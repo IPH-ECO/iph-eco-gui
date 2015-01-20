@@ -12,21 +12,21 @@ TARGET = iph-eco
 TEMPLATE = app
 
 
-SOURCES += main.cpp\
-        mainwindow.cpp \
-    newprojectdialog.cpp \
-    structuredgriddialog.cpp \
-    projectpropertiesdialog.cpp \
-    unstructuredgriddialog.cpp
+SOURCES += src/ui/mainwindow.cpp \
+    src/ui/newprojectdialog.cpp \
+    src/ui/projectpropertiesdialog.cpp \
+    src/ui/structuredgriddialog.cpp \
+    src/ui/unstructuredgriddialog.cpp \
+    src/main.cpp
 
-HEADERS  += mainwindow.h \
-    newprojectdialog.h \
-    structuredgriddialog.h \
-    projectpropertiesdialog.h \
-    unstructuredgriddialog.h
+HEADERS  += include/ui/mainwindow.h \
+    include/ui/newprojectdialog.h \
+    include/ui/projectpropertiesdialog.h \
+    include/ui/structuredgriddialog.h \
+    include/ui/unstructuredgriddialog.h
 
-FORMS    += mainwindow.ui \
-    newprojectdialog.ui \
-    structuredgriddialog.ui \
-    projectpropertiesdialog.ui \
-    unstructuredgriddialog.ui
+FORMS    += include/ui/mainwindow.ui \
+    include/ui/newprojectdialog.ui \
+    include/ui/projectpropertiesdialog.ui \
+    include/ui/structuredgriddialog.ui \
+    include/ui/unstructuredgriddialog.ui

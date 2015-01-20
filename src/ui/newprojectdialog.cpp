@@ -1,4 +1,4 @@
-#include "newprojectdialog.h"
+#include "../../include/ui/newprojectdialog.h"
 #include "ui_newprojectdialog.h"
 
 NewProjectDialog::NewProjectDialog(QWidget *parent) :

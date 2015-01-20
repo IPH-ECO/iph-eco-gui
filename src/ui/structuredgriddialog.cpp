@@ -1,4 +1,4 @@
-#include "structuredgriddialog.h"
+#include "../../include/ui/structuredgriddialog.h"
 #include "ui_structuredgriddialog.h"
 
 StructuredGridDialog::StructuredGridDialog(QWidget *parent) :
