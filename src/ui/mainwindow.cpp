@@ -1,7 +1,7 @@
 #include "../../include/ui/mainwindow.h"
 #include "ui_mainwindow.h"
 
-MainWindow::MainWindow(QWidget *parent) :
+IPH::UI::MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
@@ -20,15 +20,15 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionImport_Unstructured_File, SIGNAL(triggered()), unstructuredGridDialog, SLOT(show()));
 }
 
-void MainWindow::on_actionOpenProject_triggered() {
+void IPH::UI::MainWindow::on_actionOpenProject_triggered() {
     QString filename = QFileDialog::getOpenFileName(this, tr("Select a project file"), ".", tr("IPH-ECO Project File (*.iph)"));
 }
 
-void MainWindow::on_actionSaveAsProject_triggered() {
+void IPH::UI::MainWindow::on_actionSaveAsProject_triggered() {
     QString filename = QFileDialog::getSaveFileName(this, tr("Save project as..."), ".", tr("IPH-ECO Project File (*.iph)"));
 }
 
-MainWindow::~MainWindow()
+IPH::UI::MainWindow::~MainWindow()
 {
     delete ui;
 }

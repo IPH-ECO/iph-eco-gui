@@ -7,16 +7,23 @@ namespace Ui {
 class NewProjectDialog;
 }
 
-class NewProjectDialog : public QDialog
-{
-    Q_OBJECT
+namespace IPH {
 
-public:
-    explicit NewProjectDialog(QWidget *parent = 0);
-    ~NewProjectDialog();
+    namespace UI {
 
-private:
-    Ui::NewProjectDialog *ui;
-};
+        class NewProjectDialog : public QDialog
+        {
+            Q_OBJECT
+
+        public:
+            explicit NewProjectDialog(QWidget *parent = 0);
+            ~NewProjectDialog();
+
+        private:
+            Ui::NewProjectDialog *ui;
+        };
+
+    }
+}
 
 #endif // NEWPROJECTDIALOG_H

@@ -8,19 +8,27 @@ namespace Ui {
 class StructuredGridDialog;
 }
 
-class StructuredGridDialog : public QDialog
-{
-    Q_OBJECT
+namespace IPH {
 
-public:
-    explicit StructuredGridDialog(QWidget *parent = 0);
-    ~StructuredGridDialog();
+    namespace UI {
 
-private slots:
-    void on_boundaryFileButton_clicked();
+        class StructuredGridDialog : public QDialog
+        {
+            Q_OBJECT
 
-private:
-    Ui::StructuredGridDialog *ui;
-};
+        public:
+            explicit StructuredGridDialog(QWidget *parent = 0);
+            ~StructuredGridDialog();
+
+        private slots:
+            void on_boundaryFileButton_clicked();
+
+        private:
+            Ui::StructuredGridDialog *ui;
+        };
+
+    }
+
+}
 
 #endif // STRUCTUREDGRIDDIALOG_H

@@ -2,21 +2,33 @@
 #define UNSTRUCTUREDGRIDDIALOG_H
 
 #include <QDialog>
+#include <QFileDialog>
 
 namespace Ui {
 class UnstructuredGridDialog;
 }
 
-class UnstructuredGridDialog : public QDialog
-{
-    Q_OBJECT
+namespace IPH {
 
-public:
-    explicit UnstructuredGridDialog(QWidget *parent = 0);
-    ~UnstructuredGridDialog();
+    namespace UI {
 
-private:
-    Ui::UnstructuredGridDialog *ui;
-};
+        class UnstructuredGridDialog : public QDialog
+        {
+            Q_OBJECT
+
+        public:
+            explicit UnstructuredGridDialog(QWidget *parent = 0);
+            ~UnstructuredGridDialog();
+
+        private slots:
+            void on_boundaryFileButton_clicked();
+
+        private:
+            Ui::UnstructuredGridDialog *ui;
+        };
+
+    }
+
+}
 
 #endif // UNSTRUCTUREDGRIDDIALOG_H

@@ -7,16 +7,24 @@ namespace Ui {
 class ProjectPropertiesDialog;
 }
 
-class ProjectPropertiesDialog : public QDialog
-{
-    Q_OBJECT
+namespace IPH {
 
-public:
-    explicit ProjectPropertiesDialog(QWidget *parent = 0);
-    ~ProjectPropertiesDialog();
+    namespace UI {
 
-private:
-    Ui::ProjectPropertiesDialog *ui;
-};
+        class ProjectPropertiesDialog : public QDialog
+        {
+            Q_OBJECT
+
+        public:
+            explicit ProjectPropertiesDialog(QWidget *parent = 0);
+            ~ProjectPropertiesDialog();
+
+        private:
+            Ui::ProjectPropertiesDialog *ui;
+        };
+
+    }
+
+}
 
 #endif // PROJECTPROPERTIESDIALOG_H

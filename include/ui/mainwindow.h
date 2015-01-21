@@ -12,20 +12,27 @@ namespace Ui {
 class MainWindow;
 }
 
-class MainWindow : public QMainWindow
-{
-    Q_OBJECT
+namespace IPH {
 
-public:
-    explicit MainWindow(QWidget *parent = 0);
-    ~MainWindow();
+    namespace UI {
 
-private slots:
-    void on_actionOpenProject_triggered();
-    void on_actionSaveAsProject_triggered();
+        class MainWindow : public QMainWindow
+        {
+            Q_OBJECT
 
-private:
-    Ui::MainWindow *ui;
-};
+        public:
+            explicit MainWindow(QWidget *parent = 0);
+            ~MainWindow();
+
+        private slots:
+            void on_actionOpenProject_triggered();
+            void on_actionSaveAsProject_triggered();
+
+        private:
+            Ui::MainWindow *ui;
+        };
+
+    }
+}
 
 #endif // MAINWINDOW_H

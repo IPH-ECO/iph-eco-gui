@@ -17,13 +17,15 @@ SOURCES += src/ui/mainwindow.cpp \
     src/ui/projectpropertiesdialog.cpp \
     src/ui/structuredgriddialog.cpp \
     src/ui/unstructuredgriddialog.cpp \
-    src/main.cpp
+    src/main.cpp \
+    src/domain/project.cpp
 
 HEADERS  += include/ui/mainwindow.h \
     include/ui/newprojectdialog.h \
     include/ui/projectpropertiesdialog.h \
     include/ui/structuredgriddialog.h \
-    include/ui/unstructuredgriddialog.h
+    include/ui/unstructuredgriddialog.h \
+    include/domain/project.h
 
 FORMS    += include/ui/mainwindow.ui \
     include/ui/newprojectdialog.ui \
