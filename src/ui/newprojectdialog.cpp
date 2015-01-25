@@ -10,25 +10,16 @@ NewProjectDialog::NewProjectDialog(QWidget *parent) :
 }
 
 void NewProjectDialog::on_bottomButtonBox_clicked(QAbstractButton *button) {
-    if (button->text() == "Save" && isFormValid()) {
-        QString projectFileName = QFileDialog::getSaveFileName(this, tr("Save IPH-ECO Project"), QDir::homePath(), tr("IPH-ECHO Project file (*.iph)"));
+    if (button->text() == "OK" && isFormValid()) {
+        QString projectName = ui->projectName->text();
+        QString projectDescription = ui->projectDescription->toPlainText();
+        QString projectAnalysis = this->formatProjectAnalysis();
 
-        if (!projectFileName.isEmpty()) {
-            QString projectName = ui->projectName->text();
-            QString projectDescription = ui->projectDescription->toPlainText();
-            QString projectAnalysis = this->formatProjectAnalysis();
+        projectService->setApplicationProject(projectName, projectDescription, projectAnalysis);
 
-            try {
-                projectService->create(projectFileName, projectName, projectDescription, projectAnalysis);
-                this->hide();
-                this->clearForm();
-            } catch (DatabaseException ex) {
-                QMessageBox::critical(this, "New Project", ex.what());
-            }
-        }
+        this->clearForm();
     } else {
         if (button->text() == "Cancel") {
-            this->hide();
             this->clearForm();
         }
     }
@@ -65,6 +56,7 @@ QString NewProjectDialog::formatProjectAnalysis() {
 }
 
 void NewProjectDialog::clearForm() {
+    this->hide();
     ui->projectName->clear();
     ui->projectDescription->clear();
     ui->analyseHydrodynamic->setChecked(false);

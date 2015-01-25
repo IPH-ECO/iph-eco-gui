@@ -4,6 +4,8 @@
 #include <QMainWindow>
 #include <QFileDialog>
 
+#include "include/services/projectservice.h"
+
 #include "newprojectdialog.h"
 #include "projectpropertiesdialog.h"
 #include "structuredgriddialog.h"
@@ -23,9 +25,11 @@ public:
 private slots:
     void on_actionOpenProject_triggered();
     void on_actionSaveAsProject_triggered();
+    void on_actionSaveProject_triggered();
 
 private:
     Ui::MainWindow *ui;
+    ProjectService *projectService;
 
 };
 

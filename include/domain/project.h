@@ -5,25 +5,25 @@
 
 class Project {
     private:
-//        long id;
+        qlonglong id;
         QString name;
-        int version;
         QString description;
         QString analysis;
-        long selectedGridDataId;
-        long selectedHydrodynamicDataId;
-        long selectedWaterQualityDataId;
-        long selectedSedimentDataId;
-        long selectedMeteorologicalDataId;
+        qlonglong selectedGridDataId;
+        qlonglong selectedHydrodynamicDataId;
+        qlonglong selectedWaterQualityDataId;
+        qlonglong selectedSedimentDataId;
+        qlonglong selectedMeteorologicalDataId;
+        int version;
 
     public:
-        Project(QString &name, QString &description, QString &analysis);
+        Project(QString &_name, QString &_description, QString &_analysis);
+
+        void setId(const qlonglong &id);
+        qlonglong getId() const;
 
         void setName(const QString &name);
-        const QString getName() const;
-
-        void setVersion(const int &version);
-        int getVersion() const;
+        QString getName() const;
 
         void setDescription(const QString &description);
         QString getDescription() const;
@@ -32,19 +32,22 @@ class Project {
         QString getAnalysis() const;
 
         void setSelectedGridDataId(const int &selectedGridDataId);
-        long getSelectedGridDataId() const;
+        qlonglong getSelectedGridDataId() const;
 
-        void setSelectedHydrodynamicDataId(const long &selectedHydrodynamicDataId);
-        long getSelectedHydrodynamicDataId() const;
+        void setSelectedHydrodynamicDataId(const qlonglong &selectedHydrodynamicDataId);
+        qlonglong getSelectedHydrodynamicDataId() const;
 
-        void setSelectedWaterQualityDataId(const long &selectedWaterQualityDataId);
-        long getSelectedWaterQualityDataId() const;
+        void setSelectedWaterQualityDataId(const qlonglong &selectedWaterQualityDataId);
+        qlonglong getSelectedWaterQualityDataId() const;
 
-        void setSelectedSedimentDataId(const long &selectedSedimentDataId);
-        long getSelectedSedimentDataId() const;
+        void setSelectedSedimentDataId(const qlonglong &selectedSedimentDataId);
+        qlonglong getSelectedSedimentDataId() const;
 
-        void setSelectedMeteorologicalDataId(const long &selectedMeteorologicalDataId);
-        long getSelectedMeteorologicalDataId() const;
+        void setSelectedMeteorologicalDataId(const qlonglong &selectedMeteorologicalDataId);
+        qlonglong getSelectedMeteorologicalDataId() const;
+
+        void setVersion(const int &version);
+        int getVersion() const;
 };
 
 #endif // PROJECT_H

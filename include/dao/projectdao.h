@@ -14,9 +14,9 @@ class ProjectDAO {
 private:
     QString database_name;
 public:
-    ProjectDAO(QString &database_name);
-    ~ProjectDAO();
+    ProjectDAO(QString &_database_name);
 
+    Project* open();
     void create(Project *project);
 };
 

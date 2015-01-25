@@ -13,6 +13,10 @@ Project* IPHApplication::getCurrentProject() {
     return currentProject;
 }
 
+int IPHApplication::getApplicationId() {
+    return 0x19A3C0;
+}
+
 IPHApplication::~IPHApplication() {
     delete IPHApplication::getCurrentProject();
 }

@@ -11,7 +11,9 @@ class ProjectService {
 private:
 //    ProjectDAO projectDAO; //TODO: Hold on heap?
 public:
-    void create(QString &filename, QString &name, QString &description, QString &analysis);
+    void setApplicationProject(QString &name, QString &description, QString &analysis);
+    void open(QString &filename);
+    void create(QString &filename);
 
 };
 

@@ -14,6 +14,7 @@ public:
 
     static void setCurrentProject(Project *project);
     static Project* getCurrentProject();
+    static int getApplicationId();
 
 };
 

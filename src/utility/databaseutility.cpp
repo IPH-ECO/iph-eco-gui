@@ -50,10 +50,9 @@ void DatabaseUtility::createApplicationDatabase(QSqlDatabase &database) {
     ")";
 
     QSqlDatabase::database().transaction();
+    QSqlQuery query(database);
 
     for (int i = 0; i < sql.count(); i++) {
-        QSqlQuery query(database);
-
         query.prepare(sql.at(i));
 
         if (!query.exec()) {
@@ -65,5 +64,18 @@ void DatabaseUtility::createApplicationDatabase(QSqlDatabase &database) {
         }
     }
 
+    query.prepare(QString("pragma application_id = %1").arg(IPHApplication::getApplicationId()));
+    query.exec();
+
     QSqlDatabase::database().commit();
+}
+
+bool DatabaseUtility::isDatabaseValid(QSqlDatabase &database) {
+    QSqlQuery query(database);
+
+    query.prepare("pragma application_id");
+    query.exec();
+    query.next();
+
+    return query.value(0).toInt() == IPHApplication::getApplicationId();
 }
