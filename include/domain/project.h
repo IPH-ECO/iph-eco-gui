@@ -1,57 +1,50 @@
 #ifndef PROJECT_H
 #define PROJECT_H
 
-#include <iostream>
+#include <QString>
 
-namespace IPH {
+class Project {
+    private:
+//        long id;
+        QString name;
+        int version;
+        QString description;
+        QString analysis;
+        long selectedGridDataId;
+        long selectedHydrodynamicDataId;
+        long selectedWaterQualityDataId;
+        long selectedSedimentDataId;
+        long selectedMeteorologicalDataId;
 
-    namespace Domain {
+    public:
+        Project(QString &name, QString &description, QString &analysis);
 
-        class Project {
-        private:
-            std::string name;
-            int version;
-            std::string description;
-            std::string analysis;
-            long selectedGridDataId;
-            long selectedHydrodynamicDataId;
-            long selectedWaterQualityDataId;
-            long selectedSedimentDataId;
-            long selectedMeteorologicalDataId;
+        void setName(const QString &name);
+        const QString getName() const;
 
-        public:
-            Project();
+        void setVersion(const int &version);
+        int getVersion() const;
 
-            void setName(const std::string &name);
-            std::string getName() const;
+        void setDescription(const QString &description);
+        QString getDescription() const;
 
-            void setVersion(const int &version);
-            int getVersion() const;
+        void setAnalysis(const QString &analysis);
+        QString getAnalysis() const;
 
-            void setDescription(const std::string &description);
-            std::string getDescription() const;
+        void setSelectedGridDataId(const int &selectedGridDataId);
+        long getSelectedGridDataId() const;
 
-            void setAnalysis(const std::string &analysis);
-            std::string getAnalysis() const;
+        void setSelectedHydrodynamicDataId(const long &selectedHydrodynamicDataId);
+        long getSelectedHydrodynamicDataId() const;
 
-            void setSelectedGridDataId(const int &selectedGridDataId);
-            long getSelectedGridDataId() const;
+        void setSelectedWaterQualityDataId(const long &selectedWaterQualityDataId);
+        long getSelectedWaterQualityDataId() const;
 
-            void setSelectedHydrodynamicDataId(const long &selectedHydrodynamicDataId);
-            long getSelectedHydrodynamicDataId() const;
+        void setSelectedSedimentDataId(const long &selectedSedimentDataId);
+        long getSelectedSedimentDataId() const;
 
-            void setSelectedWaterQualityDataId(const long &selectedWaterQualityDataId);
-            long getSelectedWaterQualityDataId() const;
-
-            void setSelectedSedimentDataId(const long &selectedSedimentDataId);
-            long getSelectedSedimentDataId() const;
-
-            void setSelectedMeteorologicalDataId(const long &selectedMeteorologicalDataId);
-            long getSelectedMeteorologicalDataId() const;
-        };
-
-    }
-
-}
+        void setSelectedMeteorologicalDataId(const long &selectedMeteorologicalDataId);
+        long getSelectedMeteorologicalDataId() const;
+};
 
 #endif // PROJECT_H

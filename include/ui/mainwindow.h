@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QFileDialog>
+
 #include "newprojectdialog.h"
 #include "projectpropertiesdialog.h"
 #include "structuredgriddialog.h"
@@ -12,27 +13,20 @@ namespace Ui {
 class MainWindow;
 }
 
-namespace IPH {
+class MainWindow : public QMainWindow {
+    Q_OBJECT
 
-    namespace UI {
+public:
+    explicit MainWindow(QWidget *parent = 0);
+    ~MainWindow();
 
-        class MainWindow : public QMainWindow
-        {
-            Q_OBJECT
+private slots:
+    void on_actionOpenProject_triggered();
+    void on_actionSaveAsProject_triggered();
 
-        public:
-            explicit MainWindow(QWidget *parent = 0);
-            ~MainWindow();
+private:
+    Ui::MainWindow *ui;
 
-        private slots:
-            void on_actionOpenProject_triggered();
-            void on_actionSaveAsProject_triggered();
-
-        private:
-            Ui::MainWindow *ui;
-        };
-
-    }
-}
+};
 
 #endif // MAINWINDOW_H

@@ -2,28 +2,35 @@
 #define NEWPROJECTDIALOG_H
 
 #include <QDialog>
+#include <QFileDialog>
+#include <QDir>
+#include <QSqlDatabase>
+#include <QAbstractButton>
+#include <QMessageBox>
+
+#include "include/services/projectservice.h"
 
 namespace Ui {
 class NewProjectDialog;
 }
 
-namespace IPH {
+class NewProjectDialog : public QDialog {
+    Q_OBJECT
 
-    namespace UI {
+public:
+    explicit NewProjectDialog(QWidget *parent = 0);
+    ~NewProjectDialog();
 
-        class NewProjectDialog : public QDialog
-        {
-            Q_OBJECT
+private slots:
+    void on_bottomButtonBox_clicked(QAbstractButton * button);
 
-        public:
-            explicit NewProjectDialog(QWidget *parent = 0);
-            ~NewProjectDialog();
+private:
+    Ui::NewProjectDialog *ui;
+    ProjectService *projectService;
 
-        private:
-            Ui::NewProjectDialog *ui;
-        };
-
-    }
-}
+    bool isFormValid();
+    void clearForm();
+    QString formatProjectAnalysis();
+};
 
 #endif // NEWPROJECTDIALOG_H

@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui sql
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -18,14 +18,24 @@ SOURCES += src/ui/mainwindow.cpp \
     src/ui/structuredgriddialog.cpp \
     src/ui/unstructuredgriddialog.cpp \
     src/main.cpp \
-    src/domain/project.cpp
+    src/domain/project.cpp \
+    src/services/projectservice.cpp \
+    src/utility/databaseutility.cpp \
+    src/exceptions/databaseexception.cpp \
+    src/dao/projectdao.cpp \
+    src/application/iphapplication.cpp
 
 HEADERS  += include/ui/mainwindow.h \
     include/ui/newprojectdialog.h \
     include/ui/projectpropertiesdialog.h \
     include/ui/structuredgriddialog.h \
     include/ui/unstructuredgriddialog.h \
-    include/domain/project.h
+    include/domain/project.h \
+    include/services/projectservice.h \
+    include/utility/databaseutility.h \
+    include/exceptions/databaseexception.h \
+    include/dao/projectdao.h \
+    include/application/iphapplication.h
 
 FORMS    += include/ui/mainwindow.ui \
     include/ui/newprojectdialog.ui \

@@ -8,27 +8,18 @@ namespace Ui {
 class UnstructuredGridDialog;
 }
 
-namespace IPH {
+class UnstructuredGridDialog : public QDialog {
+    Q_OBJECT
 
-    namespace UI {
+public:
+    explicit UnstructuredGridDialog(QWidget *parent = 0);
+    ~UnstructuredGridDialog();
 
-        class UnstructuredGridDialog : public QDialog
-        {
-            Q_OBJECT
+private slots:
+    void on_boundaryFileButton_clicked();
 
-        public:
-            explicit UnstructuredGridDialog(QWidget *parent = 0);
-            ~UnstructuredGridDialog();
-
-        private slots:
-            void on_boundaryFileButton_clicked();
-
-        private:
-            Ui::UnstructuredGridDialog *ui;
-        };
-
-    }
-
-}
+private:
+    Ui::UnstructuredGridDialog *ui;
+};
 
 #endif // UNSTRUCTUREDGRIDDIALOG_H

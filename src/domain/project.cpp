@@ -1,77 +1,80 @@
-#include "../../include/domain/project.h"
+#include "include/domain/project.h"
 
-IPH::Domain::Project::Project() {
-
+Project::Project(QString &name, QString &description, QString &analysis) {
+    this->name = name;
+    this->description = description;
+    this->analysis = analysis;
+    this->version = 1;
 }
 
-void IPH::Domain::Project::setName(const std::string &name) {
+void Project::setName(const QString &name) {
     this->name = name;
 }
 
-std::string IPH::Domain::Project::getName() const {
+const QString Project::getName() const {
     return this->name;
 }
 
-void IPH::Domain::Project::setVersion(const int &version) {
+void Project::setVersion(const int &version) {
     this->version = version;
 }
 
-int IPH::Domain::Project::getVersion() const {
+int Project::getVersion() const {
     return this->version;
 }
 
-void IPH::Domain::Project::setDescription(const std::string &description) {
+void Project::setDescription(const QString &description) {
     this->description = description;
 }
 
-std::string IPH::Domain::Project::getDescription() const {
+QString Project::getDescription() const {
     return this->description;
 }
 
-void IPH::Domain::Project::setAnalysis(const std::string &analysis) {
+void Project::setAnalysis(const QString &analysis) {
     this->analysis = analysis;
 }
 
-std::string IPH::Domain::Project::getAnalysis() const {
+QString Project::getAnalysis() const {
     return this->analysis;
 }
 
-void IPH::Domain::Project::setSelectedGridDataId(const int &selectedGridDataId) {
+void Project::setSelectedGridDataId(const int &selectedGridDataId) {
     this->selectedGridDataId = selectedGridDataId;
 }
 
-long IPH::Domain::Project::getSelectedGridDataId() const {
+long Project::getSelectedGridDataId() const {
     return selectedGridDataId;
 }
 
-void IPH::Domain::Project::setSelectedHydrodynamicDataId(const long &selectedHydrodynamicDataId) {
+void Project::setSelectedHydrodynamicDataId(const long &selectedHydrodynamicDataId) {
     this->selectedHydrodynamicDataId = selectedHydrodynamicDataId;
 }
 
-long IPH::Domain::Project::getSelectedHydrodynamicDataId() const {
+long Project::getSelectedHydrodynamicDataId() const {
     return this->selectedHydrodynamicDataId;
 }
 
-void IPH::Domain::Project::setSelectedWaterQualityDataId(const long &selectedWaterQualityDataId) {
+void Project::setSelectedWaterQualityDataId(const long &selectedWaterQualityDataId) {
     this->selectedWaterQualityDataId = selectedWaterQualityDataId;
 }
 
-long IPH::Domain::Project::getSelectedWaterQualityDataId() const {
+long Project::getSelectedWaterQualityDataId() const {
     return selectedWaterQualityDataId;
 }
 
-void IPH::Domain::Project::setSelectedSedimentDataId(const long &selectedSedimentDataId) {
+void Project::setSelectedSedimentDataId(const long &selectedSedimentDataId) {
     this->selectedSedimentDataId = selectedSedimentDataId;
 }
 
-long IPH::Domain::Project::getSelectedSedimentDataId() const {
+long Project::getSelectedSedimentDataId() const {
     return selectedSedimentDataId;
 }
 
-void IPH::Domain::Project::setSelectedMeteorologicalDataId(const long &selectedMeteorologicalDataId) {
+void Project::setSelectedMeteorologicalDataId(const long &selectedMeteorologicalDataId) {
     this->selectedMeteorologicalDataId = selectedMeteorologicalDataId;
 }
 
-long IPH::Domain::Project::getSelectedMeteorologicalDataId() const {
+long Project::getSelectedMeteorologicalDataId() const {
     return this->selectedMeteorologicalDataId;
 }

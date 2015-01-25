@@ -2,29 +2,20 @@
 #define PROJECTPROPERTIESDIALOG_H
 
 #include <QDialog>
+#include <QSqlDatabase>
 
 namespace Ui {
 class ProjectPropertiesDialog;
 }
 
-namespace IPH {
+class ProjectPropertiesDialog : public QDialog {
+    Q_OBJECT
 
-    namespace UI {
-
-        class ProjectPropertiesDialog : public QDialog
-        {
-            Q_OBJECT
-
-        public:
-            explicit ProjectPropertiesDialog(QWidget *parent = 0);
-            ~ProjectPropertiesDialog();
-
-        private:
-            Ui::ProjectPropertiesDialog *ui;
-        };
-
-    }
-
-}
+public:
+    explicit ProjectPropertiesDialog(QWidget *parent = 0);
+    ~ProjectPropertiesDialog();
+private:
+    Ui::ProjectPropertiesDialog *ui;
+};
 
 #endif // PROJECTPROPERTIESDIALOG_H

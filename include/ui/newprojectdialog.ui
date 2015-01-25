@@ -131,7 +131,7 @@
        </widget>
       </item>
       <item row="0" column="1">
-       <widget class="QLineEdit" name="name"/>
+       <widget class="QLineEdit" name="projectName"/>
       </item>
       <item row="1" column="0">
        <widget class="QLabel" name="label_2">
@@ -141,7 +141,7 @@
        </widget>
       </item>
       <item row="1" column="1">
-       <widget class="QPlainTextEdit" name="description">
+       <widget class="QPlainTextEdit" name="projectDescription">
         <property name="maximumSize">
          <size>
           <width>16777215</width>
@@ -160,21 +160,21 @@
       <item row="2" column="1">
        <layout class="QHBoxLayout" name="horizontalLayout">
         <item>
-         <widget class="QCheckBox" name="hydrodynamicCheckBox">
+         <widget class="QCheckBox" name="analyseHydrodynamic">
           <property name="text">
            <string>Hydrodynamic</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QCheckBox" name="waterQualityCheckBox">
+         <widget class="QCheckBox" name="analyseWaterQuality">
           <property name="text">
            <string>Water Quality</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QCheckBox" name="checkBox">
+         <widget class="QCheckBox" name="analyseSediment">
           <property name="text">
            <string>Sediment</string>
           </property>
@@ -203,7 +203,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QDialogButtonBox" name="buttonBox">
+       <widget class="QDialogButtonBox" name="bottomButtonBox">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
           <horstretch>0</horstretch>
@@ -211,7 +211,7 @@
          </sizepolicy>
         </property>
         <property name="standardButtons">
-         <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+         <set>QDialogButtonBox::Cancel|QDialogButtonBox::Save</set>
         </property>
        </widget>
       </item>
@@ -221,11 +221,11 @@
   </widget>
  </widget>
  <tabstops>
-  <tabstop>name</tabstop>
-  <tabstop>description</tabstop>
-  <tabstop>hydrodynamicCheckBox</tabstop>
-  <tabstop>waterQualityCheckBox</tabstop>
-  <tabstop>checkBox</tabstop>
+  <tabstop>projectName</tabstop>
+  <tabstop>projectDescription</tabstop>
+  <tabstop>analyseHydrodynamic</tabstop>
+  <tabstop>analyseWaterQuality</tabstop>
+  <tabstop>analyseSediment</tabstop>
  </tabstops>
  <resources/>
  <connections/>
