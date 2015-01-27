@@ -11,7 +11,7 @@ void ProjectService::open(QString &filename) {
         Project *project = projectDAO.open();
 
         IPHApplication::setCurrentProject(project);
-    } catch (DatabaseException ex) {
+    } catch (DatabaseException &ex) {
         throw ex;
     }
 }
@@ -22,7 +22,7 @@ void ProjectService::create(QString &filename) {
         ProjectDAO projectDAO(filename);
 
         projectDAO.create(project);
-    } catch (DatabaseException ex) {
+    } catch (DatabaseException &ex) {
         throw ex;
     }
 }

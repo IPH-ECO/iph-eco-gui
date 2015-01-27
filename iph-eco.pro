@@ -23,7 +23,9 @@ SOURCES += src/ui/mainwindow.cpp \
     src/utility/databaseutility.cpp \
     src/exceptions/databaseexception.cpp \
     src/dao/projectdao.cpp \
-    src/application/iphapplication.cpp
+    src/application/iphapplication.cpp \
+    src/services/gridservice.cpp \
+    src/exceptions/gridexception.cpp
 
 HEADERS  += include/ui/mainwindow.h \
     include/ui/newprojectdialog.h \
@@ -35,10 +37,19 @@ HEADERS  += include/ui/mainwindow.h \
     include/utility/databaseutility.h \
     include/exceptions/databaseexception.h \
     include/dao/projectdao.h \
-    include/application/iphapplication.h
+    include/application/iphapplication.h \
+    include/services/gridservice.h \
+    include/exceptions/gridexception.h
 
 FORMS    += include/ui/mainwindow.ui \
     include/ui/newprojectdialog.ui \
     include/ui/projectpropertiesdialog.ui \
     include/ui/structuredgriddialog.ui \
     include/ui/unstructuredgriddialog.ui
+
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../usr/local/Cellar/geographiclib/1.40/lib/release/ -lGeographic
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../usr/local/Cellar/geographiclib/1.40/lib/debug/ -lGeographic
+else:unix: LIBS += -L$$PWD/../../../../../usr/local/Cellar/geographiclib/1.40/lib/ -lGeographic
+
+INCLUDEPATH += $$PWD/../../../../../usr/local/Cellar/geographiclib/1.40/include
+DEPENDPATH += $$PWD/../../../../../usr/local/Cellar/geographiclib/1.40/include

@@ -22,7 +22,7 @@ public:
     ~NewProjectDialog();
 
 private slots:
-    void on_bottomButtonBox_clicked(QAbstractButton * button);
+    void on_bottomButtonBox_clicked(QAbstractButton *button);
 
 private:
     Ui::NewProjectDialog *ui;

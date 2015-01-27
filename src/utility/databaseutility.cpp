@@ -5,8 +5,7 @@ QSqlDatabase DatabaseUtility::connect(QString &database_name) {
     db.setDatabaseName(database_name);
 
     if (!db.open()) {
-        QString error = QString("The following error ocurred during database connection: %1").arg(db.lastError().text());
-        throw DatabaseException(error.toStdString().c_str());
+        throw DatabaseException(QString("The following error ocurred during database connection: %1").arg(db.lastError().text()));
     }
 
     return db;
@@ -59,8 +58,7 @@ void DatabaseUtility::createApplicationDatabase(QSqlDatabase &database) {
             QSqlDatabase::database().rollback();
             DatabaseUtility::disconnect(database);
 
-            QString error = QString("The following error ocurred during database creation: %1").arg(query.lastError().text());
-            throw DatabaseException(error.toStdString().c_str());
+            throw DatabaseException(QString("The following error ocurred during database creation: %1").arg(query.lastError().text()));
         }
     }
 

@@ -1,9 +1,9 @@
 #include "include/dao/projectdao.h"
 
-ProjectDAO::ProjectDAO(QString &_database_name) : database_name(_database_name) {}
+ProjectDAO::ProjectDAO(QString &_databaseName) : databaseName(_databaseName) {}
 
 Project* ProjectDAO::open() {
-    QSqlDatabase db = DatabaseUtility::connect(this->database_name);
+    QSqlDatabase db = DatabaseUtility::connect(this->databaseName);
 
     if (!DatabaseUtility::isDatabaseValid(db)) {
         throw DatabaseException("Invalid IPH-ECO Project file.");
@@ -27,7 +27,7 @@ Project* ProjectDAO::open() {
 }
 
 void ProjectDAO::create(Project *project) {
-    QSqlDatabase db = DatabaseUtility::connect(this->database_name);
+    QSqlDatabase db = DatabaseUtility::connect(this->databaseName);
 
     DatabaseUtility::createApplicationDatabase(db);
 
@@ -42,7 +42,7 @@ void ProjectDAO::create(Project *project) {
 
     if (!query.exec()) {
         DatabaseUtility::disconnect(db);
-        throw DatabaseException(QString("Unable to create project. Error: %1.").arg(query.lastError().text()).toStdString().c_str());
+        throw DatabaseException(QString("Unable to create project. Error: %1.").arg(query.lastError().text()));
     }
 
     project->setId(query.lastInsertId().toLongLong());

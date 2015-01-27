@@ -2,14 +2,13 @@
 #define DATABASEEXCEPTION_H
 
 #include <exception>
-#include <iostream>
+#include <QString>
 
 class DatabaseException : public std::exception {
 private:
     const char* cause;
 public:
-    // TODO: Change constructor argument type
-    DatabaseException(const char* cause);
+    DatabaseException(const QString &cause);
 
     const char* what() const throw();
 };

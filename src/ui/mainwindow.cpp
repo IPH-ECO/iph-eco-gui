@@ -26,7 +26,7 @@ void MainWindow::on_actionOpenProject_triggered() {
 
     try {
         projectService->open(filename);
-    } catch (DatabaseException ex) {
+    } catch (DatabaseException &ex) {
         QMessageBox::critical(this, "Open Project", ex.what());
     }
 }
@@ -37,7 +37,7 @@ void MainWindow::on_actionSaveProject_triggered() {
     if (!projectFileName.isEmpty()) {
         try {
             projectService->create(projectFileName);
-        } catch (DatabaseException ex) {
+        } catch (DatabaseException &ex) {
             QMessageBox::critical(this, "New Project", ex.what());
         }
     }
@@ -49,7 +49,7 @@ void MainWindow::on_actionSaveAsProject_triggered() {
     if (!filename.isEmpty()) {
         try {
             projectService->create(filename);
-        } catch (DatabaseException ex) {
+        } catch (DatabaseException &ex) {
             QMessageBox::critical(this, "Save As Project", ex.what());
         }
     }

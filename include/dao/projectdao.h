@@ -12,7 +12,7 @@
 
 class ProjectDAO {
 private:
-    QString database_name;
+    QString databaseName;
 public:
     ProjectDAO(QString &_database_name);
 

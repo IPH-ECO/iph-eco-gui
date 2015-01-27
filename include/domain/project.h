@@ -9,6 +9,7 @@ class Project {
         QString name;
         QString description;
         QString analysis;
+        QString boundaryData;
         qlonglong selectedGridDataId;
         qlonglong selectedHydrodynamicDataId;
         qlonglong selectedWaterQualityDataId;
@@ -30,6 +31,9 @@ class Project {
 
         void setAnalysis(const QString &analysis);
         QString getAnalysis() const;
+
+        void setBoundaryData(const QString &boundaryData);
+        QString getBoundaryData() const;
 
         void setSelectedGridDataId(const int &selectedGridDataId);
         qlonglong getSelectedGridDataId() const;

@@ -38,6 +38,14 @@ QString Project::getAnalysis() const {
     return this->analysis;
 }
 
+void Project::setBoundaryData(const QString &boundaryData) {
+    this->boundaryData = boundaryData;
+}
+
+QString Project::getBoundaryData() const {
+    return this->boundaryData;
+}
+
 void Project::setSelectedGridDataId(const int &selectedGridDataId) {
     this->selectedGridDataId = selectedGridDataId;
 }

@@ -3,6 +3,11 @@
 
 #include <QDialog>
 #include <QFileDialog>
+#include <QAbstractButton>
+#include <QMessageBox>
+
+#include "include/services/gridservice.h"
+#include "include/application/iphapplication.h"
 
 namespace Ui {
 class StructuredGridDialog;
@@ -17,9 +22,13 @@ public:
 
 private slots:
     void on_boundaryFileButton_clicked();
+    void on_bottomButtonBox_clicked(QAbstractButton *button);
 
 private:
     Ui::StructuredGridDialog *ui;
+
+    bool isValidForm();
+    void clearForm();
 };
 
 #endif // STRUCTUREDGRIDDIALOG_H
