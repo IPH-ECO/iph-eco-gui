@@ -1,6 +1,8 @@
 #include "include/ui/structuredgriddialog.h"
 #include "ui_structuredgriddialog.h"
 
+#include <QDebug>
+
 StructuredGridDialog::StructuredGridDialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::StructuredGridDialog)
@@ -17,10 +19,10 @@ void StructuredGridDialog::on_boundaryFileButton_clicked() {
         GridService gridService(filepath);
 
         try {
-            gridService.processBoundaryFile();
-            QString gridJson = gridService.getJsonRepresentation();
+            QString boundaryJson = gridService.getBoundaryJson();
+            qDebug() << boundaryJson;
 //            Project *project = IPHApplication::getCurrentProject();
-//            project->setBoundaryData(gridJson);
+//            project->setBoundaryData(boundaryJson);
         } catch (GridException &ex) {
             QMessageBox::critical(this, "Structured Grid Generation", ex.what());
         }

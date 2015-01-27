@@ -11,7 +11,6 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = iph-eco
 TEMPLATE = app
 
-
 SOURCES += src/ui/mainwindow.cpp \
     src/ui/newprojectdialog.cpp \
     src/ui/projectpropertiesdialog.cpp \

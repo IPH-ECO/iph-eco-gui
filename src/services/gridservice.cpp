@@ -1,22 +1,16 @@
 #include "include/services/gridservice.h"
 
-#include <QDebug>
+GridService::GridService(QString &_boundaryFilename) : boundaryFilename(_boundaryFilename) {}
 
-GridService::GridService(QString &_boundaryFilename) :
-    boundaryFilename(_boundaryFilename),
-    outerBoundaryList(new QList<CoordinateMap>()), innerBoundaryList(new QList<CoordinateMap>()) {}
-
-void GridService::processBoundaryFile() {
+QString GridService::getBoundaryJson() {
     QFile boundaryFile(this->boundaryFilename);
 
     if (!boundaryFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
         throw GridException(QString("Unable to open boundary file. Error: %1").arg(boundaryFile.errorString()));
     }
 
-    outerBoundaryList->clear();
-    innerBoundaryList->clear();
-
     QXmlStreamReader kml(&boundaryFile);
+    QJsonArray outerBoundaryJsonArray, innerBoundaryJsonArray;
 
     while (!kml.atEnd()) {
         kml.readNext();
@@ -30,74 +24,36 @@ void GridService::processBoundaryFile() {
 
             QString coordinatesText = kml.readElementText();
             QStringList coordinates = coordinatesText.trimmed().split(" ");
-            CoordinateMap coordinateMap;
+
+            QJsonArray coordinatesJsonArray;
 
             for (int i = 0; i < coordinates.count(); i++) {
                 QStringList coordinateStr = coordinates.at(i).split(",");
                 GeographicLib::GeoCoords coordinate(coordinateStr.at(1).toDouble(), coordinateStr.at(0).toDouble());
 
-                coordinateMap.insert(coordinate.Easting(), coordinate.Northing());
+                coordinatesJsonArray.push_back(QString::number(coordinate.Easting(), 'f', 11) + "," + QString::number(coordinate.Northing(), 'f', 11));
             }
 
             if (boundaryElementName == "outerBoundaryIs") {
-                outerBoundaryList->push_back(coordinateMap);
+                outerBoundaryJsonArray.push_back(coordinatesJsonArray);
             } else {
-                innerBoundaryList->push_back(coordinateMap);
+                innerBoundaryJsonArray.push_back(coordinatesJsonArray);
             }
         }
     }
 
-    if (this->outerBoundaryList->isEmpty()) {
-        boundaryFile.close();
+    boundaryFile.close();
+
+    if (outerBoundaryJsonArray.isEmpty()) {
         throw GridException("Invalid KML file. No domain coordinates found.");
     }
 
-    boundaryFile.close();
+    QJsonObject boundaryJsonObject;
+
+    boundaryJsonObject["outer"] = outerBoundaryJsonArray;
+    boundaryJsonObject["inner"] = innerBoundaryJsonArray;
+
+    return QJsonDocument(boundaryJsonObject).toJson(QJsonDocument::Compact);
 }
 
-QString GridService::getJsonRepresentation() {
-    if (this->outerBoundaryList->isEmpty()) {
-        throw GridException("No boundary file processing done.");
-    }
-
-    QJsonObject boundaryObject;
-
-    boundaryObject["outer"] = this->buildJson(GridService::OUTER_BOUNDARY);
-    boundaryObject["inner"] = this->buildJson(GridService::INNER_BOUNDARY);
-
-    return QJsonDocument(boundaryObject).toJson(QJsonDocument::Compact);
-}
-
-QJsonArray GridService::buildJson(BoundaryType boundaryType) {
-    QString elementName;
-    QList<CoordinateMap> *boundaryList;
-
-    if (boundaryType == GridService::OUTER_BOUNDARY) {
-        elementName = "outer";
-        boundaryList = this->outerBoundaryList;
-    } else {
-        elementName = "inner";
-        boundaryList = this->innerBoundaryList;
-        qDebug() << this->innerBoundaryList->size();
-    }
-
-    QJsonArray boundaryArrayObject;
-
-    for (int i = 0; i < boundaryList->count(); i++) {
-        QJsonArray coordinatesArray;
-        CoordinateMap &currentBoundary = const_cast<CoordinateMap&>(boundaryList->at(i));
-
-        for (CoordinateMap::iterator it = currentBoundary.begin(); it != currentBoundary.end(); it++) {
-            coordinatesArray.push_back(QString("%1,%2").arg(it.key()).arg(it.value()));
-        }
-
-        boundaryArrayObject.push_back(coordinatesArray);
-    }
-
-    return boundaryArrayObject;
-}
-
-GridService::~GridService() {
-    delete outerBoundaryList;
-    delete innerBoundaryList;
-}
+GridService::~GridService() {}

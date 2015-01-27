@@ -15,23 +15,14 @@
 
 #include "include/exceptions/gridexception.h"
 
-typedef QMultiMap<double, double> CoordinateMap;
-
 class GridService {
 private:
-    enum BoundaryType { OUTER_BOUNDARY, INNER_BOUNDARY };
-
     QString boundaryFilename;
-    QList<CoordinateMap> *outerBoundaryList;
-    QList<CoordinateMap> *innerBoundaryList;
-
-    QJsonArray buildJson(BoundaryType boundaryType);
 public:
     GridService(QString &_boundaryFilename);
     ~GridService();
 
-    void processBoundaryFile();
-    QString getJsonRepresentation();
+    QString getBoundaryJson();
 };
 
 #endif // GRIDSERVICE_H
