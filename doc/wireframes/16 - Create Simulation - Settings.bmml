@@ -1,0 +1,140 @@
+<mockup version="1.0" skin="sketch" fontFace="Balsamiq Sans" measuredW="474" measuredH="766" mockupW="450" mockupH="752">
+  <controls>
+    <control controlID="2" controlTypeID="com.balsamiq.mockups::TitleWindow" x="24" y="50" w="450" h="716" measuredW="450" measuredH="400" zOrder="0" locked="false" isInGroup="-1">
+      <controlProperties>
+        <bottomheight>0</bottomheight>
+        <text>Create%20Simulation</text>
+      </controlProperties>
+    </control>
+    <control controlID="4" controlTypeID="com.balsamiq.mockups::ButtonBar" x="179" y="92" w="-1" h="-1" measuredW="140" measuredH="27" zOrder="1" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Settings%2C%20Output</text>
+      </controlProperties>
+    </control>
+    <control controlID="5" controlTypeID="com.balsamiq.mockups::Label" x="48" y="283" w="-1" h="-1" measuredW="142" measuredH="21" zOrder="2" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Simulation%20Period%20%28days%29</text>
+      </controlProperties>
+    </control>
+    <control controlID="6" controlTypeID="com.balsamiq.mockups::Label" x="301" y="283" w="-1" h="-1" measuredW="96" measuredH="21" zOrder="3" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Step%20Time%20%28sec%29</text>
+      </controlProperties>
+    </control>
+    <control controlID="7" controlTypeID="com.balsamiq.mockups::TextInput" x="208" y="280" w="46" h="-1" measuredW="79" measuredH="26" zOrder="4" locked="false" isInGroup="-1"/>
+    <control controlID="8" controlTypeID="com.balsamiq.mockups::TextInput" x="407" y="280" w="46" h="-1" measuredW="79" measuredH="26" zOrder="5" locked="false" isInGroup="-1"/>
+    <control controlID="9" controlTypeID="com.balsamiq.mockups::Label" x="48" y="241" w="-1" h="-1" measuredW="65" measuredH="21" zOrder="6" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Initial%20Time</text>
+      </controlProperties>
+    </control>
+    <control controlID="35" controlTypeID="com.balsamiq.mockups::Button" x="328" y="724" w="-1" h="-1" measuredW="64" measuredH="27" zOrder="7" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Cancel</text>
+      </controlProperties>
+    </control>
+    <control controlID="37" controlTypeID="com.balsamiq.mockups::Button" x="396" y="724" w="-1" h="-1" measuredW="63" measuredH="27" zOrder="8" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Create</text>
+      </controlProperties>
+    </control>
+    <control controlID="43" controlTypeID="com.balsamiq.mockups::ComboBox" x="208" y="172" w="142" h="-1" measuredW="73" measuredH="62" zOrder="9" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Default%0AParameter%20calibration%0ASensibility%20analysis</text>
+      </controlProperties>
+    </control>
+    <control controlID="44" controlTypeID="com.balsamiq.mockups::Label" x="48" y="172" w="-1" h="-1" measuredW="93" measuredH="21" zOrder="10" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Simulation%20Type</text>
+      </controlProperties>
+    </control>
+    <control controlID="46" controlTypeID="com.balsamiq.mockups::Label" x="48" y="627" w="-1" h="-1" measuredW="64" measuredH="21" zOrder="11" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Comments</text>
+      </controlProperties>
+    </control>
+    <control controlID="47" controlTypeID="com.balsamiq.mockups::TextArea" x="208" y="627" w="245" h="82" measuredW="200" measuredH="140" zOrder="12" locked="false" isInGroup="-1"/>
+    <control controlID="48" controlTypeID="com.balsamiq.mockups::Label" x="48" y="591" w="-1" h="-1" measuredW="93" measuredH="21" zOrder="13" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Start%20on%20Create</text>
+      </controlProperties>
+    </control>
+    <control controlID="49" controlTypeID="com.balsamiq.mockups::CheckBox" x="208" y="591" w="-1" h="-1" measuredW="20" measuredH="21" zOrder="14" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text/>
+      </controlProperties>
+    </control>
+    <control controlID="51" controlTypeID="com.balsamiq.mockups::DateChooser" x="208" y="239" w="-1" h="-1" measuredW="90" measuredH="25" zOrder="15" locked="false" isInGroup="-1"/>
+    <control controlID="55" controlTypeID="com.balsamiq.mockups::FieldSet" x="48" y="401" w="405" h="170" measuredW="200" measuredH="170" zOrder="16" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Scenario%20Configuration</text>
+      </controlProperties>
+    </control>
+    <control controlID="56" controlTypeID="com.balsamiq.mockups::Label" x="63" y="425" w="-1" h="-1" measuredW="116" measuredH="21" zOrder="17" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Hydrodynamic%20Data</text>
+      </controlProperties>
+    </control>
+    <control controlID="57" controlTypeID="com.balsamiq.mockups::Label" x="63" y="461" w="-1" h="-1" measuredW="114" measuredH="21" zOrder="18" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Water%20Quality%20Data</text>
+      </controlProperties>
+    </control>
+    <control controlID="58" controlTypeID="com.balsamiq.mockups::Label" x="63" y="497" w="-1" h="-1" measuredW="88" measuredH="21" zOrder="19" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Sediment%20Data</text>
+      </controlProperties>
+    </control>
+    <control controlID="59" controlTypeID="com.balsamiq.mockups::Label" x="63" y="533" w="-1" h="-1" measuredW="117" measuredH="21" zOrder="20" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Meteorological%20Data</text>
+      </controlProperties>
+    </control>
+    <control controlID="60" controlTypeID="com.balsamiq.mockups::ComboBox" x="208" y="423" w="230" h="-1" measuredW="118" measuredH="24" zOrder="21" locked="false" isInGroup="-1">
+      <controlProperties>
+        <state>closed</state>
+        <text>Configuration%201</text>
+      </controlProperties>
+    </control>
+    <control controlID="61" controlTypeID="com.balsamiq.mockups::ComboBox" x="208" y="459" w="230" h="-1" measuredW="121" measuredH="24" zOrder="22" locked="false" isInGroup="-1">
+      <controlProperties>
+        <state>closed</state>
+        <text>Configuration%202</text>
+      </controlProperties>
+    </control>
+    <control controlID="62" controlTypeID="com.balsamiq.mockups::ComboBox" x="208" y="495" w="230" h="-1" measuredW="120" measuredH="24" zOrder="23" locked="false" isInGroup="-1">
+      <controlProperties>
+        <state>closed</state>
+        <text>Configuration%203</text>
+      </controlProperties>
+    </control>
+    <control controlID="63" controlTypeID="com.balsamiq.mockups::ComboBox" x="208" y="531" w="230" h="-1" measuredW="121" measuredH="24" zOrder="24" locked="false" isInGroup="-1">
+      <controlProperties>
+        <state>closed</state>
+        <text>Configuration%204</text>
+      </controlProperties>
+    </control>
+    <control controlID="64" controlTypeID="com.balsamiq.mockups::Label" x="48" y="135" w="-1" h="-1" measuredW="54" measuredH="21" zOrder="25" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Identifier</text>
+      </controlProperties>
+    </control>
+    <control controlID="65" controlTypeID="com.balsamiq.mockups::TextInput" x="208" y="132" w="245" h="-1" measuredW="79" measuredH="26" zOrder="26" locked="false" isInGroup="-1"/>
+    <control controlID="66" controlTypeID="com.balsamiq.mockups::Label" x="48" y="319" w="-1" h="-1" measuredW="40" measuredH="21" zOrder="27" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Layers</text>
+      </controlProperties>
+    </control>
+    <control controlID="67" controlTypeID="com.balsamiq.mockups::List" x="208" y="319" w="100" h="67" measuredW="100" measuredH="126" zOrder="28" locked="false" isInGroup="-1">
+      <controlProperties>
+        <hasHeader>true</hasHeader>
+        <text>Depth%20%28m%29%0A2%0A4</text>
+      </controlProperties>
+    </control>
+    <control controlID="68" controlTypeID="com.balsamiq.mockups::Label" x="24" y="14" w="-1" h="-1" measuredW="131" measuredH="21" zOrder="29" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Simulations%20%3E%20Create...</text>
+      </controlProperties>
+    </control>
+  </controls>
+</mockup>
