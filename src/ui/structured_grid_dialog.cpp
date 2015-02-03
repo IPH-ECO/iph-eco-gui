@@ -1,4 +1,4 @@
-#include "include/ui/structuredgriddialog.h"
+#include "include/ui/structured_grid_dialog.h"
 #include "ui_structuredgriddialog.h"
 
 #include <QDebug>

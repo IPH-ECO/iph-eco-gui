@@ -11,34 +11,36 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = iph-eco
 TEMPLATE = app
 
-SOURCES += src/ui/mainwindow.cpp \
-    src/ui/newprojectdialog.cpp \
-    src/ui/projectpropertiesdialog.cpp \
-    src/ui/structuredgriddialog.cpp \
-    src/ui/unstructuredgriddialog.cpp \
+SOURCES += \
     src/main.cpp \
     src/domain/project.cpp \
-    src/services/projectservice.cpp \
-    src/utility/databaseutility.cpp \
-    src/exceptions/databaseexception.cpp \
-    src/dao/projectdao.cpp \
-    src/application/iphapplication.cpp \
-    src/services/gridservice.cpp \
-    src/exceptions/gridexception.cpp
+    src/application/iph_application.cpp \
+    src/dao/project_dao.cpp \
+    src/exceptions/database_exception.cpp \
+    src/exceptions/grid_exception.cpp \
+    src/services/grid_service.cpp \
+    src/services/project_service.cpp \
+    src/ui/main_window.cpp \
+    src/ui/new_project_dialog.cpp \
+    src/ui/project_properties_dialog.cpp \
+    src/ui/structured_grid_dialog.cpp \
+    src/ui/unstructured_grid_dialog.cpp \
+    src/utility/database_utility.cpp
 
-HEADERS  += include/ui/mainwindow.h \
-    include/ui/newprojectdialog.h \
-    include/ui/projectpropertiesdialog.h \
-    include/ui/structuredgriddialog.h \
-    include/ui/unstructuredgriddialog.h \
+HEADERS  += \
     include/domain/project.h \
-    include/services/projectservice.h \
-    include/utility/databaseutility.h \
-    include/exceptions/databaseexception.h \
-    include/dao/projectdao.h \
-    include/application/iphapplication.h \
-    include/services/gridservice.h \
-    include/exceptions/gridexception.h
+    include/application/iph_application.h \
+    include/dao/project_dao.h \
+    include/exceptions/database_exception.h \
+    include/exceptions/grid_exception.h \
+    include/services/grid_service.h \
+    include/services/project_service.h \
+    include/ui/main_window.h \
+    include/ui/new_project_dialog.h \
+    include/ui/project_properties_dialog.h \
+    include/ui/structured_grid_dialog.h \
+    include/ui/unstructured_grid_dialog.h \
+    include/utility/database_utility.h
 
 FORMS    += include/ui/mainwindow.ui \
     include/ui/newprojectdialog.ui \

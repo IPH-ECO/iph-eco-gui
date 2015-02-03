@@ -1,5 +1,5 @@
-#include "include/application/iphapplication.h"
-#include "include/ui/mainwindow.h"
+#include "include/application/iph_application.h"
+#include "include/ui/main_window.h"
 
 int main(int argc, char *argv[]) {
     IPHApplication a(argc, argv);

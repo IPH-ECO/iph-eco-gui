@@ -1,9 +1,8 @@
 #include "include/domain/project.h"
 
-Project::Project(QString &_name, QString &_description, QString &_analysis) :
-    name(_name), description(_description), analysis(_analysis),
-    selectedGridDataId(0), selectedHydrodynamicDataId(0), selectedWaterQualityDataId(0),
-    selectedSedimentDataId(0), selectedMeteorologicalDataId(0), version(1)
+Project::Project(QString &_name, QString &_description, bool &_hydrodynamic, bool &_sediment, bool &_waterQuality) :
+    name(_name), description(_description), hydrodynamic(_hydrodynamic), waterQuality(_waterQuality),
+    sediment(_sediment), selectedMeteorologicalDataId(0), version(1)
 {}
 
 void Project::setId(const qlonglong &id) {
@@ -30,12 +29,12 @@ QString Project::getDescription() const {
     return this->description;
 }
 
-void Project::setAnalysis(const QString &analysis) {
-    this->analysis = analysis;
+void Project::setFilename(const QString &filename) {
+    this->filename = filename;
 }
 
-QString Project::getAnalysis() const {
-    return this->analysis;
+QString Project::getFilename() const {
+    return this->filename;
 }
 
 void Project::setBoundaryData(const QString &boundaryData) {
@@ -54,28 +53,28 @@ qlonglong Project::getSelectedGridDataId() const {
     return selectedGridDataId;
 }
 
-void Project::setSelectedHydrodynamicDataId(const qlonglong &selectedHydrodynamicDataId) {
-    this->selectedHydrodynamicDataId = selectedHydrodynamicDataId;
+void Project::setHydrodynamic(const bool &hydrodynamic) {
+    this->hydrodynamic = hydrodynamic;
 }
 
-qlonglong Project::getSelectedHydrodynamicDataId() const {
-    return this->selectedHydrodynamicDataId;
+bool Project::getHydrodynamic() const {
+    return this->hydrodynamic;
 }
 
-void Project::setSelectedWaterQualityDataId(const qlonglong &selectedWaterQualityDataId) {
-    this->selectedWaterQualityDataId = selectedWaterQualityDataId;
+void Project::setWaterQuality(const bool &waterQuality) {
+    this->waterQuality = waterQuality;
 }
 
-qlonglong Project::getSelectedWaterQualityDataId() const {
-    return selectedWaterQualityDataId;
+bool Project::getWaterQuality() const {
+    return waterQuality;
 }
 
-void Project::setSelectedSedimentDataId(const qlonglong &selectedSedimentDataId) {
-    this->selectedSedimentDataId = selectedSedimentDataId;
+void Project::setSediment(const bool &sediment) {
+    this->sediment = sediment;
 }
 
-qlonglong Project::getSelectedSedimentDataId() const {
-    return selectedSedimentDataId;
+bool Project::getSediment() const {
+    return sediment;
 }
 
 void Project::setSelectedMeteorologicalDataId(const qlonglong &selectedMeteorologicalDataId) {

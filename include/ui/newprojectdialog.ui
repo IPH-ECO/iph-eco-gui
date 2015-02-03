@@ -124,24 +124,24 @@
        <number>20</number>
       </property>
       <item row="0" column="0">
-       <widget class="QLabel" name="label">
+       <widget class="QLabel" name="lblName">
         <property name="text">
          <string>Name</string>
         </property>
        </widget>
       </item>
       <item row="0" column="1">
-       <widget class="QLineEdit" name="projectName"/>
+       <widget class="QLineEdit" name="edtName"/>
       </item>
       <item row="1" column="0">
-       <widget class="QLabel" name="label_2">
+       <widget class="QLabel" name="lblDescription">
         <property name="text">
          <string>Description</string>
         </property>
        </widget>
       </item>
       <item row="1" column="1">
-       <widget class="QPlainTextEdit" name="projectDescription">
+       <widget class="QPlainTextEdit" name="edtDescription">
         <property name="maximumSize">
          <size>
           <width>16777215</width>
@@ -151,7 +151,7 @@
        </widget>
       </item>
       <item row="2" column="0">
-       <widget class="QLabel" name="label_3">
+       <widget class="QLabel" name="lblAnalysis">
         <property name="text">
          <string>Analysis</string>
         </property>
@@ -160,21 +160,21 @@
       <item row="2" column="1">
        <layout class="QHBoxLayout" name="horizontalLayout">
         <item>
-         <widget class="QCheckBox" name="analyseHydrodynamic">
+         <widget class="QCheckBox" name="cbxHydrodynamic">
           <property name="text">
            <string>Hydrodynamic</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QCheckBox" name="analyseWaterQuality">
+         <widget class="QCheckBox" name="cbxWaterQuality">
           <property name="text">
            <string>Water Quality</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QCheckBox" name="analyseSediment">
+         <widget class="QCheckBox" name="cbxSediment">
           <property name="text">
            <string>Sediment</string>
           </property>
@@ -221,11 +221,11 @@
   </widget>
  </widget>
  <tabstops>
-  <tabstop>projectName</tabstop>
-  <tabstop>projectDescription</tabstop>
-  <tabstop>analyseHydrodynamic</tabstop>
-  <tabstop>analyseWaterQuality</tabstop>
-  <tabstop>analyseSediment</tabstop>
+  <tabstop>edtName</tabstop>
+  <tabstop>edtDescription</tabstop>
+  <tabstop>cbxHydrodynamic</tabstop>
+  <tabstop>cbxWaterQuality</tabstop>
+  <tabstop>cbxSediment</tabstop>
  </tabstops>
  <resources/>
  <connections/>

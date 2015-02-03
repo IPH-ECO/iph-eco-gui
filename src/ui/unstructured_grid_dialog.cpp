@@ -1,4 +1,4 @@
-#include "include/ui/unstructuredgriddialog.h"
+#include "include/ui/unstructured_grid_dialog.h"
 #include "ui_unstructuredgriddialog.h"
 
 UnstructuredGridDialog::UnstructuredGridDialog(QWidget *parent) :

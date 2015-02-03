@@ -1,4 +1,4 @@
-#include "include/services/gridservice.h"
+#include "include/services/grid_service.h"
 
 GridService::GridService(QString &_boundaryFilename) : boundaryFilename(_boundaryFilename) {}
 

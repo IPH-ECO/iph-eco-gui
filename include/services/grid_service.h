@@ -13,7 +13,7 @@
 
 #include <GeographicLib/GeoCoords.hpp>
 
-#include "include/exceptions/gridexception.h"
+#include "include/exceptions/grid_exception.h"
 
 class GridService {
 private:

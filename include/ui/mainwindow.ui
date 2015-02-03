@@ -112,21 +112,33 @@
    </property>
   </action>
   <action name="actionOpenProject">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>Open...</string>
    </property>
   </action>
   <action name="actionSaveProject">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>Save</string>
    </property>
   </action>
   <action name="actionSaveAsProject">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>Save as...</string>
    </property>
   </action>
   <action name="actionProjectProperties">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>Properties</string>
    </property>

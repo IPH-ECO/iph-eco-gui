@@ -1,4 +1,4 @@
-#include "include/utility/databaseutility.h"
+#include "include/utility/database_utility.h"
 
 QSqlDatabase DatabaseUtility::connect(QString &database_name) {
     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
@@ -27,9 +27,9 @@ void DatabaseUtility::createApplicationDatabase(QSqlDatabase &database) {
        "id integer primary key, " \
        "name varchar(255) not null, " \
        "description text, " \
-       "analysis varchar(255) not null," \
-       "selected_grid_data_id integer," \
-       "selected_hydrodynamic_data_id integer," \
+       "hydrodynamic boolean," \
+       "water_quality boolean," \
+       "sediment boolean," \
        "version integer" \
     ")";
 

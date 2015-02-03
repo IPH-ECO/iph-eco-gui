@@ -8,7 +8,7 @@
 #include <QAbstractButton>
 #include <QMessageBox>
 
-#include "include/services/projectservice.h"
+#include "include/services/project_service.h"
 
 namespace Ui {
 class NewProjectDialog;

@@ -1,4 +1,4 @@
-#include "include/dao/projectdao.h"
+#include "include/dao/project_dao.h"
 
 ProjectDAO::ProjectDAO(QString &_databaseName) : databaseName(_databaseName) {}
 
@@ -15,29 +15,34 @@ Project* ProjectDAO::open() {
     query.exec();
     query.next();
 
-    QString projectName = query.value("name").toString();
-    QString projectDescription = query.value("description").toString();
-    QString projectAnalysis = query.value("analysis").toString();
+    QString name = query.value("name").toString();
+    QString description = query.value("description").toString();
+    bool hydrodynamic = query.value("hydrodynamic").toBool();
+    bool sediment = query.value("sediment").toBool();
+    bool waterQuality = query.value("water_quality").toBool();
 
-    Project *project = new Project(projectName, projectDescription, projectAnalysis);
-    // TODO: Set remaining attributes
-    // project->setSelectedGridDataId(0);
+    Project *project = new Project(name, description, hydrodynamic, sediment, waterQuality);
+    project->setFilename(this->databaseName);
+//    project->setSelectedGridDataId(0);
 
     return project;
 }
 
-void ProjectDAO::create(Project *project) {
+void ProjectDAO::save(Project *project) {
     QSqlDatabase db = DatabaseUtility::connect(this->databaseName);
 
     DatabaseUtility::createApplicationDatabase(db);
 
     QSqlQuery query(db);
 
-    query.prepare("insert into project (name, description, analysis, version) values (:name, :description, :analysis, :version)");
+    query.prepare("insert into project (name, description, hydrodynamic, water_quality, sediment, version) values "
+                  "(:name, :description, :hydrodynamic, :water_quality, :sediment, :version)");
 
     query.bindValue(":name", project->getName());
     query.bindValue(":description", project->getDescription());
-    query.bindValue(":analysis", project->getAnalysis());
+    query.bindValue(":hydrodynamic", project->getHydrodynamic());
+    query.bindValue(":water_quality", project->getWaterQuality());
+    query.bindValue(":sediment", project->getSediment());
     query.bindValue(":version", project->getVersion());
 
     if (!query.exec()) {
@@ -49,4 +54,3 @@ void ProjectDAO::create(Project *project) {
 
     DatabaseUtility::disconnect(db);
 }
-

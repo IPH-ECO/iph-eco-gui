@@ -7,8 +7,8 @@
 #include <QSqlQuery>
 #include <QSqlError>
 
-#include "include/application/iphapplication.h"
-#include "include/exceptions/databaseexception.h"
+#include "include/application/iph_application.h"
+#include "include/exceptions/database_exception.h"
 
 class DatabaseUtility {
 public:

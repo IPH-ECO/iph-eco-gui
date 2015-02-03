@@ -8,16 +8,16 @@
 #include <QSqlError>
 
 #include "include/domain/project.h"
-#include "include/utility/databaseutility.h"
+#include "include/utility/database_utility.h"
 
 class ProjectDAO {
 private:
     QString databaseName;
 public:
-    ProjectDAO(QString &_database_name);
+    ProjectDAO(QString &_databaseName);
 
     Project* open();
-    void create(Project *project);
+    void save(Project *project);
 };
 
 #endif // PROJECTDAO_H

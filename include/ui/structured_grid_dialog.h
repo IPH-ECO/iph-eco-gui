@@ -6,8 +6,8 @@
 #include <QAbstractButton>
 #include <QMessageBox>
 
-#include "include/services/gridservice.h"
-#include "include/application/iphapplication.h"
+#include "include/services/grid_service.h"
+#include "include/application/iph_application.h"
 
 namespace Ui {
 class StructuredGridDialog;
