@@ -1,0 +1,100 @@
+<mockup version="1.0" skin="sketch" fontFace="Balsamiq Sans" measuredW="595" measuredH="610" mockupW="571" mockupH="596">
+  <controls>
+    <control controlID="1" controlTypeID="com.balsamiq.mockups::TitleWindow" x="24" y="50" w="571" h="560" measuredW="450" measuredH="400" zOrder="0" locked="false" isInGroup="-1">
+      <controlProperties>
+        <bottomheight>0</bottomheight>
+        <text>Water%20Quality%20Data</text>
+      </controlProperties>
+    </control>
+    <control controlID="4" controlTypeID="com.balsamiq.mockups::Label" x="39" y="98" w="-1" h="-1" measuredW="117" measuredH="21" zOrder="1" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Configuration%20Name</text>
+      </controlProperties>
+    </control>
+    <control controlID="5" controlTypeID="com.balsamiq.mockups::ComboBox" x="171" y="96" w="-1" h="-1" measuredW="177" measuredH="62" zOrder="2" locked="false" isInGroup="-1">
+      <controlProperties>
+        <state>up</state>
+        <text>WQ%20Data%20Configuration%201%0AWQ%20Data%20Configuration%202%0AWQ%20Data%20Configuration%203</text>
+      </controlProperties>
+    </control>
+    <control controlID="8" controlTypeID="com.balsamiq.mockups::Button" x="363" y="95" w="-1" h="-1" measuredW="70" measuredH="27" zOrder="3" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Remove</text>
+      </controlProperties>
+    </control>
+    <control controlID="10" controlTypeID="com.balsamiq.mockups::DataGrid" x="39" y="215" w="541" h="342" measuredW="443" measuredH="621" zOrder="4" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Name%2C%20Value%0AWater%20Temperature%20Modeling%2C%0ASalinity%20Modeling%2C%0ALimnology%20Modeling%2C%0A%20%20%20Refine%20Organic%20Matter%20Modeling%2C%0A%20%20%20%20%20%20Refine%20Dissolved%20Organic%20Matter%20%28Labile%20and%20Refractory%29%2C%0A%20%20%20%20%20%20Refine%20Particulated%20Organic%20Matter%20%28Labile%20and%20Refractory%29%2C%0A%20%20%20Phytoplankton%20Modeling%2C%0A%20%20%20%20%20%20Include%20Distinction%20among%20Functional%20Groups%2C%0A%20%20%20Macrophytes%20Modeling%2C%0A%20%20%20%20%20%20Include%20Distinction%20among%20Functional%20Groups%2C%0A%20%20%20%20%20%20%20%20%20Rooted%0A%20%20%20%20%20%20%20%20%20Non-rooted%0A%20%20%20%20%20%20%20%20%20Emergents%0A%20%20%20%20%20%20%20%20%20Floating%20plants%0A%20%20%20Zooplankton%20Modeling%0A%20%20%20%20%20%20Include%20Distinction%20Among%20Functional%20Groups%0A%20%20%20Fish%20Modeling%0A%20%20%20%20%20%20Include%20Distinction%20among%20Functional%20Groups%0A%20%20%20%20%20%20%20%20%20Planktivorous%0A%20%20%20%20%20%20%20%20%20%20%20%20Regard%20Fish%20Movement</text>
+        <value>0</value>
+        <verticalScrollbar>true</verticalScrollbar>
+      </controlProperties>
+    </control>
+    <control controlID="14" controlTypeID="com.balsamiq.mockups::ButtonBar" x="79" y="173" w="-1" h="-1" measuredW="460" measuredH="27" zOrder="5" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Constituents%2C%20Parameters%2C%20Initial%20Conditions%2C%20Boundary%20Conditions</text>
+      </controlProperties>
+    </control>
+    <control controlID="15" controlTypeID="com.balsamiq.mockups::CheckBox" x="531" y="238" w="-1" h="-1" measuredW="20" measuredH="21" zOrder="6" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text/>
+      </controlProperties>
+    </control>
+    <control controlID="16" controlTypeID="com.balsamiq.mockups::CheckBox" x="531" y="268" w="-1" h="-1" measuredW="20" measuredH="21" zOrder="7" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text/>
+      </controlProperties>
+    </control>
+    <control controlID="17" controlTypeID="com.balsamiq.mockups::CheckBox" x="531" y="298" w="-1" h="-1" measuredW="20" measuredH="21" zOrder="8" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text/>
+      </controlProperties>
+    </control>
+    <control controlID="18" controlTypeID="com.balsamiq.mockups::CheckBox" x="531" y="328" w="-1" h="-1" measuredW="20" measuredH="21" zOrder="9" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text/>
+      </controlProperties>
+    </control>
+    <control controlID="19" controlTypeID="com.balsamiq.mockups::CheckBox" x="531" y="358" w="-1" h="-1" measuredW="20" measuredH="21" zOrder="10" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text/>
+      </controlProperties>
+    </control>
+    <control controlID="20" controlTypeID="com.balsamiq.mockups::CheckBox" x="531" y="388" w="-1" h="-1" measuredW="20" measuredH="21" zOrder="11" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text/>
+      </controlProperties>
+    </control>
+    <control controlID="21" controlTypeID="com.balsamiq.mockups::CheckBox" x="531" y="418" w="-1" h="-1" measuredW="20" measuredH="21" zOrder="12" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text/>
+      </controlProperties>
+    </control>
+    <control controlID="23" controlTypeID="com.balsamiq.mockups::CheckBox" x="531" y="478" w="-1" h="-1" measuredW="20" measuredH="21" zOrder="13" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text/>
+      </controlProperties>
+    </control>
+    <control controlID="25" controlTypeID="com.balsamiq.mockups::TextInput" x="526" y="446" w="23" h="-1" measuredW="79" measuredH="26" zOrder="14" locked="false" isInGroup="-1"/>
+    <control controlID="26" controlTypeID="com.balsamiq.mockups::TextInput" x="526" y="507" w="23" h="-1" measuredW="79" measuredH="26" zOrder="15" locked="false" isInGroup="-1"/>
+    <control controlID="90" controlTypeID="com.balsamiq.mockups::Label" x="24" y="14" w="-1" h="-1" measuredW="161" measuredH="21" zOrder="16" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Input%20%3E%20Water%20Quality%20Data</text>
+      </controlProperties>
+    </control>
+    <control controlID="91" controlTypeID="com.balsamiq.mockups::Button" x="339" y="568" w="-1" h="-1" measuredW="64" measuredH="27" zOrder="17" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Cancel</text>
+      </controlProperties>
+    </control>
+    <control controlID="92" controlTypeID="com.balsamiq.mockups::Button" x="412" y="568" w="107" h="27" measuredW="106" measuredH="27" zOrder="18" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Save%20as%20New...</text>
+      </controlProperties>
+    </control>
+    <control controlID="93" controlTypeID="com.balsamiq.mockups::Button" x="528" y="568" w="-1" h="-1" measuredW="52" measuredH="27" zOrder="19" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Save</text>
+      </controlProperties>
+    </control>
+  </controls>
+</mockup>
