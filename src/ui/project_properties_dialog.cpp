@@ -18,9 +18,14 @@ ProjectPropertiesDialog::~ProjectPropertiesDialog() {
     delete ui;
 }
 
-void ProjectPropertiesDialog::on_buttonBox_clicked(QAbstractButton *button)
+void ProjectPropertiesDialog::on_btnBox_clicked(QAbstractButton *button)
 {
-    if (button->text() == "OK") {
+    if (ui->btnBox->standardButton(button) == QDialogButtonBox::Cancel) {
+        this->close();
+        return;
+    }
+
+    if (isFormValid()) {
         QString name = ui->edtName->text();
         QString description = ui->txtDescription->toPlainText();
         bool hydrodynamic = ui->cbxHydrodynamic->isChecked();
@@ -29,7 +34,21 @@ void ProjectPropertiesDialog::on_buttonBox_clicked(QAbstractButton *button)
 
         ProjectService projectService;
         projectService.updateProperties(name, description, hydrodynamic, sediment, waterQuality);
+
+        this->close();
+    }
+}
+
+bool ProjectPropertiesDialog::isFormValid() {
+    if (ui->edtName->text().isEmpty()) {
+        QMessageBox::warning(this, tr("New Project"), tr("Project name can't be blank."));
+        return false;
     }
 
-    this->close();
+    if (!ui->cbxHydrodynamic->isChecked() && !ui->cbxWaterQuality->isChecked() && !ui->cbxSediment->isChecked()) {
+        QMessageBox::warning(this, tr("New Project"), tr("At least one analysis type must be checked"));
+        return false;
+    }
+
+    return true;
 }

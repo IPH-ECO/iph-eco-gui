@@ -3,6 +3,8 @@
 
 #include <QAbstractButton>
 #include <QDialog>
+#include <QDialogButtonBox>
+#include <QMessageBox>
 
 #include "include/services/project_service.h"
 
@@ -17,11 +19,14 @@ public:
     explicit ProjectPropertiesDialog(QWidget *parent = 0);
     ~ProjectPropertiesDialog();
 private slots:
-    void on_buttonBox_clicked(QAbstractButton *button);
+
+
+    void on_btnBox_clicked(QAbstractButton *button);
 
 private:
     Ui::ProjectPropertiesDialog *ui;
-    ProjectService *projectService;
+
+    bool isFormValid();
 };
 
 #endif // PROJECTPROPERTIESDIALOG_H

@@ -31,14 +31,15 @@ private slots:
 
     void on_actionNewProject_triggered();
 
-    void on_actionGenerateUnstructuredMesh_triggered();
+    void on_actionImportUnstructuredGridGeneration_triggered();
 
     void on_actionCloseProject_triggered();
 
     void toggleMenu(bool enable);
+    void on_actionSobre_triggered();
+
 private:
     Ui::MainWindow *ui;
-    ProjectService *projectService;
 
 };
 

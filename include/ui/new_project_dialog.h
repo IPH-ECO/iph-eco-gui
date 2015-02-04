@@ -3,10 +3,12 @@
 
 #include <QDialog>
 #include <QFileDialog>
+#include <QDebug>
 #include <QDir>
 #include <QSqlDatabase>
 #include <QAbstractButton>
 #include <QMessageBox>
+#include <QDialogButtonBox>
 
 #include "include/services/project_service.h"
 
@@ -22,14 +24,13 @@ public:
     ~NewProjectDialog();
 
 private slots:
-    void on_bottomButtonBox_clicked(QAbstractButton *button);
+    void on_btnBox_clicked(QAbstractButton *button);
 
 signals:
     void toggleParentMenu(bool enable);
 
 private:
     Ui::NewProjectDialog *ui;
-    ProjectService *projectService;
 
     bool isFormValid();
     QString formatProjectAnalysis();

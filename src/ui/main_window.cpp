@@ -74,7 +74,7 @@ void MainWindow::on_actionProjectProperties_triggered() {
     projectPropertiesDialog->show();
 }
 
-void MainWindow::on_actionGenerateUnstructuredMesh_triggered() {
+void MainWindow::on_actionImportUnstructuredGridGeneration_triggered() {
     UnstructuredMeshWidget *unstructuredMeshWidget = new UnstructuredMeshWidget(this);
     unstructuredMeshWidget->setAttribute(Qt::WA_DeleteOnClose);
     this->setCentralWidget(unstructuredMeshWidget);
@@ -87,9 +87,18 @@ void MainWindow::on_actionCloseProject_triggered()
 }
 
 void MainWindow::toggleMenu(bool enable) {
+    ui->menuPreprocessing->setEnabled(enable);
+    ui->menuInput->setEnabled(enable);
+    ui->menuSimulations->setEnabled(enable);
+    ui->menuGleon->setEnabled(enable);
     ui->actionNewProject->setEnabled(!enable);
     ui->actionSaveProject->setEnabled(enable);
     ui->actionSaveAsProject->setEnabled(enable);
     ui->actionProjectProperties->setEnabled(enable);
     ui->actionCloseProject->setEnabled(enable);
+}
+
+void MainWindow::on_actionSobre_triggered()
+{
+
 }

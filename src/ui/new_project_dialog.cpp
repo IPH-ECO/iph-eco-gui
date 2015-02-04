@@ -10,8 +10,13 @@ NewProjectDialog::NewProjectDialog(QWidget *parent) :
     connect(this, SIGNAL(toggleParentMenu(bool)), parentWidget(), SLOT(toggleMenu(bool)));
 }
 
-void NewProjectDialog::on_bottomButtonBox_clicked(QAbstractButton *button) {
-    if (button->text() == "OK" && isFormValid()) {
+void NewProjectDialog::on_btnBox_clicked(QAbstractButton *button) {
+    if (ui->btnBox->standardButton(button) == QDialogButtonBox::Cancel) {
+        this->close();
+        return;
+    }
+
+    if (isFormValid()) {
         QString name = ui->edtName->text();
         QString description = ui->edtDescription->toPlainText();
         bool hydrodynamic = ui->cbxHydrodynamic->isChecked();
@@ -22,9 +27,9 @@ void NewProjectDialog::on_bottomButtonBox_clicked(QAbstractButton *button) {
         projectService.setApplicationProject(name, description, hydrodynamic, sediment, waterQuality);
 
         emit toggleParentMenu(true);
-    }
 
-    this->close();
+        this->close();
+    }
 }
 
 bool NewProjectDialog::isFormValid() {

@@ -54,14 +54,20 @@
     <addaction name="separator"/>
     <addaction name="actionExit"/>
    </widget>
-   <widget class="QMenu" name="menuMap">
+   <widget class="QMenu" name="menuPreprocessing">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
     <property name="title">
      <string>Preprocessing</string>
     </property>
-    <addaction name="actionImport_Structured_File"/>
-    <addaction name="actionGenerateUnstructuredMesh"/>
+    <addaction name="actionImportStructuredGridGeneration"/>
+    <addaction name="actionImportUnstructuredGridGeneration"/>
    </widget>
    <widget class="QMenu" name="menuInput">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
     <property name="title">
      <string>Input</string>
     </property>
@@ -72,6 +78,9 @@
     <addaction name="actionMeteorology_Data"/>
    </widget>
    <widget class="QMenu" name="menuSimulations">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
     <property name="title">
      <string>Simulations</string>
     </property>
@@ -88,14 +97,15 @@
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="enabled">
-     <bool>false</bool>
+     <bool>true</bool>
     </property>
     <property name="title">
      <string>Help</string>
     </property>
+    <addaction name="actionSobre"/>
    </widget>
    <addaction name="menuProject"/>
-   <addaction name="menuMap"/>
+   <addaction name="menuPreprocessing"/>
    <addaction name="menuInput"/>
    <addaction name="menuSimulations"/>
    <addaction name="menuGleon"/>
@@ -149,12 +159,12 @@
     <string>Exit</string>
    </property>
   </action>
-  <action name="actionImport_Structured_File">
+  <action name="actionImportStructuredGridGeneration">
    <property name="text">
     <string>Structured Grid Generation</string>
    </property>
   </action>
-  <action name="actionGenerateUnstructuredMesh">
+  <action name="actionImportUnstructuredGridGeneration">
    <property name="text">
     <string>Unstructured Grid Generation</string>
    </property>
@@ -205,6 +215,17 @@
    </property>
    <property name="text">
     <string>Close</string>
+   </property>
+  </action>
+  <action name="actionSobre">
+   <property name="checkable">
+    <bool>false</bool>
+   </property>
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Sobre</string>
    </property>
   </action>
  </widget>
