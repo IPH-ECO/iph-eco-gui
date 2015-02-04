@@ -23,10 +23,7 @@ void MainWindow::on_actionOpenProject_triggered() {
             ProjectService projectService;
             projectService.open(filename);
 
-            ui->actionSaveProject->setEnabled(true);
-            ui->actionSaveAsProject->setEnabled(true);
-            ui->actionProjectProperties->setEnabled(true);
-            ui->actionCloseProject->setEnabled(true);
+            toggleMenu(true);
         } catch (DatabaseException &ex) {
             QMessageBox::critical(this, "Open Project", ex.what());
         }
@@ -86,8 +83,13 @@ void MainWindow::on_actionGenerateUnstructuredMesh_triggered() {
 void MainWindow::on_actionCloseProject_triggered()
 {
     IPHApplication::setCurrentProject(NULL);
-    ui->actionSaveProject->setEnabled(false);
-    ui->actionSaveAsProject->setEnabled(false);
-    ui->actionProjectProperties->setEnabled(false);
-    ui->actionCloseProject->setEnabled(false);
+    toggleMenu(false);
+}
+
+void MainWindow::toggleMenu(bool enable) {
+    ui->actionNewProject->setEnabled(!enable);
+    ui->actionSaveProject->setEnabled(enable);
+    ui->actionSaveAsProject->setEnabled(enable);
+    ui->actionProjectProperties->setEnabled(enable);
+    ui->actionCloseProject->setEnabled(enable);
 }

@@ -1,11 +1,13 @@
 #include "include/ui/new_project_dialog.h"
-#include "ui_newprojectdialog.h"
+#include "ui_new_project_dialog.h"
 
 NewProjectDialog::NewProjectDialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::NewProjectDialog)
 {
     ui->setupUi(this);
+
+    connect(this, SIGNAL(toggleParentMenu(bool)), parentWidget(), SLOT(toggleMenu(bool)));
 }
 
 void NewProjectDialog::on_bottomButtonBox_clicked(QAbstractButton *button) {
@@ -18,6 +20,8 @@ void NewProjectDialog::on_bottomButtonBox_clicked(QAbstractButton *button) {
 
         ProjectService projectService;
         projectService.setApplicationProject(name, description, hydrodynamic, sediment, waterQuality);
+
+        emit toggleParentMenu(true);
     }
 
     this->close();

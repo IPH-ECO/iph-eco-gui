@@ -35,6 +35,7 @@ private slots:
 
     void on_actionCloseProject_triggered();
 
+    void toggleMenu(bool enable);
 private:
     Ui::MainWindow *ui;
     ProjectService *projectService;

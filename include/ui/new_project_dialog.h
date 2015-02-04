@@ -24,12 +24,14 @@ public:
 private slots:
     void on_bottomButtonBox_clicked(QAbstractButton *button);
 
+signals:
+    void toggleParentMenu(bool enable);
+
 private:
     Ui::NewProjectDialog *ui;
     ProjectService *projectService;
 
     bool isFormValid();
-    void clearForm();
     QString formatProjectAnalysis();
 };
 
