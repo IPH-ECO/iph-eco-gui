@@ -33,7 +33,6 @@ private:
     Ui::NewProjectDialog *ui;
 
     bool isFormValid();
-    QString formatProjectAnalysis();
 };
 
 #endif // NEWPROJECTDIALOG_H

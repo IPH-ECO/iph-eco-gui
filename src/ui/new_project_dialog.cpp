@@ -39,7 +39,7 @@ bool NewProjectDialog::isFormValid() {
     }
 
     if (!ui->cbxHydrodynamic->isChecked() && !ui->cbxWaterQuality->isChecked() && !ui->cbxSediment->isChecked()) {
-        QMessageBox::warning(this, tr("New Project"), tr("At least one analysis type must be checked"));
+        QMessageBox::warning(this, tr("New Project"), tr("At least one analysis type must be checked."));
         return false;
     }
 
