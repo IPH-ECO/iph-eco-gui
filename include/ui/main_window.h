@@ -33,6 +33,8 @@ private slots:
 
     void on_actionGenerateUnstructuredMesh_triggered();
 
+    void on_actionCloseProject_triggered();
+
 private:
     Ui::MainWindow *ui;
     ProjectService *projectService;

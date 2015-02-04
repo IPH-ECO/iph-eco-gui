@@ -1,5 +1,5 @@
 #include "include/ui/main_window.h"
-#include "ui_mainwindow.h"
+#include "ui_main_window.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -23,10 +23,10 @@ void MainWindow::on_actionOpenProject_triggered() {
             ProjectService projectService;
             projectService.open(filename);
 
-            ui->actionOpenProject->setEnabled(true);
             ui->actionSaveProject->setEnabled(true);
             ui->actionSaveAsProject->setEnabled(true);
             ui->actionProjectProperties->setEnabled(true);
+            ui->actionCloseProject->setEnabled(true);
         } catch (DatabaseException &ex) {
             QMessageBox::critical(this, "Open Project", ex.what());
         }
@@ -81,4 +81,13 @@ void MainWindow::on_actionGenerateUnstructuredMesh_triggered() {
     UnstructuredMeshWidget *unstructuredMeshWidget = new UnstructuredMeshWidget(this);
     unstructuredMeshWidget->setAttribute(Qt::WA_DeleteOnClose);
     this->setCentralWidget(unstructuredMeshWidget);
+}
+
+void MainWindow::on_actionCloseProject_triggered()
+{
+    IPHApplication::setCurrentProject(NULL);
+    ui->actionSaveProject->setEnabled(false);
+    ui->actionSaveAsProject->setEnabled(false);
+    ui->actionProjectProperties->setEnabled(false);
+    ui->actionCloseProject->setEnabled(false);
 }
