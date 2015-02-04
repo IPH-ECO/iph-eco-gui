@@ -9,9 +9,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
 //    StructuredGridDialog *structuredGridDialog = new StructuredGridDialog();
 //    connect(ui->actionImport_Structured_File, SIGNAL(triggered()), structuredGridDialog, SLOT(show()));
-
-//    UnstructuredGridDialog *unstructuredGridDialog = new UnstructuredGridDialog();
-//    connect(ui->actionImport_Unstructured_File, SIGNAL(triggered()), unstructuredGridDialog, SLOT(show()));
 }
 
 MainWindow::~MainWindow() {
@@ -68,16 +65,20 @@ void MainWindow::on_actionSaveAsProject_triggered() {
     }
 }
 
-void MainWindow::on_actionNewProject_triggered()
-{
+void MainWindow::on_actionNewProject_triggered() {
     NewProjectDialog *newProjectDialog = new NewProjectDialog(this);
     newProjectDialog->setAttribute(Qt::WA_DeleteOnClose, true);
     newProjectDialog->show();
 }
 
-void MainWindow::on_actionProjectProperties_triggered()
-{
+void MainWindow::on_actionProjectProperties_triggered() {
     ProjectPropertiesDialog *projectPropertiesDialog = new ProjectPropertiesDialog(this);
     projectPropertiesDialog->setAttribute(Qt::WA_DeleteOnClose, true);
     projectPropertiesDialog->show();
+}
+
+void MainWindow::on_actionGenerateUnstructuredMesh_triggered() {
+    UnstructuredMeshWidget *unstructuredMeshWidget = new UnstructuredMeshWidget(this);
+    unstructuredMeshWidget->setAttribute(Qt::WA_DeleteOnClose);
+    this->setCentralWidget(unstructuredMeshWidget);
 }

@@ -8,8 +8,8 @@
 
 #include "new_project_dialog.h"
 #include "project_properties_dialog.h"
+#include "unstructured_mesh_widget.h"
 #include "structured_grid_dialog.h"
-#include "unstructured_grid_dialog.h"
 
 namespace Ui {
 class MainWindow;
@@ -30,6 +30,8 @@ private slots:
     void on_actionProjectProperties_triggered();
 
     void on_actionNewProject_triggered();
+
+    void on_actionGenerateUnstructuredMesh_triggered();
 
 private:
     Ui::MainWindow *ui;

@@ -25,6 +25,7 @@ SOURCES += \
     src/ui/project_properties_dialog.cpp \
     src/ui/structured_grid_dialog.cpp \
     src/ui/unstructured_grid_dialog.cpp \
+    src/ui/unstructured_mesh_widget.cpp \
     src/utility/database_utility.cpp
 
 HEADERS  += \
@@ -40,13 +41,15 @@ HEADERS  += \
     include/ui/project_properties_dialog.h \
     include/ui/structured_grid_dialog.h \
     include/ui/unstructured_grid_dialog.h \
+    include/ui/unstructured_mesh_widget.h \
     include/utility/database_utility.h
 
 FORMS    += include/ui/mainwindow.ui \
     include/ui/newprojectdialog.ui \
     include/ui/projectpropertiesdialog.ui \
     include/ui/structuredgriddialog.ui \
-    include/ui/unstructuredgriddialog.ui
+    include/ui/unstructuredgriddialog.ui \
+    include/ui/unstructured_mesh_widget.ui
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../usr/local/Cellar/geographiclib/1.40/lib/release/ -lGeographic
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../usr/local/Cellar/geographiclib/1.40/lib/debug/ -lGeographic
