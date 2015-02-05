@@ -50,9 +50,11 @@ void MainWindow::on_actionSaveProject_triggered() {
 void MainWindow::on_actionSaveAsProject_triggered() {
     Project *project = IPHApplication::getCurrentProject();
 
-    project->setFilename(QFileDialog::getSaveFileName(this, tr("Save project as..."), ".", tr("IPH-ECO Project File (*.iph)")));
+    QString filename = QFileDialog::getSaveFileName(this, tr("Save project as..."), ".", tr("IPH-ECO Project File (*.iph)"));
 
-    if (!project->getFilename().isEmpty()) {
+    if (!filename.isEmpty()) {
+        project->setFilename(filename);
+
         try {
             ProjectService projectService;
             projectService.save(project);
