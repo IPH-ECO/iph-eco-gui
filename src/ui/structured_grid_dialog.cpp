@@ -16,14 +16,14 @@ void StructuredGridDialog::on_boundaryFileButton_clicked() {
     if (!filepath.isEmpty()) {
         ui->boundaryFileTextEdit->setText(filepath);
 
-        GridService gridService(filepath);
-
         try {
+            MeshService gridService(filepath);
             QString boundaryJson = gridService.getBoundaryJson();
+
             qDebug() << boundaryJson;
 //            Project *project = IPHApplication::getCurrentProject();
 //            project->setBoundaryData(boundaryJson);
-        } catch (GridException &ex) {
+        } catch (MeshException &ex) {
             QMessageBox::critical(this, "Structured Grid Generation", ex.what());
         }
     }

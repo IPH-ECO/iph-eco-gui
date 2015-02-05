@@ -6,7 +6,7 @@
 #include <QAbstractButton>
 #include <QMessageBox>
 
-#include "include/services/grid_service.h"
+#include "include/services/mesh_service.h"
 #include "include/application/iph_application.h"
 
 namespace Ui {

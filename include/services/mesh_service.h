@@ -13,16 +13,17 @@
 
 #include <GeographicLib/GeoCoords.hpp>
 
-#include "include/exceptions/grid_exception.h"
+#include "include/exceptions/mesh_exception.h"
 
-class GridService {
+class MeshService {
 private:
     QString boundaryFilename;
 public:
-    GridService(QString &_boundaryFilename);
-    ~GridService();
+    MeshService(QString &_boundaryFilename);
+    ~MeshService();
 
     QString getBoundaryJson();
+    void convertGeoCoordinatesListToUTM(QString &coordinatesText, QJsonArray &coordinatesJsonArray);
 };
 
 #endif // GRIDSERVICE_H

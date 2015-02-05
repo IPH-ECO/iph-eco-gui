@@ -1,12 +1,12 @@
-#include "include/services/grid_service.h"
+#include "include/services/mesh_service.h"
 
-GridService::GridService(QString &_boundaryFilename) : boundaryFilename(_boundaryFilename) {}
+MeshService::MeshService(QString &_boundaryFilename) : boundaryFilename(_boundaryFilename) {}
 
-QString GridService::getBoundaryJson() {
+QString MeshService::getBoundaryJson() {
     QFile boundaryFile(this->boundaryFilename);
 
     if (!boundaryFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        throw GridException(QString("Unable to open boundary file. Error: %1").arg(boundaryFile.errorString()));
+        throw MeshException(QString("Unable to open boundary file. Error: %1").arg(boundaryFile.errorString()));
     }
 
     QXmlStreamReader kml(&boundaryFile);
@@ -22,20 +22,17 @@ QString GridService::getBoundaryJson() {
                 kml.readNext();
             } while (kml.name() != "coordinates");
 
-            QString coordinatesText = kml.readElementText();
-            QStringList coordinates = coordinatesText.trimmed().split(" ");
-
-            QJsonArray coordinatesJsonArray;
-
-            for (int i = 0; i < coordinates.count(); i++) {
-                QStringList coordinateStr = coordinates.at(i).split(",");
-                GeographicLib::GeoCoords coordinate(coordinateStr.at(1).toDouble(), coordinateStr.at(0).toDouble());
-
-                coordinatesJsonArray.push_back(QString::number(coordinate.Easting(), 'f', 11) + "," + QString::number(coordinate.Northing(), 'f', 11));
+            if (kml.atEnd()) {
+                throw MeshException(QString("No boundary domain found."));
             }
 
-            if (boundaryElementName == "outerBoundaryIs") {
-                outerBoundaryJsonArray.push_back(coordinatesJsonArray);
+            QString coordinatesText = kml.readElementText();
+            QJsonArray coordinatesJsonArray;
+
+            convertGeoCoordinatesListToUTM(coordinatesText, coordinatesJsonArray);
+
+            if (boundaryElementName == "outerBoundaryIs" && outerBoundaryJsonArray.isEmpty()) {
+                outerBoundaryJsonArray = coordinatesJsonArray;
             } else {
                 innerBoundaryJsonArray.push_back(coordinatesJsonArray);
             }
@@ -45,7 +42,7 @@ QString GridService::getBoundaryJson() {
     boundaryFile.close();
 
     if (outerBoundaryJsonArray.isEmpty()) {
-        throw GridException("Invalid KML file. No domain coordinates found.");
+        throw MeshException("Invalid KML file. No domain coordinates found.");
     }
 
     QJsonObject boundaryJsonObject;
@@ -56,4 +53,15 @@ QString GridService::getBoundaryJson() {
     return QJsonDocument(boundaryJsonObject).toJson(QJsonDocument::Compact);
 }
 
-GridService::~GridService() {}
+void MeshService::convertGeoCoordinatesListToUTM(QString &coordinatesText, QJsonArray &coordinatesJsonArray) {
+    QStringList coordinates = coordinatesText.trimmed().split(" ");
+
+    for (int i = 0; i < coordinates.count(); i++) {
+        QStringList coordinateStr = coordinates.at(i).split(",");
+        GeographicLib::GeoCoords coordinate(coordinateStr.at(1).toDouble(), coordinateStr.at(0).toDouble());
+
+        coordinatesJsonArray.push_back(QString::number(coordinate.Easting(), 'f', 11) + "," + QString::number(coordinate.Northing(), 'f', 11));
+    }
+}
+
+MeshService::~MeshService() {}

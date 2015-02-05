@@ -5,6 +5,8 @@
 #include <QFileDialog>
 #include <QInputDialog>
 
+#include "include/services/mesh_service.h"
+
 namespace Ui {
 class UnstructuredMeshWidget;
 }

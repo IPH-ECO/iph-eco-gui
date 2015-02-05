@@ -4,11 +4,11 @@
 #include <exception>
 #include <QString>
 
-class GridException : public std::exception {
+class MeshException : public std::exception {
 private:
     const char* cause;
 public:
-    GridException(const QString &cause);
+    MeshException(const QString &cause);
 
     const char* what() const throw();
 };

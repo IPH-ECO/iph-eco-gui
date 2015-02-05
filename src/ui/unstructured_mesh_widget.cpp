@@ -15,8 +15,10 @@ void UnstructuredMeshWidget::on_newMeshButton_clicked() {
 }
 
 void UnstructuredMeshWidget::on_boundaryFileBrowserButton_clicked() {
-    QString filepath = QFileDialog::getOpenFileName(this, tr("Select a boundary file"), ".", "Keyhole Markup Language files (*.kml)");
-    ui->boundaryFileLineEdit->setText(filepath);
+    QString boundaryFilePath = QFileDialog::getOpenFileName(this, tr("Select a boundary file"), ".", "Keyhole Markup Language file (*.kml)");
+
+    MeshService meshService(boundaryFilePath);
+    qDebug() << meshService.getBoundaryJson();
 }
 
 void UnstructuredMeshWidget::on_resetMeshButton_clicked() {

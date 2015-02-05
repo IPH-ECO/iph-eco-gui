@@ -17,8 +17,7 @@ SOURCES += \
     src/application/iph_application.cpp \
     src/dao/project_dao.cpp \
     src/exceptions/database_exception.cpp \
-    src/exceptions/grid_exception.cpp \
-    src/services/grid_service.cpp \
+    src/services/mesh_service.cpp \
     src/services/project_service.cpp \
     src/ui/main_window.cpp \
     src/ui/new_project_dialog.cpp \
@@ -26,15 +25,15 @@ SOURCES += \
     src/ui/structured_grid_dialog.cpp \
     src/ui/unstructured_grid_dialog.cpp \
     src/ui/unstructured_mesh_widget.cpp \
-    src/utility/database_utility.cpp
+    src/utility/database_utility.cpp \
+    src/exceptions/mesh_exception.cpp
 
 HEADERS  += \
     include/domain/project.h \
     include/application/iph_application.h \
     include/dao/project_dao.h \
     include/exceptions/database_exception.h \
-    include/exceptions/grid_exception.h \
-    include/services/grid_service.h \
+    include/services/mesh_service.h \
     include/services/project_service.h \
     include/ui/main_window.h \
     include/ui/new_project_dialog.h \
@@ -42,7 +41,8 @@ HEADERS  += \
     include/ui/structured_grid_dialog.h \
     include/ui/unstructured_grid_dialog.h \
     include/ui/unstructured_mesh_widget.h \
-    include/utility/database_utility.h
+    include/utility/database_utility.h \
+    include/exceptions/mesh_exception.h
 
 FORMS    += \
     include/ui/unstructured_mesh_widget.ui \

@@ -1,9 +1,9 @@
-#include "include/exceptions/grid_exception.h"
+#include "include/exceptions/mesh_exception.h"
 
-GridException::GridException(const QString &cause) {
+MeshException::MeshException(const QString &cause) {
     this->cause = cause.toStdString().c_str();
 }
 
-const char* GridException::what() const throw() {
+const char* MeshException::what() const throw() {
     return cause;
 }
