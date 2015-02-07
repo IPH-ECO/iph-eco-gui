@@ -4,6 +4,7 @@
 #include <QWidget>
 #include <QFileDialog>
 #include <QInputDialog>
+#include <QMessageBox>
 
 #include "include/services/mesh_service.h"
 
@@ -11,8 +12,7 @@ namespace Ui {
 class UnstructuredMeshWidget;
 }
 
-class UnstructuredMeshWidget : public QWidget
-{
+class UnstructuredMeshWidget : public QWidget {
     Q_OBJECT
 
 public:
@@ -26,6 +26,7 @@ private slots:
 
 private:
     Ui::UnstructuredMeshWidget *ui;
+    MeshService *meshService;
 };
 
 #endif // UNSTRUCTURED_MESH_WIDGET_H
