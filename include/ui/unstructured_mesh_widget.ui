@@ -294,21 +294,21 @@
         <item>
          <widget class="QCheckBox" name="showVertexesCheckBox">
           <property name="text">
-           <string>Show vertexes numbers</string>
+           <string>Show vertexes labels</string>
           </property>
          </widget>
         </item>
         <item>
          <widget class="QCheckBox" name="showTrianglesCheckBox">
           <property name="text">
-           <string>Show triangles numbers</string>
+           <string>Show triangles labels</string>
           </property>
          </widget>
         </item>
         <item>
          <widget class="QCheckBox" name="showEdgesCheckBox">
           <property name="text">
-           <string>Show edges numbers</string>
+           <string>Show edges labels</string>
           </property>
          </widget>
         </item>

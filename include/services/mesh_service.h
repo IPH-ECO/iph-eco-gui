@@ -3,27 +3,28 @@
 
 #include <QString>
 #include <QStringList>
-#include <QMultiMap>
-#include <QFile>
-#include <QIODevice>
-#include <QXmlStreamReader>
-#include <QJsonDocument>
-#include <QJsonObject>
-#include <QJsonArray>
 
-#include <GeographicLib/GeoCoords.hpp>
-
+#include "include/domain/mesh_manager.h"
 #include "include/exceptions/mesh_exception.h"
 
 class MeshService {
 private:
-    QString boundaryFilename;
-public:
-    MeshService(QString &_boundaryFilename);
-    ~MeshService();
+    MeshManager *meshManager;
 
-    QString getBoundaryJson();
-    void convertGeoCoordinatesListToUTM(QString &coordinatesText, QJsonArray &coordinatesJsonArray);
+public:
+    MeshService();
+
+    void addStructuredMesh(QString &name);
+    void addUnstructuredMesh(QString &name);
+
+    void setStructuredMeshBoundaryFile(QString &meshName, QString &boundaryFilePath);
+    void setUnstructuredMeshBoundaryFile(QString &meshName, QString &boundaryFilePath);
+
+    void removeStructuredMesh(QString &name);
+    void removeUnstructuredMesh(QString &name);
+
+    bool structuredMeshExists(QString &name);
+    bool unstructuredMeshExists(QString &name);
 };
 
 #endif // GRIDSERVICE_H

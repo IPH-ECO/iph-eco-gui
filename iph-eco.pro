@@ -26,7 +26,11 @@ SOURCES += \
     src/ui/unstructured_grid_dialog.cpp \
     src/ui/unstructured_mesh_widget.cpp \
     src/utility/database_utility.cpp \
-    src/exceptions/mesh_exception.cpp
+    src/exceptions/mesh_exception.cpp \
+    src/domain/unstructured_mesh.cpp \
+    src/domain/structured_mesh.cpp \
+    src/domain/mesh_manager.cpp \
+    src/domain/mesh.cpp
 
 HEADERS  += \
     include/domain/project.h \
@@ -42,7 +46,11 @@ HEADERS  += \
     include/ui/unstructured_grid_dialog.h \
     include/ui/unstructured_mesh_widget.h \
     include/utility/database_utility.h \
-    include/exceptions/mesh_exception.h
+    include/exceptions/mesh_exception.h \
+    include/domain/unstructured_mesh.h \
+    include/domain/structured_mesh.h \
+    include/domain/mesh_manager.h \
+    include/domain/mesh.h
 
 FORMS    += \
     include/ui/unstructured_mesh_widget.ui \
