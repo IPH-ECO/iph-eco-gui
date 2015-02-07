@@ -19,7 +19,6 @@ void UnstructuredMeshWidget::on_newMeshButton_clicked() {
             meshService->addUnstructuredMesh(meshName);
         } catch(MeshException &ex) {
             QMessageBox::warning(this, tr("New unstructured mesh"), ex.what());
-            return;
         }
     }
 }
