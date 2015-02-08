@@ -2,10 +2,12 @@
 #define GRIDSERVICE_H
 
 #include <QString>
-#include <QStringList>
+#include <QJsonObject>
+#include <QProgressDialog>
 
 #include "include/domain/mesh_manager.h"
 #include "include/exceptions/mesh_exception.h"
+#include "include/domain/mesh_observer.h"
 
 class MeshService {
 private:
@@ -14,17 +16,22 @@ private:
 public:
     MeshService();
 
-    void addStructuredMesh(QString &name);
-    void addUnstructuredMesh(QString &name);
+    void addStructuredMesh(QString &meshName);
+    void addUnstructuredMesh(QString &meshName);
 
     void setStructuredMeshBoundaryFile(QString &meshName, QString &boundaryFilePath);
     void setUnstructuredMeshBoundaryFile(QString &meshName, QString &boundaryFilePath);
 
-    void removeStructuredMesh(QString &name);
-    void removeUnstructuredMesh(QString &name);
+    void removeStructuredMesh(QString &meshName);
+    void removeUnstructuredMesh(QString &meshName);
 
-    bool structuredMeshExists(QString &name);
-    bool unstructuredMeshExists(QString &name);
+    bool structuredMeshExists(QString &meshName);
+    bool unstructuredMeshExists(QString &meshName);
+
+    QJsonObject getUnstructuredMeshBoundary(QString &meshName, QProgressDialog *progressDialog);
+
+    void generateUnstructuredMesh(QString &meshName);
+    void generateStructuredMesh(QString &meshName);
 };
 
 #endif // GRIDSERVICE_H

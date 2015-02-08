@@ -30,7 +30,9 @@ SOURCES += \
     src/domain/unstructured_mesh.cpp \
     src/domain/structured_mesh.cpp \
     src/domain/mesh_manager.cpp \
-    src/domain/mesh.cpp
+    src/domain/mesh.cpp \
+    src/domain/observable.cpp \
+    src/domain/observer.cpp
 
 HEADERS  += \
     include/domain/project.h \
@@ -50,7 +52,11 @@ HEADERS  += \
     include/domain/unstructured_mesh.h \
     include/domain/structured_mesh.h \
     include/domain/mesh_manager.h \
-    include/domain/mesh.h
+    include/domain/mesh.h \
+    include/domain/observable.h \
+    include/domain/observer.h \
+    include/domain/mesh_observer.h \
+    include/domain/mesh_observable.h
 
 FORMS    += \
     include/ui/unstructured_mesh_widget.ui \

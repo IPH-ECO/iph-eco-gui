@@ -21,13 +21,13 @@ void MeshService::addUnstructuredMesh(QString &meshName) {
 }
 
 void MeshService::setStructuredMeshBoundaryFile(QString &meshName, QString &boundaryFilePath) {
-    Mesh mesh = meshManager->getMesh(MeshManager::STRUCTURED, meshName);
-    mesh.setBoundaryFilePath(boundaryFilePath);
+    Mesh *mesh = meshManager->getMesh(MeshManager::STRUCTURED, meshName);
+    mesh->setBoundaryFilePath(boundaryFilePath);
 }
 
 void MeshService::setUnstructuredMeshBoundaryFile(QString &meshName, QString &boundaryFilePath) {
-    Mesh mesh = meshManager->getMesh(MeshManager::UNSTRUCTURED, meshName);
-    mesh.setBoundaryFilePath(boundaryFilePath);
+    Mesh *mesh = meshManager->getMesh(MeshManager::UNSTRUCTURED, meshName);
+    mesh->setBoundaryFilePath(boundaryFilePath);
 }
 
 void MeshService::removeStructuredMesh(QString &meshName) {
@@ -44,4 +44,19 @@ bool MeshService::structuredMeshExists(QString &meshName) {
 
 bool MeshService::unstructuredMeshExists(QString &meshName) {
     return meshManager->meshExists(MeshManager::UNSTRUCTURED, meshName);
+}
+
+QJsonObject MeshService::getUnstructuredMeshBoundary(QString &meshName, QProgressDialog *progressDialog) {
+    Mesh *mesh = meshManager->getMesh(MeshManager::UNSTRUCTURED, meshName);
+    MeshObserver observer(meshManager);
+
+    observer.setProgressDialog(progressDialog);
+
+    return meshManager->getBoundaryJson(mesh);
+}
+
+void MeshService::generateUnstructuredMesh(QString &meshName) {
+}
+
+void MeshService::generateStructuredMesh(QString &meshName) {
 }
