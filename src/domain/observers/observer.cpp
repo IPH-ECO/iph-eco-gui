@@ -1,4 +1,4 @@
-#include "include/domain/observer.h"
+#include "include/domain/observers/observer.h"
 
 Observer::Observer(Observable *_observable) : observable(_observable) {
     this->observable->attach(this);

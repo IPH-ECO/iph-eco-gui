@@ -29,10 +29,10 @@ SOURCES += \
     src/exceptions/mesh_exception.cpp \
     src/domain/unstructured_mesh.cpp \
     src/domain/structured_mesh.cpp \
-    src/domain/mesh_manager.cpp \
+    src/domain/managers/mesh_manager.cpp \
     src/domain/mesh.cpp \
-    src/domain/observable.cpp \
-    src/domain/observer.cpp
+    src/domain/observers/observable.cpp \
+    src/domain/observers/observer.cpp
 
 HEADERS  += \
     include/domain/project.h \
@@ -51,12 +51,12 @@ HEADERS  += \
     include/exceptions/mesh_exception.h \
     include/domain/unstructured_mesh.h \
     include/domain/structured_mesh.h \
-    include/domain/mesh_manager.h \
+    include/domain/managers/mesh_manager.h \
     include/domain/mesh.h \
-    include/domain/observable.h \
-    include/domain/observer.h \
-    include/domain/mesh_observer.h \
-    include/domain/mesh_observable.h
+    include/domain/observers/observable.h \
+    include/domain/observers/observer.h \
+    include/domain/observers/mesh_observer.h \
+    include/domain/observers/mesh_observable.h
 
 FORMS    += \
     include/ui/unstructured_mesh_widget.ui \

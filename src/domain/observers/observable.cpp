@@ -1,4 +1,4 @@
-#include "include/domain/observable.h"
+#include "include/domain/observers/observable.h"
 
 void Observable::notify() {
     for (int i = 0; i < observers.count(); i++) {

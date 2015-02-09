@@ -9,7 +9,7 @@
 #include <QJsonObject>
 
 #include "include/services/mesh_service.h"
-#include "include/domain/mesh_observer.h"
+#include "include/domain/observers/mesh_observer.h"
 
 namespace Ui {
 class UnstructuredMeshWidget;

@@ -1,4 +1,4 @@
-#include "include/domain/mesh_manager.h"
+#include "include/domain/managers/mesh_manager.h"
 
 MeshManager* MeshManager::instance = NULL;
 

@@ -5,9 +5,9 @@
 #include <QJsonObject>
 #include <QProgressDialog>
 
-#include "include/domain/mesh_manager.h"
+#include "include/domain/managers/mesh_manager.h"
 #include "include/exceptions/mesh_exception.h"
-#include "include/domain/mesh_observer.h"
+#include "include/domain/observers/mesh_observer.h"
 
 class MeshService {
 private:

@@ -16,7 +16,7 @@
 #include "include/domain/structured_mesh.h"
 #include "include/domain/unstructured_mesh.h"
 #include "include/exceptions/mesh_exception.h"
-#include "mesh_observable.h"
+#include "include/domain/observers/mesh_observable.h"
 
 class MeshManager : public MeshObservable {
 private:

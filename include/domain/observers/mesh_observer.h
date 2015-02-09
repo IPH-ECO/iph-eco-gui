@@ -3,8 +3,8 @@
 
 #include <QProgressDialog>
 
-#include "observer.h"
-#include "mesh_manager.h"
+#include "include/domain/observers/observer.h"
+#include "include/domain/managers/mesh_manager.h"
 
 class MeshObserver : public Observer {
 private:

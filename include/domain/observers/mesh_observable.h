@@ -7,7 +7,7 @@ class MeshObservable : public Observable {
 private:
     qint64 observableBoundaryFileSize;
     qint64 observableCurrentBoundaryFileByte;
-    bool _cancelCurrentTask;
+    bool currentTaskCanceled;
 
 protected:
     void setObservableBoundaryFileSize(qint64 observableBoundaryFileSize) {
@@ -20,18 +20,18 @@ protected:
     }
 
 public:
-    MeshObservable() : _cancelCurrentTask(false) {}
+    MeshObservable() : currentTaskCanceled(false) {}
 
     qint64 getProgress() {
         return (this->observableBoundaryFileSize / (double) this->observableCurrentBoundaryFileByte) * 100;
     }
 
     bool isCurrentTaskCanceled() {
-        return this->_cancelCurrentTask;
+        return this->currentTaskCanceled;
     }
 
     void cancelCurrentTask() {
-        this->_cancelCurrentTask = true;
+        this->currentTaskCanceled = true;
     }
 };
 
