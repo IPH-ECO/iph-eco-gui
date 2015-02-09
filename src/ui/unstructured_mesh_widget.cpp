@@ -1,14 +1,12 @@
 #include "include/ui/unstructured_mesh_widget.h"
 #include "ui_unstructured_mesh_widget.h"
 
-#include <QDebug>
-
 UnstructuredMeshWidget::UnstructuredMeshWidget(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::UnstructuredMeshWidget)
 {
     ui->setupUi(this);
-    this->meshService = new MeshService();
+    this->meshService = new UnstructuredMeshService();
 }
 
 void UnstructuredMeshWidget::on_newMeshButton_clicked() {
@@ -16,7 +14,7 @@ void UnstructuredMeshWidget::on_newMeshButton_clicked() {
 
     if (!this->currentMeshName.isEmpty()) {
         try {
-            meshService->addUnstructuredMesh(this->currentMeshName);
+            meshService->addMesh(this->currentMeshName);
         } catch(MeshException &ex) {
             QMessageBox::warning(this, tr("New unstructured mesh"), ex.what());
         }
@@ -28,7 +26,7 @@ void UnstructuredMeshWidget::on_boundaryFileBrowserButton_clicked() {
 
     if (!boundaryFilePath.isEmpty()) {
         ui->boundaryFileLineEdit->setText(boundaryFilePath);
-        meshService->setUnstructuredMeshBoundaryFile(this->currentMeshName, boundaryFilePath);
+        meshService->setBoundaryFilePath(this->currentMeshName, boundaryFilePath);
     }
 }
 
@@ -39,7 +37,7 @@ void UnstructuredMeshWidget::on_generateMeshButton_clicked() {
     progressDialog->setWindowModality(Qt::WindowModal);
     progressDialog->setMinimumDuration(100);
 
-    QJsonObject boundary = meshService->getUnstructuredMeshBoundary(this->currentMeshName, progressDialog);
+    QJsonObject boundary = meshService->getBoundaryJson(this->currentMeshName, progressDialog);
 
     if (!progressDialog->wasCanceled()) {
         //TODO: Draw boundary on OpenGL widget

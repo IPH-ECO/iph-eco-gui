@@ -8,12 +8,9 @@
 
 class MeshObserver : public Observer {
 private:
-//    MeshObservableEvent event;
     QProgressDialog *progressDialog;
 
 public:
-    enum MeshObservableEvent { BOUNDARY_FILE_CONVERSION, MESH_GENERATION };
-
     MeshObserver(Observable *observable) : Observer(observable), progressDialog(NULL) {}
 
     virtual void update() {

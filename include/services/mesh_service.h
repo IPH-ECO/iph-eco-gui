@@ -1,37 +1,27 @@
-#ifndef GRIDSERVICE_H
-#define GRIDSERVICE_H
+#ifndef MESH_SERVICE_H
+#define MESH_SERVICE_H
 
 #include <QString>
 #include <QJsonObject>
 #include <QProgressDialog>
 
 #include "include/domain/managers/mesh_manager.h"
-#include "include/exceptions/mesh_exception.h"
-#include "include/domain/observers/mesh_observer.h"
 
 class MeshService {
-private:
+protected:
     MeshManager *meshManager;
 
+    MeshService() {
+        this->meshManager = MeshManager::getInstance();
+    }
+
 public:
-    MeshService();
-
-    void addStructuredMesh(QString &meshName);
-    void addUnstructuredMesh(QString &meshName);
-
-    void setStructuredMeshBoundaryFile(QString &meshName, QString &boundaryFilePath);
-    void setUnstructuredMeshBoundaryFile(QString &meshName, QString &boundaryFilePath);
-
-    void removeStructuredMesh(QString &meshName);
-    void removeUnstructuredMesh(QString &meshName);
-
-    bool structuredMeshExists(QString &meshName);
-    bool unstructuredMeshExists(QString &meshName);
-
-    QJsonObject getUnstructuredMeshBoundary(QString &meshName, QProgressDialog *progressDialog);
-
-    void generateUnstructuredMesh(QString &meshName);
-    void generateStructuredMesh(QString &meshName);
+    virtual void addMesh(QString &meshName) = 0;
+    virtual void removeMesh(QString &meshName) = 0;
+    virtual void setBoundaryFilePath(QString &meshName, QString &boundaryFilePath) = 0;
+    virtual bool meshExists(QString &meshName) = 0;
+    virtual QJsonObject getBoundaryJson(QString &meshName, QProgressDialog *progressDialog) = 0;
+    virtual ~MeshService() {}
 };
 
-#endif // GRIDSERVICE_H
+#endif // MESH_SERVICE_H

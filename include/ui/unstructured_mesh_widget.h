@@ -8,7 +8,7 @@
 #include <QProgressDialog>
 #include <QJsonObject>
 
-#include "include/services/mesh_service.h"
+#include "include/services/unstructured_mesh_service.h"
 #include "include/domain/observers/mesh_observer.h"
 
 namespace Ui {
