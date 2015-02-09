@@ -28,7 +28,12 @@ private slots:
     void on_btnBoundaryFileBrowser_clicked();
     void on_btnGenerateMesh_clicked();
     void on_btnResetMesh_clicked();
-    void toggleFormButtons(bool enable);
+    void enableMeshForm(bool enable);
+    void enableMeshOptions(bool enable);
+
+    void on_btnEditMesh_clicked();
+
+    void on_cbxMeshName_currentIndexChanged(int index);
 
 private:
     Ui::UnstructuredMeshWidget *ui;

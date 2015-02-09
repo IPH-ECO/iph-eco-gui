@@ -24,7 +24,7 @@ void UnstructuredMeshWidget::on_btnNewMesh_clicked() {
             ui->cbxMeshName->addItem(meshName);
             ui->cbxMeshName->setCurrentText(meshName);
 
-            toggleFormButtons(true);
+            enableMeshForm(true);
         } catch(MeshException &ex) {
             QMessageBox::warning(this, tr("New unstructured mesh"), ex.what());
         }
@@ -42,27 +42,36 @@ void UnstructuredMeshWidget::on_btnBoundaryFileBrowser_clicked() {
     }
 }
 
-void UnstructuredMeshWidget::on_btnGenerateMesh_clicked() {
-    QProgressDialog *progressDialog = new QProgressDialog("Importing boundary file...", "Cancel", 0, 100, this);
+void UnstructuredMeshWidget::on_btnGenerateMesh_clicked() {    
+    QFile file(ui->edtBoundaryFileLine->text());
+    QFileInfo fileInfo(file);
 
-    progressDialog->setAttribute(Qt::WA_DeleteOnClose, true);
-    progressDialog->setWindowModality(Qt::WindowModal);
-    progressDialog->setMinimumDuration(100);
+    if (fileInfo.exists() && fileInfo.isFile()) {
+        QProgressDialog *progressDialog = new QProgressDialog("Importing boundary file...", "Cancel", 0, 100, this);
 
-    QString meshName = ui->cbxMeshName->currentText();
-    QJsonObject boundary = meshService->getBoundaryJson(meshName, progressDialog);
+        progressDialog->setAttribute(Qt::WA_DeleteOnClose, true);
+        progressDialog->setWindowModality(Qt::WindowModal);
+        progressDialog->setMinimumDuration(100);
 
-    if (!progressDialog->wasCanceled()) {
-        //TODO: Draw boundary on OpenGL widget
+        QString meshName = ui->cbxMeshName->currentText();
+        QJsonObject boundary = meshService->getBoundaryJson(meshName, progressDialog);
+
+        if (!progressDialog->wasCanceled()) {
+            //TODO: Draw boundary on OpenGL widget
+            enableMeshOptions(true);
+        }
+    } else {
+        QMessageBox::warning(this, tr("Generate Mesh"), "Boundary file not found.");
     }
 }
 
 void UnstructuredMeshWidget::on_btnResetMesh_clicked() {
     ui->sbxMinimumAngle->setValue(ui->sbxMinimumAngle->minimum());
     ui->sbxMaximumEdgeLength->setValue(ui->sbxMaximumEdgeLength->minimum());
+    enableMeshOptions(false);
 }
 
-void UnstructuredMeshWidget::toggleFormButtons(bool enable) {
+void UnstructuredMeshWidget::enableMeshForm(bool enable) {
     ui->btnEditMesh->setEnabled(enable);
     ui->btnRemoveMesh->setEnabled(enable);
 
@@ -75,7 +84,9 @@ void UnstructuredMeshWidget::toggleFormButtons(bool enable) {
 
     ui->btnGenerateMesh->setEnabled(enable);
     ui->btnResetMesh->setEnabled(enable);
+}
 
+void UnstructuredMeshWidget::enableMeshOptions(bool enable) {
     ui->btnRefineSpecificRegion->setEnabled(enable);
     ui->btnApplyCoarsening->setEnabled(enable);
 
@@ -85,14 +96,39 @@ void UnstructuredMeshWidget::toggleFormButtons(bool enable) {
     ui->chkShowVertexes->setEnabled(enable);
 }
 
-void UnstructuredMeshWidget::on_btnRemoveMesh_clicked()
-{
+void UnstructuredMeshWidget::on_btnRemoveMesh_clicked() {
     QString meshName = ui->cbxMeshName->currentText();
-    meshService->removeMesh(meshName);
+
+    if (QMessageBox::Yes == QMessageBox::question(this, tr("Remove mesh"), tr("Are you sure you want to remove '") + meshName + "'?",
+                                          QMessageBox::Yes|QMessageBox::No)) {
+        meshService->removeMesh(meshName);
+
+        ui->cbxMeshName->removeItem(ui->cbxMeshName->currentIndex());
+
+        if (ui->cbxMeshName->count() == 0) {
+            enableMeshForm(false);
+            enableMeshOptions(false);
+        }
+    }
+
+}
+
+void UnstructuredMeshWidget::on_btnEditMesh_clicked() {
+    QString oldMeshName = ui->cbxMeshName->currentText();
+    QString newMeshName = QInputDialog::getText(this, tr("Enter the mesh name"), tr("Mesh name"), QLineEdit::Normal, oldMeshName);
 
     ui->cbxMeshName->removeItem(ui->cbxMeshName->currentIndex());
 
-    if (ui->cbxMeshName->count() == 0) {
-        toggleFormButtons(false);
+    meshService->removeMesh(oldMeshName);
+    meshService->addMesh(newMeshName);
+
+    ui->cbxMeshName->addItem(newMeshName);
+    ui->cbxMeshName->setCurrentText(newMeshName);
+}
+
+void UnstructuredMeshWidget::on_cbxMeshName_currentIndexChanged(int index)
+{
+    if (index < 0) {
+        enableMeshOptions(false); //TODO precisa verificar se há uma malha gerada
     }
 }
