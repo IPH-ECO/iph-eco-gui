@@ -20,9 +20,11 @@ public:
     ~UnstructuredMeshWidget();
 
 private slots:
-    void on_newMeshButton_clicked();
-    void on_boundaryFileBrowserButton_clicked();
-    void on_resetMeshButton_clicked();
+    void on_btnNewMesh_clicked();
+    void on_btnRemoveMesh_clicked();
+    void on_btnBoundaryFileBrowser_clicked();
+    void on_btnResetMesh_clicked();
+    void toggleFormButtons(bool enable);
 
 private:
     Ui::UnstructuredMeshWidget *ui;

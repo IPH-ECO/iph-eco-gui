@@ -44,7 +44,10 @@
         <number>15</number>
        </property>
        <item row="1" column="1" colspan="2">
-        <widget class="QComboBox" name="meshNameComboBox">
+        <widget class="QComboBox" name="cbxMeshName">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -57,28 +60,35 @@
         </widget>
        </item>
        <item row="2" column="0">
-        <widget class="QLabel" name="label_2">
+        <widget class="QLabel" name="lblBoundaryFile">
          <property name="text">
           <string>Boundary File</string>
          </property>
         </widget>
        </item>
        <item row="1" column="0">
-        <widget class="QLabel" name="label">
+        <widget class="QLabel" name="lblMesh">
          <property name="text">
           <string>Mesh</string>
          </property>
         </widget>
        </item>
        <item row="2" column="2">
-        <widget class="QPushButton" name="boundaryFileBrowserButton">
+        <widget class="QPushButton" name="btnBoundaryFileBrowser">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
          <property name="text">
           <string>Browse...</string>
          </property>
         </widget>
        </item>
        <item row="2" column="1">
-        <widget class="QLineEdit" name="boundaryFileLineEdit"/>
+        <widget class="QLineEdit" name="edtBoundaryFileLine">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+        </widget>
        </item>
        <item row="0" column="0" colspan="3">
         <layout class="QHBoxLayout" name="horizontalLayout">
@@ -86,7 +96,7 @@
           <enum>QLayout::SetMaximumSize</enum>
          </property>
          <item>
-          <widget class="QPushButton" name="newMeshButton">
+          <widget class="QPushButton" name="btnNewMesh">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
              <horstretch>0</horstretch>
@@ -99,7 +109,10 @@
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="editMeshButton">
+          <widget class="QPushButton" name="btnEditMesh">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
            <property name="sizePolicy">
             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
              <horstretch>0</horstretch>
@@ -112,7 +125,10 @@
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="pushButton_2">
+          <widget class="QPushButton" name="btnRemoveMesh">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
            <property name="sizePolicy">
             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
              <horstretch>0</horstretch>
@@ -153,14 +169,17 @@
          <number>10</number>
         </property>
         <item row="0" column="0">
-         <widget class="QLabel" name="label_3">
+         <widget class="QLabel" name="lblAngleTriangles">
           <property name="text">
            <string>Minimum Angle of Triangles (degrees)</string>
           </property>
          </widget>
         </item>
         <item row="1" column="1">
-         <widget class="QDoubleSpinBox" name="maximumEdgeLengthSpinBox">
+         <widget class="QDoubleSpinBox" name="sbxMaximumEdgeLength">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
           <property name="decimals">
            <number>2</number>
           </property>
@@ -179,7 +198,10 @@
          </widget>
         </item>
         <item row="0" column="1">
-         <widget class="QDoubleSpinBox" name="minimumAngleSpinBox">
+         <widget class="QDoubleSpinBox" name="sbxMinimumAngle">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
           <property name="decimals">
            <number>3</number>
           </property>
@@ -203,7 +225,10 @@
            <number>-1</number>
           </property>
           <item row="0" column="0">
-           <widget class="QPushButton" name="generateMeshButton">
+           <widget class="QPushButton" name="btnGenerateMesh">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -216,9 +241,9 @@
            </widget>
           </item>
           <item row="0" column="1">
-           <widget class="QPushButton" name="resetMeshButton">
+           <widget class="QPushButton" name="btnResetMesh">
             <property name="enabled">
-             <bool>true</bool>
+             <bool>false</bool>
             </property>
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -234,7 +259,7 @@
          </layout>
         </item>
         <item row="1" column="0">
-         <widget class="QLabel" name="label_4">
+         <widget class="QLabel" name="lblMaximumEdgeTriangles">
           <property name="text">
            <string>Maximum Edge Length of Triangles</string>
           </property>
@@ -256,14 +281,20 @@
        </property>
        <layout class="QGridLayout" name="gridLayout_4">
         <item row="0" column="0">
-         <widget class="QPushButton" name="refineButton">
+         <widget class="QPushButton" name="btnRefineSpecificRegion">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
           <property name="text">
            <string>Refine Specific Region...</string>
           </property>
          </widget>
         </item>
         <item row="1" column="0">
-         <widget class="QPushButton" name="coarseningButton">
+         <widget class="QPushButton" name="btnApplyCoarsening">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
           <property name="text">
            <string>Apply Coarsening</string>
           </property>
@@ -285,28 +316,40 @@
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_3">
         <item>
-         <widget class="QCheckBox" name="showUtmCoordinatesCheckBox">
+         <widget class="QCheckBox" name="chkShowUtmCoordinates">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
           <property name="text">
            <string>Show UTM Coordinates</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QCheckBox" name="showVertexesCheckBox">
+         <widget class="QCheckBox" name="chkShowVertexes">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
           <property name="text">
            <string>Show vertexes labels</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QCheckBox" name="showTrianglesCheckBox">
+         <widget class="QCheckBox" name="chkShowTriangles">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
           <property name="text">
            <string>Show triangles labels</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QCheckBox" name="showEdgesCheckBox">
+         <widget class="QCheckBox" name="chkShowEdges">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
           <property name="text">
            <string>Show edges labels</string>
           </property>
@@ -320,22 +363,22 @@
   </layout>
  </widget>
  <tabstops>
-  <tabstop>newMeshButton</tabstop>
-  <tabstop>editMeshButton</tabstop>
-  <tabstop>pushButton_2</tabstop>
-  <tabstop>meshNameComboBox</tabstop>
-  <tabstop>boundaryFileLineEdit</tabstop>
-  <tabstop>boundaryFileBrowserButton</tabstop>
-  <tabstop>minimumAngleSpinBox</tabstop>
-  <tabstop>maximumEdgeLengthSpinBox</tabstop>
-  <tabstop>generateMeshButton</tabstop>
-  <tabstop>resetMeshButton</tabstop>
-  <tabstop>refineButton</tabstop>
-  <tabstop>coarseningButton</tabstop>
-  <tabstop>showUtmCoordinatesCheckBox</tabstop>
-  <tabstop>showVertexesCheckBox</tabstop>
-  <tabstop>showTrianglesCheckBox</tabstop>
-  <tabstop>showEdgesCheckBox</tabstop>
+  <tabstop>btnNewMesh</tabstop>
+  <tabstop>btnEditMesh</tabstop>
+  <tabstop>btnRemoveMesh</tabstop>
+  <tabstop>cbxMeshName</tabstop>
+  <tabstop>edtBoundaryFileLine</tabstop>
+  <tabstop>btnBoundaryFileBrowser</tabstop>
+  <tabstop>sbxMinimumAngle</tabstop>
+  <tabstop>sbxMaximumEdgeLength</tabstop>
+  <tabstop>btnGenerateMesh</tabstop>
+  <tabstop>btnResetMesh</tabstop>
+  <tabstop>btnRefineSpecificRegion</tabstop>
+  <tabstop>btnApplyCoarsening</tabstop>
+  <tabstop>chkShowUtmCoordinates</tabstop>
+  <tabstop>chkShowVertexes</tabstop>
+  <tabstop>chkShowTriangles</tabstop>
+  <tabstop>chkShowEdges</tabstop>
  </tabstops>
  <resources/>
  <connections/>
