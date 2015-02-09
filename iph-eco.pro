@@ -17,7 +17,6 @@ SOURCES += \
     src/application/iph_application.cpp \
     src/dao/project_dao.cpp \
     src/exceptions/database_exception.cpp \
-    src/services/mesh_service.cpp \
     src/services/project_service.cpp \
     src/ui/main_window.cpp \
     src/ui/new_project_dialog.cpp \
@@ -29,8 +28,11 @@ SOURCES += \
     src/exceptions/mesh_exception.cpp \
     src/domain/unstructured_mesh.cpp \
     src/domain/structured_mesh.cpp \
-    src/domain/mesh_manager.cpp \
-    src/domain/mesh.cpp
+    src/domain/managers/mesh_manager.cpp \
+    src/domain/mesh.cpp \
+    src/domain/observers/observable.cpp \
+    src/domain/observers/observer.cpp \
+    src/services/unstructured_mesh_service.cpp
 
 HEADERS  += \
     include/domain/project.h \
@@ -49,8 +51,13 @@ HEADERS  += \
     include/exceptions/mesh_exception.h \
     include/domain/unstructured_mesh.h \
     include/domain/structured_mesh.h \
-    include/domain/mesh_manager.h \
-    include/domain/mesh.h
+    include/domain/managers/mesh_manager.h \
+    include/domain/mesh.h \
+    include/domain/observers/observable.h \
+    include/domain/observers/observer.h \
+    include/domain/observers/mesh_observer.h \
+    include/domain/observers/mesh_observable.h \
+    include/services/unstructured_mesh_service.h
 
 FORMS    += \
     include/ui/unstructured_mesh_widget.ui \

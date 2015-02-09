@@ -5,8 +5,11 @@
 #include <QFileDialog>
 #include <QInputDialog>
 #include <QMessageBox>
+#include <QProgressDialog>
+#include <QJsonObject>
 
-#include "include/services/mesh_service.h"
+#include "include/services/unstructured_mesh_service.h"
+#include "include/domain/observers/mesh_observer.h"
 
 namespace Ui {
 class UnstructuredMeshWidget;
@@ -23,6 +26,7 @@ private slots:
     void on_btnNewMesh_clicked();
     void on_btnRemoveMesh_clicked();
     void on_btnBoundaryFileBrowser_clicked();
+    void on_btnGenerateMesh_clicked();
     void on_btnResetMesh_clicked();
     void toggleFormButtons(bool enable);
 

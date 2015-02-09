@@ -6,7 +6,7 @@ UnstructuredMeshWidget::UnstructuredMeshWidget(QWidget *parent) :
     ui(new Ui::UnstructuredMeshWidget)
 {
     ui->setupUi(this);
-    this->meshService = new MeshService();
+    this->meshService = new UnstructuredMeshService();
 }
 
 UnstructuredMeshWidget::~UnstructuredMeshWidget() {
@@ -19,7 +19,7 @@ void UnstructuredMeshWidget::on_btnNewMesh_clicked() {
 
     if (!meshName.isEmpty()) {
         try {
-            meshService->addUnstructuredMesh(meshName);
+            meshService->addMesh(meshName);
 
             ui->cbxMeshName->addItem(meshName);
             ui->cbxMeshName->setCurrentText(meshName);
@@ -35,9 +35,25 @@ void UnstructuredMeshWidget::on_btnBoundaryFileBrowser_clicked() {
     QString boundaryFilePath = QFileDialog::getOpenFileName(this, tr("Select a boundary file"), ".", "Keyhole Markup Language file (*.kml)");
 
     if (!boundaryFilePath.isEmpty()) {
-        QString meshName = this->ui->cbxMeshName->currentText();
+        QString meshName = ui->cbxMeshName->currentText();
 
-        meshService->setUnstructuredMeshBoundaryFile(meshName, boundaryFilePath);
+        ui->edtBoundaryFileLine->setText(boundaryFilePath);
+        meshService->setBoundaryFilePath(meshName, boundaryFilePath);
+    }
+}
+
+void UnstructuredMeshWidget::on_btnGenerateMesh_clicked() {
+    QProgressDialog *progressDialog = new QProgressDialog("Importing boundary file...", "Cancel", 0, 100, this);
+
+    progressDialog->setAttribute(Qt::WA_DeleteOnClose, true);
+    progressDialog->setWindowModality(Qt::WindowModal);
+    progressDialog->setMinimumDuration(100);
+
+    QString meshName = ui->cbxMeshName->currentText();
+    QJsonObject boundary = meshService->getBoundaryJson(meshName, progressDialog);
+
+    if (!progressDialog->wasCanceled()) {
+        //TODO: Draw boundary on OpenGL widget
     }
 }
 
@@ -72,7 +88,7 @@ void UnstructuredMeshWidget::toggleFormButtons(bool enable) {
 void UnstructuredMeshWidget::on_btnRemoveMesh_clicked()
 {
     QString meshName = ui->cbxMeshName->currentText();
-    meshService->removeUnstructuredMesh(meshName);
+    meshService->removeMesh(meshName);
 
     ui->cbxMeshName->removeItem(ui->cbxMeshName->currentIndex());
 
