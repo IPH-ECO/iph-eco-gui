@@ -2,14 +2,14 @@
 
 Project::Project(QString &_name, QString &_description, bool &_hydrodynamic, bool &_sediment, bool &_waterQuality) :
     name(_name), description(_description), hydrodynamic(_hydrodynamic), waterQuality(_waterQuality),
-    sediment(_sediment), selectedMeteorologicalDataId(0), version(1)
+    sediment(_sediment), structuredMeshes(QSet<StructuredMesh>()), unstructuredMeshes(QSet<UnstructuredMesh>())
 {}
 
-void Project::setId(const qlonglong &id) {
+void Project::setId(const qint8 &id) {
     this->id = id;
 }
 
-qlonglong Project::getId() const {
+qint8 Project::getId() const {
     return this->id;
 }
 
@@ -37,22 +37,6 @@ QString Project::getFilename() const {
     return this->filename;
 }
 
-void Project::setBoundaryData(const QString &boundaryData) {
-    this->boundaryData = boundaryData;
-}
-
-QString Project::getBoundaryData() const {
-    return this->boundaryData;
-}
-
-void Project::setSelectedGridDataId(const int &selectedGridDataId) {
-    this->selectedGridDataId = selectedGridDataId;
-}
-
-qlonglong Project::getSelectedGridDataId() const {
-    return selectedGridDataId;
-}
-
 void Project::setHydrodynamic(const bool &hydrodynamic) {
     this->hydrodynamic = hydrodynamic;
 }
@@ -75,20 +59,4 @@ void Project::setSediment(const bool &sediment) {
 
 bool Project::getSediment() const {
     return sediment;
-}
-
-void Project::setSelectedMeteorologicalDataId(const qlonglong &selectedMeteorologicalDataId) {
-    this->selectedMeteorologicalDataId = selectedMeteorologicalDataId;
-}
-
-qlonglong Project::getSelectedMeteorologicalDataId() const {
-    return this->selectedMeteorologicalDataId;
-}
-
-void Project::setVersion(const int &version) {
-    this->version = version;
-}
-
-int Project::getVersion() const {
-    return this->version;
 }

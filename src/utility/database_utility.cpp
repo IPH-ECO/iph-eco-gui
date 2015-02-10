@@ -29,8 +29,7 @@ void DatabaseUtility::createApplicationDatabase(QSqlDatabase &database) {
        "description text, " \
        "hydrodynamic boolean," \
        "water_quality boolean," \
-       "sediment boolean," \
-       "version integer" \
+       "sediment boolean" \
     ")";
 
     sql << "drop table if exists structured_grid";

@@ -23,7 +23,6 @@ Project* ProjectDAO::open() {
 
     Project *project = new Project(name, description, hydrodynamic, sediment, waterQuality);
     project->setFilename(this->databaseName);
-//    project->setSelectedGridDataId(0);
 
     return project;
 }
@@ -35,15 +34,14 @@ void ProjectDAO::save(Project *project) {
 
     QSqlQuery query(db);
 
-    query.prepare("insert into project (name, description, hydrodynamic, water_quality, sediment, version) values "
-                  "(:name, :description, :hydrodynamic, :water_quality, :sediment, :version)");
+    query.prepare("insert into project (name, description, hydrodynamic, water_quality, sediment) values "
+                  "(:name, :description, :hydrodynamic, :water_quality, :sediment)");
 
     query.bindValue(":name", project->getName());
     query.bindValue(":description", project->getDescription());
     query.bindValue(":hydrodynamic", project->getHydrodynamic());
     query.bindValue(":water_quality", project->getWaterQuality());
     query.bindValue(":sediment", project->getSediment());
-    query.bindValue(":version", project->getVersion());
 
     if (!query.exec()) {
         DatabaseUtility::disconnect(db);

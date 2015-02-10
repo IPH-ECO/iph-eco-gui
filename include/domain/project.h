@@ -1,27 +1,29 @@
 #ifndef PROJECT_H
 #define PROJECT_H
 
-#include <QString>
+#include <QSet>
+
+#include "include/domain/mesh.h"
+#include "include/domain/structured_mesh.h"
+#include "include/domain/unstructured_mesh.h"
 
 class Project {
     private:
-        qlonglong id;        
+        qint8 id;
         QString name;
         QString description;
         QString filename;
-        QString boundaryData;
-        qlonglong selectedGridDataId;
         bool hydrodynamic;
         bool waterQuality;
         bool sediment;
-        qlonglong selectedMeteorologicalDataId;
-        int version;
+        QSet<StructuredMesh> structuredMeshes;
+        QSet<UnstructuredMesh> unstructuredMeshes;
 
     public:
         Project(QString &_name, QString &_description, bool &_hydrodynamic, bool &_sediment, bool &_waterQuality);
 
-        void setId(const qlonglong &id);
-        qlonglong getId() const;
+        void setId(const qint8 &id);
+        qint8 getId() const;
 
         void setName(const QString &name);
         QString getName() const;
@@ -32,12 +34,6 @@ class Project {
         void setFilename(const QString &filename);
         QString getFilename() const;
 
-        void setBoundaryData(const QString &boundaryData);
-        QString getBoundaryData() const;
-
-        void setSelectedGridDataId(const int &selectedGridDataId);
-        qlonglong getSelectedGridDataId() const;
-
         void setHydrodynamic(const bool &hydrodynamic);
         bool getHydrodynamic() const;
 
@@ -47,11 +43,6 @@ class Project {
         void setSediment(const bool &sediment);
         bool getSediment() const;
 
-        void setSelectedMeteorologicalDataId(const qlonglong &selectedMeteorologicalDataId);
-        qlonglong getSelectedMeteorologicalDataId() const;
-
-        void setVersion(const int &version);
-        int getVersion() const;
 };
 
 #endif // PROJECT_H
