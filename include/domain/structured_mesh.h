@@ -1,8 +1,6 @@
 #ifndef STRUCTUREDMESH_H
 #define STRUCTUREDMESH_H
 
-#include <QJsonArray>
-
 #include "mesh.h"
 
 class StructuredMesh : public Mesh {

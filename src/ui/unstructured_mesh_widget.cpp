@@ -6,11 +6,9 @@ UnstructuredMeshWidget::UnstructuredMeshWidget(QWidget *parent) :
     ui(new Ui::UnstructuredMeshWidget)
 {
     ui->setupUi(this);
-    this->meshService = new UnstructuredMeshService();
 }
 
 UnstructuredMeshWidget::~UnstructuredMeshWidget() {
-    delete meshService;
     delete ui;
 }
 
@@ -18,16 +16,17 @@ void UnstructuredMeshWidget::on_btnNewMesh_clicked() {
     QString meshName = QInputDialog::getText(this, tr("Enter the mesh name"), tr("Mesh name"));
 
     if (!meshName.isEmpty()) {
-        try {
-            meshService->addMesh(meshName);
-
+        UnstructuredMesh unstructuredMesh(meshName);
+        if (!IPHApplication::getCurrentProject()->containsMesh(unstructuredMesh)) {
+            IPHApplication::getCurrentProject()->addMesh(unstructuredMesh);
             ui->cbxMeshName->addItem(meshName);
             ui->cbxMeshName->setCurrentText(meshName);
-
             enableMeshForm(true);
-        } catch(MeshException &ex) {
-            QMessageBox::warning(this, tr("New unstructured mesh"), ex.what());
+        } else {
+            QMessageBox::warning(this, tr("New unstructured mesh"), "Mesh already exists.");
         }
+    } else {
+        QMessageBox::warning(this, tr("New unstructured mesh"), "Empty mesh name.");
     }
 }
 
@@ -38,7 +37,7 @@ void UnstructuredMeshWidget::on_btnBoundaryFileBrowser_clicked() {
         QString meshName = ui->cbxMeshName->currentText();
 
         ui->edtBoundaryFileLine->setText(boundaryFilePath);
-        meshService->setBoundaryFilePath(meshName, boundaryFilePath);
+//        meshService->setBoundaryFilePath(meshName, boundaryFilePath);
     }
 }
 
@@ -54,7 +53,7 @@ void UnstructuredMeshWidget::on_btnGenerateMesh_clicked() {
         progressDialog->setMinimumDuration(100);
 
         QString meshName = ui->cbxMeshName->currentText();
-        QJsonObject boundary = meshService->getBoundaryJson(meshName, progressDialog);
+//        QJsonObject boundary = meshService->getBoundaryJson(meshName, progressDialog);
 
         if (!progressDialog->wasCanceled()) {
             //TODO: Draw boundary on OpenGL widget
@@ -101,7 +100,9 @@ void UnstructuredMeshWidget::on_btnRemoveMesh_clicked() {
 
     if (QMessageBox::Yes == QMessageBox::question(this, tr("Remove mesh"), tr("Are you sure you want to remove '") + meshName + "'?",
                                           QMessageBox::Yes|QMessageBox::No)) {
-        meshService->removeMesh(meshName);
+
+        UnstructuredMesh unstructuredMesh(meshName);
+        IPHApplication::getCurrentProject()->removeMesh(unstructuredMesh);
 
         ui->cbxMeshName->removeItem(ui->cbxMeshName->currentIndex());
 
@@ -119,8 +120,11 @@ void UnstructuredMeshWidget::on_btnEditMesh_clicked() {
 
     ui->cbxMeshName->removeItem(ui->cbxMeshName->currentIndex());
 
-    meshService->removeMesh(oldMeshName);
-    meshService->addMesh(newMeshName);
+    UnstructuredMesh oldUnstructuredMesh(oldMeshName);
+    IPHApplication::getCurrentProject()->removeMesh(oldUnstructuredMesh);
+
+    UnstructuredMesh newUnstructuredMesh(newMeshName);
+    IPHApplication::getCurrentProject()->addMesh(newUnstructuredMesh);
 
     ui->cbxMeshName->addItem(newMeshName);
     ui->cbxMeshName->setCurrentText(newMeshName);

@@ -2,7 +2,7 @@
 
 Project::Project(QString &_name, QString &_description, bool &_hydrodynamic, bool &_sediment, bool &_waterQuality) :
     name(_name), description(_description), hydrodynamic(_hydrodynamic), waterQuality(_waterQuality),
-    sediment(_sediment), structuredMeshes(QSet<StructuredMesh>()), unstructuredMeshes(QSet<UnstructuredMesh>())
+    sediment(_sediment), meshes(QSet<Mesh>())
 {}
 
 void Project::setId(const qint8 &id) {
@@ -60,3 +60,16 @@ void Project::setSediment(const bool &sediment) {
 bool Project::getSediment() const {
     return sediment;
 }
+
+void Project::addMesh(Mesh &mesh) {
+    meshes.insert(mesh);
+}
+
+bool Project::removeMesh(Mesh &mesh) {
+    return meshes.remove(mesh);
+}
+
+bool Project::containsMesh(Mesh &mesh) {
+    return meshes.contains(mesh);
+}
+

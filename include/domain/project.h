@@ -16,8 +16,7 @@ class Project {
         bool hydrodynamic;
         bool waterQuality;
         bool sediment;
-        QSet<StructuredMesh> structuredMeshes;
-        QSet<UnstructuredMesh> unstructuredMeshes;
+        QSet<Mesh> meshes;
 
     public:
         Project(QString &_name, QString &_description, bool &_hydrodynamic, bool &_sediment, bool &_waterQuality);
@@ -43,6 +42,10 @@ class Project {
         void setSediment(const bool &sediment);
         bool getSediment() const;
 
+        void addMesh(Mesh &mesh);
+        bool removeMesh(Mesh &mesh);
+        bool containsMesh(Mesh &mesh);
+        Mesh getMesh(QString &meshName);
 };
 
 #endif // PROJECT_H

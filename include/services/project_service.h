@@ -9,7 +9,7 @@
 
 class ProjectService {
 private:
-//    ProjectDAO projectDAO; //TODO: Hold on heap?
+
 public:
     void setApplicationProject(QString &name, QString &description, bool &hydrodinamic, bool &sediment,
                                bool &waterQuality);

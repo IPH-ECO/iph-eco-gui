@@ -8,8 +8,9 @@
 #include <QProgressDialog>
 #include <QJsonObject>
 
-#include "include/services/unstructured_mesh_service.h"
+#include "include/exceptions/mesh_exception.h"
 #include "include/domain/observers/mesh_observer.h"
+#include "include/application/iph_application.h"
 
 namespace Ui {
 class UnstructuredMeshWidget;
@@ -36,8 +37,7 @@ private slots:
     void on_cbxMeshName_currentIndexChanged(int index);
 
 private:
-    Ui::UnstructuredMeshWidget *ui;
-    MeshService *meshService;
+    Ui::UnstructuredMeshWidget *ui;    
 };
 
 #endif // UNSTRUCTURED_MESH_WIDGET_H
