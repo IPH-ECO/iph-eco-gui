@@ -43,7 +43,7 @@ class Project {
         bool addMesh(Mesh &mesh);
         bool removeMesh(Mesh &mesh);
         bool containsMesh(Mesh &mesh);
-        Mesh getMesh(Mesh &mesh);
+        Mesh* getMesh(Mesh &mesh);
 };
 
 #endif // PROJECT_H

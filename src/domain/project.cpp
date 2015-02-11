@@ -62,7 +62,7 @@ bool Project::getSediment() const {
 }
 
 bool Project::addMesh(Mesh &mesh) {
-    if (containsMesh(mesh)) {
+    if (!containsMesh(mesh)) {
         this->meshes.insert(mesh);
         return true;
     }
@@ -77,6 +77,12 @@ bool Project::containsMesh(Mesh &mesh) {
     return this->meshes.contains(mesh);
 }
 
-Mesh Project::getMesh(Mesh &mesh) {
-    return *(qFind(this->meshes.begin(), this->meshes.end(), mesh));
+Mesh* Project::getMesh(Mesh &mesh) {
+    QSet<Mesh>::iterator it = qFind(this->meshes.begin(), this->meshes.end(), mesh);
+
+    if (it == this->meshes.end()) {
+        return NULL;
+    }
+
+    return (Mesh*) &(*it);
 }

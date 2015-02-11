@@ -18,39 +18,35 @@ void UnstructuredMeshWidget::on_btnBoundaryFileBrowser_clicked() {
     QString boundaryFilePath = QFileDialog::getOpenFileName(this, tr("Select a boundary file"), ".", "Keyhole Markup Language file (*.kml)");
 
     if (!boundaryFilePath.isEmpty()) {
-        QString meshName = ui->cbxMeshName->currentText();
-
         ui->edtBoundaryFileLine->setText(boundaryFilePath);
-
-        UnstructuredMesh unstructuredMesh(meshName);
-        IPHApplication::getCurrentProject()->getMesh(unstructuredMesh).setBoundaryFilePath(boundaryFilePath);;
     }
 }
 
 void UnstructuredMeshWidget::on_btnGenerateMesh_clicked() {
+    QString meshName = ui->edtMeshName->text();
+
+    if (meshName.isEmpty()) {
+        QMessageBox::warning(this, tr("Generate Mesh"), "Please input the mesh name.");
+        return;
+    }
+
+    QString boundaryFileStr = ui->edtBoundaryFileLine->text();
+    QFile boundaryFile(boundaryFileStr);
+    QFileInfo boundaryFileInfo(boundaryFile);
+
+    if (!boundaryFileInfo.exists() || !boundaryFileInfo.isFile()) {
+        QMessageBox::warning(this, tr("Generate Mesh"), "Boundary file not found.");
+        return;
+    }
+
     enableMeshForm(true);
 
-    QFile file(ui->edtBoundaryFileLine->text());
-    QFileInfo fileInfo(file);
+    double minimumAngle = ui->sbxMinimumAngle->value();
+    double maximumEdgeLength = ui->sbxMaximumEdgeLength->value();
+    UnstructuredMesh unstructuredMesh(meshName, boundaryFileStr, minimumAngle, maximumEdgeLength);
 
-    if (fileInfo.exists() && fileInfo.isFile()) {
-//        QProgressDialog *progressDialog = new QProgressDialog("Importing boundary file...", "Cancel", 0, 100, this);
-
-//        progressDialog->setAttribute(Qt::WA_DeleteOnClose, true);
-//        progressDialog->setWindowModality(Qt::WindowModal);
-//        progressDialog->setMinimumDuration(100);
-
-//        QString meshName = ui->cbxMeshName->currentText();
-
-//        UnstructuredMesh unstructuredMesh(meshName);
-//        QJsonObject boundary = IPHApplication::getCurrentProject()->getMesh(unstructuredMesh).getBoundaryJson();
-
-//        if (!progressDialog->wasCanceled()) {
-            //TODO: Draw boundary on OpenGL widget
-//        }
-    } else {
-        QMessageBox::warning(this, tr("Generate Mesh"), "Boundary file not found.");
-    }
+    //TODO: Draw boundary on OpenGL component
+    QJsonObject boundaryJson = unstructuredMesh.getBoundaryJson();
 }
 
 void UnstructuredMeshWidget::on_btnResetMesh_clicked() {
@@ -59,12 +55,26 @@ void UnstructuredMeshWidget::on_btnResetMesh_clicked() {
 }
 
 void UnstructuredMeshWidget::on_btnSaveMesh_clicked() {
-    QString meshName = ui->cbxMeshName->currentText();
-    UnstructuredMesh unstructuredMesh(meshName);
-    IPHApplication::getCurrentProject()->addMesh(unstructuredMesh);
+    QString meshName = ui->edtMeshName->text();
+    QString boundaryFile = ui->edtBoundaryFileLine->text();
+    double minimumAngle = ui->sbxMinimumAngle->value();
+    double maximumEdgeLength = ui->sbxMaximumEdgeLength->value();
+    UnstructuredMesh unstructuredMesh(meshName, boundaryFile, minimumAngle, maximumEdgeLength);
+    Project *project = IPHApplication::getCurrentProject();
 
-    ui->cbxMeshName->addItem(ui->edtMeshName->text());
-    ui->cbxMeshName->setCurrentIndex(-1);
+    UnstructuredMesh *mesh = project->getMesh(unstructuredMesh);
+
+    if (mesh == NULL) {
+        project->addMesh(unstructuredMesh);
+
+        ui->cbxMeshName->addItem(ui->edtMeshName->text());
+        ui->cbxMeshName->setCurrentIndex(-1);
+    } else {
+        mesh->setBoundaryFilePath(boundaryFile);
+        mesh->setMinimumAngle(minimumAngle);
+        mesh->setMaximumEdgeLength(maximumEdgeLength);
+    }
+
     resetMeshForm();
 }
 
@@ -94,12 +104,12 @@ void UnstructuredMeshWidget::on_cbxMeshName_currentIndexChanged(int index) {
 
         QString meshName = ui->cbxMeshName->currentText();
         UnstructuredMesh unstructuredMesh(meshName);
-        Mesh mesh = IPHApplication::getCurrentProject()->getMesh(unstructuredMesh);
+        UnstructuredMesh *mesh = (UnstructuredMesh*) IPHApplication::getCurrentProject()->getMesh(unstructuredMesh);
 
-        ui->edtMeshName->setText(mesh.getName());
-        ui->edtBoundaryFileLine->setText(mesh.getBoundaryFilePath());
-        ui->sbxMinimumAngle->setValue(0.125);
-        ui->sbxMaximumEdgeLength->setValue(0.05);
+        ui->edtMeshName->setText(mesh->getName());
+        ui->edtBoundaryFileLine->setText(mesh->getBoundaryFilePath());
+        ui->sbxMinimumAngle->setValue(mesh->getMaximumEdgeLength());
+        ui->sbxMaximumEdgeLength->setValue(mesh->getMinimumAngle());
     } else {
         resetMeshForm();
     }
