@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1018</width>
-    <height>551</height>
+    <width>997</width>
+    <height>660</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -36,17 +36,24 @@
       <number>28</number>
      </property>
      <item>
-      <layout class="QGridLayout" name="gridLayout_2" columnstretch="1,2,0">
+      <layout class="QGridLayout" name="gridLayout_3">
+       <property name="sizeConstraint">
+        <enum>QLayout::SetDefaultConstraint</enum>
+       </property>
        <property name="horizontalSpacing">
-        <number>5</number>
+        <number>10</number>
        </property>
-       <property name="verticalSpacing">
-        <number>15</number>
-       </property>
-       <item row="1" column="1" colspan="2">
+       <item row="0" column="0">
+        <widget class="QLabel" name="lblMesh">
+         <property name="text">
+          <string>Mesh</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
         <widget class="QComboBox" name="cbxMeshName">
          <property name="enabled">
-          <bool>false</bool>
+          <bool>true</bool>
          </property>
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -57,90 +64,63 @@
          <property name="editable">
           <bool>false</bool>
          </property>
+         <property name="currentIndex">
+          <number>-1</number>
+         </property>
+         <item>
+          <property name="text">
+           <string>Malha 1</string>
+          </property>
+         </item>
         </widget>
        </item>
-       <item row="2" column="0">
+      </layout>
+     </item>
+     <item>
+      <layout class="QGridLayout" name="gridLayout_2" columnstretch="0,0,0">
+       <property name="horizontalSpacing">
+        <number>5</number>
+       </property>
+       <property name="verticalSpacing">
+        <number>15</number>
+       </property>
+       <item row="1" column="0">
         <widget class="QLabel" name="lblBoundaryFile">
          <property name="text">
           <string>Boundary File</string>
          </property>
         </widget>
        </item>
-       <item row="1" column="0">
-        <widget class="QLabel" name="lblMesh">
-         <property name="text">
-          <string>Mesh</string>
+       <item row="1" column="1">
+        <widget class="QLineEdit" name="edtBoundaryFileLine">
+         <property name="enabled">
+          <bool>true</bool>
          </property>
         </widget>
        </item>
-       <item row="2" column="2">
+       <item row="1" column="2">
         <widget class="QPushButton" name="btnBoundaryFileBrowser">
          <property name="enabled">
-          <bool>false</bool>
+          <bool>true</bool>
          </property>
          <property name="text">
           <string>Browse...</string>
          </property>
         </widget>
        </item>
-       <item row="2" column="1">
-        <widget class="QLineEdit" name="edtBoundaryFileLine">
+       <item row="0" column="1" colspan="2">
+        <widget class="QLineEdit" name="edtMeshName">
          <property name="enabled">
-          <bool>false</bool>
+          <bool>true</bool>
          </property>
         </widget>
        </item>
-       <item row="0" column="0" colspan="3">
-        <layout class="QHBoxLayout" name="horizontalLayout">
-         <property name="sizeConstraint">
-          <enum>QLayout::SetMaximumSize</enum>
+       <item row="0" column="0">
+        <widget class="QLabel" name="lblMeshName">
+         <property name="text">
+          <string>Mesh Name</string>
          </property>
-         <item>
-          <widget class="QPushButton" name="btnNewMesh">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="text">
-            <string>New...</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="btnEditMesh">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="text">
-            <string>Edit..</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="btnRemoveMesh">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="text">
-            <string>Remove</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
+        </widget>
        </item>
       </layout>
      </item>
@@ -178,7 +158,7 @@
         <item row="1" column="1">
          <widget class="QDoubleSpinBox" name="sbxMaximumEdgeLength">
           <property name="enabled">
-           <bool>false</bool>
+           <bool>true</bool>
           </property>
           <property name="decimals">
            <number>2</number>
@@ -200,7 +180,7 @@
         <item row="0" column="1">
          <widget class="QDoubleSpinBox" name="sbxMinimumAngle">
           <property name="enabled">
-           <bool>false</bool>
+           <bool>true</bool>
           </property>
           <property name="decimals">
            <number>3</number>
@@ -227,7 +207,7 @@
           <item row="0" column="0">
            <widget class="QPushButton" name="btnGenerateMesh">
             <property name="enabled">
-             <bool>false</bool>
+             <bool>true</bool>
             </property>
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -243,7 +223,7 @@
           <item row="0" column="1">
            <widget class="QPushButton" name="btnResetMesh">
             <property name="enabled">
-             <bool>false</bool>
+             <bool>true</bool>
             </property>
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -358,15 +338,78 @@
        </layout>
       </widget>
      </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <item>
+        <widget class="QPushButton" name="btnSaveMesh">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string>Save</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="btnCancelMesh">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string>Cancel</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="btnRemoveMesh">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string>Remove</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="horizontalSpacer">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </item>
     </layout>
    </item>
   </layout>
  </widget>
  <tabstops>
-  <tabstop>btnNewMesh</tabstop>
-  <tabstop>btnEditMesh</tabstop>
-  <tabstop>btnRemoveMesh</tabstop>
   <tabstop>cbxMeshName</tabstop>
+  <tabstop>edtMeshName</tabstop>
   <tabstop>edtBoundaryFileLine</tabstop>
   <tabstop>btnBoundaryFileBrowser</tabstop>
   <tabstop>sbxMinimumAngle</tabstop>
@@ -379,6 +422,8 @@
   <tabstop>chkShowVertexes</tabstop>
   <tabstop>chkShowTriangles</tabstop>
   <tabstop>chkShowEdges</tabstop>
+  <tabstop>btnSaveMesh</tabstop>
+  <tabstop>btnRemoveMesh</tabstop>
  </tabstops>
  <resources/>
  <connections/>
