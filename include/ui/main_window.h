@@ -35,7 +35,7 @@ private slots:
 
     void on_actionCloseProject_triggered();
 
-    void toggleMenu(bool enable);
+    void enableMenus(bool enable);
     void on_actionSobre_triggered();
 
 private:

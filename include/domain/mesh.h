@@ -1,15 +1,8 @@
 #ifndef MESH_H
 #define MESH_H
 
-#include <QStringList>
-#include <QMultiMap>
-#include <QFile>
-#include <QIODevice>
-#include <QXmlStreamReader>
-#include <QJsonDocument>
-#include <QJsonObject>
-#include <QJsonArray>
 #include <QHash>
+#include <QJsonObject>
 
 #include <GeographicLib/GeoCoords.hpp>
 
@@ -36,7 +29,6 @@ public:
     void toogleVertexesLabels(bool &show);
 
     QJsonObject getBoundaryJson();
-
 };
 
 inline bool operator==(const Mesh &mesh1, const Mesh &mesh2) {

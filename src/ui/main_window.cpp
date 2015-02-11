@@ -1,14 +1,14 @@
 #include "include/ui/main_window.h"
 #include "ui_main_window.h"
 
+#include "include/exceptions/database_exception.h"
+#include "include/application/iph_application.h"
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-
-//    StructuredGridDialog *structuredGridDialog = new StructuredGridDialog();
-//    connect(ui->actionImport_Structured_File, SIGNAL(triggered()), structuredGridDialog, SLOT(show()));
 }
 
 MainWindow::~MainWindow() {
@@ -23,7 +23,7 @@ void MainWindow::on_actionOpenProject_triggered() {
             ProjectService projectService;
             projectService.open(filename);
 
-            toggleMenu(true);
+            enableMenus(true);
         } catch (DatabaseException &ex) {
             QMessageBox::critical(this, "Open Project", ex.what());
         }
@@ -70,8 +70,8 @@ void MainWindow::on_actionNewProject_triggered() {
     newProjectDialog->show();
 }
 
-void MainWindow::on_actionProjectProperties_triggered() {
-    ProjectPropertiesDialog *projectPropertiesDialog = new ProjectPropertiesDialog(this);
+void MainWindow::on_actionProjectProperties_triggered() {    
+    ProjectPropertiesDialog *projectPropertiesDialog = new ProjectPropertiesDialog(this, IPHApplication::getCurrentProject());
     projectPropertiesDialog->setAttribute(Qt::WA_DeleteOnClose, true);
     projectPropertiesDialog->show();
 }
@@ -85,10 +85,10 @@ void MainWindow::on_actionImportUnstructuredGridGeneration_triggered() {
 void MainWindow::on_actionCloseProject_triggered()
 {
     IPHApplication::setCurrentProject(NULL);
-    toggleMenu(false);
+    enableMenus(false);
 }
 
-void MainWindow::toggleMenu(bool enable) {
+void MainWindow::enableMenus(bool enable) {
     ui->menuPreprocessing->setEnabled(enable);
     ui->menuInput->setEnabled(enable);
     ui->menuSimulations->setEnabled(enable);

@@ -4,8 +4,6 @@
 #include <QSet>
 
 #include "include/domain/mesh.h"
-#include "include/domain/structured_mesh.h"
-#include "include/domain/unstructured_mesh.h"
 
 class Project {
     private:
@@ -42,10 +40,10 @@ class Project {
         void setSediment(const bool &sediment);
         bool getSediment() const;
 
-        void addMesh(Mesh &mesh);
+        bool addMesh(Mesh &mesh);
         bool removeMesh(Mesh &mesh);
         bool containsMesh(Mesh &mesh);
-        Mesh getMesh(QString &meshName);
+        Mesh getMesh(Mesh &mesh);
 };
 
 #endif // PROJECT_H

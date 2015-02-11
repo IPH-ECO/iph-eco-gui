@@ -2,10 +2,8 @@
 #define PROJECTSERVICE_H
 
 #include <QString>
-#include <QSqlDatabase>
 
-#include "include/application/iph_application.h"
-#include "include/dao/project_dao.h"
+#include "include/domain/project.h"
 
 class ProjectService {
 private:

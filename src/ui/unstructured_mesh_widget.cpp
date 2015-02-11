@@ -1,6 +1,8 @@
 #include "include/ui/unstructured_mesh_widget.h"
 #include "ui_unstructured_mesh_widget.h"
 
+#include "include/domain/unstructured_mesh.h"
+
 UnstructuredMeshWidget::UnstructuredMeshWidget(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::UnstructuredMeshWidget)

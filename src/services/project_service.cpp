@@ -1,5 +1,10 @@
 #include "include/services/project_service.h"
 
+#include <QSqlDatabase>
+
+#include "include/application/iph_application.h"
+#include "include/dao/project_dao.h"
+
 void ProjectService::setApplicationProject(QString &name, QString &description,
                                            bool &hydrodynamic, bool &sediment, bool &waterQuality) {
     Project *project = new Project(name, description, hydrodynamic, sediment, waterQuality);
@@ -7,25 +12,17 @@ void ProjectService::setApplicationProject(QString &name, QString &description,
 }
 
 void ProjectService::open(QString &filename) {
-    try {
-        ProjectDAO projectDAO(filename);
-        Project *project = projectDAO.open();
+    ProjectDAO projectDAO(filename);
+    Project *project = projectDAO.open();
 
-        IPHApplication::setCurrentProject(project);
-    } catch (DatabaseException &ex) {
-        throw ex;
-    }
+    IPHApplication::setCurrentProject(project);
 }
 
 void ProjectService::save(Project *project) {
-    try {
-        QString filename = project->getFilename();
-        ProjectDAO projectDAO(filename);
+    QString filename = project->getFilename();
+    ProjectDAO projectDAO(filename);
 
-        projectDAO.save(project);
-    } catch (DatabaseException &ex) {
-        throw ex;
-    }
+    projectDAO.save(project);
 }
 
 void ProjectService::updateProperties(QString &name, QString &description,

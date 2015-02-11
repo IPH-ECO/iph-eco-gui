@@ -16,7 +16,6 @@ public:
 
     void setColumns(const uint columns);
     uint getColumns() const;
-
 };
 
 #endif // STRUCTUREDMESH_H

@@ -61,15 +61,22 @@ bool Project::getSediment() const {
     return sediment;
 }
 
-void Project::addMesh(Mesh &mesh) {
-    meshes.insert(mesh);
+bool Project::addMesh(Mesh &mesh) {
+    if (containsMesh(mesh)) {
+        this->meshes.insert(mesh);
+        return true;
+    }
+    return false;
 }
 
 bool Project::removeMesh(Mesh &mesh) {
-    return meshes.remove(mesh);
+    return this->meshes.remove(mesh);
 }
 
 bool Project::containsMesh(Mesh &mesh) {
-    return meshes.contains(mesh);
+    return this->meshes.contains(mesh);
 }
 
+Mesh Project::getMesh(Mesh &mesh) {
+    return *(qFind(this->meshes.begin(), this->meshes.end(), mesh));
+}
