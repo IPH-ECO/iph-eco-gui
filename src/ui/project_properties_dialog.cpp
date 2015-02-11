@@ -1,17 +1,23 @@
 #include "include/ui/project_properties_dialog.h"
 #include "ui_project_properties_dialog.h"
 
-ProjectPropertiesDialog::ProjectPropertiesDialog(QWidget *parent) :
+#include <QDialogButtonBox>
+#include <QMessageBox>
+
+#include "include/services/project_service.h"
+
+ProjectPropertiesDialog::ProjectPropertiesDialog(QWidget *parent, Project *project) :
     QDialog(parent),
-    ui(new Ui::ProjectPropertiesDialog)
+    ui(new Ui::ProjectPropertiesDialog),
+    project(project)
 {
     ui->setupUi(this);
 
-    ui->edtName->setText(IPHApplication::getCurrentProject()->getName());
-    ui->txtDescription->setPlainText(IPHApplication::getCurrentProject()->getDescription());
-    ui->cbxHydrodynamic->setChecked(IPHApplication::getCurrentProject()->getHydrodynamic());
-    ui->cbxSediment->setChecked(IPHApplication::getCurrentProject()->getSediment());
-    ui->cbxWaterQuality->setChecked(IPHApplication::getCurrentProject()->getWaterQuality());
+    ui->edtName->setText(project->getName());
+    ui->txtDescription->setPlainText(project->getDescription());
+    ui->cbxHydrodynamic->setChecked(project->getHydrodynamic());
+    ui->cbxSediment->setChecked(project->getSediment());
+    ui->cbxWaterQuality->setChecked(project->getWaterQuality());
 }
 
 ProjectPropertiesDialog::~ProjectPropertiesDialog() {

@@ -2,6 +2,7 @@
 #define GRIDEXCEPTION_H
 
 #include <exception>
+
 #include <QString>
 
 class MeshException : public std::exception {

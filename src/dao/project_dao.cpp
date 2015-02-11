@@ -1,5 +1,14 @@
 #include "include/dao/project_dao.h"
 
+#include "include/exceptions/database_exception.h"
+#include "include/utility/database_utility.h"
+
+#include <QString>
+#include <QSqlDatabase>
+#include <QSqlQuery>
+#include <QVariant>
+#include <QSqlError>
+
 ProjectDAO::ProjectDAO(QString &_databaseName) : databaseName(_databaseName) {}
 
 Project* ProjectDAO::open() {

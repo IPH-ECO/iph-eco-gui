@@ -1,23 +1,23 @@
 #include "include/domain/unstructured_mesh.h"
 
-UnstructuredMesh::UnstructuredMesh(QString &_name) : Mesh(_name), maximumAngle(0.125), minimumEdgeLength(0.5) {}
+UnstructuredMesh::UnstructuredMesh(QString &_name) : Mesh(_name), minimumAngle(0.125), maximumEdgeLength(0.5) {}
 
-UnstructuredMesh::UnstructuredMesh(QString &_name, QString &_boundaryFilePath, double &_maximumAngle, double &_minimumEdgeLength) :
-    Mesh(_name, _boundaryFilePath), maximumAngle(_maximumAngle), minimumEdgeLength(_minimumEdgeLength)
+UnstructuredMesh::UnstructuredMesh(QString &_name, QString &_boundaryFilePath, double &_minimumAngle, double &_maximumEdgeLength) :
+    Mesh(_name, _boundaryFilePath), minimumAngle(_minimumAngle), maximumEdgeLength(_maximumEdgeLength)
 {}
 
-void UnstructuredMesh::setMaximumAngle(const double &maximumAngle) {
-    this->maximumAngle = maximumAngle;
+void UnstructuredMesh::setMinimumAngle(const double &minimumAngle) {
+    this->minimumAngle = minimumAngle;
 }
 
-double UnstructuredMesh::getMaximumAngle() const {
-    return maximumAngle;
+double UnstructuredMesh::getMinimumAngle() const {
+    return minimumAngle;
 }
 
-void UnstructuredMesh::setMinimumEdgeLength(const double &minimumEdgeLength) {
-    this->minimumEdgeLength = minimumEdgeLength;
+void UnstructuredMesh::setMaximumEdgeLength(const double &maximumEdgeLength) {
+    this->maximumEdgeLength = maximumEdgeLength;
 }
 
-double UnstructuredMesh::getMinimumEdgeLength() const {
-    return minimumEdgeLength;
+double UnstructuredMesh::getMaximumEdgeLength() const {
+    return maximumEdgeLength;
 }

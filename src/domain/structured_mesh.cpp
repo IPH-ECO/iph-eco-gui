@@ -21,3 +21,4 @@ void StructuredMesh::setColumns(const uint columns) {
 uint StructuredMesh::getColumns() const {
     return this->columns;
 }
+

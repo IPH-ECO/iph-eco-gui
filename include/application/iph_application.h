@@ -2,6 +2,7 @@
 #define IPHAPPLICATION
 
 #include <QApplication>
+
 #include "include/domain/project.h"
 
 class IPHApplication : public QApplication {
