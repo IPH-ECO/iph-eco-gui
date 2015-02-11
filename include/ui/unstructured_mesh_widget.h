@@ -24,15 +24,14 @@ public:
     ~UnstructuredMeshWidget();
 
 private slots:
-    void on_btnNewMesh_clicked();
     void on_btnRemoveMesh_clicked();
     void on_btnBoundaryFileBrowser_clicked();
     void on_btnGenerateMesh_clicked();
     void on_btnResetMesh_clicked();
+    void on_btnSaveMesh_clicked();
+    void on_btnCancelMesh_clicked();
+    void resetMeshForm();
     void enableMeshForm(bool enable);
-    void enableMeshOptions(bool enable);
-
-    void on_btnEditMesh_clicked();
 
     void on_cbxMeshName_currentIndexChanged(int index);
 
