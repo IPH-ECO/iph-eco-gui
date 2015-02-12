@@ -55,27 +55,29 @@ void UnstructuredMeshWidget::on_btnResetMesh_clicked() {
 }
 
 void UnstructuredMeshWidget::on_btnSaveMesh_clicked() {
-    QString meshName = ui->edtMeshName->text();
+    QString meshName = ui->cbxMeshName->currentIndex() == -1 ? ui->edtMeshName->text() : ui->cbxMeshName->currentText();
     QString boundaryFile = ui->edtBoundaryFileLine->text();
     double minimumAngle = ui->sbxMinimumAngle->value();
     double maximumEdgeLength = ui->sbxMaximumEdgeLength->value();
+
     UnstructuredMesh unstructuredMesh(meshName, boundaryFile, minimumAngle, maximumEdgeLength);
     Project *project = IPHApplication::getCurrentProject();
 
-    UnstructuredMesh *mesh = project->getMesh(unstructuredMesh);
+    UnstructuredMesh *mesh = (UnstructuredMesh*) project->getMesh(unstructuredMesh);
 
-    if (mesh == NULL) {
+    if (mesh == NULL && ui->cbxMeshName->currentIndex() == -1) {
         project->addMesh(unstructuredMesh);
 
-        ui->cbxMeshName->addItem(ui->edtMeshName->text());
-        ui->cbxMeshName->setCurrentIndex(-1);
+        ui->cbxMeshName->addItem(meshName);
+        ui->cbxMeshName->setCurrentText(meshName);
     } else {
+        mesh->setName(ui->edtMeshName->text());
         mesh->setBoundaryFilePath(boundaryFile);
         mesh->setMinimumAngle(minimumAngle);
         mesh->setMaximumEdgeLength(maximumEdgeLength);
-    }
 
-    resetMeshForm();
+        ui->cbxMeshName->setItemText(ui->cbxMeshName->currentIndex(), mesh->getName());
+    }
 }
 
 void UnstructuredMeshWidget::on_btnRemoveMesh_clicked() {
@@ -103,13 +105,12 @@ void UnstructuredMeshWidget::on_cbxMeshName_currentIndexChanged(int index) {
         ui->btnRemoveMesh->setEnabled(true);
 
         QString meshName = ui->cbxMeshName->currentText();
-        UnstructuredMesh unstructuredMesh(meshName);
-        UnstructuredMesh *mesh = (UnstructuredMesh*) IPHApplication::getCurrentProject()->getMesh(unstructuredMesh);
+        UnstructuredMesh *mesh = (UnstructuredMesh*) IPHApplication::getCurrentProject()->getMesh(UnstructuredMesh(meshName));
 
         ui->edtMeshName->setText(mesh->getName());
         ui->edtBoundaryFileLine->setText(mesh->getBoundaryFilePath());
-        ui->sbxMinimumAngle->setValue(mesh->getMaximumEdgeLength());
-        ui->sbxMaximumEdgeLength->setValue(mesh->getMinimumAngle());
+        ui->sbxMinimumAngle->setValue(mesh->getMinimumAngle());
+        ui->sbxMaximumEdgeLength->setValue(mesh->getMaximumEdgeLength());
     } else {
         resetMeshForm();
     }
