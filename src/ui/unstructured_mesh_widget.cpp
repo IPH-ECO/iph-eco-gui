@@ -105,7 +105,8 @@ void UnstructuredMeshWidget::on_cbxMeshName_currentIndexChanged(int index) {
         ui->btnRemoveMesh->setEnabled(true);
 
         QString meshName = ui->cbxMeshName->currentText();
-        UnstructuredMesh *mesh = (UnstructuredMesh*) IPHApplication::getCurrentProject()->getMesh(UnstructuredMesh(meshName));
+        UnstructuredMesh unstructuredMesh(meshName);
+        UnstructuredMesh *mesh = (UnstructuredMesh*) IPHApplication::getCurrentProject()->getMesh(unstructuredMesh);
 
         ui->edtMeshName->setText(mesh->getName());
         ui->edtBoundaryFileLine->setText(mesh->getBoundaryFilePath());

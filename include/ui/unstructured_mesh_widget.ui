@@ -37,9 +37,6 @@
      </property>
      <item>
       <layout class="QGridLayout" name="gridLayout_3">
-       <property name="sizeConstraint">
-        <enum>QLayout::SetDefaultConstraint</enum>
-       </property>
        <property name="horizontalSpacing">
         <number>10</number>
        </property>
@@ -60,9 +57,6 @@
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
-         </property>
-         <property name="editable">
-          <bool>false</bool>
          </property>
          <property name="currentIndex">
           <number>-1</number>
