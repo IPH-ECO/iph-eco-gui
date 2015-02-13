@@ -7,7 +7,7 @@ NewProjectDialog::NewProjectDialog(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    connect(this, SIGNAL(toggleParentMenu(bool)), parentWidget(), SLOT(toggleMenu(bool)));
+    connect(this, SIGNAL(enableParentMenu(bool)), parentWidget(), SLOT(enableMenus(bool)));
 }
 
 void NewProjectDialog::on_btnBox_clicked(QAbstractButton *button) {
@@ -26,7 +26,7 @@ void NewProjectDialog::on_btnBox_clicked(QAbstractButton *button) {
         ProjectService projectService;
         projectService.setApplicationProject(name, description, hydrodynamic, sediment, waterQuality);
 
-        emit toggleParentMenu(true);
+        emit enableParentMenu(true);
 
         this->close();
     }

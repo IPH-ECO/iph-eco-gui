@@ -1,8 +1,10 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include <QMainWindow>
+#include <QCloseEvent>
 #include <QFileDialog>
+#include <QMainWindow>
+#include <QSettings>
 
 #include "include/services/project_service.h"
 
@@ -22,25 +24,27 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+protected:
+    void closeEvent(QCloseEvent *);
+
 private slots:
     void on_actionOpenProject_triggered();
     void on_actionSaveAsProject_triggered();
     void on_actionSaveProject_triggered();
-
     void on_actionProjectProperties_triggered();
-
     void on_actionNewProject_triggered();
-
     void on_actionImportUnstructuredGridGeneration_triggered();
-
     void on_actionCloseProject_triggered();
+    void on_actionSobre_triggered();
 
     void enableMenus(bool enable);
-    void on_actionSobre_triggered();
 
 private:
     Ui::MainWindow *ui;
+    QSettings *appSettings;
 
+    void readSettings();
+    void writeSettings();
 };
 
 #endif // MAINWINDOW_H

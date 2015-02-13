@@ -27,7 +27,7 @@ private slots:
     void on_btnBox_clicked(QAbstractButton *button);
 
 signals:
-    void toggleParentMenu(bool enable);
+    void enableParentMenu(bool enable);
 
 private:
     Ui::NewProjectDialog *ui;

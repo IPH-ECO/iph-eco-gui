@@ -8,11 +8,29 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
+    appSettings = new QSettings("4techlabs", "IPH-ECO", this);
+
+    readSettings();
+
     ui->setupUi(this);
 }
 
 MainWindow::~MainWindow() {
     delete ui;
+}
+
+void MainWindow::readSettings() {
+    appSettings->beginGroup("MainWindow");
+    resize(appSettings->value("size", QSize(400, 400)).toSize());
+    move(appSettings->value("pos", QPoint(200, 200)).toPoint());
+    appSettings->endGroup();
+}
+
+void MainWindow::writeSettings() {
+    appSettings->beginGroup("MainWindow");
+    appSettings->setValue("size", size());
+    appSettings->setValue("pos", pos());
+    appSettings->endGroup();
 }
 
 void MainWindow::on_actionOpenProject_triggered() {
@@ -82,8 +100,7 @@ void MainWindow::on_actionImportUnstructuredGridGeneration_triggered() {
     this->setCentralWidget(unstructuredMeshWidget);
 }
 
-void MainWindow::on_actionCloseProject_triggered()
-{
+void MainWindow::on_actionCloseProject_triggered() {
     IPHApplication::setCurrentProject(NULL);
     enableMenus(false);
 }
@@ -100,7 +117,15 @@ void MainWindow::enableMenus(bool enable) {
     ui->actionCloseProject->setEnabled(enable);
 }
 
-void MainWindow::on_actionSobre_triggered()
-{
+void MainWindow::on_actionSobre_triggered() {
+    QMessageBox::about(this, tr("Sobre"), tr("IPH-ECO."));
+}
 
+void MainWindow::closeEvent(QCloseEvent *event) {
+//    if (maybeSave()) { //TODO vai ser usado na ISSUE 11
+        writeSettings();
+//        event->accept();
+//    } else {
+//        event->ignore();
+//    }
 }
