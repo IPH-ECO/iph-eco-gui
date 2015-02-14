@@ -11,7 +11,7 @@ void ProjectService::setApplicationProject(QString &name, QString &description,
     IPHApplication::setCurrentProject(project);
 }
 
-void ProjectService::open(QString &filename) {
+void ProjectService::open(const QString &filename) {
     ProjectDAO projectDAO(filename);
     Project *project = projectDAO.open();
 

@@ -7,7 +7,7 @@ class ProjectDAO {
 private:
     QString databaseName;
 public:
-    ProjectDAO(QString &_databaseName);
+    ProjectDAO(const QString &_databaseName);
 
     Project* open();
     void save(Project *project);

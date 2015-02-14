@@ -38,13 +38,22 @@ private slots:
     void on_actionSobre_triggered();
 
     void enableMenus(bool enable);
+    void openRecent();
 
 private:
+    const int MAX_RECENT_FILES;
+    const QString RECENT_FILES_KEY;
+    const QString DEFAULT_DIR_KEY;
+
     Ui::MainWindow *ui;
     QSettings *appSettings;
 
+    QString getDefaultDirectory();
     void readSettings();
     void writeSettings();
+    void updateRecentFilesList(const QString &_filePath);
+    void updateRecentFilesActionList();
+    void openProject(const QString &filename);
 };
 
 #endif // MAINWINDOW_H

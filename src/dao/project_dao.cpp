@@ -9,7 +9,7 @@
 #include <QVariant>
 #include <QSqlError>
 
-ProjectDAO::ProjectDAO(QString &_databaseName) : databaseName(_databaseName) {}
+ProjectDAO::ProjectDAO(const QString &_databaseName) : databaseName(_databaseName) {}
 
 Project* ProjectDAO::open() {
     QSqlDatabase db = DatabaseUtility::connect(this->databaseName);
