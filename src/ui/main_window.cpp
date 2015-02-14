@@ -29,6 +29,8 @@ MainWindow::~MainWindow() {
 
 //slots
 void MainWindow::on_actionOpenProject_triggered() {
+    on_actionCloseProject_triggered();
+
     const QString filename = QFileDialog::getOpenFileName(this, tr("Select a project file"),
                 getDefaultDirectory(), tr("IPH-ECO Project File (*.iph)"));
 
@@ -143,7 +145,8 @@ QString MainWindow::getDefaultDirectory() {
 }
 
 void MainWindow::openProject(const QString &filename) {
-    if (!filename.isEmpty()) {
+    QDir file(filename);
+    if (file.exists()) {
         appSettings->setValue(DEFAULT_DIR_KEY, QFileInfo(filename).absoluteDir().absolutePath());
 
         try {
@@ -156,11 +159,13 @@ void MainWindow::openProject(const QString &filename) {
         } catch (DatabaseException &ex) {
             QMessageBox::critical(this, "Open Project", ex.what());
         }
+    } else {
+        QMessageBox::critical(this, "Open Project", "File not found.");
     }
 }
 
 void MainWindow::closeEvent(QCloseEvent *closeEvent) {
-//    if (maybeSave()) { //TODO vai ser usado na ISSUE 11
+//    if (maybeSave()) { //TODO vai ser usado na ISSUE 11        
         writeSettings();
         closeEvent->accept();
 //    } else {

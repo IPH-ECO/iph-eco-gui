@@ -1,7 +1,9 @@
 #include "include/utility/database_utility.h"
 
+#include <QUuid>
+
 QSqlDatabase DatabaseUtility::connect(QString &database_name) {
-    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
+    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", QUuid::createUuid().toString());
     db.setDatabaseName(database_name);
 
     if (!db.open()) {
@@ -15,6 +17,7 @@ void DatabaseUtility::disconnect(QSqlDatabase &database) {
     if (database.isOpen()) {
         database.close();
     }
+    QSqlDatabase::removeDatabase(database.connectionName());
 }
 
 void DatabaseUtility::createApplicationDatabase(QSqlDatabase &database) {
