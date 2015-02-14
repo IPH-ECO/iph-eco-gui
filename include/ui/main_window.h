@@ -4,13 +4,14 @@
 #include <QCloseEvent>
 #include <QFileDialog>
 #include <QMainWindow>
+#include <QMdiArea>
 #include <QSettings>
 
 #include "include/services/project_service.h"
 
 #include "new_project_dialog.h"
 #include "project_properties_dialog.h"
-#include "unstructured_mesh_widget.h"
+#include "unstructured_mesh_dialog.h"
 #include "structured_grid_dialog.h"
 
 namespace Ui {
@@ -47,6 +48,7 @@ private:
 
     Ui::MainWindow *ui;
     QSettings *appSettings;
+    QMdiArea *mdiArea;
 
     QString getDefaultDirectory();
     void readSettings();

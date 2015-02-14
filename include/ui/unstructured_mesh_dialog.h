@@ -16,7 +16,7 @@ namespace Ui {
 class UnstructuredMeshWidget;
 }
 
-class UnstructuredMeshWidget : public QWidget {
+class UnstructuredMeshWidget : public QDialog {
     Q_OBJECT
 
 public:

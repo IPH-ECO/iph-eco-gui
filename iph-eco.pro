@@ -23,14 +23,14 @@ SOURCES += \
     src/ui/project_properties_dialog.cpp \
     src/ui/structured_grid_dialog.cpp \
     src/ui/unstructured_grid_dialog.cpp \
-    src/ui/unstructured_mesh_widget.cpp \
     src/utility/database_utility.cpp \
     src/exceptions/mesh_exception.cpp \
     src/domain/unstructured_mesh.cpp \
     src/domain/structured_mesh.cpp \
     src/domain/mesh.cpp \
     src/domain/observers/observable.cpp \
-    src/domain/observers/observer.cpp
+    src/domain/observers/observer.cpp \
+    src/ui/unstructured_mesh_dialog.cpp
 
 HEADERS  += \
     include/domain/project.h \
@@ -43,7 +43,6 @@ HEADERS  += \
     include/ui/project_properties_dialog.h \
     include/ui/structured_grid_dialog.h \
     include/ui/unstructured_grid_dialog.h \
-    include/ui/unstructured_mesh_widget.h \
     include/utility/database_utility.h \
     include/exceptions/mesh_exception.h \
     include/domain/unstructured_mesh.h \
@@ -52,15 +51,16 @@ HEADERS  += \
     include/domain/observers/observable.h \
     include/domain/observers/observer.h \
     include/domain/observers/mesh_observer.h \
-    include/domain/observers/mesh_observable.h
+    include/domain/observers/mesh_observable.h \
+    include/ui/unstructured_mesh_dialog.h
 
 FORMS    += \
-    include/ui/unstructured_mesh_widget.ui \
     include/ui/main_window.ui \
     include/ui/new_project_dialog.ui \
     include/ui/project_properties_dialog.ui \
     include/ui/structured_grid_dialog.ui \
-    include/ui/unstructured_grid_dialog.ui
+    include/ui/unstructured_grid_dialog.ui \
+    include/ui/unstructured_mesh_dialog.ui
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../usr/local/Cellar/geographiclib/1.40/lib/release/ -lGeographic
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../usr/local/Cellar/geographiclib/1.40/lib/debug/ -lGeographic

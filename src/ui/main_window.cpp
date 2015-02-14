@@ -4,14 +4,13 @@
 #include "include/exceptions/database_exception.h"
 #include "include/application/iph_application.h"
 
-#include <QDebug>
-
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     MAX_RECENT_FILES(4),
     RECENT_FILES_KEY("recent_files"),
     DEFAULT_DIR_KEY("default_dir"),
-    ui(new Ui::MainWindow)
+    ui(new Ui::MainWindow),
+    mdiArea(new QMdiArea())
 {
     appSettings = new QSettings(QApplication::organizationName(), QApplication::applicationName(), this);
 
@@ -20,6 +19,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
     updateRecentFilesActionList();
+
+    setCentralWidget(mdiArea);
 }
 
 MainWindow::~MainWindow() {
@@ -78,21 +79,19 @@ void MainWindow::on_actionSaveAsProject_triggered() {
 }
 
 void MainWindow::on_actionNewProject_triggered() {
-    NewProjectDialog *newProjectDialog = new NewProjectDialog(this);
-    newProjectDialog->setAttribute(Qt::WA_DeleteOnClose, true);
-    newProjectDialog->show();
+    NewProjectDialog newProjectDialog(this);
+    newProjectDialog.exec();
 }
 
 void MainWindow::on_actionProjectProperties_triggered() {
-    ProjectPropertiesDialog *projectPropertiesDialog = new ProjectPropertiesDialog(this, IPHApplication::getCurrentProject());
-    projectPropertiesDialog->setAttribute(Qt::WA_DeleteOnClose, true);
-    projectPropertiesDialog->show();
+    ProjectPropertiesDialog projectPropertiesDialog(this, IPHApplication::getCurrentProject());
+    projectPropertiesDialog.exec();
 }
 
 void MainWindow::on_actionImportUnstructuredGridGeneration_triggered() {
     UnstructuredMeshWidget *unstructuredMeshWidget = new UnstructuredMeshWidget(this);
-    unstructuredMeshWidget->setAttribute(Qt::WA_DeleteOnClose);
-    this->setCentralWidget(unstructuredMeshWidget);
+    unstructuredMeshWidget->setModal(true);
+    unstructuredMeshWidget->exec();
 }
 
 void MainWindow::on_actionCloseProject_triggered() {
