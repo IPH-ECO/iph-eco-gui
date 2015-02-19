@@ -30,7 +30,8 @@ SOURCES += \
     src/domain/mesh.cpp \
     src/domain/observers/observable.cpp \
     src/domain/observers/observer.cpp \
-    src/ui/unstructured_mesh_dialog.cpp
+    src/ui/unstructured_mesh_dialog.cpp \
+    src/ui/mesh_opengl_widget.cpp
 
 HEADERS  += \
     include/domain/project.h \
@@ -52,7 +53,8 @@ HEADERS  += \
     include/domain/observers/observer.h \
     include/domain/observers/mesh_observer.h \
     include/domain/observers/mesh_observable.h \
-    include/ui/unstructured_mesh_dialog.h
+    include/ui/unstructured_mesh_dialog.h \
+    include/ui/mesh_opengl_widget.h
 
 FORMS    += \
     include/ui/main_window.ui \

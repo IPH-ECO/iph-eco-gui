@@ -26,7 +26,7 @@ void UnstructuredMeshWidget::on_btnGenerateMesh_clicked() {
     QString meshName = ui->edtMeshName->text();
 
     if (meshName.isEmpty()) {
-        QMessageBox::warning(this, tr("Generate Mesh"), "Please input the mesh name.");
+        QMessageBox::warning(this, tr("Generate Mesh"), tr("Please input the mesh name."));
         return;
     }
 
@@ -35,7 +35,7 @@ void UnstructuredMeshWidget::on_btnGenerateMesh_clicked() {
     QFileInfo boundaryFileInfo(boundaryFile);
 
     if (!boundaryFileInfo.exists() || !boundaryFileInfo.isFile()) {
-        QMessageBox::warning(this, tr("Generate Mesh"), "Boundary file not found.");
+        QMessageBox::warning(this, tr("Generate Mesh"), tr("Boundary file not found."));
         return;
     }
 
@@ -45,8 +45,11 @@ void UnstructuredMeshWidget::on_btnGenerateMesh_clicked() {
     double maximumEdgeLength = ui->sbxMaximumEdgeLength->value();
     UnstructuredMesh unstructuredMesh(meshName, boundaryFileStr, minimumAngle, maximumEdgeLength);
 
-    //TODO: Draw boundary on OpenGL component
-    QJsonObject boundaryJson = unstructuredMesh.getBoundaryJson();
+    try {
+        ui->meshOpenGLWidget->showDomain(unstructuredMesh);
+    } catch (MeshException &ex) {
+        QMessageBox::warning(this, tr("Generate Mesh"), ex.what());
+    }
 }
 
 void UnstructuredMeshWidget::on_btnResetMesh_clicked() {
@@ -91,12 +94,14 @@ void UnstructuredMeshWidget::on_btnRemoveMesh_clicked() {
 
         ui->cbxMeshName->removeItem(ui->cbxMeshName->currentIndex());
         ui->cbxMeshName->setCurrentIndex(-1);
+        ui->meshOpenGLWidget->clearMap();
     }
 }
 
 void UnstructuredMeshWidget::on_btnCancelMesh_clicked() {
     resetMeshForm();
     ui->cbxMeshName->setCurrentIndex(-1);
+    ui->meshOpenGLWidget->clearMap();
 }
 
 void UnstructuredMeshWidget::on_cbxMeshName_currentIndexChanged(int index) {

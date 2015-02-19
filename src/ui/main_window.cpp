@@ -140,12 +140,12 @@ void MainWindow::writeSettings() {
 }
 
 QString MainWindow::getDefaultDirectory() {
-    return appSettings->value(DEFAULT_DIR_KEY).toString().isEmpty() ?
-                QDir::homePath() : appSettings->value(DEFAULT_DIR_KEY).toString();
+    return appSettings->value(DEFAULT_DIR_KEY).toString().isEmpty() ? QDir::homePath() : appSettings->value(DEFAULT_DIR_KEY).toString();
 }
 
 void MainWindow::openProject(const QString &filename) {
-    QDir file(filename);
+    QFile file(filename);
+
     if (file.exists()) {
         appSettings->setValue(DEFAULT_DIR_KEY, QFileInfo(filename).absoluteDir().absolutePath());
 

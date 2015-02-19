@@ -16,6 +16,7 @@ protected:
     bool showEdgesLabels;
 
 public:
+    Mesh();
     Mesh(QString &_name);
     Mesh(QString &_name, QString &_boundaryFilePath);
 
