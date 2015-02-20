@@ -144,6 +144,10 @@ QString MainWindow::getDefaultDirectory() {
 }
 
 void MainWindow::openProject(const QString &filename) {
+    if (filename.isEmpty()) {
+        return;
+    }
+
     QFile file(filename);
 
     if (file.exists()) {
