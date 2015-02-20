@@ -10,6 +10,7 @@ private:
 
 public:
     UnstructuredMesh(QString &_name);
+    UnstructuredMesh(QString &_name, QString &_boundaryFilePath);
     UnstructuredMesh(QString &_name, QString &_boundaryFilePath, double &_minimumAngle, double &_maximumEdgeLength);
 
     void setMinimumAngle(const double &minimumAngle);

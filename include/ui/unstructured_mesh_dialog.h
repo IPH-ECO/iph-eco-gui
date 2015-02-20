@@ -1,5 +1,5 @@
-#ifndef UNSTRUCTURED_MESH_WIDGET_H
-#define UNSTRUCTURED_MESH_WIDGET_H
+#ifndef UNSTRUCTURED_MESH_DIALOG_H
+#define UNSTRUCTURED_MESH_DIALOG_H
 
 #include <QWidget>
 #include <QFileDialog>
@@ -13,15 +13,15 @@
 #include "include/application/iph_application.h"
 
 namespace Ui {
-class UnstructuredMeshWidget;
+class UnstructuredMeshDialog;
 }
 
-class UnstructuredMeshWidget : public QDialog {
+class UnstructuredMeshDialog : public QDialog {
     Q_OBJECT
 
 public:
-    explicit UnstructuredMeshWidget(QWidget *parent = 0);
-    ~UnstructuredMeshWidget();
+    explicit UnstructuredMeshDialog(QWidget *parent = 0);
+    ~UnstructuredMeshDialog();
 
 private slots:
     void on_btnRemoveMesh_clicked();
@@ -35,8 +35,11 @@ private slots:
 
     void on_cbxMeshName_currentIndexChanged(int index);
 
+    // Options
+    void on_chkShowDomainBoundary_clicked();
+
 private:
-    Ui::UnstructuredMeshWidget *ui;    
+    Ui::UnstructuredMeshDialog *ui;
 };
 
-#endif // UNSTRUCTURED_MESH_WIDGET_H
+#endif // UNSTRUCTURED_MESH_DIALOG_H
