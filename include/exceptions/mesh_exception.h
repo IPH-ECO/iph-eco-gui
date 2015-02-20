@@ -1,5 +1,5 @@
-#ifndef GRIDEXCEPTION_H
-#define GRIDEXCEPTION_H
+#ifndef MESH_EXCEPTION_H
+#define MESH_EXCEPTION_H
 
 #include <exception>
 
@@ -14,4 +14,4 @@ public:
     const char* what() const throw();
 };
 
-#endif // GRIDEXCEPTION_H
+#endif // MESH_EXCEPTION_H

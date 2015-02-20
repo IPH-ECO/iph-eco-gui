@@ -12,6 +12,7 @@
 #include <QVector>
 
 #include "include/domain/mesh.h"
+#include "include/exceptions/mesh_exception.h"
 
 class MeshOpenGLWidget : public QOpenGLWidget, protected QOpenGLFunctions {
 private:
@@ -23,6 +24,7 @@ private:
     double minHeight;
     double maxHeight;
 
+    void updateBoundary();
     void parseDomainCoordinates(QJsonArray &jsonCoordinates);
     void parseHoleCoordinates(QJsonArray &jsonCoordinates);
 
@@ -38,7 +40,8 @@ protected:
 public:
     MeshOpenGLWidget(QWidget *parent);
 
-    void showDomain(const Mesh &mesh);
+    void updateCurrentMesh(const Mesh &mesh);
+
     void clearMap();
     void toogleBoundaryDomain(bool show);
 };

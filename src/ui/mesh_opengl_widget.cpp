@@ -20,19 +20,6 @@ void MeshOpenGLWidget::paintGL() {
         return;
     }
 
-    if (this->domainCoordinates.empty()) {
-        QJsonObject boundaryJson = mesh.getBoundaryJson();
-        QJsonArray domainCoordinatesJson = boundaryJson["domain"].toArray();
-        QJsonArray holesJson = boundaryJson["holes"].toArray();
-
-        parseDomainCoordinates(domainCoordinatesJson);
-
-        for (int i = 0; i < holesJson.count(); i++) {
-            QJsonArray holeCoordinates = holesJson.at(i).toArray();
-            parseHoleCoordinates(holeCoordinates);
-        }
-    }
-
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     glOrtho(this->minWidth, this->maxWidth, this->minHeight, this->maxHeight, -1.0, 1.0);
@@ -70,9 +57,31 @@ void MeshOpenGLWidget::paintGL() {
     }
 }
 
-void MeshOpenGLWidget::showDomain(const Mesh &mesh) {
+void MeshOpenGLWidget::updateCurrentMesh(const Mesh &mesh) {
     this->mesh = mesh;
+    this->updateBoundary();
     this->setEnabled(true);
+    update();
+}
+
+void MeshOpenGLWidget::updateBoundary() {
+    this->domainCoordinates.clear();
+    this->holes.clear();
+
+    try {
+        QJsonObject boundaryJson = mesh.getBoundaryJson();
+        QJsonArray domainCoordinatesJson = boundaryJson["domain"].toArray();
+        QJsonArray holesJson = boundaryJson["holes"].toArray();
+
+        parseDomainCoordinates(domainCoordinatesJson);
+
+        for (int i = 0; i < holesJson.count(); i++) {
+            QJsonArray holeCoordinates = holesJson.at(i).toArray();
+            parseHoleCoordinates(holeCoordinates);
+        }
+    } catch (MeshException &e) {
+        throw e;
+    }
 }
 
 void MeshOpenGLWidget::clearMap() {

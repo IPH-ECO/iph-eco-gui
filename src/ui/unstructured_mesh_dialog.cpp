@@ -3,10 +3,7 @@
 
 #include "include/domain/unstructured_mesh.h"
 
-UnstructuredMeshDialog::UnstructuredMeshDialog(QWidget *parent) :
-    QDialog(parent),
-    ui(new Ui::UnstructuredMeshDialog)
-{
+UnstructuredMeshDialog::UnstructuredMeshDialog(QWidget *parent) : QDialog(parent), ui(new Ui::UnstructuredMeshDialog) {
     ui->setupUi(this);
 }
 
@@ -15,23 +12,30 @@ UnstructuredMeshDialog::~UnstructuredMeshDialog() {
 }
 
 void UnstructuredMeshDialog::on_btnBoundaryFileBrowser_clicked() {
-    QString meshName = ui->edtMeshName->text();
     QString boundaryFilePath = QFileDialog::getOpenFileName(this, tr("Select a boundary file"), ".", "Keyhole Markup Language file (*.kml)");
 
-    if (!boundaryFilePath.isEmpty()) {
-        ui->edtBoundaryFileLine->setText(boundaryFilePath);
+    if (boundaryFilePath.isEmpty()) {
+        return;
     }
 
+    QString meshName = ui->edtMeshName->text();
     UnstructuredMesh unstructuredMesh = UnstructuredMesh(meshName, boundaryFilePath);
 
-    ui->meshOpenGLWidget->showDomain(unstructuredMesh);
+    ui->edtBoundaryFileLine->setText(boundaryFilePath);
+
+    try {
+        ui->meshOpenGLWidget->updateCurrentMesh(unstructuredMesh);
+    } catch(MeshException &e) {
+        QMessageBox::critical(this, tr("Unstructured Mesh Generation"), e.what());
+    }
 }
 
 void UnstructuredMeshDialog::on_btnGenerateMesh_clicked() {
     QString meshName = ui->edtMeshName->text();
 
     if (meshName.isEmpty()) {
-        QMessageBox::warning(this, tr("Generate Mesh"), tr("Please input the mesh name."));
+        QMessageBox::warning(this, tr("Unstructured Mesh Generation"), tr("Please input the mesh name."));
+        ui->edtMeshName->setFocus();
         return;
     }
 
@@ -40,20 +44,20 @@ void UnstructuredMeshDialog::on_btnGenerateMesh_clicked() {
     QFileInfo boundaryFileInfo(boundaryFile);
 
     if (!boundaryFileInfo.exists() || !boundaryFileInfo.isFile()) {
-        QMessageBox::warning(this, tr("Generate Mesh"), tr("Boundary file not found."));
+        QMessageBox::warning(this, tr("Unstructured Mesh Generation"), tr("Boundary file not found."));
         return;
     }
 
     enableMeshForm(true);
 
-    double minimumAngle = ui->sbxMinimumAngle->value();
-    double maximumEdgeLength = ui->sbxMaximumEdgeLength->value();
-    UnstructuredMesh unstructuredMesh(meshName, boundaryFileStr, minimumAngle, maximumEdgeLength);
+//    double minimumAngle = ui->sbxMinimumAngle->value();
+//    double maximumEdgeLength = ui->sbxMaximumEdgeLength->value();
+//    UnstructuredMesh unstructuredMesh(meshName, boundaryFileStr, minimumAngle, maximumEdgeLength);
 
     try {
-        ui->meshOpenGLWidget->showDomain(unstructuredMesh);
-    } catch (MeshException &ex) {
-        QMessageBox::warning(this, tr("Generate Mesh"), ex.what());
+        //TODO: Generate mesh
+    } catch(MeshException &e) {
+        QMessageBox::critical(this, tr("Unstructured Mesh Generation"), e.what());
     }
 }
 
@@ -122,6 +126,7 @@ void UnstructuredMeshDialog::on_cbxMeshName_currentIndexChanged(int index) {
         ui->edtBoundaryFileLine->setText(mesh->getBoundaryFilePath());
         ui->sbxMinimumAngle->setValue(mesh->getMinimumAngle());
         ui->sbxMaximumEdgeLength->setValue(mesh->getMaximumEdgeLength());
+        ui->meshOpenGLWidget->updateCurrentMesh(*mesh);
     } else {
         resetMeshForm();
     }
