@@ -10,6 +10,7 @@ class Mesh {
 protected:
     QString name;
     QString boundaryFilePath;
+    bool showDomainBoundary;
     bool showUTMCoordinates;
     bool showVertexesLabels;
     bool showTrianglesLabels;
@@ -25,6 +26,9 @@ public:
 
     void setBoundaryFilePath(const QString &boundaryFilePath);
     QString getBoundaryFilePath() const;
+
+    void setShowDomainBoundary(const bool &show);
+    bool getShowDomainBoundary() const;
 
     void toogleUTMCoordinates(bool &show);
     void toogleVertexesLabels(bool &show);

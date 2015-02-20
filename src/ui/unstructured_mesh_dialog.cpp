@@ -1,28 +1,33 @@
 #include "include/ui/unstructured_mesh_dialog.h"
-#include "ui_unstructured_mesh_widget.h"
+#include "ui_unstructured_mesh_dialog.h"
 
 #include "include/domain/unstructured_mesh.h"
 
-UnstructuredMeshWidget::UnstructuredMeshWidget(QWidget *parent) :
+UnstructuredMeshDialog::UnstructuredMeshDialog(QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::UnstructuredMeshWidget)
+    ui(new Ui::UnstructuredMeshDialog)
 {
     ui->setupUi(this);
 }
 
-UnstructuredMeshWidget::~UnstructuredMeshWidget() {
+UnstructuredMeshDialog::~UnstructuredMeshDialog() {
     delete ui;
 }
 
-void UnstructuredMeshWidget::on_btnBoundaryFileBrowser_clicked() {
+void UnstructuredMeshDialog::on_btnBoundaryFileBrowser_clicked() {
+    QString meshName = ui->edtMeshName->text();
     QString boundaryFilePath = QFileDialog::getOpenFileName(this, tr("Select a boundary file"), ".", "Keyhole Markup Language file (*.kml)");
 
     if (!boundaryFilePath.isEmpty()) {
         ui->edtBoundaryFileLine->setText(boundaryFilePath);
     }
+
+    UnstructuredMesh unstructuredMesh = UnstructuredMesh(meshName, boundaryFilePath);
+
+    ui->meshOpenGLWidget->showDomain(unstructuredMesh);
 }
 
-void UnstructuredMeshWidget::on_btnGenerateMesh_clicked() {
+void UnstructuredMeshDialog::on_btnGenerateMesh_clicked() {
     QString meshName = ui->edtMeshName->text();
 
     if (meshName.isEmpty()) {
@@ -52,12 +57,12 @@ void UnstructuredMeshWidget::on_btnGenerateMesh_clicked() {
     }
 }
 
-void UnstructuredMeshWidget::on_btnResetMesh_clicked() {
+void UnstructuredMeshDialog::on_btnResetMesh_clicked() {
     ui->sbxMinimumAngle->setValue(ui->sbxMinimumAngle->minimum());
     ui->sbxMaximumEdgeLength->setValue(ui->sbxMaximumEdgeLength->minimum());
 }
 
-void UnstructuredMeshWidget::on_btnSaveMesh_clicked() {
+void UnstructuredMeshDialog::on_btnSaveMesh_clicked() {
     QString meshName = ui->cbxMeshName->currentIndex() == -1 ? ui->edtMeshName->text() : ui->cbxMeshName->currentText();
     QString boundaryFile = ui->edtBoundaryFileLine->text();
     double minimumAngle = ui->sbxMinimumAngle->value();
@@ -83,7 +88,7 @@ void UnstructuredMeshWidget::on_btnSaveMesh_clicked() {
     }
 }
 
-void UnstructuredMeshWidget::on_btnRemoveMesh_clicked() {
+void UnstructuredMeshDialog::on_btnRemoveMesh_clicked() {
     QString meshName = ui->cbxMeshName->currentText();
 
     if (QMessageBox::Yes == QMessageBox::question(this, tr("Remove mesh"), tr("Are you sure you want to remove '") + meshName + "'?",
@@ -98,13 +103,13 @@ void UnstructuredMeshWidget::on_btnRemoveMesh_clicked() {
     }
 }
 
-void UnstructuredMeshWidget::on_btnCancelMesh_clicked() {
+void UnstructuredMeshDialog::on_btnCancelMesh_clicked() {
     resetMeshForm();
     ui->cbxMeshName->setCurrentIndex(-1);
     ui->meshOpenGLWidget->clearMap();
 }
 
-void UnstructuredMeshWidget::on_cbxMeshName_currentIndexChanged(int index) {
+void UnstructuredMeshDialog::on_cbxMeshName_currentIndexChanged(int index) {
     if (index > -1) {
         enableMeshForm(true);
         ui->btnRemoveMesh->setEnabled(true);
@@ -122,7 +127,7 @@ void UnstructuredMeshWidget::on_cbxMeshName_currentIndexChanged(int index) {
     }
 }
 
-void UnstructuredMeshWidget::enableMeshForm(bool enable) {
+void UnstructuredMeshDialog::enableMeshForm(bool enable) {
     ui->btnRefineSpecificRegion->setEnabled(enable);
     ui->btnApplyCoarsening->setEnabled(enable);
 
@@ -135,7 +140,7 @@ void UnstructuredMeshWidget::enableMeshForm(bool enable) {
     ui->btnCancelMesh->setEnabled(enable);
 }
 
-void UnstructuredMeshWidget::resetMeshForm() {
+void UnstructuredMeshDialog::resetMeshForm() {
     ui->edtMeshName->setFocus();
 
     ui->edtMeshName->clear();
@@ -144,4 +149,8 @@ void UnstructuredMeshWidget::resetMeshForm() {
 
     ui->btnRemoveMesh->setEnabled(false);
     enableMeshForm(false);
+}
+
+void UnstructuredMeshDialog::on_chkShowDomainBoundary_clicked() {
+    ui->meshOpenGLWidget->toogleBoundaryDomain(ui->chkShowDomainBoundary->isChecked());
 }

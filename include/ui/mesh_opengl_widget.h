@@ -40,6 +40,7 @@ public:
 
     void showDomain(const Mesh &mesh);
     void clearMap();
+    void toogleBoundaryDomain(bool show);
 };
 
 #endif // MESH_OPENGL_WIDGET_H

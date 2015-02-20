@@ -13,7 +13,7 @@ Mesh::Mesh() {}
 
 Mesh::Mesh(QString &_name) : name(_name) {}
 
-Mesh::Mesh(QString &_name, QString &_boundaryFilePath) : name(_name), boundaryFilePath(_boundaryFilePath) {}
+Mesh::Mesh(QString &_name, QString &_boundaryFilePath) : name(_name), boundaryFilePath(_boundaryFilePath), showDomainBoundary(true) {}
 
 void Mesh::setName(const QString &name) {
     this->name = name;
@@ -90,4 +90,12 @@ QJsonObject Mesh::getBoundaryJson() {
     boundaryJsonObject["holes"] = holesJsonArray;
 
     return boundaryJsonObject;
+}
+
+void Mesh::setShowDomainBoundary(const bool &show) {
+    this->showDomainBoundary = show;
+}
+
+bool Mesh::getShowDomainBoundary() const {
+    return this->showDomainBoundary;
 }

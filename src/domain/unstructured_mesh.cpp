@@ -2,6 +2,8 @@
 
 UnstructuredMesh::UnstructuredMesh(QString &_name) : Mesh(_name), minimumAngle(0.125), maximumEdgeLength(0.5) {}
 
+UnstructuredMesh::UnstructuredMesh(QString &_name, QString &_boundaryFilePath) : Mesh(_name, _boundaryFilePath) {}
+
 UnstructuredMesh::UnstructuredMesh(QString &_name, QString &_boundaryFilePath, double &_minimumAngle, double &_maximumEdgeLength) :
     Mesh(_name, _boundaryFilePath), minimumAngle(_minimumAngle), maximumEdgeLength(_maximumEdgeLength)
 {}

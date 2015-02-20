@@ -91,9 +91,9 @@ void MainWindow::on_actionProjectProperties_triggered() {
 }
 
 void MainWindow::on_actionImportUnstructuredGridGeneration_triggered() {
-    UnstructuredMeshWidget *unstructuredMeshWidget = new UnstructuredMeshWidget(this);
-    unstructuredMeshWidget->setModal(true);
-    unstructuredMeshWidget->exec();
+    UnstructuredMeshDialog *unstructuredMeshDialog = new UnstructuredMeshDialog(this);
+    unstructuredMeshDialog->setModal(true);
+    unstructuredMeshDialog->show();
 }
 
 void MainWindow::on_actionCloseProject_triggered() {

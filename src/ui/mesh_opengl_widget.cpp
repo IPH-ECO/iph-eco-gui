@@ -41,6 +41,10 @@ void MeshOpenGLWidget::paintGL() {
     glColor3f(0.0, 0.0, 0.0);
     glPointSize(1.0f);
 
+    if (!mesh.getShowDomainBoundary()) {
+        return;
+    }
+
     glBegin(GL_LINE_LOOP);
     for (int i = 0; i < this->domainCoordinates.count() - 1; i++) {
         QPointF p1 = this->domainCoordinates.at(i);
@@ -75,6 +79,10 @@ void MeshOpenGLWidget::clearMap() {
     this->setEnabled(false);
     this->domainCoordinates.clear();
     this->holes.clear();
+}
+
+void MeshOpenGLWidget::toogleBoundaryDomain(bool show) {
+    this->mesh.setShowDomainBoundary(show);
 }
 
 void MeshOpenGLWidget::parseDomainCoordinates(QJsonArray &jsonCoordinates) {
