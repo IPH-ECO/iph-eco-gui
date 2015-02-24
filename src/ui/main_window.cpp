@@ -90,15 +90,15 @@ void MainWindow::on_actionProjectProperties_triggered() {
     projectPropertiesDialog.exec();
 }
 
-void MainWindow::on_actionImportUnstructuredGridGeneration_triggered() {
-    UnstructuredMeshDialog *unstructuredMeshDialog = new UnstructuredMeshDialog(this);
-    unstructuredMeshDialog->setModal(true);
-    unstructuredMeshDialog->show();
-}
-
 void MainWindow::on_actionCloseProject_triggered() {
     IPHApplication::setCurrentProject(0);
     enableMenus(false);
+}
+
+void MainWindow::on_actionUnstructuredMeshGeneration_triggered() {
+    UnstructuredMeshDialog *unstructuredMeshDialog = new UnstructuredMeshDialog(this);
+    unstructuredMeshDialog->setModal(true);
+    unstructuredMeshDialog->show();
 }
 
 void MainWindow::on_actionSobre_triggered() {

@@ -73,8 +73,8 @@
     <property name="title">
      <string>Preprocessing</string>
     </property>
-    <addaction name="actionImportStructuredGridGeneration"/>
-    <addaction name="actionImportUnstructuredGridGeneration"/>
+    <addaction name="actionStructuredMeshGeneration"/>
+    <addaction name="actionUnstructuredMeshGeneration"/>
    </widget>
    <widget class="QMenu" name="menuInput">
     <property name="enabled">
@@ -142,6 +142,9 @@
    <property name="text">
     <string>Open...</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
+   </property>
   </action>
   <action name="actionSaveProject">
    <property name="enabled">
@@ -150,6 +153,9 @@
    <property name="text">
     <string>Save</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
   </action>
   <action name="actionSaveAsProject">
    <property name="enabled">
@@ -157,6 +163,9 @@
    </property>
    <property name="text">
     <string>Save as...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+S</string>
    </property>
   </action>
   <action name="actionProjectProperties">
@@ -172,14 +181,17 @@
     <string>Exit</string>
    </property>
   </action>
-  <action name="actionImportStructuredGridGeneration">
+  <action name="actionStructuredMeshGeneration">
    <property name="text">
-    <string>Structured Grid Generation</string>
+    <string>Structured Mesh Generation</string>
    </property>
   </action>
-  <action name="actionImportUnstructuredGridGeneration">
+  <action name="actionUnstructuredMeshGeneration">
    <property name="text">
-    <string>Unstructured Grid Generation</string>
+    <string>Unstructured Mesh Generation</string>
+   </property>
+   <property name="iconText">
+    <string>Unstructured Mesh Generation</string>
    </property>
   </action>
   <action name="actionBoundary_Conditions">
@@ -228,6 +240,9 @@
    </property>
    <property name="text">
     <string>Close</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+W</string>
    </property>
   </action>
   <action name="actionSobre">

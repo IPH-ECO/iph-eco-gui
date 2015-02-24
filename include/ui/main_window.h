@@ -34,7 +34,7 @@ private slots:
     void on_actionSaveProject_triggered();
     void on_actionProjectProperties_triggered();
     void on_actionNewProject_triggered();
-    void on_actionImportUnstructuredGridGeneration_triggered();
+    void on_actionUnstructuredMeshGeneration_triggered();
     void on_actionCloseProject_triggered();
     void on_actionSobre_triggered();
 
