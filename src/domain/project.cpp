@@ -1,8 +1,7 @@
 #include "include/domain/project.h"
-
 Project::Project(QString &_name, QString &_description, bool &_hydrodynamic, bool &_sediment, bool &_waterQuality) :
     name(_name), description(_description), hydrodynamic(_hydrodynamic), waterQuality(_waterQuality),
-    sediment(_sediment), meshes(QSet<Mesh>())
+    sediment(_sediment), meshes(QSet<Mesh*>())
 {}
 
 void Project::setId(const qint8 &id) {
@@ -61,7 +60,7 @@ bool Project::getSediment() const {
     return sediment;
 }
 
-bool Project::addMesh(Mesh &mesh) {
+bool Project::addMesh(Mesh *mesh) {
     if (!containsMesh(mesh)) {
         this->meshes.insert(mesh);
         return true;
@@ -69,20 +68,23 @@ bool Project::addMesh(Mesh &mesh) {
     return false;
 }
 
-bool Project::removeMesh(Mesh &mesh) {
-    return this->meshes.remove(mesh);
+void Project::removeMesh(Mesh *mesh) {
+    Mesh *m = getMesh(mesh);
+
+    this->meshes.remove(m);
+    delete m;
 }
 
-bool Project::containsMesh(Mesh &mesh) {
+bool Project::containsMesh(Mesh *mesh) {
     return this->meshes.contains(mesh);
 }
 
-Mesh* Project::getMesh(Mesh &mesh) {
-    QSet<Mesh>::iterator it = qFind(this->meshes.begin(), this->meshes.end(), mesh);
-
-    if (it == this->meshes.end()) {
-        return NULL;
+Mesh* Project::getMesh(Mesh *mesh) {
+    for (QSet<Mesh*>::iterator it = meshes.begin(); it != meshes.end(); it++) {
+        if ((*it)->getName() == mesh->getName() && typeid(*it) == typeid(mesh)) {
+            return *it;
+        }
     }
 
-    return (Mesh*) &(*it);
+    return NULL;
 }

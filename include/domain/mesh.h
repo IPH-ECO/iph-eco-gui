@@ -3,14 +3,18 @@
 
 #include <QHash>
 #include <QJsonObject>
+#include <QVector>
 
-#include <GeographicLib/GeoCoords.hpp>
+#include "mesh_polygon.h"
 
 class Mesh {
 protected:
     QString name;
     QString boundaryFilePath;
+    QVector<MeshPolygon> domain;
+
     bool showDomainBoundary;
+    bool showMesh;
     bool showUTMCoordinates;
     bool showVertexesLabels;
     bool showTrianglesLabels;
@@ -20,6 +24,7 @@ public:
     Mesh();
     Mesh(QString &_name);
     Mesh(QString &_name, QString &_boundaryFilePath);
+    ~Mesh();
 
     void setName(const QString &name);
     QString getName() const;
@@ -29,20 +34,18 @@ public:
 
     void setShowDomainBoundary(const bool &show);
     bool getShowDomainBoundary() const;
+    void setShowMesh(const bool &show);
+    bool getShowMesh() const;
 
     void toogleUTMCoordinates(bool &show);
     void toogleVertexesLabels(bool &show);
 
-    QJsonObject getBoundaryJson();
+    virtual void buildDomain();
+    QVector<MeshPolygon>& getDomain();
+    const MeshPolygon* getBoundaryPolygon();
+
+    virtual void clear();
 };
-
-inline bool operator==(const Mesh &mesh1, const Mesh &mesh2) {
-    return mesh1.getName() == mesh2.getName() && typeid(mesh1) == typeid(mesh2);
-}
-
-inline uint qHash(const Mesh &mesh) {
-    return qHash(mesh.getName() + typeid(mesh).name());
-}
 
 #endif // MESH_H
 
