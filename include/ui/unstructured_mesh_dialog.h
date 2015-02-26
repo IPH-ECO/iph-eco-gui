@@ -8,9 +8,9 @@
 #include <QProgressDialog>
 #include <QJsonObject>
 
-#include "include/exceptions/mesh_exception.h"
-#include "include/domain/observers/mesh_observer.h"
 #include "include/application/iph_application.h"
+#include "include/domain/unstructured_mesh.h"
+#include "include/exceptions/mesh_exception.h"
 
 namespace Ui {
 class UnstructuredMeshDialog;
@@ -30,6 +30,7 @@ private slots:
     void on_btnResetMesh_clicked();
     void on_btnSaveMesh_clicked();
     void on_btnCancelMesh_clicked();
+
     void resetMeshForm();
     void enableMeshForm(bool enable);
 
@@ -40,6 +41,8 @@ private slots:
 
 private:
     Ui::UnstructuredMeshDialog *ui;
+    UnstructuredMesh *unsavedMesh;
+    UnstructuredMesh *currentMesh;
 };
 
 #endif // UNSTRUCTURED_MESH_DIALOG_H

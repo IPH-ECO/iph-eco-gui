@@ -31,7 +31,8 @@ SOURCES += \
     src/domain/observers/observable.cpp \
     src/domain/observers/observer.cpp \
     src/ui/unstructured_mesh_dialog.cpp \
-    src/ui/mesh_opengl_widget.cpp
+    src/ui/unstructured_mesh_opengl_widget.cpp \
+    src/domain/mesh_polygon.cpp
 
 HEADERS  += \
     include/domain/project.h \
@@ -54,7 +55,9 @@ HEADERS  += \
     include/domain/observers/mesh_observer.h \
     include/domain/observers/mesh_observable.h \
     include/ui/unstructured_mesh_dialog.h \
-    include/ui/mesh_opengl_widget.h
+    include/ui/unstructured_mesh_opengl_widget.h \
+    include/utility/delaunay_triangulation_definitions.h \
+    include/domain/mesh_polygon.h
 
 FORMS    += \
     include/ui/main_window.ui \
@@ -64,9 +67,34 @@ FORMS    += \
     include/ui/unstructured_grid_dialog.ui \
     include/ui/unstructured_mesh_dialog.ui
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../usr/local/Cellar/geographiclib/1.40/lib/release/ -lGeographic
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../usr/local/Cellar/geographiclib/1.40/lib/debug/ -lGeographic
-else:unix: LIBS += -L$$PWD/../../../../../usr/local/Cellar/geographiclib/1.40/lib/ -lGeographic
+macx: QMAKE_CXXFLAGS += -Wno-redeclared-class-member
+
+macx: LIBS += -L$$PWD/../../../../../usr/local/Cellar/geographiclib/1.40/lib/ -lGeographic
 
 INCLUDEPATH += $$PWD/../../../../../usr/local/Cellar/geographiclib/1.40/include
 DEPENDPATH += $$PWD/../../../../../usr/local/Cellar/geographiclib/1.40/include
+
+macx: LIBS += -L$$PWD/../../../../../usr/local/Cellar/boost/1.57.0/lib/ -lboost_system
+
+INCLUDEPATH += $$PWD/../../../../../usr/local/Cellar/boost/1.57.0/include
+DEPENDPATH += $$PWD/../../../../../usr/local/Cellar/boost/1.57.0/include
+
+macx: LIBS += -L$$PWD/../../../../../usr/local/Cellar/boost/1.57.0/lib/ -lboost_thread-mt
+
+INCLUDEPATH += $$PWD/../../../../../usr/local/Cellar/boost/1.57.0/include
+DEPENDPATH += $$PWD/../../../../../usr/local/Cellar/boost/1.57.0/include
+
+macx: LIBS += -L$$PWD/../../../../../usr/local/Cellar/gmp/6.0.0a/lib/ -lgmp
+
+INCLUDEPATH += $$PWD/../../../../../usr/local/Cellar/gmp/6.0.0a/include
+DEPENDPATH += $$PWD/../../../../../usr/local/Cellar/gmp/6.0.0a/include
+
+macx: LIBS += -L$$PWD/../../../../../usr/local/Cellar/mpfr/3.1.2-p10/lib/ -lmpfr
+
+INCLUDEPATH += $$PWD/../../../../../usr/local/Cellar/mpfr/3.1.2-p10/include
+DEPENDPATH += $$PWD/../../../../../usr/local/Cellar/mpfr/3.1.2-p10/include
+
+macx: LIBS += -L$$PWD/../../../../../usr/local/Cellar/cgal/4.5.2/lib/ -lCGAL
+
+INCLUDEPATH += $$PWD/../../../../../usr/local/Cellar/cgal/4.5.2/include
+DEPENDPATH += $$PWD/../../../../../usr/local/Cellar/cgal/4.5.2/include

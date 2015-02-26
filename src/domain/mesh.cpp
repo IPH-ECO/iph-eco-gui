@@ -9,11 +9,15 @@
 #include <QJsonDocument>
 #include <QJsonArray>
 
-Mesh::Mesh() {}
+#include <GeographicLib/GeoCoords.hpp>
 
-Mesh::Mesh(QString &_name) : name(_name) {}
+Mesh::Mesh() : showDomainBoundary(true), showMesh(true) {}
 
-Mesh::Mesh(QString &_name, QString &_boundaryFilePath) : name(_name), boundaryFilePath(_boundaryFilePath), showDomainBoundary(true) {}
+Mesh::Mesh(QString &_name) : name(_name), showMesh(true) {}
+
+Mesh::Mesh(QString &_name, QString &_boundaryFilePath) : name(_name), boundaryFilePath(_boundaryFilePath), showDomainBoundary(true), showMesh(true) {}
+
+Mesh::~Mesh() {}
 
 void Mesh::setName(const QString &name) {
     this->name = name;
@@ -31,7 +35,9 @@ QString Mesh::getBoundaryFilePath() const {
     return this->boundaryFilePath;
 }
 
-QJsonObject Mesh::getBoundaryJson() {
+void Mesh::buildDomain() {
+    domain.clear();
+
     QFile boundaryFile(this->getBoundaryFilePath());
 
     if (!boundaryFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
@@ -39,14 +45,14 @@ QJsonObject Mesh::getBoundaryJson() {
     }
 
     QXmlStreamReader kml(&boundaryFile);
-    QJsonArray domainJsonArray, holesJsonArray;
 
     while (!kml.atEnd()) {
         kml.readNext();
 
-        if (((kml.name() == "outerBoundaryIs" && domainJsonArray.isEmpty()) || kml.name() == "innerBoundaryIs") && kml.isStartElement()) {
-            QString boundaryElementName = kml.name().toString();
+        bool isBoundary = kml.name() == "outerBoundaryIs";
+        bool isHole = kml.name() == "innerBoundaryIs";
 
+        if ((isBoundary || isHole) && kml.isStartElement()) {
             do {
                 kml.readNext();
             } while (kml.name() != "coordinates" && !kml.atEnd());
@@ -57,39 +63,35 @@ QJsonObject Mesh::getBoundaryJson() {
 
             // Convert geographic coordinates to UTM coordinates
             QString coordinatesText = kml.readElementText();
-            QJsonArray coordinatesJsonArray;
             QStringList coordinates = coordinatesText.trimmed().split(" ");
+            MeshPolygon meshPolygon(isHole);
 
             for (int i = 0; i < coordinates.count(); i++) {
                 QStringList coordinateStr = coordinates.at(i).split(",");
                 GeographicLib::GeoCoords utmCoordinate(coordinateStr.at(1).toDouble(), coordinateStr.at(0).toDouble());
-                QJsonObject coordinate;
 
-                coordinate["x"] = utmCoordinate.Easting();
-                coordinate["y"] = utmCoordinate.Northing();
-
-                coordinatesJsonArray.push_back(coordinate);
+                meshPolygon.push_back(Point(utmCoordinate.Easting(), utmCoordinate.Northing()));
             }
 
-            if (boundaryElementName == "outerBoundaryIs" && domainJsonArray.isEmpty()) {
-                domainJsonArray = coordinatesJsonArray;
-            } else {
-                holesJsonArray.push_back(coordinatesJsonArray);
-            }
+            domain.push_back(meshPolygon);
         }
     }
 
     boundaryFile.close();
+}
 
-    if (domainJsonArray.isEmpty()) {
-        throw MeshException("Invalid KML file. No domain coordinates found.");
+QVector<MeshPolygon>& Mesh::getDomain() {
+    return domain;
+}
+
+const MeshPolygon* Mesh::getBoundaryPolygon() {
+    QVector<MeshPolygon>::const_iterator it = std::find_if(domain.begin(), domain.end(), MeshPolygon::isBoundaryPolygon);
+
+    if (it == domain.end()) {
+        return NULL;
     }
 
-    QJsonObject boundaryJsonObject;
-    boundaryJsonObject["domain"] = domainJsonArray;
-    boundaryJsonObject["holes"] = holesJsonArray;
-
-    return boundaryJsonObject;
+    return &(*it);
 }
 
 void Mesh::setShowDomainBoundary(const bool &show) {
@@ -98,4 +100,20 @@ void Mesh::setShowDomainBoundary(const bool &show) {
 
 bool Mesh::getShowDomainBoundary() const {
     return this->showDomainBoundary;
+}
+
+void Mesh::setShowMesh(const bool &show) {
+    this->showMesh = show;
+}
+
+bool Mesh::getShowMesh() const {
+    return this->showMesh;
+}
+
+void Mesh::clear() {
+    name.clear();
+    boundaryFilePath.clear();
+    domain.clear();
+    showDomainBoundary = showMesh = true;
+    showUTMCoordinates = showVertexesLabels = showTrianglesLabels = showEdgesLabels = false;
 }
