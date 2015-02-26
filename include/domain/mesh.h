@@ -24,7 +24,7 @@ public:
     Mesh();
     Mesh(QString &_name);
     Mesh(QString &_name, QString &_boundaryFilePath);
-    ~Mesh();
+    virtual ~Mesh();
 
     void setName(const QString &name);
     QString getName() const;

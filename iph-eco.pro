@@ -67,34 +67,34 @@ FORMS    += \
     include/ui/unstructured_grid_dialog.ui \
     include/ui/unstructured_mesh_dialog.ui
 
-QMAKE_CXXFLAGS += -Wredeclared-class-member
+macx: QMAKE_CXXFLAGS += -Wno-redeclared-class-member
 
-INCLUDEPATH += /usr/local/Cellar/boost/1.57.0/include
-
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../usr/local/Cellar/geographiclib/1.40/lib/release/ -lGeographic
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../usr/local/Cellar/geographiclib/1.40/lib/debug/ -lGeographic
-else:unix: LIBS += -L$$PWD/../../../../../usr/local/Cellar/geographiclib/1.40/lib/ -lGeographic
+macx: LIBS += -L$$PWD/../../../../../usr/local/Cellar/geographiclib/1.40/lib/ -lGeographic
 
 INCLUDEPATH += $$PWD/../../../../../usr/local/Cellar/geographiclib/1.40/include
 DEPENDPATH += $$PWD/../../../../../usr/local/Cellar/geographiclib/1.40/include
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../usr/local/Cellar/cgal/4.5/lib/release/ -lCGAL
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../usr/local/Cellar/cgal/4.5/lib/debug/ -lCGAL
-else:unix: LIBS += -L$$PWD/../../../../../usr/local/Cellar/cgal/4.5/lib/ -lCGAL
+macx: LIBS += -L$$PWD/../../../../../usr/local/Cellar/boost/1.57.0/lib/ -lboost_system
 
-INCLUDEPATH += $$PWD/../../../../../usr/local/Cellar/cgal/4.5/include
-DEPENDPATH += $$PWD/../../../../../usr/local/Cellar/cgal/4.5/include
+INCLUDEPATH += $$PWD/../../../../../usr/local/Cellar/boost/1.57.0/include
+DEPENDPATH += $$PWD/../../../../../usr/local/Cellar/boost/1.57.0/include
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../usr/local/Cellar/gmp/6.0.0a/lib/release/ -lgmp
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../usr/local/Cellar/gmp/6.0.0a/lib/debug/ -lgmp
-else:unix: LIBS += -L$$PWD/../../../../../usr/local/Cellar/gmp/6.0.0a/lib/ -lgmp
+macx: LIBS += -L$$PWD/../../../../../usr/local/Cellar/boost/1.57.0/lib/ -lboost_thread-mt
+
+INCLUDEPATH += $$PWD/../../../../../usr/local/Cellar/boost/1.57.0/include
+DEPENDPATH += $$PWD/../../../../../usr/local/Cellar/boost/1.57.0/include
+
+macx: LIBS += -L$$PWD/../../../../../usr/local/Cellar/gmp/6.0.0a/lib/ -lgmp
 
 INCLUDEPATH += $$PWD/../../../../../usr/local/Cellar/gmp/6.0.0a/include
 DEPENDPATH += $$PWD/../../../../../usr/local/Cellar/gmp/6.0.0a/include
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../usr/local/Cellar/mpfr/3.1.2-p10/lib/release/ -lmpfr
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../usr/local/Cellar/mpfr/3.1.2-p10/lib/debug/ -lmpfr
-else:unix: LIBS += -L$$PWD/../../../../../usr/local/Cellar/mpfr/3.1.2-p10/lib/ -lmpfr
+macx: LIBS += -L$$PWD/../../../../../usr/local/Cellar/mpfr/3.1.2-p10/lib/ -lmpfr
 
 INCLUDEPATH += $$PWD/../../../../../usr/local/Cellar/mpfr/3.1.2-p10/include
 DEPENDPATH += $$PWD/../../../../../usr/local/Cellar/mpfr/3.1.2-p10/include
+
+macx: LIBS += -L$$PWD/../../../../../usr/local/Cellar/cgal/4.5.2/lib/ -lCGAL
+
+INCLUDEPATH += $$PWD/../../../../../usr/local/Cellar/cgal/4.5.2/include
+DEPENDPATH += $$PWD/../../../../../usr/local/Cellar/cgal/4.5.2/include
