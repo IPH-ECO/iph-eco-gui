@@ -34,11 +34,11 @@ protected:
 public:
     UnstructuredMeshOpenGLWidget(QWidget *parent);
 
-    void updateCurrentMesh(UnstructuredMesh *mesh);
+    void setMesh(UnstructuredMesh *mesh);
+    void updateCurrentMesh();
     void generateMesh();
 
     void reset();
-    void toogleDomainBoundary(bool show);
 };
 
 #endif // UNSTRUCTURED_MESH_OPENGL_WIDGET_H

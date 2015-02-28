@@ -5,11 +5,16 @@
 #include "include/exceptions/mesh_exception.h"
 #include "mesh.h"
 
+#include <QList>
+
 class UnstructuredMesh : public Mesh {
 private:
     CDT cdt;
     double minimumAngle;
     double maximumEdgeLength;
+
+    void mark_domains(CDT::Face_handle start, int index, QList<CDT::Edge>& border);
+    void mark_domains();
 
 public:
     UnstructuredMesh();

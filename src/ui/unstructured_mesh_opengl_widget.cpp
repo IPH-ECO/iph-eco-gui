@@ -39,7 +39,7 @@ void UnstructuredMeshOpenGLWidget::paintGL() {
         for (int i = 0; i < domain.count(); i++) {
             MeshPolygon meshPolygon = domain.at(i);
 
-            glBegin(GL_LINE_STRIP);
+            glBegin(GL_LINE_LOOP);
             for (MeshPolygon::Vertex_iterator vt = meshPolygon.vertices_begin(); vt != meshPolygon.vertices_end(); vt++) {
                 glVertex2d(vt->x(), vt->y());
             }
@@ -51,21 +51,39 @@ void UnstructuredMeshOpenGLWidget::paintGL() {
         const CDT *cdt = mesh->getCDT();
 
         glBegin(GL_LINES);
-        for (CDT::Finite_edges_iterator ei = cdt->finite_edges_begin(); ei != cdt->finite_edges_end(); ei++) {
-            Point p1 = ei->first->vertex((ei->second + 1) % 3)->point();
-            Point p2 = ei->first->vertex((ei->second + 2) % 3)->point();
+        for (CDT::Finite_faces_iterator fit = cdt->finite_faces_begin(); fit != cdt->finite_faces_end(); ++fit) {
+            if (!fit->info().in_domain()) {
+                continue;
+            }
 
-            glVertex2f(p1.x(), p1.y());
-            glVertex2f(p2.x(), p2.y());
+            for (int i = 0; i < 3; i++) {
+                CDT::Edge e(fit, i);
+
+                if (cdt->is_constrained(e)) {
+                    continue;
+                }
+
+                Point p1 = e.first->vertex((e.second + 1) % 3)->point();
+                Point p2 = e.first->vertex((e.second + 2) % 3)->point();
+
+                glVertex2f(p1.x(), p1.y());
+                glVertex2f(p2.x(), p2.y());
+            }
         }
         glEnd();
     }
 }
 
-void UnstructuredMeshOpenGLWidget::updateCurrentMesh(UnstructuredMesh *_mesh) {
-    QMutexLocker locker(&mutex);
+void UnstructuredMeshOpenGLWidget::setMesh(UnstructuredMesh *mesh) {
+    this->mesh = mesh;
+}
 
-    this->mesh = _mesh;
+void UnstructuredMeshOpenGLWidget::updateCurrentMesh() {
+    if (this->mesh == NULL) {
+        return;
+    }
+
+    QMutexLocker locker(&mutex);
 
     try {
         this->mesh->buildDomain();
@@ -86,10 +104,6 @@ void UnstructuredMeshOpenGLWidget::generateMesh() {
 
 void UnstructuredMeshOpenGLWidget::reset() {
     mesh = NULL;
-}
-
-void UnstructuredMeshOpenGLWidget::toogleDomainBoundary(bool show) {
-    this->mesh->setShowDomainBoundary(show);
 }
 
 void UnstructuredMeshOpenGLWidget::wheelEvent(QWheelEvent *event) {

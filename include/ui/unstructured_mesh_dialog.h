@@ -38,6 +38,7 @@ private slots:
 
     // Options
     void on_chkShowDomainBoundary_clicked();
+    void on_chkShowMesh_clicked();
 
 private:
     Ui::UnstructuredMeshDialog *ui;

@@ -3,6 +3,7 @@
 
 UnstructuredMeshDialog::UnstructuredMeshDialog(QWidget *parent) : QDialog(parent), ui(new Ui::UnstructuredMeshDialog), unsavedMesh(new UnstructuredMesh()), currentMesh(unsavedMesh) {
     ui->setupUi(this);
+    ui->unstructuredMeshOpenGLWidget->setMesh(unsavedMesh);
 }
 
 UnstructuredMeshDialog::~UnstructuredMeshDialog() {
@@ -18,11 +19,10 @@ void UnstructuredMeshDialog::on_btnBoundaryFileBrowser_clicked() {
     }
 
     currentMesh->setBoundaryFilePath(boundaryFilePath);
-
     ui->edtBoundaryFileLine->setText(boundaryFilePath);
 
     try {
-        ui->unstructuredMeshOpenGLWidget->updateCurrentMesh(currentMesh);
+        ui->unstructuredMeshOpenGLWidget->updateCurrentMesh();
     } catch(MeshException &e) {
         QMessageBox::critical(this, tr("Unstructured Mesh Generation"), e.what());
     }
@@ -54,7 +54,8 @@ void UnstructuredMeshDialog::on_btnGenerateMesh_clicked() {
     currentMesh->setMaximumEdgeLength(ui->sbxMaximumEdgeLength->value());
 
     try {
-        ui->unstructuredMeshOpenGLWidget->updateCurrentMesh(currentMesh);
+        ui->unstructuredMeshOpenGLWidget->setMesh(currentMesh);
+        ui->unstructuredMeshOpenGLWidget->updateCurrentMesh();
         ui->unstructuredMeshOpenGLWidget->generateMesh();
     } catch(MeshException &e) {
         QMessageBox::critical(this, tr("Unstructured Mesh Generation"), e.what());
@@ -71,6 +72,8 @@ void UnstructuredMeshDialog::on_btnSaveMesh_clicked() {
     QString boundaryFile = ui->edtBoundaryFileLine->text();
     double minimumAngle = ui->sbxMinimumAngle->value();
     double maximumEdgeLength = ui->sbxMaximumEdgeLength->value();
+    bool showDomainBoundary = ui->chkShowDomainBoundary->isChecked();
+    bool showMesh = ui->chkShowMesh->isChecked();
 
     Project *project = IPHApplication::getCurrentProject();
     UnstructuredMesh unstructuredMesh(meshName);
@@ -78,6 +81,8 @@ void UnstructuredMeshDialog::on_btnSaveMesh_clicked() {
 
     if (currentMesh == NULL && ui->cbxMeshName->currentIndex() == -1) {
         currentMesh = new UnstructuredMesh(meshName, boundaryFile, minimumAngle, maximumEdgeLength);
+        currentMesh->setShowDomainBoundary(showDomainBoundary);
+        currentMesh->setShowMesh(showMesh);
         project->addMesh(currentMesh);
 
         ui->cbxMeshName->addItem(meshName);
@@ -98,8 +103,9 @@ void UnstructuredMeshDialog::on_btnRemoveMesh_clicked() {
     if (QMessageBox::Yes == QMessageBox::question(this, tr("Remove mesh"), tr("Are you sure you want to remove '") + meshName + "'?",
                                           QMessageBox::Yes|QMessageBox::No)) {
 
-        UnstructuredMesh unstructuredMesh(meshName);
-        IPHApplication::getCurrentProject()->removeMesh(&unstructuredMesh);
+        UnstructuredMesh *removedMesh = currentMesh;
+        currentMesh = unsavedMesh;
+        IPHApplication::getCurrentProject()->removeMesh(removedMesh);
 
         ui->cbxMeshName->removeItem(ui->cbxMeshName->currentIndex());
         ui->cbxMeshName->setCurrentIndex(-1);
@@ -108,9 +114,11 @@ void UnstructuredMeshDialog::on_btnRemoveMesh_clicked() {
 }
 
 void UnstructuredMeshDialog::on_btnCancelMesh_clicked() {
+    if (ui->btnCancelMesh->text() == "Done") {
+        ui->btnCancelMesh->setText("Cancel");
+    }
     resetMeshForm();
     ui->cbxMeshName->setCurrentIndex(-1);
-    ui->unstructuredMeshOpenGLWidget->reset();
 }
 
 void UnstructuredMeshDialog::on_cbxMeshName_currentIndexChanged(int index) {
@@ -126,8 +134,12 @@ void UnstructuredMeshDialog::on_cbxMeshName_currentIndexChanged(int index) {
         ui->edtBoundaryFileLine->setText(currentMesh->getBoundaryFilePath());
         ui->sbxMinimumAngle->setValue(currentMesh->getMinimumAngle());
         ui->sbxMaximumEdgeLength->setValue(currentMesh->getMaximumEdgeLength());
+        ui->chkShowDomainBoundary->setChecked(currentMesh->getShowDomainBoundary());
+        ui->chkShowMesh->setChecked(currentMesh->getShowMesh());
+        ui->btnCancelMesh->setText("Done");
 
-        ui->unstructuredMeshOpenGLWidget->updateCurrentMesh(currentMesh);
+        ui->unstructuredMeshOpenGLWidget->setMesh(currentMesh);
+        ui->unstructuredMeshOpenGLWidget->updateCurrentMesh();
         ui->unstructuredMeshOpenGLWidget->generateMesh();
     } else {
         resetMeshForm();
@@ -138,6 +150,7 @@ void UnstructuredMeshDialog::enableMeshForm(bool enable) {
     ui->btnRefineSpecificRegion->setEnabled(enable);
     ui->btnApplyCoarsening->setEnabled(enable);
 
+    ui->chkShowMesh->setEnabled(enable);
     ui->chkShowEdges->setEnabled(enable);
     ui->chkShowTriangles->setEnabled(enable);
     ui->chkShowUtmCoordinates->setEnabled(enable);
@@ -158,8 +171,13 @@ void UnstructuredMeshDialog::resetMeshForm() {
     enableMeshForm(false);
 
     currentMesh = unsavedMesh;
+    ui->unstructuredMeshOpenGLWidget->setMesh(NULL);
 }
 
 void UnstructuredMeshDialog::on_chkShowDomainBoundary_clicked() {
-    ui->unstructuredMeshOpenGLWidget->toogleDomainBoundary(ui->chkShowDomainBoundary->isChecked());
+    currentMesh->setShowDomainBoundary(ui->chkShowDomainBoundary->isChecked());
+}
+
+void UnstructuredMeshDialog::on_chkShowMesh_clicked() {
+    currentMesh->setShowMesh(ui->chkShowMesh->isChecked());
 }

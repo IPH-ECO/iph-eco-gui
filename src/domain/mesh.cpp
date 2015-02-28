@@ -66,7 +66,7 @@ void Mesh::buildDomain() {
             QStringList coordinates = coordinatesText.trimmed().split(" ");
             MeshPolygon meshPolygon(isHole);
 
-            for (int i = 0; i < coordinates.count(); i++) {
+            for (int i = 0; i < coordinates.count() - 1; i++) {
                 QStringList coordinateStr = coordinates.at(i).split(",");
                 GeographicLib::GeoCoords utmCoordinate(coordinateStr.at(1).toDouble(), coordinateStr.at(0).toDouble());
 
