@@ -27,7 +27,6 @@ private slots:
     void on_btnRemoveMesh_clicked();
     void on_btnBoundaryFileBrowser_clicked();
     void on_btnGenerateMesh_clicked();
-    void on_btnResetMesh_clicked();
     void on_btnSaveMesh_clicked();
     void on_btnCancelMesh_clicked();
 

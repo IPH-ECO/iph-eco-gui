@@ -117,3 +117,23 @@ void Mesh::clear() {
     showDomainBoundary = showMesh = true;
     showUTMCoordinates = showVertexesLabels = showTrianglesLabels = showEdgesLabels = false;
 }
+
+double Mesh::height() {
+    const MeshPolygon *boundaryPolygon = getBoundaryPolygon();
+
+    if (boundaryPolygon == NULL) {
+        return 0.0;
+    }
+
+    return boundaryPolygon->top_vertex()->y() - boundaryPolygon->bottom_vertex()->y();
+}
+
+double Mesh::width() {
+    const MeshPolygon *boundaryPolygon = getBoundaryPolygon();
+
+    if (boundaryPolygon == NULL) {
+        return 0.0;
+    }
+
+    return boundaryPolygon->right_vertex()->x() - boundaryPolygon->left_vertex()->x();
+}

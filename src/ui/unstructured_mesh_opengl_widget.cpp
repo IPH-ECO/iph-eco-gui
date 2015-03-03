@@ -78,7 +78,7 @@ void UnstructuredMeshOpenGLWidget::setMesh(UnstructuredMesh *mesh) {
     this->mesh = mesh;
 }
 
-void UnstructuredMeshOpenGLWidget::updateCurrentMesh() {
+void UnstructuredMeshOpenGLWidget::generateDomain() {
     if (this->mesh == NULL) {
         return;
     }
@@ -100,10 +100,6 @@ void UnstructuredMeshOpenGLWidget::generateMesh() {
     } catch (MeshException &e) {
         throw e;
     }
-}
-
-void UnstructuredMeshOpenGLWidget::reset() {
-    mesh = NULL;
 }
 
 void UnstructuredMeshOpenGLWidget::wheelEvent(QWheelEvent *event) {

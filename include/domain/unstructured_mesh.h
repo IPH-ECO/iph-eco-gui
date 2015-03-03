@@ -9,6 +9,9 @@
 
 class UnstructuredMesh : public Mesh {
 private:
+    const double DEFAULT_MINIMUM_ANGLE;
+    const double DEFAULT_MINIMUM_EDGE_LENGTH;
+
     CDT cdt;
     double minimumAngle;
     double maximumEdgeLength;

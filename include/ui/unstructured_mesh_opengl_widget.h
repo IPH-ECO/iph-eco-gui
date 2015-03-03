@@ -3,8 +3,6 @@
 
 #include <QOpenGLWidget>
 #include <QOpenGLFunctions>
-#include <QJsonObject>
-#include <QJsonArray>
 #include <QMouseEvent>
 #include <QWheelEvent>
 #include <QDebug>
@@ -35,10 +33,8 @@ public:
     UnstructuredMeshOpenGLWidget(QWidget *parent);
 
     void setMesh(UnstructuredMesh *mesh);
-    void updateCurrentMesh();
+    void generateDomain();
     void generateMesh();
-
-    void reset();
 };
 
 #endif // UNSTRUCTURED_MESH_OPENGL_WIDGET_H

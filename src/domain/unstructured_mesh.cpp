@@ -1,13 +1,14 @@
 #include "include/domain/unstructured_mesh.h"
 
-UnstructuredMesh::UnstructuredMesh() {}
+UnstructuredMesh::UnstructuredMesh() : DEFAULT_MINIMUM_ANGLE(0.125), DEFAULT_MINIMUM_EDGE_LENGTH(0.5) {}
 
-UnstructuredMesh::UnstructuredMesh(QString &_name) : Mesh(_name), minimumAngle(0.125), maximumEdgeLength(0.5) {}
+UnstructuredMesh::UnstructuredMesh(QString &_name) :
+    Mesh(_name), DEFAULT_MINIMUM_ANGLE(0.125), DEFAULT_MINIMUM_EDGE_LENGTH(0.5), minimumAngle(DEFAULT_MINIMUM_ANGLE), maximumEdgeLength(DEFAULT_MINIMUM_EDGE_LENGTH) {}
 
-UnstructuredMesh::UnstructuredMesh(QString &_name, QString &_boundaryFilePath) : Mesh(_name, _boundaryFilePath) {}
+UnstructuredMesh::UnstructuredMesh(QString &_name, QString &_boundaryFilePath) : Mesh(_name, _boundaryFilePath), DEFAULT_MINIMUM_ANGLE(0.125), DEFAULT_MINIMUM_EDGE_LENGTH(0.5) {}
 
 UnstructuredMesh::UnstructuredMesh(QString &_name, QString &_boundaryFilePath, double &_minimumAngle, double &_maximumEdgeLength) :
-    Mesh(_name, _boundaryFilePath), minimumAngle(_minimumAngle), maximumEdgeLength(_maximumEdgeLength)
+    Mesh(_name, _boundaryFilePath), DEFAULT_MINIMUM_ANGLE(0.125), DEFAULT_MINIMUM_EDGE_LENGTH(0.5), minimumAngle(_minimumAngle), maximumEdgeLength(_maximumEdgeLength)
 {}
 
 void UnstructuredMesh::setMinimumAngle(const double &minimumAngle) {
@@ -60,14 +61,25 @@ const CDT* UnstructuredMesh::getCDT() {
 
 void UnstructuredMesh::buildDomain() {
     cdt.clear();
+
     Mesh::buildDomain();
+
+    double smallEdgeLength = (this->height() > this->width() ? width() : height()) / 10;
+
+    if (smallEdgeLength < DEFAULT_MINIMUM_EDGE_LENGTH) {
+        maximumEdgeLength = DEFAULT_MINIMUM_EDGE_LENGTH;
+    } else {
+        maximumEdgeLength = smallEdgeLength;
+    }
 }
 
 void UnstructuredMesh::clear() {
     Mesh::clear();
     cdt.clear();
-    minimumAngle = 0.125;
-    maximumEdgeLength = 0.5;
+    name.clear();
+    boundaryFilePath.clear();
+    minimumAngle = DEFAULT_MINIMUM_ANGLE;
+    maximumEdgeLength = DEFAULT_MINIMUM_EDGE_LENGTH;
 }
 
 void UnstructuredMesh::mark_domains(CDT::Face_handle start, int index, QList<CDT::Edge>& border) {

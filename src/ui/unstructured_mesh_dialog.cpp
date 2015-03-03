@@ -20,9 +20,12 @@ void UnstructuredMeshDialog::on_btnBoundaryFileBrowser_clicked() {
 
     currentMesh->setBoundaryFilePath(boundaryFilePath);
     ui->edtBoundaryFileLine->setText(boundaryFilePath);
+    ui->unstructuredMeshOpenGLWidget->setMesh(currentMesh);
 
     try {
-        ui->unstructuredMeshOpenGLWidget->updateCurrentMesh();
+        ui->unstructuredMeshOpenGLWidget->generateDomain();
+        ui->sbxMaximumEdgeLength->setValue(currentMesh->getMaximumEdgeLength());
+        ui->sbxMaximumEdgeLength->setMaximum(currentMesh->height() > currentMesh->width() ? currentMesh->width() : currentMesh->height());
     } catch(MeshException &e) {
         QMessageBox::critical(this, tr("Unstructured Mesh Generation"), e.what());
     }
@@ -55,16 +58,11 @@ void UnstructuredMeshDialog::on_btnGenerateMesh_clicked() {
 
     try {
         ui->unstructuredMeshOpenGLWidget->setMesh(currentMesh);
-        ui->unstructuredMeshOpenGLWidget->updateCurrentMesh();
+        ui->unstructuredMeshOpenGLWidget->generateDomain();
         ui->unstructuredMeshOpenGLWidget->generateMesh();
     } catch(MeshException &e) {
         QMessageBox::critical(this, tr("Unstructured Mesh Generation"), e.what());
     }
-}
-
-void UnstructuredMeshDialog::on_btnResetMesh_clicked() {
-    ui->sbxMinimumAngle->setValue(ui->sbxMinimumAngle->minimum());
-    ui->sbxMaximumEdgeLength->setValue(ui->sbxMaximumEdgeLength->minimum());
 }
 
 void UnstructuredMeshDialog::on_btnSaveMesh_clicked() {
@@ -109,7 +107,7 @@ void UnstructuredMeshDialog::on_btnRemoveMesh_clicked() {
 
         ui->cbxMeshName->removeItem(ui->cbxMeshName->currentIndex());
         ui->cbxMeshName->setCurrentIndex(-1);
-        ui->unstructuredMeshOpenGLWidget->reset();
+        ui->unstructuredMeshOpenGLWidget->setMesh(NULL);
     }
 }
 
@@ -117,6 +115,7 @@ void UnstructuredMeshDialog::on_btnCancelMesh_clicked() {
     if (ui->btnCancelMesh->text() == "Done") {
         ui->btnCancelMesh->setText("Cancel");
     }
+
     resetMeshForm();
     ui->cbxMeshName->setCurrentIndex(-1);
 }
@@ -139,7 +138,7 @@ void UnstructuredMeshDialog::on_cbxMeshName_currentIndexChanged(int index) {
         ui->btnCancelMesh->setText("Done");
 
         ui->unstructuredMeshOpenGLWidget->setMesh(currentMesh);
-        ui->unstructuredMeshOpenGLWidget->updateCurrentMesh();
+        ui->unstructuredMeshOpenGLWidget->generateDomain();
         ui->unstructuredMeshOpenGLWidget->generateMesh();
     } else {
         resetMeshForm();
@@ -161,17 +160,18 @@ void UnstructuredMeshDialog::enableMeshForm(bool enable) {
 }
 
 void UnstructuredMeshDialog::resetMeshForm() {
-    ui->edtMeshName->setFocus();
+    unsavedMesh->clear();
+    currentMesh = unsavedMesh;
+    ui->unstructuredMeshOpenGLWidget->setMesh(NULL);
 
-    ui->edtMeshName->clear();
-    ui->edtBoundaryFileLine->clear();
-    on_btnResetMesh_clicked();
+    ui->edtMeshName->setFocus();
+    ui->edtMeshName->setText(unsavedMesh->getName());
+    ui->edtBoundaryFileLine->setText(unsavedMesh->getBoundaryFilePath());
+    ui->sbxMaximumEdgeLength->setValue(unsavedMesh->getMaximumEdgeLength());
+    ui->sbxMinimumAngle->setValue(unsavedMesh->getMinimumAngle());
 
     ui->btnRemoveMesh->setEnabled(false);
     enableMeshForm(false);
-
-    currentMesh = unsavedMesh;
-    ui->unstructuredMeshOpenGLWidget->setMesh(NULL);
 }
 
 void UnstructuredMeshDialog::on_chkShowDomainBoundary_clicked() {

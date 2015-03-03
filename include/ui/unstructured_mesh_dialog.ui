@@ -137,54 +137,6 @@
         <property name="bottomMargin">
          <number>10</number>
         </property>
-        <item row="0" column="0">
-         <widget class="QLabel" name="lblAngleTriangles">
-          <property name="text">
-           <string>Minimum Angle of Triangles (degrees)</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="1">
-         <widget class="QDoubleSpinBox" name="sbxMaximumEdgeLength">
-          <property name="enabled">
-           <bool>true</bool>
-          </property>
-          <property name="decimals">
-           <number>2</number>
-          </property>
-          <property name="minimum">
-           <double>0.500000000000000</double>
-          </property>
-          <property name="maximum">
-           <double>1000.000000000000000</double>
-          </property>
-          <property name="singleStep">
-           <double>0.010000000000000</double>
-          </property>
-          <property name="value">
-           <double>100.000000000000000</double>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1">
-         <widget class="QDoubleSpinBox" name="sbxMinimumAngle">
-          <property name="enabled">
-           <bool>true</bool>
-          </property>
-          <property name="decimals">
-           <number>3</number>
-          </property>
-          <property name="minimum">
-           <double>0.125000000000000</double>
-          </property>
-          <property name="maximum">
-           <double>1000.000000000000000</double>
-          </property>
-          <property name="singleStep">
-           <double>0.001000000000000</double>
-          </property>
-         </widget>
-        </item>
         <item row="2" column="0">
          <layout class="QFormLayout" name="formLayout">
           <property name="formAlignment">
@@ -209,28 +161,57 @@
             </property>
            </widget>
           </item>
-          <item row="0" column="1">
-           <widget class="QPushButton" name="btnResetMesh">
-            <property name="enabled">
-             <bool>true</bool>
-            </property>
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="text">
-             <string>Reset</string>
-            </property>
-           </widget>
-          </item>
          </layout>
         </item>
         <item row="1" column="0">
          <widget class="QLabel" name="lblMaximumEdgeTriangles">
           <property name="text">
-           <string>Maximum Edge Length of Triangles</string>
+           <string>Maximum Edge Length of Triangles (m)</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="2">
+         <widget class="QDoubleSpinBox" name="sbxMinimumAngle">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
+          <property name="decimals">
+           <number>3</number>
+          </property>
+          <property name="minimum">
+           <double>0.125000000000000</double>
+          </property>
+          <property name="maximum">
+           <double>1000.000000000000000</double>
+          </property>
+          <property name="singleStep">
+           <double>0.001000000000000</double>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="0">
+         <widget class="QLabel" name="lblAngleTriangles">
+          <property name="text">
+           <string>Minimum Angle of Triangles (degrees)</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="2">
+         <widget class="QDoubleSpinBox" name="sbxMaximumEdgeLength">
+          <property name="decimals">
+           <number>1</number>
+          </property>
+          <property name="minimum">
+           <double>0.500000000000000</double>
+          </property>
+          <property name="maximum">
+           <double>999999.000000000000000</double>
+          </property>
+          <property name="singleStep">
+           <double>0.100000000000000</double>
+          </property>
+          <property name="value">
+           <double>0.500000000000000</double>
           </property>
          </widget>
         </item>
@@ -432,9 +413,7 @@
   <tabstop>edtBoundaryFileLine</tabstop>
   <tabstop>btnBoundaryFileBrowser</tabstop>
   <tabstop>sbxMinimumAngle</tabstop>
-  <tabstop>sbxMaximumEdgeLength</tabstop>
   <tabstop>btnGenerateMesh</tabstop>
-  <tabstop>btnResetMesh</tabstop>
   <tabstop>btnRefineSpecificRegion</tabstop>
   <tabstop>btnApplyCoarsening</tabstop>
   <tabstop>chkShowDomainBoundary</tabstop>

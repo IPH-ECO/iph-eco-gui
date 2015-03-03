@@ -44,6 +44,9 @@ public:
     QVector<MeshPolygon>& getDomain();
     const MeshPolygon* getBoundaryPolygon();
 
+    double height();
+    double width();
+
     virtual void clear();
 };
 
