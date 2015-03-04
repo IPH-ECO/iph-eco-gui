@@ -50,10 +50,6 @@ HEADERS  += \
     include/domain/unstructured_mesh.h \
     include/domain/structured_mesh.h \
     include/domain/mesh.h \
-    include/domain/observers/observable.h \
-    include/domain/observers/observer.h \
-    include/domain/observers/mesh_observer.h \
-    include/domain/observers/mesh_observable.h \
     include/ui/unstructured_mesh_dialog.h \
     include/ui/unstructured_mesh_opengl_widget.h \
     include/utility/delaunay_triangulation_definitions.h \

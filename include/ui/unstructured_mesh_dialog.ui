@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>997</width>
+    <width>1001</width>
     <height>660</height>
    </rect>
   </property>
@@ -138,30 +138,27 @@
          <number>10</number>
         </property>
         <item row="2" column="0">
-         <layout class="QFormLayout" name="formLayout">
-          <property name="formAlignment">
-           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+         <widget class="QPushButton" name="btnGenerateMesh">
+          <property name="enabled">
+           <bool>true</bool>
           </property>
-          <property name="horizontalSpacing">
-           <number>-1</number>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
           </property>
-          <item row="0" column="0">
-           <widget class="QPushButton" name="btnGenerateMesh">
-            <property name="enabled">
-             <bool>true</bool>
-            </property>
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="text">
-             <string>Generate Mesh</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
+          <property name="text">
+           <string>Generate Mesh</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="0">
+         <widget class="QLabel" name="lblAngleTriangles">
+          <property name="text">
+           <string>Minimum Angle of Triangles (degrees)</string>
+          </property>
+         </widget>
         </item>
         <item row="1" column="0">
          <widget class="QLabel" name="lblMaximumEdgeTriangles">
@@ -170,7 +167,7 @@
           </property>
          </widget>
         </item>
-        <item row="0" column="2">
+        <item row="0" column="1">
          <widget class="QDoubleSpinBox" name="sbxMinimumAngle">
           <property name="enabled">
            <bool>true</bool>
@@ -189,14 +186,7 @@
           </property>
          </widget>
         </item>
-        <item row="0" column="0">
-         <widget class="QLabel" name="lblAngleTriangles">
-          <property name="text">
-           <string>Minimum Angle of Triangles (degrees)</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="2">
+        <item row="1" column="1">
          <widget class="QDoubleSpinBox" name="sbxMaximumEdgeLength">
           <property name="decimals">
            <number>1</number>
@@ -413,7 +403,6 @@
   <tabstop>edtBoundaryFileLine</tabstop>
   <tabstop>btnBoundaryFileBrowser</tabstop>
   <tabstop>sbxMinimumAngle</tabstop>
-  <tabstop>btnGenerateMesh</tabstop>
   <tabstop>btnRefineSpecificRegion</tabstop>
   <tabstop>btnApplyCoarsening</tabstop>
   <tabstop>chkShowDomainBoundary</tabstop>

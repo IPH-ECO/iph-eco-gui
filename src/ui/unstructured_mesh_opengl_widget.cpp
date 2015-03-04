@@ -83,8 +83,6 @@ void UnstructuredMeshOpenGLWidget::generateDomain() {
         return;
     }
 
-    QMutexLocker locker(&mutex);
-
     try {
         this->mesh->buildDomain();
         update();
