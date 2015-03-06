@@ -38,13 +38,18 @@ void UnstructuredMesh::generate() {
         return; // Mesh already generated
     }
 
-    cdt.insert(boundaryPolygon->vertices_begin(), boundaryPolygon->vertices_end());
+    for (int i = 0; i < domain.size(); i++) {
+        MeshPolygon meshPolygon = domain.at(i);
+        ulong polygonVerticesCount = meshPolygon.size();
 
-    for (unsigned long i = 0; i < boundaryPolygon->size(); i++) {
-        Point p1 = (*boundaryPolygon)[i];
-        Point p2 = (*boundaryPolygon)[i == boundaryPolygon->size() - 1 ? 0 : i + 1];
+        cdt.insert(meshPolygon.vertices_begin(), meshPolygon.vertices_end());
 
-        cdt.insert_constraint(p1, p2);
+        for (ulong j = 0; j < polygonVerticesCount; j++) {
+            Point p1 = meshPolygon[j];
+            Point p2 = meshPolygon[j == polygonVerticesCount - 1 ? 0 : j + 1];
+
+            cdt.insert_constraint(p1, p2);
+        }
     }
 
     Criteria criteria(minimumAngle, maximumEdgeLength);
