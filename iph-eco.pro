@@ -55,7 +55,6 @@ FORMS    += \
     include/ui/main_window.ui \
     include/ui/new_project_dialog.ui \
     include/ui/project_properties_dialog.ui \
-    include/ui/structured_grid_dialog.ui \
     include/ui/unstructured_mesh_dialog.ui
 
 macx: QMAKE_CXXFLAGS += -Wno-redeclared-class-member
