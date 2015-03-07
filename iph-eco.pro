@@ -21,8 +21,6 @@ SOURCES += \
     src/ui/main_window.cpp \
     src/ui/new_project_dialog.cpp \
     src/ui/project_properties_dialog.cpp \
-    src/ui/structured_grid_dialog.cpp \
-    src/ui/unstructured_grid_dialog.cpp \
     src/utility/database_utility.cpp \
     src/exceptions/mesh_exception.cpp \
     src/domain/unstructured_mesh.cpp \
@@ -43,8 +41,6 @@ HEADERS  += \
     include/ui/main_window.h \
     include/ui/new_project_dialog.h \
     include/ui/project_properties_dialog.h \
-    include/ui/structured_grid_dialog.h \
-    include/ui/unstructured_grid_dialog.h \
     include/utility/database_utility.h \
     include/exceptions/mesh_exception.h \
     include/domain/unstructured_mesh.h \
@@ -60,7 +56,6 @@ FORMS    += \
     include/ui/new_project_dialog.ui \
     include/ui/project_properties_dialog.ui \
     include/ui/structured_grid_dialog.ui \
-    include/ui/unstructured_grid_dialog.ui \
     include/ui/unstructured_mesh_dialog.ui
 
 macx: QMAKE_CXXFLAGS += -Wno-redeclared-class-member
