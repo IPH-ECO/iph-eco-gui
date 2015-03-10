@@ -60,6 +60,10 @@ bool Project::getSediment() const {
     return sediment;
 }
 
+const QSet<Mesh*> Project::getMeshes() {
+    return meshes;
+}
+
 bool Project::addMesh(Mesh *mesh) {
     if (!containsMesh(mesh)) {
         this->meshes.insert(mesh);

@@ -40,6 +40,8 @@ class Project {
         void setSediment(const bool &sediment);
         bool getSediment() const;
 
+        const QSet<Mesh*> getMeshes();
+
         bool addMesh(Mesh *mesh);
         void removeMesh(Mesh *mesh);
         bool containsMesh(Mesh *mesh);

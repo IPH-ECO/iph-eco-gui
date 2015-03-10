@@ -1,9 +1,32 @@
 #include "include/ui/unstructured_mesh_dialog.h"
 #include "ui_unstructured_mesh_dialog.h"
 
-UnstructuredMeshDialog::UnstructuredMeshDialog(QWidget *parent) : QDialog(parent), ui(new Ui::UnstructuredMeshDialog), unsavedMesh(new UnstructuredMesh()), currentMesh(unsavedMesh) {
+UnstructuredMeshDialog::UnstructuredMeshDialog(QWidget *parent) :
+    QDialog(parent),
+    ui(new Ui::UnstructuredMeshDialog),
+    unsavedMesh(new UnstructuredMesh()),
+    currentMesh(unsavedMesh),
+    BOUNDARY_DEFAULT_DIR_KEY("boundary_default_dir")
+{
+
     ui->setupUi(this);
     ui->unstructuredMeshOpenGLWidget->setMesh(unsavedMesh);
+
+    appSettings = new QSettings(QApplication::organizationName(), QApplication::applicationName(), this);
+
+    Project *project = IPHApplication::getCurrentProject();
+
+    QSet<Mesh*> meshes = project->getMeshes();
+
+    QSet<Mesh*>::iterator i;
+    for (i = meshes.begin(); i != meshes.end(); ++i) {
+        ui->cbxMeshName->addItem((*i)->getName());
+    }
+    ui->cbxMeshName->setCurrentIndex(-1);
+}
+
+QString UnstructuredMeshDialog::getDefaultDirectory() {
+    return appSettings->value(BOUNDARY_DEFAULT_DIR_KEY).toString().isEmpty() ? QDir::homePath() : appSettings->value(BOUNDARY_DEFAULT_DIR_KEY).toString();
 }
 
 UnstructuredMeshDialog::~UnstructuredMeshDialog() {
@@ -12,11 +35,13 @@ UnstructuredMeshDialog::~UnstructuredMeshDialog() {
 }
 
 void UnstructuredMeshDialog::on_btnBoundaryFileBrowser_clicked() {
-    QString boundaryFilePath = QFileDialog::getOpenFileName(this, tr("Select a boundary file"), ".", "Keyhole Markup Language file (*.kml)");
+    QString boundaryFilePath = QFileDialog::getOpenFileName(this, tr("Select a boundary file"), getDefaultDirectory(), "Keyhole Markup Language file (*.kml)");
 
     if (boundaryFilePath.isEmpty()) {
         return;
     }
+
+    appSettings->setValue(BOUNDARY_DEFAULT_DIR_KEY, QFileInfo(boundaryFilePath).absolutePath());
 
     currentMesh->setBoundaryFilePath(boundaryFilePath);
     ui->edtBoundaryFileLine->setText(boundaryFilePath);

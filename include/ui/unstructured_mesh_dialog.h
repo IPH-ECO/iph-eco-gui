@@ -6,6 +6,7 @@
 #include <QInputDialog>
 #include <QMessageBox>
 #include <QProgressDialog>
+#include <QSettings>
 #include <QJsonObject>
 
 #include "include/application/iph_application.h"
@@ -40,9 +41,14 @@ private slots:
     void on_chkShowMesh_clicked();
 
 private:
+    const QString BOUNDARY_DEFAULT_DIR_KEY;
+
     Ui::UnstructuredMeshDialog *ui;
     UnstructuredMesh *unsavedMesh;
     UnstructuredMesh *currentMesh;
+    QSettings *appSettings;
+
+    QString getDefaultDirectory();
 };
 
 #endif // UNSTRUCTURED_MESH_DIALOG_H
