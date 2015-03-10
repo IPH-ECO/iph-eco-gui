@@ -1,6 +1,8 @@
 #include "include/ui/unstructured_mesh_opengl_widget.h"
 
-UnstructuredMeshOpenGLWidget::UnstructuredMeshOpenGLWidget(QWidget *parent) : QOpenGLWidget(parent), mesh(NULL) {}
+#include <QPoint>
+
+UnstructuredMeshOpenGLWidget::UnstructuredMeshOpenGLWidget(QWidget *parent) : QOpenGLWidget(parent), mesh(NULL), zoom_factor_base(1.0) {}
 
 void UnstructuredMeshOpenGLWidget::initializeGL() {
     initializeOpenGLFunctions();
@@ -25,13 +27,17 @@ void UnstructuredMeshOpenGLWidget::paintGL() {
         return;
     }
 
+    double lx = boundaryPolygon->left_vertex()->x() + zoom_factor_base;
+    double rx = boundaryPolygon->right_vertex()->x() - zoom_factor_base;
+    double by = boundaryPolygon->bottom_vertex()->y() + zoom_factor_base;
+    double ty = boundaryPolygon->top_vertex()->y() - zoom_factor_base;
+
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    glOrtho(boundaryPolygon->left_vertex()->x(), boundaryPolygon->right_vertex()->x(), boundaryPolygon->bottom_vertex()->y(), boundaryPolygon->top_vertex()->y(), -1.0, 1.0);
+    glOrtho(lx, rx, by, ty, -1.0, 1.0);
     glMatrixMode(GL_MODELVIEW);
 
     glColor3f(0.0, 0.0, 0.0);
-    glPointSize(1.0f);
 
     if (mesh->getShowDomainBoundary()) {
         QVector<MeshPolygon> domain = mesh->getDomain();
@@ -101,7 +107,11 @@ void UnstructuredMeshOpenGLWidget::generateMesh() {
 }
 
 void UnstructuredMeshOpenGLWidget::wheelEvent(QWheelEvent *event) {
-    qDebug() << "zoom in/out";
+    QPoint angleDelta = event->angleDelta();
+    if (!angleDelta.isNull() && angleDelta.y() != 0 && angleDelta.x() == 0) {
+        zoom_factor_base += angleDelta.y() * 2;
+        update();
+    }
 }
 
 void UnstructuredMeshOpenGLWidget::mouseMoveEvent(QMouseEvent *event) {

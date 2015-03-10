@@ -18,6 +18,7 @@
 class UnstructuredMeshOpenGLWidget : public QOpenGLWidget, protected QOpenGLFunctions {
 private:
     UnstructuredMesh *mesh;
+    double zoom_factor_base;
     QMutex mutex;
 
 protected:
