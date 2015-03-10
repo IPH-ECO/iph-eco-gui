@@ -88,3 +88,6 @@ macx: LIBS += -L$$PWD/../../../../../usr/local/Cellar/cgal/4.5.2/lib/ -lCGAL
 
 INCLUDEPATH += $$PWD/../../../../../usr/local/Cellar/cgal/4.5.2/include
 DEPENDPATH += $$PWD/../../../../../usr/local/Cellar/cgal/4.5.2/include
+
+RESOURCES += \
+    icons.qrc
