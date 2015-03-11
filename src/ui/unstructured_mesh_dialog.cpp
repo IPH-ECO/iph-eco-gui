@@ -49,6 +49,7 @@ void UnstructuredMeshDialog::on_btnBoundaryFileBrowser_clicked() {
 
     try {
         ui->unstructuredMeshOpenGLWidget->generateDomain();
+        ui->lblDomainArea->setText(QString("Area: %1 m\u00B2").arg(currentMesh->getBoundaryPolygon()->area(), 0, 'f', 3));
         ui->sbxMaximumEdgeLength->setValue(currentMesh->getMaximumEdgeLength());
         ui->sbxMaximumEdgeLength->setMaximum(currentMesh->height() > currentMesh->width() ? currentMesh->width() : currentMesh->height());
     } catch(MeshException &e) {
@@ -165,6 +166,8 @@ void UnstructuredMeshDialog::on_cbxMeshName_currentIndexChanged(int index) {
         ui->unstructuredMeshOpenGLWidget->setMesh(currentMesh);
         ui->unstructuredMeshOpenGLWidget->generateDomain();
         ui->unstructuredMeshOpenGLWidget->generateMesh();
+
+        ui->lblDomainArea->setText(QString("Area: %1 m\u00B2").arg(currentMesh->getBoundaryPolygon()->area(), 0, 'f', 3));
     } else {
         resetMeshForm();
     }
@@ -194,6 +197,7 @@ void UnstructuredMeshDialog::resetMeshForm() {
     ui->edtBoundaryFileLine->setText(unsavedMesh->getBoundaryFilePath());
     ui->sbxMaximumEdgeLength->setValue(unsavedMesh->getMaximumEdgeLength());
     ui->sbxMinimumAngle->setValue(unsavedMesh->getMinimumAngle());
+    ui->lblDomainArea->setText("Area: -");
 
     ui->btnRemoveMesh->setEnabled(false);
     enableMeshForm(false);
