@@ -3,10 +3,10 @@
 
 UnstructuredMeshDialog::UnstructuredMeshDialog(QWidget *parent) :
     QDialog(parent),
+    BOUNDARY_DEFAULT_DIR_KEY("boundary_default_dir"),
     ui(new Ui::UnstructuredMeshDialog),
     unsavedMesh(new UnstructuredMesh()),
-    currentMesh(unsavedMesh),
-    BOUNDARY_DEFAULT_DIR_KEY("boundary_default_dir")
+    currentMesh(unsavedMesh)
 {
 
     ui->setupUi(this);

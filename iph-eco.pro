@@ -26,8 +26,6 @@ SOURCES += \
     src/domain/unstructured_mesh.cpp \
     src/domain/structured_mesh.cpp \
     src/domain/mesh.cpp \
-    src/domain/observers/observable.cpp \
-    src/domain/observers/observer.cpp \
     src/ui/unstructured_mesh_dialog.cpp \
     src/ui/unstructured_mesh_opengl_widget.cpp \
     src/domain/mesh_polygon.cpp
