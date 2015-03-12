@@ -68,7 +68,7 @@ bool Project::getSediment() const {
     return sediment;
 }
 
-const QSet<Mesh*> Project::getMeshes() {
+const QSet<Mesh*>& Project::getMeshes() {
     return meshes;
 }
 
