@@ -15,6 +15,7 @@ UnstructuredMesh::UnstructuredMesh(QString &_name, QString &_boundaryFilePath, d
 {}
 
 void UnstructuredMesh::setMinimumAngle(const double &minimumAngle) {
+    // http://doc.cgal.org/latest/Mesh_2/classCGAL_1_1Delaunay__mesh__size__criteria__2.html
     this->minimumAngle = qPow(sin(minimumAngle * M_PI / 180), 2.0);
 }
 
