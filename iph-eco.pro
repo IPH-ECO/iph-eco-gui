@@ -26,8 +26,6 @@ SOURCES += \
     src/domain/unstructured_mesh.cpp \
     src/domain/structured_mesh.cpp \
     src/domain/mesh.cpp \
-    src/domain/observers/observable.cpp \
-    src/domain/observers/observer.cpp \
     src/ui/unstructured_mesh_dialog.cpp \
     src/ui/unstructured_mesh_opengl_widget.cpp \
     src/domain/mesh_polygon.cpp
@@ -59,35 +57,37 @@ FORMS    += \
 
 macx: QMAKE_CXXFLAGS += -Wno-redeclared-class-member
 
-macx: LIBS += -L$$PWD/../../../../../usr/local/Cellar/geographiclib/1.40/lib/ -lGeographic
+macx: LIBS += -L/usr/local/Cellar/geographiclib/1.40/lib/ -lGeographic
 
-INCLUDEPATH += $$PWD/../../../../../usr/local/Cellar/geographiclib/1.40/include
-DEPENDPATH += $$PWD/../../../../../usr/local/Cellar/geographiclib/1.40/include
+INCLUDEPATH += /usr/local/Cellar/geographiclib/1.40/include
+DEPENDPATH += /usr/local/Cellar/geographiclib/1.40/include
 
-macx: LIBS += -L$$PWD/../../../../../usr/local/Cellar/boost/1.57.0/lib/ -lboost_system
+macx: LIBS += -L/usr/local/Cellar/boost/1.57.0/lib/ -lboost_system
 
-INCLUDEPATH += $$PWD/../../../../../usr/local/Cellar/boost/1.57.0/include
-DEPENDPATH += $$PWD/../../../../../usr/local/Cellar/boost/1.57.0/include
+INCLUDEPATH += /usr/local/Cellar/boost/1.57.0/include
+DEPENDPATH += /usr/local/Cellar/boost/1.57.0/include
 
-macx: LIBS += -L$$PWD/../../../../../usr/local/Cellar/boost/1.57.0/lib/ -lboost_thread-mt
+macx: LIBS += -L/usr/local/Cellar/boost/1.57.0/lib/ -lboost_thread-mt
 
-INCLUDEPATH += $$PWD/../../../../../usr/local/Cellar/boost/1.57.0/include
-DEPENDPATH += $$PWD/../../../../../usr/local/Cellar/boost/1.57.0/include
+INCLUDEPATH += /usr/local/Cellar/boost/1.57.0/include
+DEPENDPATH += /usr/local/Cellar/boost/1.57.0/include
 
-macx: LIBS += -L$$PWD/../../../../../usr/local/Cellar/gmp/6.0.0a/lib/ -lgmp
+macx: LIBS += -L/usr/local/Cellar/gmp/6.0.0a/lib/ -lgmp
 
-INCLUDEPATH += $$PWD/../../../../../usr/local/Cellar/gmp/6.0.0a/include
-DEPENDPATH += $$PWD/../../../../../usr/local/Cellar/gmp/6.0.0a/include
+INCLUDEPATH += /usr/local/Cellar/gmp/6.0.0a/include
+DEPENDPATH += /usr/local/Cellar/gmp/6.0.0a/include
 
-macx: LIBS += -L$$PWD/../../../../../usr/local/Cellar/mpfr/3.1.2-p10/lib/ -lmpfr
+macx: LIBS += -L/usr/local/Cellar/mpfr/3.1.2-p10/lib/ -lmpfr
 
-INCLUDEPATH += $$PWD/../../../../../usr/local/Cellar/mpfr/3.1.2-p10/include
-DEPENDPATH += $$PWD/../../../../../usr/local/Cellar/mpfr/3.1.2-p10/include
+INCLUDEPATH += /usr/local/Cellar/mpfr/3.1.2-p10/include
+DEPENDPATH += /usr/local/Cellar/mpfr/3.1.2-p10/include
 
-macx: LIBS += -L$$PWD/../../../../../usr/local/Cellar/cgal/4.5.2/lib/ -lCGAL
+macx: LIBS += -L/usr/local/Cellar/cgal/4.5.2/lib/ -lCGAL
 
-INCLUDEPATH += $$PWD/../../../../../usr/local/Cellar/cgal/4.5.2/include
-DEPENDPATH += $$PWD/../../../../../usr/local/Cellar/cgal/4.5.2/include
+INCLUDEPATH += /usr/local/Cellar/cgal/4.5.2/include
+DEPENDPATH += /usr/local/Cellar/cgal/4.5.2/include
 
 RESOURCES += \
     icons.qrc
+
+DISTFILES +=
