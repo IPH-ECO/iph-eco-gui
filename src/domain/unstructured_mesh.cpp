@@ -1,5 +1,7 @@
 #include "include/domain/unstructured_mesh.h"
 
+#include <QtMath>
+
 UnstructuredMesh::UnstructuredMesh() : DEFAULT_MINIMUM_ANGLE(0.125), DEFAULT_MINIMUM_EDGE_LENGTH(0.5) {}
 
 UnstructuredMesh::UnstructuredMesh(QString &_name) :
@@ -8,11 +10,12 @@ UnstructuredMesh::UnstructuredMesh(QString &_name) :
 UnstructuredMesh::UnstructuredMesh(QString &_name, QString &_boundaryFilePath) : Mesh(_name, _boundaryFilePath), DEFAULT_MINIMUM_ANGLE(0.125), DEFAULT_MINIMUM_EDGE_LENGTH(0.5) {}
 
 UnstructuredMesh::UnstructuredMesh(QString &_name, QString &_boundaryFilePath, double &_minimumAngle, double &_maximumEdgeLength) :
-    Mesh(_name, _boundaryFilePath), DEFAULT_MINIMUM_ANGLE(0.125), DEFAULT_MINIMUM_EDGE_LENGTH(0.5), minimumAngle(_minimumAngle), maximumEdgeLength(_maximumEdgeLength)
+    Mesh(_name, _boundaryFilePath), DEFAULT_MINIMUM_ANGLE(0.125), DEFAULT_MINIMUM_EDGE_LENGTH(0.5),
+    minimumAngle(qPow(sin(_minimumAngle * M_PI / 180), 2.0)), maximumEdgeLength(_maximumEdgeLength)
 {}
 
 void UnstructuredMesh::setMinimumAngle(const double &minimumAngle) {
-    this->minimumAngle = minimumAngle;
+    this->minimumAngle = qPow(sin(minimumAngle * M_PI / 180), 2.0);
 }
 
 double UnstructuredMesh::getMinimumAngle() const {

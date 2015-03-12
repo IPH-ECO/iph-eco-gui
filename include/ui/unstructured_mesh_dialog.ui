@@ -195,16 +195,19 @@
            <bool>true</bool>
           </property>
           <property name="decimals">
-           <number>3</number>
+           <number>1</number>
           </property>
           <property name="minimum">
-           <double>0.125000000000000</double>
+           <double>20.699999999999999</double>
           </property>
           <property name="maximum">
-           <double>1000.000000000000000</double>
+           <double>30.000000000000000</double>
           </property>
           <property name="singleStep">
-           <double>0.001000000000000</double>
+           <double>1.000000000000000</double>
+          </property>
+          <property name="value">
+           <double>20.699999999999999</double>
           </property>
          </widget>
         </item>
