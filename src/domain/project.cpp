@@ -1,11 +1,13 @@
 #include "include/domain/project.h"
 Project::Project(QString &_name, QString &_description, bool &_hydrodynamic, bool &_sediment, bool &_waterQuality) :
-    name(_name), description(_description), hydrodynamic(_hydrodynamic), waterQuality(_waterQuality),
-    sediment(_sediment), meshes(QSet<Mesh*>())
-{}
+        name(_name), description(_description), hydrodynamic(_hydrodynamic), waterQuality(_waterQuality),
+        sediment(_sediment), meshes(QSet<Mesh*>()) {
+    this->dirty = false;
+}
 
 void Project::setId(const qint8 &id) {
     this->id = id;
+    this->setDirty(true);
 }
 
 qint8 Project::getId() const {
@@ -14,6 +16,7 @@ qint8 Project::getId() const {
 
 void Project::setName(const QString &name) {
     this->name = name;
+    this->setDirty(true);
 }
 
 QString Project::getName() const {
@@ -22,6 +25,7 @@ QString Project::getName() const {
 
 void Project::setDescription(const QString &description) {
     this->description = description;
+    this->setDirty(true);
 }
 
 QString Project::getDescription() const {
@@ -30,6 +34,7 @@ QString Project::getDescription() const {
 
 void Project::setFilename(const QString &filename) {
     this->filename = filename;
+    this->setDirty(true);
 }
 
 QString Project::getFilename() const {
@@ -38,6 +43,7 @@ QString Project::getFilename() const {
 
 void Project::setHydrodynamic(const bool &hydrodynamic) {
     this->hydrodynamic = hydrodynamic;
+    this->setDirty(true);
 }
 
 bool Project::getHydrodynamic() const {
@@ -46,6 +52,7 @@ bool Project::getHydrodynamic() const {
 
 void Project::setWaterQuality(const bool &waterQuality) {
     this->waterQuality = waterQuality;
+    this->setDirty(true);
 }
 
 bool Project::getWaterQuality() const {
@@ -54,6 +61,7 @@ bool Project::getWaterQuality() const {
 
 void Project::setSediment(const bool &sediment) {
     this->sediment = sediment;
+    this->setDirty(true);
 }
 
 bool Project::getSediment() const {
@@ -67,6 +75,7 @@ const QSet<Mesh*> Project::getMeshes() {
 bool Project::addMesh(Mesh *mesh) {
     if (!containsMesh(mesh)) {
         this->meshes.insert(mesh);
+        this->setDirty(true);
         return true;
     }
     return false;
@@ -77,6 +86,7 @@ void Project::removeMesh(Mesh *mesh) {
 
     this->meshes.remove(m);
     delete m;
+    this->setDirty(true);
 }
 
 bool Project::containsMesh(Mesh *mesh) {
@@ -91,4 +101,12 @@ Mesh* Project::getMesh(Mesh *mesh) {
     }
 
     return NULL;
+}
+
+void Project::setDirty(const bool &dirty) {
+    this->dirty = dirty;
+}
+
+bool Project::isDirty() const {
+    return this->dirty;
 }

@@ -21,6 +21,7 @@ SOURCES += \
     src/ui/main_window.cpp \
     src/ui/new_project_dialog.cpp \
     src/ui/project_properties_dialog.cpp \
+    src/ui/save_on_close_dialog.cpp \
     src/utility/database_utility.cpp \
     src/exceptions/mesh_exception.cpp \
     src/domain/unstructured_mesh.cpp \
@@ -39,6 +40,7 @@ HEADERS  += \
     include/ui/main_window.h \
     include/ui/new_project_dialog.h \
     include/ui/project_properties_dialog.h \
+    include/ui/save_on_close_dialog.h \
     include/utility/database_utility.h \
     include/exceptions/mesh_exception.h \
     include/domain/unstructured_mesh.h \
@@ -53,39 +55,42 @@ FORMS    += \
     include/ui/main_window.ui \
     include/ui/new_project_dialog.ui \
     include/ui/project_properties_dialog.ui \
-    include/ui/unstructured_mesh_dialog.ui
+    include/ui/unstructured_mesh_dialog.ui \
+    include/ui/save_on_close_dialog.ui
 
 macx: QMAKE_CXXFLAGS += -Wno-redeclared-class-member
 
-macx: LIBS += -L$$PWD/../../../../../usr/local/Cellar/geographiclib/1.40/lib/ -lGeographic
+macx: LIBS += -L/usr/local/Cellar/geographiclib/1.40/lib/ -lGeographic
 
-INCLUDEPATH += $$PWD/../../../../../usr/local/Cellar/geographiclib/1.40/include
-DEPENDPATH += $$PWD/../../../../../usr/local/Cellar/geographiclib/1.40/include
+INCLUDEPATH += /usr/local/Cellar/geographiclib/1.40/include
+DEPENDPATH += /usr/local/Cellar/geographiclib/1.40/include
 
-macx: LIBS += -L$$PWD/../../../../../usr/local/Cellar/boost/1.57.0/lib/ -lboost_system
+macx: LIBS += -L/usr/local/Cellar/boost/1.57.0/lib/ -lboost_system
 
-INCLUDEPATH += $$PWD/../../../../../usr/local/Cellar/boost/1.57.0/include
-DEPENDPATH += $$PWD/../../../../../usr/local/Cellar/boost/1.57.0/include
+INCLUDEPATH += /usr/local/Cellar/boost/1.57.0/include
+DEPENDPATH += /usr/local/Cellar/boost/1.57.0/include
 
-macx: LIBS += -L$$PWD/../../../../../usr/local/Cellar/boost/1.57.0/lib/ -lboost_thread-mt
+macx: LIBS += -L/usr/local/Cellar/boost/1.57.0/lib/ -lboost_thread-mt
 
-INCLUDEPATH += $$PWD/../../../../../usr/local/Cellar/boost/1.57.0/include
-DEPENDPATH += $$PWD/../../../../../usr/local/Cellar/boost/1.57.0/include
+INCLUDEPATH += /usr/local/Cellar/boost/1.57.0/include
+DEPENDPATH += /usr/local/Cellar/boost/1.57.0/include
 
-macx: LIBS += -L$$PWD/../../../../../usr/local/Cellar/gmp/6.0.0a/lib/ -lgmp
+macx: LIBS += -L/usr/local/Cellar/gmp/6.0.0a/lib/ -lgmp
 
-INCLUDEPATH += $$PWD/../../../../../usr/local/Cellar/gmp/6.0.0a/include
-DEPENDPATH += $$PWD/../../../../../usr/local/Cellar/gmp/6.0.0a/include
+INCLUDEPATH += /usr/local/Cellar/gmp/6.0.0a/include
+DEPENDPATH += /usr/local/Cellar/gmp/6.0.0a/include
 
-macx: LIBS += -L$$PWD/../../../../../usr/local/Cellar/mpfr/3.1.2-p10/lib/ -lmpfr
+macx: LIBS += -L/usr/local/Cellar/mpfr/3.1.2-p10/lib/ -lmpfr
 
-INCLUDEPATH += $$PWD/../../../../../usr/local/Cellar/mpfr/3.1.2-p10/include
-DEPENDPATH += $$PWD/../../../../../usr/local/Cellar/mpfr/3.1.2-p10/include
+INCLUDEPATH += /usr/local/Cellar/mpfr/3.1.2-p10/include
+DEPENDPATH += /usr/local/Cellar/mpfr/3.1.2-p10/include
 
-macx: LIBS += -L$$PWD/../../../../../usr/local/Cellar/cgal/4.5.2/lib/ -lCGAL
+macx: LIBS += -L/usr/local/Cellar/cgal/4.5.2/lib/ -lCGAL
 
-INCLUDEPATH += $$PWD/../../../../../usr/local/Cellar/cgal/4.5.2/include
-DEPENDPATH += $$PWD/../../../../../usr/local/Cellar/cgal/4.5.2/include
+INCLUDEPATH += /usr/local/Cellar/cgal/4.5.2/include
+DEPENDPATH += /usr/local/Cellar/cgal/4.5.2/include
 
 RESOURCES += \
     icons.qrc
+
+DISTFILES +=
