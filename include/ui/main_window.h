@@ -12,6 +12,7 @@
 #include "new_project_dialog.h"
 #include "project_properties_dialog.h"
 #include "unstructured_mesh_dialog.h"
+#include "save_on_close_dialog.h"
 
 namespace Ui {
 class MainWindow;

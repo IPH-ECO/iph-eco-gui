@@ -16,6 +16,9 @@ class Project {
         bool sediment;
         QSet<Mesh*> meshes;
 
+        //Transient attributes
+        bool dirty;
+
     public:
         Project(QString &_name, QString &_description, bool &_hydrodynamic, bool &_sediment, bool &_waterQuality);
 
@@ -46,6 +49,10 @@ class Project {
         void removeMesh(Mesh *mesh);
         bool containsMesh(Mesh *mesh);
         Mesh* getMesh(Mesh *mesh);
+
+        //Transient gets and sets
+        bool isDirty() const;
+        void setDirty(const bool &dirty);
 };
 
 #endif // PROJECT_H

@@ -33,6 +33,8 @@ Project* ProjectDAO::open() {
     Project *project = new Project(name, description, hydrodynamic, sediment, waterQuality);
     project->setFilename(this->databaseName);
 
+    project->setDirty(false);
+
     return project;
 }
 
@@ -58,6 +60,7 @@ void ProjectDAO::save(Project *project) {
     }
 
     project->setId(query.lastInsertId().toLongLong());
+    project->setDirty(false);
 
     DatabaseUtility::disconnect(db);
 }

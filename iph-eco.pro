@@ -21,6 +21,7 @@ SOURCES += \
     src/ui/main_window.cpp \
     src/ui/new_project_dialog.cpp \
     src/ui/project_properties_dialog.cpp \
+    src/ui/save_on_close_dialog.cpp \
     src/utility/database_utility.cpp \
     src/exceptions/mesh_exception.cpp \
     src/domain/unstructured_mesh.cpp \
@@ -39,6 +40,7 @@ HEADERS  += \
     include/ui/main_window.h \
     include/ui/new_project_dialog.h \
     include/ui/project_properties_dialog.h \
+    include/ui/save_on_close_dialog.h \
     include/utility/database_utility.h \
     include/exceptions/mesh_exception.h \
     include/domain/unstructured_mesh.h \
@@ -53,7 +55,8 @@ FORMS    += \
     include/ui/main_window.ui \
     include/ui/new_project_dialog.ui \
     include/ui/project_properties_dialog.ui \
-    include/ui/unstructured_mesh_dialog.ui
+    include/ui/unstructured_mesh_dialog.ui \
+    include/ui/save_on_close_dialog.ui
 
 macx: QMAKE_CXXFLAGS += -Wno-redeclared-class-member
 

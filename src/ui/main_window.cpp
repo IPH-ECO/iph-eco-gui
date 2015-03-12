@@ -91,6 +91,12 @@ void MainWindow::on_actionProjectProperties_triggered() {
 }
 
 void MainWindow::on_actionCloseProject_triggered() {
+    Project *project = IPHApplication::getCurrentProject();
+    if (project != NULL && project->isDirty()) {
+        SaveOnCloseDialog saveOnCloseDialog(this, IPHApplication::getCurrentProject());
+        saveOnCloseDialog.exec();
+    }
+
     IPHApplication::setCurrentProject(0);
     enableMenus(false);
 }
