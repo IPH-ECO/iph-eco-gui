@@ -25,9 +25,10 @@ public:
     ~UnstructuredMeshDialog();
 
 private slots:
+    void on_btnGenerateDomain_clicked();
+    void on_btnGenerateMesh_clicked();
     void on_btnRemoveMesh_clicked();
     void on_btnBoundaryFileBrowser_clicked();
-    void on_btnGenerateMesh_clicked();
     void on_btnSaveMesh_clicked();
     void on_btnCancelMesh_clicked();
 

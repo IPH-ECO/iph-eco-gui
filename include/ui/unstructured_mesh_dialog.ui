@@ -6,14 +6,14 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1003</width>
-    <height>660</height>
+    <width>1046</width>
+    <height>632</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Unstructured Mesh Generation</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout" columnstretch="1,0,0">
+  <layout class="QGridLayout" name="gridLayout" columnstretch="1,0,0" columnminimumwidth="410,0,0">
    <item row="0" column="2">
     <layout class="QVBoxLayout" name="verticalLayout_4">
      <item>
@@ -88,52 +88,114 @@
       </layout>
      </item>
      <item>
-      <layout class="QGridLayout" name="gridLayout_2" columnstretch="0,0,0">
-       <property name="horizontalSpacing">
-        <number>5</number>
+      <widget class="QGroupBox" name="groupBox_4">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
        </property>
-       <property name="verticalSpacing">
-        <number>15</number>
+       <property name="title">
+        <string>Domain Parameters</string>
        </property>
-       <item row="1" column="0">
-        <widget class="QLabel" name="lblBoundaryFile">
-         <property name="text">
-          <string>Boundary File</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="1">
-        <widget class="QLineEdit" name="edtBoundaryFileLine">
-         <property name="enabled">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="2">
-        <widget class="QPushButton" name="btnBoundaryFileBrowser">
-         <property name="enabled">
-          <bool>true</bool>
-         </property>
-         <property name="text">
-          <string>Browse...</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1" colspan="2">
-        <widget class="QLineEdit" name="edtMeshName">
-         <property name="enabled">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="0">
-        <widget class="QLabel" name="lblMeshName">
-         <property name="text">
-          <string>Mesh Name</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
+       <layout class="QGridLayout" name="gridLayout_7">
+        <property name="leftMargin">
+         <number>6</number>
+        </property>
+        <property name="topMargin">
+         <number>6</number>
+        </property>
+        <property name="rightMargin">
+         <number>6</number>
+        </property>
+        <property name="bottomMargin">
+         <number>6</number>
+        </property>
+        <property name="horizontalSpacing">
+         <number>5</number>
+        </property>
+        <property name="verticalSpacing">
+         <number>10</number>
+        </property>
+        <item row="1" column="0">
+         <widget class="QLabel" name="lblBoundaryFile">
+          <property name="text">
+           <string>Boundary File</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QLineEdit" name="edtBoundaryFileLine">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="0">
+         <widget class="QLabel" name="lblMeshName">
+          <property name="text">
+           <string>Mesh Name</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="QDoubleSpinBox" name="sbxCoordinatesDistance">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="decimals">
+           <number>1</number>
+          </property>
+          <property name="maximum">
+           <double>100000.000000000000000</double>
+          </property>
+          <property name="singleStep">
+           <double>1.000000000000000</double>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="2">
+         <widget class="QPushButton" name="btnBoundaryFileBrowser">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
+          <property name="text">
+           <string>...</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="QLabel" name="label">
+          <property name="text">
+           <string>Coordinates Distance (m)</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="0">
+         <widget class="QPushButton" name="btnGenerateDomain">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="text">
+           <string>Generate Domain</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1" colspan="2">
+         <widget class="QLineEdit" name="edtMeshName">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
      </item>
      <item>
       <widget class="QGroupBox" name="groupBox">
@@ -144,7 +206,7 @@
         </sizepolicy>
        </property>
        <property name="title">
-        <string>Parameters</string>
+        <string>Mesh Parameters</string>
        </property>
        <layout class="QGridLayout" name="gridLayout_5">
         <property name="leftMargin">
@@ -159,29 +221,6 @@
         <property name="bottomMargin">
          <number>10</number>
         </property>
-        <item row="2" column="0">
-         <widget class="QPushButton" name="btnGenerateMesh">
-          <property name="enabled">
-           <bool>true</bool>
-          </property>
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="text">
-           <string>Generate Mesh</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="0">
-         <widget class="QLabel" name="lblAngleTriangles">
-          <property name="text">
-           <string>Minimum Angle of Triangles (degrees)</string>
-          </property>
-         </widget>
-        </item>
         <item row="1" column="0">
          <widget class="QLabel" name="lblMaximumEdgeTriangles">
           <property name="text">
@@ -194,6 +233,9 @@
           <property name="enabled">
            <bool>true</bool>
           </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
           <property name="decimals">
            <number>1</number>
           </property>
@@ -201,7 +243,7 @@
            <double>20.699999999999999</double>
           </property>
           <property name="maximum">
-           <double>30.000000000000000</double>
+           <double>60.000000000000000</double>
           </property>
           <property name="singleStep">
            <double>1.000000000000000</double>
@@ -211,8 +253,18 @@
           </property>
          </widget>
         </item>
+        <item row="0" column="0">
+         <widget class="QLabel" name="lblAngleTriangles">
+          <property name="text">
+           <string>Minimum Angle of Triangles (degrees)</string>
+          </property>
+         </widget>
+        </item>
         <item row="1" column="1">
          <widget class="QDoubleSpinBox" name="sbxMaximumEdgeLength">
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
           <property name="decimals">
            <number>1</number>
           </property>
@@ -223,45 +275,26 @@
            <double>999999.000000000000000</double>
           </property>
           <property name="singleStep">
-           <double>0.100000000000000</double>
+           <double>1.000000000000000</double>
           </property>
           <property name="value">
-           <double>0.500000000000000</double>
+           <double>10.000000000000000</double>
           </property>
          </widget>
         </item>
-       </layout>
-      </widget>
-     </item>
-     <item>
-      <widget class="QGroupBox" name="groupBox_2">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="title">
-        <string>Tools</string>
-       </property>
-       <layout class="QGridLayout" name="gridLayout_4">
-        <item row="0" column="0">
-         <widget class="QPushButton" name="btnRefineSpecificRegion">
+        <item row="3" column="0">
+         <widget class="QPushButton" name="btnGenerateMesh">
           <property name="enabled">
-           <bool>false</bool>
+           <bool>true</bool>
+          </property>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
           </property>
           <property name="text">
-           <string>Refine Specific Region...</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0">
-         <widget class="QPushButton" name="btnApplyCoarsening">
-          <property name="enabled">
-           <bool>false</bool>
-          </property>
-          <property name="text">
-           <string>Apply Coarsening</string>
+           <string>Generate Mesh</string>
           </property>
          </widget>
         </item>
@@ -424,12 +457,7 @@
  </customwidgets>
  <tabstops>
   <tabstop>cbxMeshName</tabstop>
-  <tabstop>edtMeshName</tabstop>
-  <tabstop>edtBoundaryFileLine</tabstop>
-  <tabstop>btnBoundaryFileBrowser</tabstop>
   <tabstop>sbxMinimumAngle</tabstop>
-  <tabstop>btnRefineSpecificRegion</tabstop>
-  <tabstop>btnApplyCoarsening</tabstop>
   <tabstop>chkShowDomainBoundary</tabstop>
   <tabstop>chkShowUtmCoordinates</tabstop>
   <tabstop>chkShowVertexes</tabstop>

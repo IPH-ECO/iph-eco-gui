@@ -18,8 +18,7 @@ UnstructuredMeshDialog::UnstructuredMeshDialog(QWidget *parent) :
 
     QSet<Mesh*> meshes = project->getMeshes();
 
-    QSet<Mesh*>::iterator i;
-    for (i = meshes.begin(); i != meshes.end(); ++i) {
+    for (QSet<Mesh*>::iterator i = meshes.begin(); i != meshes.end(); ++i) {
         ui->cbxMeshName->addItem((*i)->getName());
     }
     ui->cbxMeshName->setCurrentIndex(-1);
@@ -41,10 +40,16 @@ void UnstructuredMeshDialog::on_btnBoundaryFileBrowser_clicked() {
         return;
     }
 
+    ui->edtBoundaryFileLine->setText(boundaryFilePath);
     appSettings->setValue(BOUNDARY_DEFAULT_DIR_KEY, QFileInfo(boundaryFilePath).absolutePath());
+}
+
+void UnstructuredMeshDialog::on_btnGenerateDomain_clicked() {
+    QString boundaryFilePath = ui->edtBoundaryFileLine->text();
+    double coordinatesDistance = ui->sbxCoordinatesDistance->value();
 
     currentMesh->setBoundaryFilePath(boundaryFilePath);
-    ui->edtBoundaryFileLine->setText(boundaryFilePath);
+    currentMesh->setCoordinatesDistance(coordinatesDistance);
     ui->unstructuredMeshOpenGLWidget->setMesh(currentMesh);
 
     try {
@@ -174,9 +179,6 @@ void UnstructuredMeshDialog::on_cbxMeshName_currentIndexChanged(int index) {
 }
 
 void UnstructuredMeshDialog::enableMeshForm(bool enable) {
-    ui->btnRefineSpecificRegion->setEnabled(enable);
-    ui->btnApplyCoarsening->setEnabled(enable);
-
     ui->chkShowMesh->setEnabled(enable);
     ui->chkShowEdges->setEnabled(enable);
     ui->chkShowTriangles->setEnabled(enable);

@@ -11,6 +11,7 @@ class Mesh {
 protected:
     QString name;
     QString boundaryFilePath;
+    double coordinatesDistance;
     QVector<MeshPolygon> domain;
 
     bool showDomainBoundary;
@@ -32,21 +33,21 @@ public:
     void setBoundaryFilePath(const QString &boundaryFilePath);
     QString getBoundaryFilePath() const;
 
+    void setCoordinatesDistance(const double &coordinatesDistance);
+    double getCoordinatesDistance() const;
+
+    QVector<MeshPolygon>& getDomain();
+    const MeshPolygon* getBoundaryPolygon();
+
     void setShowDomainBoundary(const bool &show);
     bool getShowDomainBoundary() const;
     void setShowMesh(const bool &show);
     bool getShowMesh() const;
 
-    void toogleUTMCoordinates(bool &show);
-    void toogleVertexesLabels(bool &show);
-
-    virtual void buildDomain();
-    QVector<MeshPolygon>& getDomain();
-    const MeshPolygon* getBoundaryPolygon();
-
     double height();
     double width();
 
+    virtual void buildDomain();
     virtual void clear();
 };
 

@@ -35,6 +35,14 @@ QString Mesh::getBoundaryFilePath() const {
     return this->boundaryFilePath;
 }
 
+void Mesh::setCoordinatesDistance(const double &coordinatesDistance) {
+    this->coordinatesDistance = coordinatesDistance;
+}
+
+double Mesh::getCoordinatesDistance() const {
+    return this->coordinatesDistance;
+}
+
 void Mesh::buildDomain() {
     domain.clear();
 
