@@ -1,6 +1,8 @@
 #include "include/ui/unstructured_mesh_dialog.h"
 #include "ui_unstructured_mesh_dialog.h"
 
+#include <CGAL/assertions_behaviour.h>
+
 UnstructuredMeshDialog::UnstructuredMeshDialog(QWidget *parent) :
     QDialog(parent),
     BOUNDARY_DEFAULT_DIR_KEY("boundary_default_dir"),
@@ -87,13 +89,19 @@ void UnstructuredMeshDialog::on_btnGenerateMesh_clicked() {
     currentMesh->setMinimumAngle(ui->sbxMinimumAngle->value());
     currentMesh->setMaximumEdgeLength(ui->sbxMaximumEdgeLength->value());
 
+    CGAL::Failure_behaviour old_behaviour = CGAL::set_error_behaviour(CGAL::THROW_EXCEPTION);
     try {
         ui->unstructuredMeshOpenGLWidget->setMesh(currentMesh);
         ui->unstructuredMeshOpenGLWidget->generateDomain();
         ui->unstructuredMeshOpenGLWidget->generateMesh();
-    } catch(MeshException &e) {
-        QMessageBox::critical(this, tr("Unstructured Mesh Generation"), e.what());
+//    } catch(MeshException &e) {
+//        QMessageBox::critical(this, tr("Unstructured Mesh Generation"), e.what());
+    } catch (const std::exception& e) {
+        QMessageBox::critical(this, tr("Unstructured Mesh Generation"), tr("This triangulation does not deal with intersecting constraints."));
+        CGAL::set_error_behaviour(old_behaviour);
+        return;
     }
+    CGAL::set_error_behaviour(old_behaviour);
 }
 
 void UnstructuredMeshDialog::on_btnSaveMesh_clicked() {
