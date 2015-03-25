@@ -8,6 +8,9 @@
 #include <QXmlStreamReader>
 #include <QJsonDocument>
 #include <QJsonArray>
+#include <QtMath>
+
+#include <QDebug>
 
 #include <GeographicLib/GeoCoords.hpp>
 
@@ -74,11 +77,31 @@ void Mesh::buildDomain() {
             QStringList coordinates = coordinatesText.trimmed().split(" ");
             MeshPolygon meshPolygon(isHole);
 
-            for (int i = 0; i < coordinates.count() - 1; i++) {
-                QStringList coordinateStr = coordinates.at(i).split(",");
-                GeographicLib::GeoCoords utmCoordinate(coordinateStr.at(1).toDouble(), coordinateStr.at(0).toDouble());
+            // Get first coordinate
+            QStringList coordinateStr = coordinates.at(0).split(",");
+            GeographicLib::GeoCoords utmCoordinate(coordinateStr.at(1).toDouble(), coordinateStr.at(0).toDouble());
+            Point p1(utmCoordinate.Easting(), utmCoordinate.Northing());
 
-                meshPolygon.push_back(Point(utmCoordinate.Easting(), utmCoordinate.Northing()));
+            meshPolygon.push_back(p1);
+
+            for (int i = 1; i < coordinates.count(); i++) {
+                coordinateStr = coordinates.at(i).split(",");
+                utmCoordinate = GeographicLib::GeoCoords(coordinateStr.at(1).toDouble(), coordinateStr.at(0).toDouble());
+                Point p2(utmCoordinate.Easting(), utmCoordinate.Northing());
+
+                if (this->coordinatesDistance > 0.0) {
+                    double distance = sqrt(qPow(p2.x() - p1.x(), 2) + qPow(p2.y() - p1.y(), 2));
+
+                    if (distance < this->coordinatesDistance) {
+                        continue;
+                    }
+
+                    p1 = createNewCoordinate(p1, p2, distance);
+                    meshPolygon.push_back(p1);
+                    i--;
+                } else {
+                    meshPolygon.push_back(p2);
+                }
             }
 
             domain.push_back(meshPolygon);
@@ -86,6 +109,13 @@ void Mesh::buildDomain() {
     }
 
     boundaryFile.close();
+}
+
+Point Mesh::createNewCoordinate(const Point &p1, const Point &p2, const double &distance) {
+    double x = p1.x() + (p2.x() - p1.x()) * this->coordinatesDistance / distance;
+    double y = p1.y() + (p2.y() - p1.y()) * this->coordinatesDistance / distance;
+
+    return Point(x, y);
 }
 
 QVector<MeshPolygon>& Mesh::getDomain() {

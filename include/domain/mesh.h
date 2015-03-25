@@ -21,6 +21,9 @@ protected:
     bool showTrianglesLabels;
     bool showEdgesLabels;
 
+private:
+    Point createNewCoordinate(const Point &p1, const Point &p2, const double &distance);
+
 public:
     Mesh();
     Mesh(QString &_name);

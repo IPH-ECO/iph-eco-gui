@@ -86,13 +86,15 @@ void UnstructuredMeshDialog::on_btnGenerateMesh_clicked() {
 
     currentMesh->setName(meshName);
     currentMesh->setBoundaryFilePath(boundaryFileStr);
-    currentMesh->setMinimumAngle(ui->sbxMinimumAngle->value());
-    currentMesh->setMaximumEdgeLength(ui->sbxMaximumEdgeLength->value());
 
     CGAL::Failure_behaviour old_behaviour = CGAL::set_error_behaviour(CGAL::THROW_EXCEPTION);
     try {
         ui->unstructuredMeshOpenGLWidget->setMesh(currentMesh);
         ui->unstructuredMeshOpenGLWidget->generateDomain();
+
+        currentMesh->setMinimumAngle(ui->sbxMinimumAngle->value());
+        currentMesh->setMaximumEdgeLength(ui->sbxMaximumEdgeLength->value());
+
         ui->unstructuredMeshOpenGLWidget->generateMesh();
 //    } catch(MeshException &e) {
 //        QMessageBox::critical(this, tr("Unstructured Mesh Generation"), e.what());
