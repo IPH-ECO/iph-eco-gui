@@ -25,12 +25,18 @@ public:
     ~UnstructuredMeshDialog();
 
 private slots:
+    // Domain tab events
     void on_btnGenerateDomain_clicked();
-    void on_btnGenerateMesh_clicked();
-    void on_btnRemoveMesh_clicked();
     void on_btnBoundaryFileBrowser_clicked();
     void on_btnSaveMesh_clicked();
     void on_btnCancelMesh_clicked();
+
+    // Mesh tab events
+    void on_btnGenerateMesh_clicked();
+    void on_btnRemoveMesh_clicked();
+    void on_btnAddCoordinatesFile_clicked();
+    void on_btnRemoveCoordinatesFile_clicked();
+    void on_lstCoordinateFiles_itemSelectionChanged();
 
     void resetMeshForm();
     void enableMeshForm(bool enable);

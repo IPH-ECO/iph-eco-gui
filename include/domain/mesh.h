@@ -6,6 +6,7 @@
 #include <QVector>
 
 #include "mesh_polygon.h"
+#include "refinement_polygon.h"
 
 class Mesh {
 protected:

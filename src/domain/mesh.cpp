@@ -69,7 +69,7 @@ void Mesh::buildDomain() {
             } while (kml.name() != "coordinates" && !kml.atEnd());
 
             if (kml.atEnd()) {
-                throw MeshException(QString("No boundary domain found."));
+                throw MeshException(QString("No coordinates found in domain file."));
             }
 
             // Convert geographic coordinates to UTM coordinates

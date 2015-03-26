@@ -1,13 +1,9 @@
 #ifndef MESH_POLYGON_H
 #define MESH_POLYGON_H
 
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Polygon_2.h>
+#include "include/utility/delaunay_triangulation_definitions.h"
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-typedef CGAL::Point_2<K> Point;
-
-class MeshPolygon : public CGAL::Polygon_2<K> {
+class MeshPolygon : public Polygon {
 private:
     bool hole;
 public:

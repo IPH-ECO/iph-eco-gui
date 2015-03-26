@@ -1,6 +1,12 @@
 #include "include/domain/unstructured_mesh.h"
 
+#include <QFile>
+#include <QStringList>
+#include <QIODevice>
+#include <QXmlStreamReader>
 #include <QtMath>
+
+#include <GeographicLib/GeoCoords.hpp>
 
 UnstructuredMesh::UnstructuredMesh() : DEFAULT_MINIMUM_ANGLE(0.125), DEFAULT_MINIMUM_EDGE_LENGTH(0.5) {}
 
@@ -66,6 +72,68 @@ void UnstructuredMesh::generate() {
 
 const CDT* UnstructuredMesh::getCDT() {
     return &cdt;
+}
+
+QVector<RefinementPolygon>& UnstructuredMesh::getRefinementPolygons() {
+    return refinementPolygons;
+}
+
+void UnstructuredMesh::addRefinementPolygon(RefinementPolygon &refinementPolygon) {
+    QFile refinementFile(refinementPolygon.getFilename());
+
+    if (!refinementFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        throw MeshException(QString("Unable to open refinement file. Error: %1").arg(refinementFile.errorString()));
+    }
+
+    QXmlStreamReader kml(&refinementFile);
+
+    while (!kml.atEnd()) {
+        kml.readNext();
+
+        if (kml.name() == "outerBoundaryIs" && kml.isStartElement()) {
+            do {
+                kml.readNext();
+            } while (kml.name() != "coordinates" && !kml.atEnd());
+
+            if (kml.atEnd()) {
+                throw MeshException(QString("No coordinates found in domain file."));
+            }
+
+            QString coordinatesText = kml.readElementText();
+            QStringList coordinates = coordinatesText.trimmed().split(" ");
+
+            for (int i = 0; i < coordinates.count(); i++) {
+                QStringList coordinateStr = coordinates.at(i).split(",");
+                GeographicLib::GeoCoords utmCoordinate = GeographicLib::GeoCoords(coordinateStr.at(1).toDouble(), coordinateStr.at(0).toDouble());
+                Point p(utmCoordinate.Easting(), utmCoordinate.Northing());
+
+                refinementPolygon.getPolygon().push_back(p);
+            }
+
+            refinementPolygons.push_back(refinementPolygon);
+
+            break;
+        }
+    }
+}
+
+void UnstructuredMesh::removeRefinementPolygon(const QString &filename) {
+    for (int i = 0; i < refinementPolygons.count(); i++) {
+        if (refinementPolygons.at(i).getFilename() == filename) {
+            refinementPolygons.remove(i);
+            break;
+        }
+    }
+}
+
+const RefinementPolygon* UnstructuredMesh::getRefinementPolygon(const QString &filename) {
+    for (int i = 0; i < refinementPolygons.count(); i++) {
+        if (refinementPolygons.at(i).getFilename() == filename) {
+            return &refinementPolygons.at(i);
+        }
+    }
+
+    return NULL;
 }
 
 void UnstructuredMesh::buildDomain() {

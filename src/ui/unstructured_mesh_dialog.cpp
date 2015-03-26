@@ -3,6 +3,8 @@
 
 #include <CGAL/assertions_behaviour.h>
 
+#include "include/domain/refinement_polygon.h"
+
 UnstructuredMeshDialog::UnstructuredMeshDialog(QWidget *parent) :
     QDialog(parent),
     BOUNDARY_DEFAULT_DIR_KEY("boundary_default_dir"),
@@ -66,12 +68,56 @@ void UnstructuredMeshDialog::on_btnGenerateDomain_clicked() {
     ui->sbxMaximumEdgeLength->setMaximum(currentMesh->height() > currentMesh->width() ? currentMesh->width() : currentMesh->height());
 }
 
+void UnstructuredMeshDialog::on_btnAddCoordinatesFile_clicked() {
+    QString coordinatesFile = QFileDialog::getOpenFileName(this, tr("Select a boundary file"), getDefaultDirectory(), "Keyhole Markup Language file (*.kml)");
+
+    if (coordinatesFile.isEmpty()) {
+        return;
+    }
+
+    if (!ui->lstCoordinateFiles->findItems(coordinatesFile, Qt::MatchExactly).empty()) {
+        QMessageBox::information(this, tr("Unstructured Mesh Generation"), tr("Coordinates file already added."));
+        return;
+    }
+
+    double maximumEdgeLength = ui->sbxMaximumEdgeLength->value();
+    double minimumAngle = ui->sbxMinimumAngle->value();
+
+    ui->lstCoordinateFiles->addItem(coordinatesFile);
+    ui->edtBoundaryFileLine->setText(coordinatesFile);
+
+    RefinementPolygon refinementPolygon(coordinatesFile, maximumEdgeLength, minimumAngle);
+    currentMesh->addRefinementPolygon(refinementPolygon);
+}
+
+void UnstructuredMeshDialog::on_btnRemoveCoordinatesFile_clicked() {
+    QListWidgetItem *currentItem = ui->lstCoordinateFiles->currentItem();
+
+    if (currentItem != NULL) {
+        QString coordinatesFile = currentItem->text();
+
+        currentMesh->removeRefinementPolygon(coordinatesFile);
+        ui->lstCoordinateFiles->takeItem(ui->lstCoordinateFiles->currentRow());
+    }
+}
+
+void UnstructuredMeshDialog::on_lstCoordinateFiles_itemSelectionChanged() {
+    QListWidgetItem *currentItem = ui->lstCoordinateFiles->currentItem();
+    const RefinementPolygon *refinementPolygon = currentMesh->getRefinementPolygon(currentItem->text());
+
+    if (refinementPolygon != NULL) {
+        ui->sbxMaximumEdgeLength->setValue(refinementPolygon->getMaximumEdgeLength());
+        ui->sbxMinimumAngle->setValue(refinementPolygon->getMinimumAngle());
+    }
+}
+
 void UnstructuredMeshDialog::on_btnGenerateMesh_clicked() {
     QString meshName = ui->edtMeshName->text();
 
     if (meshName.isEmpty()) {
-        QMessageBox::warning(this, tr("Unstructured Mesh Generation"), tr("Please input the mesh name."));
+        ui->tabWidget->setCurrentIndex(0);
         ui->edtMeshName->setFocus();
+        QMessageBox::warning(this, tr("Unstructured Mesh Generation"), tr("Please input the mesh name."));
         return;
     }
 
@@ -97,9 +143,7 @@ void UnstructuredMeshDialog::on_btnGenerateMesh_clicked() {
         currentMesh->setMinimumAngle(ui->sbxMinimumAngle->value());
         currentMesh->setMaximumEdgeLength(ui->sbxMaximumEdgeLength->value());
 
-        ui->unstructuredMeshOpenGLWidget->generateMesh();
-//    } catch(MeshException &e) {
-//        QMessageBox::critical(this, tr("Unstructured Mesh Generation"), e.what());
+        ui->unstructuredMeshOpenGLWidget->generateMesh();\
     } catch (const std::exception& e) {
         QMessageBox::critical(this, tr("Unstructured Mesh Generation"), tr("This triangulation does not deal with intersecting constraints."));
         CGAL::set_error_behaviour(old_behaviour);
