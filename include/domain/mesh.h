@@ -49,6 +49,7 @@ public:
 
     double height();
     double width();
+    double area();
 
     virtual void buildDomain();
     virtual void clear();

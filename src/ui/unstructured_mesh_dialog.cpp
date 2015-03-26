@@ -56,12 +56,14 @@ void UnstructuredMeshDialog::on_btnGenerateDomain_clicked() {
 
     try {
         ui->unstructuredMeshOpenGLWidget->generateDomain();
-        ui->lblDomainArea->setText(QString("Area: %1 m\u00B2").arg(currentMesh->getBoundaryPolygon()->area(), 0, 'f', 3));
-        ui->sbxMaximumEdgeLength->setValue(currentMesh->getMaximumEdgeLength());
-        ui->sbxMaximumEdgeLength->setMaximum(currentMesh->height() > currentMesh->width() ? currentMesh->width() : currentMesh->height());
     } catch(MeshException &e) {
         QMessageBox::critical(this, tr("Unstructured Mesh Generation"), e.what());
+        return;
     }
+
+    ui->lblDomainArea->setText(QString("Area: %1 m\u00B2").arg(currentMesh->area(), 0, 'f', 3));
+    ui->sbxMaximumEdgeLength->setValue(currentMesh->getMaximumEdgeLength());
+    ui->sbxMaximumEdgeLength->setMaximum(currentMesh->height() > currentMesh->width() ? currentMesh->width() : currentMesh->height());
 }
 
 void UnstructuredMeshDialog::on_btnGenerateMesh_clicked() {

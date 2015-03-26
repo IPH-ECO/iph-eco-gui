@@ -175,3 +175,17 @@ double Mesh::width() {
 
     return boundaryPolygon->right_vertex()->x() - boundaryPolygon->left_vertex()->x();
 }
+
+double Mesh::area() {
+    double area = getBoundaryPolygon()->area();
+
+    for (int i = 0; i < domain.count(); i++) {
+        const MeshPolygon &innerPolygon = domain.at(i);
+
+        if (innerPolygon.isHole()) {
+            area -= innerPolygon.area();
+        }
+    }
+
+    return area;
+}
