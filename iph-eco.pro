@@ -61,36 +61,34 @@ FORMS    += \
 macx: QMAKE_CXXFLAGS += -Wno-redeclared-class-member
 
 macx: LIBS += -L/usr/local/Cellar/geographiclib/1.40/lib/ -lGeographic
-
-INCLUDEPATH += /usr/local/Cellar/geographiclib/1.40/include
-DEPENDPATH += /usr/local/Cellar/geographiclib/1.40/include
+macx: INCLUDEPATH += /usr/local/Cellar/geographiclib/1.40/include
+macx: DEPENDPATH += /usr/local/Cellar/geographiclib/1.40/include
 
 macx: LIBS += -L/usr/local/Cellar/boost/1.57.0/lib/ -lboost_system
-
-INCLUDEPATH += /usr/local/Cellar/boost/1.57.0/include
-DEPENDPATH += /usr/local/Cellar/boost/1.57.0/include
+macx: INCLUDEPATH += /usr/local/Cellar/boost/1.57.0/include
+macx: DEPENDPATH += /usr/local/Cellar/boost/1.57.0/include
 
 macx: LIBS += -L/usr/local/Cellar/boost/1.57.0/lib/ -lboost_thread-mt
-
-INCLUDEPATH += /usr/local/Cellar/boost/1.57.0/include
-DEPENDPATH += /usr/local/Cellar/boost/1.57.0/include
+macx: INCLUDEPATH += /usr/local/Cellar/boost/1.57.0/include
+macx: DEPENDPATH += /usr/local/Cellar/boost/1.57.0/include
 
 macx: LIBS += -L/usr/local/Cellar/gmp/6.0.0a/lib/ -lgmp
-
-INCLUDEPATH += /usr/local/Cellar/gmp/6.0.0a/include
-DEPENDPATH += /usr/local/Cellar/gmp/6.0.0a/include
+macx: INCLUDEPATH += /usr/local/Cellar/gmp/6.0.0a/include
+macx: DEPENDPATH += /usr/local/Cellar/gmp/6.0.0a/include
 
 macx: LIBS += -L/usr/local/Cellar/mpfr/3.1.2-p10/lib/ -lmpfr
-
-INCLUDEPATH += /usr/local/Cellar/mpfr/3.1.2-p10/include
-DEPENDPATH += /usr/local/Cellar/mpfr/3.1.2-p10/include
+macx: INCLUDEPATH += /usr/local/Cellar/mpfr/3.1.2-p10/include
+macx: DEPENDPATH += /usr/local/Cellar/mpfr/3.1.2-p10/include
 
 macx: LIBS += -L/usr/local/Cellar/cgal/4.5.2/lib/ -lCGAL
+macx: INCLUDEPATH += /usr/local/Cellar/cgal/4.5.2/include
+macx: DEPENDPATH += /usr/local/Cellar/cgal/4.5.2/include
 
-INCLUDEPATH += /usr/local/Cellar/cgal/4.5.2/include
-DEPENDPATH += /usr/local/Cellar/cgal/4.5.2/include
 
 RESOURCES += \
     icons.qrc
 
-DISTFILES +=
+unix:!macx: QMAKE_CXXFLAGS += -frounding-math
+unix:!macx: LIBS += -L/usr/lib/ -lGeographic -lCGAL -lgmp -lmpfr -lboost_system -lboost_thread
+unix:!macx: INCLUDEPATH += /usr/include
+unix:!macx: DEPENDPATH += /usr/include
