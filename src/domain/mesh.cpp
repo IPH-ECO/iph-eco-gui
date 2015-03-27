@@ -122,7 +122,7 @@ QVector<MeshPolygon>& Mesh::getDomain() {
     return domain;
 }
 
-const MeshPolygon* Mesh::getBoundaryPolygon() {
+const MeshPolygon* Mesh::getBoundaryPolygon() const {
     QVector<MeshPolygon>::const_iterator it = std::find_if(domain.begin(), domain.end(), MeshPolygon::isBoundaryPolygon);
 
     if (it == domain.end()) {
@@ -154,26 +154,6 @@ void Mesh::clear() {
     domain.clear();
     showDomainBoundary = showMesh = true;
     showUTMCoordinates = showVertexesLabels = showTrianglesLabels = showEdgesLabels = false;
-}
-
-double Mesh::height() {
-    const MeshPolygon *boundaryPolygon = getBoundaryPolygon();
-
-    if (boundaryPolygon == NULL) {
-        return 0.0;
-    }
-
-    return boundaryPolygon->top_vertex()->y() - boundaryPolygon->bottom_vertex()->y();
-}
-
-double Mesh::width() {
-    const MeshPolygon *boundaryPolygon = getBoundaryPolygon();
-
-    if (boundaryPolygon == NULL) {
-        return 0.0;
-    }
-
-    return boundaryPolygon->right_vertex()->x() - boundaryPolygon->left_vertex()->x();
 }
 
 double Mesh::area() {

@@ -3,7 +3,7 @@
 
 #include <CGAL/assertions_behaviour.h>
 
-#include "include/domain/refinement_polygon.h"
+#include "include/domain/refinement_area.h"
 
 UnstructuredMeshDialog::UnstructuredMeshDialog(QWidget *parent) :
     QDialog(parent),
@@ -64,8 +64,6 @@ void UnstructuredMeshDialog::on_btnGenerateDomain_clicked() {
     }
 
     ui->lblDomainArea->setText(QString("Area: %1 m\u00B2").arg(currentMesh->area(), 0, 'f', 3));
-    ui->sbxMaximumEdgeLength->setValue(currentMesh->getMaximumEdgeLength());
-    ui->sbxMaximumEdgeLength->setMaximum(currentMesh->height() > currentMesh->width() ? currentMesh->width() : currentMesh->height());
 }
 
 void UnstructuredMeshDialog::on_btnAddCoordinatesFile_clicked() {
@@ -80,35 +78,44 @@ void UnstructuredMeshDialog::on_btnAddCoordinatesFile_clicked() {
         return;
     }
 
-    double maximumEdgeLength = ui->sbxMaximumEdgeLength->value();
-    double minimumAngle = ui->sbxMinimumAngle->value();
-
     ui->lstCoordinateFiles->addItem(coordinatesFile);
-    ui->edtBoundaryFileLine->setText(coordinatesFile);
-
-    RefinementPolygon refinementPolygon(coordinatesFile, maximumEdgeLength, minimumAngle);
-    currentMesh->addRefinementPolygon(refinementPolygon);
+    currentMesh->addRefinementPolygon(coordinatesFile);
 }
 
 void UnstructuredMeshDialog::on_btnRemoveCoordinatesFile_clicked() {
-    QListWidgetItem *currentItem = ui->lstCoordinateFiles->currentItem();
+    if (ui->lstCoordinateFiles->currentRow() > 0) {
+        QListWidgetItem *currentItem = ui->lstCoordinateFiles->currentItem();
 
-    if (currentItem != NULL) {
-        QString coordinatesFile = currentItem->text();
+        if (currentItem != NULL) {
+            QString coordinatesFile = currentItem->text();
 
-        currentMesh->removeRefinementPolygon(coordinatesFile);
-        ui->lstCoordinateFiles->takeItem(ui->lstCoordinateFiles->currentRow());
+            currentMesh->removeRefinementPolygon(coordinatesFile);
+            ui->lstCoordinateFiles->takeItem(ui->lstCoordinateFiles->currentRow());
+        }
     }
 }
 
 void UnstructuredMeshDialog::on_lstCoordinateFiles_itemSelectionChanged() {
-    QListWidgetItem *currentItem = ui->lstCoordinateFiles->currentItem();
-    const RefinementPolygon *refinementPolygon = currentMesh->getRefinementPolygon(currentItem->text());
+    double maximumEdgeLength, minimumAngle, upperBoundForMaximumEdgeLength;
 
-    if (refinementPolygon != NULL) {
-        ui->sbxMaximumEdgeLength->setValue(refinementPolygon->getMaximumEdgeLength());
-        ui->sbxMinimumAngle->setValue(refinementPolygon->getMinimumAngle());
+    if (ui->lstCoordinateFiles->currentRow() > 0) {
+        QListWidgetItem *currentItem = ui->lstCoordinateFiles->currentItem();
+        const RefinementArea *refinementArea = currentMesh->getRefinementPolygon(currentItem->text());
+
+        if (refinementArea != NULL) {
+            maximumEdgeLength = refinementArea->getMaximumEdgeLength();
+            minimumAngle = refinementArea->getMinimumAngle();
+            upperBoundForMaximumEdgeLength = refinementArea->getUpperBoundForMaximumEdgeLength();
+        }
+    } else {
+        maximumEdgeLength = currentMesh->getMaximumEdgeLength();
+        minimumAngle = currentMesh->getMinimumAngle();
+        upperBoundForMaximumEdgeLength = currentMesh->getUpperBoundForMaximumEdgeLength();
     }
+
+    ui->sbxMaximumEdgeLength->setValue(maximumEdgeLength);
+    ui->sbxMaximumEdgeLength->setMaximum(upperBoundForMaximumEdgeLength);
+    ui->sbxMinimumAngle->setValue(minimumAngle);
 }
 
 void UnstructuredMeshDialog::on_btnGenerateMesh_clicked() {

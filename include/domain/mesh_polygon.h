@@ -18,6 +18,9 @@ public:
     static bool isBoundaryPolygon(const MeshPolygon &meshPolygon) {
         return !isHolePolygon(meshPolygon);
     }
+
+    double width() const;
+    double height() const;
 };
 
 #endif // MESH_POLYGON_H

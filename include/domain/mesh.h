@@ -6,7 +6,7 @@
 #include <QVector>
 
 #include "mesh_polygon.h"
-#include "refinement_polygon.h"
+#include "refinement_area.h"
 
 class Mesh {
 protected:
@@ -41,15 +41,13 @@ public:
     double getCoordinatesDistance() const;
 
     QVector<MeshPolygon>& getDomain();
-    const MeshPolygon* getBoundaryPolygon();
+    const MeshPolygon* getBoundaryPolygon() const;
 
     void setShowDomainBoundary(const bool &show);
     bool getShowDomainBoundary() const;
     void setShowMesh(const bool &show);
     bool getShowMesh() const;
 
-    double height();
-    double width();
     double area();
 
     virtual void buildDomain();

@@ -37,6 +37,17 @@ double UnstructuredMesh::getMaximumEdgeLength() const {
     return maximumEdgeLength;
 }
 
+double UnstructuredMesh::getUpperBoundForMaximumEdgeLength() const {
+    if (getBoundaryPolygon() == NULL) {
+        return 0.0;
+    }
+
+    double width = getBoundaryPolygon()->width();
+    double height = getBoundaryPolygon()->height();
+
+    return height > width ? width : height;
+}
+
 void UnstructuredMesh::generate() {
     const MeshPolygon *boundaryPolygon = getBoundaryPolygon();
 
@@ -74,18 +85,19 @@ const CDT* UnstructuredMesh::getCDT() {
     return &cdt;
 }
 
-QVector<RefinementPolygon>& UnstructuredMesh::getRefinementPolygons() {
-    return refinementPolygons;
+QVector<RefinementArea>& UnstructuredMesh::getRefinementPolygons() {
+    return refinementAreas;
 }
 
-void UnstructuredMesh::addRefinementPolygon(RefinementPolygon &refinementPolygon) {
-    QFile refinementFile(refinementPolygon.getFilename());
+void UnstructuredMesh::addRefinementPolygon(QString &filename) {
+    QFile refinementFile(filename);
 
     if (!refinementFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
         throw MeshException(QString("Unable to open refinement file. Error: %1").arg(refinementFile.errorString()));
     }
 
     QXmlStreamReader kml(&refinementFile);
+    RefinementArea refinementArea(filename);
 
     while (!kml.atEnd()) {
         kml.readNext();
@@ -107,29 +119,44 @@ void UnstructuredMesh::addRefinementPolygon(RefinementPolygon &refinementPolygon
                 GeographicLib::GeoCoords utmCoordinate = GeographicLib::GeoCoords(coordinateStr.at(1).toDouble(), coordinateStr.at(0).toDouble());
                 Point p(utmCoordinate.Easting(), utmCoordinate.Northing());
 
-                refinementPolygon.getPolygon().push_back(p);
+                refinementArea.getMeshPolygon().push_back(p);
             }
 
-            refinementPolygons.push_back(refinementPolygon);
+            MeshPolygon meshPolygon = refinementArea.getMeshPolygon();
+
+            calculateOptimalEdgeLength(&meshPolygon);
+            refinementAreas.push_back(refinementArea);
 
             break;
         }
+    }
+}
+
+void UnstructuredMesh::calculateOptimalEdgeLength(const MeshPolygon *meshPolygon) {
+    double width = meshPolygon->width();
+    double height = meshPolygon->height();
+    double smallEdgeLength = (height > width ? width : height) / 10;
+
+    if (smallEdgeLength < DEFAULT_MINIMUM_EDGE_LENGTH) {
+        maximumEdgeLength = DEFAULT_MINIMUM_EDGE_LENGTH;
+    } else {
+        maximumEdgeLength = smallEdgeLength;
     }
 }
 
 void UnstructuredMesh::removeRefinementPolygon(const QString &filename) {
-    for (int i = 0; i < refinementPolygons.count(); i++) {
-        if (refinementPolygons.at(i).getFilename() == filename) {
-            refinementPolygons.remove(i);
+    for (int i = 0; i < refinementAreas.count(); i++) {
+        if (refinementAreas.at(i).getFilename() == filename) {
+            refinementAreas.remove(i);
             break;
         }
     }
 }
 
-const RefinementPolygon* UnstructuredMesh::getRefinementPolygon(const QString &filename) {
-    for (int i = 0; i < refinementPolygons.count(); i++) {
-        if (refinementPolygons.at(i).getFilename() == filename) {
-            return &refinementPolygons.at(i);
+const RefinementArea* UnstructuredMesh::getRefinementPolygon(const QString &filename) {
+    for (int i = 0; i < refinementAreas.count(); i++) {
+        if (refinementAreas.at(i).getFilename() == filename) {
+            return &refinementAreas.at(i);
         }
     }
 
@@ -140,14 +167,7 @@ void UnstructuredMesh::buildDomain() {
     cdt.clear();
 
     Mesh::buildDomain();
-
-    double smallEdgeLength = (this->height() > this->width() ? width() : height()) / 10;
-
-    if (smallEdgeLength < DEFAULT_MINIMUM_EDGE_LENGTH) {
-        maximumEdgeLength = DEFAULT_MINIMUM_EDGE_LENGTH;
-    } else {
-        maximumEdgeLength = smallEdgeLength;
-    }
+    calculateOptimalEdgeLength(getBoundaryPolygon());
 }
 
 void UnstructuredMesh::clear() {
