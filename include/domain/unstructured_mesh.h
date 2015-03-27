@@ -17,7 +17,7 @@ private:
     double maximumEdgeLength;
     QVector<RefinementArea> refinementAreas;
 
-    void calculateOptimalEdgeLength(const MeshPolygon *polygon);
+    void calculateOptimalEdgeLength(RefinementArea *refinementArea = NULL);
     void mark_domains(CDT::Face_handle start, int index, QList<CDT::Edge>& border);
     void mark_domains();
 
@@ -29,6 +29,7 @@ public:
 
     void setMinimumAngle(const double &minimumAngle);
     double getMinimumAngle() const;
+    double getMinimumAngleInDegrees() const;
     void setMaximumEdgeLength(const double &maximumEdgeLength);
     double getMaximumEdgeLength() const;
     double getUpperBoundForMaximumEdgeLength() const;
@@ -39,8 +40,8 @@ public:
 
     QVector<RefinementArea>& getRefinementPolygons();
     void addRefinementPolygon(QString &filename);
-    void removeRefinementPolygon(const QString &filename);
-    const RefinementArea* getRefinementPolygon(const QString &filename);
+    void removeRefinementArea(const QString &filename);
+    RefinementArea* getRefinementArea(const QString &filename);
 
     virtual void buildDomain();
     virtual void clear();

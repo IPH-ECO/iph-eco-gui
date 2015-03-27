@@ -78,10 +78,11 @@ void UnstructuredMeshOpenGLWidget::paintGL() {
         QVector<RefinementArea> refinements = mesh->getRefinementPolygons();
 
         for (int i = 0; i < refinements.count(); i++) {
-            RefinementArea refinement = refinements.at(i);
+            RefinementArea refinementArea = refinements.at(i);
+            MeshPolygon *refinementPolygon = refinementArea.getMeshPolygon();
 
             glBegin(GL_LINE_LOOP);
-            for (MeshPolygon::Vertex_iterator vt = refinement.getMeshPolygon().vertices_begin(); vt != refinement.getMeshPolygon().vertices_end(); vt++) {
+            for (MeshPolygon::Vertex_iterator vt = refinementPolygon->vertices_begin(); vt != refinementPolygon->vertices_end(); vt++) {
                 glVertex2d(vt->x(), vt->y());
             }
             glEnd();

@@ -2,6 +2,7 @@
 #include "ui_unstructured_mesh_dialog.h"
 
 #include <CGAL/assertions_behaviour.h>
+#include <QDebug>
 
 #include "include/domain/refinement_area.h"
 
@@ -89,33 +90,51 @@ void UnstructuredMeshDialog::on_btnRemoveCoordinatesFile_clicked() {
         if (currentItem != NULL) {
             QString coordinatesFile = currentItem->text();
 
-            currentMesh->removeRefinementPolygon(coordinatesFile);
+            currentMesh->removeRefinementArea(coordinatesFile);
             ui->lstCoordinateFiles->takeItem(ui->lstCoordinateFiles->currentRow());
         }
     }
 }
 
 void UnstructuredMeshDialog::on_lstCoordinateFiles_itemSelectionChanged() {
-    double maximumEdgeLength, minimumAngle, upperBoundForMaximumEdgeLength;
-
     if (ui->lstCoordinateFiles->currentRow() > 0) {
         QListWidgetItem *currentItem = ui->lstCoordinateFiles->currentItem();
-        const RefinementArea *refinementArea = currentMesh->getRefinementPolygon(currentItem->text());
+        RefinementArea *refinementArea = currentMesh->getRefinementArea(currentItem->text());
 
-        if (refinementArea != NULL) {
-            maximumEdgeLength = refinementArea->getMaximumEdgeLength();
-            minimumAngle = refinementArea->getMinimumAngle();
-            upperBoundForMaximumEdgeLength = refinementArea->getUpperBoundForMaximumEdgeLength();
-        }
+        ui->sbxMaximumEdgeLength->setValue(refinementArea->getMaximumEdgeLength());
+        ui->sbxMaximumEdgeLength->setMaximum(refinementArea->getUpperBoundForMaximumEdgeLength());
+        ui->sbxMinimumAngle->setValue(refinementArea->getMinimumAngleInDegrees());
     } else {
-        maximumEdgeLength = currentMesh->getMaximumEdgeLength();
-        minimumAngle = currentMesh->getMinimumAngle();
-        upperBoundForMaximumEdgeLength = currentMesh->getUpperBoundForMaximumEdgeLength();
+        if (currentMesh->getBoundaryPolygon() != NULL) {
+            ui->sbxMaximumEdgeLength->setValue(currentMesh->getMaximumEdgeLength());
+            ui->sbxMaximumEdgeLength->setMaximum(currentMesh->getUpperBoundForMaximumEdgeLength());
+            ui->sbxMinimumAngle->setValue(currentMesh->getMinimumAngleInDegrees());
+        }
     }
+}
 
-    ui->sbxMaximumEdgeLength->setValue(maximumEdgeLength);
-    ui->sbxMaximumEdgeLength->setMaximum(upperBoundForMaximumEdgeLength);
-    ui->sbxMinimumAngle->setValue(minimumAngle);
+void UnstructuredMeshDialog::on_sbxMaximumEdgeLength_valueChanged(double value) {
+    if (ui->lstCoordinateFiles->currentRow() > 0) {
+        RefinementArea *refinementArea = currentMesh->getRefinementArea(ui->lstCoordinateFiles->currentItem()->text());
+
+        refinementArea->setMaximumEdgeLength(value);
+    } else {
+        if (currentMesh->getBoundaryPolygon() != NULL) {
+            currentMesh->setMaximumEdgeLength(value);
+        }
+    }
+}
+
+void UnstructuredMeshDialog::on_sbxMinimumAngle_valueChanged(double value) {
+    if (ui->lstCoordinateFiles->currentRow() > 0) {
+        RefinementArea *refinementArea = currentMesh->getRefinementArea(ui->lstCoordinateFiles->currentItem()->text());
+
+        refinementArea->setMinimumAngle(value);
+    } else {
+        if (currentMesh->getBoundaryPolygon() != NULL) {
+            currentMesh->setMinimumAngle(value);
+        }
+    }
 }
 
 void UnstructuredMeshDialog::on_btnGenerateMesh_clicked() {
@@ -164,14 +183,15 @@ void UnstructuredMeshDialog::on_btnSaveMesh_clicked() {
     QString boundaryFile = ui->edtBoundaryFileLine->text();
     double minimumAngle = ui->sbxMinimumAngle->value();
     double maximumEdgeLength = ui->sbxMaximumEdgeLength->value();
-    bool showDomainBoundary = ui->chkShowDomainBoundary->isChecked();
-    bool showMesh = ui->chkShowMesh->isChecked();
 
     Project *project = IPHApplication::getCurrentProject();
     UnstructuredMesh unstructuredMesh(meshName);
     currentMesh = static_cast<UnstructuredMesh*>(project->getMesh(&unstructuredMesh));
 
     if (currentMesh == NULL && ui->cbxMeshName->currentIndex() == -1) {
+        bool showDomainBoundary = ui->chkShowDomainBoundary->isChecked();
+        bool showMesh = ui->chkShowMesh->isChecked();
+
         currentMesh = new UnstructuredMesh(meshName, boundaryFile, minimumAngle, maximumEdgeLength);
         currentMesh->setShowDomainBoundary(showDomainBoundary);
         currentMesh->setShowMesh(showMesh);

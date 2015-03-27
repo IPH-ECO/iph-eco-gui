@@ -19,14 +19,15 @@ public:
     QString getFilename() const;
     void setFilename(const QString &filename);
 
-    MeshPolygon& getMeshPolygon();
+    MeshPolygon* getMeshPolygon();
     void setMeshPolygon(const MeshPolygon &meshPolygon);
-
     void setMinimumAngle(const double &minimumAngle);
     double getMinimumAngle() const;
+    double getMinimumAngleInDegrees() const;
 
     void setMaximumEdgeLength(const double &maximumEdgeLength);
     double getMaximumEdgeLength() const;
+    double getUpperBoundForMaximumEdgeLength() const;
 };
 
 #endif // REFINEMENT_AREA_H

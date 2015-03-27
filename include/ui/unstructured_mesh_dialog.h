@@ -25,27 +25,28 @@ public:
     ~UnstructuredMeshDialog();
 
 private slots:
+    // General dialog events
+    void on_btnRemoveMesh_clicked();
+    void on_btnSaveMesh_clicked();
+    void on_btnCancelMesh_clicked();
+    void on_cbxMeshName_currentIndexChanged(int index);
+    void on_chkShowDomainBoundary_clicked();
+
     // Domain tab events
     void on_btnGenerateDomain_clicked();
     void on_btnBoundaryFileBrowser_clicked();
-    void on_btnSaveMesh_clicked();
-    void on_btnCancelMesh_clicked();
 
     // Mesh tab events
     void on_btnGenerateMesh_clicked();
-    void on_btnRemoveMesh_clicked();
     void on_btnAddCoordinatesFile_clicked();
     void on_btnRemoveCoordinatesFile_clicked();
     void on_lstCoordinateFiles_itemSelectionChanged();
+    void on_sbxMaximumEdgeLength_valueChanged(double value);
+    void on_sbxMinimumAngle_valueChanged(double value);
+    void on_chkShowMesh_clicked();
 
     void resetMeshForm();
     void enableMeshForm(bool enable);
-
-    void on_cbxMeshName_currentIndexChanged(int index);
-
-    // Options
-    void on_chkShowDomainBoundary_clicked();
-    void on_chkShowMesh_clicked();
 
 private:
     const QString BOUNDARY_DEFAULT_DIR_KEY;
