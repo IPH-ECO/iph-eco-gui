@@ -44,8 +44,5 @@ double RefinementArea::getMaximumEdgeLength() const {
 }
 
 double RefinementArea::getUpperBoundForMaximumEdgeLength() const {
-    double width = meshPolygon.width();
-    double height = meshPolygon.height();
-
-    return height > width ? width : height;
+    return qMin(meshPolygon.width(), meshPolygon.height());
 }

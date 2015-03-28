@@ -8,7 +8,7 @@
 
 #include <GeographicLib/GeoCoords.hpp>
 
-UnstructuredMesh::UnstructuredMesh() : DEFAULT_MINIMUM_ANGLE(0.125), DEFAULT_MINIMUM_EDGE_LENGTH(0.5) {}
+UnstructuredMesh::UnstructuredMesh() : DEFAULT_MINIMUM_ANGLE(0.125), DEFAULT_MINIMUM_EDGE_LENGTH(0.5), minimumAngle(DEFAULT_MINIMUM_ANGLE), maximumEdgeLength(DEFAULT_MINIMUM_EDGE_LENGTH) {}
 
 UnstructuredMesh::UnstructuredMesh(QString &_name) :
     Mesh(_name), DEFAULT_MINIMUM_ANGLE(0.125), DEFAULT_MINIMUM_EDGE_LENGTH(0.5), minimumAngle(DEFAULT_MINIMUM_ANGLE), maximumEdgeLength(DEFAULT_MINIMUM_EDGE_LENGTH) {}
@@ -46,10 +46,7 @@ double UnstructuredMesh::getUpperBoundForMaximumEdgeLength() const {
         return 0.0;
     }
 
-    double width = getBoundaryPolygon()->width();
-    double height = getBoundaryPolygon()->height();
-
-    return height > width ? width : height;
+    return qMin(getBoundaryPolygon()->width(), getBoundaryPolygon()->height());
 }
 
 void UnstructuredMesh::generate() {
@@ -89,11 +86,11 @@ const CDT* UnstructuredMesh::getCDT() {
     return &cdt;
 }
 
-QVector<RefinementArea>& UnstructuredMesh::getRefinementPolygons() {
+QVector<RefinementArea>& UnstructuredMesh::getRefinementAreas() {
     return refinementAreas;
 }
 
-void UnstructuredMesh::addRefinementPolygon(QString &filename) {
+RefinementArea UnstructuredMesh::addRefinementArea(QString &filename) {
     QFile refinementFile(filename);
 
     if (!refinementFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
@@ -133,26 +130,19 @@ void UnstructuredMesh::addRefinementPolygon(QString &filename) {
             break;
         }
     }
+
+    return refinementArea;
 }
 
 void UnstructuredMesh::calculateOptimalEdgeLength(RefinementArea *refinementArea) {
     const MeshPolygon* meshPolygon = refinementArea == NULL ? getBoundaryPolygon() : refinementArea->getMeshPolygon();
-    double width = meshPolygon->width();
-    double height = meshPolygon->height();
-    double smallEdgeLength = (height > width ? width : height) / 10;
+    double smallEdgeLength = qMin(meshPolygon->width(), meshPolygon->height()) / 10.0;
+    double optimalEdgeLength = qMax(smallEdgeLength, DEFAULT_MINIMUM_EDGE_LENGTH);
 
-    if (smallEdgeLength < DEFAULT_MINIMUM_EDGE_LENGTH) {
-        if (refinementArea == NULL) {
-            this->maximumEdgeLength = DEFAULT_MINIMUM_EDGE_LENGTH;
-        } else {
-            refinementArea->setMaximumEdgeLength(DEFAULT_MINIMUM_EDGE_LENGTH);
-        }
+    if (refinementArea == NULL) {
+        this->maximumEdgeLength = optimalEdgeLength;
     } else {
-        if (refinementArea == NULL) {
-            this->maximumEdgeLength = smallEdgeLength;
-        } else {
-            refinementArea->setMaximumEdgeLength(smallEdgeLength);
-        }
+        refinementArea->setMaximumEdgeLength(optimalEdgeLength);
     }
 }
 
@@ -177,7 +167,6 @@ RefinementArea* UnstructuredMesh::getRefinementArea(const QString &filename) {
 
 void UnstructuredMesh::buildDomain() {
     cdt.clear();
-
     Mesh::buildDomain();
     calculateOptimalEdgeLength();
 }

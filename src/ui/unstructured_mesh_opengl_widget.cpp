@@ -75,7 +75,7 @@ void UnstructuredMeshOpenGLWidget::paintGL() {
             glEnd();
         }
 
-        QVector<RefinementArea> refinements = mesh->getRefinementPolygons();
+        QVector<RefinementArea> refinements = mesh->getRefinementAreas();
 
         for (int i = 0; i < refinements.count(); i++) {
             RefinementArea refinementArea = refinements.at(i);

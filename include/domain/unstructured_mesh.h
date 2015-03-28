@@ -38,8 +38,8 @@ public:
 
     const CDT* getCDT();
 
-    QVector<RefinementArea>& getRefinementPolygons();
-    void addRefinementPolygon(QString &filename);
+    QVector<RefinementArea>& getRefinementAreas();
+    RefinementArea addRefinementArea(QString &filename);
     void removeRefinementArea(const QString &filename);
     RefinementArea* getRefinementArea(const QString &filename);
 
