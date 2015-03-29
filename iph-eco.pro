@@ -29,8 +29,7 @@ SOURCES += \
     src/domain/mesh.cpp \
     src/ui/unstructured_mesh_dialog.cpp \
     src/ui/unstructured_mesh_opengl_widget.cpp \
-    src/domain/mesh_polygon.cpp \
-    src/domain/refinement_area.cpp
+    src/domain/mesh_polygon.cpp
 
 HEADERS  += \
     include/domain/project.h \
@@ -50,8 +49,7 @@ HEADERS  += \
     include/ui/unstructured_mesh_dialog.h \
     include/ui/unstructured_mesh_opengl_widget.h \
     include/utility/delaunay_triangulation_definitions.h \
-    include/domain/mesh_polygon.h \
-    include/domain/refinement_area.h
+    include/domain/mesh_polygon.h
 
 FORMS    += \
     include/ui/main_window.ui \

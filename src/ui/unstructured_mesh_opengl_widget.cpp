@@ -74,19 +74,6 @@ void UnstructuredMeshOpenGLWidget::paintGL() {
             }
             glEnd();
         }
-
-        QVector<RefinementArea> refinements = mesh->getRefinementAreas();
-
-        for (int i = 0; i < refinements.count(); i++) {
-            RefinementArea refinementArea = refinements.at(i);
-            MeshPolygon *refinementPolygon = refinementArea.getMeshPolygon();
-
-            glBegin(GL_LINE_LOOP);
-            for (MeshPolygon::Vertex_iterator vt = refinementPolygon->vertices_begin(); vt != refinementPolygon->vertices_end(); vt++) {
-                glVertex2d(vt->x(), vt->y());
-            }
-            glEnd();
-        }
     }
 
     if (mesh->getShowMesh()) {
@@ -120,13 +107,13 @@ void UnstructuredMeshOpenGLWidget::setMesh(UnstructuredMesh *mesh) {
     this->mesh = mesh;
 }
 
-void UnstructuredMeshOpenGLWidget::generateDomain() {
+void UnstructuredMeshOpenGLWidget::generateDomain(const QString &filename) {
     if (this->mesh == NULL) {
         return;
     }
 
     try {
-        this->mesh->buildDomain();
+        this->mesh->buildDomain(filename);
         update();
     } catch (MeshException &e) {
         throw e;

@@ -1,13 +1,59 @@
 #include "include/domain/mesh_polygon.h"
 
-MeshPolygon::MeshPolygon(bool hole) : hole(hole) {}
+#include <QtMath>
 
-void MeshPolygon::setHole(const bool &hole) {
-    this->hole = hole;
+const double MeshPolygon::DEFAULT_MINIMUM_ANGLE = 0.125;
+
+const double MeshPolygon::DEFAULT_MINIMUM_EDGE_LENGTH = 0.5;
+
+const QString MeshPolygon::BOUNDARY_POLYGON_FILENAME = "Main";
+
+MeshPolygon::MeshPolygon() {}
+
+MeshPolygon::MeshPolygon(const QString &filename, MeshPolygonType meshPolygonType) : filename(filename), meshPolygonType(meshPolygonType) {}
+
+bool MeshPolygon::operator==(const MeshPolygon &meshPolygon) {
+    return this->filename == meshPolygon.getFilename() && this->meshPolygonType == meshPolygon.getMeshPolygonType();
 }
 
-bool MeshPolygon::isHole() const {
-    return hole;
+void MeshPolygon::setFilename(const QString &filename) {
+    this->filename = filename;
+}
+
+QString MeshPolygon::getFilename() const {
+    return filename;
+}
+
+MeshPolygon::MeshPolygonType MeshPolygon::getMeshPolygonType() const {
+    return meshPolygonType;
+}
+
+void MeshPolygon::setMinimumAngle(const double &minimumAngle) {
+    // http://doc.cgal.org/latest/Mesh_2/classCGAL_1_1Delaunay__mesh__size__criteria__2.html
+    this->minimumAngle = qPow(sin(minimumAngle * M_PI / 180), 2.0);
+}
+
+double MeshPolygon::getMinimumAngle() const {
+    return minimumAngle;
+}
+
+double MeshPolygon::getMinimumAngleInDegrees() const {
+    return qAsin(qSqrt(minimumAngle)) * 180 / M_PI;
+}
+
+void MeshPolygon::setMaximumEdgeLength(const double &maximumEdgeLength) {
+    this->maximumEdgeLength = maximumEdgeLength;
+}
+
+double MeshPolygon::getMaximumEdgeLength() const {
+    return maximumEdgeLength;
+}
+
+void MeshPolygon::setOptimalEdgeLength() {
+    double smallEdgeLength = qMin(width(), height()) / 10.0;
+    double optimalEdgeLength = qMax(smallEdgeLength, DEFAULT_MINIMUM_EDGE_LENGTH);
+
+    this->maximumEdgeLength = optimalEdgeLength;
 }
 
 double MeshPolygon::width() const {

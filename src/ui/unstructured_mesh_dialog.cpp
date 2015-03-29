@@ -4,8 +4,6 @@
 #include <CGAL/assertions_behaviour.h>
 #include <QDebug>
 
-#include "include/domain/refinement_area.h"
-
 UnstructuredMeshDialog::UnstructuredMeshDialog(QWidget *parent) :
     QDialog(parent),
     BOUNDARY_DEFAULT_DIR_KEY("boundary_default_dir"),
@@ -13,7 +11,6 @@ UnstructuredMeshDialog::UnstructuredMeshDialog(QWidget *parent) :
     unsavedMesh(new UnstructuredMesh()),
     currentMesh(unsavedMesh)
 {
-
     ui->setupUi(this);
     ui->unstructuredMeshOpenGLWidget->setMesh(unsavedMesh);
 
@@ -26,6 +23,8 @@ UnstructuredMeshDialog::UnstructuredMeshDialog(QWidget *parent) :
         ui->cbxMeshName->addItem((*i)->getName());
     }
     ui->cbxMeshName->setCurrentIndex(-1);
+
+    ui->lstCoordinateFiles->addItem(MeshPolygon::BOUNDARY_POLYGON_FILENAME);
 }
 
 QString UnstructuredMeshDialog::getDefaultDirectory() {
@@ -52,14 +51,13 @@ void UnstructuredMeshDialog::on_btnGenerateDomain_clicked() {
     QString boundaryFilePath = ui->edtBoundaryFileLine->text();
     double coordinatesDistance = ui->sbxCoordinatesDistance->value();
 
-    currentMesh->setBoundaryFilePath(boundaryFilePath);
     currentMesh->setCoordinatesDistance(coordinatesDistance);
     ui->unstructuredMeshOpenGLWidget->setMesh(currentMesh);
 
     try {
-        ui->unstructuredMeshOpenGLWidget->generateDomain();
-        ui->sbxMaximumEdgeLength->setValue(currentMesh->getMaximumEdgeLength());
-        ui->sbxMinimumAngle->setValue(currentMesh->getMinimumAngleInDegrees());
+        ui->unstructuredMeshOpenGLWidget->generateDomain(boundaryFilePath);
+        ui->sbxMaximumEdgeLength->setValue(currentMesh->getBoundaryPolygon()->getMaximumEdgeLength());
+        ui->sbxMinimumAngle->setValue(currentMesh->getBoundaryPolygon()->getMinimumAngleInDegrees());
     } catch(MeshException &e) {
         QMessageBox::critical(this, tr("Unstructured Mesh Generation"), e.what());
         return;
@@ -81,10 +79,11 @@ void UnstructuredMeshDialog::on_btnAddCoordinatesFile_clicked() {
     }
 
     try {
-        RefinementArea refinementArea = currentMesh->addRefinementArea(coordinatesFile);
+        MeshPolygon meshPolygon = currentMesh->addRefinementArea(coordinatesFile);
+
         ui->lstCoordinateFiles->addItem(coordinatesFile);
         ui->lstCoordinateFiles->setCurrentRow(ui->lstCoordinateFiles->count() - 1);
-        ui->sbxMaximumEdgeLength->setValue(refinementArea.getMaximumEdgeLength());
+//        ui->sbxMaximumEdgeLength->setValue(meshPolygon.getMaximumEdgeLength());
     } catch (MeshException &ex) {
         QMessageBox::critical(this, tr("Unstructured Mesh Generation"), ex.what());
     }
@@ -106,36 +105,36 @@ void UnstructuredMeshDialog::on_btnRemoveCoordinatesFile_clicked() {
 void UnstructuredMeshDialog::on_lstCoordinateFiles_itemSelectionChanged() {
     if (ui->lstCoordinateFiles->currentRow() > 0) {
         QListWidgetItem *currentItem = ui->lstCoordinateFiles->currentItem();
-        RefinementArea *refinementArea = currentMesh->getRefinementArea(currentItem->text());
+        MeshPolygon *meshPolygon = currentMesh->getRefinementArea(currentItem->text());
 
-        ui->sbxMinimumAngle->setValue(refinementArea->getMinimumAngleInDegrees());
-        ui->sbxMaximumEdgeLength->setValue(refinementArea->getMaximumEdgeLength());
+        ui->sbxMinimumAngle->setValue(meshPolygon->getMinimumAngleInDegrees());
+        ui->sbxMaximumEdgeLength->setValue(meshPolygon->getMaximumEdgeLength());
     } else {
         if (currentMesh->getBoundaryPolygon() != NULL) {
-            ui->sbxMinimumAngle->setValue(currentMesh->getMinimumAngleInDegrees());
-            ui->sbxMaximumEdgeLength->setValue(currentMesh->getMaximumEdgeLength());
+            ui->sbxMinimumAngle->setValue(currentMesh->getBoundaryPolygon()->getMinimumAngleInDegrees());
+            ui->sbxMaximumEdgeLength->setValue(currentMesh->getBoundaryPolygon()->getMaximumEdgeLength());
         }
     }
 }
 
 void UnstructuredMeshDialog::on_sbxMaximumEdgeLength_valueChanged(double value) {
     if (ui->lstCoordinateFiles->currentRow() > 0) {
-        RefinementArea *refinementArea = currentMesh->getRefinementArea(ui->lstCoordinateFiles->currentItem()->text());
-        refinementArea->setMaximumEdgeLength(value);
+        MeshPolygon *meshPolygon = currentMesh->getRefinementArea(ui->lstCoordinateFiles->currentItem()->text());
+        meshPolygon->setMaximumEdgeLength(value);
     } else {
         if (currentMesh->getBoundaryPolygon() != NULL) {
-            currentMesh->setMaximumEdgeLength(value);
+            currentMesh->getBoundaryPolygon()->setMaximumEdgeLength(value);
         }
     }
 }
 
 void UnstructuredMeshDialog::on_sbxMinimumAngle_valueChanged(double value) {
     if (ui->lstCoordinateFiles->currentRow() > 0) {
-        RefinementArea *refinementArea = currentMesh->getRefinementArea(ui->lstCoordinateFiles->currentItem()->text());
-        refinementArea->setMinimumAngle(value);
+        MeshPolygon *meshPolygon = currentMesh->getRefinementArea(ui->lstCoordinateFiles->currentItem()->text());
+        meshPolygon->setMinimumAngle(value);
     } else {
         if (currentMesh->getBoundaryPolygon() != NULL) {
-            currentMesh->setMinimumAngle(value);
+            currentMesh->getBoundaryPolygon()->setMinimumAngle(value);
         }
     }
 }
@@ -162,15 +161,14 @@ void UnstructuredMeshDialog::on_btnGenerateMesh_clicked() {
     enableMeshForm(true);
 
     currentMesh->setName(meshName);
-    currentMesh->setBoundaryFilePath(boundaryFileStr);
 
     CGAL::Failure_behaviour old_behaviour = CGAL::set_error_behaviour(CGAL::THROW_EXCEPTION);
     try {
         ui->unstructuredMeshOpenGLWidget->setMesh(currentMesh);
-        ui->unstructuredMeshOpenGLWidget->generateDomain();
+        ui->unstructuredMeshOpenGLWidget->generateDomain(boundaryFileStr);
 
-        currentMesh->setMinimumAngle(ui->sbxMinimumAngle->value());
-        currentMesh->setMaximumEdgeLength(ui->sbxMaximumEdgeLength->value());
+        currentMesh->getBoundaryPolygon()->setMinimumAngle(ui->sbxMinimumAngle->value());
+        currentMesh->getBoundaryPolygon()->setMaximumEdgeLength(ui->sbxMaximumEdgeLength->value());
 
         ui->unstructuredMeshOpenGLWidget->generateMesh();\
     } catch (const std::exception& e) {
@@ -194,19 +192,26 @@ void UnstructuredMeshDialog::on_btnSaveMesh_clicked() {
     if (currentMesh == NULL && ui->cbxMeshName->currentIndex() == -1) {
         bool showDomainBoundary = ui->chkShowDomainBoundary->isChecked();
         bool showMesh = ui->chkShowMesh->isChecked();
+        MeshPolygon *meshPolygon = unsavedMesh->getBoundaryPolygon();
 
-        currentMesh = new UnstructuredMesh(meshName, boundaryFile, minimumAngle, maximumEdgeLength);
+        meshPolygon->setFilename(boundaryFile);
+        meshPolygon->setMinimumAngle(minimumAngle);
+        meshPolygon->setMaximumEdgeLength(maximumEdgeLength);
+
+        currentMesh = new UnstructuredMesh(meshName);
+        currentMesh->setBoundaryPolygon(*meshPolygon);
         currentMesh->setShowDomainBoundary(showDomainBoundary);
         currentMesh->setShowMesh(showMesh);
+
         project->addMesh(currentMesh);
 
         ui->cbxMeshName->addItem(meshName);
         ui->cbxMeshName->setCurrentText(meshName);
     } else {
         currentMesh->setName(meshName);
-        currentMesh->setBoundaryFilePath(boundaryFile);
-        currentMesh->setMinimumAngle(minimumAngle);
-        currentMesh->setMaximumEdgeLength(maximumEdgeLength);
+        currentMesh->getBoundaryPolygon()->setFilename(boundaryFile);
+        currentMesh->getBoundaryPolygon()->setMinimumAngle(minimumAngle);
+        currentMesh->getBoundaryPolygon()->setMaximumEdgeLength(maximumEdgeLength);
 
         ui->cbxMeshName->setItemText(ui->cbxMeshName->currentIndex(), currentMesh->getName());
     }
@@ -247,15 +252,15 @@ void UnstructuredMeshDialog::on_cbxMeshName_currentIndexChanged(int index) {
         currentMesh = static_cast<UnstructuredMesh*>(IPHApplication::getCurrentProject()->getMesh(&unstructuredMesh));
 
         ui->edtMeshName->setText(currentMesh->getName());
-        ui->edtBoundaryFileLine->setText(currentMesh->getBoundaryFilePath());
-        ui->sbxMinimumAngle->setValue(currentMesh->getMinimumAngle());
-        ui->sbxMaximumEdgeLength->setValue(currentMesh->getMaximumEdgeLength());
+        ui->edtBoundaryFileLine->setText(currentMesh->getBoundaryPolygon()->getFilename());
+        ui->sbxMinimumAngle->setValue(currentMesh->getBoundaryPolygon()->getMinimumAngle());
+        ui->sbxMaximumEdgeLength->setValue(currentMesh->getBoundaryPolygon()->getMaximumEdgeLength());
         ui->chkShowDomainBoundary->setChecked(currentMesh->getShowDomainBoundary());
         ui->chkShowMesh->setChecked(currentMesh->getShowMesh());
         ui->btnCancelMesh->setText("Done");
 
         ui->unstructuredMeshOpenGLWidget->setMesh(currentMesh);
-        ui->unstructuredMeshOpenGLWidget->generateDomain();
+        ui->unstructuredMeshOpenGLWidget->generateDomain(currentMesh->getBoundaryPolygon()->getFilename());
         ui->unstructuredMeshOpenGLWidget->generateMesh();
 
         ui->lblDomainArea->setText(QString("Area: %1 m\u00B2").arg(currentMesh->getBoundaryPolygon()->area(), 0, 'f', 3));
@@ -282,9 +287,9 @@ void UnstructuredMeshDialog::resetMeshForm() {
 
     ui->edtMeshName->setFocus();
     ui->edtMeshName->setText(unsavedMesh->getName());
-    ui->edtBoundaryFileLine->setText(unsavedMesh->getBoundaryFilePath());
-    ui->sbxMaximumEdgeLength->setValue(unsavedMesh->getMaximumEdgeLength());
-    ui->sbxMinimumAngle->setValue(unsavedMesh->getMinimumAngle());
+//    ui->edtBoundaryFileLine->setText(unsavedMesh->getBoundaryFilePath());
+//    ui->sbxMaximumEdgeLength->setValue(unsavedMesh->getMaximumEdgeLength());
+//    ui->sbxMinimumAngle->setValue(unsavedMesh->getMinimumAngle());
     ui->lblDomainArea->setText("Area: -");
 
     ui->btnRemoveMesh->setEnabled(false);
@@ -299,4 +304,27 @@ void UnstructuredMeshDialog::on_chkShowDomainBoundary_clicked() {
 void UnstructuredMeshDialog::on_chkShowMesh_clicked() {
     currentMesh->setShowMesh(ui->chkShowMesh->isChecked());
     ui->unstructuredMeshOpenGLWidget->update();
+}
+
+void UnstructuredMeshDialog::on_btnAddIsland_clicked() {
+    QString islandFile = QFileDialog::getOpenFileName(this, tr("Select a island file"), getDefaultDirectory(), "Keyhole Markup Language file (*.kml)");
+
+    if (islandFile.isEmpty()) {
+        return;
+    }
+
+    if (!ui->lstIslands->findItems(islandFile, Qt::MatchExactly).empty()) {
+        QMessageBox::information(this, tr("Unstructured Mesh Generation"), tr("Island file already added."));
+        return;
+    }
+
+    try {
+        currentMesh->addIsland(islandFile);
+    } catch (MeshException &ex) {
+        QMessageBox::critical(this, tr("Unstructured Mesh Generation"), ex.what());
+    }
+}
+
+void UnstructuredMeshDialog::on_btnRemoveIsland_clicked() {
+
 }

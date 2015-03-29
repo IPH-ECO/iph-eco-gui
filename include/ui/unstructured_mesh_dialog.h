@@ -33,8 +33,10 @@ private slots:
     void on_chkShowDomainBoundary_clicked();
 
     // Domain tab events
-    void on_btnGenerateDomain_clicked();
+    void on_btnAddIsland_clicked();
+    void on_btnRemoveIsland_clicked();
     void on_btnBoundaryFileBrowser_clicked();
+    void on_btnGenerateDomain_clicked();
 
     // Mesh tab events
     void on_btnGenerateMesh_clicked();

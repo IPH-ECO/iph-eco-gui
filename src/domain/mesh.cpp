@@ -14,11 +14,9 @@
 
 #include <GeographicLib/GeoCoords.hpp>
 
-Mesh::Mesh() : showDomainBoundary(true), showMesh(true) {}
+Mesh::Mesh() : coordinatesDistance(0.0), showDomainBoundary(true), showMesh(true) {}
 
-Mesh::Mesh(QString &_name) : name(_name), showMesh(true) {}
-
-Mesh::Mesh(QString &_name, QString &_boundaryFilePath) : name(_name), boundaryFilePath(_boundaryFilePath), showDomainBoundary(true), showMesh(true) {}
+Mesh::Mesh(QString &_name) : name(_name), coordinatesDistance(0.0), showDomainBoundary(true) {}
 
 Mesh::~Mesh() {}
 
@@ -30,14 +28,6 @@ QString Mesh::getName() const {
     return this->name;
 }
 
-void Mesh::setBoundaryFilePath(const QString &boundaryFilePath) {
-    this->boundaryFilePath = boundaryFilePath;
-}
-
-QString Mesh::getBoundaryFilePath() const {
-    return this->boundaryFilePath;
-}
-
 void Mesh::setCoordinatesDistance(const double &coordinatesDistance) {
     this->coordinatesDistance = coordinatesDistance;
 }
@@ -46,10 +36,10 @@ double Mesh::getCoordinatesDistance() const {
     return this->coordinatesDistance;
 }
 
-void Mesh::buildDomain() {
+void Mesh::buildDomain(const QString &filename) {
     domain.clear();
 
-    QFile boundaryFile(this->getBoundaryFilePath());
+    QFile boundaryFile(filename);
 
     if (!boundaryFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
         throw MeshException(QString("Unable to open boundary file. Error: %1").arg(boundaryFile.errorString()));
@@ -61,9 +51,9 @@ void Mesh::buildDomain() {
         kml.readNext();
 
         bool isBoundary = kml.name() == "outerBoundaryIs";
-        bool isHole = kml.name() == "innerBoundaryIs";
+        bool isIsland = kml.name() == "innerBoundaryIs";
 
-        if ((isBoundary || isHole) && kml.isStartElement()) {
+        if ((isBoundary || isIsland) && kml.isStartElement()) {
             do {
                 kml.readNext();
             } while (kml.name() != "coordinates" && !kml.atEnd());
@@ -75,7 +65,8 @@ void Mesh::buildDomain() {
             // Convert geographic coordinates to UTM coordinates
             QString coordinatesText = kml.readElementText();
             QStringList coordinates = coordinatesText.trimmed().split(" ");
-            MeshPolygon meshPolygon(isHole);
+            MeshPolygon::MeshPolygonType meshPolygonType = isBoundary ? MeshPolygon::BOUNDARY : MeshPolygon::ISLAND;
+            MeshPolygon meshPolygon(MeshPolygon::BOUNDARY_POLYGON_FILENAME, meshPolygonType);
 
             // Get first coordinate
             QStringList coordinateStr = coordinates.at(0).split(",");
@@ -111,6 +102,53 @@ void Mesh::buildDomain() {
     boundaryFile.close();
 }
 
+void Mesh::addIsland(const QString &filename) {
+    QFile islandFile(filename);
+
+    if (!islandFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        throw MeshException(QString("Unable to open island file. Error: %1").arg(islandFile.errorString()));
+    }
+
+    QXmlStreamReader kml(&islandFile);
+
+    while (!kml.atEnd()) {
+        kml.readNext();
+
+        if (kml.name() == "outerBoundaryIs" && kml.isStartElement()) {
+            do {
+                kml.readNext();
+            } while (kml.name() != "coordinates" && !kml.atEnd());
+
+            if (kml.atEnd()) {
+                throw MeshException(QString("No coordinates found in domain file."));
+            }
+
+            QString coordinatesText = kml.readElementText();
+            QStringList coordinates = coordinatesText.trimmed().split(" ");
+            MeshPolygon islandPolygon(filename, MeshPolygon::ISLAND);
+
+            for (int i = 0; i < coordinates.count(); i++) {
+                QStringList coordinateStr = coordinates.at(i).split(",");
+                GeographicLib::GeoCoords utmCoordinate = GeographicLib::GeoCoords(coordinateStr.at(1).toDouble(), coordinateStr.at(0).toDouble());
+                Point p(utmCoordinate.Easting(), utmCoordinate.Northing());
+
+                islandPolygon.push_back(p);
+            }
+
+            domain.push_back(islandPolygon);
+        }
+    }
+}
+
+void Mesh::removeIsland(const QString &filename) {
+    for (int i = 0; i < domain.size(); i++) {
+        if (domain.at(i).getFilename() == filename) {
+            domain.remove(i);
+            break;
+        }
+    }
+}
+
 Point Mesh::createNewCoordinate(const Point &p1, const Point &p2, const double &distance) {
     double x = p1.x() + (p2.x() - p1.x()) * this->coordinatesDistance / distance;
     double y = p1.y() + (p2.y() - p1.y()) * this->coordinatesDistance / distance;
@@ -122,14 +160,19 @@ QVector<MeshPolygon>& Mesh::getDomain() {
     return domain;
 }
 
-const MeshPolygon* Mesh::getBoundaryPolygon() const {
-    QVector<MeshPolygon>::const_iterator it = std::find_if(domain.begin(), domain.end(), MeshPolygon::isBoundaryPolygon);
+MeshPolygon* Mesh::getBoundaryPolygon() {
+    MeshPolygon meshPolygon(MeshPolygon::BOUNDARY_POLYGON_FILENAME, MeshPolygon::BOUNDARY);
+    QVector<MeshPolygon>::iterator it = std::find(domain.begin(), domain.end(), meshPolygon);
 
     if (it == domain.end()) {
         return NULL;
     }
 
     return &(*it);
+}
+
+void Mesh::setBoundaryPolygon(const MeshPolygon &meshPolygon) {
+    domain.push_back(meshPolygon);
 }
 
 void Mesh::setShowDomainBoundary(const bool &show) {
@@ -150,7 +193,6 @@ bool Mesh::getShowMesh() const {
 
 void Mesh::clear() {
     name.clear();
-    boundaryFilePath.clear();
     domain.clear();
     showDomainBoundary = showMesh = true;
     showUTMCoordinates = showVertexesLabels = showTrianglesLabels = showEdgesLabels = false;
@@ -162,7 +204,7 @@ double Mesh::area() {
     for (int i = 0; i < domain.count(); i++) {
         const MeshPolygon &innerPolygon = domain.at(i);
 
-        if (innerPolygon.isHole()) {
+        if (innerPolygon.getMeshPolygonType() == MeshPolygon::ISLAND) {
             area -= innerPolygon.area();
         }
     }

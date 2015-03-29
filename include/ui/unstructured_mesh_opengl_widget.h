@@ -42,7 +42,7 @@ public:
     UnstructuredMeshOpenGLWidget(QWidget *parent);
 
     void setMesh(UnstructuredMesh *mesh);
-    void generateDomain();
+    void generateDomain(const QString &filename);
     void generateMesh();
 };
 

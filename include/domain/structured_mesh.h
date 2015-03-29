@@ -9,7 +9,7 @@ private:
     uint columns;
 public:
     StructuredMesh(QString &_name);
-    StructuredMesh(QString &_name, QString &_boundaryFilePath, uint &_rows, uint &_columns);
+    StructuredMesh(QString &_name, uint &_rows, uint &_columns);
 
     void setRows(const uint rows);
     uint getRows() const;
