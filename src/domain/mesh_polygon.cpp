@@ -8,13 +8,9 @@ const double MeshPolygon::DEFAULT_MINIMUM_EDGE_LENGTH = 0.5;
 
 const QString MeshPolygon::BOUNDARY_POLYGON_FILENAME = "Main";
 
-const int MeshPolygon::BOUNDARY = 1;
-const int MeshPolygon::ISLAND = 2;
-const int MeshPolygon::REFINEMENT_AREA = 3;
-
 MeshPolygon::MeshPolygon() {}
 
-MeshPolygon::MeshPolygon(const QString &filename, int meshPolygonType) : filename(filename), meshPolygonType(meshPolygonType) {}
+MeshPolygon::MeshPolygon(const QString &filename, MeshPolygonType meshPolygonType) : filename(filename), meshPolygonType(meshPolygonType) {}
 
 bool MeshPolygon::operator==(const MeshPolygon &meshPolygon) {
     return this->filename == meshPolygon.getFilename() && this->meshPolygonType == meshPolygon.getMeshPolygonType();
@@ -28,7 +24,7 @@ QString MeshPolygon::getFilename() const {
     return filename;
 }
 
-int MeshPolygon::getMeshPolygonType() const {
+MeshPolygon::MeshPolygonType MeshPolygon::getMeshPolygonType() const {
     return meshPolygonType;
 }
 
@@ -58,6 +54,18 @@ void MeshPolygon::setOptimalEdgeLength() {
     double optimalEdgeLength = qMax(smallEdgeLength, DEFAULT_MINIMUM_EDGE_LENGTH);
 
     this->maximumEdgeLength = optimalEdgeLength;
+}
+
+bool MeshPolygon::isIsland() const {
+    return this->meshPolygonType == MeshPolygon::ISLAND;
+}
+
+bool MeshPolygon::isBoundary() const {
+    return this->meshPolygonType == MeshPolygon::BOUNDARY;
+}
+
+bool MeshPolygon::isRefinementArea() const {
+    return this->meshPolygonType == MeshPolygon::REFINEMENT_AREA;
 }
 
 double MeshPolygon::width() const {

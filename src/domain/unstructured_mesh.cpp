@@ -49,56 +49,9 @@ const CDT* UnstructuredMesh::getCDT() {
     return &cdt;
 }
 
-void UnstructuredMesh::addRefinementArea(const QString &filename) {
-    QFile refinementFile(filename);
-
-    if (!refinementFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        throw MeshException(QString("Unable to open refinement file. Error: %1").arg(refinementFile.errorString()));
-    }
-
-    QXmlStreamReader kml(&refinementFile);
-
-    while (!kml.atEnd()) {
-        kml.readNext();
-
-        if (kml.name() == "outerBoundaryIs" && kml.isStartElement()) {
-            do {
-                kml.readNext();
-            } while (kml.name() != "coordinates" && !kml.atEnd());
-
-            if (kml.atEnd()) {
-                throw MeshException(QString("No coordinates found in refinement file."));
-            }
-
-            QString coordinatesText = kml.readElementText();
-            QStringList coordinates = coordinatesText.trimmed().split(" ");
-            MeshPolygon meshPolygon(filename, MeshPolygon::REFINEMENT_AREA);
-
-            for (int i = 0; i < coordinates.count(); i++) {
-                QStringList coordinateStr = coordinates.at(i).split(",");
-                GeographicLib::GeoCoords utmCoordinate = GeographicLib::GeoCoords(coordinateStr.at(1).toDouble(), coordinateStr.at(0).toDouble());
-                Point p(utmCoordinate.Easting(), utmCoordinate.Northing());
-
-                meshPolygon.push_back(p);
-            }
-
-            meshPolygon.setOptimalEdgeLength();
-            domain.push_back(meshPolygon);
-
-            break;
-        }
-    }
-
-    refinementFile.close();
-}
-
-void UnstructuredMesh::removeRefinementArea(const QString &filename) {
-    domain.removeOne(MeshPolygon(filename, MeshPolygon::REFINEMENT_AREA));
-}
-
 MeshPolygon* UnstructuredMesh::getRefinementArea(const QString &filename) {
     MeshPolygon meshPolygon(filename, MeshPolygon::REFINEMENT_AREA);
-    QVector<MeshPolygon>::iterator it = std::find(domain.begin(), domain.end(), meshPolygon);
+    QList<MeshPolygon>::iterator it = std::find(domain.begin(), domain.end(), meshPolygon);
 
     if (it == domain.end()) {
         return NULL;

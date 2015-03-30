@@ -1,5 +1,6 @@
 #include "include/ui/unstructured_mesh_opengl_widget.h"
 
+#include <QList>
 #include <QPoint>
 
 UnstructuredMeshOpenGLWidget::UnstructuredMeshOpenGLWidget(QWidget *parent) :
@@ -45,6 +46,8 @@ void UnstructuredMeshOpenGLWidget::paintGL() {
         return;
     }
 
+    qDebug() << boundaryPolygon->is_simple();
+
     left = boundaryPolygon->left_vertex()->x() - zoom;
     right = boundaryPolygon->right_vertex()->x() + zoom;
     bottom = boundaryPolygon->bottom_vertex()->y() - zoom;
@@ -63,9 +66,9 @@ void UnstructuredMeshOpenGLWidget::paintGL() {
     glColor3f(0.0, 0.0, 0.0);
 
     if (mesh->getShowDomainBoundary()) {
-        QVector<MeshPolygon> domain = mesh->getDomain();
+        QList<MeshPolygon> domain = mesh->getDomain();
 
-        for (QVector<MeshPolygon>::const_iterator it = domain.begin(); it != domain.end(); it++) {
+        for (QList<MeshPolygon>::const_iterator it = domain.begin(); it != domain.end(); it++) {
             glBegin(GL_LINE_LOOP);
             for (MeshPolygon::Vertex_iterator vt = it->vertices_begin(); vt != it->vertices_end(); vt++) {
                 glVertex2d(vt->x(), vt->y());

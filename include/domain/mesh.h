@@ -3,7 +3,7 @@
 
 #include <QHash>
 #include <QJsonObject>
-#include <QVector>
+#include <QList>
 
 #include "mesh_polygon.h"
 
@@ -11,7 +11,7 @@ class Mesh {
 protected:
     QString name;
     double coordinatesDistance;
-    QVector<MeshPolygon> domain;
+    QList<MeshPolygon> domain;
 
     bool showDomainBoundary;
     bool showMesh;
@@ -34,13 +34,14 @@ public:
     void setCoordinatesDistance(const double &coordinatesDistance);
     double getCoordinatesDistance() const;
 
-    QVector<MeshPolygon>& getDomain();
-    QVector<MeshPolygon*> getIslands();
+    QList<MeshPolygon>& getDomain();
+    QList<MeshPolygon*> getIslands();
     MeshPolygon* getBoundaryPolygon();
     void setBoundaryPolygon(const MeshPolygon &meshPolygon);
 
-    void addIsland(const QString &filename);
-    void removeIsland(const QString &filename);
+    void addMeshPolygon(const MeshPolygon &meshPolygon);
+    void removeMeshPolygon(const MeshPolygon &meshPolygon);
+    MeshPolygon* getMeshPolygon(const MeshPolygon &meshPolygon);
 
     void setShowDomainBoundary(const bool &show);
     bool getShowDomainBoundary() const;

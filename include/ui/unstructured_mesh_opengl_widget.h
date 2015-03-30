@@ -6,7 +6,6 @@
 #include <QMouseEvent>
 #include <QWheelEvent>
 #include <QDebug>
-#include <QVector>
 #include <QMutex>
 #include <QMutexLocker>
 

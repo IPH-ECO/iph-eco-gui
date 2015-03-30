@@ -79,7 +79,9 @@ void UnstructuredMeshDialog::on_btnAddCoordinatesFile_clicked() {
     }
 
     try {
-        currentMesh->addRefinementArea(refinementFile);
+        MeshPolygon refinementPolygon(refinementFile, MeshPolygon::REFINEMENT_AREA);
+
+        currentMesh->addMeshPolygon(refinementPolygon);
         ui->lstCoordinateFiles->addItem(refinementFile);
         ui->lstCoordinateFiles->setCurrentRow(ui->lstCoordinateFiles->count() - 1);
     } catch (MeshException &ex) {
@@ -93,8 +95,9 @@ void UnstructuredMeshDialog::on_btnRemoveCoordinatesFile_clicked() {
 
         if (currentItem != NULL) {
             QString coordinatesFile = currentItem->text();
+            MeshPolygon refinementPolygon(coordinatesFile, MeshPolygon::REFINEMENT_AREA);
 
-            currentMesh->removeRefinementArea(coordinatesFile);
+            currentMesh->removeMeshPolygon(refinementPolygon);
             ui->lstCoordinateFiles->takeItem(ui->lstCoordinateFiles->currentRow());
         }
     }
@@ -197,6 +200,7 @@ void UnstructuredMeshDialog::on_btnSaveMesh_clicked() {
         meshPolygon->setMaximumEdgeLength(maximumEdgeLength);
 
         currentMesh = new UnstructuredMesh(meshName);
+        // TODO: bug
         currentMesh->setBoundaryPolygon(*meshPolygon);
         currentMesh->setShowDomainBoundary(showDomainBoundary);
         currentMesh->setShowMesh(showMesh);
@@ -317,7 +321,9 @@ void UnstructuredMeshDialog::on_btnAddIsland_clicked() {
     }
 
     try {
-        currentMesh->addIsland(islandFile);
+        MeshPolygon islandPolygon(islandFile, MeshPolygon::ISLAND);
+
+        currentMesh->addMeshPolygon(islandPolygon);
         ui->lstIslands->addItem(islandFile);
     } catch (MeshException &ex) {
         QMessageBox::critical(this, tr("Unstructured Mesh Generation"), ex.what());
@@ -329,8 +335,9 @@ void UnstructuredMeshDialog::on_btnRemoveIsland_clicked() {
 
     if (currentItem != NULL) {
         QString islandFile = currentItem->text();
+        MeshPolygon islandPolygon(islandFile, MeshPolygon::ISLAND);
 
-        currentMesh->removeIsland(islandFile);
+        currentMesh->removeMeshPolygon(islandPolygon);
         ui->lstIslands->takeItem(ui->lstIslands->currentRow());
     }
 }
