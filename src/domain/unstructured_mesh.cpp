@@ -49,7 +49,7 @@ const CDT* UnstructuredMesh::getCDT() {
     return &cdt;
 }
 
-MeshPolygon UnstructuredMesh::addRefinementArea(const QString &filename) {
+void UnstructuredMesh::addRefinementArea(const QString &filename) {
     QFile refinementFile(filename);
 
     if (!refinementFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
@@ -57,7 +57,6 @@ MeshPolygon UnstructuredMesh::addRefinementArea(const QString &filename) {
     }
 
     QXmlStreamReader kml(&refinementFile);
-    MeshPolygon meshPolygon(filename, MeshPolygon::REFINEMENT_AREA);
 
     while (!kml.atEnd()) {
         kml.readNext();
@@ -73,6 +72,7 @@ MeshPolygon UnstructuredMesh::addRefinementArea(const QString &filename) {
 
             QString coordinatesText = kml.readElementText();
             QStringList coordinates = coordinatesText.trimmed().split(" ");
+            MeshPolygon meshPolygon(filename, MeshPolygon::REFINEMENT_AREA);
 
             for (int i = 0; i < coordinates.count(); i++) {
                 QStringList coordinateStr = coordinates.at(i).split(",");
@@ -90,19 +90,10 @@ MeshPolygon UnstructuredMesh::addRefinementArea(const QString &filename) {
     }
 
     refinementFile.close();
-
-    //TODO: Improve return variable
-    return meshPolygon;
 }
 
 void UnstructuredMesh::removeRefinementArea(const QString &filename) {
-    for (int i = 0; i < domain.count(); i++) {
-        MeshPolygon meshPolygon = domain.at(i);
-        if (meshPolygon.getMeshPolygonType() == MeshPolygon::REFINEMENT_AREA && meshPolygon.getFilename() == filename) {
-            domain.remove(i);
-            break;
-        }
-    }
+    domain.removeOne(MeshPolygon(filename, MeshPolygon::REFINEMENT_AREA));
 }
 
 MeshPolygon* UnstructuredMesh::getRefinementArea(const QString &filename) {

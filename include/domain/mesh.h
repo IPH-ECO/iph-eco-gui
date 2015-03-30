@@ -21,7 +21,7 @@ protected:
     bool showEdgesLabels;
 
 private:
-    Point createNewCoordinate(const Point &p1, const Point &p2, const double &distance);
+    void filterCoordinates(MeshPolygon &meshPolygon);
 
 public:
     Mesh();
@@ -35,7 +35,7 @@ public:
     double getCoordinatesDistance() const;
 
     QVector<MeshPolygon>& getDomain();
-//    QVector<MeshPolygon>& getIslands();
+    QVector<MeshPolygon*> getIslands();
     MeshPolygon* getBoundaryPolygon();
     void setBoundaryPolygon(const MeshPolygon &meshPolygon);
 

@@ -22,7 +22,7 @@ public:
 
     const CDT* getCDT();
 
-    MeshPolygon addRefinementArea(const QString &filename);
+    void addRefinementArea(const QString &filename);
     void removeRefinementArea(const QString &filename);
     MeshPolygon* getRefinementArea(const QString &filename);
 

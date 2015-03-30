@@ -37,13 +37,20 @@ double Mesh::getCoordinatesDistance() const {
 }
 
 void Mesh::buildDomain(const QString &filename) {
-    domain.clear();
-
     QFile boundaryFile(filename);
 
     if (!boundaryFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
         throw MeshException(QString("Unable to open boundary file. Error: %1").arg(boundaryFile.errorString()));
     }
+
+    for (int i = 0; i < domain.size(); i++) {
+        if (domain.at(i).getMeshPolygonType() == MeshPolygon::BOUNDARY) {
+            domain.remove(i);
+        }
+    }
+//    std::remove_if(domain.begin(), domain.end(), MeshPolygon::isBoundary);
+
+    qDebug() << domain.size();
 
     QXmlStreamReader kml(&boundaryFile);
 
@@ -65,41 +72,50 @@ void Mesh::buildDomain(const QString &filename) {
             // Convert geographic coordinates to UTM coordinates
             QString coordinatesText = kml.readElementText();
             QStringList coordinates = coordinatesText.trimmed().split(" ");
-            MeshPolygon::MeshPolygonType meshPolygonType = isBoundary ? MeshPolygon::BOUNDARY : MeshPolygon::ISLAND;
-            MeshPolygon meshPolygon(MeshPolygon::BOUNDARY_POLYGON_FILENAME, meshPolygonType);
+            MeshPolygon boundaryPolygon(MeshPolygon::BOUNDARY_POLYGON_FILENAME, MeshPolygon::BOUNDARY);
 
-            // Get first coordinate
-            QStringList coordinateStr = coordinates.at(0).split(",");
-            GeographicLib::GeoCoords utmCoordinate(coordinateStr.at(1).toDouble(), coordinateStr.at(0).toDouble());
-            Point p1(utmCoordinate.Easting(), utmCoordinate.Northing());
+            for (int i = 0; i < coordinates.count(); i++) {
+                QStringList coordinateStr = coordinates.at(i).split(",");
+                GeographicLib::GeoCoords utmCoordinate(coordinateStr.at(1).toDouble(), coordinateStr.at(0).toDouble());
+                Point p(utmCoordinate.Easting(), utmCoordinate.Northing());
 
-            meshPolygon.push_back(p1);
-
-            for (int i = 1; i < coordinates.count(); i++) {
-                coordinateStr = coordinates.at(i).split(",");
-                utmCoordinate = GeographicLib::GeoCoords(coordinateStr.at(1).toDouble(), coordinateStr.at(0).toDouble());
-                Point p2(utmCoordinate.Easting(), utmCoordinate.Northing());
-
-                if (this->coordinatesDistance > 0.0) {
-                    double distance = sqrt(qPow(p2.x() - p1.x(), 2) + qPow(p2.y() - p1.y(), 2));
-
-                    if (distance < this->coordinatesDistance) {
-                        continue;
-                    }
-
-                    p1 = createNewCoordinate(p1, p2, distance);
-                    meshPolygon.push_back(p1);
-                    i--;
-                } else {
-                    meshPolygon.push_back(p2);
-                }
+                boundaryPolygon.push_back(p);
             }
 
-            domain.push_back(meshPolygon);
+            domain.push_back(boundaryPolygon);
         }
     }
 
     boundaryFile.close();
+
+    if (this->coordinatesDistance > 0.0) {
+        for (QVector<MeshPolygon>::iterator it = domain.begin(); it != domain.end(); it++) {
+            if (it->getMeshPolygonType() == MeshPolygon::REFINEMENT_AREA) {
+                continue;
+            }
+
+            filterCoordinates(*it);
+        }
+    }
+}
+
+void Mesh::filterCoordinates(MeshPolygon &meshPolygon) {
+    MeshPolygon::Vertex_iterator vit = meshPolygon.vertices_begin();
+    Point p1 = *vit;
+
+    for (++vit; vit != meshPolygon.vertices_end(); vit++) {
+        Point p2 = *vit;
+        double distance = sqrt(qPow(p2.x() - p1.x(), 2) + qPow(p2.y() - p1.y(), 2));
+
+        if (distance < this->coordinatesDistance) {
+            meshPolygon.erase(vit);
+        } else {
+            double x = p1.x() + (p2.x() - p1.x()) * this->coordinatesDistance / distance;
+            double y = p1.y() + (p2.y() - p1.y()) * this->coordinatesDistance / distance;
+
+            meshPolygon.insert(vit + 1, Point(x, y));
+        }
+    }
 }
 
 void Mesh::addIsland(const QString &filename) {
@@ -128,32 +144,36 @@ void Mesh::addIsland(const QString &filename) {
             MeshPolygon islandPolygon(filename, MeshPolygon::ISLAND);
 
             for (int i = 0; i < coordinates.count(); i++) {
-                QStringList coordinateStr = coordinates.at(i).split(",");
-                GeographicLib::GeoCoords utmCoordinate = GeographicLib::GeoCoords(coordinateStr.at(1).toDouble(), coordinateStr.at(0).toDouble());
+                QStringList coordinateStr = coordinates.at(0).split(",");
+                GeographicLib::GeoCoords utmCoordinate(coordinateStr.at(1).toDouble(), coordinateStr.at(0).toDouble());
                 Point p(utmCoordinate.Easting(), utmCoordinate.Northing());
 
                 islandPolygon.push_back(p);
             }
 
             domain.push_back(islandPolygon);
+
+            qDebug() << islandPolygon.size() << domain.size();
         }
     }
+
+    islandFile.close();
+}
+
+QVector<MeshPolygon*> Mesh::getIslands() {
+    QVector<MeshPolygon*> islands;
+
+    for (QVector<MeshPolygon>::iterator it = domain.begin(); it != domain.end(); it++) {
+        if (it->getMeshPolygonType() == MeshPolygon::ISLAND) {
+            islands.push_back(&(*it));
+        }
+    }
+
+    return islands;
 }
 
 void Mesh::removeIsland(const QString &filename) {
-    for (int i = 0; i < domain.size(); i++) {
-        if (domain.at(i).getFilename() == filename) {
-            domain.remove(i);
-            break;
-        }
-    }
-}
-
-Point Mesh::createNewCoordinate(const Point &p1, const Point &p2, const double &distance) {
-    double x = p1.x() + (p2.x() - p1.x()) * this->coordinatesDistance / distance;
-    double y = p1.y() + (p2.y() - p1.y()) * this->coordinatesDistance / distance;
-
-    return Point(x, y);
+    domain.removeOne(MeshPolygon(filename, MeshPolygon::ISLAND));
 }
 
 QVector<MeshPolygon>& Mesh::getDomain() {

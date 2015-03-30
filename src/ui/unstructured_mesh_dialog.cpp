@@ -67,23 +67,21 @@ void UnstructuredMeshDialog::on_btnGenerateDomain_clicked() {
 }
 
 void UnstructuredMeshDialog::on_btnAddCoordinatesFile_clicked() {
-    QString coordinatesFile = QFileDialog::getOpenFileName(this, tr("Select a boundary file"), getDefaultDirectory(), "Keyhole Markup Language file (*.kml)");
+    QString refinementFile = QFileDialog::getOpenFileName(this, tr("Select a boundary file"), getDefaultDirectory(), "Keyhole Markup Language file (*.kml)");
 
-    if (coordinatesFile.isEmpty()) {
+    if (refinementFile.isEmpty()) {
         return;
     }
 
-    if (!ui->lstCoordinateFiles->findItems(coordinatesFile, Qt::MatchExactly).empty()) {
+    if (!ui->lstCoordinateFiles->findItems(refinementFile, Qt::MatchExactly).empty()) {
         QMessageBox::information(this, tr("Unstructured Mesh Generation"), tr("Coordinates file already added."));
         return;
     }
 
     try {
-        MeshPolygon meshPolygon = currentMesh->addRefinementArea(coordinatesFile);
-
-        ui->lstCoordinateFiles->addItem(coordinatesFile);
+        currentMesh->addRefinementArea(refinementFile);
+        ui->lstCoordinateFiles->addItem(refinementFile);
         ui->lstCoordinateFiles->setCurrentRow(ui->lstCoordinateFiles->count() - 1);
-//        ui->sbxMaximumEdgeLength->setValue(meshPolygon.getMaximumEdgeLength());
     } catch (MeshException &ex) {
         QMessageBox::critical(this, tr("Unstructured Mesh Generation"), ex.what());
     }
@@ -320,11 +318,19 @@ void UnstructuredMeshDialog::on_btnAddIsland_clicked() {
 
     try {
         currentMesh->addIsland(islandFile);
+        ui->lstIslands->addItem(islandFile);
     } catch (MeshException &ex) {
         QMessageBox::critical(this, tr("Unstructured Mesh Generation"), ex.what());
     }
 }
 
 void UnstructuredMeshDialog::on_btnRemoveIsland_clicked() {
+    QListWidgetItem *currentItem = ui->lstIslands->currentItem();
 
+    if (currentItem != NULL) {
+        QString islandFile = currentItem->text();
+
+        currentMesh->removeIsland(islandFile);
+        ui->lstIslands->takeItem(ui->lstIslands->currentRow());
+    }
 }

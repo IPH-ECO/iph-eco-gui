@@ -65,11 +65,9 @@ void UnstructuredMeshOpenGLWidget::paintGL() {
     if (mesh->getShowDomainBoundary()) {
         QVector<MeshPolygon> domain = mesh->getDomain();
 
-        for (int i = 0; i < domain.count(); i++) {
-            MeshPolygon meshPolygon = domain.at(i);
-
+        for (QVector<MeshPolygon>::const_iterator it = domain.begin(); it != domain.end(); it++) {
             glBegin(GL_LINE_LOOP);
-            for (MeshPolygon::Vertex_iterator vt = meshPolygon.vertices_begin(); vt != meshPolygon.vertices_end(); vt++) {
+            for (MeshPolygon::Vertex_iterator vt = it->vertices_begin(); vt != it->vertices_end(); vt++) {
                 glVertex2d(vt->x(), vt->y());
             }
             glEnd();
