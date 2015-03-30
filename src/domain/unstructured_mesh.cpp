@@ -49,21 +49,9 @@ const CDT* UnstructuredMesh::getCDT() {
     return &cdt;
 }
 
-MeshPolygon* UnstructuredMesh::getRefinementArea(const QString &filename) {
-    MeshPolygon meshPolygon(filename, MeshPolygon::REFINEMENT_AREA);
-    QList<MeshPolygon>::iterator it = std::find(domain.begin(), domain.end(), meshPolygon);
-
-    if (it == domain.end()) {
-        return NULL;
-    }
-
-    return &(*it);
-}
-
 void UnstructuredMesh::buildDomain(const QString &filename) {
     cdt.clear();
     Mesh::buildDomain(filename);
-    getBoundaryPolygon()->setOptimalEdgeLength();
 }
 
 void UnstructuredMesh::clear() {

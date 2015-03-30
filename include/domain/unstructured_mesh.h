@@ -22,10 +22,6 @@ public:
 
     const CDT* getCDT();
 
-    void addRefinementArea(const QString &filename);
-    void removeRefinementArea(const QString &filename);
-    MeshPolygon* getRefinementArea(const QString &filename);
-
     virtual void buildDomain(const QString &filename);
     virtual void clear();
 };

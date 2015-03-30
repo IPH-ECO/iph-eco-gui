@@ -46,8 +46,6 @@ void UnstructuredMeshOpenGLWidget::paintGL() {
         return;
     }
 
-    qDebug() << boundaryPolygon->is_simple();
-
     left = boundaryPolygon->left_vertex()->x() - zoom;
     right = boundaryPolygon->right_vertex()->x() + zoom;
     bottom = boundaryPolygon->bottom_vertex()->y() - zoom;
@@ -108,7 +106,7 @@ void UnstructuredMeshOpenGLWidget::setMesh(UnstructuredMesh *mesh) {
     this->mesh = mesh;
 }
 
-void UnstructuredMeshOpenGLWidget::generateDomain(const QString &filename) {
+void UnstructuredMeshOpenGLWidget::buildDomain(const QString &filename) {
     if (this->mesh == NULL) {
         return;
     }

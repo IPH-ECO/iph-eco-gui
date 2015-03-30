@@ -10,7 +10,6 @@
 #include <QJsonArray>
 #include <QtMath>
 
-#include <QDebug>
 
 #include <GeographicLib/GeoCoords.hpp>
 
@@ -54,9 +53,9 @@ void Mesh::buildDomain(const QString &filename) {
 
 void Mesh::filterCoordinates(MeshPolygon &meshPolygon) {
     MeshPolygon::Vertex_iterator vit = meshPolygon.vertices_begin();
-    Point p1 = *vit;
+    Point p1 = *vit++;
 
-    for (++vit; vit != meshPolygon.vertices_end(); vit++) {
+    while (vit != meshPolygon.vertices_end()) {
         Point p2 = *vit;
         double distance = sqrt(qPow(p2.x() - p1.x(), 2) + qPow(p2.y() - p1.y(), 2));
 
@@ -66,7 +65,8 @@ void Mesh::filterCoordinates(MeshPolygon &meshPolygon) {
             double x = p1.x() + (p2.x() - p1.x()) * this->coordinatesDistance / distance;
             double y = p1.y() + (p2.y() - p1.y()) * this->coordinatesDistance / distance;
 
-            meshPolygon.insert(vit + 1, Point(x, y));
+            p1 = Point(x, y);
+            vit = meshPolygon.insert(vit + 1, p1);
         }
     }
 }
@@ -98,7 +98,7 @@ void Mesh::addMeshPolygon(const MeshPolygon &meshPolygon) {
             QStringList coordinates = coordinatesText.trimmed().split(" ");
 
             for (int i = 0; i < coordinates.count(); i++) {
-                QStringList coordinateStr = coordinates.at(0).split(",");
+                QStringList coordinateStr = coordinates.at(i).split(",");
                 GeographicLib::GeoCoords utmCoordinate(coordinateStr.at(1).toDouble(), coordinateStr.at(0).toDouble());
                 Point p(utmCoordinate.Easting(), utmCoordinate.Northing());
 
@@ -146,6 +146,16 @@ MeshPolygon* Mesh::getBoundaryPolygon() {
     }
 
     return NULL;
+}
+
+MeshPolygon* Mesh::getMeshPolygon(const MeshPolygon &meshPolygon) {
+    QList<MeshPolygon>::iterator it = qFind(domain.begin(), domain.end(), meshPolygon);
+
+    if (it == domain.end()) {
+        return NULL;
+    }
+
+    return &(*it);
 }
 
 void Mesh::setBoundaryPolygon(const MeshPolygon &meshPolygon) {
