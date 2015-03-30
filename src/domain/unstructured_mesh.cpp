@@ -49,77 +49,9 @@ const CDT* UnstructuredMesh::getCDT() {
     return &cdt;
 }
 
-MeshPolygon UnstructuredMesh::addRefinementArea(const QString &filename) {
-    QFile refinementFile(filename);
-
-    if (!refinementFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        throw MeshException(QString("Unable to open refinement file. Error: %1").arg(refinementFile.errorString()));
-    }
-
-    QXmlStreamReader kml(&refinementFile);
-    MeshPolygon meshPolygon(filename, MeshPolygon::REFINEMENT_AREA);
-
-    while (!kml.atEnd()) {
-        kml.readNext();
-
-        if (kml.name() == "outerBoundaryIs" && kml.isStartElement()) {
-            do {
-                kml.readNext();
-            } while (kml.name() != "coordinates" && !kml.atEnd());
-
-            if (kml.atEnd()) {
-                throw MeshException(QString("No coordinates found in refinement file."));
-            }
-
-            QString coordinatesText = kml.readElementText();
-            QStringList coordinates = coordinatesText.trimmed().split(" ");
-
-            for (int i = 0; i < coordinates.count(); i++) {
-                QStringList coordinateStr = coordinates.at(i).split(",");
-                GeographicLib::GeoCoords utmCoordinate = GeographicLib::GeoCoords(coordinateStr.at(1).toDouble(), coordinateStr.at(0).toDouble());
-                Point p(utmCoordinate.Easting(), utmCoordinate.Northing());
-
-                meshPolygon.push_back(p);
-            }
-
-            meshPolygon.setOptimalEdgeLength();
-            domain.push_back(meshPolygon);
-
-            break;
-        }
-    }
-
-    refinementFile.close();
-
-    //TODO: Improve return variable
-    return meshPolygon;
-}
-
-void UnstructuredMesh::removeRefinementArea(const QString &filename) {
-    for (int i = 0; i < domain.count(); i++) {
-        MeshPolygon meshPolygon = domain.at(i);
-        if (meshPolygon.getMeshPolygonType() == MeshPolygon::REFINEMENT_AREA && meshPolygon.getFilename() == filename) {
-            domain.remove(i);
-            break;
-        }
-    }
-}
-
-MeshPolygon* UnstructuredMesh::getRefinementArea(const QString &filename) {
-    MeshPolygon meshPolygon(filename, MeshPolygon::REFINEMENT_AREA);
-    QVector<MeshPolygon>::iterator it = std::find(domain.begin(), domain.end(), meshPolygon);
-
-    if (it == domain.end()) {
-        return NULL;
-    }
-
-    return &(*it);
-}
-
 void UnstructuredMesh::buildDomain(const QString &filename) {
     cdt.clear();
     Mesh::buildDomain(filename);
-    getBoundaryPolygon()->setOptimalEdgeLength();
 }
 
 void UnstructuredMesh::clear() {

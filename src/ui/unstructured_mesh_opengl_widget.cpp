@@ -1,5 +1,6 @@
 #include "include/ui/unstructured_mesh_opengl_widget.h"
 
+#include <QList>
 #include <QPoint>
 
 UnstructuredMeshOpenGLWidget::UnstructuredMeshOpenGLWidget(QWidget *parent) :
@@ -63,13 +64,11 @@ void UnstructuredMeshOpenGLWidget::paintGL() {
     glColor3f(0.0, 0.0, 0.0);
 
     if (mesh->getShowDomainBoundary()) {
-        QVector<MeshPolygon> domain = mesh->getDomain();
+        QList<MeshPolygon> domain = mesh->getDomain();
 
-        for (int i = 0; i < domain.count(); i++) {
-            MeshPolygon meshPolygon = domain.at(i);
-
+        for (QList<MeshPolygon>::const_iterator it = domain.begin(); it != domain.end(); it++) {
             glBegin(GL_LINE_LOOP);
-            for (MeshPolygon::Vertex_iterator vt = meshPolygon.vertices_begin(); vt != meshPolygon.vertices_end(); vt++) {
+            for (MeshPolygon::Vertex_iterator vt = it->vertices_begin(); vt != it->vertices_end(); vt++) {
                 glVertex2d(vt->x(), vt->y());
             }
             glEnd();
@@ -107,7 +106,7 @@ void UnstructuredMeshOpenGLWidget::setMesh(UnstructuredMesh *mesh) {
     this->mesh = mesh;
 }
 
-void UnstructuredMeshOpenGLWidget::generateDomain(const QString &filename) {
+void UnstructuredMeshOpenGLWidget::buildDomain(const QString &filename) {
     if (this->mesh == NULL) {
         return;
     }

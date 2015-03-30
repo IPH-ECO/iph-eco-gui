@@ -56,6 +56,18 @@ void MeshPolygon::setOptimalEdgeLength() {
     this->maximumEdgeLength = optimalEdgeLength;
 }
 
+bool MeshPolygon::isIsland() const {
+    return this->meshPolygonType == MeshPolygon::ISLAND;
+}
+
+bool MeshPolygon::isBoundary() const {
+    return this->meshPolygonType == MeshPolygon::BOUNDARY;
+}
+
+bool MeshPolygon::isRefinementArea() const {
+    return this->meshPolygonType == MeshPolygon::REFINEMENT_AREA;
+}
+
 double MeshPolygon::width() const {
     if (right_vertex() == this->vertices_end() || left_vertex() == this->vertices_end()) {
         return 0.0;

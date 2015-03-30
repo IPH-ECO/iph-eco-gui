@@ -28,7 +28,7 @@ public:
 
     void setFilename(const QString &filename);
     QString getFilename() const;
-    MeshPolygon::MeshPolygonType getMeshPolygonType() const;
+    MeshPolygonType getMeshPolygonType() const;
     void setMinimumAngle(const double &minimumAngle);
     double getMinimumAngle() const;
     double getMinimumAngleInDegrees() const;
@@ -36,17 +36,9 @@ public:
     double getMaximumEdgeLength() const;
     void setOptimalEdgeLength();
 
-    static inline bool isIsland(const MeshPolygon &meshPolygon) {
-        return meshPolygon.getMeshPolygonType() == ISLAND;
-    }
-
-    static inline bool isBoundary(const MeshPolygon &meshPolygon) {
-        return meshPolygon.getMeshPolygonType() == BOUNDARY;
-    }
-
-    static inline bool isRefinementArea(const MeshPolygon &meshPolygon) {
-        return meshPolygon.getMeshPolygonType() == REFINEMENT_AREA;
-    }
+    bool isBoundary() const;
+    bool isIsland() const;
+    bool isRefinementArea() const;
 
     double width() const;
     double height() const;
