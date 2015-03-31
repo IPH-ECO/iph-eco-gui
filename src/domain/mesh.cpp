@@ -12,6 +12,8 @@
 
 #include <GeographicLib/GeoCoords.hpp>
 
+#include <QDebug>
+
 Mesh::Mesh() : coordinatesDistance(0.0), showDomainBoundary(true), showMesh(true) {}
 
 Mesh::Mesh(QString &_name) : name(_name), coordinatesDistance(0.0), showDomainBoundary(true) {}
@@ -36,22 +38,39 @@ double Mesh::getCoordinatesDistance() const {
 
 void Mesh::buildDomain(const QString &filename) {
     MeshPolygon boundaryMeshPolygon(filename, MeshPolygon::BOUNDARY);
-    QList<MeshPolygon>::iterator it = qFind(domain.begin(), domain.end(), boundaryMeshPolygon);
 
-    if (it != domain.end()) {
-        boundaryMeshPolygon.setMinimumAngle(it->getMinimumAngle());
-        boundaryMeshPolygon.setMaximumEdgeLength(it->getMaximumEdgeLength());
+    if (domain.empty()) {
+        MeshPolygon *newMeshPolygon = addMeshPolygon(boundaryMeshPolygon);
 
-        domain.erase(it);
+        if (this->coordinatesDistance > 0.0) {
+            filterCoordinates(*newMeshPolygon);
+        }
+
+        return;
     }
 
-    addMeshPolygon(boundaryMeshPolygon);
+    QList<MeshPolygon>::iterator existingDomain = qFind(domain.begin(), domain.end(), boundaryMeshPolygon);
 
-    if (this->coordinatesDistance > 0.0) {
-        for (QList<MeshPolygon>::iterator it = domain.begin(); it != domain.end(); it++) {
-            if (it->isBoundary() || it->isIsland()) {
-                filterCoordinates(*it);
-            }
+    if (existingDomain != domain.end()) {
+        boundaryMeshPolygon.setMinimumAngle(existingDomain->getMinimumAngle());
+        boundaryMeshPolygon.setMaximumEdgeLength(existingDomain->getMaximumEdgeLength());
+    }
+
+    for (QList<MeshPolygon>::iterator it = domain.begin(); it != domain.end(); it++) {
+        if (!it->isBoundary() && !it->isIsland()) {
+            continue;
+        }
+
+        if (this->coordinatesDistance > 0.0) {
+            filterCoordinates(*it);
+        } else {
+            MeshPolygon meshPolygon(it->getFilename(), it->getMeshPolygonType());
+
+            meshPolygon.setMaximumEdgeLength(it->getMaximumEdgeLength());
+            meshPolygon.setMinimumAngle(it->getMinimumAngle());
+
+            domain.erase(it);
+            addMeshPolygon(meshPolygon);
         }
     }
 }
