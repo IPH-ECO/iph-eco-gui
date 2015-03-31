@@ -10,7 +10,6 @@
 #include <QJsonArray>
 #include <QtMath>
 
-
 #include <GeographicLib/GeoCoords.hpp>
 
 Mesh::Mesh() : coordinatesDistance(0.0), showDomainBoundary(true), showMesh(true) {}

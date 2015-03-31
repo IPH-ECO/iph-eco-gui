@@ -40,11 +40,11 @@ public:
     double height() const;
 
     inline bool isBoundary() const {
-        return this->meshPolygonType == MeshPolygon::ISLAND;
+        return this->meshPolygonType == MeshPolygon::BOUNDARY;
     }
 
     inline bool isIsland() const {
-        return this->meshPolygonType == MeshPolygon::BOUNDARY;
+        return this->meshPolygonType == MeshPolygon::ISLAND;
     }
 
     inline bool isRefinementArea() const {

@@ -337,6 +337,7 @@ void UnstructuredMeshDialog::on_btnAddIsland_clicked() {
 
         currentMesh->addMeshPolygon(islandPolygon);
         ui->lstIslands->addItem(islandFile);
+        ui->unstructuredMeshOpenGLWidget->update();
     } catch (MeshException &ex) {
         QMessageBox::critical(this, tr("Unstructured Mesh Generation"), ex.what());
     }
@@ -351,5 +352,6 @@ void UnstructuredMeshDialog::on_btnRemoveIsland_clicked() {
 
         currentMesh->removeMeshPolygon(islandPolygon);
         ui->lstIslands->takeItem(ui->lstIslands->currentRow());
+        ui->unstructuredMeshOpenGLWidget->update();
     }
 }
