@@ -37,7 +37,7 @@ void UnstructuredMesh::generate() {
         }
     }
 
-    Criteria criteria(boundaryPolygon->getMinimumAngle(), boundaryPolygon->getMaximumEdgeLength());
+    Criteria criteria(boundaryPolygon->getMinimumAngleInCGALRepresentation(), boundaryPolygon->getMaximumEdgeLength());
     Mesher mesher(cdt, criteria);
 
     mesher.refine_mesh();

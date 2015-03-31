@@ -56,13 +56,18 @@ void UnstructuredMeshDialog::on_btnGenerateDomain_clicked() {
 
     try {
         ui->unstructuredMeshOpenGLWidget->buildDomain(boundaryFilePath);
-        ui->sbxMaximumEdgeLength->setValue(currentMesh->getBoundaryPolygon()->getMaximumEdgeLength());
-        ui->sbxMinimumAngle->setValue(currentMesh->getBoundaryPolygon()->getMinimumAngleInDegrees());
     } catch(MeshException &e) {
         QMessageBox::critical(this, tr("Unstructured Mesh Generation"), e.what());
         return;
     }
 
+    MeshPolygon* boundaryPolygon = currentMesh->getBoundaryPolygon();
+
+    boundaryPolygon->setOptimalEdgeLength();
+
+    ui->lstCoordinateFiles->setCurrentRow(0);
+    ui->sbxMaximumEdgeLength->setValue(boundaryPolygon->getMaximumEdgeLength());
+    ui->sbxMinimumAngle->setValue(boundaryPolygon->getMinimumAngle());
     ui->lblDomainArea->setText(QString("Area: %1 m\u00B2").arg(currentMesh->area(), 0, 'f', 3));
 }
 
@@ -80,8 +85,9 @@ void UnstructuredMeshDialog::on_btnAddCoordinatesFile_clicked() {
 
     try {
         MeshPolygon refinementPolygon(refinementFile, MeshPolygon::REFINEMENT_AREA);
+        MeshPolygon *newRefinementPolygon = currentMesh->addMeshPolygon(refinementPolygon);
 
-        currentMesh->addMeshPolygon(refinementPolygon);
+        newRefinementPolygon->setOptimalEdgeLength();
         ui->lstCoordinateFiles->addItem(refinementFile);
         ui->lstCoordinateFiles->setCurrentRow(ui->lstCoordinateFiles->count() - 1);
     } catch (MeshException &ex) {
@@ -108,11 +114,11 @@ void UnstructuredMeshDialog::on_lstCoordinateFiles_itemSelectionChanged() {
         QString filename = ui->lstCoordinateFiles->currentItem()->text();
         MeshPolygon *refinementPolygon = currentMesh->getMeshPolygon(MeshPolygon(filename, MeshPolygon::REFINEMENT_AREA));
 
-        ui->sbxMinimumAngle->setValue(refinementPolygon->getMinimumAngleInDegrees());
+        ui->sbxMinimumAngle->setValue(refinementPolygon->getMinimumAngle());
         ui->sbxMaximumEdgeLength->setValue(refinementPolygon->getMaximumEdgeLength());
     } else {
         if (currentMesh->getBoundaryPolygon() != NULL) {
-            ui->sbxMinimumAngle->setValue(currentMesh->getBoundaryPolygon()->getMinimumAngleInDegrees());
+            ui->sbxMinimumAngle->setValue(currentMesh->getBoundaryPolygon()->getMinimumAngle());
             ui->sbxMaximumEdgeLength->setValue(currentMesh->getBoundaryPolygon()->getMaximumEdgeLength());
         }
     }
@@ -175,11 +181,7 @@ void UnstructuredMeshDialog::on_btnGenerateMesh_clicked() {
     try {
         ui->unstructuredMeshOpenGLWidget->setMesh(currentMesh);
         ui->unstructuredMeshOpenGLWidget->buildDomain(boundaryFileStr);
-
-        currentMesh->getBoundaryPolygon()->setMinimumAngle(ui->sbxMinimumAngle->value());
-        currentMesh->getBoundaryPolygon()->setMaximumEdgeLength(ui->sbxMaximumEdgeLength->value());
-
-        ui->unstructuredMeshOpenGLWidget->generateMesh();\
+        ui->unstructuredMeshOpenGLWidget->generateMesh();
     } catch (const std::exception& e) {
         QMessageBox::critical(this, tr("Unstructured Mesh Generation"), tr("This triangulation does not deal with intersecting constraints."));
         CGAL::set_error_behaviour(old_behaviour);

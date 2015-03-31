@@ -31,17 +31,25 @@ public:
     MeshPolygonType getMeshPolygonType() const;
     void setMinimumAngle(const double &minimumAngle);
     double getMinimumAngle() const;
-    double getMinimumAngleInDegrees() const;
+    double getMinimumAngleInCGALRepresentation() const;
     void setMaximumEdgeLength(const double &maximumEdgeLength);
     double getMaximumEdgeLength() const;
     void setOptimalEdgeLength();
 
-    bool isBoundary() const;
-    bool isIsland() const;
-    bool isRefinementArea() const;
-
     double width() const;
     double height() const;
+
+    inline bool isBoundary() const {
+        return this->meshPolygonType == MeshPolygon::ISLAND;
+    }
+
+    inline bool isIsland() const {
+        return this->meshPolygonType == MeshPolygon::BOUNDARY;
+    }
+
+    inline bool isRefinementArea() const {
+        return this->meshPolygonType == MeshPolygon::REFINEMENT_AREA;
+    }
 };
 
 #endif // MESH_POLYGON_H

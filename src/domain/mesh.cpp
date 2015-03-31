@@ -37,8 +37,14 @@ double Mesh::getCoordinatesDistance() const {
 
 void Mesh::buildDomain(const QString &filename) {
     MeshPolygon boundaryMeshPolygon(filename, MeshPolygon::BOUNDARY);
+    QList<MeshPolygon>::iterator it = qFind(domain.begin(), domain.end(), boundaryMeshPolygon);
 
-    domain.removeOne(boundaryMeshPolygon);
+    if (it != domain.end()) {
+        boundaryMeshPolygon.setMinimumAngle(it->getMinimumAngle());
+        boundaryMeshPolygon.setMaximumEdgeLength(it->getMaximumEdgeLength());
+
+        domain.erase(it);
+    }
 
     addMeshPolygon(boundaryMeshPolygon);
 
@@ -71,7 +77,7 @@ void Mesh::filterCoordinates(MeshPolygon &meshPolygon) {
     }
 }
 
-void Mesh::addMeshPolygon(const MeshPolygon &meshPolygon) {
+MeshPolygon* Mesh::addMeshPolygon(const MeshPolygon &meshPolygon) {
     QString filename = meshPolygon.getFilename();
     QFile kmlFile(filename);
 
@@ -81,6 +87,9 @@ void Mesh::addMeshPolygon(const MeshPolygon &meshPolygon) {
 
     MeshPolygon newMeshPolygon(meshPolygon.getFilename(), meshPolygon.getMeshPolygonType());
     QXmlStreamReader kmlReader(&kmlFile);
+
+    newMeshPolygon.setMinimumAngle(meshPolygon.getMinimumAngle());
+    newMeshPolygon.setMaximumEdgeLength(meshPolygon.getMaximumEdgeLength());
 
     while (!kmlReader.atEnd()) {
         kmlReader.readNext();
@@ -105,10 +114,6 @@ void Mesh::addMeshPolygon(const MeshPolygon &meshPolygon) {
                 newMeshPolygon.push_back(p);
             }
 
-            if (!newMeshPolygon.isIsland()) {
-                newMeshPolygon.setOptimalEdgeLength();
-            }
-
             domain.append(newMeshPolygon);
 
             break;
@@ -116,6 +121,8 @@ void Mesh::addMeshPolygon(const MeshPolygon &meshPolygon) {
     }
 
     kmlFile.close();
+
+    return &(domain.last());
 }
 
 QList<MeshPolygon*> Mesh::getIslands() {

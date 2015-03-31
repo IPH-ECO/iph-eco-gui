@@ -29,16 +29,16 @@ MeshPolygon::MeshPolygonType MeshPolygon::getMeshPolygonType() const {
 }
 
 void MeshPolygon::setMinimumAngle(const double &minimumAngle) {
-    // http://doc.cgal.org/latest/Mesh_2/classCGAL_1_1Delaunay__mesh__size__criteria__2.html
-    this->minimumAngle = qPow(sin(minimumAngle * M_PI / 180), 2.0);
+    this->minimumAngle = minimumAngle;
 }
 
 double MeshPolygon::getMinimumAngle() const {
     return minimumAngle;
 }
 
-double MeshPolygon::getMinimumAngleInDegrees() const {
-    return qAsin(qSqrt(minimumAngle)) * 180 / M_PI;
+double MeshPolygon::getMinimumAngleInCGALRepresentation() const {
+    // http://doc.cgal.org/latest/Mesh_2/classCGAL_1_1Delaunay__mesh__size__criteria__2.html
+    return qPow(sin(minimumAngle * M_PI / 180), 2.0);
 }
 
 void MeshPolygon::setMaximumEdgeLength(const double &maximumEdgeLength) {
@@ -54,18 +54,6 @@ void MeshPolygon::setOptimalEdgeLength() {
     double optimalEdgeLength = qMax(smallEdgeLength, DEFAULT_MINIMUM_EDGE_LENGTH);
 
     this->maximumEdgeLength = optimalEdgeLength;
-}
-
-bool MeshPolygon::isIsland() const {
-    return this->meshPolygonType == MeshPolygon::ISLAND;
-}
-
-bool MeshPolygon::isBoundary() const {
-    return this->meshPolygonType == MeshPolygon::BOUNDARY;
-}
-
-bool MeshPolygon::isRefinementArea() const {
-    return this->meshPolygonType == MeshPolygon::REFINEMENT_AREA;
 }
 
 double MeshPolygon::width() const {

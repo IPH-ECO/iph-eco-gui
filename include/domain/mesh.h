@@ -39,7 +39,7 @@ public:
     MeshPolygon* getBoundaryPolygon();
     void setBoundaryPolygon(const MeshPolygon &meshPolygon);
 
-    void addMeshPolygon(const MeshPolygon &meshPolygon);
+    MeshPolygon* addMeshPolygon(const MeshPolygon &meshPolygon);
     void removeMeshPolygon(const MeshPolygon &meshPolygon);
     MeshPolygon* getMeshPolygon(const MeshPolygon &meshPolygon);
 
