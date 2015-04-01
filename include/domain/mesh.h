@@ -51,6 +51,7 @@ public:
 
     double area();
 
+    virtual bool isGenerated() = 0;
     virtual void buildDomain(const QString &filename);
     virtual void clear();
 };

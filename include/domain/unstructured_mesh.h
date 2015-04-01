@@ -21,7 +21,9 @@ public:
     void generate();
 
     const CDT* getCDT();
+    void clearCDT();
 
+    virtual bool isGenerated();
     virtual void buildDomain(const QString &filename);
     virtual void clear();
 };

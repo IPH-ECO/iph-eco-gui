@@ -98,14 +98,11 @@ void UnstructuredMeshDialog::on_btnAddCoordinatesFile_clicked() {
 void UnstructuredMeshDialog::on_btnRemoveCoordinatesFile_clicked() {
     if (ui->lstCoordinateFiles->currentRow() > 0) {
         QListWidgetItem *currentItem = ui->lstCoordinateFiles->currentItem();
+        QString coordinatesFile = currentItem->text();
+        MeshPolygon refinementPolygon(coordinatesFile, MeshPolygon::REFINEMENT_AREA);
 
-        if (currentItem != NULL) {
-            QString coordinatesFile = currentItem->text();
-            MeshPolygon refinementPolygon(coordinatesFile, MeshPolygon::REFINEMENT_AREA);
-
-            currentMesh->removeMeshPolygon(refinementPolygon);
-            ui->lstCoordinateFiles->takeItem(ui->lstCoordinateFiles->currentRow());
-        }
+        currentMesh->removeMeshPolygon(refinementPolygon);
+        ui->lstCoordinateFiles->takeItem(ui->lstCoordinateFiles->currentRow());
     }
 }
 
@@ -332,7 +329,21 @@ void UnstructuredMeshDialog::on_btnAddIsland_clicked() {
         return;
     }
 
+    bool proceedWithAddition = true;
+
+    if (currentMesh->isGenerated()) {
+        proceedWithAddition = QMessageBox::Yes == QMessageBox::question(this, tr("Unstructured Mesh Generation"), tr("This action will clear the generated mesh. Are you sure?"));
+    }
+
+    if (!proceedWithAddition) {
+        return;
+    }
+
     try {
+        if (currentMesh->isGenerated()) {
+            currentMesh->clearCDT();
+        }
+
         MeshPolygon islandPolygon(islandFile, MeshPolygon::ISLAND);
 
         currentMesh->addMeshPolygon(islandPolygon);
@@ -347,11 +358,24 @@ void UnstructuredMeshDialog::on_btnRemoveIsland_clicked() {
     QListWidgetItem *currentItem = ui->lstIslands->currentItem();
 
     if (currentItem != NULL) {
-        QString islandFile = currentItem->text();
-        MeshPolygon islandPolygon(islandFile, MeshPolygon::ISLAND);
+        bool proceedWithRemoval = true;
 
-        currentMesh->removeMeshPolygon(islandPolygon);
-        ui->lstIslands->takeItem(ui->lstIslands->currentRow());
-        ui->unstructuredMeshOpenGLWidget->update();
+        if (currentMesh->isGenerated()) {
+            proceedWithRemoval = QMessageBox::Yes == QMessageBox::question(this, tr("Unstructured Mesh Generation"), tr("This action will clear the generated mesh. Are you sure?"));
+        }
+
+        if (proceedWithRemoval) {
+            QString islandFile = currentItem->text();
+            MeshPolygon islandPolygon(islandFile, MeshPolygon::ISLAND);
+
+            currentMesh->removeMeshPolygon(islandPolygon);
+
+            if (currentMesh->isGenerated()) {
+                currentMesh->clearCDT();
+            }
+
+            ui->lstIslands->takeItem(ui->lstIslands->currentRow());
+            ui->unstructuredMeshOpenGLWidget->update();
+        }
     }
 }

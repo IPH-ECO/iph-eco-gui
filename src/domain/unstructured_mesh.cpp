@@ -19,8 +19,8 @@ void UnstructuredMesh::generate() {
         throw MeshException("No boundary vertices found.");
     }
 
-    if (cdt.number_of_vertices() > 0) {
-        return; // Mesh already generated
+    if (isGenerated()) {
+        return;
     }
 
     for (int i = 0; i < domain.size(); i++) {
@@ -49,6 +49,10 @@ const CDT* UnstructuredMesh::getCDT() {
     return &cdt;
 }
 
+void UnstructuredMesh::clearCDT() {
+    this->cdt.clear();
+}
+
 void UnstructuredMesh::buildDomain(const QString &filename) {
     cdt.clear();
     Mesh::buildDomain(filename);
@@ -57,6 +61,10 @@ void UnstructuredMesh::buildDomain(const QString &filename) {
 void UnstructuredMesh::clear() {
     cdt.clear();
     Mesh::clear();
+}
+
+bool UnstructuredMesh::isGenerated() {
+    return cdt.number_of_vertices() > 0;
 }
 
 void UnstructuredMesh::mark_domains(CDT::Face_handle start, int index, QList<CDT::Edge>& border) {
