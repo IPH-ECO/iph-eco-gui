@@ -37,41 +37,65 @@ double Mesh::getCoordinatesDistance() const {
 }
 
 void Mesh::buildDomain(const QString &filename) {
-    MeshPolygon boundaryMeshPolygon(filename, MeshPolygon::BOUNDARY);
+    MeshPolygon *boundaryMeshPolygon = getBoundaryPolygon();
 
-    if (domain.empty()) {
-        MeshPolygon *newMeshPolygon = addMeshPolygon(boundaryMeshPolygon);
-
-        if (this->coordinatesDistance > 0.0) {
-            filterCoordinates(*newMeshPolygon);
-        }
-
-        return;
+    if (boundaryMeshPolygon == NULL) {
+        MeshPolygon meshPolygon(filename, MeshPolygon::BOUNDARY);
+        boundaryMeshPolygon = addMeshPolygon(meshPolygon);
+    } else {
+        buildMeshPolygon(*boundaryMeshPolygon);
     }
 
-    QList<MeshPolygon>::iterator existingDomain = qFind(domain.begin(), domain.end(), boundaryMeshPolygon);
+    QList<MeshPolygon*> islands = this->getIslands();
 
-    if (existingDomain != domain.end()) {
-        boundaryMeshPolygon.setMinimumAngle(existingDomain->getMinimumAngle());
-        boundaryMeshPolygon.setMaximumEdgeLength(existingDomain->getMaximumEdgeLength());
+    for (QList<MeshPolygon*>::iterator it = islands.begin(); it != islands.end(); it++) {
+        buildMeshPolygon(*(*it));
+    }
+}
+
+void Mesh::buildMeshPolygon(MeshPolygon &meshPolygon) {
+    QString filename = meshPolygon.getFilename();
+    QFile kmlFile(filename);
+
+    if (!kmlFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        throw MeshException(QString("Unable to open KML file. Error: %1").arg(kmlFile.errorString()));
     }
 
-    for (QList<MeshPolygon>::iterator it = domain.begin(); it != domain.end(); it++) {
-        if (!it->isBoundary() && !it->isIsland()) {
-            continue;
+    QXmlStreamReader kmlReader(&kmlFile);
+
+    meshPolygon.clear();
+
+    while (!kmlReader.atEnd()) {
+        kmlReader.readNext();
+
+        if (kmlReader.name() == "outerBoundaryIs" && kmlReader.isStartElement()) {
+            do {
+                kmlReader.readNext();
+            } while (kmlReader.name() != "coordinates" && !kmlReader.atEnd());
+
+            if (kmlReader.atEnd()) {
+                throw MeshException(QString("No coordinates found in KML file."));
+            }
+
+            QString coordinatesText = kmlReader.readElementText();
+            QStringList coordinates = coordinatesText.trimmed().split(" ");
+
+            for (int i = 0; i < coordinates.count(); i++) {
+                QStringList coordinateStr = coordinates.at(i).split(",");
+                GeographicLib::GeoCoords utmCoordinate(coordinateStr.at(1).toDouble(), coordinateStr.at(0).toDouble());
+                Point p(utmCoordinate.Easting(), utmCoordinate.Northing());
+
+                meshPolygon.push_back(p);
+            }
+
+            break;
         }
+    }
 
-        if (this->coordinatesDistance > 0.0) {
-            filterCoordinates(*it);
-        } else {
-            MeshPolygon meshPolygon(it->getFilename(), it->getMeshPolygonType());
+    kmlFile.close();
 
-            meshPolygon.setMaximumEdgeLength(it->getMaximumEdgeLength());
-            meshPolygon.setMinimumAngle(it->getMinimumAngle());
-
-            domain.erase(it);
-            addMeshPolygon(meshPolygon);
-        }
+    if (this->coordinatesDistance > 0.0) {
+        filterCoordinates(meshPolygon);
     }
 }
 
@@ -95,50 +119,9 @@ void Mesh::filterCoordinates(MeshPolygon &meshPolygon) {
     }
 }
 
-MeshPolygon* Mesh::addMeshPolygon(const MeshPolygon &meshPolygon) {
-    QString filename = meshPolygon.getFilename();
-    QFile kmlFile(filename);
-
-    if (!kmlFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        throw MeshException(QString("Unable to open KML file. Error: %1").arg(kmlFile.errorString()));
-    }
-
-    MeshPolygon newMeshPolygon(meshPolygon.getFilename(), meshPolygon.getMeshPolygonType());
-    QXmlStreamReader kmlReader(&kmlFile);
-
-    newMeshPolygon.setMinimumAngle(meshPolygon.getMinimumAngle());
-    newMeshPolygon.setMaximumEdgeLength(meshPolygon.getMaximumEdgeLength());
-
-    while (!kmlReader.atEnd()) {
-        kmlReader.readNext();
-
-        if (kmlReader.name() == "outerBoundaryIs" && kmlReader.isStartElement()) {
-            do {
-                kmlReader.readNext();
-            } while (kmlReader.name() != "coordinates" && !kmlReader.atEnd());
-
-            if (kmlReader.atEnd()) {
-                throw MeshException(QString("No coordinates found in KML file."));
-            }
-
-            QString coordinatesText = kmlReader.readElementText();
-            QStringList coordinates = coordinatesText.trimmed().split(" ");
-
-            for (int i = 0; i < coordinates.count(); i++) {
-                QStringList coordinateStr = coordinates.at(i).split(",");
-                GeographicLib::GeoCoords utmCoordinate(coordinateStr.at(1).toDouble(), coordinateStr.at(0).toDouble());
-                Point p(utmCoordinate.Easting(), utmCoordinate.Northing());
-
-                newMeshPolygon.push_back(p);
-            }
-
-            domain.append(newMeshPolygon);
-
-            break;
-        }
-    }
-
-    kmlFile.close();
+MeshPolygon* Mesh::addMeshPolygon(MeshPolygon &meshPolygon) {
+    buildMeshPolygon(meshPolygon);
+    domain.append(meshPolygon);
 
     return &(domain.last());
 }

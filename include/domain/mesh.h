@@ -22,6 +22,7 @@ protected:
 
 private:
     void filterCoordinates(MeshPolygon &meshPolygon);
+    void buildMeshPolygon(MeshPolygon &meshPolygon);
 
 public:
     Mesh();
@@ -39,7 +40,7 @@ public:
     MeshPolygon* getBoundaryPolygon();
     void setBoundaryPolygon(const MeshPolygon &meshPolygon);
 
-    MeshPolygon* addMeshPolygon(const MeshPolygon &meshPolygon);
+    MeshPolygon* addMeshPolygon(MeshPolygon &meshPolygon);
     void removeMeshPolygon(const MeshPolygon &meshPolygon);
     MeshPolygon* getMeshPolygon(const MeshPolygon &meshPolygon);
 

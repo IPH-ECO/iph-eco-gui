@@ -24,6 +24,7 @@ public:
     MeshPolygon();
     MeshPolygon(const QString &filename, MeshPolygonType meshPolygonType);
 
+    MeshPolygon& operator=(const MeshPolygon &meshPolygon);
     bool operator==(const MeshPolygon &meshPolygon);
 
     void setFilename(const QString &filename);

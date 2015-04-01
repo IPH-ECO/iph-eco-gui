@@ -12,6 +12,15 @@ MeshPolygon::MeshPolygon() {}
 
 MeshPolygon::MeshPolygon(const QString &filename, MeshPolygonType meshPolygonType) : filename(filename), meshPolygonType(meshPolygonType) {}
 
+MeshPolygon& MeshPolygon::operator=(const MeshPolygon &meshPolygon) {
+    this->filename = meshPolygon.getFilename();
+    this->meshPolygonType = meshPolygon.getMeshPolygonType();
+    this->minimumAngle = meshPolygon.getMinimumAngle();
+    this->maximumEdgeLength = meshPolygon.getMaximumEdgeLength();
+
+    return *this;
+}
+
 bool MeshPolygon::operator==(const MeshPolygon &meshPolygon) {
     return this->filename == meshPolygon.getFilename() && this->meshPolygonType == meshPolygon.getMeshPolygonType();
 }
