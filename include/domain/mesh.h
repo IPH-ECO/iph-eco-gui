@@ -36,6 +36,7 @@ public:
     double getCoordinatesDistance() const;
 
     QList<MeshPolygon>& getDomain();
+    void setDomain(const QList<MeshPolygon> &domain);
     QList<MeshPolygon*> getIslands();
     MeshPolygon* getBoundaryPolygon();
     void setBoundaryPolygon(const MeshPolygon &meshPolygon);

@@ -4,7 +4,7 @@
 
 const double MeshPolygon::DEFAULT_MINIMUM_ANGLE = 0.125;
 
-const double MeshPolygon::DEFAULT_MINIMUM_EDGE_LENGTH = 0.5;
+const double MeshPolygon::DEFAULT_MAXIMUM_EDGE_LENGTH = 0.5;
 
 const QString MeshPolygon::BOUNDARY_POLYGON_FILENAME = "Main";
 
@@ -60,7 +60,7 @@ double MeshPolygon::getMaximumEdgeLength() const {
 
 void MeshPolygon::setOptimalEdgeLength() {
     double smallEdgeLength = qMin(width(), height()) / 10.0;
-    double optimalEdgeLength = qMax(smallEdgeLength, DEFAULT_MINIMUM_EDGE_LENGTH);
+    double optimalEdgeLength = qMax(smallEdgeLength, DEFAULT_MAXIMUM_EDGE_LENGTH);
 
     this->maximumEdgeLength = optimalEdgeLength;
 }

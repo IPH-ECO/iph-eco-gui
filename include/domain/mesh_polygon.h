@@ -10,9 +10,6 @@ public:
     enum MeshPolygonType { BOUNDARY, ISLAND, REFINEMENT_AREA };
 
 private:
-    static const double DEFAULT_MINIMUM_ANGLE;
-    static const double DEFAULT_MINIMUM_EDGE_LENGTH;
-
     QString filename;
     MeshPolygonType meshPolygonType;
     double minimumAngle;
@@ -20,6 +17,8 @@ private:
 
 public:
     static const QString BOUNDARY_POLYGON_FILENAME;
+    static const double DEFAULT_MINIMUM_ANGLE;
+    static const double DEFAULT_MAXIMUM_EDGE_LENGTH;
 
     MeshPolygon();
     MeshPolygon(const QString &filename, MeshPolygonType meshPolygonType);

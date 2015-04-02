@@ -146,6 +146,10 @@ QList<MeshPolygon>& Mesh::getDomain() {
     return domain;
 }
 
+void Mesh::setDomain(const QList<MeshPolygon> &domain) {
+    this->domain = domain;
+}
+
 MeshPolygon* Mesh::getBoundaryPolygon() {
     for (QList<MeshPolygon>::iterator it = domain.begin(); it != domain.end(); it++) {
         if (it->isBoundary()) {
