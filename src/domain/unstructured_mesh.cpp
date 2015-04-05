@@ -23,15 +23,14 @@ void UnstructuredMesh::generate() {
         return;
     }
 
-    for (int i = 0; i < domain.size(); i++) {
-        MeshPolygon meshPolygon = domain.at(i);
-        ulong polygonVerticesCount = meshPolygon.size();
+    for (QList<MeshPolygon>::const_iterator it = domain.begin(); it != domain.end(); it++) {
+        ulong polygonVerticesCount = it->size();
 
-        cdt.insert(meshPolygon.vertices_begin(), meshPolygon.vertices_end());
+        cdt.insert(it->vertices_begin(), it->vertices_end());
 
         for (ulong j = 0; j < polygonVerticesCount; j++) {
-            Point p1 = meshPolygon[j];
-            Point p2 = meshPolygon[j == polygonVerticesCount - 1 ? 0 : j + 1];
+            Point p1 = (*it)[j];
+            Point p2 = (*it)[j == polygonVerticesCount - 1 ? 0 : j + 1];
 
             cdt.insert_constraint(p1, p2);
         }
@@ -41,6 +40,19 @@ void UnstructuredMesh::generate() {
     Mesher mesher(cdt, criteria);
 
     mesher.refine_mesh();
+
+    /*for (QList<MeshPolygon>::const_iterator it = domain.begin(); it != domain.end(); it++) {
+        if (!it->isRefinementArea()) {
+            continue;
+        }
+
+        cdt.insert(it->vertices_begin(), it->vertices_end());
+
+        Criteria criteria(it->getMinimumAngleInCGALRepresentation(), it->getMaximumEdgeLength());
+
+        mesher.set_criteria(criteria);
+        mesher.refine_mesh();
+    }*/
 
     mark_domains();
 }
