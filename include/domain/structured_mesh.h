@@ -5,17 +5,22 @@
 
 class StructuredMesh : public Mesh {
 private:
-    uint rows;
-    uint columns;
+    uint width;
+    uint height;
 public:
-    StructuredMesh(QString &_name);
-    StructuredMesh(QString &_name, uint &_rows, uint &_columns);
+    StructuredMesh();
+    StructuredMesh(QString &name);
 
-    void setRows(const uint rows);
-    uint getRows() const;
+    uint getWidth() const;
+    void setWidth(const uint &width);
+    uint getHeight() const;
+    void setHeight(const uint &height);
 
-    void setColumns(const uint columns);
-    uint getColumns() const;
+    void generate();
+
+    virtual bool isGenerated();
+    virtual void buildDomain(const QString &filename);
+    virtual void clear();
 };
 
 #endif // STRUCTUREDMESH_H

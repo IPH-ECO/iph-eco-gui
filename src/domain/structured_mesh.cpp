@@ -1,22 +1,37 @@
 #include "include/domain/structured_mesh.h"
 
-StructuredMesh::StructuredMesh(QString &_name) : Mesh(_name), rows(1), columns(1) {}
+StructuredMesh::StructuredMesh() : width(1), height(1) {}
 
-StructuredMesh::StructuredMesh(QString &_name, uint &_rows, uint &_columns) : Mesh(_name), rows(_rows), columns(_columns) {}
+StructuredMesh::StructuredMesh(QString &name) : Mesh(name), width(1), height(1) {}
 
-void StructuredMesh::setRows(const uint rows) {
-    this->rows = rows;
+uint StructuredMesh::getWidth() const {
+    return width;
 }
 
-uint StructuredMesh::getRows() const {
-    return this->rows;
+void StructuredMesh::setWidth(const uint &width) {
+    this->width = width;
 }
 
-void StructuredMesh::setColumns(const uint columns) {
-    this->columns = columns;
+uint StructuredMesh::getHeight() const {
+    return height;
 }
 
-uint StructuredMesh::getColumns() const {
-    return this->columns;
+void StructuredMesh::setHeight(const uint &height) {
+    this->height = height;
 }
 
+void StructuredMesh::generate() {
+
+}
+
+bool StructuredMesh::isGenerated() {
+    return false;
+}
+
+void StructuredMesh::buildDomain(const QString &filename) {
+    Mesh::buildDomain(filename);
+}
+
+void StructuredMesh::clear() {
+
+}

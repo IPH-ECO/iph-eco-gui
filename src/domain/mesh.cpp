@@ -43,6 +43,7 @@ void Mesh::buildDomain(const QString &filename) {
         MeshPolygon meshPolygon(filename, MeshPolygon::BOUNDARY);
         boundaryMeshPolygon = addMeshPolygon(meshPolygon);
     } else {
+        boundaryMeshPolygon->setFilename(filename);
         buildMeshPolygon(*boundaryMeshPolygon);
     }
 
