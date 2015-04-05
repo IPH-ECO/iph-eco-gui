@@ -22,6 +22,7 @@ protected:
 
 private:
     void filterCoordinates(MeshPolygon &meshPolygon);
+    void buildMeshPolygon(MeshPolygon &meshPolygon);
 
 public:
     Mesh();
@@ -35,11 +36,12 @@ public:
     double getCoordinatesDistance() const;
 
     QList<MeshPolygon>& getDomain();
+    void setDomain(const QList<MeshPolygon> &domain);
     QList<MeshPolygon*> getIslands();
     MeshPolygon* getBoundaryPolygon();
     void setBoundaryPolygon(const MeshPolygon &meshPolygon);
 
-    void addMeshPolygon(const MeshPolygon &meshPolygon);
+    MeshPolygon* addMeshPolygon(MeshPolygon &meshPolygon);
     void removeMeshPolygon(const MeshPolygon &meshPolygon);
     MeshPolygon* getMeshPolygon(const MeshPolygon &meshPolygon);
 
@@ -50,6 +52,7 @@ public:
 
     double area();
 
+    virtual bool isGenerated() = 0;
     virtual void buildDomain(const QString &filename);
     virtual void clear();
 };

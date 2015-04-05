@@ -4,13 +4,22 @@
 
 const double MeshPolygon::DEFAULT_MINIMUM_ANGLE = 0.125;
 
-const double MeshPolygon::DEFAULT_MINIMUM_EDGE_LENGTH = 0.5;
+const double MeshPolygon::DEFAULT_MAXIMUM_EDGE_LENGTH = 0.5;
 
 const QString MeshPolygon::BOUNDARY_POLYGON_FILENAME = "Main";
 
 MeshPolygon::MeshPolygon() {}
 
 MeshPolygon::MeshPolygon(const QString &filename, MeshPolygonType meshPolygonType) : filename(filename), meshPolygonType(meshPolygonType) {}
+
+MeshPolygon& MeshPolygon::operator=(const MeshPolygon &meshPolygon) {
+    this->filename = meshPolygon.getFilename();
+    this->meshPolygonType = meshPolygon.getMeshPolygonType();
+    this->minimumAngle = meshPolygon.getMinimumAngle();
+    this->maximumEdgeLength = meshPolygon.getMaximumEdgeLength();
+
+    return *this;
+}
 
 bool MeshPolygon::operator==(const MeshPolygon &meshPolygon) {
     return this->filename == meshPolygon.getFilename() && this->meshPolygonType == meshPolygon.getMeshPolygonType();
@@ -29,16 +38,16 @@ MeshPolygon::MeshPolygonType MeshPolygon::getMeshPolygonType() const {
 }
 
 void MeshPolygon::setMinimumAngle(const double &minimumAngle) {
-    // http://doc.cgal.org/latest/Mesh_2/classCGAL_1_1Delaunay__mesh__size__criteria__2.html
-    this->minimumAngle = qPow(sin(minimumAngle * M_PI / 180), 2.0);
+    this->minimumAngle = minimumAngle;
 }
 
 double MeshPolygon::getMinimumAngle() const {
     return minimumAngle;
 }
 
-double MeshPolygon::getMinimumAngleInDegrees() const {
-    return qAsin(qSqrt(minimumAngle)) * 180 / M_PI;
+double MeshPolygon::getMinimumAngleInCGALRepresentation() const {
+    // http://doc.cgal.org/latest/Mesh_2/classCGAL_1_1Delaunay__mesh__size__criteria__2.html
+    return qPow(sin(minimumAngle * M_PI / 180), 2.0);
 }
 
 void MeshPolygon::setMaximumEdgeLength(const double &maximumEdgeLength) {
@@ -51,21 +60,9 @@ double MeshPolygon::getMaximumEdgeLength() const {
 
 void MeshPolygon::setOptimalEdgeLength() {
     double smallEdgeLength = qMin(width(), height()) / 10.0;
-    double optimalEdgeLength = qMax(smallEdgeLength, DEFAULT_MINIMUM_EDGE_LENGTH);
+    double optimalEdgeLength = qMax(smallEdgeLength, DEFAULT_MAXIMUM_EDGE_LENGTH);
 
     this->maximumEdgeLength = optimalEdgeLength;
-}
-
-bool MeshPolygon::isIsland() const {
-    return this->meshPolygonType == MeshPolygon::ISLAND;
-}
-
-bool MeshPolygon::isBoundary() const {
-    return this->meshPolygonType == MeshPolygon::BOUNDARY;
-}
-
-bool MeshPolygon::isRefinementArea() const {
-    return this->meshPolygonType == MeshPolygon::REFINEMENT_AREA;
 }
 
 double MeshPolygon::width() const {

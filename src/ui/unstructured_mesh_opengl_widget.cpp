@@ -104,6 +104,7 @@ void UnstructuredMeshOpenGLWidget::paintGL() {
 
 void UnstructuredMeshOpenGLWidget::setMesh(UnstructuredMesh *mesh) {
     this->mesh = mesh;
+    update();
 }
 
 void UnstructuredMeshOpenGLWidget::buildDomain(const QString &filename) {
