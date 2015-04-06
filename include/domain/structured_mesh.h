@@ -1,20 +1,18 @@
-#ifndef STRUCTUREDMESH_H
-#define STRUCTUREDMESH_H
+#ifndef STRUCTURED_MESH_H
+#define STRUCTURED_MESH_H
 
 #include "mesh.h"
 
 class StructuredMesh : public Mesh {
 private:
-    uint width;
-    uint height;
+    uint resolution;
+
 public:
     StructuredMesh();
     StructuredMesh(QString &name);
 
-    uint getWidth() const;
-    void setWidth(const uint &width);
-    uint getHeight() const;
-    void setHeight(const uint &height);
+    uint getResolution() const;
+    void setResolution(const uint &resolution);
 
     void generate();
 
@@ -23,4 +21,4 @@ public:
     virtual void clear();
 };
 
-#endif // STRUCTUREDMESH_H
+#endif // STRUCTURED_MESH_H

@@ -157,8 +157,7 @@ void StructuredMeshDialog::on_btnGenerateMesh_clicked() {
 void StructuredMeshDialog::on_btnSaveMesh_clicked() {
     QString meshName = ui->cbxMeshName->currentIndex() == -1 ? ui->edtMeshName->text() : ui->cbxMeshName->currentText();
     QList<MeshPolygon> &domain = currentMesh->getDomain();
-    uint width = ui->sbxWidth->value();
-    uint height = ui->sbxHeight->value();
+    uint resolution = ui->sbxResolution->value();
 
     Project *project = IPHApplication::getCurrentProject();
     StructuredMesh structuredMesh(meshName);
@@ -170,8 +169,7 @@ void StructuredMeshDialog::on_btnSaveMesh_clicked() {
 
         currentMesh = new StructuredMesh(meshName);
         currentMesh->setDomain(domain);
-        currentMesh->setWidth(width);
-        currentMesh->setHeight(height);
+        currentMesh->setResolution(resolution);
         currentMesh->setShowDomainBoundary(showDomainBoundary);
         currentMesh->setShowMesh(showMesh);
 
@@ -182,8 +180,7 @@ void StructuredMeshDialog::on_btnSaveMesh_clicked() {
     } else {
         currentMesh->setName(meshName);
         currentMesh->setDomain(domain);
-        currentMesh->setWidth(width);
-        currentMesh->setHeight(height);
+        currentMesh->setResolution(resolution);
 
         ui->cbxMeshName->setItemText(ui->cbxMeshName->currentIndex(), currentMesh->getName());
     }
@@ -229,8 +226,7 @@ void StructuredMeshDialog::resetMeshForm() {
     ui->edtMeshName->setFocus();
     ui->edtMeshName->clear();
     ui->edtBoundaryFileLine->clear();
-    ui->sbxWidth->setValue(ui->sbxWidth->minimum());
-    ui->sbxHeight->setValue(ui->sbxHeight->minimum());
+    ui->sbxResolution->setValue(ui->sbxResolution->minimum());
     ui->lstIslands->clear();
     ui->lblDomainArea->setText("Area: -");
     ui->lblUTMCoordinate->setText("UTM: -");
@@ -252,8 +248,7 @@ void StructuredMeshDialog::on_cbxMeshName_currentIndexChanged(int index) {
 
         ui->edtMeshName->setText(currentMesh->getName());
         ui->edtBoundaryFileLine->setText(boundaryPolygon->getFilename());
-        ui->sbxWidth->setValue(currentMesh->getWidth());
-        ui->sbxHeight->setValue(currentMesh->getHeight());
+        ui->sbxResolution->setValue(currentMesh->getResolution());
         ui->chkShowDomainBoundary->setChecked(currentMesh->getShowDomainBoundary());
         ui->chkShowMesh->setChecked(currentMesh->getShowMesh());
         ui->btnCancelMesh->setText("Done");

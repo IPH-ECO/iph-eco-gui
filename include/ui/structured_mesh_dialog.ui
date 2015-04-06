@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1000</width>
-    <height>720</height>
+    <height>731</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -140,12 +140,12 @@
          <item row="2" column="0">
           <widget class="QLabel" name="label">
            <property name="text">
-            <string>Width</string>
+            <string>Resolution</string>
            </property>
           </widget>
          </item>
          <item row="2" column="2">
-          <widget class="QSpinBox" name="sbxWidth">
+          <widget class="QSpinBox" name="sbxResolution">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
              <horstretch>0</horstretch>
@@ -176,13 +176,6 @@
            </property>
           </widget>
          </item>
-         <item row="0" column="0" colspan="2">
-          <widget class="QLabel" name="lblMeshName">
-           <property name="text">
-            <string>Mesh Name</string>
-           </property>
-          </widget>
-         </item>
          <item row="1" column="0">
           <widget class="QLabel" name="lblBoundaryFile">
            <property name="text">
@@ -190,26 +183,10 @@
            </property>
           </widget>
          </item>
-         <item row="3" column="0">
-          <widget class="QLabel" name="label_2">
+         <item row="0" column="0" colspan="2">
+          <widget class="QLabel" name="lblMeshName">
            <property name="text">
-            <string>Height</string>
-           </property>
-          </widget>
-         </item>
-         <item row="3" column="2" colspan="2">
-          <widget class="QSpinBox" name="sbxHeight">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="minimum">
-            <number>1</number>
-           </property>
-           <property name="maximum">
-            <number>999999</number>
+            <string>Mesh Name</string>
            </property>
           </widget>
          </item>
@@ -459,8 +436,7 @@
   <tabstop>edtMeshName</tabstop>
   <tabstop>edtBoundaryFileLine</tabstop>
   <tabstop>btnBoundaryFileBrowser</tabstop>
-  <tabstop>sbxWidth</tabstop>
-  <tabstop>sbxHeight</tabstop>
+  <tabstop>sbxResolution</tabstop>
   <tabstop>lstIslands</tabstop>
   <tabstop>btnAddIsland</tabstop>
   <tabstop>btnRemoveIsland</tabstop>

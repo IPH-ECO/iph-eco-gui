@@ -1,23 +1,15 @@
 #include "include/domain/structured_mesh.h"
 
-StructuredMesh::StructuredMesh() : width(1), height(1) {}
+StructuredMesh::StructuredMesh() : resolution(1) {}
 
-StructuredMesh::StructuredMesh(QString &name) : Mesh(name), width(1), height(1) {}
+StructuredMesh::StructuredMesh(QString &name) : Mesh(name), resolution(1) {}
 
-uint StructuredMesh::getWidth() const {
-    return width;
+uint StructuredMesh::getResolution() const {
+    return resolution;
 }
 
-void StructuredMesh::setWidth(const uint &width) {
-    this->width = width;
-}
-
-uint StructuredMesh::getHeight() const {
-    return height;
-}
-
-void StructuredMesh::setHeight(const uint &height) {
-    this->height = height;
+void StructuredMesh::setResolution(const uint &resolution) {
+    this->resolution = resolution;
 }
 
 void StructuredMesh::generate() {
