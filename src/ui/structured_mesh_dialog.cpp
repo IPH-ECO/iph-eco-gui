@@ -137,9 +137,12 @@ void StructuredMeshDialog::on_btnGenerateMesh_clicked() {
         return;
     }
 
+    uint resolution = ui->sbxResolution->value();
+
     enableMeshForm(true);
 
     currentMesh->setName(meshName);
+    currentMesh->setResolution(resolution);
 
     CGAL::Failure_behaviour old_behaviour = CGAL::set_error_behaviour(CGAL::THROW_EXCEPTION);
     try {

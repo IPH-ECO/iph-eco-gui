@@ -63,7 +63,7 @@ FORMS    += \
     include/ui/save_on_close_dialog.ui \
     include/ui/structured_mesh_dialog.ui
 
-macx: QMAKE_CXXFLAGS += -Wno-redeclared-class-member
+macx: QMAKE_CXXFLAGS += -Wno-redeclared-class-member -Wno-unused-parameter
 
 macx: LIBS += -L/usr/local/Cellar/geographiclib/1.40/lib/ -lGeographic
 macx: INCLUDEPATH += /usr/local/Cellar/geographiclib/1.40/include

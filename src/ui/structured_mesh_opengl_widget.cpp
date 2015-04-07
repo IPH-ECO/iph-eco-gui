@@ -1,7 +1,11 @@
 #include "include/ui/structured_mesh_opengl_widget.h"
 
 #include <QList>
-#include <QPoint>
+#include <boost/numeric/ublas/matrix.hpp>
+
+#include "include/utility/delaunay_triangulation_definitions.h"
+
+using boost::numeric::ublas::matrix;
 
 StructuredMeshOpenGLWidget::StructuredMeshOpenGLWidget(QWidget *parent) :
     QOpenGLWidget(parent), mesh(NULL), left(0), right(0), bottom(0), top(0) {}
@@ -46,7 +50,7 @@ void StructuredMeshOpenGLWidget::paintGL() {
     glColor3f(0.0, 0.0, 0.0);
 
     if (mesh->getShowDomainBoundary()) {
-        QList<MeshPolygon> domain = mesh->getDomain();
+        QList<MeshPolygon> &domain = mesh->getDomain();
 
         for (QList<MeshPolygon>::const_iterator it = domain.begin(); it != domain.end(); it++) {
             glBegin(GL_LINE_LOOP);
@@ -58,7 +62,23 @@ void StructuredMeshOpenGLWidget::paintGL() {
     }
 
     if (mesh->getShowMesh()) {
-        //TODO: Show mesh
+        matrix<Polygon> &grid = mesh->getGrid();
+
+        for (ulong i = 0; i < grid.size1(); i++) {
+            for (ulong j = 0; j < grid.size2(); j++) {
+                Polygon &quad = grid(i, j);
+
+                if (quad.size() == 0) {
+                    continue;
+                }
+
+                glBegin(GL_LINE_LOOP);
+                for (int k = 0; k < quad.size(); k++) {
+                    glVertex2d(quad[k].x(), quad[k].y());
+                }
+                glEnd();
+            }
+        }
     }
 }
 
