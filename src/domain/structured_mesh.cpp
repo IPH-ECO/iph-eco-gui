@@ -1,7 +1,5 @@
 #include "include/domain/structured_mesh.h"
 
-#include <QDebug>
-
 StructuredMesh::StructuredMesh() : resolution(1) {}
 
 StructuredMesh::StructuredMesh(QString &name) : Mesh(name), resolution(1) {}
@@ -34,8 +32,6 @@ void StructuredMesh::generate() {
                 Polygon quad = makeQuadFromPoint(&initialPoint, i, j);
 
                 grid.insert_element(i, j, quad);
-            } else {
-                grid.insert_element(i, j, Polygon());
             }
         }
     }
@@ -46,7 +42,12 @@ bool StructuredMesh::isGenerated() {
 }
 
 void StructuredMesh::buildDomain(const QString &filename) {
+    grid.clear();
     Mesh::buildDomain(filename);
+}
+
+void StructuredMesh::clearGrid() {
+    grid.clear();
 }
 
 void StructuredMesh::clear() {
@@ -89,7 +90,17 @@ bool StructuredMesh::isCenterInscribed(const Point *p, const int &i, const int &
     Point center(p->x() + j * this->resolution + this->resolution / 2, p->y() - i * this->resolution - this->resolution / 2);
     MeshPolygon *boundaryPolygon = getBoundaryPolygon();
 
-    qDebug() << boundaryPolygon->is_simple();
+    if (boundaryPolygon->bounded_side(center) == CGAL::ON_BOUNDED_SIDE) {
+        QList<MeshPolygon*> islands = this->getIslands();
 
-    return boundaryPolygon->bounded_side(center) == CGAL::ON_BOUNDED_SIDE;
+        for (QList<MeshPolygon*>::const_iterator it = islands.begin(); it != islands.end(); it++) {
+            if ((*it)->bounded_side(center) != CGAL::ON_UNBOUNDED_SIDE) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    return false;
 }

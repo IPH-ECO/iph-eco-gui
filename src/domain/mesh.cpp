@@ -41,21 +41,21 @@ void Mesh::buildDomain(const QString &filename) {
 
     if (boundaryMeshPolygon == NULL) {
         MeshPolygon meshPolygon(filename, MeshPolygon::BOUNDARY);
-        boundaryMeshPolygon = addMeshPolygon(meshPolygon);
+        addMeshPolygon(meshPolygon);
     } else {
         boundaryMeshPolygon->setFilename(filename);
-        buildMeshPolygon(*boundaryMeshPolygon);
+        buildMeshPolygon(boundaryMeshPolygon);
     }
 
     QList<MeshPolygon*> islands = this->getIslands();
 
     for (QList<MeshPolygon*>::iterator it = islands.begin(); it != islands.end(); it++) {
-        buildMeshPolygon(*(*it));
+        buildMeshPolygon(*it);
     }
 }
 
-void Mesh::buildMeshPolygon(MeshPolygon &meshPolygon) {
-    QString filename = meshPolygon.getFilename();
+void Mesh::buildMeshPolygon(MeshPolygon *meshPolygon) {
+    QString filename = meshPolygon->getFilename();
     QFile kmlFile(filename);
 
     if (!kmlFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
@@ -64,7 +64,7 @@ void Mesh::buildMeshPolygon(MeshPolygon &meshPolygon) {
 
     QXmlStreamReader kmlReader(&kmlFile);
 
-    meshPolygon.clear();
+    meshPolygon->clear();
 
     while (!kmlReader.atEnd()) {
         kmlReader.readNext();
@@ -81,12 +81,12 @@ void Mesh::buildMeshPolygon(MeshPolygon &meshPolygon) {
             QString coordinatesText = kmlReader.readElementText();
             QStringList coordinates = coordinatesText.trimmed().split(" ");
 
-            for (int i = 0; i < coordinates.count(); i++) {
+            for (int i = 0; i < coordinates.count() - 1; i++) {
                 QStringList coordinateStr = coordinates.at(i).split(",");
                 GeographicLib::GeoCoords utmCoordinate(coordinateStr.at(1).toDouble(), coordinateStr.at(0).toDouble());
                 Point p(utmCoordinate.Easting(), utmCoordinate.Northing());
 
-                meshPolygon.push_back(p);
+                meshPolygon->push_back(p);
             }
 
             break;
@@ -100,28 +100,28 @@ void Mesh::buildMeshPolygon(MeshPolygon &meshPolygon) {
     }
 }
 
-void Mesh::filterCoordinates(MeshPolygon &meshPolygon) {
-    MeshPolygon::Vertex_iterator vit = meshPolygon.vertices_begin();
+void Mesh::filterCoordinates(MeshPolygon *meshPolygon) {
+    MeshPolygon::Vertex_iterator vit = meshPolygon->vertices_begin();
     Point p1 = *vit++;
 
-    while (vit != meshPolygon.vertices_end()) {
+    while (vit != meshPolygon->vertices_end()) {
         Point p2 = *vit;
         double distance = sqrt(qPow(p2.x() - p1.x(), 2) + qPow(p2.y() - p1.y(), 2));
 
         if (distance < this->coordinatesDistance) {
-            meshPolygon.erase(vit);
+            meshPolygon->erase(vit);
         } else {
             double x = p1.x() + (p2.x() - p1.x()) * this->coordinatesDistance / distance;
             double y = p1.y() + (p2.y() - p1.y()) * this->coordinatesDistance / distance;
 
             p1 = Point(x, y);
-            vit = meshPolygon.insert(vit + 1, p1);
+            vit = meshPolygon->insert(vit + 1, p1);
         }
     }
 }
 
 MeshPolygon* Mesh::addMeshPolygon(MeshPolygon &meshPolygon) {
-    buildMeshPolygon(meshPolygon);
+    buildMeshPolygon(&meshPolygon);
     domain.append(meshPolygon);
 
     return &(domain.last());

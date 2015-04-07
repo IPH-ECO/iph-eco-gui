@@ -27,6 +27,7 @@ public:
     matrix<Polygon>& getGrid();
 
     void generate();
+    void clearGrid();
 
     virtual bool isGenerated();
     virtual void buildDomain(const QString &filename);

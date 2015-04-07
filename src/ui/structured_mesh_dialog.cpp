@@ -69,15 +69,11 @@ void StructuredMeshDialog::on_btnAddIsland_clicked() {
     }
 
     try {
-        if (currentMesh->isGenerated()) {
-            //currentMesh->clear();
-        }
-
         MeshPolygon islandPolygon(islandFile, MeshPolygon::ISLAND);
 
         currentMesh->addMeshPolygon(islandPolygon);
         ui->lstIslands->addItem(islandFile);
-        ui->structuredMeshOpenGLWidget->update();
+        currentMesh->clearGrid();
     } catch (MeshException &ex) {
         QMessageBox::critical(this, tr("Structured Mesh Generation"), ex.what());
     }
@@ -100,7 +96,7 @@ void StructuredMeshDialog::on_btnRemoveIsland_clicked() {
             currentMesh->removeMeshPolygon(islandPolygon);
 
             if (currentMesh->isGenerated()) {
-//                currentMesh->clear();
+                currentMesh->clearGrid();
             }
 
             ui->lstIslands->takeItem(ui->lstIslands->currentRow());

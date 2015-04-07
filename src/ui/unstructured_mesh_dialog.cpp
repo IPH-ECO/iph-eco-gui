@@ -128,7 +128,7 @@ void UnstructuredMeshDialog::on_btnGenerateDomain_clicked() {
 
     MeshPolygon* boundaryPolygon = currentMesh->getBoundaryPolygon();
 
-    boundaryPolygon->setOptimalEdgeLength();
+    boundaryPolygon->setOptimalParameters();
 
     ui->lstCoordinateFiles->setCurrentRow(0);
     ui->sbxMaximumEdgeLength->setValue(boundaryPolygon->getMaximumEdgeLength());
@@ -172,7 +172,7 @@ void UnstructuredMeshDialog::on_btnAddCoordinatesFile_clicked() {
         MeshPolygon refinementPolygon(refinementFile, MeshPolygon::REFINEMENT_AREA);
         MeshPolygon *newRefinementPolygon = currentMesh->addMeshPolygon(refinementPolygon);
 
-        newRefinementPolygon->setOptimalEdgeLength();
+        newRefinementPolygon->setOptimalParameters();
         ui->lstCoordinateFiles->addItem(refinementFile);
         ui->lstCoordinateFiles->setCurrentRow(ui->lstCoordinateFiles->count() - 1);
         ui->unstructuredMeshOpenGLWidget->update();

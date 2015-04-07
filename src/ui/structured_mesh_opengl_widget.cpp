@@ -73,7 +73,7 @@ void StructuredMeshOpenGLWidget::paintGL() {
                 }
 
                 glBegin(GL_LINE_LOOP);
-                for (int k = 0; k < quad.size(); k++) {
+                for (uint k = 0; k < quad.size(); k++) {
                     glVertex2d(quad[k].x(), quad[k].y());
                 }
                 glEnd();
