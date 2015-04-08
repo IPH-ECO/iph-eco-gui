@@ -21,8 +21,8 @@ protected:
     bool showEdgesLabels;
 
 private:
-    void filterCoordinates(MeshPolygon &meshPolygon);
-    void buildMeshPolygon(MeshPolygon &meshPolygon);
+    void filterCoordinates(MeshPolygon *meshPolygon);
+    void buildMeshPolygon(MeshPolygon *meshPolygon);
 
 public:
     Mesh();

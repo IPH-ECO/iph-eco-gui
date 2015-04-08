@@ -5,13 +5,9 @@
 #include <QFileDialog>
 #include <QInputDialog>
 #include <QMessageBox>
-#include <QProgressDialog>
 #include <QSettings>
-#include <QJsonObject>
 
-#include "include/application/iph_application.h"
 #include "include/domain/unstructured_mesh.h"
-#include "include/exceptions/mesh_exception.h"
 
 namespace Ui {
 class UnstructuredMeshDialog;

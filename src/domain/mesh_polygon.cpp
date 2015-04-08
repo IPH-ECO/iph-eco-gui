@@ -2,7 +2,7 @@
 
 #include <QtMath>
 
-const double MeshPolygon::DEFAULT_MINIMUM_ANGLE = 0.125;
+const double MeshPolygon::DEFAULT_MINIMUM_ANGLE = 20.7;
 
 const double MeshPolygon::DEFAULT_MAXIMUM_EDGE_LENGTH = 0.5;
 
@@ -58,11 +58,12 @@ double MeshPolygon::getMaximumEdgeLength() const {
     return maximumEdgeLength;
 }
 
-void MeshPolygon::setOptimalEdgeLength() {
+void MeshPolygon::setOptimalParameters() {
     double smallEdgeLength = qMin(width(), height()) / 10.0;
     double optimalEdgeLength = qMax(smallEdgeLength, DEFAULT_MAXIMUM_EDGE_LENGTH);
 
     this->maximumEdgeLength = optimalEdgeLength;
+    this->minimumAngle = DEFAULT_MINIMUM_ANGLE;
 }
 
 double MeshPolygon::width() const {

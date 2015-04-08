@@ -34,7 +34,7 @@ public:
     double getMinimumAngleInCGALRepresentation() const;
     void setMaximumEdgeLength(const double &maximumEdgeLength);
     double getMaximumEdgeLength() const;
-    void setOptimalEdgeLength();
+    void setOptimalParameters();
 
     double width() const;
     double height() const;

@@ -29,7 +29,9 @@ SOURCES += \
     src/domain/mesh.cpp \
     src/ui/unstructured_mesh_dialog.cpp \
     src/ui/unstructured_mesh_opengl_widget.cpp \
-    src/domain/mesh_polygon.cpp
+    src/ui/structured_mesh_opengl_widget.cpp \
+    src/domain/mesh_polygon.cpp \
+    src/ui/structured_mesh_dialog.cpp
 
 HEADERS  += \
     include/domain/project.h \
@@ -48,17 +50,20 @@ HEADERS  += \
     include/domain/mesh.h \
     include/ui/unstructured_mesh_dialog.h \
     include/ui/unstructured_mesh_opengl_widget.h \
+    include/ui/structured_mesh_opengl_widget.h \
     include/utility/delaunay_triangulation_definitions.h \
-    include/domain/mesh_polygon.h
+    include/domain/mesh_polygon.h \
+    include/ui/structured_mesh_dialog.h
 
 FORMS    += \
     include/ui/main_window.ui \
     include/ui/new_project_dialog.ui \
     include/ui/project_properties_dialog.ui \
     include/ui/unstructured_mesh_dialog.ui \
-    include/ui/save_on_close_dialog.ui
+    include/ui/save_on_close_dialog.ui \
+    include/ui/structured_mesh_dialog.ui
 
-macx: QMAKE_CXXFLAGS += -Wno-redeclared-class-member
+macx: QMAKE_CXXFLAGS += -Wno-redeclared-class-member -Wno-unused-parameter
 
 macx: LIBS += -L/usr/local/Cellar/geographiclib/1.40/lib/ -lGeographic
 macx: INCLUDEPATH += /usr/local/Cellar/geographiclib/1.40/include

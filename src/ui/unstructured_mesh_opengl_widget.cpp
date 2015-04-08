@@ -136,13 +136,11 @@ void UnstructuredMeshOpenGLWidget::wheelEvent(QWheelEvent *event) {
 }
 
 void UnstructuredMeshOpenGLWidget::mouseMoveEvent(QMouseEvent *event) {
-    qDebug() << "move";
-
-//    update();
+//    qDebug() << "move";
 }
 
 void UnstructuredMeshOpenGLWidget::mousePressEvent(QMouseEvent *event) {
-    qDebug() << "press";
+//    qDebug() << "press";
 
     xAtPress = event->x();
     yAtPress = event->y();

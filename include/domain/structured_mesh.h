@@ -1,21 +1,37 @@
-#ifndef STRUCTUREDMESH_H
-#define STRUCTUREDMESH_H
+#ifndef STRUCTURED_MESH_H
+#define STRUCTURED_MESH_H
 
+#include <boost/numeric/ublas/matrix.hpp>
+
+#include "include/utility/delaunay_triangulation_definitions.h"
 #include "mesh.h"
+
+using boost::numeric::ublas::matrix;
 
 class StructuredMesh : public Mesh {
 private:
-    uint rows;
-    uint columns;
+    uint resolution;
+    matrix<Polygon> grid;
+
+    std::vector<ulong> calculateInitialPoints();
+    Polygon makeQuadFromPoint(const Point *p, const int &i, const int &j);
+    bool isCenterInscribed(const Point *p, const int &i, const int &j);
+
 public:
-    StructuredMesh(QString &_name);
-    StructuredMesh(QString &_name, uint &_rows, uint &_columns);
+    StructuredMesh();
+    StructuredMesh(QString &name);
+    StructuredMesh(QString &name, uint &resolution);
 
-    void setRows(const uint rows);
-    uint getRows() const;
+    uint getResolution() const;
+    void setResolution(const uint &resolution);
+    matrix<Polygon>& getGrid();
 
-    void setColumns(const uint columns);
-    uint getColumns() const;
+    void generate();
+    void clearGrid();
+
+    virtual bool isGenerated();
+    virtual void buildDomain(const QString &filename);
+    virtual void clear();
 };
 
-#endif // STRUCTUREDMESH_H
+#endif // STRUCTURED_MESH_H
