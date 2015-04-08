@@ -277,6 +277,7 @@ void UnstructuredMeshDialog::on_cbxMeshName_currentIndexChanged(int index) {
         ui->edtMeshName->setText(currentMesh->getName());
         ui->edtBoundaryFileLine->setText(currentMesh->getBoundaryPolygon()->getFilename());
         ui->sbxCoordinatesDistance->setValue(currentMesh->getCoordinatesDistance());
+        ui->lstCoordinateFiles->setCurrentRow(0);
         ui->sbxMinimumAngle->setValue(currentMesh->getBoundaryPolygon()->getMinimumAngle());
         ui->sbxMaximumEdgeLength->setValue(currentMesh->getBoundaryPolygon()->getMaximumEdgeLength());
         ui->chkShowDomainBoundary->setChecked(currentMesh->getShowDomainBoundary());
