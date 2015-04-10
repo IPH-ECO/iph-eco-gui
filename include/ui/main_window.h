@@ -28,15 +28,21 @@ protected:
     void closeEvent(QCloseEvent *);
 
 private slots:
+    //File
     void on_actionOpenProject_triggered();
     void on_actionSaveAsProject_triggered();
     void on_actionSaveProject_triggered();
     void on_actionProjectProperties_triggered();
     void on_actionNewProject_triggered();
-    void on_actionUnstructuredMeshGeneration_triggered();
-    void on_actionStructuredMeshGeneration_triggered();
     void on_actionCloseProject_triggered();
     void on_actionSobre_triggered();
+
+    //Preprocessing
+    void on_actionUnstructuredMeshGeneration_triggered();
+    void on_actionStructuredMeshGeneration_triggered();
+
+    //Input
+    void on_actionGridData_triggered();
 
     void enableMenus(bool enable);
     void openRecent();
