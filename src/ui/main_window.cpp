@@ -93,9 +93,12 @@ void MainWindow::on_actionProjectProperties_triggered() {
 
 void MainWindow::on_actionCloseProject_triggered() {
     Project *project = IPHApplication::getCurrentProject();
+
     if (project != NULL && project->isDirty()) {
-        SaveOnCloseDialog saveOnCloseDialog(this, IPHApplication::getCurrentProject());
-        saveOnCloseDialog.exec();
+        if (QMessageBox::question(this, tr("Project has unsaved changes"), tr("Do you want to save the changes before closing the project?"))) {
+            ProjectService projectService;
+            projectService.save(project);
+        }
     }
 
     IPHApplication::setCurrentProject(0);
