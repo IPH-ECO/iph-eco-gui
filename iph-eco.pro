@@ -31,7 +31,9 @@ SOURCES += \
     src/ui/structured_mesh_opengl_widget.cpp \
     src/domain/mesh_polygon.cpp \
     src/ui/structured_mesh_dialog.cpp \
-    src/ui/grid_data_dialog.cpp
+    src/ui/grid_data_dialog.cpp \
+    src/domain/grid_data.cpp \
+    src/ui/grid_data_opengl_widget.cpp
 
 HEADERS  += \
     include/domain/project.h \
@@ -53,7 +55,9 @@ HEADERS  += \
     include/utility/delaunay_triangulation_definitions.h \
     include/domain/mesh_polygon.h \
     include/ui/structured_mesh_dialog.h \
-    include/ui/grid_data_dialog.h
+    include/ui/grid_data_dialog.h \
+    include/domain/grid_data.h \
+    include/ui/grid_data_opengl_widget.h
 
 FORMS    += \
     include/ui/main_window.ui \

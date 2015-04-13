@@ -49,6 +49,7 @@ class Project {
         void removeMesh(Mesh *mesh);
         bool containsMesh(Mesh *mesh);
         Mesh* getMesh(Mesh *mesh);
+        Mesh* getMesh(const QString &meshName);
 
         //Transient gets and sets
         bool isDirty() const;

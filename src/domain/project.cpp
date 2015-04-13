@@ -103,6 +103,16 @@ Mesh* Project::getMesh(Mesh *mesh) {
     return NULL;
 }
 
+Mesh* Project::getMesh(const QString &meshName) {
+    for (QSet<Mesh*>::iterator it = meshes.begin(); it != meshes.end(); it++) {
+        if ((*it)->getName() == meshName) {
+            return *it;
+        }
+    }
+
+    return NULL;
+}
+
 void Project::setDirty(const bool &dirty) {
     this->dirty = dirty;
 }
