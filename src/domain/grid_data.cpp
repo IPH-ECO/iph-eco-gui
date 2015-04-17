@@ -77,3 +77,18 @@ QString GridData::gridInformationTypeToString() const {
         return "";
     }
 }
+
+GridData::GridInformationType GridData::toGridInformationType(const QString gridInformationTypeStr) {
+    if (gridInformationTypeStr == "Bathymetry") {
+        return BATHYMETRY;
+    }
+    if (gridInformationTypeStr == "Wind Reduction Coefficient") {
+        return WIND_REDUCTION;
+    }
+    if (gridInformationTypeStr == "Chezy Coefficient") {
+        return CHEZY;
+    }
+    if (gridInformationTypeStr == "Wetland Area") {
+        return WETLAND_AREA;
+    }
+}

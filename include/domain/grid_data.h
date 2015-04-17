@@ -39,6 +39,8 @@ public:
 
     QString gridInputTypeToString() const;
     QString gridInformationTypeToString() const;
+
+    static GridInformationType toGridInformationType(const QString gridInformationTypeStr);
 };
 
 #endif // GRID_DATA_H

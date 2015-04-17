@@ -3,6 +3,7 @@
 
 #include <QFileDialog>
 #include <QTableWidgetItem>
+#include <QMessageBox>
 
 #include "include/application/iph_application.h"
 #include "include/domain/structured_mesh.h"
@@ -10,7 +11,8 @@
 
 GridDataDialog::GridDataDialog(QWidget *parent) :
     QDialog(parent), GRID_DATA_DEFAULT_DIR_KEY("grid_data_default_dir"), ui(new Ui::GridDataDialog),
-    unsavedGridData(new GridDataConfiguration()), currentGridData(unsavedGridData)
+    unsavedGridDataConfiguration(new GridDataConfiguration()), currentGridDataConfiguration(unsavedGridDataConfiguration),
+    unsavedGridData(new GridData()), currentGridData(unsavedGridData)
 {
     ui->setupUi(this);
 
@@ -34,6 +36,7 @@ GridDataDialog::GridDataDialog(QWidget *parent) :
 
 GridDataDialog::~GridDataDialog() {
     delete unsavedGridData;
+    delete unsavedGridDataConfiguration;
     delete ui;
 }
 
@@ -54,20 +57,44 @@ void GridDataDialog::on_cbxMesh_currentIndexChanged(const QString &meshName) {
     ui->gridDataOpenGLWidget->setMesh(mesh);
 }
 
-void GridDataDialog::on_btnEditGridInfomation_clicked() {
-
+void GridDataDialog::on_btnAddGridInfomation_clicked() {
+    resetForm();
 }
 
 void GridDataDialog::on_btnRemoveGridInformation_clicked() {
 
 }
 
-void GridDataDialog::on_btnBrowse_clicked() {
+void GridDataDialog::on_rdoPoint_toggled(bool checked) {
+    ui->edtExponent->setEnabled(checked);
+    ui->edtRadius->setEnabled(checked);
+}
+
+void GridDataDialog::on_rdoPolygon_toggled(bool checked) {
 
 }
 
-void GridDataDialog::on_btnDone_clicked() {
 
+void GridDataDialog::on_btnBrowse_clicked() {
+    QString gridDataFile = QFileDialog::getOpenFileName(this, tr("Select a grid data file"), getDefaultDirectory(), "Keyhole Markup Language file (*.kml)");
+
+    ui->edtInputFile->setText(gridDataFile);
+}
+
+void GridDataDialog::on_btnDone_clicked() {
+    if (!ui->rdoPoint->isChecked() && !ui->rdoPolygon->isChecked()) {
+        QMessageBox::warning(this, tr("Grid Data"), tr("Select a input type."));
+        return;
+    }
+
+    GridData::GridInputType gridInputType = ui->rdoPoint->isChecked() ? GridData::POINT : GridData::POLYGON;
+    QString inputFile = ui->edtInputFile->text();
+    GridData::GridInformationType gridInformationType = GridData::GridInformationType::toGridInformationType(ui->cbxGridInformation->currentText());
+
+    GridData gridData(currentMesh);
+    gridData.setGridInputType(gridInputType);
+    gridData.setInputFile(inputFile);
+    gridData.setGridInformationType(gridInformationType);
 }
 
 void GridDataDialog::on_cbxConfiguration_currentIndexChanged(const QString &configurationName) {
@@ -86,4 +113,13 @@ void GridDataDialog::on_cbxConfiguration_currentIndexChanged(const QString &conf
             ui->tblGridInformation->setItem(rowCount, 1, (*it)->getGridInputTypeToString());
         }
     }
+}
+
+void GridDataDialog::resetForm() {
+    ui->rdoPoint->setChecked(false);
+    ui->rdoPolygon->setChecked(false);
+    ui->edtInputFile->clear();
+    ui->cbxGridInformation->setCurrentIndex(-1);
+    ui->edtExponent->setText(ui->edtExponent->text());
+    ui->edtRadius->clear();
 }

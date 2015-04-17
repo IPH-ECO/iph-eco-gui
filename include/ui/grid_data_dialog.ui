@@ -93,7 +93,7 @@
         <item>
          <layout class="QVBoxLayout" name="verticalLayout_2">
           <item>
-           <widget class="QPushButton" name="btnEditGridInfomation">
+           <widget class="QPushButton" name="btnAddGridInfomation">
             <property name="text">
              <string/>
             </property>
@@ -350,7 +350,7 @@
   <tabstop>cbxConfiguration</tabstop>
   <tabstop>cbxMesh</tabstop>
   <tabstop>tblGridInformation</tabstop>
-  <tabstop>btnEditGridInfomation</tabstop>
+  <tabstop>btnAddGridInfomation</tabstop>
   <tabstop>btnRemoveGridInformation</tabstop>
   <tabstop>rdoPoint</tabstop>
   <tabstop>rdoPolygon</tabstop>
