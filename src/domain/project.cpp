@@ -113,6 +113,37 @@ Mesh* Project::getMesh(const QString &meshName) {
     return NULL;
 }
 
+bool Project::addGridDataConfiguration(GridDataConfiguration *gridDataConfiguration) {
+    if (this->gridDataConfigurations.contains(gridDataConfiguration)) {
+        return false;
+    }
+
+    this->gridDataConfigurations.insert(gridDataConfiguration);
+    this->setDirty(true);
+
+    return true;
+}
+
+void Project::removeGridDataConfiguration(GridDataConfiguration *gridDataConfiguration) {
+    this->gridDataConfigurations.remove(gridDataConfiguration);
+    delete gridDataConfiguration;
+    this->setDirty(true);
+}
+
+GridDataConfiguration* Project::getGridDataConfiguration(const QString &configurationName) {
+    for (QSet<GridDataConfiguration*>::const_iterator it = gridDataConfigurations.begin(); it != gridDataConfigurations.end(); it++) {
+        if ((*it)->getName() == configurationName) {
+            return *it;
+        }
+    }
+
+    return NULL;
+}
+
+QSet<GridDataConfiguration*>& Project::getGridDataConfigurations() {
+    return &gridDataConfigurations;
+}
+
 void Project::setDirty(const bool &dirty) {
     this->dirty = dirty;
 }

@@ -3,7 +3,8 @@
 
 #include <QSet>
 
-#include "include/domain/mesh.h"
+#include "mesh.h"
+#include "grid_data_configuration.h"
 
 class Project {
     private:
@@ -15,6 +16,7 @@ class Project {
         bool waterQuality;
         bool sediment;
         QSet<Mesh*> meshes;
+        QSet<GridDataConfiguration*> gridDataConfigurations;
 
         //Transient attributes
         bool dirty;
@@ -50,6 +52,11 @@ class Project {
         bool containsMesh(Mesh *mesh);
         Mesh* getMesh(Mesh *mesh);
         Mesh* getMesh(const QString &meshName);
+
+        bool addGridDataConfiguration(GridDataConfiguration *gridDataConfiguration);
+        void removeGridDataConfiguration(GridDataConfiguration *gridDataConfiguration);
+        GridDataConfiguration* getGridDataConfiguration(const QString &configurationName);
+        QSet<GridDataConfiguration*>& getGridDataConfigurations();
 
         //Transient gets and sets
         bool isDirty() const;

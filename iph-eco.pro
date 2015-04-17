@@ -33,7 +33,8 @@ SOURCES += \
     src/ui/structured_mesh_dialog.cpp \
     src/ui/grid_data_dialog.cpp \
     src/domain/grid_data.cpp \
-    src/ui/grid_data_opengl_widget.cpp
+    src/ui/grid_data_opengl_widget.cpp \
+    src/domain/grid_data_configuration.cpp
 
 HEADERS  += \
     include/domain/project.h \
@@ -57,7 +58,8 @@ HEADERS  += \
     include/ui/structured_mesh_dialog.h \
     include/ui/grid_data_dialog.h \
     include/domain/grid_data.h \
-    include/ui/grid_data_opengl_widget.h
+    include/ui/grid_data_opengl_widget.h \
+    include/domain/grid_data_configuration.h
 
 FORMS    += \
     include/ui/main_window.ui \
@@ -101,3 +103,5 @@ unix:!macx: QMAKE_CXXFLAGS += -frounding-math
 unix:!macx: LIBS += -L/usr/lib/ -lGeographic -lCGAL -lgmp -lmpfr -lboost_system -lboost_thread
 unix:!macx: INCLUDEPATH += /usr/include
 unix:!macx: DEPENDPATH += /usr/include
+
+DISTFILES +=

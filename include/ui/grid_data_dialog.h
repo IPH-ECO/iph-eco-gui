@@ -4,7 +4,7 @@
 #include <QDialog>
 #include <QSettings>
 
-#include "include/domain/grid_data.h"
+#include "include/domain/grid_data_configuration.h"
 
 namespace Ui {
 class GridDataDialog;
@@ -18,19 +18,19 @@ public:
     ~GridDataDialog();
 
 private slots:
-    void on_btnBathymetry_clicked();
-    void on_btnWindReduction_clicked();
-    void on_btnChezy_clicked();
-    void on_btnWetlandAreas_clicked();
-    void on_cbxMesh_currentIndexChanged(const QString &arg1);
+    void on_cbxMesh_currentIndexChanged(const QString &meshName);
+    void on_btnEditGridInfomation_clicked();
+    void on_btnRemoveGridInformation_clicked();
+    void on_btnBrowse_clicked();
+    void on_btnDone_clicked();
 
 private:
     const QString GRID_DATA_DEFAULT_DIR_KEY;
 
     Ui::GridDataDialog *ui;
     QSettings *appSettings;
-    GridData *unsavedGridData;
-    GridData *currentGridData;
+    GridDataConfiguration *unsavedGridData;
+    GridDataConfiguration *currentGridData;
 
     QString getDefaultDirectory();
 };
