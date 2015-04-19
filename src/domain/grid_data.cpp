@@ -52,6 +52,14 @@ void GridData::setMesh(Mesh *mesh) {
     this->mesh = mesh;
 }
 
+bool GridData::getShow() const {
+    return show;
+}
+
+void GridData::setShow(bool show) {
+    this->show = show;
+}
+
 QString GridData::gridInputTypeToString() const {
     switch (gridInputType) {
     case POINT:
@@ -91,4 +99,6 @@ GridData::GridInformationType GridData::toGridInformationType(const QString grid
     if (gridInformationTypeStr == "Wetland Area") {
         return WETLAND_AREA;
     }
+
+    return UNDEFINED;
 }

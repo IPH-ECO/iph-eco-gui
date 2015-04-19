@@ -1,26 +1,26 @@
 #ifndef GRID_DATA_CONFIGURATION_H
 #define GRID_DATA_CONFIGURATION_H
 
-#include <QSet>
+#include <QVector>
 
 #include "grid_data.h"
 
 class GridDataConfiguration {
 private:
-    QString &name;
-    QSet<GridData*> gridDataSet;
+    QString name;
+    QVector<GridData*> gridDataVector;
 
 public:
     GridDataConfiguration();
 
     QString getName() const;
     void setName(const QString &name);
-    QSet<GridData*>& getGridDataSet() const;
+    QVector<GridData*>& getGridDataVector();
 
     bool addGridData(GridData *gridData);
-    void removeGridData(GridData *gridData);
+    void removeGridData(int i);
     bool containsGridData(GridData *gridData);
-    GridData* getGridData(const GridData::GridInputType &gridInputType, const QString &gridInputFile, const GridData::GridInformationType gridInformationType);
+    GridData* getGridData(int i);
 };
 
 #endif // GRID_DATA_CONFIGURATION_H

@@ -1,14 +1,15 @@
 #ifndef GRID_DATA_H
 #define GRID_DATA_H
 
-#include <QString>
+#include <QObject>
 
 #include "mesh.h"
 
-class GridData {
+class GridData : public QObject {
+    Q_OBJECT
 public:
     enum GridInputType { POINT = 1, POLYGON };
-    enum GridInformationType { BATHYMETRY = 1, WIND_REDUCTION, CHEZY, WETLAND_AREA };
+    enum GridInformationType { BATHYMETRY = 1, WIND_REDUCTION, CHEZY, WETLAND_AREA, UNDEFINED };
 
 private:
     GridInputType gridInputType;
@@ -17,6 +18,9 @@ private:
     double exponent;
     double radius;
     Mesh *mesh;
+
+    //Transient
+    bool show;
 
 public:
     GridData();
@@ -37,10 +41,15 @@ public:
     Mesh* getMesh() const;
     void setMesh(Mesh *mesh);
 
+    bool getShow() const;
+
     QString gridInputTypeToString() const;
     QString gridInformationTypeToString() const;
 
     static GridInformationType toGridInformationType(const QString gridInformationTypeStr);
+
+public slots:
+    void setShow(bool show);
 };
 
 #endif // GRID_DATA_H

@@ -141,7 +141,7 @@ GridDataConfiguration* Project::getGridDataConfiguration(const QString &configur
 }
 
 QSet<GridDataConfiguration*>& Project::getGridDataConfigurations() {
-    return &gridDataConfigurations;
+    return gridDataConfigurations;
 }
 
 void Project::setDirty(const bool &dirty) {

@@ -66,6 +66,9 @@
         </property>
         <item>
          <widget class="QTableWidget" name="tblGridInformation">
+          <property name="editTriggers">
+           <set>QAbstractItemView::NoEditTriggers</set>
+          </property>
           <property name="alternatingRowColors">
            <bool>true</bool>
           </property>
@@ -78,6 +81,12 @@
           <property name="cornerButtonEnabled">
            <bool>true</bool>
           </property>
+          <attribute name="horizontalHeaderVisible">
+           <bool>true</bool>
+          </attribute>
+          <attribute name="verticalHeaderVisible">
+           <bool>false</bool>
+          </attribute>
           <column>
            <property name="text">
             <string>Input Type</string>
@@ -86,6 +95,11 @@
           <column>
            <property name="text">
             <string>Grid Info</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>View on Map</string>
            </property>
           </column>
          </widget>
@@ -180,6 +194,9 @@
              <height>16777215</height>
             </size>
            </property>
+           <property name="text">
+            <string>10</string>
+           </property>
            <property name="alignment">
             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
            </property>
@@ -240,13 +257,19 @@
            <property name="sizeHint" stdset="0">
             <size>
              <width>20</width>
-             <height>2</height>
+             <height>4</height>
             </size>
            </property>
           </spacer>
          </item>
          <item row="2" column="1" colspan="2">
           <widget class="QComboBox" name="cbxGridInformation">
+           <property name="currentText">
+            <string/>
+           </property>
+           <property name="currentIndex">
+            <number>-1</number>
+           </property>
            <item>
             <property name="text">
              <string>Bathymetry</string>
@@ -264,15 +287,15 @@
            </item>
            <item>
             <property name="text">
-             <string>Wetland Areas</string>
+             <string>Wetland Area</string>
             </property>
            </item>
           </widget>
          </item>
          <item row="7" column="0">
-          <widget class="QPushButton" name="btnDone">
+          <widget class="QPushButton" name="btnSave">
            <property name="text">
-            <string>Done</string>
+            <string>Save</string>
            </property>
           </widget>
          </item>
@@ -359,7 +382,7 @@
   <tabstop>cbxGridInformation</tabstop>
   <tabstop>edtExponent</tabstop>
   <tabstop>edtRadius</tabstop>
-  <tabstop>btnDone</tabstop>
+  <tabstop>btnSave</tabstop>
   <tabstop>pushButton_4</tabstop>
   <tabstop>pushButton_3</tabstop>
   <tabstop>pushButton_2</tabstop>

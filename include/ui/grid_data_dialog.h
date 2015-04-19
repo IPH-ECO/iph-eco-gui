@@ -3,6 +3,7 @@
 
 #include <QDialog>
 #include <QSettings>
+#include <QWidget>
 
 #include "include/domain/grid_data_configuration.h"
 
@@ -19,12 +20,14 @@ public:
 
 private slots:
     void on_cbxMesh_currentIndexChanged(const QString &meshName);
+    void on_cbxConfiguration_currentIndexChanged(const QString &configurationName);
     void on_btnAddGridInfomation_clicked();
     void on_btnRemoveGridInformation_clicked();
     void on_rdoPoint_toggled(bool checked);
     void on_rdoPolygon_toggled(bool checked);
     void on_btnBrowse_clicked();
-    void on_btnDone_clicked();
+    void on_btnSave_clicked();
+    void on_tblGridInformation_itemSelectionChanged();
 
 private:
     const QString GRID_DATA_DEFAULT_DIR_KEY;
@@ -37,6 +40,7 @@ private:
     GridData *currentGridData;
 
     QString getDefaultDirectory();
+    QWidget* createCheckBoxWidget(GridData *gridData);
     void resetForm();
 };
 
