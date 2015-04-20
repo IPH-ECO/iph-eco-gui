@@ -8,7 +8,5 @@
         <file>icons/document-properties.png</file>
         <file>icons/list-add.png</file>
         <file>icons/list-remove.png</file>
-        <file>icons/story-editor.png</file>
-        <file>icons/draw-brush.png</file>
     </qresource>
 </RCC>

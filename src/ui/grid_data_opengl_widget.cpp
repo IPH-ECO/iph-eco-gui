@@ -108,4 +108,5 @@ void GridDataOpenGLWidget::paintGL() {
 
 void GridDataOpenGLWidget::setMesh(Mesh *mesh) {
     this->mesh = mesh;
+    update();
 }

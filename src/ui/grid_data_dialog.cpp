@@ -2,6 +2,7 @@
 #include "ui_grid_data_dialog.h"
 
 #include <QFileDialog>
+#include <QInputDialog>
 #include <QTableWidgetItem>
 #include <QMessageBox>
 #include <QVector>
@@ -49,13 +50,17 @@ QString GridDataDialog::getDefaultDirectory() {
 }
 
 void GridDataDialog::on_cbxMesh_currentIndexChanged(const QString &meshName) {
-    Project *project = IPHApplication::getCurrentProject();
-    Mesh *mesh = project->getMesh(meshName);
+    Mesh *mesh = NULL;
 
-    if (dynamic_cast<UnstructuredMesh*>(mesh) != NULL) {
-        mesh = static_cast<UnstructuredMesh*>(mesh);
-    } else {
-        mesh = static_cast<StructuredMesh*>(mesh);
+    if (!meshName.isEmpty()) {
+        Project *project = IPHApplication::getCurrentProject();
+        mesh = project->getMesh(meshName);
+
+        if (dynamic_cast<UnstructuredMesh*>(mesh) != NULL) {
+            mesh = static_cast<UnstructuredMesh*>(mesh);
+        } else {
+            mesh = static_cast<StructuredMesh*>(mesh);
+        }
     }
 
     ui->gridDataOpenGLWidget->setMesh(mesh);
@@ -85,13 +90,13 @@ void GridDataDialog::on_rdoPolygon_toggled(bool checked) {
     ui->edtRadius->setEnabled(!checked);
 }
 
-void GridDataDialog::on_btnBrowse_clicked() {
+void GridDataDialog::on_btnBrowseInputFile_clicked() {
     QString gridDataFile = QFileDialog::getOpenFileName(this, tr("Select a grid data file"), getDefaultDirectory(), "Keyhole Markup Language file (*.kml)");
 
     ui->edtInputFile->setText(gridDataFile);
 }
 
-void GridDataDialog::on_btnSave_clicked() {
+void GridDataDialog::on_btnSaveGridInformation_clicked() {
     if (!ui->rdoPoint->isChecked() && !ui->rdoPolygon->isChecked()) {
         QMessageBox::warning(this, tr("Grid Data"), tr("Select a input type."));
         return;
@@ -147,9 +152,7 @@ void GridDataDialog::on_cbxConfiguration_currentIndexChanged(const QString &conf
     ui->tblGridInformation->setRowCount(0);
 
     if (configurationName.isEmpty()) {
-        ui->edtConfigurationName->clear();
-        ui->cbxMesh->setCurrentIndex(-1);
-        ui->btnCancelConfiguration->setEnabled(false);
+        enableGridDataConfigurationForm(false);
     } else {
         Project *project = IPHApplication::getCurrentProject();
         GridDataConfiguration *gridDataConfiguration = project->getGridDataConfiguration(configurationName);
@@ -168,6 +171,8 @@ void GridDataDialog::on_cbxConfiguration_currentIndexChanged(const QString &conf
             ui->tblGridInformation->setItem(rowCount, 1, new QTableWidgetItem(gridData->gridInputTypeToString()));
             ui->tblGridInformation->setCellWidget(rowCount, 2, checkBoxWidget);
         }
+
+        enableGridDataConfigurationForm(true);
     }
 }
 
@@ -195,8 +200,30 @@ void GridDataDialog::resetGridDataForm() {
     ui->cbxGridInformation->setCurrentIndex(-1);
     ui->edtExponent->setText("2");
     ui->edtRadius->setText("10");
-    ui->btnSave->setText("Save");
+    ui->btnSaveGridInformation->setText("Save");
     currentGridData = unsavedGridData;
+}
+
+void GridDataDialog::enableGridDataConfigurationForm(bool enable) {
+    ui->btnDoneConfiguration->setEnabled(enable);
+    ui->btnRemoveConfiguration->setEnabled(enable);
+    ui->tblGridInformation->setEnabled(enable);
+    ui->btnAddGridInfomation->setEnabled(enable);
+    ui->btnRemoveGridInformation->setEnabled(enable);
+    ui->rdoPoint->setEnabled(enable);
+    ui->rdoPolygon->setEnabled(enable);
+    ui->edtInputFile->setEnabled(enable);
+    ui->btnBrowseInputFile->setEnabled(enable);
+    ui->cbxGridInformation->setEnabled(enable);
+    ui->edtExponent->setEnabled(enable);
+    ui->edtRadius->setEnabled(enable);
+    ui->btnSaveGridInformation->setEnabled(enable);
+    ui->btnSaveAsNewConfiguration->setEnabled(enable);
+
+    if (!enable) {
+        ui->edtConfigurationName->clear();
+        ui->cbxMesh->setCurrentIndex(-1);
+    }
 }
 
 void GridDataDialog::on_tblGridInformation_itemSelectionChanged() {
@@ -211,23 +238,12 @@ void GridDataDialog::on_tblGridInformation_itemSelectionChanged() {
         ui->cbxGridInformation->setCurrentText(currentGridData->gridInformationTypeToString());
         ui->edtExponent->setText(QString::number(currentGridData->getExponent()));
         ui->edtRadius->setText(QString::number(currentGridData->getRadius()));
-        ui->btnSave->setText("Update");
+        ui->btnSaveGridInformation->setText("Update");
     }
 }
 
 void GridDataDialog::on_btnSaveConfiguration_clicked() {
-    if (ui->edtConfigurationName->text().isEmpty()) {
-        QMessageBox::warning(this, tr("Grid Data"), tr("Please input the configuration name."));
-        return;
-    }
-
-    if (ui->cbxMesh->currentIndex() == -1) {
-        QMessageBox::warning(this, tr("Grid Data"), tr("Associate a mesh to this configuration."));
-        return;
-    }
-
-    if (ui->tblGridInformation->rowCount() == 0) {
-        QMessageBox::warning(this, tr("Grid Data"), tr("Input at least one grid information."));
+    if (!isConfigurationValid()) {
         return;
     }
 
@@ -256,7 +272,37 @@ void GridDataDialog::on_btnSaveConfiguration_clicked() {
 }
 
 void GridDataDialog::on_btnSaveAsNewConfiguration_clicked() {
+    QString newConfigurationName = QInputDialog::getText(this, tr("Save Grid Data Configuration as New"), tr("New Configuration Name"));
 
+    if (!newConfigurationName.isEmpty() && isConfigurationValid()) {
+        GridDataConfiguration *newConfiguration = new GridDataConfiguration();
+        Project *project = IPHApplication::getCurrentProject();
+        QString meshName = ui->cbxMesh->currentText();
+        Mesh *mesh = project->getMesh(meshName);
+        QVector<GridData*> gridDataVector = currentGridDataConfiguration->getGridDataVector();
+
+        newConfiguration->setName(newConfigurationName);
+        newConfiguration->setMesh(mesh);
+
+        for (int i = 0; i < gridDataVector.count(); i++) {
+            GridData *gridData = gridDataVector.at(i);
+            GridData *newGridData = new GridData();
+
+            newGridData->setGridInputType(gridData->getGridInputType());
+            newGridData->setInputFile(gridData->getInputFile());
+            newGridData->setGridInformationType(gridData->getGridInformationType());
+            newGridData->setExponent(gridData->getExponent());
+            newGridData->setRadius(gridData->getRadius());
+            newGridData->setShow(gridData->getShow());
+
+            newConfiguration->addGridData(newGridData);
+        }
+
+        currentGridDataConfiguration = newConfiguration;
+
+        ui->cbxConfiguration->addItem(newConfigurationName);
+        ui->cbxConfiguration->setCurrentText(newConfigurationName);
+    }
 }
 
 void GridDataDialog::on_btnRemoveConfiguration_clicked() {
@@ -271,6 +317,25 @@ void GridDataDialog::on_btnRemoveConfiguration_clicked() {
     }
 }
 
-void GridDataDialog::on_btnCancelConfiguration_clicked() {
+void GridDataDialog::on_btnDoneConfiguration_clicked() {
     ui->cbxConfiguration->setCurrentIndex(-1);
+}
+
+bool GridDataDialog::isConfigurationValid() {
+    if (ui->edtConfigurationName->text().isEmpty()) {
+        QMessageBox::warning(this, tr("Grid Data"), tr("Please input the configuration name."));
+        return false;
+    }
+
+    if (ui->cbxMesh->currentIndex() == -1) {
+        QMessageBox::warning(this, tr("Grid Data"), tr("Associate a mesh to this configuration."));
+        return false;
+    }
+
+    if (ui->tblGridInformation->rowCount() == 0) {
+        QMessageBox::warning(this, tr("Grid Data"), tr("Input at least one grid information."));
+        return false;
+    }
+
+    return true;
 }
