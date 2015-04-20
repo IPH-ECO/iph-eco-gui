@@ -54,7 +54,7 @@ class Project {
         Mesh* getMesh(const QString &meshName);
 
         bool addGridDataConfiguration(GridDataConfiguration *gridDataConfiguration);
-        void removeGridDataConfiguration(GridDataConfiguration *gridDataConfiguration);
+        void removeGridDataConfiguration(const QString &configurationName);
         GridDataConfiguration* getGridDataConfiguration(const QString &configurationName);
         QSet<GridDataConfiguration*>& getGridDataConfigurations();
 

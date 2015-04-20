@@ -4,17 +4,22 @@
 #include <QVector>
 
 #include "grid_data.h"
+#include "mesh.h"
 
 class GridDataConfiguration {
 private:
     QString name;
     QVector<GridData*> gridDataVector;
+    Mesh *mesh;
 
 public:
     GridDataConfiguration();
 
     QString getName() const;
     void setName(const QString &name);
+    Mesh* getMesh() const;
+    void setMesh(Mesh *mesh);
+
     QVector<GridData*>& getGridDataVector();
 
     bool addGridData(GridData *gridData);

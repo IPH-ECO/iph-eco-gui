@@ -124,9 +124,14 @@ bool Project::addGridDataConfiguration(GridDataConfiguration *gridDataConfigurat
     return true;
 }
 
-void Project::removeGridDataConfiguration(GridDataConfiguration *gridDataConfiguration) {
-    this->gridDataConfigurations.remove(gridDataConfiguration);
-    delete gridDataConfiguration;
+void Project::removeGridDataConfiguration(const QString &configurationName) {
+    GridDataConfiguration *gridDataConfiguration = getGridDataConfiguration(configurationName);
+
+    if (gridDataConfiguration != NULL) {
+        gridDataConfigurations.remove(gridDataConfiguration);
+        delete gridDataConfiguration;
+    }
+
     this->setDirty(true);
 }
 

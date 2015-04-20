@@ -28,6 +28,11 @@ private slots:
     void on_btnBrowse_clicked();
     void on_btnSave_clicked();
     void on_tblGridInformation_itemSelectionChanged();
+    void on_btnSaveConfiguration_clicked();
+    void on_btnSaveAsNewConfiguration_clicked();
+    void on_btnRemoveConfiguration_clicked();
+
+    void on_btnCancelConfiguration_clicked();
 
 private:
     const QString GRID_DATA_DEFAULT_DIR_KEY;
@@ -41,7 +46,7 @@ private:
 
     QString getDefaultDirectory();
     QWidget* createCheckBoxWidget(GridData *gridData);
-    void resetForm();
+    void resetGridDataForm();
 };
 
 #endif // GRID_DATA_DIALOG_H

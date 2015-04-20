@@ -10,6 +10,14 @@ void GridDataConfiguration::setName(const QString &name) {
     this->name = name;
 }
 
+Mesh* GridDataConfiguration::getMesh() const {
+    return mesh;
+}
+
+void GridDataConfiguration::setMesh(Mesh *mesh) {
+    this->mesh = mesh;
+}
+
 QVector<GridData*>& GridDataConfiguration::getGridDataVector() {
     return gridDataVector;
 }

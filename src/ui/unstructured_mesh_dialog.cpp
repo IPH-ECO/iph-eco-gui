@@ -318,6 +318,7 @@ void UnstructuredMeshDialog::on_btnSaveMesh_clicked() {
         currentMesh->setShowDomainBoundary(showDomainBoundary);
         currentMesh->setShowMesh(showMesh);
 
+        //TODO: handle duplicity
         project->addMesh(currentMesh);
 
         ui->cbxMeshName->addItem(meshName);

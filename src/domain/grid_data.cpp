@@ -1,8 +1,6 @@
 #include "include/domain/grid_data.h"
 
-GridData::GridData() : mesh(NULL) {}
-
-GridData::GridData(Mesh *mesh) : mesh(mesh) {}
+GridData::GridData() {}
 
 GridData::GridInputType GridData::getGridInputType() const {
     return gridInputType;
@@ -42,14 +40,6 @@ double GridData::getRadius() const {
 
 void GridData::setRadius(const double &radius) {
     this->radius = radius;
-}
-
-Mesh* GridData::getMesh() const {
-    return mesh;
-}
-
-void GridData::setMesh(Mesh *mesh) {
-    this->mesh = mesh;
 }
 
 bool GridData::getShow() const {

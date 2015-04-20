@@ -3,8 +3,6 @@
 
 #include <QObject>
 
-#include "mesh.h"
-
 class GridData : public QObject {
     Q_OBJECT
 public:
@@ -17,14 +15,10 @@ private:
     GridInformationType gridInformationType;
     double exponent;
     double radius;
-    Mesh *mesh;
-
-    //Transient
     bool show;
 
 public:
     GridData();
-    GridData(Mesh *mesh);
 
     QString getName() const;
     void setName(const QString &name);
@@ -38,8 +32,6 @@ public:
     void setExponent(const double &exponent);
     double getRadius() const;
     void setRadius(const double &radius);
-    Mesh* getMesh() const;
-    void setMesh(Mesh *mesh);
 
     bool getShow() const;
 
