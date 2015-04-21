@@ -13,6 +13,7 @@
 #include "include/application/iph_application.h"
 #include "include/domain/structured_mesh.h"
 #include "include/domain/unstructured_mesh.h"
+#include "include/exceptions/grid_data_exception.h"
 
 GridDataDialog::GridDataDialog(QWidget *parent) :
     QDialog(parent), GRID_DATA_DEFAULT_DIR_KEY("grid_data_default_dir"), ui(new Ui::GridDataDialog),
@@ -96,7 +97,7 @@ void GridDataDialog::on_btnBrowseInputFile_clicked() {
     ui->edtInputFile->setText(gridDataFile);
 }
 
-void GridDataDialog::on_btnSaveGridInformation_clicked() {
+void GridDataDialog::on_btnAddGridInformation_clicked() {
     if (!ui->rdoPoint->isChecked() && !ui->rdoPolygon->isChecked()) {
         QMessageBox::warning(this, tr("Grid Data"), tr("Select a input type."));
         return;
@@ -126,6 +127,14 @@ void GridDataDialog::on_btnSaveGridInformation_clicked() {
     gridData->setExponent(exponent);
     gridData->setRadius(radius);
 
+    try {
+        gridData->buildDataPoints();
+    } catch (GridDataException &e) {
+        QMessageBox::critical(this, tr("Grid Data"), tr(e.what()));
+        delete gridData;
+        return;
+    }
+
     if (updateGridData) {
         int currentRow = ui->tblGridInformation->currentRow();
         QTableWidgetItem *gridInformationItem = ui->tblGridInformation->item(currentRow, 0);
@@ -140,8 +149,8 @@ void GridDataDialog::on_btnSaveGridInformation_clicked() {
         QWidget *checkBoxWidget = createCheckBoxWidget(gridData);
 
         ui->tblGridInformation->insertRow(rowCount);
-        ui->tblGridInformation->setItem(rowCount, 0, new QTableWidgetItem(gridData->gridInformationTypeToString()));
-        ui->tblGridInformation->setItem(rowCount, 1, new QTableWidgetItem(gridData->gridInputTypeToString()));
+        ui->tblGridInformation->setItem(rowCount, 0, new QTableWidgetItem(gridData->gridInputTypeToString()));
+        ui->tblGridInformation->setItem(rowCount, 1, new QTableWidgetItem(gridData->gridInformationTypeToString()));
         ui->tblGridInformation->setCellWidget(rowCount, 2, checkBoxWidget);
 
         resetGridDataForm();
@@ -152,14 +161,17 @@ void GridDataDialog::on_cbxConfiguration_currentIndexChanged(const QString &conf
     ui->tblGridInformation->setRowCount(0);
 
     if (configurationName.isEmpty()) {
-        enableGridDataConfigurationForm(false);
+        toggleGridDataConfigurationForm(false);
+        ui->edtConfigurationName->clear();
+        ui->cbxMesh->setCurrentIndex(-1);
+        currentGridDataConfiguration = unsavedGridDataConfiguration;
     } else {
         Project *project = IPHApplication::getCurrentProject();
-        GridDataConfiguration *gridDataConfiguration = project->getGridDataConfiguration(configurationName);
-        QVector<GridData*> &gridDataVector = gridDataConfiguration->getGridDataVector();
+        currentGridDataConfiguration = project->getGridDataConfiguration(configurationName);
+        QVector<GridData*> &gridDataVector = currentGridDataConfiguration->getGridDataVector();
 
-        ui->edtConfigurationName->setText(gridDataConfiguration->getName());
-        ui->cbxMesh->setCurrentText(gridDataConfiguration->getMesh()->getName());
+        ui->edtConfigurationName->setText(currentGridDataConfiguration->getName());
+        ui->cbxMesh->setCurrentText(currentGridDataConfiguration->getMesh()->getName());
 
         for (int i = 0; i < gridDataVector.count(); i++) {
             int rowCount = ui->tblGridInformation->rowCount();
@@ -167,12 +179,12 @@ void GridDataDialog::on_cbxConfiguration_currentIndexChanged(const QString &conf
             QWidget *checkBoxWidget = createCheckBoxWidget(gridData);
 
             ui->tblGridInformation->insertRow(rowCount);
-            ui->tblGridInformation->setItem(rowCount, 0, new QTableWidgetItem(gridData->gridInformationTypeToString()));
-            ui->tblGridInformation->setItem(rowCount, 1, new QTableWidgetItem(gridData->gridInputTypeToString()));
+            ui->tblGridInformation->setItem(rowCount, 0, new QTableWidgetItem(gridData->gridInputTypeToString()));
+            ui->tblGridInformation->setItem(rowCount, 1, new QTableWidgetItem(gridData->gridInformationTypeToString()));
             ui->tblGridInformation->setCellWidget(rowCount, 2, checkBoxWidget);
         }
 
-        enableGridDataConfigurationForm(true);
+        toggleGridDataConfigurationForm(true);
     }
 }
 
@@ -200,30 +212,14 @@ void GridDataDialog::resetGridDataForm() {
     ui->cbxGridInformation->setCurrentIndex(-1);
     ui->edtExponent->setText("2");
     ui->edtRadius->setText("10");
-    ui->btnSaveGridInformation->setText("Save");
+    ui->btnAddGridInformation->setText("Save");
     currentGridData = unsavedGridData;
 }
 
-void GridDataDialog::enableGridDataConfigurationForm(bool enable) {
+void GridDataDialog::toggleGridDataConfigurationForm(bool enable) {
     ui->btnDoneConfiguration->setEnabled(enable);
     ui->btnRemoveConfiguration->setEnabled(enable);
-    ui->tblGridInformation->setEnabled(enable);
-    ui->btnAddGridInfomation->setEnabled(enable);
-    ui->btnRemoveGridInformation->setEnabled(enable);
-    ui->rdoPoint->setEnabled(enable);
-    ui->rdoPolygon->setEnabled(enable);
-    ui->edtInputFile->setEnabled(enable);
-    ui->btnBrowseInputFile->setEnabled(enable);
-    ui->cbxGridInformation->setEnabled(enable);
-    ui->edtExponent->setEnabled(enable);
-    ui->edtRadius->setEnabled(enable);
-    ui->btnSaveGridInformation->setEnabled(enable);
     ui->btnSaveAsNewConfiguration->setEnabled(enable);
-
-    if (!enable) {
-        ui->edtConfigurationName->clear();
-        ui->cbxMesh->setCurrentIndex(-1);
-    }
 }
 
 void GridDataDialog::on_tblGridInformation_itemSelectionChanged() {
@@ -238,7 +234,7 @@ void GridDataDialog::on_tblGridInformation_itemSelectionChanged() {
         ui->cbxGridInformation->setCurrentText(currentGridData->gridInformationTypeToString());
         ui->edtExponent->setText(QString::number(currentGridData->getExponent()));
         ui->edtRadius->setText(QString::number(currentGridData->getRadius()));
-        ui->btnSaveGridInformation->setText("Update");
+        ui->btnAddGridInformation->setText("Update");
     }
 }
 
@@ -264,8 +260,16 @@ void GridDataDialog::on_btnSaveConfiguration_clicked() {
         ui->cbxConfiguration->addItem(configurationName);
         ui->cbxConfiguration->setCurrentText(configurationName);
     } else {
+        configurationName = ui->edtConfigurationName->text();
+
+        if (configurationName.isEmpty()) {
+            QMessageBox::warning(this, tr("Grid Data"), tr("Configuration name can't be empty."));
+            return;
+        }
+
         currentGridDataConfiguration->setName(configurationName);
         currentGridDataConfiguration->setMesh(mesh);
+        ui->cbxConfiguration->setItemText(ui->cbxConfiguration->currentIndex(), configurationName);
     }
 
     resetGridDataForm();
@@ -319,6 +323,7 @@ void GridDataDialog::on_btnRemoveConfiguration_clicked() {
 
 void GridDataDialog::on_btnDoneConfiguration_clicked() {
     ui->cbxConfiguration->setCurrentIndex(-1);
+    resetGridDataForm();
 }
 
 bool GridDataDialog::isConfigurationValid() {

@@ -34,7 +34,8 @@ SOURCES += \
     src/ui/grid_data_dialog.cpp \
     src/domain/grid_data.cpp \
     src/ui/grid_data_opengl_widget.cpp \
-    src/domain/grid_data_configuration.cpp
+    src/domain/grid_data_configuration.cpp \
+    src/exceptions/grid_data_exception.cpp
 
 HEADERS  += \
     include/domain/project.h \
@@ -59,7 +60,9 @@ HEADERS  += \
     include/ui/grid_data_dialog.h \
     include/domain/grid_data.h \
     include/ui/grid_data_opengl_widget.h \
-    include/domain/grid_data_configuration.h
+    include/domain/grid_data_configuration.h \
+    include/exceptions/grid_data_exception.h \
+    include/domain/grid_data_point.h
 
 FORMS    += \
     include/ui/main_window.ui \

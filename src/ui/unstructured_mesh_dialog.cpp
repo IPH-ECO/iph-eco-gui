@@ -324,6 +324,13 @@ void UnstructuredMeshDialog::on_btnSaveMesh_clicked() {
         ui->cbxMeshName->addItem(meshName);
         ui->cbxMeshName->setCurrentText(meshName);
     } else {
+        meshName = ui->edtMeshName->text();
+
+        if (meshName.isEmpty()) {
+            QMessageBox::warning(this, tr("Unstructured Mesh Generation"), tr("Mesh name can't be empty."));
+            return;
+        }
+
         currentMesh->setName(meshName);
         currentMesh->setDomain(domain);
         currentMesh->setCoordinatesDistance(coordinatesDistance);
