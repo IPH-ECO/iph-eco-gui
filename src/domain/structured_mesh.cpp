@@ -64,8 +64,8 @@ std::vector<ulong> StructuredMesh::calculateInitialPoints() {
     std::vector<ulong> points;
 
     points.push_back(leftVertex - (leftVertex % this->resolution)); //A
-    points.push_back(rightVertex - (rightVertex % this->resolution)); //B
-    points.push_back(topVertex - (topVertex % this->resolution)); //C
+    points.push_back(rightVertex + (rightVertex % this->resolution)); //B
+    points.push_back(topVertex + (topVertex % this->resolution)); //C
     points.push_back(bottomVertex - (bottomVertex % this->resolution)); //D
 
     return points;
