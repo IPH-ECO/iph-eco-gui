@@ -4,8 +4,10 @@
 #include <QDialog>
 #include <QSettings>
 #include <QWidget>
+#include <QTableWidgetItem>
 
 #include "include/domain/grid_data_configuration.h"
+#include "include/ui/grid_information_dialog.h"
 
 namespace Ui {
 class GridDataDialog;
@@ -23,30 +25,18 @@ private slots:
     void on_cbxConfiguration_currentIndexChanged(const QString &configurationName);
     void on_btnAddGridInfomation_clicked();
     void on_btnRemoveGridInformation_clicked();
-    void on_rdoPoint_toggled(bool checked);
-    void on_rdoPolygon_toggled(bool checked);
-    void on_btnBrowseInputFile_clicked();
-    void on_btnAddGridInformation_clicked();
-    void on_tblGridInformation_itemSelectionChanged();
     void on_btnSaveConfiguration_clicked();
     void on_btnSaveAsNewConfiguration_clicked();
     void on_btnRemoveConfiguration_clicked();
-
     void on_btnDoneConfiguration_clicked();
+    void on_tblGridInformation_itemDoubleClicked(QTableWidgetItem *item);
 
 private:
-    const QString GRID_DATA_DEFAULT_DIR_KEY;
-
     Ui::GridDataDialog *ui;
-    QSettings *appSettings;
     GridDataConfiguration *unsavedGridDataConfiguration;
     GridDataConfiguration *currentGridDataConfiguration;
-    GridData *unsavedGridData;
-    GridData *currentGridData;
-
-    QString getDefaultDirectory();
+    
     QWidget* createCheckBoxWidget(GridData *gridData);
-    void resetGridDataForm();
     void toggleGridDataConfigurationForm(bool enable);
     bool isConfigurationValid();
 };

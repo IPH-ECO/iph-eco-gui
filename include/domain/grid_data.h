@@ -13,12 +13,12 @@ public:
 
 private:
     GridInputType gridInputType;
-    QString inputFile;
     GridInformationType gridInformationType;
+    QString inputFile;
     double exponent;
     double radius;
     bool show;
-    QSet<GridDataPoint> gridDataPoints;
+    QSet<GridDataPoint> dataPoints;
 
 public:
     GridData();
@@ -27,17 +27,19 @@ public:
     void setName(const QString &name);
     GridInputType getGridInputType() const;
     void setGridInputType(const GridInputType gridInputType);
-    QString getInputFile() const;
-    void setInputFile(const QString &inputFile);
     GridInformationType getGridInformationType() const;
     void setGridInformationType(const GridInformationType &gridInformationType);
+    QString getInputFile() const;
+    void setInputFile(const QString &inputFile);
     double getExponent() const;
     void setExponent(const double &exponent);
     double getRadius() const;
     void setRadius(const double &radius);
     bool getShow() const;
+    QSet<GridDataPoint>& getDataPoints();
 
     void buildDataPoints();
+    void copy(GridData &srcGridData);
 
     QString gridInputTypeToString() const;
     QString gridInformationTypeToString() const;

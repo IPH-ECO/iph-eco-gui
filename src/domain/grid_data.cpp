@@ -56,11 +56,15 @@ void GridData::setShow(bool show) {
     this->show = show;
 }
 
+QSet<GridDataPoint>& GridData::getDataPoints() {
+    return this->dataPoints;
+}
+
 void GridData::buildDataPoints() {
     QFile inputFileHandle(inputFile);
 
     if (!inputFileHandle.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        throw GridDataException(QString("Unable to open XYZ file. Error: %1").arg(inputFileHandle.errorString()));
+        throw GridDataException(QString("Unable to open Input File. Error: %1").arg(inputFileHandle.errorString()));
     }
 
     QTextStream in(&inputFileHandle);
@@ -73,15 +77,24 @@ void GridData::buildDataPoints() {
             GeographicLib::GeoCoords utmCoordinate(coordinate.at(1).toDouble(), coordinate.at(0).toDouble());
             GridDataPoint dataPoint(utmCoordinate.Easting(), utmCoordinate.Northing(), coordinate.at(2).toDouble());
 
-            gridDataPoints.insert(dataPoint);
+            dataPoints.insert(dataPoint);
         }
     }
 
     inputFileHandle.close();
 
-    if (gridDataPoints.isEmpty()) {
-        throw GridDataException("Error: invalid XYZ file.");
+    if (dataPoints.isEmpty()) {
+        throw GridDataException("Error: invalid file contents.");
     }
+}
+
+void GridData::copy(GridData &srcGridData) {
+    this->gridInputType = srcGridData.getGridInputType();
+    this->gridInformationType = srcGridData.getGridInformationType();
+    this->inputFile = srcGridData.getInputFile();
+    this->exponent = srcGridData.getExponent();
+    this->radius = srcGridData.getRadius();
+    this->dataPoints = srcGridData.getDataPoints();
 }
 
 QString GridData::gridInputTypeToString() const {
