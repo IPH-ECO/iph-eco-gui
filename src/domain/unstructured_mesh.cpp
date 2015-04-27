@@ -80,7 +80,7 @@ bool UnstructuredMesh::isGenerated() {
 }
 
 void UnstructuredMesh::mark_domains(CDT::Face_handle start, int index, QList<CDT::Edge>& border) {
-    if (start->info().nesting_level != -1) {
+    if (start->info().nestingLevel != -1) {
         return;
     }
 
@@ -93,14 +93,14 @@ void UnstructuredMesh::mark_domains(CDT::Face_handle start, int index, QList<CDT
 
         queue.pop_front();
 
-        if (fh->info().nesting_level == -1) {
-            fh->info().nesting_level = index;
+        if (fh->info().nestingLevel == -1) {
+            fh->info().nestingLevel = index;
 
             for (int i = 0; i < 3; i++) {
                 CDT::Edge e(fh, i);
                 CDT::Face_handle n = fh->neighbor(i);
 
-                if (n->info().nesting_level == -1) {
+                if (n->info().nestingLevel == -1) {
                     if (cdt.is_constrained(e)) {
                         border.push_back(e);
                     } else {
@@ -114,7 +114,7 @@ void UnstructuredMesh::mark_domains(CDT::Face_handle start, int index, QList<CDT
 
 void UnstructuredMesh::mark_domains() {
     for (CDT::All_faces_iterator it = cdt.all_faces_begin(); it != cdt.all_faces_end(); it++) {
-        it->info().nesting_level = -1;
+        it->info().nestingLevel = -1;
     }
 
     QList<CDT::Edge> border;
@@ -127,8 +127,8 @@ void UnstructuredMesh::mark_domains() {
 
         border.pop_front();
 
-        if (n->info().nesting_level == -1) {
-            mark_domains(n, e.first->info().nesting_level + 1, border);
+        if (n->info().nestingLevel == -1) {
+            mark_domains(n, e.first->info().nestingLevel + 1, border);
         }
     }
 }

@@ -4,6 +4,7 @@
 #include <boost/numeric/ublas/matrix.hpp>
 
 #include "include/utility/delaunay_triangulation_definitions.h"
+#include "quad.h"
 #include "mesh.h"
 
 using boost::numeric::ublas::matrix;
@@ -11,10 +12,10 @@ using boost::numeric::ublas::matrix;
 class StructuredMesh : public Mesh {
 private:
     uint resolution;
-    matrix<Polygon> grid;
+    matrix<Quad> grid;
 
     std::vector<ulong> calculateInitialPoints();
-    Polygon makeQuadFromPoint(const Point *p, const int &i, const int &j);
+    Quad makeQuadFromPoint(const Point *p, const int &i, const int &j);
     bool isCenterInscribed(const Point *p, const int &i, const int &j);
 
 public:
@@ -24,7 +25,7 @@ public:
 
     uint getResolution() const;
     void setResolution(const uint &resolution);
-    matrix<Polygon>& getGrid();
+    matrix<Quad>& getGrid();
 
     void generate();
     void clearGrid();

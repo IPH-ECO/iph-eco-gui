@@ -56,8 +56,12 @@ void GridData::setShow(bool show) {
     this->show = show;
 }
 
-QSet<GridDataPoint>& GridData::getDataPoints() {
+QSet<GridDataPoint>& GridData::getGridDataPoints() {
     return this->dataPoints;
+}
+
+GridDataPolygon& GridData::getGridDataPolygon() {
+    return this->dataPolygon;
 }
 
 void GridData::buildDataPoints() {
@@ -69,21 +73,29 @@ void GridData::buildDataPoints() {
 
     QTextStream in(&inputFileHandle);
 
+    dataPoints.clear();
+    dataPolygon.clear();
+
     while (!in.atEnd()) {
         QString line = in.readLine();
         QStringList coordinate = line.split(',');
 
         if (coordinate.count() == 3) {
             GeographicLib::GeoCoords utmCoordinate(coordinate.at(1).toDouble(), coordinate.at(0).toDouble());
-            GridDataPoint dataPoint(utmCoordinate.Easting(), utmCoordinate.Northing(), coordinate.at(2).toDouble());
 
-            dataPoints.insert(dataPoint);
+            if (this->gridInputType == GridData::POINT) {
+                GridDataPoint dataPoint(utmCoordinate.Easting(), utmCoordinate.Northing(), coordinate.at(2).toDouble());
+                dataPoints.insert(dataPoint);
+            } else {
+                GridDataPolygon gridDataPolygon(coordinate.at(2).toDouble());
+                gridDataPolygon.push_back(Point(utmCoordinate.Easting(), utmCoordinate.Northing()));
+            }
         }
     }
 
     inputFileHandle.close();
 
-    if (dataPoints.isEmpty()) {
+    if (dataPoints.isEmpty() && dataPolygon.is_empty()) {
         throw GridDataException("Error: invalid file contents.");
     }
 }
@@ -94,7 +106,8 @@ void GridData::copy(GridData &srcGridData) {
     this->inputFile = srcGridData.getInputFile();
     this->exponent = srcGridData.getExponent();
     this->radius = srcGridData.getRadius();
-    this->dataPoints = srcGridData.getDataPoints();
+    this->dataPoints = srcGridData.getGridDataPoints();
+    this->show = srcGridData.getShow();
 }
 
 QString GridData::gridInputTypeToString() const {

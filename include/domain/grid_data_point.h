@@ -1,20 +1,17 @@
 #ifndef GRID_DATA_POINT_H
 #define GRID_DATA_POINT_H
 
+#include "include/utility/delaunay_triangulation_definitions.h"
+
 class GridDataPoint {
 private:
-    double x;
-    double y;
+    Point point;
     double data;
 public:
-    GridDataPoint(double x, double y, double data) : x(x), y(y), data(data) {}
+    GridDataPoint(double x, double y, double data) : point(Point(x, y)), data(data) {}
 
-    double getX() const {
-        return x;
-    }
-
-    double getY() const {
-        return y;
+    const Point& getPoint() const {
+        return point;
     }
 
     double getData() const {

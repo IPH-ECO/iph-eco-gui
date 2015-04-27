@@ -15,10 +15,11 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 struct FaceInfo : public CGAL::Delaunay_mesh_face_base_2<K> {
     FaceInfo() {}
 
-    int nesting_level;
+    double weight;
+    int nestingLevel;
 
-    bool in_domain() {
-        return nesting_level % 2 == 1; //positive odd
+    bool inDomain() {
+        return nestingLevel % 2 == 1; //positive odd
     }
 };
 

@@ -62,11 +62,11 @@ void StructuredMeshOpenGLWidget::paintGL() {
     }
 
     if (mesh->getShowMesh()) {
-        matrix<Polygon> &grid = mesh->getGrid();
+        matrix<Quad> &grid = mesh->getGrid();
 
         for (ulong i = 0; i < grid.size1(); i++) {
             for (ulong j = 0; j < grid.size2(); j++) {
-                Polygon &quad = grid(i, j);
+                Quad &quad = grid(i, j);
 
                 if (quad.size() == 0) {
                     continue;

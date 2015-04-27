@@ -85,6 +85,7 @@ void GridInformationDialog::on_bottomButtons_clicked(QAbstractButton *button) {
         tempGridData.setGridInformationType(gridInformationType);
         tempGridData.setExponent(exponent);
         tempGridData.setRadius(radius);
+        tempGridData.setShow(true);
 
         try {
             tempGridData.buildDataPoints();

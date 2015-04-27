@@ -80,7 +80,7 @@ void UnstructuredMeshOpenGLWidget::paintGL() {
 
         glBegin(GL_LINES);
         for (CDT::Finite_faces_iterator fit = cdt->finite_faces_begin(); fit != cdt->finite_faces_end(); ++fit) {
-            if (!fit->info().in_domain()) {
+            if (!fit->info().inDomain()) {
                 continue;
             }
 

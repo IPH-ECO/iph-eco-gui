@@ -30,6 +30,7 @@ private slots:
     void on_btnRemoveConfiguration_clicked();
     void on_btnDoneConfiguration_clicked();
     void on_tblGridInformation_itemDoubleClicked(QTableWidgetItem *item);
+    void on_chkShowMesh_toggled(bool checked);
 
 private:
     Ui::GridDataDialog *ui;

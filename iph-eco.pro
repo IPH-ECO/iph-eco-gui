@@ -64,7 +64,9 @@ HEADERS  += \
     include/domain/grid_data_configuration.h \
     include/exceptions/grid_data_exception.h \
     include/domain/grid_data_point.h \
-    include/ui/grid_information_dialog.h
+    include/ui/grid_information_dialog.h \
+    include/domain/grid_data_polygon.h \
+    include/domain/quad.h
 
 FORMS    += \
     include/ui/main_window.ui \

@@ -12,6 +12,8 @@ private:
     QVector<GridData*> gridDataVector;
     Mesh *mesh;
 
+    double inverseOfDistance(GridData *gridData, QSet<GridDataPoint> &dataPoints, Point &centroid);
+
 public:
     GridDataConfiguration();
     ~GridDataConfiguration();
@@ -27,6 +29,7 @@ public:
     void removeGridData(int i);
     bool containsGridData(GridData *gridData);
     GridData* getGridData(int i);
+    void processGridData(GridData *gridData);
 };
 
 #endif // GRID_DATA_CONFIGURATION_H

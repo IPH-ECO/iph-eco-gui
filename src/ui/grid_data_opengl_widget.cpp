@@ -61,11 +61,11 @@ void GridDataOpenGLWidget::paintGL() {
 
     if (dynamic_cast<UnstructuredMesh*>(mesh) == NULL) {
         StructuredMesh *structuredMesh = static_cast<StructuredMesh*>(mesh);
-        matrix<Polygon> &grid = structuredMesh->getGrid();
+        matrix<Quad> &grid = structuredMesh->getGrid();
 
         for (ulong i = 0; i < grid.size1(); i++) {
             for (ulong j = 0; j < grid.size2(); j++) {
-                Polygon &quad = grid(i, j);
+                Quad &quad = grid(i, j);
 
                 if (quad.size() == 0) {
                     continue;
@@ -84,7 +84,7 @@ void GridDataOpenGLWidget::paintGL() {
 
         glBegin(GL_LINES);
         for (CDT::Finite_faces_iterator fit = cdt->finite_faces_begin(); fit != cdt->finite_faces_end(); ++fit) {
-            if (!fit->info().in_domain()) {
+            if (!fit->info().inDomain()) {
                 continue;
             }
 

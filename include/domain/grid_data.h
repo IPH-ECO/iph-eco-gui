@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QSet>
 #include "grid_data_point.h"
+#include "grid_data_polygon.h"
 
 class GridData : public QObject {
     Q_OBJECT
@@ -19,12 +20,11 @@ private:
     double radius;
     bool show;
     QSet<GridDataPoint> dataPoints;
+    GridDataPolygon dataPolygon;
 
 public:
     GridData();
 
-    QString getName() const;
-    void setName(const QString &name);
     GridInputType getGridInputType() const;
     void setGridInputType(const GridInputType gridInputType);
     GridInformationType getGridInformationType() const;
@@ -36,7 +36,8 @@ public:
     double getRadius() const;
     void setRadius(const double &radius);
     bool getShow() const;
-    QSet<GridDataPoint>& getDataPoints();
+    QSet<GridDataPoint>& getGridDataPoints();
+    GridDataPolygon& getGridDataPolygon();
 
     void buildDataPoints();
     void copy(GridData &srcGridData);
@@ -51,11 +52,11 @@ public slots:
 };
 
 inline bool operator==(const GridDataPoint &dataPoint1, const GridDataPoint &dataPoint2) {
-    return dataPoint1.getX() == dataPoint2.getX() && dataPoint1.getY() == dataPoint2.getY();
+    return dataPoint1.getPoint().x() == dataPoint2.getPoint().x() && dataPoint1.getPoint().y() == dataPoint2.getPoint().y();
 }
 
 inline uint qHash(const GridDataPoint &dataPoint) {
-    return qHash(QString::number(dataPoint.getX()) + QString::number(dataPoint.getY()));
+    return qHash(QString::number(dataPoint.getPoint().x()) + QString::number(dataPoint.getPoint().y()));
 }
 
 #endif // GRID_DATA_H

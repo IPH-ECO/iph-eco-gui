@@ -14,7 +14,7 @@ void StructuredMesh::setResolution(const uint &resolution) {
     this->resolution = resolution;
 }
 
-matrix<Polygon>& StructuredMesh::getGrid() {
+matrix<Quad>& StructuredMesh::getGrid() {
     return grid;
 }
 
@@ -29,7 +29,7 @@ void StructuredMesh::generate() {
     for (int i = 0; i < rows; i++) {
         for (int j = 0; j < columns; j++) {
             if (isCenterInscribed(&initialPoint, i, j)) {
-                Polygon quad = makeQuadFromPoint(&initialPoint, i, j);
+                Quad quad = makeQuadFromPoint(&initialPoint, i, j);
 
                 grid.insert_element(i, j, quad);
             }
@@ -71,12 +71,12 @@ std::vector<ulong> StructuredMesh::calculateInitialPoints() {
     return points;
 }
 
-Polygon StructuredMesh::makeQuadFromPoint(const Point *p, const int &i, const int &j) {
+Quad StructuredMesh::makeQuadFromPoint(const Point *p, const int &i, const int &j) {
     Point a(p->x() + j * this->resolution, p->y() - i * this->resolution);
     Point b(a.x() + this->resolution, a.y());
     Point c(b.x(), b.y() - this->resolution);
     Point d(c.x() - this->resolution, c.y());
-    Polygon quad;
+    Quad quad;
 
     quad.push_back(a); //A
     quad.push_back(b); //B

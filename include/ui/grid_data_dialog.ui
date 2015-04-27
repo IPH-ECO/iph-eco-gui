@@ -134,6 +134,9 @@
          <layout class="QVBoxLayout" name="verticalLayout_2">
           <item>
            <widget class="QPushButton" name="btnAddGridInfomation">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
             <property name="text">
              <string/>
             </property>
@@ -145,6 +148,9 @@
           </item>
           <item>
            <widget class="QPushButton" name="btnRemoveGridInformation">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
             <property name="text">
              <string/>
             </property>
@@ -170,6 +176,38 @@
          </layout>
         </item>
        </layout>
+      </item>
+      <item>
+       <widget class="QGroupBox" name="groupBox">
+        <property name="title">
+         <string>Options</string>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_3">
+         <item>
+          <widget class="QCheckBox" name="chkShowMesh">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string>Show Mesh</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="chkShowUtmCoordinates">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string>Show UTM Coordinates</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
       </item>
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_14">
@@ -229,7 +267,14 @@
     </widget>
    </item>
    <item row="0" column="1">
-    <widget class="GridDataOpenGLWidget" name="gridDataOpenGLWidget"/>
+    <widget class="GridDataOpenGLWidget" name="gridDataOpenGLWidget">
+     <property name="minimumSize">
+      <size>
+       <width>600</width>
+       <height>500</height>
+      </size>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>

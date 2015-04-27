@@ -45,8 +45,9 @@ GridDataDialog::~GridDataDialog() {
 
 void GridDataDialog::on_cbxMesh_currentIndexChanged(const QString &meshName) {
     Mesh *mesh = NULL;
+    bool isMeshNamePresent = !meshName.isEmpty();
 
-    if (!meshName.isEmpty()) {
+    if (isMeshNamePresent) {
         Project *project = IPHApplication::getCurrentProject();
         mesh = project->getMesh(meshName);
 
@@ -57,6 +58,8 @@ void GridDataDialog::on_cbxMesh_currentIndexChanged(const QString &meshName) {
         }
     }
 
+    ui->btnAddGridInfomation->setEnabled(isMeshNamePresent);
+    ui->btnRemoveGridInformation->setEnabled(isMeshNamePresent);
     ui->gridDataOpenGLWidget->setMesh(mesh);
 }
 
@@ -65,26 +68,30 @@ void GridDataDialog::on_btnAddGridInfomation_clicked() {
     int exitCode = gridInformationDialog->exec();
 
     if (exitCode == QDialog::Accepted) {
+        int rowCount = ui->tblGridInformation->rowCount();
         GridData *gridData = gridInformationDialog->getGridData();
-        int currentRow = ui->tblGridInformation->currentRow();
+        QWidget *checkBoxWidget = createCheckBoxWidget(gridData);
 
-        if (currentRow == -1) {
-            currentGridDataConfiguration->addGridData(gridData);
+        currentGridDataConfiguration->addGridData(gridData);
 
-            int rowCount = ui->tblGridInformation->rowCount();
-            QWidget *checkBoxWidget = createCheckBoxWidget(gridData);
+        ui->tblGridInformation->insertRow(rowCount);
+        ui->tblGridInformation->setItem(rowCount, 0, new QTableWidgetItem(gridData->gridInputTypeToString()));
+        ui->tblGridInformation->setItem(rowCount, 1, new QTableWidgetItem(gridData->gridInformationTypeToString()));
+        ui->tblGridInformation->setCellWidget(rowCount, 2, checkBoxWidget);
+    }
+}
 
-            ui->tblGridInformation->insertRow(rowCount);
-            ui->tblGridInformation->setItem(rowCount, 0, new QTableWidgetItem(gridData->gridInformationTypeToString()));
-            ui->tblGridInformation->setItem(rowCount, 1, new QTableWidgetItem(gridData->gridInputTypeToString()));
-            ui->tblGridInformation->setCellWidget(rowCount, 2, checkBoxWidget);
-        } else {
-            QTableWidgetItem *gridInformationItem = ui->tblGridInformation->item(currentRow, 0);
-            QTableWidgetItem *inputTypeItem = ui->tblGridInformation->item(currentRow, 1);
+void GridDataDialog::on_tblGridInformation_itemDoubleClicked(QTableWidgetItem *item) {
+    GridData *gridData = currentGridDataConfiguration->getGridData(item->row());
+    GridInformationDialog *gridInformationDialog = new GridInformationDialog(this, gridData);
+    int exitCode = gridInformationDialog->exec();
 
-            gridInformationItem->setText(gridData->gridInformationTypeToString());
-            inputTypeItem->setText(gridData->gridInputTypeToString());
-        }
+    if (exitCode == QDialog::Accepted) {
+        QTableWidgetItem *inputTypeItem = ui->tblGridInformation->item(item->row(), 0);
+        QTableWidgetItem *gridInformationItem = ui->tblGridInformation->item(item->row(), 1);
+
+        inputTypeItem->setText(gridData->gridInputTypeToString());
+        gridInformationItem->setText(gridData->gridInformationTypeToString());
     }
 }
 
@@ -254,13 +261,11 @@ bool GridDataDialog::isConfigurationValid() {
     return true;
 }
 
-void GridDataDialog::on_tblGridInformation_itemDoubleClicked(QTableWidgetItem *item) {
-    GridData *gridData = currentGridDataConfiguration->getGridData(item->row());
+void GridDataDialog::on_chkShowMesh_toggled(bool checked) {
+    QString meshName = ui->cbxMesh->currentText();
 
-    GridInformationDialog *gridInformationDialog = new GridInformationDialog(this, gridData);
-    int exitCode = gridInformationDialog->exec();
-
-    if (exitCode == QDialog::Accepted) {
-
+    if (!meshName.isEmpty()) {
+        Mesh *mesh = IPHApplication::getCurrentProject()->getMesh(meshName);
+        mesh->setShowMesh(checked);
     }
 }
