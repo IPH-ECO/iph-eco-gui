@@ -10,13 +10,15 @@
 #include <CGAL/Delaunay_mesher_2.h>
 #include <CGAL/Polygon_2.h>
 
+#include "include/domain/cell.h"
+
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
 struct FaceInfo : public CGAL::Delaunay_mesh_face_base_2<K> {
-    FaceInfo() {}
-
-    double weight;
+    Cell cell;
     int nestingLevel;
+
+    FaceInfo() {}
 
     bool inDomain() {
         return nestingLevel % 2 == 1; //positive odd

@@ -11,8 +11,10 @@ private:
     QString name;
     QVector<GridData*> gridDataVector;
     Mesh *mesh;
+    bool showMesh;
 
     double inverseOfDistance(GridData *gridData, QSet<GridDataPoint> &dataPoints, Point &centroid);
+    double calculateNearestWeight(QSet<GridDataPoint> &dataPoints, Point &centroid);
 
 public:
     GridDataConfiguration();
@@ -22,6 +24,8 @@ public:
     void setName(const QString &name);
     Mesh* getMesh() const;
     void setMesh(Mesh *mesh);
+    bool getShowMesh() const;
+    void setShowMesh(const bool showMesh);
 
     QVector<GridData*>& getGridDataVector();
 
@@ -30,6 +34,7 @@ public:
     bool containsGridData(GridData *gridData);
     GridData* getGridData(int i);
     void processGridData(GridData *gridData);
+    Cell* queryCell(Point &point);
 };
 
 #endif // GRID_DATA_CONFIGURATION_H

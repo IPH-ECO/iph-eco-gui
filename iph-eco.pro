@@ -36,7 +36,8 @@ SOURCES += \
     src/ui/grid_data_opengl_widget.cpp \
     src/domain/grid_data_configuration.cpp \
     src/exceptions/grid_data_exception.cpp \
-    src/ui/grid_information_dialog.cpp
+    src/ui/grid_information_dialog.cpp \
+    src/ui/cell_update_dialog.cpp
 
 HEADERS  += \
     include/domain/project.h \
@@ -66,7 +67,10 @@ HEADERS  += \
     include/domain/grid_data_point.h \
     include/ui/grid_information_dialog.h \
     include/domain/grid_data_polygon.h \
-    include/domain/quad.h
+    include/domain/quad.h \
+    include/domain/cell.h \
+    include/domain/grid_information_type.h \
+    include/ui/cell_update_dialog.h
 
 FORMS    += \
     include/ui/main_window.ui \
@@ -75,7 +79,8 @@ FORMS    += \
     include/ui/unstructured_mesh_dialog.ui \
     include/ui/structured_mesh_dialog.ui \
     include/ui/grid_data_dialog.ui \
-    include/ui/grid_information_dialog.ui
+    include/ui/grid_information_dialog.ui \
+    include/ui/cell_update_dialog.ui
 
 macx: QMAKE_CXXFLAGS += -Wno-redeclared-class-member -Wno-unused-parameter
 

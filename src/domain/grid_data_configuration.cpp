@@ -6,7 +6,9 @@
 #include "include/domain/unstructured_mesh.h"
 #include "include/domain/structured_mesh.h"
 
-GridDataConfiguration::GridDataConfiguration() {}
+#include <QDebug>
+
+GridDataConfiguration::GridDataConfiguration() : showMesh(true) {}
 
 GridDataConfiguration::~GridDataConfiguration() {
     for (int i = 0; i < gridDataVector.size(); i++) {
@@ -30,6 +32,14 @@ void GridDataConfiguration::setMesh(Mesh *mesh) {
     this->mesh = mesh;
 }
 
+bool GridDataConfiguration::getShowMesh() const {
+    return showMesh;
+}
+
+void GridDataConfiguration::setShowMesh(const bool showMesh) {
+    this->showMesh = showMesh;
+}
+
 QVector<GridData*>& GridDataConfiguration::getGridDataVector() {
     return gridDataVector;
 }
@@ -39,6 +49,7 @@ bool GridDataConfiguration::addGridData(GridData *gridData) {
         return false;
     }
 
+    this->processGridData(gridData);
     this->gridDataVector.push_back(gridData);
     return true;
 }
@@ -62,35 +73,55 @@ GridData* GridDataConfiguration::getGridData(int i) {
     return NULL;
 }
 
+// TODO: refactor
 void GridDataConfiguration::processGridData(GridData *gridData) {
+    QSet<GridDataPoint> dataPoints;
+    GridDataPolygon dataPolygon;
+    GridInformationType gridInformationType = gridData->getGridInformationType();
+    bool isInputTypePoint = gridData->getGridInputType() == GridData::POINT;
+
+    if (isInputTypePoint) {
+        dataPoints = gridData->getGridDataPoints();
+    } else {
+        dataPolygon = gridData->getGridDataPolygon();
+    }
+
     if (dynamic_cast<UnstructuredMesh*>(mesh) != NULL) {
         UnstructuredMesh *unstructuredMesh = static_cast<UnstructuredMesh*>(mesh);
         const CDT *cdt = unstructuredMesh->getCDT();
 
-        for (CDT::Finite_faces_iterator cell = cdt->finite_faces_begin(); cell != cdt->finite_faces_end(); ++cell) {
-            if (!cell->info().inDomain()) {
+        for (CDT::Finite_faces_iterator fit = cdt->finite_faces_begin(); fit != cdt->finite_faces_end(); ++fit) {
+            if (!fit->info().inDomain()) {
                 continue;
             }
 
-            CGAL::Triangle_2<K> triangle = cdt->triangle(cell);
+            CGAL::Triangle_2<K> triangle = cdt->triangle(fit);
             Point centroid = CGAL::centroid(triangle);
 
-            if (gridData->getGridInputType() == GridData::POINT) {
+            if (isInputTypePoint) {
                 CGAL::Circle_2<K> circle(centroid, gridData->getRadius());
-                QSet<GridDataPoint> &gridDataPoints = gridData->getGridDataPoints();
+                QSet<GridDataPoint> tempDataPoints;
 
-                for (QSet<GridDataPoint>::const_iterator it = gridDataPoints.begin(); it != gridDataPoints.end(); it++) {
-                    if (circle.bounded_side(it->getPoint()) != CGAL::ON_BOUNDED_SIDE) {
-                        gridDataPoints.remove(*it);
+                for (QSet<GridDataPoint>::const_iterator it = dataPoints.begin(); it != dataPoints.end(); it++) {
+                    if (circle.bounded_side(it->getPoint()) == CGAL::ON_BOUNDED_SIDE) {
+                        tempDataPoints.insert(*it);
                     }
                 }
 
-                cell->info().weight = inverseOfDistance(gridData, gridDataPoints, centroid);
-            } else {
-                GridDataPolygon dataPolygon = gridData->getGridDataPolygon();
+                double weight;
 
+                if (tempDataPoints.isEmpty()) {
+                    weight = calculateNearestWeight(dataPoints, centroid);
+                } else {
+                    weight = inverseOfDistance(gridData, tempDataPoints, centroid);
+                }
+
+                fit->info().cell.setGridInformationType(gridInformationType);
+                fit->info().cell.setWeight(weight);
+            } else {
                 if (dataPolygon.bounded_side(centroid) == CGAL::ON_BOUNDED_SIDE) {
-                    cell->info().weight = dataPolygon.getData();
+                    fit->info().cell.setGridInformationType(gridInformationType);
+                    fit->info().cell.setWeight(dataPolygon.getData());
                 }
             }
         }
@@ -100,34 +131,51 @@ void GridDataConfiguration::processGridData(GridData *gridData) {
 
         for (ulong i = 0; i < grid.size1(); i++) {
             for (ulong j = 0; j < grid.size2(); j++) {
-                Quad &cell = grid(i, j);
-                Point centroid = CGAL::centroid(cell.vertex(0), cell.vertex(1), cell.vertex(2), cell.vertex(3));
+                Quad &quad = grid(i, j);
 
-                if (gridData->getGridInputType() == GridData::POINT) {
+                if (quad.is_empty()) {
+                    continue;
+                }
+
+                Point centroid = CGAL::centroid(quad[0], quad[1], quad[2], quad[3]);
+
+                if (isInputTypePoint) {
                     CGAL::Circle_2<K> circle(centroid, gridData->getRadius());
-                    QSet<GridDataPoint> &gridDataPoints = gridData->getGridDataPoints();
+                    QSet<GridDataPoint> tempDataPoints;
 
-                    for (QSet<GridDataPoint>::const_iterator it = gridDataPoints.begin(); it != gridDataPoints.end(); it++) {
-                        if (circle.bounded_side(it->getPoint()) != CGAL::ON_BOUNDED_SIDE) {
-                            gridDataPoints.remove(*it);
+                    for (QSet<GridDataPoint>::const_iterator it = dataPoints.begin(); it != dataPoints.end(); it++) {
+                        if (circle.bounded_side(it->getPoint()) == CGAL::ON_BOUNDED_SIDE) {
+                            tempDataPoints.insert(*it);
                         }
                     }
 
-                    cell.setWeight(inverseOfDistance(gridData, gridDataPoints, centroid));
+                    double weight;
+
+                    if (tempDataPoints.isEmpty()) {
+                        weight = calculateNearestWeight(dataPoints, centroid);
+                    } else {
+                        weight = inverseOfDistance(gridData, tempDataPoints, centroid);
+                    }
+
+                    quad.getCell().setGridInformationType(gridInformationType);
+                    quad.getCell().setWeight(weight);
                 } else {
-                    GridDataPolygon dataPolygon = gridData->getGridDataPolygon();
+                    GridDataPolygon &dataPolygon = gridData->getGridDataPolygon();
 
                     if (dataPolygon.bounded_side(centroid) == CGAL::ON_BOUNDED_SIDE) {
-                        cell.setWeight(dataPolygon.getData());
+                        quad.getCell().setGridInformationType(gridInformationType);
+                        quad.getCell().setWeight(dataPolygon.getData());
                     }
                 }
+
+                return;
             }
         }
     }
 }
 
 double GridDataConfiguration::inverseOfDistance(GridData *gridData, QSet<GridDataPoint> &dataPoints, Point &centroid) {
-    double numerator = 0, denominator = 0;
+    double numerator = 0.0, denominator = 0.0;
 
     for (QSet<GridDataPoint>::const_iterator it = dataPoints.begin(); it != dataPoints.end(); it++) {
         double distance = CGAL::squared_distance(centroid, it->getPoint());
@@ -136,4 +184,62 @@ double GridDataConfiguration::inverseOfDistance(GridData *gridData, QSet<GridDat
     }
 
     return numerator / denominator;
+}
+
+double GridDataConfiguration::calculateNearestWeight(QSet<GridDataPoint> &dataPoints, Point &centroid) {
+    QSet<GridDataPoint>::const_iterator it = dataPoints.begin();
+    QSet<GridDataPoint>::const_iterator nearest = it;
+    double minimalDistance = CGAL::squared_distance(centroid, nearest->getPoint());
+
+    while (++it != dataPoints.end()) {
+        double distance = CGAL::squared_distance(centroid, it->getPoint());
+
+        if (minimalDistance > distance) {
+            nearest = it;
+            minimalDistance = distance;
+        }
+    }
+
+    return nearest->getData();
+}
+
+Cell* GridDataConfiguration::queryCell(Point &point) {
+    if (dynamic_cast<UnstructuredMesh*>(mesh) != NULL) {
+        UnstructuredMesh *unstructuredMesh = static_cast<UnstructuredMesh*>(mesh);
+        const CDT *cdt = unstructuredMesh->getCDT();
+
+        for (CDT::Finite_faces_iterator fit = cdt->finite_faces_begin(); fit != cdt->finite_faces_end(); ++fit) {
+            if (!fit->info().inDomain()) {
+                continue;
+            }
+
+            CGAL::Triangle_2<K> triangle = cdt->triangle(fit);
+
+            if (triangle.bounded_side(point) == CGAL::ON_BOUNDED_SIDE) {
+                return &fit->info().cell;
+            }
+        }
+    } else {
+        StructuredMesh *structuredMesh = static_cast<StructuredMesh*>(mesh);
+        matrix<Quad> &grid = structuredMesh->getGrid();
+
+        for (ulong i = 0; i < grid.size1(); i++) {
+            for (ulong j = 0; j < grid.size2(); j++) {
+                Quad &quad = grid(i, j);
+
+                if (quad.getCell().isValid()) {
+                    qDebug() << quad[0].x() << quad[0].y();
+                    qDebug() << quad[1].x() << quad[1].y();
+                    qDebug() << quad[2].x() << quad[2].y();
+                    qDebug() << quad[3].x() << quad[3].y();
+
+                    if (quad.bounded_side(point) == CGAL::ON_BOUNDED_SIDE) {
+                        return &quad.getCell();
+                    }
+                }
+            }
+        }
+    }
+
+    return NULL;
 }

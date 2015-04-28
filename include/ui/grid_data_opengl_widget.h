@@ -3,12 +3,13 @@
 
 #include <QOpenGLWidget>
 #include <QOpenGLFunctions>
+#include <QMouseEvent>
 
-#include "include/domain/mesh.h"
+#include "include/domain/grid_data_configuration.h"
 
 class GridDataOpenGLWidget : public QOpenGLWidget, protected QOpenGLFunctions {
 private:
-    Mesh *mesh;
+    GridDataConfiguration *gridDataConfiguration;
     double left;
     double right;
     double bottom;
@@ -22,7 +23,8 @@ protected:
 public:
     GridDataOpenGLWidget(QWidget *parent);
 
-    void setMesh(Mesh *mesh);
+    void setGridDataConfiguration(GridDataConfiguration *gridDataConfiguration);
+    void mousePressEvent(QMouseEvent *event);
 };
 
 #endif // GRID_DATA_OPENGL_WIDGET_H

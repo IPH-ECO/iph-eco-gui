@@ -3,13 +3,16 @@
 #include <QList>
 #include <boost/numeric/ublas/matrix.hpp>
 
+#include "include/ui/cell_update_dialog.h"
 #include "include/utility/delaunay_triangulation_definitions.h"
 #include "include/domain/structured_mesh.h"
 #include "include/domain/unstructured_mesh.h"
 
+#include <QDebug>
+
 using boost::numeric::ublas::matrix;
 
-GridDataOpenGLWidget::GridDataOpenGLWidget(QWidget *parent) : QOpenGLWidget(parent), mesh(NULL), left(0), right(0), bottom(0), top(0) {}
+GridDataOpenGLWidget::GridDataOpenGLWidget(QWidget *parent) : QOpenGLWidget(parent), gridDataConfiguration(NULL), left(0), right(0), bottom(0), top(0) {}
 
 void GridDataOpenGLWidget::initializeGL() {
     initializeOpenGLFunctions();
@@ -26,6 +29,12 @@ void GridDataOpenGLWidget::resizeGL(int width, int height) {
 
 void GridDataOpenGLWidget::paintGL() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    if (gridDataConfiguration == NULL) {
+        return;
+    }
+
+    Mesh *mesh = gridDataConfiguration->getMesh();
 
     if (mesh == NULL) {
         return;
@@ -49,64 +58,110 @@ void GridDataOpenGLWidget::paintGL() {
 
     glColor3f(0.0, 0.0, 0.0);
 
-    QList<MeshPolygon> &domain = mesh->getDomain();
+    if (gridDataConfiguration->getShowMesh()) {
+        if (dynamic_cast<UnstructuredMesh*>(mesh) == NULL) {
+            StructuredMesh *structuredMesh = static_cast<StructuredMesh*>(mesh);
+            matrix<Quad> &grid = structuredMesh->getGrid();
 
-    for (QList<MeshPolygon>::const_iterator it = domain.begin(); it != domain.end(); it++) {
-        glBegin(GL_LINE_LOOP);
-        for (MeshPolygon::Vertex_iterator vt = it->vertices_begin(); vt != it->vertices_end(); vt++) {
-            glVertex2d(vt->x(), vt->y());
-        }
-        glEnd();
-    }
+            for (ulong i = 0; i < grid.size1(); i++) {
+                for (ulong j = 0; j < grid.size2(); j++) {
+                    Quad &quad = grid(i, j);
 
-    if (dynamic_cast<UnstructuredMesh*>(mesh) == NULL) {
-        StructuredMesh *structuredMesh = static_cast<StructuredMesh*>(mesh);
-        matrix<Quad> &grid = structuredMesh->getGrid();
+                    if (quad.size() == 0) {
+                        continue;
+                    }
 
-        for (ulong i = 0; i < grid.size1(); i++) {
-            for (ulong j = 0; j < grid.size2(); j++) {
-                Quad &quad = grid(i, j);
+                    glBegin(GL_LINE_LOOP);
+                    for (uint k = 0; k < quad.size(); k++) {
+                        Point point = quad[k];
+                        glVertex2d(point.x(), point.y());
+                    }
+                    glEnd();
+                }
+            }
+        } else {
+            UnstructuredMesh *unstructuredMesh = static_cast<UnstructuredMesh*>(mesh);
+            const CDT *cdt = unstructuredMesh->getCDT();
 
-                if (quad.size() == 0) {
+            glBegin(GL_LINES);
+            for (CDT::Finite_faces_iterator fit = cdt->finite_faces_begin(); fit != cdt->finite_faces_end(); ++fit) {
+                if (!fit->info().inDomain()) {
                     continue;
                 }
 
-                glBegin(GL_LINE_LOOP);
-                for (uint k = 0; k < quad.size(); k++) {
-                    glVertex2d(quad[k].x(), quad[k].y());
+                for (int i = 0; i < 3; i++) {
+                    CDT::Edge e(fit, i);
+
+                    if (cdt->is_constrained(e)) {
+                        continue;
+                    }
+
+                    Point p1 = e.first->vertex((e.second + 1) % 3)->point();
+                    Point p2 = e.first->vertex((e.second + 2) % 3)->point();
+
+                    glVertex2f(p1.x(), p1.y());
+                    glVertex2f(p2.x(), p2.y());
                 }
-                glEnd();
+            }
+            glEnd();
+        }
+
+        QVector<GridData*> &gridDataVector = gridDataConfiguration->getGridDataVector();
+
+        for (int i = 0; i < gridDataVector.count(); i++) {
+            GridData *gridData = gridDataVector.at(i);
+
+//            if (gridData->getShow()) {
+            if (false) {
+                if (gridData->getGridInputType() == GridData::POINT) {
+                    QSet<GridDataPoint> &dataPoints = gridData->getGridDataPoints();
+
+                    //TODO: Refactor loop
+                    glBegin(GL_POINTS);
+                    for (QSet<GridDataPoint>::const_iterator it = dataPoints.begin(); it != dataPoints.end(); it++) {
+                        glVertex2f(it->getPoint().x(), it->getPoint().y());
+                    }
+                    glEnd();
+                } else {
+                    GridDataPolygon &dataPolygon = gridData->getGridDataPolygon();
+
+                    glBegin(GL_LINE_LOOP);
+                    for (ulong j = 0; j < dataPolygon.size(); j++) {
+                        Point point = dataPolygon[j];
+                        glVertex2f(point.x(), point.y());
+                    }
+                    glEnd();
+                }
             }
         }
-    } else {
-        UnstructuredMesh *unstructuredMesh = static_cast<UnstructuredMesh*>(mesh);
-        const CDT *cdt = unstructuredMesh->getCDT();
-
-        glBegin(GL_LINES);
-        for (CDT::Finite_faces_iterator fit = cdt->finite_faces_begin(); fit != cdt->finite_faces_end(); ++fit) {
-            if (!fit->info().inDomain()) {
-                continue;
-            }
-
-            for (int i = 0; i < 3; i++) {
-                CDT::Edge e(fit, i);
-
-                if (cdt->is_constrained(e)) {
-                    continue;
-                }
-
-                Point p1 = e.first->vertex((e.second + 1) % 3)->point();
-                Point p2 = e.first->vertex((e.second + 2) % 3)->point();
-
-                glVertex2f(p1.x(), p1.y());
-                glVertex2f(p2.x(), p2.y());
-            }
-        }
-        glEnd();
     }
 }
 
-void GridDataOpenGLWidget::setMesh(Mesh *mesh) {
-    this->mesh = mesh;
+void GridDataOpenGLWidget::setGridDataConfiguration(GridDataConfiguration *gridDataConfiguration) {
+    this->gridDataConfiguration = gridDataConfiguration;
     update();
+}
+
+void GridDataOpenGLWidget::mousePressEvent(QMouseEvent *event) {
+    if (gridDataConfiguration == NULL || gridDataConfiguration->getMesh() == NULL) {
+        return;
+    }
+
+    int x = event->x(), y = event->y();
+    double ratioX = x / (double) this->width(), ratioY = y / (double) this->height();
+    double mapWidth = right - left, mapHeight = top - bottom;
+    Point realCoordinate(left + mapWidth * ratioX, top - mapHeight * ratioY);
+    Cell *cell = gridDataConfiguration->queryCell(realCoordinate);
+
+    if (cell != NULL) {
+        CellUpdateDialog *cellUpdateDialog = new CellUpdateDialog((QWidget*) this->parent());
+        cellUpdateDialog->setValues(cell->getGridInformationType().toString(), cell->getWeight());
+
+        int exitCode = cellUpdateDialog->exec();
+
+        if (exitCode == QDialog::Accepted) {
+            double weight = cellUpdateDialog->getWeight();
+            cell->setWeight(weight);
+        }
+    }
 }

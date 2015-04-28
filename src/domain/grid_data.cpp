@@ -24,11 +24,11 @@ void GridData::setInputFile(const QString &inputFile) {
     this->inputFile = inputFile;
 }
 
-GridData::GridInformationType GridData::getGridInformationType() const {
+GridInformationType GridData::getGridInformationType() const {
     return gridInformationType;
 }
 
-void GridData::setGridInformationType(const GridData::GridInformationType &gridInformationType) {
+void GridData::setGridInformationType(const GridInformationType &gridInformationType) {
     this->gridInformationType = gridInformationType;
 }
 
@@ -121,34 +121,3 @@ QString GridData::gridInputTypeToString() const {
     }
 }
 
-QString GridData::gridInformationTypeToString() const {
-    switch (gridInformationType) {
-    case BATHYMETRY:
-        return "Bathymetry";
-    case WIND_REDUCTION:
-        return "Wind Reduction Coefficient";
-    case CHEZY:
-        return "Chezy Coefficient";
-    case WETLAND_AREA:
-        return "Wetland Area";
-    default:
-        return "";
-    }
-}
-
-GridData::GridInformationType GridData::toGridInformationType(const QString gridInformationTypeStr) {
-    if (gridInformationTypeStr == "Bathymetry") {
-        return BATHYMETRY;
-    }
-    if (gridInformationTypeStr == "Wind Reduction Coefficient") {
-        return WIND_REDUCTION;
-    }
-    if (gridInformationTypeStr == "Chezy Coefficient") {
-        return CHEZY;
-    }
-    if (gridInformationTypeStr == "Wetland Area") {
-        return WETLAND_AREA;
-    }
-
-    return UNDEFINED;
-}

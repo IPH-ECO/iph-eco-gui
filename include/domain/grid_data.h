@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QSet>
+#include "grid_information_type.h"
 #include "grid_data_point.h"
 #include "grid_data_polygon.h"
 
@@ -10,7 +11,6 @@ class GridData : public QObject {
     Q_OBJECT
 public:
     enum GridInputType { POINT = 1, POLYGON };
-    enum GridInformationType { BATHYMETRY = 1, WIND_REDUCTION, CHEZY, WETLAND_AREA, UNDEFINED };
 
 private:
     GridInputType gridInputType;
@@ -43,9 +43,6 @@ public:
     void copy(GridData &srcGridData);
 
     QString gridInputTypeToString() const;
-    QString gridInformationTypeToString() const;
-
-    static GridInformationType toGridInformationType(const QString gridInformationTypeStr);
 
 public slots:
     void setShow(bool show);

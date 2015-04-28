@@ -22,7 +22,7 @@ GridInformationDialog::GridInformationDialog(QDialog *parent, GridData *gridData
     	}
 
     	ui->edtInputFile->setText(gridData->getInputFile());
-    	ui->cbxGridInformation->setCurrentText(gridData->gridInformationTypeToString());
+        ui->cbxGridInformation->setCurrentText(gridData->getGridInformationType().toString());
         ui->edtExponent->setText(QString::number(gridData->getExponent()));
         ui->edtRadius->setText(QString::number(gridData->getRadius()));
     }
@@ -75,7 +75,7 @@ void GridInformationDialog::on_bottomButtons_clicked(QAbstractButton *button) {
 
         GridData::GridInputType gridInputType = ui->rdoPoint->isChecked() ? GridData::POINT : GridData::POLYGON;
         QString inputFile = ui->edtInputFile->text();
-        GridData::GridInformationType gridInformationType = GridData::toGridInformationType(ui->cbxGridInformation->currentText());
+        GridInformationType gridInformationType = GridInformationType::toGridInformationType(ui->cbxGridInformation->currentText());
         double exponent = ui->edtExponent->text().toDouble();
         double radius = ui->edtRadius->text().toDouble();
         GridData tempGridData;
