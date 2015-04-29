@@ -195,6 +195,7 @@ void MainWindow::closeEvent(QCloseEvent *closeEvent) {
 
 void MainWindow::updateRecentFilesList(const QString &filePath) {
     QStringList recentFilePaths = appSettings->value(RECENT_FILES_KEY).toStringList();
+
     recentFilePaths.removeAll(filePath);
     recentFilePaths.prepend(filePath);
 
@@ -208,6 +209,14 @@ void MainWindow::updateRecentFilesList(const QString &filePath) {
 
 void MainWindow::updateRecentFilesActionList() {
     QStringList recentFilePaths = appSettings->value(RECENT_FILES_KEY).toStringList();
+
+    QMutableStringListIterator i(recentFilePaths);
+    while (i.hasNext()) {
+        QFile file(i.next());
+        if (!file.exists()) {
+            i.remove();
+        }
+    }
 
     ui->menuOpenRecent->setEnabled(!recentFilePaths.isEmpty());
     ui->menuOpenRecent->clear();
