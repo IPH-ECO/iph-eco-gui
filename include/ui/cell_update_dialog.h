@@ -19,6 +19,7 @@ private:
     QSet<CellInfo*> cellInfoSet;
 private slots:
     void on_buttonBox_clicked(QAbstractButton *button);
+    void on_tblGridInformation_cellChanged(int row, int column);
 
 public:
     explicit CellUpdateDialog(QWidget *parent, QSet<CellInfo*> &cellInfoSet);

@@ -73,11 +73,44 @@ GridData* GridDataConfiguration::getGridData(int i) {
     return NULL;
 }
 
+CellInfo* GridDataConfiguration::createCellInfoFromDataPoints(Point &centroid, GridData *gridData, QSet<GridDataPoint> &dataPoints) {
+    GridInformationType gridInformationType = gridData->getGridInformationType();
+    CGAL::Circle_2<K> circle(centroid, gridData->getRadius());
+    QSet<GridDataPoint> tempDataPoints;
+
+    for (QSet<GridDataPoint>::const_iterator it = dataPoints.begin(); it != dataPoints.end(); it++) {
+        if (circle.bounded_side(it->getPoint()) == CGAL::ON_BOUNDED_SIDE) {
+            tempDataPoints.insert(*it);
+        }
+    }
+
+    double weight;
+
+    if (tempDataPoints.isEmpty()) {
+        weight = calculateNearestWeight(dataPoints, centroid);
+    } else {
+        weight = inverseOfDistance(gridData, tempDataPoints, centroid);
+    }
+
+    return new CellInfo(gridInformationType, weight);
+}
+
+CellInfo* GridDataConfiguration::createCellInfoFromDataPolygon(Point &centroid, GridData *gridData, GridDataPolygon &dataPolygon) {
+    GridInformationType gridInformationType = gridData->getGridInformationType();
+
+    if (dataPolygon.bounded_side(centroid) == CGAL::ON_BOUNDED_SIDE) {
+        double weight = dataPolygon.getData();
+        return new CellInfo(gridInformationType, weight);
+    }
+
+    return NULL; //TODO: fix NULL
+}
+
 // TODO: refactor
 void GridDataConfiguration::processGridData(GridData *gridData) {
+    GridInformationType gridInformationType = gridData->getGridInformationType();
     QSet<GridDataPoint> dataPoints;
     GridDataPolygon dataPolygon;
-    GridInformationType gridInformationType = gridData->getGridInformationType();
     bool isInputTypePoint = gridData->getGridInputType() == GridData::POINT;
 
     if (isInputTypePoint) {
@@ -97,32 +130,15 @@ void GridDataConfiguration::processGridData(GridData *gridData) {
 
             CGAL::Triangle_2<K> triangle = cdt->triangle(fit);
             Point centroid = CGAL::centroid(triangle);
+            CellInfo *cellInfo = NULL;
 
             if (isInputTypePoint) {
-                CGAL::Circle_2<K> circle(centroid, gridData->getRadius());
-                QSet<GridDataPoint> tempDataPoints;
-
-                for (QSet<GridDataPoint>::const_iterator it = dataPoints.begin(); it != dataPoints.end(); it++) {
-                    if (circle.bounded_side(it->getPoint()) == CGAL::ON_BOUNDED_SIDE) {
-                        tempDataPoints.insert(*it);
-                    }
-                }
-
-                double weight;
-
-                if (tempDataPoints.isEmpty()) {
-                    weight = calculateNearestWeight(dataPoints, centroid);
-                } else {
-                    weight = inverseOfDistance(gridData, tempDataPoints, centroid);
-                }
-
-                fit->info().addCellInfo(new CellInfo(gridInformationType, weight));
+                cellInfo = createCellInfoFromDataPoints(centroid, gridData, dataPoints);
             } else {
-                if (dataPolygon.bounded_side(centroid) == CGAL::ON_BOUNDED_SIDE) {
-                    double weight = dataPolygon.getData();
-                    fit->info().addCellInfo(new CellInfo(gridInformationType, weight));
-                }
+                cellInfo = createCellInfoFromDataPolygon(centroid, gridData, dataPolygon);
             }
+
+            fit->info().addCellInfo(cellInfo);
         }
     } else {
         StructuredMesh *structuredMesh = static_cast<StructuredMesh*>(mesh);
@@ -137,34 +153,15 @@ void GridDataConfiguration::processGridData(GridData *gridData) {
                 }
 
                 Point centroid = CGAL::centroid((*quad)[0], (*quad)[1], (*quad)[2], (*quad)[3]);
+                CellInfo *cellInfo = NULL;
 
                 if (isInputTypePoint) {
-                    CGAL::Circle_2<K> circle(centroid, gridData->getRadius());
-                    QSet<GridDataPoint> tempDataPoints;
-
-                    for (QSet<GridDataPoint>::const_iterator it = dataPoints.begin(); it != dataPoints.end(); it++) {
-                        if (circle.bounded_side(it->getPoint()) == CGAL::ON_BOUNDED_SIDE) {
-                            tempDataPoints.insert(*it);
-                        }
-                    }
-
-                    double weight;
-
-                    if (tempDataPoints.isEmpty()) {
-                        weight = calculateNearestWeight(dataPoints, centroid);
-                    } else {
-                        weight = inverseOfDistance(gridData, tempDataPoints, centroid);
-                    }
-
-                    quad->addCellInfo(new CellInfo(gridInformationType, weight));
+                    cellInfo = createCellInfoFromDataPoints(centroid, gridData, dataPoints);
                 } else {
-                    GridDataPolygon &dataPolygon = gridData->getGridDataPolygon();
-
-                    if (dataPolygon.bounded_side(centroid) == CGAL::ON_BOUNDED_SIDE) {
-                        double weight = dataPolygon.getData();
-                        quad->addCellInfo(new CellInfo(gridInformationType, weight));
-                    }
+                    cellInfo = createCellInfoFromDataPolygon(centroid, gridData, dataPolygon);
                 }
+
+                quad->addCellInfo(cellInfo);
 
                 return;
             }

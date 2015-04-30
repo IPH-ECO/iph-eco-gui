@@ -41,7 +41,7 @@ SOURCES += \
     src/domain/quad.cpp \
     src/domain/cell_info.cpp \
     src/domain/grid_information_type.cpp \
-    include/domain/delaunay_triangulation_face.cpp
+    src/domain/delaunay_triangulation_face.cpp
 
 HEADERS  += \
     include/domain/project.h \

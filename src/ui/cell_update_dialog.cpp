@@ -36,11 +36,19 @@ QList<CellInfo> CellUpdateDialog::getCellInfoList() {
     QList<CellInfo> cellInfoList;
 
     for (int i = 0; i < ui->tblGridInformation->rowCount(); i++) {
-        QString gridInformationStr = ui->tblGridInformation->itemAt(0, i)->text();
-        double weight = ui->tblGridInformation->itemAt(1, i)->text().toDouble();
+        QString gridInformationStr = ui->tblGridInformation->item(i, 0)->text();
+        double weight = ui->tblGridInformation->item(i, 1)->text().toDouble();
 
         cellInfoList.push_back(CellInfo(GridInformationType::toGridInformationType(gridInformationStr), weight));
     }
 
     return cellInfoList;
+}
+
+void CellUpdateDialog::on_tblGridInformation_cellChanged(int row, int column) {
+//    for (int i = 0; i < ui->tblGridInformation->rowCount(); i++) {
+//        for (QSet<CellInfo*>::iterator it = cellInfoSet.begin(); it != cellInfoSet.end(); it++) {
+//            (*it)->
+//        }
+//    }
 }

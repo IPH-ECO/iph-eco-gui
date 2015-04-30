@@ -15,6 +15,8 @@ private:
     Mesh *mesh;
     bool showMesh;
 
+    CellInfo* createCellInfoFromDataPoints(Point &centroid, GridData *gridData, QSet<GridDataPoint> &dataPoints);
+    CellInfo* createCellInfoFromDataPolygon(Point &centroid, GridData *gridData, GridDataPolygon &dataPolygon);
     double inverseOfDistance(GridData *gridData, QSet<GridDataPoint> &dataPoints, Point &centroid);
     double calculateNearestWeight(QSet<GridDataPoint> &dataPoints, Point &centroid);
 
