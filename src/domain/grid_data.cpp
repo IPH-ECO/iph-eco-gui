@@ -5,6 +5,7 @@
 #include <QStringList>
 #include <GeographicLib/GeoCoords.hpp>
 #include "include/exceptions/grid_data_exception.h"
+#include "include/utility/cgal_definitions.h"
 
 GridData::GridData() {}
 

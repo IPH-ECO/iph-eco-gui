@@ -91,7 +91,7 @@ void GridDataConfiguration::processGridData(GridData *gridData) {
         const CDT *cdt = unstructuredMesh->getCDT();
 
         for (CDT::Finite_faces_iterator fit = cdt->finite_faces_begin(); fit != cdt->finite_faces_end(); ++fit) {
-            if (!fit->info().inDomain() || fit->info().getCellInfo(gridInformationType) != NULL) {
+            if (!fit->info().isInDomain() || fit->info().getCellInfo(gridInformationType) != NULL) {
                 continue;
             }
 
@@ -116,11 +116,11 @@ void GridDataConfiguration::processGridData(GridData *gridData) {
                     weight = inverseOfDistance(gridData, tempDataPoints, centroid);
                 }
 
-                fit->info().cellInfoSet.insert(new CellInfo(gridInformationType, weight));
+                fit->info().addCellInfo(new CellInfo(gridInformationType, weight));
             } else {
                 if (dataPolygon.bounded_side(centroid) == CGAL::ON_BOUNDED_SIDE) {
                     double weight = dataPolygon.getData();
-                    fit->info().cellInfoSet.insert(new CellInfo(gridInformationType, weight));
+                    fit->info().addCellInfo(new CellInfo(gridInformationType, weight));
                 }
             }
         }
@@ -207,14 +207,14 @@ QSet<CellInfo*> GridDataConfiguration::queryCells(Point &point) {
         const CDT *cdt = unstructuredMesh->getCDT();
 
         for (CDT::Finite_faces_iterator fit = cdt->finite_faces_begin(); fit != cdt->finite_faces_end(); ++fit) {
-            if (!fit->info().inDomain()) {
+            if (!fit->info().isInDomain()) {
                 continue;
             }
 
             CGAL::Triangle_2<K> triangle = cdt->triangle(fit);
 
             if (triangle.bounded_side(point) == CGAL::ON_BOUNDED_SIDE) {
-                return fit->info().cellInfoSet;
+                return fit->info().getCellInfoSet();
             }
         }
     } else {

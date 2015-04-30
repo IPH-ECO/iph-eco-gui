@@ -1,9 +1,12 @@
 #ifndef GRID_DATA_POLYGON_H
 #define GRID_DATA_POLYGON_H
 
-#include "include/utility/delaunay_triangulation_definitions.h"
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Polygon_2.h>
 
-class GridDataPolygon : public Polygon {
+typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
+
+class GridDataPolygon : public CGAL::Polygon_2<K> {
 private:
     double data;
 public:

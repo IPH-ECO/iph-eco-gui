@@ -4,7 +4,7 @@
 #include <boost/numeric/ublas/matrix.hpp>
 
 #include "include/ui/cell_update_dialog.h"
-#include "include/utility/delaunay_triangulation_definitions.h"
+#include "include/utility/cgal_definitions.h"
 #include "include/domain/structured_mesh.h"
 #include "include/domain/unstructured_mesh.h"
 
@@ -85,7 +85,7 @@ void GridDataOpenGLWidget::paintGL() {
 
             glBegin(GL_LINES);
             for (CDT::Finite_faces_iterator fit = cdt->finite_faces_begin(); fit != cdt->finite_faces_end(); ++fit) {
-                if (!fit->info().inDomain()) {
+                if (!fit->info().isInDomain()) {
                     continue;
                 }
 

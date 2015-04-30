@@ -9,24 +9,13 @@ private:
     double weight;
 
 public:
-    CellInfo() {}
-    CellInfo(const GridInformationType &gridInformationType, double &weight) : gridInformationType(gridInformationType), weight(weight) {}
+    CellInfo();
+    CellInfo(const GridInformationType &gridInformationType, double &weight);
 
-    void setGridInformationType(GridInformationType &gridInformationType) {
-        this->gridInformationType = gridInformationType;
-    }
-
-    GridInformationType getGridInformationType() const {
-        return gridInformationType;
-    }
-
-    void setWeight(const double &weight) {
-        this->weight = weight;
-    }
-
-    double getWeight() const {
-        return weight;
-    }
+    void setGridInformationType(GridInformationType &gridInformationType);
+    GridInformationType getGridInformationType() const;
+    void setWeight(const double &weight);
+    double getWeight() const;
 };
 
 #endif // CELL_INFO_H

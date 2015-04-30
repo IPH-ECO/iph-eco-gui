@@ -3,7 +3,7 @@
 
 #include <boost/numeric/ublas/matrix.hpp>
 
-#include "include/utility/delaunay_triangulation_definitions.h"
+#include "include/utility/cgal_definitions.h"
 #include "quad.h"
 #include "mesh.h"
 
@@ -22,6 +22,7 @@ public:
     StructuredMesh();
     StructuredMesh(QString &name);
     StructuredMesh(QString &name, uint &resolution);
+    ~StructuredMesh();
 
     uint getResolution() const;
     void setResolution(const uint &resolution);

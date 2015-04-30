@@ -3,7 +3,7 @@
 #include <QList>
 #include <boost/numeric/ublas/matrix.hpp>
 
-#include "include/utility/delaunay_triangulation_definitions.h"
+#include "include/utility/cgal_definitions.h"
 
 using boost::numeric::ublas::matrix;
 

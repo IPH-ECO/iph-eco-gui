@@ -37,7 +37,11 @@ SOURCES += \
     src/domain/grid_data_configuration.cpp \
     src/exceptions/grid_data_exception.cpp \
     src/ui/grid_information_dialog.cpp \
-    src/ui/cell_update_dialog.cpp
+    src/ui/cell_update_dialog.cpp \
+    src/domain/quad.cpp \
+    src/domain/cell_info.cpp \
+    src/domain/grid_information_type.cpp \
+    include/domain/delaunay_triangulation_face.cpp
 
 HEADERS  += \
     include/domain/project.h \
@@ -56,7 +60,6 @@ HEADERS  += \
     include/ui/unstructured_mesh_dialog.h \
     include/ui/unstructured_mesh_opengl_widget.h \
     include/ui/structured_mesh_opengl_widget.h \
-    include/utility/delaunay_triangulation_definitions.h \
     include/domain/mesh_polygon.h \
     include/ui/structured_mesh_dialog.h \
     include/ui/grid_data_dialog.h \
@@ -70,7 +73,10 @@ HEADERS  += \
     include/domain/quad.h \
     include/domain/grid_information_type.h \
     include/ui/cell_update_dialog.h \
-    include/domain/cell_info.h
+    include/domain/cell_info.h \
+    include/domain/delaunay_triangulation_face.h \
+    include/utility/point.h \
+    include/utility/cgal_definitions.h
 
 FORMS    += \
     include/ui/main_window.ui \

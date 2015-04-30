@@ -6,6 +6,14 @@ StructuredMesh::StructuredMesh(QString &name) : Mesh(name), resolution(1) {}
 
 StructuredMesh::StructuredMesh(QString &name, uint &resolution) : Mesh(name), resolution(resolution) {}
 
+StructuredMesh::~StructuredMesh() {
+    for (ulong i = 0; i < grid.size1(); i++) {
+        for (ulong j = 0; j < grid.size2(); j++) {
+            delete grid(i, j);
+        }
+    }
+}
+
 uint StructuredMesh::getResolution() const {
     return resolution;
 }
@@ -20,7 +28,7 @@ matrix<Quad*>& StructuredMesh::getGrid() {
 
 void StructuredMesh::generate() {
     std::vector<ulong> initialPoints = calculateInitialPoints();
-    Point initialPoint = Point(initialPoints.at(0), initialPoints.at(2));
+    Point initialPoint(initialPoints.at(0), initialPoints.at(2));
     int rows = (initialPoints.at(2) - initialPoints.at(3)) / this->resolution;
     int columns = (initialPoints.at(1) - initialPoints.at(0)) / this->resolution;
 

@@ -1,7 +1,7 @@
 #ifndef GRID_DATA_POINT_H
 #define GRID_DATA_POINT_H
 
-#include "include/utility/delaunay_triangulation_definitions.h"
+#include "include/utility/cgal_definitions.h"
 
 class GridDataPoint {
 private:
