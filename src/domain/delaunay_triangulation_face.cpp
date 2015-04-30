@@ -1,4 +1,4 @@
-#include "delaunay_triangulation_face.h"
+#include "include/domain/delaunay_triangulation_face.h"
 
 DelaunayTriangulationFace::DelaunayTriangulationFace() {}
 DelaunayTriangulationFace::~DelaunayTriangulationFace() {

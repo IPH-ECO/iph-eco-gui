@@ -39,7 +39,7 @@ public:
     QSet<GridDataPoint>& getGridDataPoints();
     GridDataPolygon& getGridDataPolygon();
 
-    void buildDataPoints();
+    void buildData();
     void copy(GridData &srcGridData);
 
     QString gridInputTypeToString() const;

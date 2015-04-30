@@ -11,7 +11,7 @@ private:
     double data;
 public:
     GridDataPolygon() {}
-    GridDataPolygon(double data) : data(data) {}
+    GridDataPolygon(const double &data) : data(data) {}
 
     double getData() const {
         return data;

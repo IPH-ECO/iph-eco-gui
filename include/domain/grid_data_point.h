@@ -8,7 +8,7 @@ private:
     Point point;
     double data;
 public:
-    GridDataPoint(double x, double y, double data) : point(Point(x, y)), data(data) {}
+    GridDataPoint(const Point &point, const double &data) : point(point), data(data) {}
 
     const Point& getPoint() const {
         return point;

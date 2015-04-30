@@ -83,14 +83,22 @@ void GridInformationDialog::on_bottomButtons_clicked(QAbstractButton *button) {
         tempGridData.setGridInputType(gridInputType);
         tempGridData.setInputFile(inputFile);
         tempGridData.setGridInformationType(gridInformationType);
-        tempGridData.setExponent(exponent);
-        tempGridData.setRadius(radius);
         tempGridData.setShow(true);
 
+        if (gridInputType == GridData::POLYGON) {
+            tempGridData.setExponent(exponent);
+            tempGridData.setRadius(radius);
+        }
+
         try {
-            tempGridData.buildDataPoints();
+            tempGridData.buildData();
 
             if (gridData == NULL) {
+                if (gridInputType == GridData::POLYGON && !tempGridData.getGridDataPolygon().is_simple()) {
+                    QMessageBox::critical(this, tr("Grid Data"), tr("Invalid polygon."));
+                    return;
+                }
+
                 gridData = new GridData();
             }
 

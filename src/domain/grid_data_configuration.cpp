@@ -5,8 +5,7 @@
 
 #include "include/domain/unstructured_mesh.h"
 #include "include/domain/structured_mesh.h"
-
-#include <QDebug>
+#include "include/exceptions/grid_data_exception.h"
 
 GridDataConfiguration::GridDataConfiguration() : showMesh(true) {}
 
@@ -103,10 +102,9 @@ CellInfo* GridDataConfiguration::createCellInfoFromDataPolygon(Point &centroid, 
         return new CellInfo(gridInformationType, weight);
     }
 
-    return NULL; //TODO: fix NULL
+    return NULL;
 }
 
-// TODO: refactor
 void GridDataConfiguration::processGridData(GridData *gridData) {
     GridInformationType gridInformationType = gridData->getGridInformationType();
     QSet<GridDataPoint> dataPoints;
@@ -161,7 +159,9 @@ void GridDataConfiguration::processGridData(GridData *gridData) {
                     cellInfo = createCellInfoFromDataPolygon(centroid, gridData, dataPolygon);
                 }
 
-                quad->addCellInfo(cellInfo);
+                if (cellInfo != NULL) {
+                    quad->addCellInfo(cellInfo);
+                }
 
                 return;
             }

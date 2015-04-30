@@ -49,10 +49,10 @@ void GridDataDialog::on_cbxConfiguration_currentIndexChanged(const QString &conf
     ui->tblGridInformation->setRowCount(0);
 
     if (configurationName.isEmpty()) {
+        currentGridDataConfiguration = unsavedGridDataConfiguration;
         toggleGridDataConfigurationForm(false);
         ui->edtConfigurationName->clear();
         ui->cbxMesh->setCurrentIndex(-1);
-        currentGridDataConfiguration = unsavedGridDataConfiguration;
     } else {
         Project *project = IPHApplication::getCurrentProject();
         currentGridDataConfiguration = project->getGridDataConfiguration(configurationName);

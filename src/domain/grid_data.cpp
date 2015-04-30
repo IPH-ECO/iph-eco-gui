@@ -65,7 +65,7 @@ GridDataPolygon& GridData::getGridDataPolygon() {
     return this->dataPolygon;
 }
 
-void GridData::buildDataPoints() {
+void GridData::buildData() {
     QFile inputFileHandle(inputFile);
 
     if (!inputFileHandle.open(QIODevice::ReadOnly | QIODevice::Text)) {
@@ -73,6 +73,7 @@ void GridData::buildDataPoints() {
     }
 
     QTextStream in(&inputFileHandle);
+    bool isDataSet = false;
 
     dataPoints.clear();
     dataPolygon.clear();
@@ -83,13 +84,17 @@ void GridData::buildDataPoints() {
 
         if (coordinate.count() == 3) {
             GeographicLib::GeoCoords utmCoordinate(coordinate.at(1).toDouble(), coordinate.at(0).toDouble());
+            Point point(utmCoordinate.Easting(), utmCoordinate.Northing());
 
             if (this->gridInputType == GridData::POINT) {
-                GridDataPoint dataPoint(utmCoordinate.Easting(), utmCoordinate.Northing(), coordinate.at(2).toDouble());
+                GridDataPoint dataPoint(point, coordinate.at(2).toDouble());
                 dataPoints.insert(dataPoint);
             } else {
-                GridDataPolygon gridDataPolygon(coordinate.at(2).toDouble());
-                gridDataPolygon.push_back(Point(utmCoordinate.Easting(), utmCoordinate.Northing()));
+                if (!isDataSet) {
+                    dataPolygon.setData(coordinate.at(2).toDouble());
+                    isDataSet = true;
+                }
+                dataPolygon.push_back(point);
             }
         }
     }
@@ -105,10 +110,15 @@ void GridData::copy(GridData &srcGridData) {
     this->gridInputType = srcGridData.getGridInputType();
     this->gridInformationType = srcGridData.getGridInformationType();
     this->inputFile = srcGridData.getInputFile();
-    this->exponent = srcGridData.getExponent();
-    this->radius = srcGridData.getRadius();
-    this->dataPoints = srcGridData.getGridDataPoints();
     this->show = srcGridData.getShow();
+
+    if (srcGridData.getGridInputType() == POINT) {
+        this->exponent = srcGridData.getExponent();
+        this->radius = srcGridData.getRadius();
+        this->dataPoints = srcGridData.getGridDataPoints();
+    } else {
+        this->dataPolygon = srcGridData.getGridDataPolygon();
+    }
 }
 
 QString GridData::gridInputTypeToString() const {
