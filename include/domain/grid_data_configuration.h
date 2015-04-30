@@ -2,9 +2,11 @@
 #define GRID_DATA_CONFIGURATION_H
 
 #include <QVector>
+#include <QSet>
 
 #include "grid_data.h"
 #include "mesh.h"
+#include "cell_info.h"
 
 class GridDataConfiguration {
 private:
@@ -34,7 +36,7 @@ public:
     bool containsGridData(GridData *gridData);
     GridData* getGridData(int i);
     void processGridData(GridData *gridData);
-    Cell* queryCell(Point &point);
+    QSet<CellInfo*> queryCells(Point &point);
 };
 
 #endif // GRID_DATA_CONFIGURATION_H

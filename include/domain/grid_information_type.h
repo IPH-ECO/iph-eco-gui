@@ -25,6 +25,10 @@ public:
         return value;
     }
 
+    inline bool operator==(const GridInformationType &gridInformationType) {
+        return this->value == gridInformationType.getValue();
+    }
+
     static GridInformationType toGridInformationType(const QString &gridInformationTypeStr) {
         int value = UNDEFINED;
 

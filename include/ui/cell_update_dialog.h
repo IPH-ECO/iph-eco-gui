@@ -3,6 +3,10 @@
 
 #include <QDialog>
 #include <QAbstractButton>
+#include <QSet>
+#include <QList>
+
+#include "include/domain/cell_info.h"
 
 namespace Ui {
 class CellUpdateDialog;
@@ -12,15 +16,15 @@ class CellUpdateDialog : public QDialog {
     Q_OBJECT
 private:
     Ui::CellUpdateDialog *ui;
+    QSet<CellInfo*> cellInfoSet;
 private slots:
     void on_buttonBox_clicked(QAbstractButton *button);
 
 public:
-    explicit CellUpdateDialog(QWidget *parent = 0);
+    explicit CellUpdateDialog(QWidget *parent, QSet<CellInfo*> &cellInfoSet);
     ~CellUpdateDialog();
 
-    void setValues(QString gridInformationType, double weight);
-    double getWeight();
+    QList<CellInfo> getCellInfoList();
 };
 
 #endif // CELL_UPDATE_DIALOG_H

@@ -68,9 +68,9 @@ HEADERS  += \
     include/ui/grid_information_dialog.h \
     include/domain/grid_data_polygon.h \
     include/domain/quad.h \
-    include/domain/cell.h \
     include/domain/grid_information_type.h \
-    include/ui/cell_update_dialog.h
+    include/ui/cell_update_dialog.h \
+    include/domain/cell_info.h
 
 FORMS    += \
     include/ui/main_window.ui \

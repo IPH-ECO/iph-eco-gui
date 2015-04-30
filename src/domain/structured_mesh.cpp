@@ -14,7 +14,7 @@ void StructuredMesh::setResolution(const uint &resolution) {
     this->resolution = resolution;
 }
 
-matrix<Quad>& StructuredMesh::getGrid() {
+matrix<Quad*>& StructuredMesh::getGrid() {
     return grid;
 }
 
@@ -28,11 +28,13 @@ void StructuredMesh::generate() {
 
     for (int i = 0; i < rows; i++) {
         for (int j = 0; j < columns; j++) {
-            if (isCenterInscribed(&initialPoint, i, j)) {
-                Quad quad = makeQuadFromPoint(&initialPoint, i, j);
+            Quad *quad = NULL;
 
-                grid.insert_element(i, j, quad);
+            if (isCenterInscribed(&initialPoint, i, j)) {
+                quad = makeQuadFromPoint(&initialPoint, i, j);
             }
+
+            grid.insert_element(i, j, quad);
         }
     }
 }
@@ -47,11 +49,17 @@ void StructuredMesh::buildDomain(const QString &filename) {
 }
 
 void StructuredMesh::clearGrid() {
+    for (ulong i = 0; i < grid.size1(); i++) {
+        for (ulong j = 0; j < grid.size2(); j++) {
+            delete grid(i, j);
+        }
+    }
+
     grid.clear();
 }
 
 void StructuredMesh::clear() {
-    grid.clear();
+    clearGrid();
     Mesh::clear();
 }
 
@@ -71,17 +79,17 @@ std::vector<ulong> StructuredMesh::calculateInitialPoints() {
     return points;
 }
 
-Quad StructuredMesh::makeQuadFromPoint(const Point *p, const int &i, const int &j) {
+Quad* StructuredMesh::makeQuadFromPoint(const Point *p, const int &i, const int &j) {
     Point a(p->x() + j * this->resolution, p->y() - i * this->resolution);
     Point b(a.x() + this->resolution, a.y());
     Point c(b.x(), b.y() - this->resolution);
     Point d(c.x() - this->resolution, c.y());
-    Quad quad;
+    Quad *quad = new Quad();
 
-    quad.push_back(a); //A
-    quad.push_back(b); //B
-    quad.push_back(c); //C
-    quad.push_back(d); //D
+    quad->push_back(a); //A
+    quad->push_back(b); //B
+    quad->push_back(c); //C
+    quad->push_back(d); //D
 
     return quad;
 }

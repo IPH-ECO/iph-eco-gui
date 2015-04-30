@@ -4,28 +4,44 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/Point_2.h>
+#include <QSet>
 
-#include "cell.h"
+#include "cell_info.h"
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Point_2<K> Point;
 
 class Quad : public CGAL::Polygon_2<K> {
 private:
-    Cell cell;
+    QSet<CellInfo*> cellInfoSet;
 
 public:
-    void setCell(const Cell &cell) {
-        this->cell = cell;
+    QSet<CellInfo*> getCellInfoSet() {
+        return cellInfoSet;
     }
 
-    Cell& getCell() {
-        return cell;
+    void addCellInfo(CellInfo *cellInfo) {
+        cellInfoSet.insert(cellInfo);
+    }
+
+    CellInfo* getCellInfo(GridInformationType &gridInformationType) {
+        for (QSet<CellInfo*>::const_iterator it = cellInfoSet.begin(); it != cellInfoSet.end(); it++) {
+            if ((*it)->getGridInformationType().getValue() == gridInformationType.getValue()) {
+                return *it;
+            }
+        }
+
+        return NULL;
     }
 
     Point centroid() {
+        if (this->size() != 4) {
+            //TODO: throw exception
+        }
+
         double x = ((*this)[1].x() - (*this)[0].x()) / 2.0;
         double y = ((*this)[3].y() - (*this)[0].y()) / 2.0;
+
         return Point(x, y);
     }
 };

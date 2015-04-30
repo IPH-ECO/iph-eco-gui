@@ -1,16 +1,16 @@
-#ifndef CELL_H
-#define CELL_H
+#ifndef CELL_INFO_H
+#define CELL_INFO_H
 
 #include "grid_information_type.h"
 
-class Cell {
+class CellInfo {
 private:
     GridInformationType gridInformationType;
     double weight;
 
 public:
-    Cell() {}
-    Cell(GridInformationType &gridInformationType, double &weight) : gridInformationType(gridInformationType), weight(weight) {}
+    CellInfo() {}
+    CellInfo(const GridInformationType &gridInformationType, double &weight) : gridInformationType(gridInformationType), weight(weight) {}
 
     void setGridInformationType(GridInformationType &gridInformationType) {
         this->gridInformationType = gridInformationType;
@@ -27,11 +27,7 @@ public:
     double getWeight() const {
         return weight;
     }
-
-    bool isValid() {
-        return gridInformationType.getValue() != GridInformationType::UNDEFINED;
-    }
 };
 
-#endif // CELL_H
+#endif // CELL_INFO_H
 

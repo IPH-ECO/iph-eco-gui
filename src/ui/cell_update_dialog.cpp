@@ -3,35 +3,44 @@
 
 #include <QMessageBox>
 
-CellUpdateDialog::CellUpdateDialog(QWidget *parent) :
-    QDialog(parent),
-    ui(new Ui::CellUpdateDialog)
+CellUpdateDialog::CellUpdateDialog(QWidget *parent, QSet<CellInfo*> &cellInfoSet) :
+    QDialog(parent), ui(new Ui::CellUpdateDialog), cellInfoSet(cellInfoSet)
 {
     ui->setupUi(this);
+    ui->tblGridInformation->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+
+    for (QSet<CellInfo*>::const_iterator it = cellInfoSet.begin(); it != cellInfoSet.end(); it++) {
+        int rowCount = ui->tblGridInformation->rowCount();
+        QTableWidgetItem *gridInformationItem = new QTableWidgetItem((*it)->getGridInformationType().toString());
+
+        gridInformationItem->setFlags(gridInformationItem->flags() & ~Qt::ItemIsEditable);
+        ui->tblGridInformation->insertRow(rowCount);
+        ui->tblGridInformation->setItem(rowCount, 0, gridInformationItem);
+        ui->tblGridInformation->setItem(rowCount, 1, new QTableWidgetItem(QString::number((*it)->getWeight())));
+    }
 }
 
 CellUpdateDialog::~CellUpdateDialog() {
     delete ui;
 }
 
-void CellUpdateDialog::setValues(QString gridInformationType, double weight) {
-    ui->lblGridInformation->setText(gridInformationType);
-    ui->edtWeight->setText(QString::number(weight));
-}
-
-double CellUpdateDialog::getWeight() {
-    return ui->edtWeight->text().toDouble();
-}
-
 void CellUpdateDialog::on_buttonBox_clicked(QAbstractButton *button) {
     if (ui->buttonBox->standardButton(button) == QDialogButtonBox::Save) {
-        if (ui->edtWeight->text().isEmpty()) {
-            QMessageBox::warning(this, tr("Grid Data"), tr("Invalid value."));
-            return;
-        }
-
         this->accept();
     } else {
         this->reject();
     }
+}
+
+QList<CellInfo> CellUpdateDialog::getCellInfoList() {
+    QList<CellInfo> cellInfoList;
+
+    for (int i = 0; i < ui->tblGridInformation->rowCount(); i++) {
+        QString gridInformationStr = ui->tblGridInformation->itemAt(0, i)->text();
+        double weight = ui->tblGridInformation->itemAt(1, i)->text().toDouble();
+
+        cellInfoList.push_back(CellInfo(GridInformationType::toGridInformationType(gridInformationStr), weight));
+    }
+
+    return cellInfoList;
 }

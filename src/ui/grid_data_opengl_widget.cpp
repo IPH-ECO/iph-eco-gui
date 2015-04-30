@@ -61,19 +61,19 @@ void GridDataOpenGLWidget::paintGL() {
     if (gridDataConfiguration->getShowMesh()) {
         if (dynamic_cast<UnstructuredMesh*>(mesh) == NULL) {
             StructuredMesh *structuredMesh = static_cast<StructuredMesh*>(mesh);
-            matrix<Quad> &grid = structuredMesh->getGrid();
+            matrix<Quad*> &grid = structuredMesh->getGrid();
 
             for (ulong i = 0; i < grid.size1(); i++) {
                 for (ulong j = 0; j < grid.size2(); j++) {
-                    Quad &quad = grid(i, j);
+                    Quad *quad = grid(i, j);
 
-                    if (quad.size() == 0) {
+                    if (quad == NULL || quad->is_empty()) {
                         continue;
                     }
 
                     glBegin(GL_LINE_LOOP);
-                    for (uint k = 0; k < quad.size(); k++) {
-                        Point point = quad[k];
+                    for (uint k = 0; k < quad->size(); k++) {
+                        Point point = (*quad)[k];
                         glVertex2d(point.x(), point.y());
                     }
                     glEnd();
@@ -151,17 +151,26 @@ void GridDataOpenGLWidget::mousePressEvent(QMouseEvent *event) {
     double ratioX = x / (double) this->width(), ratioY = y / (double) this->height();
     double mapWidth = right - left, mapHeight = top - bottom;
     Point realCoordinate(left + mapWidth * ratioX, top - mapHeight * ratioY);
-    Cell *cell = gridDataConfiguration->queryCell(realCoordinate);
+    QSet<CellInfo*> cellInfoSet = gridDataConfiguration->queryCells(realCoordinate);
 
-    if (cell != NULL) {
-        CellUpdateDialog *cellUpdateDialog = new CellUpdateDialog((QWidget*) this->parent());
-        cellUpdateDialog->setValues(cell->getGridInformationType().toString(), cell->getWeight());
+    if (!cellInfoSet.isEmpty()) {
+        CellUpdateDialog *cellUpdateDialog = new CellUpdateDialog((QWidget*) this->parent(), cellInfoSet);
 
         int exitCode = cellUpdateDialog->exec();
 
         if (exitCode == QDialog::Accepted) {
-            double weight = cellUpdateDialog->getWeight();
-            cell->setWeight(weight);
+            QList<CellInfo> cellInfoList = cellUpdateDialog->getCellInfoList();
+
+            for (int i = 0; i < cellInfoList.count(); i++) {
+                const CellInfo &cellInfo = cellInfoList.at(i);
+
+                for (QSet<CellInfo*>::iterator it = cellInfoSet.begin(); it != cellInfoSet.end(); it++) {
+                    if (cellInfo.getGridInformationType() == (*it)->getGridInformationType()) {
+                        (*it)->setWeight(cellInfo.getWeight());
+                        break;
+                    }
+                }
+            }
         }
     }
 }

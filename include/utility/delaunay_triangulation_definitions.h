@@ -9,19 +9,30 @@
 #include <CGAL/Delaunay_mesh_size_criteria_2.h>
 #include <CGAL/Delaunay_mesher_2.h>
 #include <CGAL/Polygon_2.h>
+#include <QSet>
 
-#include "include/domain/cell.h"
+#include "include/domain/cell_info.h"
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
 struct FaceInfo : public CGAL::Delaunay_mesh_face_base_2<K> {
-    Cell cell;
+    QSet<CellInfo*> cellInfoSet;
     int nestingLevel;
 
     FaceInfo() {}
 
     bool inDomain() {
         return nestingLevel % 2 == 1; //positive odd
+    }
+
+    CellInfo* getCellInfo(GridInformationType &gridInformationType) {
+        for (QSet<CellInfo*>::const_iterator it = cellInfoSet.begin(); it != cellInfoSet.end(); it++) {
+            if ((*it)->getGridInformationType().getValue() == gridInformationType.getValue()) {
+                return *it;
+            }
+        }
+
+        return NULL;
     }
 };
 
