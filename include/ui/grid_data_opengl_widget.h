@@ -6,10 +6,12 @@
 #include <QMouseEvent>
 
 #include "include/domain/grid_data_configuration.h"
+#include "include/ui/grid_data_dialog.h"
 
 class GridDataOpenGLWidget : public QOpenGLWidget, protected QOpenGLFunctions {
 private:
     GridDataConfiguration *gridDataConfiguration;
+    GridDataDialog *_parent;
     double left;
     double right;
     double bottom;
@@ -21,9 +23,10 @@ protected:
     void paintGL();
 
 public:
-    GridDataOpenGLWidget(QWidget *parent);
+    GridDataOpenGLWidget(QWidget *_parent);
 
     void setGridDataConfiguration(GridDataConfiguration *gridDataConfiguration);
+    void mouseMoveEvent(QMouseEvent *event);
     void mousePressEvent(QMouseEvent *event);
 };
 

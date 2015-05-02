@@ -75,7 +75,8 @@ HEADERS  += \
     include/ui/cell_update_dialog.h \
     include/domain/cell_info.h \
     include/domain/delaunay_triangulation_face.h \
-    include/utility/cgal_definitions.h
+    include/utility/cgal_definitions.h \
+    include/utility/opengl_util.h
 
 FORMS    += \
     include/ui/main_window.ui \

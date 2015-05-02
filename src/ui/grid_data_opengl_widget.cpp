@@ -7,12 +7,16 @@
 #include "include/utility/cgal_definitions.h"
 #include "include/domain/structured_mesh.h"
 #include "include/domain/unstructured_mesh.h"
-
-#include <QDebug>
+#include "include/utility/opengl_util.h"
 
 using boost::numeric::ublas::matrix;
 
-GridDataOpenGLWidget::GridDataOpenGLWidget(QWidget *parent) : QOpenGLWidget(parent), gridDataConfiguration(NULL), left(0), right(0), bottom(0), top(0) {}
+GridDataOpenGLWidget::GridDataOpenGLWidget(QWidget *parent) :
+    QOpenGLWidget(parent), gridDataConfiguration(NULL), left(0), right(0), bottom(0), top(0)
+{
+    this->_parent = static_cast<GridDataDialog*>(parent);
+    setMouseTracking(true);
+}
 
 void GridDataOpenGLWidget::initializeGL() {
     initializeOpenGLFunctions();
@@ -137,20 +141,22 @@ void GridDataOpenGLWidget::setGridDataConfiguration(GridDataConfiguration *gridD
     update();
 }
 
+void GridDataOpenGLWidget::mouseMoveEvent(QMouseEvent *event) {
+    Point realCoordinate = OpenGLUtil::mapCoordinate(this, event, left, right, top, bottom);
+
+    _parent->setRealCoordinate(realCoordinate);
+}
+
 void GridDataOpenGLWidget::mousePressEvent(QMouseEvent *event) {
     if (gridDataConfiguration == NULL || gridDataConfiguration->getMesh() == NULL) {
         return;
     }
 
-    int x = event->x(), y = event->y();
-    double ratioX = x / (double) this->width(), ratioY = y / (double) this->height();
-    double mapWidth = right - left, mapHeight = top - bottom;
-    Point realCoordinate(left + mapWidth * ratioX, top - mapHeight * ratioY);
+    Point realCoordinate = OpenGLUtil::mapCoordinate(this, event, left, right, top, bottom);
     QSet<CellInfo*> cellInfoSet = gridDataConfiguration->queryCells(realCoordinate);
 
     if (!cellInfoSet.isEmpty()) {
         CellUpdateDialog *cellUpdateDialog = new CellUpdateDialog((QWidget*) this->parent(), cellInfoSet);
-
         int exitCode = cellUpdateDialog->exec();
 
         if (exitCode == QDialog::Accepted) {

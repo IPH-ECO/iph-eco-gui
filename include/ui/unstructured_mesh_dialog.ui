@@ -44,7 +44,7 @@
        <item>
         <widget class="QLabel" name="lblUTMCoordinate">
          <property name="text">
-          <string>UTM: -</string>
+          <string>Easting: -, Northing: -</string>
          </property>
         </widget>
        </item>

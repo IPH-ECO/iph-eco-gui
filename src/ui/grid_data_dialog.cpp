@@ -45,6 +45,13 @@ GridDataDialog::~GridDataDialog() {
     delete ui;
 }
 
+void GridDataDialog::setRealCoordinate(const Point &point) {
+    QString x = QString::number(point.x(), 'f', 6);
+    QString y = QString::number(point.y(), 'f', 6);
+
+    ui->lblUTMCoordinate->setText(QString("Easting: %1, Northing: %2").arg(x).arg(y));
+}
+
 void GridDataDialog::on_cbxConfiguration_currentIndexChanged(const QString &configurationName) {
     ui->tblGridInformation->setRowCount(0);
 

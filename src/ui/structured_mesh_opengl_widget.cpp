@@ -3,12 +3,16 @@
 #include <QList>
 #include <boost/numeric/ublas/matrix.hpp>
 
-#include "include/utility/cgal_definitions.h"
+#include "include/utility/opengl_util.h"
 
 using boost::numeric::ublas::matrix;
 
 StructuredMeshOpenGLWidget::StructuredMeshOpenGLWidget(QWidget *parent) :
-    QOpenGLWidget(parent), mesh(NULL), left(0), right(0), bottom(0), top(0) {}
+    QOpenGLWidget(parent), mesh(NULL), left(0), right(0), bottom(0), top(0)
+{
+    this->parent = static_cast<StructuredMeshDialog*>(parent);
+    setMouseTracking(true);
+}
 
 void StructuredMeshOpenGLWidget::initializeGL() {
     initializeOpenGLFunctions();
@@ -116,7 +120,9 @@ void StructuredMeshOpenGLWidget::wheelEvent(QWheelEvent *event) {
 }
 
 void StructuredMeshOpenGLWidget::mouseMoveEvent(QMouseEvent *event) {
-//    qDebug() << "move";
+    Point realCoordinate = OpenGLUtil::mapCoordinate(this, event, left, right, top, bottom);
+
+    parent->setRealCoordinate(realCoordinate);
 }
 
 void StructuredMeshOpenGLWidget::mousePressEvent(QMouseEvent *event) {

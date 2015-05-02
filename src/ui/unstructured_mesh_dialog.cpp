@@ -38,6 +38,13 @@ UnstructuredMeshDialog::~UnstructuredMeshDialog() {
     delete ui;
 }
 
+void UnstructuredMeshDialog::setRealCoordinate(const Point &point) {
+    QString x = QString::number(point.x(), 'f', 6);
+    QString y = QString::number(point.y(), 'f', 6);
+
+    ui->lblUTMCoordinate->setText(QString("Easting: %1, Northing: %2").arg(x).arg(y));
+}
+
 void UnstructuredMeshDialog::on_btnBoundaryFileBrowser_clicked() {
     QString boundaryFilePath = QFileDialog::getOpenFileName(this, tr("Select a boundary file"), getDefaultDirectory(), "Keyhole Markup Language file (*.kml)");
 

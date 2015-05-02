@@ -20,6 +20,8 @@ public:
     explicit GridDataDialog(QWidget *parent = 0);
     ~GridDataDialog();
 
+    void setRealCoordinate(const Point &point);
+
 private slots:
     void on_cbxMesh_currentIndexChanged(const QString &meshName);
     void on_cbxConfiguration_currentIndexChanged(const QString &configurationName);
