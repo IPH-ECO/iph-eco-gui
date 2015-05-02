@@ -4,6 +4,7 @@
 #include "include/exceptions/database_exception.h"
 #include "include/application/iph_application.h"
 #include "include/ui/structured_mesh_dialog.h"
+#include "include/ui/grid_data_dialog.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -115,6 +116,12 @@ void MainWindow::on_actionStructuredMeshGeneration_triggered() {
     StructuredMeshDialog *structuredMeshDialog = new StructuredMeshDialog(this);
     structuredMeshDialog->setModal(true);
     structuredMeshDialog->show();
+}
+
+void MainWindow::on_actionGridData_triggered() {
+    GridDataDialog *gridDataDialog = new GridDataDialog(this);
+    gridDataDialog->setModal(true);
+    gridDataDialog->show();
 }
 
 void MainWindow::on_actionSobre_triggered() {

@@ -3,7 +3,7 @@
 #include <QList>
 #include <boost/numeric/ublas/matrix.hpp>
 
-#include "include/utility/delaunay_triangulation_definitions.h"
+#include "include/utility/cgal_definitions.h"
 
 using boost::numeric::ublas::matrix;
 
@@ -62,19 +62,19 @@ void StructuredMeshOpenGLWidget::paintGL() {
     }
 
     if (mesh->getShowMesh()) {
-        matrix<Polygon> &grid = mesh->getGrid();
+        matrix<Quad*> &grid = mesh->getGrid();
 
         for (ulong i = 0; i < grid.size1(); i++) {
             for (ulong j = 0; j < grid.size2(); j++) {
-                Polygon &quad = grid(i, j);
+                Quad *quad = grid(i, j);
 
-                if (quad.size() == 0) {
+                if (quad == NULL || quad->is_empty()) {
                     continue;
                 }
 
                 glBegin(GL_LINE_LOOP);
-                for (uint k = 0; k < quad.size(); k++) {
-                    glVertex2d(quad[k].x(), quad[k].y());
+                for (uint k = 0; k < quad->size(); k++) {
+                    glVertex2d((*quad)[k].x(), (*quad)[k].y());
                 }
                 glEnd();
             }
