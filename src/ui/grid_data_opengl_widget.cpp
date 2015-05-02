@@ -91,11 +91,6 @@ void GridDataOpenGLWidget::paintGL() {
 
                 for (int i = 0; i < 3; i++) {
                     CDT::Edge e(fit, i);
-
-                    if (cdt->is_constrained(e)) {
-                        continue;
-                    }
-
                     Point p1 = e.first->vertex((e.second + 1) % 3)->point();
                     Point p2 = e.first->vertex((e.second + 2) % 3)->point();
 

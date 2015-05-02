@@ -73,7 +73,8 @@ void GridData::buildData() {
     }
 
     QTextStream in(&inputFileHandle);
-    bool isDataSet = false;
+    QList<Point> dataPolygonTempList;
+    bool isPolygonDataSet = false;
 
     dataPoints.clear();
     dataPolygon.clear();
@@ -90,11 +91,15 @@ void GridData::buildData() {
                 GridDataPoint dataPoint(point, coordinate.at(2).toDouble());
                 dataPoints.insert(dataPoint);
             } else {
-                if (!isDataSet) {
+                if (!isPolygonDataSet) {
                     dataPolygon.setData(coordinate.at(2).toDouble());
-                    isDataSet = true;
+                    isPolygonDataSet = true;
                 }
-                dataPolygon.push_back(point);
+                // Avoid duplicates
+                if (!dataPolygonTempList.contains(point)) {
+                    dataPolygon.push_back(point);
+                    dataPolygonTempList.append(point);
+                }
             }
         }
     }

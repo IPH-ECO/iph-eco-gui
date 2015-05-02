@@ -18,7 +18,6 @@ public:
     QSet<CellInfo*>& getCellInfoSet();
     bool addCellInfo(CellInfo *cellInfo);
     CellInfo* getCellInfo(GridInformationType &gridInformationType);
-    Point centroid();
 };
 
 #endif // QUAD_H

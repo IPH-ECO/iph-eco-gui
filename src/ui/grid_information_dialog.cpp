@@ -47,7 +47,7 @@ void GridInformationDialog::on_rdoPolygon_toggled(bool checked) {
 }
 
 void GridInformationDialog::on_btnBrowseInputFile_clicked() {
-    QString gridDataFile = QFileDialog::getOpenFileName(this, tr("Select a grid data file"), getDefaultDirectory(), "XYZ files (*.xyz), Text Files (*.txt)");
+    QString gridDataFile = QFileDialog::getOpenFileName(this, tr("Select a grid data file"), getDefaultDirectory(), tr("XYZ files (*.xyz *.txt)"));
 
     ui->edtInputFile->setText(gridDataFile);
 }

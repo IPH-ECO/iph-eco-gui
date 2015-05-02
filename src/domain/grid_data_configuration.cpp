@@ -136,7 +136,9 @@ void GridDataConfiguration::processGridData(GridData *gridData) {
                 cellInfo = createCellInfoFromDataPolygon(centroid, gridData, dataPolygon);
             }
 
-            fit->info().addCellInfo(cellInfo);
+            if (cellInfo != NULL) {
+                fit->info().addCellInfo(cellInfo);
+            }
         }
     } else {
         StructuredMesh *structuredMesh = static_cast<StructuredMesh*>(mesh);
@@ -162,8 +164,6 @@ void GridDataConfiguration::processGridData(GridData *gridData) {
                 if (cellInfo != NULL) {
                     quad->addCellInfo(cellInfo);
                 }
-
-                return;
             }
         }
     }

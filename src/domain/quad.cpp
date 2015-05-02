@@ -28,14 +28,3 @@ CellInfo* Quad::getCellInfo(GridInformationType &gridInformationType) {
 
     return NULL;
 }
-
-Point Quad::centroid() {
-    if (this->size() != 4) {
-        //TODO: throw exception
-    }
-
-    double x = ((*this)[1].x() - (*this)[0].x()) / 2.0;
-    double y = ((*this)[3].y() - (*this)[0].y()) / 2.0;
-
-    return Point(x, y);
-}
