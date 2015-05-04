@@ -21,6 +21,8 @@ public:
     explicit StructuredMeshDialog(QWidget *parent = 0);
     ~StructuredMeshDialog();
 
+    void setRealCoordinate(const Point &point);
+
 private slots:
     void on_btnBoundaryFileBrowser_clicked();
     void on_btnAddIsland_clicked();

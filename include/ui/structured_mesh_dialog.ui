@@ -44,7 +44,7 @@
        <item>
         <widget class="QLabel" name="lblUTMCoordinate">
          <property name="text">
-          <string>UTM: -</string>
+          <string>Easting: -, Northing: -</string>
          </property>
         </widget>
        </item>
@@ -128,12 +128,18 @@
            <property name="enabled">
             <bool>true</bool>
            </property>
+           <property name="text">
+            <string/>
+           </property>
           </widget>
          </item>
          <item row="0" column="2" colspan="2">
           <widget class="QLineEdit" name="edtMeshName">
            <property name="enabled">
             <bool>true</bool>
+           </property>
+           <property name="text">
+            <string/>
            </property>
           </widget>
          </item>
@@ -157,6 +163,9 @@
            </property>
            <property name="maximum">
             <number>999999</number>
+           </property>
+           <property name="value">
+            <number>100</number>
            </property>
           </widget>
          </item>

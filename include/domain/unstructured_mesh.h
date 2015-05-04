@@ -1,7 +1,6 @@
 #ifndef UNSTRUCTUREDMESH_H
 #define UNSTRUCTUREDMESH_H
 
-#include "include/utility/delaunay_triangulation_definitions.h"
 #include "include/exceptions/mesh_exception.h"
 #include "mesh.h"
 

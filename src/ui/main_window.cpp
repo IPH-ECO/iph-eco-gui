@@ -4,6 +4,7 @@
 #include "include/exceptions/database_exception.h"
 #include "include/application/iph_application.h"
 #include "include/ui/structured_mesh_dialog.h"
+#include "include/ui/grid_data_dialog.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -93,9 +94,12 @@ void MainWindow::on_actionProjectProperties_triggered() {
 
 void MainWindow::on_actionCloseProject_triggered() {
     Project *project = IPHApplication::getCurrentProject();
+
     if (project != NULL && project->isDirty()) {
-        SaveOnCloseDialog saveOnCloseDialog(this, IPHApplication::getCurrentProject());
-        saveOnCloseDialog.exec();
+        if (QMessageBox::question(this, tr("Project has unsaved changes"), tr("Do you want to save the changes before closing the project?"))) {
+            ProjectService projectService;
+            projectService.save(project);
+        }
     }
 
     IPHApplication::setCurrentProject(0);
@@ -112,6 +116,12 @@ void MainWindow::on_actionStructuredMeshGeneration_triggered() {
     StructuredMeshDialog *structuredMeshDialog = new StructuredMeshDialog(this);
     structuredMeshDialog->setModal(true);
     structuredMeshDialog->show();
+}
+
+void MainWindow::on_actionGridData_triggered() {
+    GridDataDialog *gridDataDialog = new GridDataDialog(this);
+    gridDataDialog->setModal(true);
+    gridDataDialog->show();
 }
 
 void MainWindow::on_actionSobre_triggered() {
@@ -192,6 +202,7 @@ void MainWindow::closeEvent(QCloseEvent *closeEvent) {
 
 void MainWindow::updateRecentFilesList(const QString &filePath) {
     QStringList recentFilePaths = appSettings->value(RECENT_FILES_KEY).toStringList();
+
     recentFilePaths.removeAll(filePath);
     recentFilePaths.prepend(filePath);
 
@@ -205,6 +216,14 @@ void MainWindow::updateRecentFilesList(const QString &filePath) {
 
 void MainWindow::updateRecentFilesActionList() {
     QStringList recentFilePaths = appSettings->value(RECENT_FILES_KEY).toStringList();
+
+    QMutableStringListIterator i(recentFilePaths);
+    while (i.hasNext()) {
+        QFile file(i.next());
+        if (!file.exists()) {
+            i.remove();
+        }
+    }
 
     ui->menuOpenRecent->setEnabled(!recentFilePaths.isEmpty());
     ui->menuOpenRecent->clear();

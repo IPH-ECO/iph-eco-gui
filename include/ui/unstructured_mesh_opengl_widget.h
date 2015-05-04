@@ -9,14 +9,16 @@
 #include <QMutex>
 #include <QMutexLocker>
 
-#include "include/utility/delaunay_triangulation_definitions.h"
+#include "include/utility/cgal_definitions.h"
 #include "include/domain/mesh_polygon.h"
 #include "include/domain/unstructured_mesh.h"
 #include "include/exceptions/mesh_exception.h"
+#include "include/ui/unstructured_mesh_dialog.h"
 
 class UnstructuredMeshOpenGLWidget : public QOpenGLWidget, protected QOpenGLFunctions {
 private:
     UnstructuredMesh *mesh;
+    UnstructuredMeshDialog *parent;
     double left;
     double right;
     double bottom;

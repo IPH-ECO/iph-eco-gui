@@ -9,14 +9,16 @@
 #include <QMutex>
 #include <QMutexLocker>
 
-#include "include/utility/delaunay_triangulation_definitions.h"
+#include "include/utility/cgal_definitions.h"
 #include "include/domain/mesh_polygon.h"
 #include "include/domain/structured_mesh.h"
 #include "include/exceptions/mesh_exception.h"
+#include "include/ui/structured_mesh_dialog.h"
 
 class StructuredMeshOpenGLWidget : public QOpenGLWidget, protected QOpenGLFunctions {
 private:
     StructuredMesh *mesh;
+    StructuredMeshDialog *parent;
     double left;
     double right;
     double bottom;

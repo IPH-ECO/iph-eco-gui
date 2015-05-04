@@ -3,6 +3,9 @@
 #include <QList>
 #include <QPoint>
 
+#include "include/utility/cgal_definitions.h"
+#include "include/utility/opengl_util.h"
+
 UnstructuredMeshOpenGLWidget::UnstructuredMeshOpenGLWidget(QWidget *parent) :
     QOpenGLWidget(parent),
     mesh(NULL),
@@ -16,7 +19,8 @@ UnstructuredMeshOpenGLWidget::UnstructuredMeshOpenGLWidget(QWidget *parent) :
     xAtPress(0),
     yAtPress(0)
 {
-
+    this->parent = static_cast<UnstructuredMeshDialog*>(parent);
+    setMouseTracking(true);
 }
 
 void UnstructuredMeshOpenGLWidget::initializeGL() {
@@ -80,7 +84,7 @@ void UnstructuredMeshOpenGLWidget::paintGL() {
 
         glBegin(GL_LINES);
         for (CDT::Finite_faces_iterator fit = cdt->finite_faces_begin(); fit != cdt->finite_faces_end(); ++fit) {
-            if (!fit->info().in_domain()) {
+            if (!fit->info().isInDomain()) {
                 continue;
             }
 
@@ -136,7 +140,9 @@ void UnstructuredMeshOpenGLWidget::wheelEvent(QWheelEvent *event) {
 }
 
 void UnstructuredMeshOpenGLWidget::mouseMoveEvent(QMouseEvent *event) {
-//    qDebug() << "move";
+    Point realCoordinate = OpenGLUtil::mapCoordinate(this, event, left, right, top, bottom);
+
+    parent->setRealCoordinate(realCoordinate);
 }
 
 void UnstructuredMeshOpenGLWidget::mousePressEvent(QMouseEvent *event) {

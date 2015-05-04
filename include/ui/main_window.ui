@@ -29,7 +29,7 @@
      <x>0</x>
      <y>0</y>
      <width>805</width>
-     <height>22</height>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuProject">
@@ -72,7 +72,7 @@
     <property name="title">
      <string>Input</string>
     </property>
-    <addaction name="actionSimulation_Parameters"/>
+    <addaction name="actionGridData"/>
     <addaction name="actionInitial_Conditions"/>
     <addaction name="actionEnvironmental_Variables"/>
     <addaction name="actionSediment_Data"/>
@@ -225,7 +225,7 @@
     <string>Boundary Conditions</string>
    </property>
   </action>
-  <action name="actionSimulation_Parameters">
+  <action name="actionGridData">
    <property name="text">
     <string>Grid Data</string>
    </property>

@@ -17,15 +17,15 @@ UnstructuredMeshDialog::UnstructuredMeshDialog(QWidget *parent) :
     ui->unstructuredMeshOpenGLWidget->setMesh(unsavedMesh);
 
     appSettings = new QSettings(QApplication::organizationName(), QApplication::applicationName(), this);
-
     Project *project = IPHApplication::getCurrentProject();
     QSet<Mesh*> meshes = project->getMeshes();
 
-    for (QSet<Mesh*>::iterator i = meshes.begin(); i != meshes.end(); ++i) {
-        ui->cbxMeshName->addItem((*i)->getName());
+    for (QSet<Mesh*>::iterator it = meshes.begin(); it != meshes.end(); ++it) {
+        if (dynamic_cast<UnstructuredMesh*>(*it) != NULL) {
+            ui->cbxMeshName->addItem((*it)->getName());
+        }
     }
     ui->cbxMeshName->setCurrentIndex(-1);
-
     ui->lstCoordinateFiles->addItem(MeshPolygon::BOUNDARY_POLYGON_FILENAME);
 }
 
@@ -36,6 +36,13 @@ QString UnstructuredMeshDialog::getDefaultDirectory() {
 UnstructuredMeshDialog::~UnstructuredMeshDialog() {
     delete unsavedMesh;
     delete ui;
+}
+
+void UnstructuredMeshDialog::setRealCoordinate(const Point &point) {
+    QString x = QString::number(point.x(), 'f', 6);
+    QString y = QString::number(point.y(), 'f', 6);
+
+    ui->lblUTMCoordinate->setText(QString("Easting: %1, Northing: %2").arg(x).arg(y));
 }
 
 void UnstructuredMeshDialog::on_btnBoundaryFileBrowser_clicked() {
@@ -318,11 +325,19 @@ void UnstructuredMeshDialog::on_btnSaveMesh_clicked() {
         currentMesh->setShowDomainBoundary(showDomainBoundary);
         currentMesh->setShowMesh(showMesh);
 
+        //TODO: handle duplicity
         project->addMesh(currentMesh);
 
         ui->cbxMeshName->addItem(meshName);
         ui->cbxMeshName->setCurrentText(meshName);
     } else {
+        meshName = ui->edtMeshName->text();
+
+        if (meshName.isEmpty()) {
+            QMessageBox::warning(this, tr("Unstructured Mesh Generation"), tr("Mesh name can't be empty."));
+            return;
+        }
+
         currentMesh->setName(meshName);
         currentMesh->setDomain(domain);
         currentMesh->setCoordinatesDistance(coordinatesDistance);

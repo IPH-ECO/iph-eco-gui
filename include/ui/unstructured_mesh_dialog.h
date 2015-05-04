@@ -20,6 +20,8 @@ public:
     explicit UnstructuredMeshDialog(QWidget *parent = 0);
     ~UnstructuredMeshDialog();
 
+    void setRealCoordinate(const Point &point);
+
 private slots:
     // Domain tab events
     void on_btnBoundaryFileBrowser_clicked();
