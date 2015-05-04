@@ -9,7 +9,7 @@
 #include "include/utility/cgal_definitions.h"
 #include "cell_info.h"
 
-class Quad : public Polygon {
+class Quad : public CGALPolygon {
 private:
     QSet<CellInfo*> cellInfoSet;
 

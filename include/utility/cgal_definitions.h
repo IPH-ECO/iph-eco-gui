@@ -21,7 +21,7 @@ typedef CGAL::Triangulation_data_structure_2<Vb, Fb> Tds;
 typedef CGAL::Constrained_Delaunay_triangulation_2<K, Tds> CDT;
 typedef CGAL::Delaunay_mesh_size_criteria_2<CDT> Criteria;
 typedef CGAL::Delaunay_mesher_2<CDT, Criteria> Mesher;
-typedef CGAL::Polygon_2<K> Polygon;
+typedef CGAL::Polygon_2<K> CGALPolygon;
 typedef CDT::Point Point;
 
 #endif // CGAL_DEFINITIONS_H

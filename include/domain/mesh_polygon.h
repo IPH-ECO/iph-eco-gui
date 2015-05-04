@@ -3,7 +3,7 @@
 
 #include "include/utility/cgal_definitions.h"
 
-class MeshPolygon : public Polygon {
+class MeshPolygon : public CGALPolygon {
 public:
     enum MeshPolygonType { BOUNDARY, ISLAND, REFINEMENT_AREA };
 
