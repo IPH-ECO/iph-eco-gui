@@ -21,7 +21,6 @@ SOURCES += \
     src/ui/main_window.cpp \
     src/ui/new_project_dialog.cpp \
     src/ui/project_properties_dialog.cpp \
-    src/ui/save_on_close_dialog.cpp \
     src/utility/database_utility.cpp \
     src/exceptions/mesh_exception.cpp \
     src/domain/unstructured_mesh.cpp \
@@ -31,7 +30,18 @@ SOURCES += \
     src/ui/unstructured_mesh_opengl_widget.cpp \
     src/ui/structured_mesh_opengl_widget.cpp \
     src/domain/mesh_polygon.cpp \
-    src/ui/structured_mesh_dialog.cpp
+    src/ui/structured_mesh_dialog.cpp \
+    src/ui/grid_data_dialog.cpp \
+    src/domain/grid_data.cpp \
+    src/ui/grid_data_opengl_widget.cpp \
+    src/domain/grid_data_configuration.cpp \
+    src/exceptions/grid_data_exception.cpp \
+    src/ui/grid_information_dialog.cpp \
+    src/ui/cell_update_dialog.cpp \
+    src/domain/quad.cpp \
+    src/domain/cell_info.cpp \
+    src/domain/grid_information_type.cpp \
+    src/domain/delaunay_triangulation_face.cpp
 
 HEADERS  += \
     include/domain/project.h \
@@ -42,7 +52,6 @@ HEADERS  += \
     include/ui/main_window.h \
     include/ui/new_project_dialog.h \
     include/ui/project_properties_dialog.h \
-    include/ui/save_on_close_dialog.h \
     include/utility/database_utility.h \
     include/exceptions/mesh_exception.h \
     include/domain/unstructured_mesh.h \
@@ -51,17 +60,33 @@ HEADERS  += \
     include/ui/unstructured_mesh_dialog.h \
     include/ui/unstructured_mesh_opengl_widget.h \
     include/ui/structured_mesh_opengl_widget.h \
-    include/utility/delaunay_triangulation_definitions.h \
     include/domain/mesh_polygon.h \
-    include/ui/structured_mesh_dialog.h
+    include/ui/structured_mesh_dialog.h \
+    include/ui/grid_data_dialog.h \
+    include/domain/grid_data.h \
+    include/ui/grid_data_opengl_widget.h \
+    include/domain/grid_data_configuration.h \
+    include/exceptions/grid_data_exception.h \
+    include/domain/grid_data_point.h \
+    include/ui/grid_information_dialog.h \
+    include/domain/grid_data_polygon.h \
+    include/domain/quad.h \
+    include/domain/grid_information_type.h \
+    include/ui/cell_update_dialog.h \
+    include/domain/cell_info.h \
+    include/domain/delaunay_triangulation_face.h \
+    include/utility/cgal_definitions.h \
+    include/utility/opengl_util.h
 
 FORMS    += \
     include/ui/main_window.ui \
     include/ui/new_project_dialog.ui \
     include/ui/project_properties_dialog.ui \
     include/ui/unstructured_mesh_dialog.ui \
-    include/ui/save_on_close_dialog.ui \
-    include/ui/structured_mesh_dialog.ui
+    include/ui/structured_mesh_dialog.ui \
+    include/ui/grid_data_dialog.ui \
+    include/ui/grid_information_dialog.ui \
+    include/ui/cell_update_dialog.ui
 
 macx: QMAKE_CXXFLAGS += -Wno-redeclared-class-member -Wno-unused-parameter
 
@@ -89,10 +114,6 @@ macx: LIBS += -L/usr/local/Cellar/cgal/4.5.2/lib/ -lCGAL
 macx: INCLUDEPATH += /usr/local/Cellar/cgal/4.5.2/include
 macx: DEPENDPATH += /usr/local/Cellar/cgal/4.5.2/include
 
-
-RESOURCES += \
-    icons.qrc
-
 unix:!macx: QMAKE_CXXFLAGS += -frounding-math
 unix:!macx: LIBS += -L/usr/lib/ -lGeographic -lCGAL -lgmp -lmpfr -lboost_system -lboost_thread
 unix:!macx: INCLUDEPATH += /usr/include
@@ -101,35 +122,34 @@ unix:!macx: DEPENDPATH += /usr/include
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../pkg-vc10/GeographicLib-1.42/lib/ -lGeographic
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../pkg-vc10/GeographicLib-1.42/lib/ -lGeographicd
 
-INCLUDEPATH += $$PWD/../../../../../pkg-vc10/GeographicLib-1.42/include
-DEPENDPATH += $$PWD/../../../../../pkg-vc10/GeographicLib-1.42/include
+win32:CONFIG(release, debug|release): INCLUDEPATH += $$PWD/../../../../../pkg-vc10/GeographicLib-1.42/include
+win32:CONFIG(release, debug|release): DEPENDPATH += $$PWD/../../../../../pkg-vc10/GeographicLib-1.42/include
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../Program Files (x86)/Boost/lib/ -lboost_system-gcc49-mt-1_49
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../Program Files (x86)/Boost/lib/ -lboost_system-gcc49-mt-1_49d
 
-INCLUDEPATH += $$PWD/../../../../../"Program Files (x86)"/Boost/include
-DEPENDPATH += $$PWD/../../../../../"Program Files (x86)"/Boost/include
+win32:CONFIG(release, debug|release): INCLUDEPATH += $$PWD/../../../../../"Program Files (x86)"/Boost/include
+win32:CONFIG(release, debug|release): DEPENDPATH += $$PWD/../../../../../"Program Files (x86)"/Boost/include
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../Program Files (x86)/Boost/lib/ -lboost_thread-gcc49-mt-1_49
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../Program Files (x86)/Boost/lib/ -lboost_thread-gcc49-mt-1_49d
 
-INCLUDEPATH += $$PWD/../../../../../"Program Files (x86)"/Boost/include
-DEPENDPATH += $$PWD/../../../../../"Program Files (x86)"/Boost/include
+win32:CONFIG(release, debug|release): INCLUDEPATH += $$PWD/../../../../../"Program Files (x86)"/Boost/include
+win32:CONFIG(release, debug|release): DEPENDPATH += $$PWD/../../../../../"Program Files (x86)"/Boost/include
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../gmp/lib/ -lgmp
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../gmp/lib/ -lgmpd
 
-INCLUDEPATH += $$PWD/../../../../../gmp/include
-DEPENDPATH += $$PWD/../../../../../gmp/include
-
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../MpfrMpir/Static/Lib32/ -lmpfr
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../MpfrMpir/Static/Lib32/ -lmpfrd
 
-INCLUDEPATH += $$PWD/../../../../../MpfrMpir/Static/Mpfr
-DEPENDPATH += $$PWD/../../../../../MpfrMpir/Static/Mpfr
+win32:CONFIG(release, debug|release): INCLUDEPATH += $$PWD/../../../../../MpfrMpir/Static/Mpfr
+win32:CONFIG(release, debug|release): DEPENDPATH += $$PWD/../../../../../MpfrMpir/Static/Mpfr
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../Program Files (x86)/CGAL/lib/ -lCGAL
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../Program Files (x86)/CGAL/lib/ -lCGALd
 
-INCLUDEPATH += $$PWD/../../../../../"Program Files (x86)"/CGAL/include
-DEPENDPATH += $$PWD/../../../../../"Program Files (x86)"/CGAL/include
+win32:CONFIG(release, debug|release): INCLUDEPATH += $$PWD/../../../../../"Program Files (x86)"/CGAL/include
+win32:CONFIG(release, debug|release): DEPENDPATH += $$PWD/../../../../../"Program Files (x86)"/CGAL/include
+
+RESOURCES += icons.qrc
