@@ -1,5 +1,5 @@
-#ifndef IPHAPPLICATION
-#define IPHAPPLICATION
+#ifndef IPH_APPLICATION
+#define IPH_APPLICATION
 
 #include <QApplication>
 
@@ -19,4 +19,4 @@ public:
 
 };
 
-#endif // IPHAPPLICATION
+#endif // IPH_APPLICATION

@@ -13,6 +13,19 @@ public:
 
         return Point(left + mapWidth * ratioX, top - mapHeight * ratioY);
     }
+
+    static QVector<double> convertToRGB(const double &color) {
+        QVector<double> rgb;
+        double r = color / 10;
+        double g = color / 100;
+        double b = color / 1000;
+
+        rgb.append(r);
+        rgb.append(g);
+        rgb.append(b);
+
+        return rgb;
+    }
 };
 
 #endif // OPENGL_UTIL_H

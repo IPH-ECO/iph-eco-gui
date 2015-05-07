@@ -90,17 +90,14 @@ FORMS    += \
 
 macx: QMAKE_CXXFLAGS += -Wno-redeclared-class-member -Wno-unused-parameter
 
+macx: INCLUDEPATH += /usr/local/Cellar/boost/1.57.0/include
+macx: DEPENDPATH += /usr/local/Cellar/boost/1.57.0/include
+macx: LIBS += -L/usr/local/Cellar/boost/1.57.0/lib/ -lboost_system
+macx: LIBS += -L/usr/local/Cellar/boost/1.57.0/lib/ -lboost_thread-mt
+
 macx: LIBS += -L/usr/local/Cellar/geographiclib/1.40/lib/ -lGeographic
 macx: INCLUDEPATH += /usr/local/Cellar/geographiclib/1.40/include
 macx: DEPENDPATH += /usr/local/Cellar/geographiclib/1.40/include
-
-macx: LIBS += -L/usr/local/Cellar/boost/1.57.0/lib/ -lboost_system
-macx: INCLUDEPATH += /usr/local/Cellar/boost/1.57.0/include
-macx: DEPENDPATH += /usr/local/Cellar/boost/1.57.0/include
-
-macx: LIBS += -L/usr/local/Cellar/boost/1.57.0/lib/ -lboost_thread-mt
-macx: INCLUDEPATH += /usr/local/Cellar/boost/1.57.0/include
-macx: DEPENDPATH += /usr/local/Cellar/boost/1.57.0/include
 
 macx: LIBS += -L/usr/local/Cellar/gmp/6.0.0a/lib/ -lgmp
 macx: INCLUDEPATH += /usr/local/Cellar/gmp/6.0.0a/include
@@ -119,37 +116,7 @@ unix:!macx: LIBS += -L/usr/lib/ -lGeographic -lCGAL -lgmp -lmpfr -lboost_system 
 unix:!macx: INCLUDEPATH += /usr/include
 unix:!macx: DEPENDPATH += /usr/include
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../pkg-vc10/GeographicLib-1.42/lib/ -lGeographic
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../pkg-vc10/GeographicLib-1.42/lib/ -lGeographicd
-
-win32:CONFIG(release, debug|release): INCLUDEPATH += $$PWD/../../../../../pkg-vc10/GeographicLib-1.42/include
-win32:CONFIG(release, debug|release): DEPENDPATH += $$PWD/../../../../../pkg-vc10/GeographicLib-1.42/include
-
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../Program Files (x86)/Boost/lib/ -lboost_system-gcc49-mt-1_49
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../Program Files (x86)/Boost/lib/ -lboost_system-gcc49-mt-1_49d
-
-win32:CONFIG(release, debug|release): INCLUDEPATH += $$PWD/../../../../../"Program Files (x86)"/Boost/include
-win32:CONFIG(release, debug|release): DEPENDPATH += $$PWD/../../../../../"Program Files (x86)"/Boost/include
-
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../Program Files (x86)/Boost/lib/ -lboost_thread-gcc49-mt-1_49
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../Program Files (x86)/Boost/lib/ -lboost_thread-gcc49-mt-1_49d
-
-win32:CONFIG(release, debug|release): INCLUDEPATH += $$PWD/../../../../../"Program Files (x86)"/Boost/include
-win32:CONFIG(release, debug|release): DEPENDPATH += $$PWD/../../../../../"Program Files (x86)"/Boost/include
-
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../gmp/lib/ -lgmp
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../gmp/lib/ -lgmpd
-
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../MpfrMpir/Static/Lib32/ -lmpfr
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../MpfrMpir/Static/Lib32/ -lmpfrd
-
-win32:CONFIG(release, debug|release): INCLUDEPATH += $$PWD/../../../../../MpfrMpir/Static/Mpfr
-win32:CONFIG(release, debug|release): DEPENDPATH += $$PWD/../../../../../MpfrMpir/Static/Mpfr
-
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../Program Files (x86)/CGAL/lib/ -lCGAL
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../Program Files (x86)/CGAL/lib/ -lCGALd
-
-win32:CONFIG(release, debug|release): INCLUDEPATH += $$PWD/../../../../../"Program Files (x86)"/CGAL/include
-win32:CONFIG(release, debug|release): DEPENDPATH += $$PWD/../../../../../"Program Files (x86)"/CGAL/include
+win32: INCLUDEPATH =+ C:\Qt\Qt5.4.1\Tools\mingw491_32\include
+win32: LIBS += -lboost_thread-mgw49-mt-1_58 -lboost_system-mgw49-mt-1_58 -lgmp -lmpfr -lGeographic -lCGAL
 
 RESOURCES += icons.qrc
