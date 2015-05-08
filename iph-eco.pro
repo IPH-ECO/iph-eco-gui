@@ -117,6 +117,12 @@ unix:!macx: INCLUDEPATH += /usr/include
 unix:!macx: DEPENDPATH += /usr/include
 
 win32: INCLUDEPATH =+ C:\Qt\Qt5.4.1\Tools\mingw491_32\include
-win32: LIBS += -lboost_thread-mgw49-mt-1_58 -lboost_system-mgw49-mt-1_58 -lgmp -lmpfr -lGeographic -lCGAL
+win32 {
+  standardboost {
+    LIBS += -lboost_thread_win32-mt -lboost_system-mt -lgmp -lmpfr -lGeographic -lCGAL
+  } else {
+    LIBS += -lboost_thread-mgw49-mt-1_58 -lboost_system-mgw49-mt-1_58 -lgmp -lmpfr -lGeographic -lCGAL
+  }
+}
 
 RESOURCES += icons.qrc
