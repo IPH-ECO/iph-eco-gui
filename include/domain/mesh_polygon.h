@@ -1,6 +1,7 @@
 #ifndef MESH_POLYGON_H
 #define MESH_POLYGON_H
 
+#include <QString>
 #include "include/utility/cgal_definitions.h"
 
 class MeshPolygon : public CGALPolygon {

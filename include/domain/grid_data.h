@@ -4,8 +4,8 @@
 #include <QObject>
 #include <QSet>
 #include "grid_information_type.h"
-#include "grid_data_point.h"
 #include "grid_data_polygon.h"
+#include "grid_data_point.h"
 
 class GridData : public QObject {
     Q_OBJECT
@@ -21,6 +21,8 @@ private:
     bool show;
     QSet<GridDataPoint> dataPoints;
     GridDataPolygon dataPolygon;
+    double minValue;
+    double maxValue;
 
 public:
     GridData();
@@ -38,6 +40,8 @@ public:
     bool getShow() const;
     QSet<GridDataPoint>& getGridDataPoints();
     GridDataPolygon& getGridDataPolygon();
+    double getMinValue() const;
+    double getMaxValue() const;
 
     void buildData();
     void copy(GridData &srcGridData);

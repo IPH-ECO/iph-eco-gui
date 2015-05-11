@@ -65,6 +65,14 @@ GridDataPolygon& GridData::getGridDataPolygon() {
     return this->dataPolygon;
 }
 
+double GridData::getMinValue() const {
+    return minValue;
+}
+
+double GridData::getMaxValue() const {
+    return maxValue;
+}
+
 void GridData::buildData() {
     QFile inputFileHandle(inputFile);
 
@@ -74,7 +82,7 @@ void GridData::buildData() {
 
     QTextStream in(&inputFileHandle);
     QList<Point> dataPolygonTempList;
-    bool isPolygonDataSet = false;
+    bool isPolygonDataSet = false, isMinValueSet = false, isMaxValueSet = false;
 
     dataPoints.clear();
     dataPolygon.clear();
@@ -86,9 +94,19 @@ void GridData::buildData() {
         if (coordinate.count() == 3) {
             GeographicLib::GeoCoords utmCoordinate(coordinate.at(1).toDouble(), coordinate.at(0).toDouble());
             Point point(utmCoordinate.Easting(), utmCoordinate.Northing());
+            double data = coordinate.at(2).toDouble();
+
+            if (!isMinValueSet || data < minValue) {
+                minValue = data;
+                isMinValueSet = true;
+            }
+            if (!isMaxValueSet || data > maxValue) {
+                maxValue = data;
+                isMaxValueSet = true;
+            }
 
             if (this->gridInputType == GridData::POINT) {
-                GridDataPoint dataPoint(point, coordinate.at(2).toDouble());
+                GridDataPoint dataPoint(point, data);
                 dataPoints.insert(dataPoint);
             } else {
                 if (!isPolygonDataSet) {
@@ -116,6 +134,8 @@ void GridData::copy(GridData &srcGridData) {
     this->gridInformationType = srcGridData.getGridInformationType();
     this->inputFile = srcGridData.getInputFile();
     this->show = srcGridData.getShow();
+    this->minValue = srcGridData.getMinValue();
+    this->maxValue = srcGridData.getMaxValue();
 
     if (srcGridData.getGridInputType() == POINT) {
         this->exponent = srcGridData.getExponent();

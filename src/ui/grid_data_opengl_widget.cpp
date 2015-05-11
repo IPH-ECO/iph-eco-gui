@@ -8,6 +8,7 @@
 #include "include/domain/structured_mesh.h"
 #include "include/domain/unstructured_mesh.h"
 #include "include/utility/opengl_util.h"
+#include "include/domain/grid_information_type.h"
 
 using boost::numeric::ublas::matrix;
 
@@ -75,11 +76,21 @@ void GridDataOpenGLWidget::paintGL() {
                         continue;
                     }
 
-                    glBegin(GL_LINE_LOOP);
-                    for (uint k = 0; k < quad->size(); k++) {
-                        Point point = (*quad)[k];
-                        glVertex2d(point.x(), point.y());
+                    QSet<CellInfo*> cells = quad->getCellInfoSet();
+
+                    for (QSet<CellInfo*>::const_iterator it = cells.begin(); it != cells.end(); it++) {
+                        if ((*it)->getGridInformationType().getValue() == GridInformationType::BATHYMETRY) {
+                            double *color = OpenGLUtil::convertToRGB(*it);
+                            glColor3d(color[0], color[1], color[2]);
+                            break;
+                        }
                     }
+
+                    glBegin(GL_QUADS);
+                    glVertex2d((*quad)[0].x(), (*quad)[0].y());
+                    glVertex2d((*quad)[1].x(), (*quad)[1].y());
+                    glVertex2d((*quad)[2].x(), (*quad)[2].y());
+                    glVertex2d((*quad)[3].x(), (*quad)[3].y());
                     glEnd();
                 }
             }
@@ -87,20 +98,27 @@ void GridDataOpenGLWidget::paintGL() {
             UnstructuredMesh *unstructuredMesh = static_cast<UnstructuredMesh*>(mesh);
             const CDT *cdt = unstructuredMesh->getCDT();
 
-            glBegin(GL_LINES);
+            glBegin(GL_TRIANGLES);
             for (CDT::Finite_faces_iterator fit = cdt->finite_faces_begin(); fit != cdt->finite_faces_end(); ++fit) {
                 if (!fit->info().isInDomain()) {
                     continue;
                 }
 
-                for (int i = 0; i < 3; i++) {
-                    CDT::Edge e(fit, i);
-                    Point p1 = e.first->vertex((e.second + 1) % 3)->point();
-                    Point p2 = e.first->vertex((e.second + 2) % 3)->point();
+                QSet<CellInfo*> cells = fit->info().getCellInfoSet();
 
-                    glVertex2f(p1.x(), p1.y());
-                    glVertex2f(p2.x(), p2.y());
+                for (QSet<CellInfo*>::const_iterator it = cells.begin(); it != cells.end(); it++) {
+                    if ((*it)->getGridInformationType().getValue() == GridInformationType::BATHYMETRY) {
+                        double *color = OpenGLUtil::convertToRGB(*it);
+                        glColor3d(color[0], color[1], color[2]);
+                        break;
+                    }
                 }
+
+                CGAL::Triangle_2<K> triangle = cdt->triangle(fit);
+
+                glVertex2d(triangle[0].x(), triangle[0].y());
+                glVertex2d(triangle[1].x(), triangle[1].y());
+                glVertex2d(triangle[2].x(), triangle[2].y());
             }
             glEnd();
         }

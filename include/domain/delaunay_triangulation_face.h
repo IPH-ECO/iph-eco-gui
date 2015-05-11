@@ -6,9 +6,10 @@
 #include <CGAL/Delaunay_mesh_face_base_2.h>
 #include <QSet>
 
-#include "cell_info.h"
-
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
+
+#include "cell_info.h"
+#include "grid_information_type.h"
 
 class DelaunayTriangulationFace : public CGAL::Delaunay_mesh_face_base_2<K> {
 private:

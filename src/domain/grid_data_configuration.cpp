@@ -7,7 +7,7 @@
 #include "include/domain/structured_mesh.h"
 #include "include/exceptions/grid_data_exception.h"
 
-GridDataConfiguration::GridDataConfiguration() : showMesh(true) {}
+GridDataConfiguration::GridDataConfiguration() : mesh(NULL), showMesh(true) {}
 
 GridDataConfiguration::~GridDataConfiguration() {
     for (int i = 0; i < gridDataVector.size(); i++) {
@@ -91,7 +91,7 @@ CellInfo* GridDataConfiguration::createCellInfoFromDataPoints(Point &centroid, G
         weight = inverseOfDistance(gridData, tempDataPoints, centroid);
     }
 
-    return new CellInfo(gridInformationType, weight);
+    return new CellInfo(gridData, gridInformationType, weight);
 }
 
 CellInfo* GridDataConfiguration::createCellInfoFromDataPolygon(Point &centroid, GridData *gridData, GridDataPolygon &dataPolygon) {
@@ -99,7 +99,7 @@ CellInfo* GridDataConfiguration::createCellInfoFromDataPolygon(Point &centroid, 
 
     if (dataPolygon.bounded_side(centroid) == CGAL::ON_BOUNDED_SIDE) {
         double weight = dataPolygon.getData();
-        return new CellInfo(gridInformationType, weight);
+        return new CellInfo(gridData, gridInformationType, weight);
     }
 
     return NULL;

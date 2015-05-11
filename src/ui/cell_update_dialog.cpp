@@ -39,7 +39,8 @@ QList<CellInfo> CellUpdateDialog::getCellInfoList() {
         QString gridInformationStr = ui->tblGridValues->item(i, 0)->text();
         double weight = ui->tblGridValues->item(i, 1)->text().toDouble();
 
-        cellInfoList.push_back(CellInfo(GridInformationType::toGridInformationType(gridInformationStr), weight));
+        //FIX: Set grid data properly
+        cellInfoList.push_back(CellInfo(NULL, GridInformationType::toGridInformationType(gridInformationStr), weight));
     }
 
     return cellInfoList;
