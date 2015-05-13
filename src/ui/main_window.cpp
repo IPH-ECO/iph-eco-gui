@@ -192,12 +192,26 @@ void MainWindow::openProject(const QString &filename) {
 }
 
 void MainWindow::closeEvent(QCloseEvent *closeEvent) {
-//    if (maybeSave()) { //TODO vai ser usado na ISSUE 11        
-        writeSettings();
-        closeEvent->accept();
-//    } else {
-//        event->ignore();
-//    }
+    Project *project = IPHApplication::getCurrentProject();
+
+    if (project != NULL) {
+        if (project->isDirty()) {
+            QMessageBox::StandardButton button =
+                    QMessageBox::question(this, tr("IPH-ECO"), tr("The project has unsaved changes. Would you like to save these changes?"), QMessageBox::Cancel | QMessageBox::No | QMessageBox::Yes, QMessageBox::Yes);
+
+            if (button == QMessageBox::Yes) {
+                //TODO: Save project changes
+            } else {
+                if (button == QMessageBox::Cancel) {
+                    closeEvent->ignore();
+                    return;
+                }
+            }
+
+            writeSettings();
+            closeEvent->accept();
+        }
+    }
 }
 
 void MainWindow::updateRecentFilesList(const QString &filePath) {
