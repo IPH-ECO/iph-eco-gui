@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Installer>
+  <Name>IPH-Eco</Name>
+  <Version>1.0.0</Version>
+  <Title>Instalador do IPH-Eco</Title>
+  <Publisher>4TechLabs</Publisher>
+  <StartMenuDir>IPH-Eco</StartMenuDir>
+  <TargetDir>@HomeDir@/IPH-Eco</TargetDir>
+</Installer>

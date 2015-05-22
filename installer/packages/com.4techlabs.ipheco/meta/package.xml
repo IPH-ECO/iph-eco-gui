@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<Package>
+  <DisplayName>IPH-Eco</DisplayName>
+  <Description>Description of what IPH-Eco is about</Description>
+  <Description xml:lang="pt_BR">Descrição do IPH-Eco em português</Description>
+  <Version>1.0.0</Version>
+  <ReleaseDate>2015-05-20</ReleaseDate>
+  <Name>com.4techlabs.ipheco</Name>
+  <Virtual>false</Virtual>
+  <Licenses>
+    <License name="License Agreement" file="license.txt" />
+  </Licenses>
+  <ForcedInstallation>true</ForcedInstallation>
+  <Script>installscript.qs</Script>
+</Package>
