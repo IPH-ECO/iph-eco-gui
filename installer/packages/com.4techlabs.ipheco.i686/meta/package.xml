@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package>
+    <DisplayName>Suporte a i686</DisplayName>
+    <Description>Binaries that require a x86 CPU.</Description>
+    <Description xml:lang="pt_BR">Produto para processadores x86</Description>
+    <Version>1.0.0-1</Version>
+    <ReleaseDate>2015-05-20</ReleaseDate>
+</Package>
