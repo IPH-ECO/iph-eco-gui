@@ -6,8 +6,12 @@
 #include <vtkPolygon.h>
 #include <vtkCellArray.h>
 #include <vtkTriangleFilter.h>
-#include <vtkPropPicker.h>
-#include <QDebug>
+#include <vtkRenderWindowInteractor.h>
+
+#include "include/ui/unstructured_mesh_dialog.h"
+#include "include/utility/mouse_interactor.h"
+
+vtkStandardNewMacro(MouseInteractor);
 
 UnstructuredMeshVTKWidget::UnstructuredMeshVTKWidget(QWidget *parent) : QVTKWidget(parent) {
 //    polyDataMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
@@ -22,17 +26,6 @@ UnstructuredMeshVTKWidget::~UnstructuredMeshVTKWidget() {
 //    renderWindow->Delete();
 //    actor->Delete();
 //    polyDataMapper->Delete();
-}
-
-void UnstructuredMeshVTKWidget::OnMouseClick() {
-    int* mousePosition = ((vtkInteractorStyleTrackballCamera*) this)->GetInteractor()->GetEventPosition();
-    vtkSmartPointer<vtkPropPicker> picker = vtkSmartPointer<vtkPropPicker>::New();
-
-    picker->Pick(mousePosition[0], mousePosition[1], 0, ((vtkInteractorStyleTrackballCamera*) this)->GetDefaultRenderer());
-
-    double *worldPosition = picker->GetPickPosition();
-
-    qDebug() << worldPosition[0] << " " << worldPosition[1];
 }
 
 void UnstructuredMeshVTKWidget::setMesh(UnstructuredMesh *mesh) {
@@ -87,11 +80,21 @@ void UnstructuredMeshVTKWidget::setMesh(UnstructuredMesh *mesh) {
     vtkSmartPointer<vtkRenderWindow> renderWindow = vtkSmartPointer<vtkRenderWindow>::New();
 
     renderWindow->AddRenderer(renderer);
+
+    vtkSmartPointer<vtkRenderWindowInteractor> renderWindowInteractor = vtkSmartPointer<vtkRenderWindowInteractor>::New();
+    renderWindowInteractor->SetRenderWindow(renderWindow);
+
+    vtkSmartPointer<MouseInteractor> mouseInteractor = vtkSmartPointer<MouseInteractor>::New();
+    mouseInteractor->SetDefaultRenderer(renderer);
+    UnstructuredMeshDialog *parent = (UnstructuredMeshDialog*) this->parent();
+    QObject::connect(mouseInteractor, SIGNAL(coordinateChanged(double&, double&)), this->parent(), SLOT(setCoordinate(double&, double&)));
+
+    renderWindowInteractor->SetInteractorStyle(mouseInteractor);
+
     renderer->AddActor(actor);
     renderer->ResetCamera();
 
-    renderWindow->Start();
-
     this->SetRenderWindow(renderWindow);
-    this->show();
+
+    renderWindow->Render();
 }

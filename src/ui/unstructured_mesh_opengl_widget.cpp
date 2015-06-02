@@ -139,11 +139,7 @@ void UnstructuredMeshOpenGLWidget::wheelEvent(QWheelEvent *event) {
     update();
 }
 
-void UnstructuredMeshOpenGLWidget::mouseMoveEvent(QMouseEvent *event) {
-    Point realCoordinate = OpenGLUtil::mapCoordinate(this, event, left, right, top, bottom);
-
-    parent->setRealCoordinate(realCoordinate);
-}
+void UnstructuredMeshOpenGLWidget::mouseMoveEvent(QMouseEvent *event) {}
 
 void UnstructuredMeshOpenGLWidget::mousePressEvent(QMouseEvent *event) {
 //    qDebug() << "press";

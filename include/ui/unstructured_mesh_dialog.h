@@ -20,7 +20,8 @@ public:
     explicit UnstructuredMeshDialog(QWidget *parent = 0);
     ~UnstructuredMeshDialog();
 
-    void setRealCoordinate(const Point &point);
+public slots:
+    void setCoordinate(double &x, double &y);
 
 private slots:
     // Domain tab events

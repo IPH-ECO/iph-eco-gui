@@ -15,5 +15,5 @@ include(${VTK_USE_FILE})
 
 file(GLOB_RECURSE SOURCES src/main.cpp src/*.cpp include/*.h icons.qrc)
 
-add_executable(ipheco ${SOURCES})
-target_link_libraries(ipheco ${VTK_LIBRARIES} Qt5::Widgets Qt5::Sql CGAL Geographic gmp mpfr boost_system boost_thread-mt)
+add_executable(iph-eco ${SOURCES})
+target_link_libraries(iph-eco ${VTK_LIBRARIES} Qt5::Widgets Qt5::Sql CGAL Geographic gmp mpfr boost_system boost_thread-mt)
