@@ -41,7 +41,8 @@ SOURCES += \
     src/domain/quad.cpp \
     src/domain/cell_info.cpp \
     src/domain/grid_information_type.cpp \
-    src/domain/delaunay_triangulation_face.cpp
+    src/domain/delaunay_triangulation_face.cpp \
+    src/ui/unstructured_mesh_vtk_widget.cpp
 
 HEADERS  += \
     include/domain/project.h \
@@ -76,7 +77,8 @@ HEADERS  += \
     include/domain/cell_info.h \
     include/domain/delaunay_triangulation_face.h \
     include/utility/cgal_definitions.h \
-    include/utility/opengl_util.h
+    include/utility/opengl_util.h \
+    include/ui/unstructured_mesh_vtk_widget.h
 
 FORMS    += \
     include/ui/main_window.ui \
@@ -92,8 +94,26 @@ macx: QMAKE_CXXFLAGS += -Wno-redeclared-class-member -Wno-unused-parameter
 
 macx: INCLUDEPATH += /usr/local/Cellar/boost/1.57.0/include
 macx: DEPENDPATH += /usr/local/Cellar/boost/1.57.0/include
-macx: LIBS += -L/usr/local/Cellar/boost/1.57.0/lib/ -lboost_system
-macx: LIBS += -L/usr/local/Cellar/boost/1.57.0/lib/ -lboost_thread-mt
+macx: LIBS += -L/usr/local/Cellar/boost/1.57.0/lib/ -lboost_system -lboost_thread-mt
+
+macx: INCLUDEPATH += /usr/local/include/vtk-6.2
+macx: LIBS += -L/usr/local/lib -lvtkCommonCore-6.2 \
+        -lvtkCommonExecutionModel-6.2 \
+        -lvtkViewsCore-6.2 \
+        #-lvtkViewsQt-6.2 \
+        -lvtkRenderingCore-6.2 \
+        #-lvtkRenderingQt-6.2 \
+        -lvtkGUISupportQt-6.2 \
+        -lvtkFiltersSources-6.2 \
+#        -lvtkRenderingVolume-6.2 \
+        -lvtkCommonDataModel-6.2 \
+        -lvtkRenderingOpenGL-6.2 \
+        -lvtkRenderingVolumeOpenGL-6.2 \
+        -lvtkInteractionStyle-6.2 \
+        -lvtkIOLegacy-6.2 \
+        -lvtkFiltersCore-6.2
+        #-lvtkRenderingFreeType-6.2 \
+        #-lvtkRenderingFreeTypeOpenGL-6.2
 
 macx: LIBS += -L/usr/local/Cellar/geographiclib/1.40/lib/ -lGeographic
 macx: INCLUDEPATH += /usr/local/Cellar/geographiclib/1.40/include

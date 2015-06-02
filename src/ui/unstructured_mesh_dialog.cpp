@@ -5,6 +5,9 @@
 
 #include "include/application/iph_application.h"
 #include "include/exceptions/mesh_exception.h"
+#include "include/ui/unstructured_mesh_vtk_widget.h"
+
+vtkStandardNewMacro(UnstructuredMeshVTKWidget)
 
 UnstructuredMeshDialog::UnstructuredMeshDialog(QWidget *parent) :
     QDialog(parent),
@@ -14,7 +17,7 @@ UnstructuredMeshDialog::UnstructuredMeshDialog(QWidget *parent) :
     currentMesh(unsavedMesh)
 {
     ui->setupUi(this);
-    ui->unstructuredMeshOpenGLWidget->setMesh(unsavedMesh);
+//    ui->unstructuredMeshVTKWidget->setMesh(unsavedMesh);
 
     appSettings = new QSettings(QApplication::organizationName(), QApplication::applicationName(), this);
     Project *project = IPHApplication::getCurrentProject();
@@ -87,7 +90,7 @@ void UnstructuredMeshDialog::on_btnAddIsland_clicked() {
 
         currentMesh->addMeshPolygon(islandPolygon);
         ui->lstIslands->addItem(islandFile);
-        ui->unstructuredMeshOpenGLWidget->update();
+        ui->unstructuredMeshVTKWidget->update();
     } catch (MeshException &ex) {
         QMessageBox::critical(this, tr("Unstructured Mesh Generation"), ex.what());
     }
@@ -114,7 +117,7 @@ void UnstructuredMeshDialog::on_btnRemoveIsland_clicked() {
             }
 
             ui->lstIslands->takeItem(ui->lstIslands->currentRow());
-            ui->unstructuredMeshOpenGLWidget->update();
+            ui->unstructuredMeshVTKWidget->update();
         }
     }
 }
@@ -124,10 +127,10 @@ void UnstructuredMeshDialog::on_btnGenerateDomain_clicked() {
     double coordinatesDistance = ui->sbxCoordinatesDistance->value();
 
     currentMesh->setCoordinatesDistance(coordinatesDistance);
-    ui->unstructuredMeshOpenGLWidget->setMesh(currentMesh);
 
     try {
-        ui->unstructuredMeshOpenGLWidget->buildDomain(boundaryFilePath);
+        currentMesh->buildDomain(boundaryFilePath);
+        ui->unstructuredMeshVTKWidget->setMesh(currentMesh);
     } catch(MeshException &e) {
         QMessageBox::critical(this, tr("Unstructured Mesh Generation"), e.what());
         return;
@@ -145,7 +148,7 @@ void UnstructuredMeshDialog::on_btnGenerateDomain_clicked() {
 
 void UnstructuredMeshDialog::on_chkShowDomainBoundary_clicked() {
     currentMesh->setShowDomainBoundary(ui->chkShowDomainBoundary->isChecked());
-    ui->unstructuredMeshOpenGLWidget->update();
+    ui->unstructuredMeshVTKWidget->update();
 }
 
 void UnstructuredMeshDialog::on_lstCoordinateFiles_itemSelectionChanged() {
@@ -182,7 +185,7 @@ void UnstructuredMeshDialog::on_btnAddCoordinatesFile_clicked() {
         newRefinementPolygon->setOptimalParameters();
         ui->lstCoordinateFiles->addItem(refinementFile);
         ui->lstCoordinateFiles->setCurrentRow(ui->lstCoordinateFiles->count() - 1);
-        ui->unstructuredMeshOpenGLWidget->update();
+        ui->unstructuredMeshVTKWidget->update();
     } catch (MeshException &ex) {
         QMessageBox::critical(this, tr("Unstructured Mesh Generation"), ex.what());
     }
@@ -196,7 +199,7 @@ void UnstructuredMeshDialog::on_btnRemoveCoordinatesFile_clicked() {
 
         currentMesh->removeMeshPolygon(refinementPolygon);
         ui->lstCoordinateFiles->takeItem(ui->lstCoordinateFiles->currentRow());
-        ui->unstructuredMeshOpenGLWidget->update();
+        ui->unstructuredMeshVTKWidget->update();
     }
 }
 
@@ -255,9 +258,9 @@ void UnstructuredMeshDialog::on_btnGenerateMesh_clicked() {
 
     CGAL::Failure_behaviour old_behaviour = CGAL::set_error_behaviour(CGAL::THROW_EXCEPTION);
     try {
-        ui->unstructuredMeshOpenGLWidget->setMesh(currentMesh);
-        ui->unstructuredMeshOpenGLWidget->buildDomain(boundaryFileStr);
-        ui->unstructuredMeshOpenGLWidget->generateMesh();
+        currentMesh->buildDomain(boundaryFileStr);
+        currentMesh->generate();
+        ui->unstructuredMeshVTKWidget->setMesh(currentMesh);
     } catch (const std::exception& e) {
         QMessageBox::critical(this, tr("Unstructured Mesh Generation"), tr("This triangulation does not deal with intersecting constraints."));
         CGAL::set_error_behaviour(old_behaviour);
@@ -268,7 +271,7 @@ void UnstructuredMeshDialog::on_btnGenerateMesh_clicked() {
 
 void UnstructuredMeshDialog::on_chkShowMesh_clicked() {
     currentMesh->setShowMesh(ui->chkShowMesh->isChecked());
-    ui->unstructuredMeshOpenGLWidget->update();
+    ui->unstructuredMeshVTKWidget->update();
 }
 
 void UnstructuredMeshDialog::on_cbxMeshName_currentIndexChanged(int index) {
@@ -296,9 +299,9 @@ void UnstructuredMeshDialog::on_cbxMeshName_currentIndexChanged(int index) {
             ui->lstIslands->addItem((*it)->getFilename());
         }
 
-        ui->unstructuredMeshOpenGLWidget->setMesh(currentMesh);
-        ui->unstructuredMeshOpenGLWidget->buildDomain(currentMesh->getBoundaryPolygon()->getFilename());
-        ui->unstructuredMeshOpenGLWidget->generateMesh();
+        currentMesh->buildDomain(currentMesh->getBoundaryPolygon()->getFilename());
+        currentMesh->generate();
+        ui->unstructuredMeshVTKWidget->setMesh(currentMesh);
 
         ui->lblDomainArea->setText(QString("Area: %1 m\u00B2").arg(currentMesh->getBoundaryPolygon()->area(), 0, 'f', 3));
     } else {
@@ -357,17 +360,17 @@ void UnstructuredMeshDialog::on_btnCancelMesh_clicked() {
 
 void UnstructuredMeshDialog::on_btnRemoveMesh_clicked() {
     QString meshName = ui->cbxMeshName->currentText();
+    QString questionStr = tr("Are you sure you want to remove '") + meshName + "'?";
+    QMessageBox::StandardButton button = QMessageBox::question(this, tr("Remove mesh"), questionStr, QMessageBox::Yes|QMessageBox::No);
 
-    if (QMessageBox::Yes == QMessageBox::question(this, tr("Remove mesh"), tr("Are you sure you want to remove '") + meshName + "'?",
-                                          QMessageBox::Yes|QMessageBox::No)) {
-
+    if (QMessageBox::Yes == button) {
         UnstructuredMesh *removedMesh = currentMesh;
         currentMesh = unsavedMesh;
         IPHApplication::getCurrentProject()->removeMesh(removedMesh);
 
         ui->cbxMeshName->removeItem(ui->cbxMeshName->currentIndex());
         ui->cbxMeshName->setCurrentIndex(-1);
-        ui->unstructuredMeshOpenGLWidget->setMesh(NULL);
+        ui->unstructuredMeshVTKWidget->setMesh(NULL);
     }
 }
 
@@ -386,7 +389,7 @@ void UnstructuredMeshDialog::resetMeshForm() {
     unsavedMesh->clear();
     currentMesh = unsavedMesh;
 
-    ui->unstructuredMeshOpenGLWidget->setMesh(NULL);
+    ui->unstructuredMeshVTKWidget->setMesh(NULL);
     ui->edtMeshName->setFocus();
     ui->edtMeshName->clear();
     ui->edtBoundaryFileLine->clear();

@@ -1,5 +1,5 @@
-#ifndef UNSTRUCTUREDMESH_H
-#define UNSTRUCTUREDMESH_H
+#ifndef UNSTRUCTURED_MESH_H
+#define UNSTRUCTURED_MESH_H
 
 #include "include/exceptions/mesh_exception.h"
 #include "mesh.h"
@@ -23,8 +23,9 @@ public:
     void clearCDT();
 
     virtual bool isGenerated();
+    virtual bool instanceOf(const QString &type);
     virtual void buildDomain(const QString &filename);
     virtual void clear();
 };
 
-#endif // UNSTRUCTUREDMESH_H
+#endif // UNSTRUCTURED_MESH_H

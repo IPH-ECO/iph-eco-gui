@@ -33,8 +33,6 @@ Project* ProjectDAO::open() {
     Project *project = new Project(name, description, hydrodynamic, sediment, waterQuality);
     project->setFilename(this->databaseName);
 
-    project->setDirty(false);
-
     return project;
 }
 

@@ -53,6 +53,7 @@ public:
     double area();
 
     virtual bool isGenerated() = 0;
+    virtual bool instanceOf(const QString &type) = 0;
     virtual void buildDomain(const QString &filename);
     virtual void clear();
 };

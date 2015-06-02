@@ -77,10 +77,11 @@ void GridDataOpenGLWidget::paintGL() {
                     }
 
                     QSet<CellInfo*> cells = quad->getCellInfoSet();
+                    QVector<double> color;
 
                     for (QSet<CellInfo*>::const_iterator it = cells.begin(); it != cells.end(); it++) {
                         if ((*it)->getGridInformationType().getValue() == GridInformationType::BATHYMETRY) {
-                            double *color = OpenGLUtil::convertToRGB(*it);
+                            color = OpenGLUtil::convertToRGB(*it);
                             glColor3d(color[0], color[1], color[2]);
                             break;
                         }
@@ -105,10 +106,11 @@ void GridDataOpenGLWidget::paintGL() {
                 }
 
                 QSet<CellInfo*> cells = fit->info().getCellInfoSet();
+                QVector<double> color;
 
                 for (QSet<CellInfo*>::const_iterator it = cells.begin(); it != cells.end(); it++) {
                     if ((*it)->getGridInformationType().getValue() == GridInformationType::BATHYMETRY) {
-                        double *color = OpenGLUtil::convertToRGB(*it);
+                        color = OpenGLUtil::convertToRGB(*it);
                         glColor3d(color[0], color[1], color[2]);
                         break;
                     }

@@ -2,11 +2,11 @@
 
 #include <QtMath>
 
+const QString MeshPolygon::BOUNDARY_POLYGON_FILENAME = "Main";
+
 const double MeshPolygon::DEFAULT_MINIMUM_ANGLE = 20.7;
 
 const double MeshPolygon::DEFAULT_MAXIMUM_EDGE_LENGTH = 0.5;
-
-const QString MeshPolygon::BOUNDARY_POLYGON_FILENAME = "Main";
 
 MeshPolygon::MeshPolygon() {}
 

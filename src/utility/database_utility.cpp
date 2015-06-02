@@ -35,19 +35,28 @@ void DatabaseUtility::createApplicationDatabase(QSqlDatabase &database) {
        "sediment boolean" \
     ")";
 
-    sql << "drop table if exists structured_grid";
-    sql << "create table structured_grid (" \
-       "id integer primary key, " \
-       "data text not null, " \
-       "project_id integer" \
+    sql << "drop table if exists structured_mesh";
+    sql << "create table structured_mesh (" \
+           "id integer primary key, " \
+           "name varchar(255) not null, " \
+           "resolution integer not null, " \
+           "data text not null, " \
+           "project_id integer" \
     ")";
 
-    sql << "drop table if exists unstructured_grid";
-    sql << "create table unstructured_grid (" \
-       "id integer primary key, " \
-       "data text not null, " \
-       "radius float not null, " \
-       "project_id integer" \
+    sql << "drop table if exists islands";
+    sql << "create table islands (" \
+           "id integer primary key, " \
+           "mesh_type varchar(255) not null, " \
+           "coordinates_json text not null" \
+    ")";
+
+    sql << "drop table if exists unstructured_mesh";
+    sql << "create table unstructured_mesh (" \
+           "id integer primary key, " \
+           "data text not null, " \
+           "radius float not null, " \
+           "project_id integer" \
     ")";
 
     QSqlDatabase::database().transaction();

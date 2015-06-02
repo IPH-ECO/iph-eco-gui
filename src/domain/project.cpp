@@ -1,9 +1,8 @@
 #include "include/domain/project.h"
 Project::Project(QString &_name, QString &_description, bool &_hydrodynamic, bool &_sediment, bool &_waterQuality) :
         name(_name), description(_description), hydrodynamic(_hydrodynamic), waterQuality(_waterQuality),
-        sediment(_sediment), meshes(QSet<Mesh*>()) {
-    this->dirty = false;
-}
+        sediment(_sediment), meshes(QSet<Mesh*>()), dirty(false)
+{}
 
 void Project::setId(const qint8 &id) {
     this->id = id;

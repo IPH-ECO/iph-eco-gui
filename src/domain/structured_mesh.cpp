@@ -51,6 +51,10 @@ bool StructuredMesh::isGenerated() {
     return grid.size1() > 0;
 }
 
+bool StructuredMesh::instanceOf(const QString &type) {
+    return type.contains("StructuredMesh");
+}
+
 void StructuredMesh::buildDomain(const QString &filename) {
     grid.clear();
     Mesh::buildDomain(filename);

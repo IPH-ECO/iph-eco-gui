@@ -10,33 +10,40 @@ class OpenGLUtil {
 public:
     static Point mapCoordinate(QWidget *widget, QMouseEvent *event, double &left, double &right, double &top, double &bottom) {
         int x = event->x(), y = event->y();
-        double ratioX = x / (double) widget->width(), ratioY = y / (double) widget->height();
+        double ratioX = x / widget->width(), ratioY = y / widget->height();
         double mapWidth = right - left, mapHeight = top - bottom;
 
         return Point(left + mapWidth * ratioX, top - mapHeight * ratioY);
     }
 
-    static double* convertToRGB(const CellInfo *cellInfo) {
-        double interval = cellInfo->getGridData()->getMaxValue() - cellInfo->getGridData()->getMinValue();
-        double intervalLength = interval / 3.0;
-        QVector<double> segments;
-        double color[3] = { 0 };
+    static QVector<double> convertToRGB(const CellInfo *cellInfo) {
+        double minValue = cellInfo->getGridData()->getMinValue();
+        double maxValue = cellInfo->getGridData()->getMaxValue();
+
+        if (minValue < 0) {
+            maxValue += abs(minValue);
+            minValue = 0;
+        }
+
+        double interval = maxValue - minValue, segmentLength = interval / 3.0;
+        QVector<double> segments(4), color(3, 1.0);
         double weight = cellInfo->getWeight();
 
         for (double i = 0.0; i < 3.0; i++) {
-            segments.push_back(cellInfo->getGridData()->getMinValue() + intervalLength * i);
+            segments.push_back(minValue + segmentLength * i);
         }
+        segments.push_back(maxValue);
 
         if (weight >= segments.at(0) && weight < segments.at(1)) {
             color[0] = weight / interval;
         }
         if (weight >= segments.at(1) && weight < segments.at(2)) {
-            color[0] = 1.0;
+            color[0] = 0.0;
             color[1] = weight / interval;
         }
-        if (weight >= segments.at(2) && weight < cellInfo->getGridData()->getMaxValue()) {
-            color[0] = 1.0;
-            color[1] = 1.0;
+        if (weight >= segments.at(2) && weight <= segments.at(3)) {
+            color[0] = 0.0;
+            color[1] = 0.0;
             color[2] = weight / interval;
         }
 

@@ -20,38 +20,6 @@
    <string>Unstructured Mesh Generation</string>
   </property>
   <layout class="QGridLayout" name="gridLayout" columnstretch="0,0,0">
-   <item row="0" column="2">
-    <layout class="QVBoxLayout" name="verticalLayout_4">
-     <item>
-      <widget class="UnstructuredMeshOpenGLWidget" name="unstructuredMeshOpenGLWidget">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_2">
-       <item>
-        <widget class="QLabel" name="lblDomainArea">
-         <property name="text">
-          <string>Area: -</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="lblUTMCoordinate">
-         <property name="text">
-          <string>Easting: -, Northing: -</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
-    </layout>
-   </item>
    <item row="0" column="0">
     <widget class="QWidget" name="leftWidget" native="true">
      <property name="sizePolicy">
@@ -756,13 +724,45 @@
      </layout>
     </widget>
    </item>
+   <item row="0" column="2">
+    <layout class="QVBoxLayout" name="verticalLayout_4">
+     <item>
+      <widget class="UnstructuredMeshVTKWidget" name="unstructuredMeshVTKWidget">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <item>
+        <widget class="QLabel" name="lblDomainArea">
+         <property name="text">
+          <string>Area: -</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="lblUTMCoordinate">
+         <property name="text">
+          <string>Easting: -, Northing: -</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </item>
   </layout>
  </widget>
  <customwidgets>
   <customwidget>
-   <class>UnstructuredMeshOpenGLWidget</class>
-   <extends>QOpenGLWidget</extends>
-   <header>include/ui/unstructured_mesh_opengl_widget.h</header>
+   <class>UnstructuredMeshVTKWidget</class>
+   <extends>QWidget</extends>
+   <header>include/ui/unstructured_mesh_vtk_widget.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

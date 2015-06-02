@@ -78,6 +78,10 @@ bool UnstructuredMesh::isGenerated() {
     return cdt.number_of_vertices() > 0;
 }
 
+bool UnstructuredMesh::instanceOf(const QString &type) {
+    return type.contains("UnstructuredMesh");
+}
+
 void UnstructuredMesh::mark_domains(CDT::Face_handle start, int index, QList<CDT::Edge>& border) {
     if (start->info().getNestingLevel() != -1) {
         return;
