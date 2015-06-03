@@ -9,6 +9,7 @@
 #include <vtkRenderWindowInteractor.h>
 #include <vtkFeatureEdges.h>
 #include <vtkWorldPointPicker.h>
+#include <QList>
 
 #include "include/ui/unstructured_mesh_dialog.h"
 #include "include/utility/mouse_interactor.h"
@@ -47,20 +48,25 @@ void UnstructuredMeshVTKWidget::setMesh(UnstructuredMesh *mesh) {
         return;
     }
 
+    QList<MeshPolygon> domain = mesh->getDomain();
     vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
-    vtkSmartPointer<vtkPolygon> polygon = vtkSmartPointer<vtkPolygon>::New();
+    vtkSmartPointer<vtkCellArray> polygons = vtkSmartPointer<vtkCellArray>::New();
     int i = 0;
 
-    polygon->GetPointIds()->SetNumberOfIds(boundaryPolygon->size());
+    for (QList<MeshPolygon>::const_iterator it = domain.begin(); it != domain.end(); it++) {
+        vtkSmartPointer<vtkPolygon> polygon = vtkSmartPointer<vtkPolygon>::New();
+        int j = 0;
 
-    for (MeshPolygon::Vertex_iterator vt = boundaryPolygon->vertices_begin(); vt != boundaryPolygon->vertices_end(); vt++) {
-        points->InsertNextPoint(vt->x(), vt->y(), 0.0);
-        polygon->GetPointIds()->SetId(i, i);
-        i++;
+        polygon->GetPointIds()->SetNumberOfIds(it->size());
+
+        for (MeshPolygon::Vertex_iterator vt = it->vertices_begin(); vt != it->vertices_end(); vt++) {
+            points->InsertNextPoint(vt->x(), vt->y(), 0.0);
+            polygon->GetPointIds()->SetId(j, i);
+            j++; i++;
+        }
+
+        polygons->InsertNextCell(polygon);
     }
-
-    vtkSmartPointer<vtkCellArray> polygons = vtkSmartPointer<vtkCellArray>::New();
-    polygons->InsertNextCell(polygon);
 
     vtkSmartPointer<vtkPolyData> polyData = vtkSmartPointer<vtkPolyData>::New();
     polyData->SetPoints(points);
