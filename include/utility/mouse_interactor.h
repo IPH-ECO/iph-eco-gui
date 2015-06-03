@@ -4,8 +4,8 @@
 #include <vtkSmartPointer.h>
 #include <vtkInteractorStyleTrackballCamera.h>
 #include <vtkObjectFactory.h>
-#include <vtkPropPicker.h>
-#include <QDebug>
+#include <vtkRendererCollection.h>
+#include <vtkAbstractPicker.h>
 
 class MouseInteractor : public QObject, public vtkInteractorStyleTrackballCamera {
     Q_OBJECT
@@ -14,15 +14,15 @@ public:
     vtkTypeMacro(MouseInteractor, vtkInteractorStyleTrackballCamera);
 
     virtual void OnMouseMove() {
-        int* mousePosition = this->GetInteractor()->GetEventPosition();
+        int* mousePosition = this->Interactor->GetEventPosition();
+        double worldPosition[3];
 
-        vtkSmartPointer<vtkPropPicker> picker = vtkSmartPointer<vtkPropPicker>::New();
-
-        picker->Pick(mousePosition[0], mousePosition[1], 0, this->GetDefaultRenderer());
-
-        double *worldPosition = picker->GetPickPosition();
+        this->Interactor->GetPicker()->Pick(mousePosition[0], mousePosition[1], 0, this->Interactor->GetRenderWindow()->GetRenderers()->GetFirstRenderer());
+        this->Interactor->GetPicker()->GetPickPosition(worldPosition);
 
         emit coordinateChanged(worldPosition[0], worldPosition[1]);
+
+        vtkInteractorStyleTrackballCamera::OnMouseMove();
     }
 
 signals:

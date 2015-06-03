@@ -7,6 +7,8 @@
 #include <vtkCellArray.h>
 #include <vtkTriangleFilter.h>
 #include <vtkRenderWindowInteractor.h>
+#include <vtkFeatureEdges.h>
+#include <vtkWorldPointPicker.h>
 
 #include "include/ui/unstructured_mesh_dialog.h"
 #include "include/utility/mouse_interactor.h"
@@ -64,14 +66,22 @@ void UnstructuredMeshVTKWidget::setMesh(UnstructuredMesh *mesh) {
     polyData->SetPoints(points);
     polyData->SetPolys(polygons);
 
-    vtkSmartPointer<vtkTriangleFilter> triangleFilter = vtkSmartPointer<vtkTriangleFilter>::New();
-    triangleFilter->SetInputData(polyData);
-    triangleFilter->Update();
+    vtkSmartPointer<vtkFeatureEdges> edges = vtkSmartPointer<vtkFeatureEdges>::New();
+    edges->SetInputData(polyData);
+    edges->BoundaryEdgesOn();
+    // edges->FeatureEdgesOff();
+    // edges->ManifoldEdgesOff();
+    // edges->NonManifoldEdgesOff();
+    edges->Update();
 
-    vtkSmartPointer<vtkPolyData> pd2 = triangleFilter->GetOutput();
+    // vtkSmartPointer<vtkTriangleFilter> triangleFilter = vtkSmartPointer<vtkTriangleFilter>::New();
+    // triangleFilter->SetInputData(polyData);
+    // triangleFilter->Update();
+
+    // vtkSmartPointer<vtkPolyData> pd2 = triangleFilter->GetOutput();
 
     vtkSmartPointer<vtkPolyDataMapper> polyDataMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-    polyDataMapper->SetInputData(pd2);
+    polyDataMapper->SetInputData(edges->GetOutput());
 
     vtkSmartPointer<vtkActor> actor = vtkSmartPointer<vtkActor>::New();
     actor->SetMapper(polyDataMapper);
@@ -81,7 +91,9 @@ void UnstructuredMeshVTKWidget::setMesh(UnstructuredMesh *mesh) {
 
     renderWindow->AddRenderer(renderer);
 
+    vtkSmartPointer<vtkWorldPointPicker> worldPointPicker = vtkSmartPointer<vtkWorldPointPicker>::New();
     vtkSmartPointer<vtkRenderWindowInteractor> renderWindowInteractor = vtkSmartPointer<vtkRenderWindowInteractor>::New();
+    renderWindowInteractor->SetPicker(worldPointPicker);
     renderWindowInteractor->SetRenderWindow(renderWindow);
 
     vtkSmartPointer<MouseInteractor> mouseInteractor = vtkSmartPointer<MouseInteractor>::New();
