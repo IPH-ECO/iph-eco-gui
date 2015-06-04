@@ -11,7 +11,8 @@ class Mesh {
 protected:
     QString name;
     double coordinatesDistance;
-    QList<MeshPolygon> domain;
+    QList<MeshPolygon*> domain;
+    MeshPolygon *boundaryPolygon;
 
     bool showDomainBoundary;
     bool showMesh;
@@ -22,7 +23,6 @@ protected:
 
 private:
     void filterCoordinates(MeshPolygon *meshPolygon);
-    void buildMeshPolygon(MeshPolygon *meshPolygon);
 
 public:
     Mesh();
@@ -31,19 +31,17 @@ public:
 
     void setName(const QString &name);
     QString getName() const;
-
     void setCoordinatesDistance(const double &coordinatesDistance);
     double getCoordinatesDistance() const;
-
-    QList<MeshPolygon>& getDomain();
-    void setDomain(const QList<MeshPolygon> &domain);
+    QList<MeshPolygon*>& getDomain();
+    void setDomain(const QList<MeshPolygon*> &domain);
     QList<MeshPolygon*> getIslands();
     MeshPolygon* getBoundaryPolygon();
-    void setBoundaryPolygon(const MeshPolygon &meshPolygon);
+    void setBoundaryPolygon(MeshPolygon *meshPolygon);
 
-    MeshPolygon* addMeshPolygon(MeshPolygon &meshPolygon);
+    MeshPolygon* addMeshPolygon(const QString &filename, const MeshPolygonType &meshPolygonType);
     void removeMeshPolygon(const MeshPolygon &meshPolygon);
-    MeshPolygon* getMeshPolygon(const MeshPolygon &meshPolygon);
+    MeshPolygon* getMeshPolygon(const QString &filename, const MeshPolygonType &meshPolygonType);
 
     void setShowDomainBoundary(const bool &show);
     bool getShowDomainBoundary() const;

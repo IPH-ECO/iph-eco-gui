@@ -84,9 +84,7 @@ void UnstructuredMeshDialog::on_btnAddIsland_clicked() {
             currentMesh->clearCDT();
         }
 
-        MeshPolygon islandPolygon(islandFile, MeshPolygon::ISLAND);
-
-        currentMesh->addMeshPolygon(islandPolygon);
+        currentMesh->addMeshPolygon(islandFile, MeshPolygonType::ISLAND);
         ui->lstIslands->addItem(islandFile);
         ui->unstructuredMeshVTKWidget->update();
     } catch (MeshException &ex) {
@@ -106,7 +104,7 @@ void UnstructuredMeshDialog::on_btnRemoveIsland_clicked() {
 
         if (proceedWithRemoval) {
             QString islandFile = currentItem->text();
-            MeshPolygon islandPolygon(islandFile, MeshPolygon::ISLAND);
+            MeshPolygon islandPolygon(islandFile, MeshPolygonType::ISLAND);
 
             currentMesh->removeMeshPolygon(islandPolygon);
 
@@ -152,7 +150,7 @@ void UnstructuredMeshDialog::on_chkShowDomainBoundary_clicked() {
 void UnstructuredMeshDialog::on_lstCoordinateFiles_itemSelectionChanged() {
     if (ui->lstCoordinateFiles->currentRow() > 0) {
         QString filename = ui->lstCoordinateFiles->currentItem()->text();
-        MeshPolygon *refinementPolygon = currentMesh->getMeshPolygon(MeshPolygon(filename, MeshPolygon::REFINEMENT_AREA));
+        MeshPolygon *refinementPolygon = currentMesh->getMeshPolygon(filename, MeshPolygonType::REFINEMENT_AREA);
 
         ui->sbxMinimumAngle->setValue(refinementPolygon->getMinimumAngle());
         ui->sbxMaximumEdgeLength->setValue(refinementPolygon->getMaximumEdgeLength());
@@ -177,8 +175,7 @@ void UnstructuredMeshDialog::on_btnAddCoordinatesFile_clicked() {
     }
 
     try {
-        MeshPolygon refinementPolygon(refinementFile, MeshPolygon::REFINEMENT_AREA);
-        MeshPolygon *newRefinementPolygon = currentMesh->addMeshPolygon(refinementPolygon);
+        MeshPolygon *newRefinementPolygon = currentMesh->addMeshPolygon(refinementFile, MeshPolygonType::REFINEMENT_AREA);
 
         newRefinementPolygon->setOptimalParameters();
         ui->lstCoordinateFiles->addItem(refinementFile);
@@ -193,7 +190,7 @@ void UnstructuredMeshDialog::on_btnRemoveCoordinatesFile_clicked() {
     if (ui->lstCoordinateFiles->currentRow() > 0) {
         QListWidgetItem *currentItem = ui->lstCoordinateFiles->currentItem();
         QString coordinatesFile = currentItem->text();
-        MeshPolygon refinementPolygon(coordinatesFile, MeshPolygon::REFINEMENT_AREA);
+        MeshPolygon refinementPolygon(coordinatesFile, MeshPolygonType::REFINEMENT_AREA);
 
         currentMesh->removeMeshPolygon(refinementPolygon);
         ui->lstCoordinateFiles->takeItem(ui->lstCoordinateFiles->currentRow());
@@ -204,7 +201,7 @@ void UnstructuredMeshDialog::on_btnRemoveCoordinatesFile_clicked() {
 void UnstructuredMeshDialog::on_sbxMaximumEdgeLength_valueChanged(double value) {
     if (ui->lstCoordinateFiles->currentRow() > 0) {
         QString filename = ui->lstCoordinateFiles->currentItem()->text();
-        MeshPolygon *refinementPolygon = currentMesh->getMeshPolygon(MeshPolygon(filename, MeshPolygon::REFINEMENT_AREA));
+        MeshPolygon *refinementPolygon = currentMesh->getMeshPolygon(filename, MeshPolygonType::REFINEMENT_AREA);
 
         refinementPolygon->setMaximumEdgeLength(value);
     } else {
@@ -219,7 +216,7 @@ void UnstructuredMeshDialog::on_sbxMaximumEdgeLength_valueChanged(double value) 
 void UnstructuredMeshDialog::on_sbxMinimumAngle_valueChanged(double value) {
     if (ui->lstCoordinateFiles->currentRow() > 0) {
         QString filename = ui->lstCoordinateFiles->currentItem()->text();
-        MeshPolygon *refinementPolygon = currentMesh->getMeshPolygon(MeshPolygon(filename, MeshPolygon::REFINEMENT_AREA));
+        MeshPolygon *refinementPolygon = currentMesh->getMeshPolygon(filename, MeshPolygonType::REFINEMENT_AREA);
 
         refinementPolygon->setMinimumAngle(value);
     } else {
@@ -301,7 +298,7 @@ void UnstructuredMeshDialog::on_cbxMeshName_currentIndexChanged(int index) {
         currentMesh->generate();
         ui->unstructuredMeshVTKWidget->setMesh(currentMesh);
 
-        ui->lblDomainArea->setText(QString("Area: %1 m\u00B2").arg(currentMesh->getBoundaryPolygon()->area(), 0, 'f', 3));
+        // ui->lblDomainArea->setText(QString("Area: %1 m\u00B2").arg(currentMesh->getBoundaryPolygon()->area(), 0, 'f', 3));
     } else {
         resetMeshForm();
     }
@@ -309,7 +306,7 @@ void UnstructuredMeshDialog::on_cbxMeshName_currentIndexChanged(int index) {
 
 void UnstructuredMeshDialog::on_btnSaveMesh_clicked() {
     QString meshName = ui->cbxMeshName->currentIndex() == -1 ? ui->edtMeshName->text() : ui->cbxMeshName->currentText();
-    QList<MeshPolygon> &domain = currentMesh->getDomain();
+    QList<MeshPolygon*> domain = currentMesh->getDomain();
     double coordinatesDistance = ui->sbxCoordinatesDistance->value();
 
     Project *project = IPHApplication::getCurrentProject();

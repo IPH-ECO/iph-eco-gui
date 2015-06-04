@@ -50,60 +50,60 @@ void UnstructuredMeshOpenGLWidget::paintGL() {
         return;
     }
 
-    left = boundaryPolygon->left_vertex()->x() - zoom;
-    right = boundaryPolygon->right_vertex()->x() + zoom;
-    bottom = boundaryPolygon->bottom_vertex()->y() - zoom;
-    top = boundaryPolygon->top_vertex()->y() + zoom;
+    // left = boundaryPolygon->left_vertex()->x() - zoom;
+    // right = boundaryPolygon->right_vertex()->x() + zoom;
+    // bottom = boundaryPolygon->bottom_vertex()->y() - zoom;
+    // top = boundaryPolygon->top_vertex()->y() + zoom;
 
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
+    // glMatrixMode(GL_PROJECTION);
+    // glLoadIdentity();
 
-    glOrtho(left - 50, right + 50, bottom - 50, top + 50, -1.0, 1.0);
+    // glOrtho(left - 50, right + 50, bottom - 50, top + 50, -1.0, 1.0);
 
-    glTranslatef(movX, movY, 0);
+    // glTranslatef(movX, movY, 0);
 
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
+    // glMatrixMode(GL_MODELVIEW);
+    // glLoadIdentity();
 
-    glColor3f(0.0, 0.0, 0.0);
+    // glColor3f(0.0, 0.0, 0.0);
 
-    if (mesh->getShowDomainBoundary()) {
-        QList<MeshPolygon> domain = mesh->getDomain();
+    // if (mesh->getShowDomainBoundary()) {
+    //     QList<MeshPolygon> domain = mesh->getDomain();
 
-        for (QList<MeshPolygon>::const_iterator it = domain.begin(); it != domain.end(); it++) {
-            glBegin(GL_LINE_LOOP);
-            for (MeshPolygon::Vertex_iterator vt = it->vertices_begin(); vt != it->vertices_end(); vt++) {
-                glVertex2d(vt->x(), vt->y());
-            }
-            glEnd();
-        }
-    }
+    //     for (QList<MeshPolygon>::const_iterator it = domain.begin(); it != domain.end(); it++) {
+    //         glBegin(GL_LINE_LOOP);
+    //         for (MeshPolygonType::Vertex_iterator vt = it->vertices_begin(); vt != it->vertices_end(); vt++) {
+    //             glVertex2d(vt->x(), vt->y());
+    //         }
+    //         glEnd();
+    //     }
+    // }
 
-    if (mesh->getShowMesh()) {
-        const CDT *cdt = mesh->getCDT();
+    // if (mesh->getShowMesh()) {
+    //     const CDT *cdt = mesh->getCDT();
 
-        glBegin(GL_LINES);
-        for (CDT::Finite_faces_iterator fit = cdt->finite_faces_begin(); fit != cdt->finite_faces_end(); ++fit) {
-            if (!fit->info().isInDomain()) {
-                continue;
-            }
+    //     glBegin(GL_LINES);
+    //     for (CDT::Finite_faces_iterator fit = cdt->finite_faces_begin(); fit != cdt->finite_faces_end(); ++fit) {
+    //         if (!fit->info().isInDomain()) {
+    //             continue;
+    //         }
 
-            for (int i = 0; i < 3; i++) {
-                CDT::Edge e(fit, i);
+    //         for (int i = 0; i < 3; i++) {
+    //             CDT::Edge e(fit, i);
 
-                if (cdt->is_constrained(e)) {
-                    continue;
-                }
+    //             if (cdt->is_constrained(e)) {
+    //                 continue;
+    //             }
 
-                Point p1 = e.first->vertex((e.second + 1) % 3)->point();
-                Point p2 = e.first->vertex((e.second + 2) % 3)->point();
+    //             Point p1 = e.first->vertex((e.second + 1) % 3)->point();
+    //             Point p2 = e.first->vertex((e.second + 2) % 3)->point();
 
-                glVertex2f(p1.x(), p1.y());
-                glVertex2f(p2.x(), p2.y());
-            }
-        }
-        glEnd();
-    }
+    //             glVertex2f(p1.x(), p1.y());
+    //             glVertex2f(p2.x(), p2.y());
+    //         }
+    //     }
+    //     glEnd();
+    // }
 }
 
 void UnstructuredMeshOpenGLWidget::setMesh(UnstructuredMesh *mesh) {

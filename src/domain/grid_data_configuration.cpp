@@ -142,30 +142,30 @@ void GridDataConfiguration::processGridData(GridData *gridData) {
         }
     } else {
         StructuredMesh *structuredMesh = static_cast<StructuredMesh*>(mesh);
-        matrix<Quad*> &grid = structuredMesh->getGrid();
+        // matrix<Quad*> &grid = structuredMesh->getGrid();
 
-        for (ulong i = 0; i < grid.size1(); i++) {
-            for (ulong j = 0; j < grid.size2(); j++) {
-                Quad *quad = grid(i, j);
+        // for (ulong i = 0; i < grid.size1(); i++) {
+        //     for (ulong j = 0; j < grid.size2(); j++) {
+        //         Quad *quad = grid(i, j);
 
-                if (quad == NULL || quad->is_empty()) {
-                    continue;
-                }
+        //         if (quad == NULL || quad->is_empty()) {
+        //             continue;
+        //         }
 
-                Point centroid = CGAL::centroid((*quad)[0], (*quad)[1], (*quad)[2], (*quad)[3]);
-                CellInfo *cellInfo = NULL;
+        //         Point centroid = CGAL::centroid((*quad)[0], (*quad)[1], (*quad)[2], (*quad)[3]);
+        //         CellInfo *cellInfo = NULL;
 
-                if (isInputTypePoint) {
-                    cellInfo = createCellInfoFromDataPoints(centroid, gridData, dataPoints);
-                } else {
-                    cellInfo = createCellInfoFromDataPolygon(centroid, gridData, dataPolygon);
-                }
+        //         if (isInputTypePoint) {
+        //             cellInfo = createCellInfoFromDataPoints(centroid, gridData, dataPoints);
+        //         } else {
+        //             cellInfo = createCellInfoFromDataPolygon(centroid, gridData, dataPolygon);
+        //         }
 
-                if (cellInfo != NULL) {
-                    quad->addCellInfo(cellInfo);
-                }
-            }
-        }
+        //         if (cellInfo != NULL) {
+        //             quad->addCellInfo(cellInfo);
+        //         }
+        //     }
+        // }
     }
 }
 
@@ -216,21 +216,21 @@ QSet<CellInfo*> GridDataConfiguration::queryCells(Point &point) {
         }
     } else {
         StructuredMesh *structuredMesh = static_cast<StructuredMesh*>(mesh);
-        matrix<Quad*> &grid = structuredMesh->getGrid();
+        // matrix<Quad*> &grid = structuredMesh->getGrid();
 
-        for (ulong i = 0; i < grid.size1(); i++) {
-            for (ulong j = 0; j < grid.size2(); j++) {
-                Quad *quad = grid(i, j);
+        // for (ulong i = 0; i < grid.size1(); i++) {
+        //     for (ulong j = 0; j < grid.size2(); j++) {
+        //         Quad *quad = grid(i, j);
 
-                if (quad == NULL || quad->is_empty()) {
-                    continue;
-                }
+        //         if (quad == NULL || quad->is_empty()) {
+        //             continue;
+        //         }
 
-                if (quad->bounded_side(point) == CGAL::ON_BOUNDED_SIDE) {
-                    return quad->getCellInfoSet();
-                }
-            }
-        }
+        //         if (quad->bounded_side(point) == CGAL::ON_BOUNDED_SIDE) {
+        //             return quad->getCellInfoSet();
+        //         }
+        //     }
+        // }
     }
 
     return QSet<CellInfo*>();

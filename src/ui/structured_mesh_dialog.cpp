@@ -15,7 +15,7 @@ StructuredMeshDialog::StructuredMeshDialog(QWidget *parent) :
     currentMesh(unsavedMesh)
 {
     ui->setupUi(this);
-    ui->structuredMeshOpenGLWidget->setMesh(currentMesh);
+    // ui->structuredMeshVTKWidget->setMesh(currentMesh);
 
     appSettings = new QSettings(QApplication::organizationName(), QApplication::applicationName(), this);
 
@@ -35,15 +35,19 @@ StructuredMeshDialog::~StructuredMeshDialog() {
     delete ui;
 }
 
-void StructuredMeshDialog::setRealCoordinate(const Point &point) {
-    QString x = QString::number(point.x(), 'f', 6);
-    QString y = QString::number(point.y(), 'f', 6);
-
-    ui->lblUTMCoordinate->setText(QString("Easting: %1, Northing: %2").arg(x).arg(y));
-}
-
 QString StructuredMeshDialog::getDefaultDirectory() {
     return appSettings->value(BOUNDARY_DEFAULT_DIR_KEY).toString().isEmpty() ? QDir::homePath() : appSettings->value(BOUNDARY_DEFAULT_DIR_KEY).toString();
+}
+
+void StructuredMeshDialog::setCoordinate(double &x, double &y) {
+    QString xStr = QString::number(x, 'f', 6);
+    QString yStr = QString::number(y, 'f', 6);
+
+    ui->lblUTMCoordinate->setText(QString("Easting: %1, Northing: %2").arg(xStr).arg(yStr));
+}
+
+void StructuredMeshDialog::setArea(const double &area) {
+    ui->lblDomainArea->setText(QString("Area: %1 m\u00B2").arg(area, 0, 'f', 3));
 }
 
 void StructuredMeshDialog::on_btnBoundaryFileBrowser_clicked() {
@@ -54,14 +58,6 @@ void StructuredMeshDialog::on_btnBoundaryFileBrowser_clicked() {
     }
 
     ui->edtBoundaryFileLine->setText(boundaryFilePath);
-    try {
-        ui->structuredMeshOpenGLWidget->buildDomain(boundaryFilePath);
-    } catch(MeshException &e) {
-        QMessageBox::critical(this, tr("Structured Mesh Generation"), e.what());
-        return;
-    }
-
-    ui->lblDomainArea->setText(QString("Area: %1 m\u00B2").arg(currentMesh->area(), 0, 'f', 3));
 }
 
 void StructuredMeshDialog::on_btnAddIsland_clicked() {
@@ -87,9 +83,7 @@ void StructuredMeshDialog::on_btnAddIsland_clicked() {
     }
 
     try {
-        MeshPolygon islandPolygon(islandFile, MeshPolygon::ISLAND);
-
-        currentMesh->addMeshPolygon(islandPolygon);
+        currentMesh->addMeshPolygon(islandFile, MeshPolygonType::ISLAND);
         ui->lstIslands->addItem(islandFile);
         currentMesh->clearGrid();
     } catch (MeshException &ex) {
@@ -109,7 +103,7 @@ void StructuredMeshDialog::on_btnRemoveIsland_clicked() {
 
         if (proceedWithRemoval) {
             QString islandFile = currentItem->text();
-            MeshPolygon islandPolygon(islandFile, MeshPolygon::ISLAND);
+            MeshPolygon islandPolygon(islandFile, MeshPolygonType::ISLAND);
 
             currentMesh->removeMeshPolygon(islandPolygon);
 
@@ -118,19 +112,19 @@ void StructuredMeshDialog::on_btnRemoveIsland_clicked() {
             }
 
             ui->lstIslands->takeItem(ui->lstIslands->currentRow());
-            ui->structuredMeshOpenGLWidget->update();
+            ui->structuredMeshVTKWidget->update();
         }
     }
 }
 
 void StructuredMeshDialog::on_chkShowDomainBoundary_clicked() {
     currentMesh->setShowDomainBoundary(ui->chkShowDomainBoundary->isChecked());
-    ui->structuredMeshOpenGLWidget->update();
+    ui->structuredMeshVTKWidget->update();
 }
 
 void StructuredMeshDialog::on_chkShowMesh_clicked() {
     currentMesh->setShowMesh(ui->chkShowMesh->isChecked());
-    ui->structuredMeshOpenGLWidget->update();
+    ui->structuredMeshVTKWidget->update();
 }
 
 void StructuredMeshDialog::on_btnGenerateMesh_clicked() {
@@ -160,11 +154,11 @@ void StructuredMeshDialog::on_btnGenerateMesh_clicked() {
 
     CGAL::Failure_behaviour old_behaviour = CGAL::set_error_behaviour(CGAL::THROW_EXCEPTION);
     try {
-        ui->structuredMeshOpenGLWidget->setMesh(currentMesh);
-        ui->structuredMeshOpenGLWidget->buildDomain(boundaryFileStr);
-        ui->structuredMeshOpenGLWidget->generateMesh();
+        currentMesh->buildDomain(boundaryFileStr);
+        currentMesh->generate();
+        ui->structuredMeshVTKWidget->setMesh(currentMesh);
     } catch (const std::exception& e) {
-        QMessageBox::critical(this, tr("Structured Mesh Generation"), tr("This triangulation does not deal with intersecting constraints."));
+        QMessageBox::critical(this, tr("Structured Mesh Generation"), e.what());
         CGAL::set_error_behaviour(old_behaviour);
         return;
     }
@@ -173,7 +167,7 @@ void StructuredMeshDialog::on_btnGenerateMesh_clicked() {
 
 void StructuredMeshDialog::on_btnSaveMesh_clicked() {
     QString meshName = ui->cbxMeshName->currentIndex() == -1 ? ui->edtMeshName->text() : ui->cbxMeshName->currentText();
-    QList<MeshPolygon> &domain = currentMesh->getDomain();
+    QList<MeshPolygon*> domain = currentMesh->getDomain();
     uint resolution = ui->sbxResolution->value();
 
     Project *project = IPHApplication::getCurrentProject();
@@ -224,7 +218,7 @@ void StructuredMeshDialog::on_btnRemoveMesh_clicked() {
 
         ui->cbxMeshName->removeItem(ui->cbxMeshName->currentIndex());
         ui->cbxMeshName->setCurrentIndex(-1);
-        ui->structuredMeshOpenGLWidget->setMesh(NULL);
+        ui->structuredMeshVTKWidget->setMesh(NULL);
     }
 }
 
@@ -239,7 +233,7 @@ void StructuredMeshDialog::resetMeshForm() {
     unsavedMesh->clear();
     currentMesh = unsavedMesh;
 
-    ui->structuredMeshOpenGLWidget->setMesh(NULL);
+    ui->structuredMeshVTKWidget->setMesh(NULL);
     ui->edtMeshName->setFocus();
     ui->edtMeshName->clear();
     ui->edtBoundaryFileLine->clear();
@@ -275,11 +269,11 @@ void StructuredMeshDialog::on_cbxMeshName_currentIndexChanged(int index) {
             ui->lstIslands->addItem((*it)->getFilename());
         }
 
-        ui->structuredMeshOpenGLWidget->setMesh(currentMesh);
-        ui->structuredMeshOpenGLWidget->buildDomain(boundaryPolygon->getFilename());
-        ui->structuredMeshOpenGLWidget->generateMesh();
+        currentMesh->buildDomain(boundaryPolygon->getFilename());
+        currentMesh->generate();
+        ui->structuredMeshVTKWidget->setMesh(currentMesh);
 
-        ui->lblDomainArea->setText(QString("Area: %1 m\u00B2").arg(boundaryPolygon->area(), 0, 'f', 3));
+        // ui->lblDomainArea->setText(QString("Area: %1 m\u00B2").arg(boundaryPolygon->area(), 0, 'f', 3));
     } else {
         resetMeshForm();
     }

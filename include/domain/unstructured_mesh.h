@@ -3,6 +3,7 @@
 
 #include "include/exceptions/mesh_exception.h"
 #include "mesh.h"
+#include "include/utility/cgal_definitions.h"
 
 #include <QList>
 

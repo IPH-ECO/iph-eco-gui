@@ -21,7 +21,10 @@ public:
     explicit StructuredMeshDialog(QWidget *parent = 0);
     ~StructuredMeshDialog();
 
-    void setRealCoordinate(const Point &point);
+    void setArea(const double &area);
+
+public slots:
+    void setCoordinate(double &x, double &y);
 
 private slots:
     void on_btnBoundaryFileBrowser_clicked();

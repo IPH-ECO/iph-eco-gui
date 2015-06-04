@@ -41,49 +41,49 @@ void StructuredMeshOpenGLWidget::paintGL() {
         return;
     }
 
-    left = boundaryPolygon->left_vertex()->x();
-    right = boundaryPolygon->right_vertex()->x();
-    bottom = boundaryPolygon->bottom_vertex()->y();
-    top = boundaryPolygon->top_vertex()->y();
+    // left = boundaryPolygon->left_vertex()->x();
+    // right = boundaryPolygon->right_vertex()->x();
+    // bottom = boundaryPolygon->bottom_vertex()->y();
+    // top = boundaryPolygon->top_vertex()->y();
 
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    glOrtho(left - 50, right + 50, bottom - 50, top + 50, -1.0, 1.0);
-    glMatrixMode(GL_MODELVIEW);
+    // glMatrixMode(GL_PROJECTION);
+    // glLoadIdentity();
+    // glOrtho(left - 50, right + 50, bottom - 50, top + 50, -1.0, 1.0);
+    // glMatrixMode(GL_MODELVIEW);
 
-    glColor3f(0.0, 0.0, 0.0);
+    // glColor3f(0.0, 0.0, 0.0);
 
-    if (mesh->getShowDomainBoundary()) {
-        QList<MeshPolygon> &domain = mesh->getDomain();
+    // if (mesh->getShowDomainBoundary()) {
+    //     QList<MeshPolygon> &domain = mesh->getDomain();
 
-        for (QList<MeshPolygon>::const_iterator it = domain.begin(); it != domain.end(); it++) {
-            glBegin(GL_LINE_LOOP);
-            for (MeshPolygon::Vertex_iterator vt = it->vertices_begin(); vt != it->vertices_end(); vt++) {
-                glVertex2d(vt->x(), vt->y());
-            }
-            glEnd();
-        }
-    }
+    //     for (QList<MeshPolygon>::const_iterator it = domain.begin(); it != domain.end(); it++) {
+    //         glBegin(GL_LINE_LOOP);
+    //         for (MeshPolygonType::Vertex_iterator vt = it->vertices_begin(); vt != it->vertices_end(); vt++) {
+    //             glVertex2d(vt->x(), vt->y());
+    //         }
+    //         glEnd();
+    //     }
+    // }
 
-    if (mesh->getShowMesh()) {
-        matrix<Quad*> &grid = mesh->getGrid();
+    // if (mesh->getShowMesh()) {
+    //     matrix<Quad*> &grid = mesh->getGrid();
 
-        for (ulong i = 0; i < grid.size1(); i++) {
-            for (ulong j = 0; j < grid.size2(); j++) {
-                Quad *quad = grid(i, j);
+    //     for (ulong i = 0; i < grid.size1(); i++) {
+    //         for (ulong j = 0; j < grid.size2(); j++) {
+    //             Quad *quad = grid(i, j);
 
-                if (quad == NULL || quad->is_empty()) {
-                    continue;
-                }
+    //             if (quad == NULL || quad->is_empty()) {
+    //                 continue;
+    //             }
 
-                glBegin(GL_LINE_LOOP);
-                for (uint k = 0; k < quad->size(); k++) {
-                    glVertex2d((*quad)[k].x(), (*quad)[k].y());
-                }
-                glEnd();
-            }
-        }
-    }
+    //             glBegin(GL_LINE_LOOP);
+    //             for (uint k = 0; k < quad->size(); k++) {
+    //                 glVertex2d((*quad)[k].x(), (*quad)[k].y());
+    //             }
+    //             glEnd();
+    //         }
+    //     }
+    // }
 }
 
 void StructuredMeshOpenGLWidget::setMesh(StructuredMesh *mesh) {
@@ -119,11 +119,7 @@ void StructuredMeshOpenGLWidget::wheelEvent(QWheelEvent *event) {
     update();
 }
 
-void StructuredMeshOpenGLWidget::mouseMoveEvent(QMouseEvent *event) {
-    Point realCoordinate = OpenGLUtil::mapCoordinate(this, event, left, right, top, bottom);
-
-    parent->setRealCoordinate(realCoordinate);
-}
+void StructuredMeshOpenGLWidget::mouseMoveEvent(QMouseEvent *event) {}
 
 void StructuredMeshOpenGLWidget::mousePressEvent(QMouseEvent *event) {
 //    qDebug() << "press";

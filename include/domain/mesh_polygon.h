@@ -2,32 +2,46 @@
 #define MESH_POLYGON_H
 
 #include <QString>
-#include "include/utility/cgal_definitions.h"
+#include <vtkSmartPointer.h>
+#include <vtkPolygon.h>
 
-class MeshPolygon : public CGALPolygon {
-public:
-    enum MeshPolygonType { BOUNDARY, ISLAND, REFINEMENT_AREA };
+enum class MeshPolygonType { BOUNDARY, ISLAND, REFINEMENT_AREA };
 
+class MeshPolygon {
 private:
     QString filename;
     MeshPolygonType meshPolygonType;
+    vtkSmartPointer<vtkPolygon> originalPolygon;
+    vtkSmartPointer<vtkPolygon> filteredPolygon;
+
+    // To be removed
     double minimumAngle;
     double maximumEdgeLength;
 
 public:
     static const QString BOUNDARY_POLYGON_FILENAME;
+
+    // To be removed
     static const double DEFAULT_MINIMUM_ANGLE;
     static const double DEFAULT_MAXIMUM_EDGE_LENGTH;
 
     MeshPolygon();
     MeshPolygon(const QString &filename, MeshPolygonType meshPolygonType);
 
+    void build();
+    void filter(double distanceFilter);
+    bool pointInPolygon(double *point);
+
     MeshPolygon& operator=(const MeshPolygon &meshPolygon);
     bool operator==(const MeshPolygon &meshPolygon);
 
     void setFilename(const QString &filename);
     QString getFilename() const;
+    void setMeshPolygonType(const MeshPolygonType &meshPolygonType);
     MeshPolygonType getMeshPolygonType() const;
+    vtkPolygon* getOriginalPolygon() const;
+    vtkPolygon* getFilteredPolygon() const;
+
     void setMinimumAngle(const double &minimumAngle);
     double getMinimumAngle() const;
     double getMinimumAngleInCGALRepresentation() const;
@@ -35,19 +49,16 @@ public:
     double getMaximumEdgeLength() const;
     void setOptimalParameters();
 
-    double width() const;
-    double height() const;
-
     inline bool isBoundary() const {
-        return this->meshPolygonType == MeshPolygon::BOUNDARY;
+        return this->meshPolygonType == MeshPolygonType::BOUNDARY;
     }
 
     inline bool isIsland() const {
-        return this->meshPolygonType == MeshPolygon::ISLAND;
+        return this->meshPolygonType == MeshPolygonType::ISLAND;
     }
 
     inline bool isRefinementArea() const {
-        return this->meshPolygonType == MeshPolygon::REFINEMENT_AREA;
+        return this->meshPolygonType == MeshPolygonType::REFINEMENT_AREA;
     }
 };
 

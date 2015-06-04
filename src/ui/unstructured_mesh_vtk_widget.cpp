@@ -44,25 +44,26 @@ void UnstructuredMeshVTKWidget::setMesh(UnstructuredMesh *mesh) {
 
     MeshPolygon *boundaryPolygon = mesh->getBoundaryPolygon();
 
-    if (boundaryPolygon->is_empty()) {
+    if (boundaryPolygon->getFilteredPolygon() == NULL) {
         return;
     }
 
-    QList<MeshPolygon> domain = mesh->getDomain();
+    QList<MeshPolygon*> domain = mesh->getDomain();
     vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
     vtkSmartPointer<vtkCellArray> polygons = vtkSmartPointer<vtkCellArray>::New();
+
     int i = 0;
 
-    for (QList<MeshPolygon>::const_iterator it = domain.begin(); it != domain.end(); it++) {
-        vtkSmartPointer<vtkPolygon> polygon = vtkSmartPointer<vtkPolygon>::New();
-        int j = 0;
+    for (QList<MeshPolygon*>::const_iterator it = domain.begin(); it != domain.end(); it++) {
+        vtkPolygon *polygon = (*it)->getFilteredPolygon();
+        int numberOfPoints = polygon->GetNumberOfPoints();
 
-        polygon->GetPointIds()->SetNumberOfIds(it->size());
+        polygon->GetPointIds()->SetNumberOfIds(numberOfPoints);
 
-        for (MeshPolygon::Vertex_iterator vt = it->vertices_begin(); vt != it->vertices_end(); vt++) {
-            points->InsertNextPoint(vt->x(), vt->y(), 0.0);
+        for (vtkIdType j = 0; j < numberOfPoints; j++) {
+            points->InsertNextPoint(polygon->GetPoints()->GetPoint(j));
             polygon->GetPointIds()->SetId(j, i);
-            j++; i++;
+            i++; j++;
         }
 
         polygons->InsertNextCell(polygon);

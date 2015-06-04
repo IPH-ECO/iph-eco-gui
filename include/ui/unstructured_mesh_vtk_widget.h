@@ -12,7 +12,7 @@
 #include "include/domain/unstructured_mesh.h"
 
 class UnstructuredMeshVTKWidget : public QVTKWidget {
-	Q_OBJECT
+    Q_OBJECT
 private:
 //    vtkPolyDataMapper *polyDataMapper;
 //    vtkActor *actor;

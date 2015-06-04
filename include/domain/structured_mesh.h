@@ -1,32 +1,27 @@
 #ifndef STRUCTURED_MESH_H
 #define STRUCTURED_MESH_H
 
-#include <boost/numeric/ublas/matrix.hpp>
+#include <vtkStructuredGrid.h>
 
 #include "include/utility/cgal_definitions.h"
 #include "quad.h"
 #include "mesh.h"
 
-using boost::numeric::ublas::matrix;
-
 class StructuredMesh : public Mesh {
 private:
     uint resolution;
-    matrix<Quad*> grid;
+    vtkSmartPointer<vtkStructuredGrid> grid;
 
-    std::vector<ulong> calculateInitialPoints();
-    Quad* makeQuadFromPoint(const Point *p, const int &i, const int &j);
-    bool isCenterInscribed(const Point *p, const int &i, const int &j);
+    void computeBounds(ulong *points);
 
 public:
     StructuredMesh();
     StructuredMesh(QString &name);
     StructuredMesh(QString &name, uint &resolution);
-    ~StructuredMesh();
 
     uint getResolution() const;
     void setResolution(const uint &resolution);
-    matrix<Quad*>& getGrid();
+    vtkStructuredGrid* getGrid();
 
     void generate();
     void clearGrid();
