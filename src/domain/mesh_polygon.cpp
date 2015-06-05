@@ -51,6 +51,7 @@ void MeshPolygon::build() {
             QStringList coordinates = coordinatesText.trimmed().split(" ");
             int coordinatesCount = coordinates.size() - 1;
 
+            originalPolygon->GetPointIds()->SetNumberOfIds(coordinatesCount);
             originalPolygon->GetPoints()->SetNumberOfPoints(coordinatesCount);
 
             for (int i = 0; i < coordinatesCount; i++) {
@@ -58,6 +59,7 @@ void MeshPolygon::build() {
                 GeographicLib::GeoCoords utmCoordinate(coordinateStr.at(1).toDouble(), coordinateStr.at(0).toDouble());
                 double point[3] = { utmCoordinate.Easting(), utmCoordinate.Northing(), 0.0 };
 
+                originalPolygon->GetPointIds()->SetId(i, i);
                 originalPolygon->GetPoints()->SetPoint(i, point);
             }
 
@@ -68,13 +70,12 @@ void MeshPolygon::build() {
     kmlFile.close();
 }
 
-void MeshPolygon::filter(double distanceFilter) {
+void MeshPolygon::filter(double &distanceFilter) {
     if (originalPolygon == NULL || originalPolygon->GetPoints()->GetNumberOfPoints() == 0) {
         throw MeshPolygonException("Unable to filter polygon. Points not defined.");
     }
 
     if (distanceFilter == 0.0) {
-        // TODO: Use shallow copy
         filteredPolygon = originalPolygon;
     } else {
         filteredPolygon = vtkSmartPointer<vtkPolygon>::New();
@@ -108,6 +109,10 @@ bool MeshPolygon::pointInPolygon(double *point) {
     filteredPolygon->GetPoints()->GetBounds(bounds);
 
     return vtkPolygon::PointInPolygon(point, numberOfPoints, dataPointer, bounds, normal);
+}
+
+double MeshPolygon::area() {
+    return filteredPolygon->ComputeArea();
 }
 
 // Refactor to return a pointer

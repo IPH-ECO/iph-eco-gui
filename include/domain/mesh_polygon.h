@@ -29,8 +29,9 @@ public:
     MeshPolygon(const QString &filename, MeshPolygonType meshPolygonType);
 
     void build();
-    void filter(double distanceFilter);
+    void filter(double &distanceFilter);
     bool pointInPolygon(double *point);
+    double area();
 
     MeshPolygon& operator=(const MeshPolygon &meshPolygon);
     bool operator==(const MeshPolygon &meshPolygon);

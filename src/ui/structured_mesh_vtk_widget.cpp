@@ -2,18 +2,10 @@
 
 #include <vtkSmartPointer.h>
 #include <vtkPolyData.h>
-#include <vtkPoints.h>
-#include <vtkPolygon.h>
-#include <vtkCellArray.h>
-#include <vtkTriangleFilter.h>
 #include <vtkRenderWindowInteractor.h>
-#include <vtkFeatureEdges.h>
 #include <vtkWorldPointPicker.h>
-#include <vtkDataSetMapper.h>
 #include <vtkProperty.h>
-#include <vtkStructuredGridOutlineFilter.h>
 #include <QList>
-#include <QDebug>
 
 #include "include/ui/structured_mesh_dialog.h"
 #include "include/utility/mouse_interactor.h"
@@ -97,21 +89,20 @@ void StructuredMeshVTKWidget::setMesh(StructuredMesh *mesh) {
     // vtkSmartPointer<vtkPolyDataMapper> polyDataMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
     // polyDataMapper->SetInputData(edges->GetOutput());
 
-    vtkSmartPointer<vtkStructuredGrid> structuredGrid = mesh->getGrid();
+    vtkSmartPointer<vtkPolyData> polyData = mesh->getGrid();
 
-    // vtkSmartPointer<vtkStructuredGridOutlineFilter> outlineFilter = vtkSmartPointer<vtkStructuredGridOutlineFilter>::New();
-    // outlineFilter->SetInputData(structuredGrid);
-    // outlineFilter->Update();
+    // vtkSmartPointer<vtkExtractEdges> extractEdges = vtkSmartPointer<vtkExtractEdges>::New();
+    // extractEdges->SetInputData(polyData);
+    // extractEdges->Update();
 
-    vtkSmartPointer<vtkDataSetMapper> mapper = vtkSmartPointer<vtkDataSetMapper>::New();
-    mapper->SetInputData(structuredGrid);
-    // mapper->SetInputConnection(outlineFilter->GetOutputPort());
+    vtkSmartPointer<vtkPolyDataMapper> mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+    mapper->SetInputData(polyData);
+    // mapper->SetInputConnection(extractEdges->GetOutputPort());
 
     vtkSmartPointer<vtkActor> actor = vtkSmartPointer<vtkActor>::New();
-    // actor->SetMapper(polyDataMapper);
     actor->SetMapper(mapper);
+    actor->GetProperty()->SetColor(1, 1, 1);
     actor->GetProperty()->EdgeVisibilityOn();
-    actor->GetProperty()->SetEdgeColor(0, 0, 1);
 
     vtkSmartPointer<vtkRenderer> renderer = vtkSmartPointer<vtkRenderer>::New();
     vtkSmartPointer<vtkRenderWindow> renderWindow = vtkSmartPointer<vtkRenderWindow>::New();
@@ -133,7 +124,7 @@ void StructuredMeshVTKWidget::setMesh(StructuredMesh *mesh) {
     renderWindowInteractor->SetInteractorStyle(mouseInteractor);
 
     renderer->AddActor(actor);
-    renderer->ResetCamera();
+    renderer->SetBackground(1, 1, 1);
 
     this->SetRenderWindow(renderWindow);
 

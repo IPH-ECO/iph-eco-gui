@@ -9,7 +9,6 @@
 #include <QXmlStreamReader>
 #include <QJsonDocument>
 #include <QJsonArray>
-#include <QtMath>
 
 #include <GeographicLib/GeoCoords.hpp>
 
@@ -141,10 +140,10 @@ double Mesh::area() {
         MeshPolygon *meshPolygon = *it;
         
         if (meshPolygon->isBoundary()) {
-            area += meshPolygon->getFilteredPolygon()->ComputeArea();
+            area += meshPolygon->area();
         } else {
             if (meshPolygon->isIsland()) {
-                area -= meshPolygon->getFilteredPolygon()->ComputeArea();
+                area -= meshPolygon->area();
             }
         }
     }

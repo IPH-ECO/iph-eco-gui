@@ -154,7 +154,7 @@ void StructuredMeshDialog::on_btnGenerateMesh_clicked() {
 
     CGAL::Failure_behaviour old_behaviour = CGAL::set_error_behaviour(CGAL::THROW_EXCEPTION);
     try {
-        currentMesh->buildDomain(boundaryFileStr);
+        currentMesh->addMeshPolygon(boundaryFileStr, MeshPolygonType::BOUNDARY);
         currentMesh->generate();
         ui->structuredMeshVTKWidget->setMesh(currentMesh);
     } catch (const std::exception& e) {

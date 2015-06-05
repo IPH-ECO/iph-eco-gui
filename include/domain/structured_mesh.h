@@ -1,7 +1,7 @@
 #ifndef STRUCTURED_MESH_H
 #define STRUCTURED_MESH_H
 
-#include <vtkStructuredGrid.h>
+#include <vtkPolyData.h>
 
 #include "include/utility/cgal_definitions.h"
 #include "quad.h"
@@ -10,7 +10,7 @@
 class StructuredMesh : public Mesh {
 private:
     uint resolution;
-    vtkSmartPointer<vtkStructuredGrid> grid;
+    vtkSmartPointer<vtkPolyData> polyData;
 
     void computeBounds(ulong *points);
 
@@ -21,14 +21,13 @@ public:
 
     uint getResolution() const;
     void setResolution(const uint &resolution);
-    vtkStructuredGrid* getGrid();
+    vtkPolyData* getGrid();
 
     void generate();
     void clearGrid();
 
     virtual bool isGenerated();
     virtual bool instanceOf(const QString &type);
-    virtual void buildDomain(const QString &filename);
     virtual void clear();
 };
 
