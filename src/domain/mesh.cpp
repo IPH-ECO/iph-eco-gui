@@ -55,41 +55,31 @@ MeshPolygon* Mesh::addMeshPolygon(const QString &filename, const MeshPolygonType
         throw e;
     }
 
-    // Only one boundary polygon must exists
-    if (meshPolygon->getMeshPolygonType() == MeshPolygonType::BOUNDARY) {
-        domain.removeOne(boundaryPolygon);
+    switch (meshPolygon->getMeshPolygonType()) {
+        case MeshPolygonType::BOUNDARY:
         delete boundaryPolygon;
         boundaryPolygon = meshPolygon;
-    }
+        break;
 
-    domain.append(meshPolygon);
+        case MeshPolygonType::ISLAND:
+        islands.append(meshPolygon);
+        break;
+
+        case MeshPolygonType::REFINEMENT_AREA:
+        refinementAreas.append(meshPolygon);
+        break;
+    }
 
     return meshPolygon;
 }
 
 QList<MeshPolygon*> Mesh::getIslands() {
-    QList<MeshPolygon*> islands;
-
-    for (QList<MeshPolygon*>::iterator it = domain.begin(); it != domain.end(); it++) {
-        if ((*it)->isIsland()) {
-            islands.append(*it);
-        }
-    }
-
     return islands;
 }
 
 // Refactor
 void Mesh::removeMeshPolygon(const MeshPolygon &meshPolygon) {
     // domain.removeOne(meshPolygon);
-}
-
-QList<MeshPolygon*>& Mesh::getDomain() {
-    return domain;
-}
-
-void Mesh::setDomain(const QList<MeshPolygon*> &domain) {
-    this->domain = domain;
 }
 
 MeshPolygon* Mesh::getBoundaryPolygon() {
@@ -104,10 +94,6 @@ MeshPolygon* Mesh::getMeshPolygon(const QString &filename, const MeshPolygonType
     // }
 
     // return &(*it);
-}
-
-void Mesh::setBoundaryPolygon(MeshPolygon *meshPolygon) {
-    domain.append(meshPolygon);
 }
 
 void Mesh::setShowDomainBoundary(const bool &show) {
@@ -126,26 +112,19 @@ bool Mesh::getShowMesh() const {
     return this->showMesh;
 }
 
+// TODO: Refactor
 void Mesh::clear() {
     name.clear();
-    domain.clear();
+    // domain.clear();
     showDomainBoundary = showMesh = true;
     showUTMCoordinates = showVertexesLabels = showTrianglesLabels = showEdgesLabels = false;
 }
 
 double Mesh::area() {
-    double area = 0.0;
+    double area = boundaryPolygon->area();
 
-    for (QList<MeshPolygon*>::const_iterator it = domain.begin(); it != domain.end(); it++) {
-        MeshPolygon *meshPolygon = *it;
-        
-        if (meshPolygon->isBoundary()) {
-            area += meshPolygon->area();
-        } else {
-            if (meshPolygon->isIsland()) {
-                area -= meshPolygon->area();
-            }
-        }
+    for (QList<MeshPolygon*>::const_iterator it = islands.begin(); it != islands.end(); it++) {
+        area -= (*it)->area();
     }
 
     return area;

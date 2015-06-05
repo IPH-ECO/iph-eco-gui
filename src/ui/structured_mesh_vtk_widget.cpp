@@ -2,6 +2,9 @@
 
 #include <vtkSmartPointer.h>
 #include <vtkPolyData.h>
+#include <vtkPolygon.h>
+#include <vtkCellArray.h>
+#include <vtkExtractEdges.h>
 #include <vtkRenderWindowInteractor.h>
 #include <vtkWorldPointPicker.h>
 #include <vtkProperty.h>
@@ -32,77 +35,63 @@ void StructuredMeshVTKWidget::setMesh(StructuredMesh *mesh) {
         return;
     }
 
-//    vtkPolyData *polyData = mesh->toPolyData();
-
-//    if (polyData == NULL) {
-//        return;
-//    }
-
     MeshPolygon *boundaryPolygon = mesh->getBoundaryPolygon();
 
     if (boundaryPolygon->getFilteredPolygon() == NULL) {
         return;
     }
 
-    // vtkSmartPointer<vtkTriangleFilter> triangleFilter = vtkSmartPointer<vtkTriangleFilter>::New();
-    // triangleFilter->SetInputData(polyData);
-    // triangleFilter->Update();
+    vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
+    vtkSmartPointer<vtkCellArray> polygons = vtkSmartPointer<vtkCellArray>::New();
 
-    // vtkSmartPointer<vtkPolyData> pd2 = triangleFilter->GetOutput();
+    int count = 0;
+    vtkPolygon *vtkBoundaryPolygon = mesh->getBoundaryPolygon()->getFilteredPolygon();
 
-    // QList<MeshPolygon*> domain = mesh->getDomain();
-    // vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
-    // vtkSmartPointer<vtkCellArray> polygons = vtkSmartPointer<vtkCellArray>::New();
+    for (vtkIdType i = 0; i < vtkBoundaryPolygon->GetNumberOfPoints(); i++) {
+        points->InsertNextPoint(vtkBoundaryPolygon->GetPoints()->GetPoint(i));
+        vtkBoundaryPolygon->GetPointIds()->SetId(i, count);
+        count++;
+    }
 
-    // int i = 0;
+    polygons->InsertNextCell(vtkBoundaryPolygon);
 
-    // for (QList<MeshPolygon*>::const_iterator it = domain.begin(); it != domain.end(); it++) {
-    //     vtkSmartPointer<vtkPolygon> polygon = (*it)->getFilteredPolygon();
-    //     int numberOfPoints = polygon->GetPoints()->GetNumberOfPoints();
-    //     double p[3] = { 174839, 8930064, 0.0 };
+    QList<MeshPolygon*> islands = mesh->getIslands();
 
-    //     polygon->GetPointIds()->SetNumberOfIds(numberOfPoints);
+    for (QList<MeshPolygon*>::const_iterator it = islands.begin(); it != islands.end(); it++) {
+        vtkPolygon *islandsPolygon = (*it)->getFilteredPolygon();
 
-    //     qDebug() << (*it)->pointInPolygon(p);
+        for (vtkIdType i = 0; i < islandsPolygon->GetNumberOfPoints(); i++) {
+            points->InsertNextPoint(islandsPolygon->GetPoints()->GetPoint(i));
+            islandsPolygon->GetPointIds()->SetId(i, count);
+            count++;
+        }
 
-    //     for (vtkIdType j = 0; j < numberOfPoints; j++) {
-    //         points->InsertNextPoint(polygon->GetPoints()->GetPoint(j));
-    //         polygon->GetPointIds()->SetId(j, i);
-    //         i++;
-    //     }
+        polygons->InsertNextCell(islandsPolygon);
+    }
 
-    //     polygons->InsertNextCell(polygon);
-    // }
+    vtkSmartPointer<vtkPolyData> domainPolyData = vtkSmartPointer<vtkPolyData>::New();
+    domainPolyData->SetPoints(points);
+    domainPolyData->SetPolys(polygons);
 
-    // vtkSmartPointer<vtkPolyData> polyData = vtkSmartPointer<vtkPolyData>::New();
-    // polyData->SetPoints(points);
-    // polyData->SetPolys(polygons);
+    vtkSmartPointer<vtkExtractEdges> domainEdges = vtkSmartPointer<vtkExtractEdges>::New();
+    domainEdges->SetInputData(domainPolyData);
+    domainEdges->Update();
 
-    // vtkSmartPointer<vtkFeatureEdges> edges = vtkSmartPointer<vtkFeatureEdges>::New();
-    // edges->SetInputData(polyData);
-    // edges->BoundaryEdgesOn();
-    // edges->FeatureEdgesOff();
-    // edges->ManifoldEdgesOff();
-    // edges->NonManifoldEdgesOff();
-    // edges->Update();
+    vtkSmartPointer<vtkPolyData> gridPolyData = mesh->getGrid();
+    vtkSmartPointer<vtkPolyDataMapper> domainMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+    domainMapper->SetInputData(domainEdges->GetOutput());
+    
+    vtkSmartPointer<vtkPolyDataMapper> gridMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+    gridMapper->SetInputData(gridPolyData);
 
-    // vtkSmartPointer<vtkPolyDataMapper> polyDataMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-    // polyDataMapper->SetInputData(edges->GetOutput());
+    vtkSmartPointer<vtkActor> domainActor = vtkSmartPointer<vtkActor>::New();
+    domainActor->SetMapper(domainMapper);
+    domainActor->GetProperty()->EdgeVisibilityOn();
 
-    vtkSmartPointer<vtkPolyData> polyData = mesh->getGrid();
-
-    // vtkSmartPointer<vtkExtractEdges> extractEdges = vtkSmartPointer<vtkExtractEdges>::New();
-    // extractEdges->SetInputData(polyData);
-    // extractEdges->Update();
-
-    vtkSmartPointer<vtkPolyDataMapper> mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-    mapper->SetInputData(polyData);
-    // mapper->SetInputConnection(extractEdges->GetOutputPort());
-
-    vtkSmartPointer<vtkActor> actor = vtkSmartPointer<vtkActor>::New();
-    actor->SetMapper(mapper);
-    actor->GetProperty()->SetColor(1, 1, 1);
-    actor->GetProperty()->EdgeVisibilityOn();
+    vtkSmartPointer<vtkActor> gridActor = vtkSmartPointer<vtkActor>::New();
+    gridActor->SetMapper(gridMapper);
+    gridActor->GetProperty()->SetColor(1, 1, 1);
+    gridActor->GetProperty()->EdgeVisibilityOn();
 
     vtkSmartPointer<vtkRenderer> renderer = vtkSmartPointer<vtkRenderer>::New();
     vtkSmartPointer<vtkRenderWindow> renderWindow = vtkSmartPointer<vtkRenderWindow>::New();
@@ -123,7 +112,8 @@ void StructuredMeshVTKWidget::setMesh(StructuredMesh *mesh) {
 
     renderWindowInteractor->SetInteractorStyle(mouseInteractor);
 
-    renderer->AddActor(actor);
+    renderer->AddActor(gridActor);
+    renderer->AddActor(domainActor);
     renderer->SetBackground(1, 1, 1);
 
     this->SetRenderWindow(renderWindow);

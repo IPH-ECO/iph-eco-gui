@@ -167,7 +167,7 @@ void StructuredMeshDialog::on_btnGenerateMesh_clicked() {
 
 void StructuredMeshDialog::on_btnSaveMesh_clicked() {
     QString meshName = ui->cbxMeshName->currentIndex() == -1 ? ui->edtMeshName->text() : ui->cbxMeshName->currentText();
-    QList<MeshPolygon*> domain = currentMesh->getDomain();
+    // QList<MeshPolygon*> domain = currentMesh->getDomain();
     uint resolution = ui->sbxResolution->value();
 
     Project *project = IPHApplication::getCurrentProject();
@@ -179,7 +179,7 @@ void StructuredMeshDialog::on_btnSaveMesh_clicked() {
         bool showMesh = ui->chkShowMesh->isChecked();
 
         currentMesh = new StructuredMesh(meshName);
-        currentMesh->setDomain(domain);
+        // currentMesh->setDomain(domain);
         currentMesh->setResolution(resolution);
         currentMesh->setShowDomainBoundary(showDomainBoundary);
         currentMesh->setShowMesh(showMesh);
@@ -190,7 +190,7 @@ void StructuredMeshDialog::on_btnSaveMesh_clicked() {
         ui->cbxMeshName->setCurrentText(meshName);
     } else {
         currentMesh->setName(meshName);
-        currentMesh->setDomain(domain);
+        // currentMesh->setDomain(domain);
         currentMesh->setResolution(resolution);
 
         ui->cbxMeshName->setItemText(ui->cbxMeshName->currentIndex(), currentMesh->getName());

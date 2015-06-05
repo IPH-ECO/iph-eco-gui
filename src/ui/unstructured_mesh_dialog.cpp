@@ -306,7 +306,7 @@ void UnstructuredMeshDialog::on_cbxMeshName_currentIndexChanged(int index) {
 
 void UnstructuredMeshDialog::on_btnSaveMesh_clicked() {
     QString meshName = ui->cbxMeshName->currentIndex() == -1 ? ui->edtMeshName->text() : ui->cbxMeshName->currentText();
-    QList<MeshPolygon*> domain = currentMesh->getDomain();
+    // QList<MeshPolygon*> domain = currentMesh->getDomain();
     double coordinatesDistance = ui->sbxCoordinatesDistance->value();
 
     Project *project = IPHApplication::getCurrentProject();
@@ -318,7 +318,7 @@ void UnstructuredMeshDialog::on_btnSaveMesh_clicked() {
         bool showMesh = ui->chkShowMesh->isChecked();
 
         currentMesh = new UnstructuredMesh(meshName);
-        currentMesh->setDomain(domain);
+        // currentMesh->setDomain(domain);
         currentMesh->setCoordinatesDistance(coordinatesDistance);
         currentMesh->setShowDomainBoundary(showDomainBoundary);
         currentMesh->setShowMesh(showMesh);
@@ -337,7 +337,7 @@ void UnstructuredMeshDialog::on_btnSaveMesh_clicked() {
         }
 
         currentMesh->setName(meshName);
-        currentMesh->setDomain(domain);
+        // currentMesh->setDomain(domain);
         currentMesh->setCoordinatesDistance(coordinatesDistance);
 
         ui->cbxMeshName->setItemText(ui->cbxMeshName->currentIndex(), currentMesh->getName());
