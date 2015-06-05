@@ -9,12 +9,12 @@
 #include <QXmlStreamReader>
 #include <QJsonDocument>
 #include <QJsonArray>
-
 #include <GeographicLib/GeoCoords.hpp>
+#include <QDebug>
 
-Mesh::Mesh() : boundaryPolygon(NULL), coordinatesDistance(0.0), showDomainBoundary(true), showMesh(true) {}
+Mesh::Mesh() : boundaryPolygon(NULL), coordinatesDistance(0.0), showBoundaryEdges(true), showMesh(true) {}
 
-Mesh::Mesh(QString &_name) : boundaryPolygon(NULL), name(_name), coordinatesDistance(0.0), showDomainBoundary(true) {}
+Mesh::Mesh(QString &_name) : boundaryPolygon(NULL), name(_name), coordinatesDistance(0.0), showBoundaryEdges(true), showMesh(true) {}
 
 Mesh::~Mesh() {}
 
@@ -55,35 +55,40 @@ MeshPolygon* Mesh::addMeshPolygon(const QString &filename, const MeshPolygonType
         throw e;
     }
 
-    switch (meshPolygon->getMeshPolygonType()) {
+    switch (meshPolygonType) {
         case MeshPolygonType::BOUNDARY:
-        delete boundaryPolygon;
-        boundaryPolygon = meshPolygon;
+        delete this->boundaryPolygon;
+        this->boundaryPolygon = meshPolygon;
         break;
 
         case MeshPolygonType::ISLAND:
-        islands.append(meshPolygon);
+        this->islands.append(meshPolygon);
         break;
 
         case MeshPolygonType::REFINEMENT_AREA:
-        refinementAreas.append(meshPolygon);
+        this->refinementAreas.append(meshPolygon);
         break;
     }
 
     return meshPolygon;
 }
 
+MeshPolygon* Mesh::getBoundaryPolygon() {
+    return boundaryPolygon;
+}
+
 QList<MeshPolygon*> Mesh::getIslands() {
     return islands;
 }
 
+QList<MeshPolygon*> Mesh::getRefinementAreas() {
+    return refinementAreas;
+}
+
+
 // Refactor
 void Mesh::removeMeshPolygon(const MeshPolygon &meshPolygon) {
     // domain.removeOne(meshPolygon);
-}
-
-MeshPolygon* Mesh::getBoundaryPolygon() {
-    return boundaryPolygon;
 }
 
 MeshPolygon* Mesh::getMeshPolygon(const QString &filename, const MeshPolygonType &meshPolygonType) {
@@ -96,16 +101,16 @@ MeshPolygon* Mesh::getMeshPolygon(const QString &filename, const MeshPolygonType
     // return &(*it);
 }
 
-void Mesh::setShowDomainBoundary(const bool &show) {
-    this->showDomainBoundary = show;
+void Mesh::setShowBoundaryEdges(const bool &toggle) {
+    this->showBoundaryEdges = toggle;
 }
 
-bool Mesh::getShowDomainBoundary() const {
-    return this->showDomainBoundary;
+bool Mesh::getShowBoundaryEdges() const {
+    return this->showBoundaryEdges;
 }
 
-void Mesh::setShowMesh(const bool &show) {
-    this->showMesh = show;
+void Mesh::setShowMesh(const bool &toggle) {
+    this->showMesh = toggle;
 }
 
 bool Mesh::getShowMesh() const {
@@ -116,7 +121,7 @@ bool Mesh::getShowMesh() const {
 void Mesh::clear() {
     name.clear();
     // domain.clear();
-    showDomainBoundary = showMesh = true;
+    showBoundaryEdges = showMesh = true;
     showUTMCoordinates = showVertexesLabels = showTrianglesLabels = showEdgesLabels = false;
 }
 

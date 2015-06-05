@@ -31,79 +31,73 @@ StructuredMeshVTKWidget::~StructuredMeshVTKWidget() {
 }
 
 void StructuredMeshVTKWidget::setMesh(StructuredMesh *mesh) {
-    if (mesh == NULL) {
-        return;
-    }
-
     MeshPolygon *boundaryPolygon = mesh->getBoundaryPolygon();
 
     if (boundaryPolygon->getFilteredPolygon() == NULL) {
         return;
     }
 
-    vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
-    vtkSmartPointer<vtkCellArray> polygons = vtkSmartPointer<vtkCellArray>::New();
+    vtkSmartPointer<vtkRenderer> renderer = vtkSmartPointer<vtkRenderer>::New();
+    renderer->SetBackground(1, 1, 1);
 
-    int count = 0;
-    vtkPolygon *vtkBoundaryPolygon = mesh->getBoundaryPolygon()->getFilteredPolygon();
+    if (mesh->getShowBoundaryEdges()) {
+        vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
+        vtkSmartPointer<vtkCellArray> polygons = vtkSmartPointer<vtkCellArray>::New();
+        QList<MeshPolygon*> meshPolygons = mesh->getIslands();
+        int count = 0;
 
-    for (vtkIdType i = 0; i < vtkBoundaryPolygon->GetNumberOfPoints(); i++) {
-        points->InsertNextPoint(vtkBoundaryPolygon->GetPoints()->GetPoint(i));
-        vtkBoundaryPolygon->GetPointIds()->SetId(i, count);
-        count++;
-    }
+        meshPolygons.prepend(mesh->getBoundaryPolygon());
 
-    polygons->InsertNextCell(vtkBoundaryPolygon);
+        for (QList<MeshPolygon*>::const_iterator it = meshPolygons.begin(); it != meshPolygons.end(); it++) {
+            vtkPolygon *vtkMeshPolygon = (*it)->getFilteredPolygon();
 
-    QList<MeshPolygon*> islands = mesh->getIslands();
+            for (vtkIdType i = 0; i < vtkMeshPolygon->GetPoints()->GetNumberOfPoints(); i++) {
+                double point[3];
 
-    for (QList<MeshPolygon*>::const_iterator it = islands.begin(); it != islands.end(); it++) {
-        vtkPolygon *islandsPolygon = (*it)->getFilteredPolygon();
+                vtkMeshPolygon->GetPoints()->GetPoint(i, point); // Safe call
+                vtkMeshPolygon->GetPointIds()->SetId(i, count);
+                points->InsertNextPoint(point);
+                count++;
+            }
 
-        for (vtkIdType i = 0; i < islandsPolygon->GetNumberOfPoints(); i++) {
-            points->InsertNextPoint(islandsPolygon->GetPoints()->GetPoint(i));
-            islandsPolygon->GetPointIds()->SetId(i, count);
-            count++;
+            polygons->InsertNextCell(vtkMeshPolygon);
         }
 
-        polygons->InsertNextCell(islandsPolygon);
+        vtkSmartPointer<vtkPolyData> domainPolyData = vtkSmartPointer<vtkPolyData>::New();
+        domainPolyData->SetPoints(points);
+        domainPolyData->SetPolys(polygons);
+
+        vtkSmartPointer<vtkExtractEdges> domainEdges = vtkSmartPointer<vtkExtractEdges>::New();
+        domainEdges->SetInputData(domainPolyData);
+        domainEdges->Update();
+
+        vtkSmartPointer<vtkPolyDataMapper> domainMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+        domainMapper->SetInputData(domainEdges->GetOutput());
+
+        vtkSmartPointer<vtkActor> domainActor = vtkSmartPointer<vtkActor>::New();
+        domainActor->SetMapper(domainMapper);
+        domainActor->GetProperty()->EdgeVisibilityOn();
+
+        renderer->AddActor(domainActor);
     }
 
-    vtkSmartPointer<vtkPolyData> domainPolyData = vtkSmartPointer<vtkPolyData>::New();
-    domainPolyData->SetPoints(points);
-    domainPolyData->SetPolys(polygons);
+    if (mesh->getShowMesh()) {
+        vtkSmartPointer<vtkPolyData> gridPolyData = mesh->getGrid();
+        vtkSmartPointer<vtkPolyDataMapper> gridMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+        vtkSmartPointer<vtkActor> gridActor = vtkSmartPointer<vtkActor>::New();
 
-    vtkSmartPointer<vtkExtractEdges> domainEdges = vtkSmartPointer<vtkExtractEdges>::New();
-    domainEdges->SetInputData(domainPolyData);
-    domainEdges->Update();
+        gridMapper->SetInputData(gridPolyData);
+        gridActor->SetMapper(gridMapper);
+        gridActor->GetProperty()->SetColor(1, 1, 1);
+        gridActor->GetProperty()->EdgeVisibilityOn();
+        renderer->AddActor(gridActor);
+    }
 
-    vtkSmartPointer<vtkPolyData> gridPolyData = mesh->getGrid();
-    vtkSmartPointer<vtkPolyDataMapper> domainMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-    domainMapper->SetInputData(domainEdges->GetOutput());
-    
-    vtkSmartPointer<vtkPolyDataMapper> gridMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-    gridMapper->SetInputData(gridPolyData);
-
-    vtkSmartPointer<vtkActor> domainActor = vtkSmartPointer<vtkActor>::New();
-    domainActor->SetMapper(domainMapper);
-    domainActor->GetProperty()->EdgeVisibilityOn();
-
-    vtkSmartPointer<vtkActor> gridActor = vtkSmartPointer<vtkActor>::New();
-    gridActor->SetMapper(gridMapper);
-    gridActor->GetProperty()->SetColor(1, 1, 1);
-    gridActor->GetProperty()->EdgeVisibilityOn();
-
-    vtkSmartPointer<vtkRenderer> renderer = vtkSmartPointer<vtkRenderer>::New();
     vtkSmartPointer<vtkRenderWindow> renderWindow = vtkSmartPointer<vtkRenderWindow>::New();
-
-    renderWindow->AddRenderer(renderer);
-
     vtkSmartPointer<vtkWorldPointPicker> worldPointPicker = vtkSmartPointer<vtkWorldPointPicker>::New();
     vtkSmartPointer<vtkRenderWindowInteractor> renderWindowInteractor = vtkSmartPointer<vtkRenderWindowInteractor>::New();
-    renderWindowInteractor->SetPicker(worldPointPicker);
-    renderWindowInteractor->SetRenderWindow(renderWindow);
-
     vtkSmartPointer<MouseInteractor> mouseInteractor = vtkSmartPointer<MouseInteractor>::New();
+    
     mouseInteractor->SetDefaultRenderer(renderer);
     
     StructuredMeshDialog *parent = (StructuredMeshDialog*) this->parent();
@@ -111,12 +105,11 @@ void StructuredMeshVTKWidget::setMesh(StructuredMesh *mesh) {
     parent->setArea(mesh->area());
 
     renderWindowInteractor->SetInteractorStyle(mouseInteractor);
-
-    renderer->AddActor(gridActor);
-    renderer->AddActor(domainActor);
-    renderer->SetBackground(1, 1, 1);
+    renderWindowInteractor->SetPicker(worldPointPicker);
+    renderWindowInteractor->SetRenderWindow(renderWindow);
+    
+    renderWindow->AddRenderer(renderer);
 
     this->SetRenderWindow(renderWindow);
-
     renderWindow->Render();
 }

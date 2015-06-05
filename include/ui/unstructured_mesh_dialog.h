@@ -29,7 +29,7 @@ private slots:
     void on_btnAddIsland_clicked();
     void on_btnRemoveIsland_clicked();
     void on_btnGenerateDomain_clicked();
-    void on_chkShowDomainBoundary_clicked();
+    void on_chkShowBoundaryEdges_clicked();
 
     // Mesh tab events
     void on_lstCoordinateFiles_itemSelectionChanged();

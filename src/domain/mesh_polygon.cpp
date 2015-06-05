@@ -49,18 +49,18 @@ void MeshPolygon::build() {
 
             QString coordinatesText = kmlReader.readElementText();
             QStringList coordinates = coordinatesText.trimmed().split(" ");
-            int coordinatesCount = coordinates.size() - 1;
+            int coordinatesCount = coordinates.size() - 1; // KML repeats the first coordinate at the end of the list
 
-            originalPolygon->GetPointIds()->SetNumberOfIds(coordinatesCount);
             originalPolygon->GetPoints()->SetNumberOfPoints(coordinatesCount);
+            originalPolygon->GetPointIds()->SetNumberOfIds(coordinatesCount);
 
             for (int i = 0; i < coordinatesCount; i++) {
                 QStringList coordinateStr = coordinates.at(i).split(",");
                 GeographicLib::GeoCoords utmCoordinate(coordinateStr.at(1).toDouble(), coordinateStr.at(0).toDouble());
                 double point[3] = { utmCoordinate.Easting(), utmCoordinate.Northing(), 0.0 };
 
-                originalPolygon->GetPointIds()->SetId(i, i);
                 originalPolygon->GetPoints()->SetPoint(i, point);
+                originalPolygon->GetPointIds()->SetId(i, i);
             }
 
             break;
@@ -80,10 +80,12 @@ void MeshPolygon::filter(double &distanceFilter) {
     } else {
         filteredPolygon = vtkSmartPointer<vtkPolygon>::New();
         double *p0 = originalPolygon->GetPoints()->GetPoint(0);
+        int count = 1;
 
         filteredPolygon->GetPoints()->InsertNextPoint(p0);
+        filteredPolygon->GetPointIds()->InsertNextId(0);
 
-        for (vtkIdType i = 1; i < originalPolygon->GetNumberOfPoints(); i++) {
+        for (vtkIdType i = 1; i < originalPolygon->GetPoints()->GetNumberOfPoints(); i++) {
             double *p1 = originalPolygon->GetPoints()->GetPoint(i);
             double pointsDistance = vtkMath::Distance2BetweenPoints(p0, p1);
 
@@ -95,6 +97,8 @@ void MeshPolygon::filter(double &distanceFilter) {
                 p0[1] = y;
                 p0[2] = 0.0;
                 filteredPolygon->GetPoints()->InsertNextPoint(p0);
+                filteredPolygon->GetPointIds()->InsertNextId(count);
+                count++;
             }
         }
     }
@@ -112,6 +116,10 @@ bool MeshPolygon::pointInPolygon(double *point) {
 }
 
 double MeshPolygon::area() {
+    for (vtkIdType i = 0; i < filteredPolygon->GetPointIds()->GetNumberOfIds(); i++) {
+        filteredPolygon->GetPointIds()->SetId(i, i);
+    }
+
     return filteredPolygon->ComputeArea();
 }
 

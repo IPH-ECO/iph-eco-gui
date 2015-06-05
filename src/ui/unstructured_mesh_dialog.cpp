@@ -142,8 +142,8 @@ void UnstructuredMeshDialog::on_btnGenerateDomain_clicked() {
     ui->lblDomainArea->setText(QString("Area: %1 m\u00B2").arg(currentMesh->area(), 0, 'f', 3));
 }
 
-void UnstructuredMeshDialog::on_chkShowDomainBoundary_clicked() {
-    currentMesh->setShowDomainBoundary(ui->chkShowDomainBoundary->isChecked());
+void UnstructuredMeshDialog::on_chkShowBoundaryEdges_clicked() {
+    currentMesh->setShowBoundaryEdges(ui->chkShowBoundaryEdges->isChecked());
     ui->unstructuredMeshVTKWidget->update();
 }
 
@@ -285,7 +285,7 @@ void UnstructuredMeshDialog::on_cbxMeshName_currentIndexChanged(int index) {
         ui->lstCoordinateFiles->setCurrentRow(0);
         ui->sbxMinimumAngle->setValue(currentMesh->getBoundaryPolygon()->getMinimumAngle());
         ui->sbxMaximumEdgeLength->setValue(currentMesh->getBoundaryPolygon()->getMaximumEdgeLength());
-        ui->chkShowDomainBoundary->setChecked(currentMesh->getShowDomainBoundary());
+        ui->chkShowBoundaryEdges->setChecked(currentMesh->getShowBoundaryEdges());
         ui->chkShowMesh->setChecked(currentMesh->getShowMesh());
         ui->btnCancelMesh->setText("Done");
 
@@ -314,13 +314,13 @@ void UnstructuredMeshDialog::on_btnSaveMesh_clicked() {
     currentMesh = static_cast<UnstructuredMesh*>(project->getMesh(&unstructuredMesh));
 
     if (currentMesh == NULL && ui->cbxMeshName->currentIndex() == -1) {
-        bool showDomainBoundary = ui->chkShowDomainBoundary->isChecked();
+        bool showBoundaryEdges = ui->chkShowBoundaryEdges->isChecked();
         bool showMesh = ui->chkShowMesh->isChecked();
 
         currentMesh = new UnstructuredMesh(meshName);
         // currentMesh->setDomain(domain);
         currentMesh->setCoordinatesDistance(coordinatesDistance);
-        currentMesh->setShowDomainBoundary(showDomainBoundary);
+        currentMesh->setShowBoundaryEdges(showBoundaryEdges);
         currentMesh->setShowMesh(showMesh);
 
         //TODO: handle duplicity

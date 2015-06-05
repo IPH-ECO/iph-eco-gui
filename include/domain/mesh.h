@@ -15,7 +15,7 @@ protected:
     QList<MeshPolygon*> islands;
     QList<MeshPolygon*> refinementAreas;
 
-    bool showDomainBoundary;
+    bool showBoundaryEdges;
     bool showMesh;
     bool showUTMCoordinates;
     bool showVertexesLabels;
@@ -34,16 +34,17 @@ public:
     QString getName() const;
     void setCoordinatesDistance(const double &coordinatesDistance);
     double getCoordinatesDistance() const;
-    QList<MeshPolygon*> getIslands();
     MeshPolygon* getBoundaryPolygon();
+    QList<MeshPolygon*> getIslands();
+    QList<MeshPolygon*> getRefinementAreas();
 
     MeshPolygon* addMeshPolygon(const QString &filename, const MeshPolygonType &meshPolygonType);
     void removeMeshPolygon(const MeshPolygon &meshPolygon);
     MeshPolygon* getMeshPolygon(const QString &filename, const MeshPolygonType &meshPolygonType);
 
-    void setShowDomainBoundary(const bool &show);
-    bool getShowDomainBoundary() const;
-    void setShowMesh(const bool &show);
+    void setShowBoundaryEdges(const bool &toogle);
+    bool getShowBoundaryEdges() const;
+    void setShowMesh(const bool &toogle);
     bool getShowMesh() const;
 
     double area();
