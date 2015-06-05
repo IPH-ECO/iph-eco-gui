@@ -42,8 +42,9 @@ void StructuredMesh::generate() {
     for (int i = 0; i < rows; i++) {
         for (int j = 0; j < columns; j++) {
             double quadCenter[3] = { x + this->resolution / 2.0, y + this->resolution / 2.0, 0.0 };
+            bool includeQuad = this->pointInMesh(quadCenter);
 
-            if (boundaryPolygon->pointInPolygon(quadCenter)) {
+            if (includeQuad) {
                 vtkSmartPointer<vtkQuad> quad = vtkSmartPointer<vtkQuad>::New();
                 double quadCoordinates[4][3] = {
                     { x, y, 0.0 },
@@ -103,4 +104,20 @@ void StructuredMesh::computeBounds(ulong *points) {
     points[1] = bounds[1] - ((ulong) bounds[1] % this->resolution); // xmax
     points[2] = bounds[2] - ((ulong) bounds[2] % this->resolution); // ymin
     points[3] = bounds[3] - ((ulong) bounds[3] % this->resolution); // ymax
+}
+
+bool StructuredMesh::pointInMesh(double *point) {
+    if (boundaryPolygon->pointInPolygon(point)) {
+        QList<MeshPolygon*> islands = this->getIslands();
+
+        for (QList<MeshPolygon*>::const_iterator it = islands.begin(); it != islands.end(); it++) {
+            if ((*it)->pointInPolygon(point)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    return false;
 }

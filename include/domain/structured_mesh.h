@@ -13,6 +13,7 @@ private:
     vtkSmartPointer<vtkPolyData> polyData;
 
     void computeBounds(ulong *points);
+    bool pointInMesh(double *point);
 
 public:
     StructuredMesh();
