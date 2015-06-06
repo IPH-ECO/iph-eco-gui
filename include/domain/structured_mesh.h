@@ -25,11 +25,9 @@ public:
     vtkPolyData* getGrid();
 
     void generate();
-    void clearGrid();
 
     virtual bool isGenerated();
     virtual bool instanceOf(const QString &type);
-    virtual void clear();
 };
 
 #endif // STRUCTURED_MESH_H

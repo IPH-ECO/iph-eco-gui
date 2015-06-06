@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include <QVTKWidget.h>
+#include <vtkRenderer.h>
 #include <vtkActor.h>
 
 #include "include/domain/structured_mesh.h"
@@ -10,12 +11,15 @@
 class StructuredMeshVTKWidget : public QVTKWidget {
 	Q_OBJECT
 private:
+	vtkSmartPointer<vtkRenderer> renderer;
 	vtkSmartPointer<vtkActor> boundaryEdgesActor;
 	vtkSmartPointer<vtkActor> gridActor;
+
 public:
     StructuredMeshVTKWidget(QWidget *parent);
     ~StructuredMeshVTKWidget();
     void render(StructuredMesh *mesh);
+    void clear();
     void showBoundaryEdges(const bool &show);
     void showMesh(const bool &show);
 };

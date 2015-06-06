@@ -142,32 +142,17 @@ void StructuredMeshDialog::on_btnGenerateMesh_clicked() {
 
 void StructuredMeshDialog::on_btnSaveMesh_clicked() {
     QString meshName = ui->cbxMeshName->currentIndex() == -1 ? ui->edtMeshName->text() : ui->cbxMeshName->currentText();
-    // QList<MeshPolygon*> domain = currentMesh->getDomain();
-    uint resolution = ui->sbxResolution->value();
-
     Project *project = IPHApplication::getCurrentProject();
-    StructuredMesh structuredMesh(meshName);
-    currentMesh = static_cast<StructuredMesh*>(project->getMesh(&structuredMesh));
 
-    if (currentMesh == NULL && ui->cbxMeshName->currentIndex() == -1) {
-        bool showBoundaryEdges = ui->chkShowBoundaryEdges->isChecked();
-        bool showMesh = ui->chkShowMesh->isChecked();
+    currentMesh->setName(meshName);
 
-        currentMesh = new StructuredMesh(meshName);
-        // currentMesh->setDomain(domain);
-        currentMesh->setResolution(resolution);
-        currentMesh->setShowBoundaryEdges(showBoundaryEdges);
-        currentMesh->setShowMesh(showMesh);
-
+    if (!project->containsMesh(currentMesh) && ui->cbxMeshName->currentIndex() == -1) {
         project->addMesh(currentMesh);
+        unsavedMesh = new StructuredMesh();
 
         ui->cbxMeshName->addItem(meshName);
         ui->cbxMeshName->setCurrentText(meshName);
     } else {
-        currentMesh->setName(meshName);
-        // currentMesh->setDomain(domain);
-        currentMesh->setResolution(resolution);
-
         ui->cbxMeshName->setItemText(ui->cbxMeshName->currentIndex(), currentMesh->getName());
     }
 }
@@ -208,7 +193,7 @@ void StructuredMeshDialog::resetMeshForm() {
     unsavedMesh->clear();
     currentMesh = unsavedMesh;
 
-    ui->structuredMeshVTKWidget->render(NULL);
+    ui->structuredMeshVTKWidget->clear();
     ui->edtMeshName->setFocus();
     ui->edtMeshName->clear();
     ui->edtBoundaryFileLine->clear();

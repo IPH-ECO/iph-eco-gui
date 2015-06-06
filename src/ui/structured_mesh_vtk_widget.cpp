@@ -8,7 +8,6 @@
 #include <vtkRenderWindowInteractor.h>
 #include <vtkWorldPointPicker.h>
 #include <vtkProperty.h>
-#include <vtkRenderer.h>
 #include <vtkPolyDataMapper.h>
 #include <vtkRenderWindow.h>
 #include <QList>
@@ -16,35 +15,18 @@
 #include "include/ui/structured_mesh_dialog.h"
 #include "include/utility/mouse_interactor.h"
 
-// vtkStandardNewMacro(MouseInteractor);
+StructuredMeshVTKWidget::StructuredMeshVTKWidget(QWidget *parent) : QVTKWidget(parent) {}
 
-StructuredMeshVTKWidget::StructuredMeshVTKWidget(QWidget *parent) : QVTKWidget(parent) {
-//    polyDataMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-//    actor = vtkSmartPointer<vtkActor>::New();
-//    renderWindow = vtkSmartPointer<vtkRenderWindow>::New();
-//    renderer = vtkSmartPointer<vtkRenderer>::New();
-}
-
-StructuredMeshVTKWidget::~StructuredMeshVTKWidget() {
-//    renderer->Delete();
-//    actor->Delete();
-//    renderWindow->Delete();
-//    actor->Delete();
-//    polyDataMapper->Delete();
-}
+StructuredMeshVTKWidget::~StructuredMeshVTKWidget() {}
 
 void StructuredMeshVTKWidget::render(StructuredMesh *mesh) {
-    if (mesh == NULL) {
-        return;
-    }
-
     MeshPolygon *boundaryPolygon = mesh->getBoundaryPolygon();
 
     if (boundaryPolygon->getFilteredPolygon() == NULL) {
         return;
     }
 
-    vtkSmartPointer<vtkRenderer> renderer = vtkSmartPointer<vtkRenderer>::New();
+    renderer = vtkSmartPointer<vtkRenderer>::New();
     renderer->SetBackground(1, 1, 1);
 
     // Contour rendering
@@ -107,6 +89,9 @@ void StructuredMeshVTKWidget::render(StructuredMesh *mesh) {
 
     renderer->AddActor(this->gridActor);
 
+    StructuredMeshDialog *structuredMeshDialog = (StructuredMeshDialog*) this->parent();
+    structuredMeshDialog->setArea(mesh->area());
+
     vtkSmartPointer<vtkRenderWindow> renderWindow = vtkSmartPointer<vtkRenderWindow>::New();
     vtkSmartPointer<vtkWorldPointPicker> worldPointPicker = vtkSmartPointer<vtkWorldPointPicker>::New();
     vtkSmartPointer<vtkRenderWindowInteractor> renderWindowInteractor = vtkSmartPointer<vtkRenderWindowInteractor>::New();
@@ -126,6 +111,11 @@ void StructuredMeshVTKWidget::render(StructuredMesh *mesh) {
 
     this->SetRenderWindow(renderWindow);
     renderWindow->Render();
+}
+
+void StructuredMeshVTKWidget::clear() {
+    renderer->RemoveAllViewProps();
+    this->GetRenderWindow()->Render();
 }
 
 void StructuredMeshVTKWidget::showBoundaryEdges(const bool &show) {

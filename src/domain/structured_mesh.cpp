@@ -6,7 +6,7 @@
 #include <vtkPolyData.h>
 #include <vtkQuad.h>
 
-StructuredMesh::StructuredMesh() : resolution(1) {}
+StructuredMesh::StructuredMesh() : resolution(100) {}
 
 StructuredMesh::StructuredMesh(QString &name) : Mesh(name), resolution(1) {}
 
@@ -80,21 +80,6 @@ bool StructuredMesh::isGenerated() {
 
 bool StructuredMesh::instanceOf(const QString &type) {
     return type.contains("StructuredMesh");
-}
-
-void StructuredMesh::clearGrid() {
-    // for (ulong i = 0; i < grid.size1(); i++) {
-    //     for (ulong j = 0; j < grid.size2(); j++) {
-    //         delete grid(i, j);
-    //     }
-    // }
-
-    // grid.clear();
-}
-
-void StructuredMesh::clear() {
-    clearGrid();
-    Mesh::clear();
 }
 
 void StructuredMesh::computeBounds(ulong *points) {

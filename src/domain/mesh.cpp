@@ -113,11 +113,19 @@ bool Mesh::getShowMesh() const {
     return this->showMesh;
 }
 
-// TODO: Refactor
 void Mesh::clear() {
     name.clear();
-    showBoundaryEdges = showMesh = true;
-    showUTMCoordinates = false;
+    delete boundaryPolygon;
+
+    for (QList<MeshPolygon*>::iterator it = islands.begin(); it != islands.end(); it++) {
+        delete *it;
+    }
+    islands.clear();
+
+    for (QList<MeshPolygon*>::iterator it = refinementAreas.begin(); it != refinementAreas.end(); it++) {
+        delete *it;
+    }
+    refinementAreas.clear();
 }
 
 double Mesh::area() {
