@@ -34,16 +34,6 @@ double Mesh::getCoordinatesDistance() const {
     return this->coordinatesDistance;
 }
 
-void Mesh::buildDomain(const QString &filename) {
-    addMeshPolygon(filename, MeshPolygonType::BOUNDARY);
-
-    // QList<MeshPolygon*> islands = this->getIslands();
-
-    // for (QList<MeshPolygon*>::iterator it = islands.begin(); it != islands.end(); it++) {
-    //     buildMeshPolygon(*it);
-    // }
-}
-
 MeshPolygon* Mesh::addMeshPolygon(const QString &filename, const MeshPolygonType &meshPolygonType) {
     MeshPolygon *meshPolygon = new MeshPolygon(filename, meshPolygonType);
 
@@ -85,10 +75,16 @@ QList<MeshPolygon*> Mesh::getRefinementAreas() {
     return refinementAreas;
 }
 
+void Mesh::removeMeshPolygon(const QString &filename, const MeshPolygonType &meshPolygonType) {
+    for (QList<MeshPolygon*>::iterator it = islands.begin(); it != islands.end(); it++) {
+        MeshPolygon *island = *it;
 
-// Refactor
-void Mesh::removeMeshPolygon(const MeshPolygon &meshPolygon) {
-    // domain.removeOne(meshPolygon);
+        if (island->getFilename() == filename && island->getMeshPolygonType() == meshPolygonType) {
+            islands.removeOne(island);
+            delete island;
+            return;
+        }
+    }
 }
 
 MeshPolygon* Mesh::getMeshPolygon(const QString &filename, const MeshPolygonType &meshPolygonType) {

@@ -6,6 +6,7 @@
 #include "include/application/iph_application.h"
 #include "include/domain/unstructured_mesh.h"
 #include "include/exceptions/mesh_exception.h"
+#include "include/exceptions/mesh_polygon_exception.h"
 
 StructuredMeshDialog::StructuredMeshDialog(QWidget *parent) :
     QDialog(parent),
@@ -53,10 +54,6 @@ void StructuredMeshDialog::setArea(const double &area) {
 void StructuredMeshDialog::on_btnBoundaryFileBrowser_clicked() {
     QString boundaryFilePath = QFileDialog::getOpenFileName(this, tr("Select a boundary file"), getDefaultDirectory(), "Keyhole Markup Language file (*.kml)");
 
-    if (boundaryFilePath.isEmpty()) {
-        return;
-    }
-
     ui->edtBoundaryFileLine->setText(boundaryFilePath);
 }
 
@@ -75,8 +72,7 @@ void StructuredMeshDialog::on_btnAddIsland_clicked() {
     try {
         currentMesh->addMeshPolygon(islandFile, MeshPolygonType::ISLAND);
         ui->lstIslands->addItem(islandFile);
-        // currentMesh->clearGrid();
-    } catch (MeshException &ex) {
+    } catch (MeshPolygonException &ex) {
         QMessageBox::critical(this, tr("Structured Mesh Generation"), ex.what());
     }
 }
@@ -85,24 +81,13 @@ void StructuredMeshDialog::on_btnRemoveIsland_clicked() {
     QListWidgetItem *currentItem = ui->lstIslands->currentItem();
 
     if (currentItem != NULL) {
-        bool proceedWithRemoval = true;
+        QMessageBox::StandardButton question = QMessageBox::question(this, tr("Structured Mesh Generation"), tr("Are you sure you want to remove the selected island?"));
 
-        if (currentMesh->isGenerated()) {
-            proceedWithRemoval = QMessageBox::Yes == QMessageBox::question(this, tr("Structured Mesh Generation"), tr("This action will clear the generated mesh. Are you sure?"));
-        }
-
-        if (proceedWithRemoval) {
+        if (question == QMessageBox::Yes) {
             QString islandFile = currentItem->text();
-            MeshPolygon islandPolygon(islandFile, MeshPolygonType::ISLAND);
 
-            currentMesh->removeMeshPolygon(islandPolygon);
-
-            if (currentMesh->isGenerated()) {
-                currentMesh->clearGrid();
-            }
-
+            currentMesh->removeMeshPolygon(islandFile, MeshPolygonType::ISLAND);
             ui->lstIslands->takeItem(ui->lstIslands->currentRow());
-            ui->structuredMeshVTKWidget->update();
         }
     }
 }
@@ -259,8 +244,8 @@ void StructuredMeshDialog::on_cbxMeshName_currentIndexChanged(int index) {
             ui->lstIslands->addItem((*it)->getFilename());
         }
 
-        currentMesh->buildDomain(boundaryPolygon->getFilename());
-        currentMesh->generate();
+        // currentMesh->addMeshPolygon(boundaryPolygon->getFilename());
+        // currentMesh->generate();
         ui->structuredMeshVTKWidget->render(currentMesh);
 
         // ui->lblDomainArea->setText(QString("Area: %1 m\u00B2").arg(boundaryPolygon->area(), 0, 'f', 3));

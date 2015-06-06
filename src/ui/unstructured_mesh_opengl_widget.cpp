@@ -117,7 +117,7 @@ void UnstructuredMeshOpenGLWidget::buildDomain(const QString &filename) {
     }
 
     try {
-        this->mesh->buildDomain(filename);
+        // this->mesh->buildDomain(filename);
         update();
     } catch (MeshException &e) {
         throw e;

@@ -25,7 +25,7 @@ public:
 
     virtual bool isGenerated();
     virtual bool instanceOf(const QString &type);
-    virtual void buildDomain(const QString &filename);
+    // virtual void buildDomain(const QString &filename);
     virtual void clear();
 };
 

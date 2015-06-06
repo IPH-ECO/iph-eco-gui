@@ -37,7 +37,7 @@ public:
     QList<MeshPolygon*> getRefinementAreas();
 
     MeshPolygon* addMeshPolygon(const QString &filename, const MeshPolygonType &meshPolygonType);
-    void removeMeshPolygon(const MeshPolygon &meshPolygon);
+    void removeMeshPolygon(const QString &filename, const MeshPolygonType &meshPolygonType);
     MeshPolygon* getMeshPolygon(const QString &filename, const MeshPolygonType &meshPolygonType);
 
     void setShowBoundaryEdges(const bool &toogle);
@@ -49,7 +49,6 @@ public:
 
     virtual bool isGenerated() = 0;
     virtual bool instanceOf(const QString &type) = 0;
-    virtual void buildDomain(const QString &filename);
     virtual void clear();
 };
 

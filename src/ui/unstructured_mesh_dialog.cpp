@@ -106,7 +106,7 @@ void UnstructuredMeshDialog::on_btnRemoveIsland_clicked() {
             QString islandFile = currentItem->text();
             MeshPolygon islandPolygon(islandFile, MeshPolygonType::ISLAND);
 
-            currentMesh->removeMeshPolygon(islandPolygon);
+            // currentMesh->removeMeshPolygon(islandPolygon);
 
             if (currentMesh->isGenerated()) {
                 currentMesh->clearCDT();
@@ -125,7 +125,7 @@ void UnstructuredMeshDialog::on_btnGenerateDomain_clicked() {
     currentMesh->setCoordinatesDistance(coordinatesDistance);
 
     try {
-        currentMesh->buildDomain(boundaryFilePath);
+        // currentMesh->buildDomain(boundaryFilePath);
         ui->unstructuredMeshVTKWidget->setMesh(currentMesh);
     } catch(MeshException &e) {
         QMessageBox::critical(this, tr("Unstructured Mesh Generation"), e.what());
@@ -192,7 +192,7 @@ void UnstructuredMeshDialog::on_btnRemoveCoordinatesFile_clicked() {
         QString coordinatesFile = currentItem->text();
         MeshPolygon refinementPolygon(coordinatesFile, MeshPolygonType::REFINEMENT_AREA);
 
-        currentMesh->removeMeshPolygon(refinementPolygon);
+        // currentMesh->removeMeshPolygon(refinementPolygon);
         ui->lstCoordinateFiles->takeItem(ui->lstCoordinateFiles->currentRow());
         ui->unstructuredMeshVTKWidget->update();
     }
@@ -253,7 +253,7 @@ void UnstructuredMeshDialog::on_btnGenerateMesh_clicked() {
 
     CGAL::Failure_behaviour old_behaviour = CGAL::set_error_behaviour(CGAL::THROW_EXCEPTION);
     try {
-        currentMesh->buildDomain(boundaryFileStr);
+        // currentMesh->buildDomain(boundaryFileStr);
         currentMesh->generate();
         ui->unstructuredMeshVTKWidget->setMesh(currentMesh);
     } catch (const std::exception& e) {
@@ -294,7 +294,7 @@ void UnstructuredMeshDialog::on_cbxMeshName_currentIndexChanged(int index) {
             ui->lstIslands->addItem((*it)->getFilename());
         }
 
-        currentMesh->buildDomain(currentMesh->getBoundaryPolygon()->getFilename());
+        // currentMesh->buildDomain(currentMesh->getBoundaryPolygon()->getFilename());
         currentMesh->generate();
         ui->unstructuredMeshVTKWidget->setMesh(currentMesh);
 

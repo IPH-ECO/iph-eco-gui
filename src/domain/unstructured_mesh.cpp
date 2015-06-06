@@ -64,10 +64,10 @@ void UnstructuredMesh::clearCDT() {
     this->cdt.clear();
 }
 
-void UnstructuredMesh::buildDomain(const QString &filename) {
-    cdt.clear();
-    Mesh::buildDomain(filename);
-}
+// void UnstructuredMesh::buildDomain(const QString &filename) {
+//     cdt.clear();
+//     Mesh::buildDomain(filename);
+// }
 
 void UnstructuredMesh::clear() {
     cdt.clear();
