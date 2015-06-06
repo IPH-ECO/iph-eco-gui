@@ -120,9 +120,8 @@ bool Mesh::getShowMesh() const {
 // TODO: Refactor
 void Mesh::clear() {
     name.clear();
-    // domain.clear();
     showBoundaryEdges = showMesh = true;
-    showUTMCoordinates = showVertexesLabels = showTrianglesLabels = showEdgesLabels = false;
+    showUTMCoordinates = false;
 }
 
 double Mesh::area() {

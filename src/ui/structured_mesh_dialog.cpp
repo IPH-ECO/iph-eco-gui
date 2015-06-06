@@ -15,7 +15,7 @@ StructuredMeshDialog::StructuredMeshDialog(QWidget *parent) :
     currentMesh(unsavedMesh)
 {
     ui->setupUi(this);
-    // ui->structuredMeshVTKWidget->setMesh(currentMesh);
+    // ui->structuredMeshVTKWidget->render(currentMesh);
 
     appSettings = new QSettings(QApplication::organizationName(), QApplication::applicationName(), this);
 
@@ -67,20 +67,10 @@ void StructuredMeshDialog::on_btnAddIsland_clicked() {
         return;
     }
 
-    // if (!ui->lstIslands->findItems(islandFile, Qt::MatchExactly).empty()) {
-    //     QMessageBox::information(this, tr("Structured Mesh Generation"), tr("Island file already added."));
-    //     return;
-    // }
-
-    // bool proceedWithAddition = true;
-
-    // if (currentMesh->isGenerated()) {
-    //     proceedWithAddition = QMessageBox::Yes == QMessageBox::question(this, tr("Structured Mesh Generation"), tr("This action will clear the generated mesh. Are you sure?"));
-    // }
-
-    // if (!proceedWithAddition) {
-    //     return;
-    // }
+    if (!ui->lstIslands->findItems(islandFile, Qt::MatchExactly).empty()) {
+        QMessageBox::information(this, tr("Structured Mesh Generation"), tr("Island file already added."));
+        return;
+    }
 
     try {
         currentMesh->addMeshPolygon(islandFile, MeshPolygonType::ISLAND);
@@ -117,14 +107,14 @@ void StructuredMeshDialog::on_btnRemoveIsland_clicked() {
     }
 }
 
-void StructuredMeshDialog::on_chkShowBoundaryEdges_clicked() {
-    currentMesh->setShowBoundaryEdges(ui->chkShowBoundaryEdges->isChecked());
-    ui->structuredMeshVTKWidget->update();
+void StructuredMeshDialog::on_chkShowBoundaryEdges_clicked(bool checked) {
+    currentMesh->setShowBoundaryEdges(checked);
+    ui->structuredMeshVTKWidget->showBoundaryEdges(checked);
 }
 
-void StructuredMeshDialog::on_chkShowMesh_clicked() {
-    currentMesh->setShowMesh(ui->chkShowMesh->isChecked());
-    ui->structuredMeshVTKWidget->update();
+void StructuredMeshDialog::on_chkShowMesh_clicked(bool checked) {
+    currentMesh->setShowMesh(checked);
+    ui->structuredMeshVTKWidget->showMesh(checked);
 }
 
 void StructuredMeshDialog::on_btnGenerateMesh_clicked() {
@@ -156,7 +146,7 @@ void StructuredMeshDialog::on_btnGenerateMesh_clicked() {
     try {
         currentMesh->addMeshPolygon(boundaryFileStr, MeshPolygonType::BOUNDARY);
         currentMesh->generate();
-        ui->structuredMeshVTKWidget->setMesh(currentMesh);
+        ui->structuredMeshVTKWidget->render(currentMesh);
     } catch (const std::exception& e) {
         QMessageBox::critical(this, tr("Structured Mesh Generation"), e.what());
         CGAL::set_error_behaviour(old_behaviour);
@@ -218,7 +208,7 @@ void StructuredMeshDialog::on_btnRemoveMesh_clicked() {
 
         ui->cbxMeshName->removeItem(ui->cbxMeshName->currentIndex());
         ui->cbxMeshName->setCurrentIndex(-1);
-        ui->structuredMeshVTKWidget->setMesh(NULL);
+        ui->structuredMeshVTKWidget->render(NULL);
     }
 }
 
@@ -233,7 +223,7 @@ void StructuredMeshDialog::resetMeshForm() {
     unsavedMesh->clear();
     currentMesh = unsavedMesh;
 
-    ui->structuredMeshVTKWidget->setMesh(NULL);
+    ui->structuredMeshVTKWidget->render(NULL);
     ui->edtMeshName->setFocus();
     ui->edtMeshName->clear();
     ui->edtBoundaryFileLine->clear();
@@ -271,7 +261,7 @@ void StructuredMeshDialog::on_cbxMeshName_currentIndexChanged(int index) {
 
         currentMesh->buildDomain(boundaryPolygon->getFilename());
         currentMesh->generate();
-        ui->structuredMeshVTKWidget->setMesh(currentMesh);
+        ui->structuredMeshVTKWidget->render(currentMesh);
 
         // ui->lblDomainArea->setText(QString("Area: %1 m\u00B2").arg(boundaryPolygon->area(), 0, 'f', 3));
     } else {

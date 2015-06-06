@@ -30,8 +30,8 @@ private slots:
     void on_btnBoundaryFileBrowser_clicked();
     void on_btnAddIsland_clicked();
     void on_btnRemoveIsland_clicked();
-    void on_chkShowBoundaryEdges_clicked();
-    void on_chkShowMesh_clicked();
+    void on_chkShowBoundaryEdges_clicked(bool checked);
+    void on_chkShowMesh_clicked(bool checked);
     void on_btnGenerateMesh_clicked();
     void on_btnSaveMesh_clicked();
     void on_btnCancelMesh_clicked();

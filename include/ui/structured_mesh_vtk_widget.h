@@ -3,20 +3,21 @@
 
 #include <QWidget>
 #include <QVTKWidget.h>
-#include <vtkAutoInit.h>
-#include <vtkPolyDataMapper.h>
 #include <vtkActor.h>
-#include <vtkRenderWindow.h>
-#include <vtkRenderer.h>
 
 #include "include/domain/structured_mesh.h"
 
 class StructuredMeshVTKWidget : public QVTKWidget {
 	Q_OBJECT
+private:
+	vtkSmartPointer<vtkActor> boundaryEdgesActor;
+	vtkSmartPointer<vtkActor> gridActor;
 public:
     StructuredMeshVTKWidget(QWidget *parent);
     ~StructuredMeshVTKWidget();
-    void setMesh(StructuredMesh *mesh);
+    void render(StructuredMesh *mesh);
+    void showBoundaryEdges(const bool &show);
+    void showMesh(const bool &show);
 };
 
 #endif // STRUCTURED_MESH_VTK_WIDGET_H

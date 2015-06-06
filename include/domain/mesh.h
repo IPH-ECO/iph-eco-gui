@@ -15,12 +15,10 @@ protected:
     QList<MeshPolygon*> islands;
     QList<MeshPolygon*> refinementAreas;
 
+    // Transient attributes
     bool showBoundaryEdges;
     bool showMesh;
     bool showUTMCoordinates;
-    bool showVertexesLabels;
-    bool showTrianglesLabels;
-    bool showEdgesLabels;
 
 private:
     void filterCoordinates(MeshPolygon *meshPolygon);
