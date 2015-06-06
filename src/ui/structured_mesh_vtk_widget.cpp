@@ -116,7 +116,7 @@ void StructuredMeshVTKWidget::render(StructuredMesh *mesh) {
 void StructuredMeshVTKWidget::clear() {
     if (renderer != NULL) {
         renderer->RemoveAllViewProps();
-        this->GetRenderWindow()->Render();
+        this->update();
     }
 }
 

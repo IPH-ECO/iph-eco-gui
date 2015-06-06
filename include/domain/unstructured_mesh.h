@@ -23,9 +23,8 @@ public:
     const CDT* getCDT();
     void clearCDT();
 
-    virtual bool isGenerated();
     virtual bool instanceOf(const QString &type);
-    // virtual void buildDomain(const QString &filename);
+    virtual bool isGenerated();
     virtual void clear();
 };
 

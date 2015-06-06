@@ -11,7 +11,7 @@
 #include "include/domain/structured_mesh.h"
 
 namespace Ui {
-class StructuredMeshDialog;
+    class StructuredMeshDialog;
 }
 
 class StructuredMeshDialog : public QDialog {
@@ -36,7 +36,6 @@ private slots:
     void on_btnSaveMesh_clicked();
     void on_btnCancelMesh_clicked();
     void on_btnRemoveMesh_clicked();
-
     void on_cbxMeshName_currentIndexChanged(int index);
 
 private:

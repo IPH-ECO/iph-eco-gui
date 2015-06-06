@@ -17,15 +17,13 @@ StructuredMeshDialog::StructuredMeshDialog(QWidget *parent) :
     currentMesh(unsavedMesh)
 {
     ui->setupUi(this);
-    // ui->structuredMeshVTKWidget->render(currentMesh);
 
     appSettings = new QSettings(QApplication::organizationName(), QApplication::applicationName(), this);
-
     Project *project = IPHApplication::getCurrentProject();
     QSet<Mesh*> meshes = project->getMeshes();
 
     for (QSet<Mesh*>::iterator it = meshes.begin(); it != meshes.end(); ++it) {
-        if (dynamic_cast<UnstructuredMesh*>(*it) == NULL) {
+        if ((*it)->instanceOf("StructuredMesh")) {
             ui->cbxMeshName->addItem((*it)->getName());
         }
     }
