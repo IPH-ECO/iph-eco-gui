@@ -16,7 +16,9 @@ Mesh::Mesh() : boundaryPolygon(NULL), coordinatesDistance(0.0), showBoundaryEdge
 
 Mesh::Mesh(QString &_name) : boundaryPolygon(NULL), name(_name), coordinatesDistance(0.0), showBoundaryEdges(true), showMesh(true) {}
 
-Mesh::~Mesh() {}
+Mesh::~Mesh() {
+    this->clear();
+}
 
 void Mesh::setName(const QString &name) {
     this->name = name;
@@ -116,6 +118,7 @@ bool Mesh::getShowMesh() const {
 void Mesh::clear() {
     name.clear();
     delete boundaryPolygon;
+    boundaryPolygon = NULL;
 
     for (QList<MeshPolygon*>::iterator it = islands.begin(); it != islands.end(); it++) {
         delete *it;

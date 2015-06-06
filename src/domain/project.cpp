@@ -88,6 +88,10 @@ void Project::removeMesh(Mesh *mesh) {
     this->setDirty(true);
 }
 
+bool Project::containsMesh(const QString &meshName) {
+    return this->getMesh(meshName) != NULL;
+}
+
 bool Project::containsMesh(Mesh *mesh) {
     return this->meshes.contains(mesh);
 }

@@ -114,8 +114,10 @@ void StructuredMeshVTKWidget::render(StructuredMesh *mesh) {
 }
 
 void StructuredMeshVTKWidget::clear() {
-    renderer->RemoveAllViewProps();
-    this->GetRenderWindow()->Render();
+    if (renderer != NULL) {
+        renderer->RemoveAllViewProps();
+        this->GetRenderWindow()->Render();
+    }
 }
 
 void StructuredMeshVTKWidget::showBoundaryEdges(const bool &show) {

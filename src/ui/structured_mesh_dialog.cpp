@@ -2,6 +2,7 @@
 #include "ui_structured_mesh_dialog.h"
 
 #include <CGAL/assertions_behaviour.h>
+#include <QDebug>
 
 #include "include/application/iph_application.h"
 #include "include/domain/unstructured_mesh.h"
@@ -132,10 +133,8 @@ void StructuredMeshDialog::on_btnGenerateMesh_clicked() {
         currentMesh->addMeshPolygon(boundaryFileStr, MeshPolygonType::BOUNDARY);
         currentMesh->generate();
         ui->structuredMeshVTKWidget->render(currentMesh);
-    } catch (const std::exception& e) {
+    } catch (const MeshPolygonException& e) {
         QMessageBox::critical(this, tr("Structured Mesh Generation"), e.what());
-        CGAL::set_error_behaviour(old_behaviour);
-        return;
     }
     CGAL::set_error_behaviour(old_behaviour);
 }
@@ -146,7 +145,12 @@ void StructuredMeshDialog::on_btnSaveMesh_clicked() {
 
     currentMesh->setName(meshName);
 
-    if (!project->containsMesh(currentMesh) && ui->cbxMeshName->currentIndex() == -1) {
+    if (ui->cbxMeshName->currentIndex() == -1) {
+        if (project->containsMesh(meshName)) {
+            QMessageBox::critical(this, tr("Structured Mesh Generation"), tr("Mesh name already used."));
+            return;
+        }
+
         project->addMesh(currentMesh);
         unsavedMesh = new StructuredMesh();
 
@@ -168,17 +172,15 @@ void StructuredMeshDialog::on_btnCancelMesh_clicked() {
 
 void StructuredMeshDialog::on_btnRemoveMesh_clicked() {
     QString meshName = ui->cbxMeshName->currentText();
+    QMessageBox::StandardButton question = QMessageBox::question(this, tr("Remove mesh"), tr("Are you sure you want to remove '") + meshName + "'?");
 
-    if (QMessageBox::Yes == QMessageBox::question(this, tr("Remove mesh"), tr("Are you sure you want to remove '") + meshName + "'?",
-                                          QMessageBox::Yes|QMessageBox::No)) {
-
-        StructuredMesh *removedMesh = currentMesh;
+    if (question == QMessageBox::Yes) {
+        IPHApplication::getCurrentProject()->removeMesh(currentMesh);
         currentMesh = unsavedMesh;
-        IPHApplication::getCurrentProject()->removeMesh(removedMesh);
 
         ui->cbxMeshName->removeItem(ui->cbxMeshName->currentIndex());
         ui->cbxMeshName->setCurrentIndex(-1);
-        ui->structuredMeshVTKWidget->render(NULL);
+        ui->structuredMeshVTKWidget->clear();
     }
 }
 
@@ -197,7 +199,7 @@ void StructuredMeshDialog::resetMeshForm() {
     ui->edtMeshName->setFocus();
     ui->edtMeshName->clear();
     ui->edtBoundaryFileLine->clear();
-    ui->sbxResolution->setValue(ui->sbxResolution->minimum());
+    ui->sbxResolution->setValue(100);
     ui->lstIslands->clear();
     ui->lblDomainArea->setText("Area: -");
     ui->lblUTMCoordinate->setText("UTM: -");
@@ -212,16 +214,13 @@ void StructuredMeshDialog::on_cbxMeshName_currentIndexChanged(int index) {
         ui->btnRemoveMesh->setEnabled(true);
 
         QString meshName = ui->cbxMeshName->currentText();
-        StructuredMesh structuredMesh(meshName);
-        currentMesh = static_cast<StructuredMesh*>(IPHApplication::getCurrentProject()->getMesh(&structuredMesh));
+        currentMesh = static_cast<StructuredMesh*>(IPHApplication::getCurrentProject()->getMesh(meshName));
         MeshPolygon *boundaryPolygon = currentMesh->getBoundaryPolygon();
         QList<MeshPolygon*> islands = currentMesh->getIslands();
 
         ui->edtMeshName->setText(currentMesh->getName());
         ui->edtBoundaryFileLine->setText(boundaryPolygon->getFilename());
         ui->sbxResolution->setValue(currentMesh->getResolution());
-        ui->chkShowBoundaryEdges->setChecked(currentMesh->getShowBoundaryEdges());
-        ui->chkShowMesh->setChecked(currentMesh->getShowMesh());
         ui->btnCancelMesh->setText("Done");
 
         ui->lstIslands->clear();
@@ -229,11 +228,7 @@ void StructuredMeshDialog::on_cbxMeshName_currentIndexChanged(int index) {
             ui->lstIslands->addItem((*it)->getFilename());
         }
 
-        // currentMesh->addMeshPolygon(boundaryPolygon->getFilename());
-        // currentMesh->generate();
         ui->structuredMeshVTKWidget->render(currentMesh);
-
-        // ui->lblDomainArea->setText(QString("Area: %1 m\u00B2").arg(boundaryPolygon->area(), 0, 'f', 3));
     } else {
         resetMeshForm();
     }

@@ -50,6 +50,7 @@ class Project {
         bool addMesh(Mesh *mesh);
         void removeMesh(Mesh *mesh);
         bool containsMesh(Mesh *mesh);
+        bool containsMesh(const QString &meshName);
         Mesh* getMesh(Mesh *mesh);
         Mesh* getMesh(const QString &meshName);
 
