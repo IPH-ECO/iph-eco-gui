@@ -14,19 +14,17 @@ private:
     vtkSmartPointer<vtkPolygon> originalPolygon;
     vtkSmartPointer<vtkPolygon> filteredPolygon;
 
-    // To be removed
+    // Used by unstructured mesh
     double minimumAngle;
     double maximumEdgeLength;
 
 public:
     static const QString BOUNDARY_POLYGON_FILENAME;
-
-    // To be removed
     static const double DEFAULT_MINIMUM_ANGLE;
     static const double DEFAULT_MAXIMUM_EDGE_LENGTH;
 
     MeshPolygon();
-    MeshPolygon(const QString &filename, MeshPolygonType meshPolygonType);
+    MeshPolygon(const QString &filename, const MeshPolygonType &meshPolygonType);
 
     void build();
     void filter(double &distanceFilter);

@@ -15,14 +15,14 @@ GridInformationDialog::GridInformationDialog(QDialog *parent, GridData *gridData
     appSettings = new QSettings(QApplication::organizationName(), QApplication::applicationName(), this);
 
     if (gridData != NULL) {
-    	if (gridData->getGridInputType() == GridData::POINT) {
+    	if (gridData->getGridDataInputType() == GridDataInputType::POINT) {
     		ui->rdoPoint->setChecked(true);
     	} else {
     		ui->rdoPolygon->setChecked(true);
     	}
 
     	ui->edtInputFile->setText(gridData->getInputFile());
-        ui->cbxGridInformation->setCurrentText(gridData->getGridInformationType().toString());
+        ui->cbxGridInformation->setCurrentText(gridData->getGridDataType().toString());
         ui->edtExponent->setText(QString::number(gridData->getExponent()));
         ui->edtRadius->setText(QString::number(gridData->getRadius()));
     }
@@ -73,36 +73,36 @@ void GridInformationDialog::on_bottomButtons_clicked(QAbstractButton *button) {
             return;
         }
 
-        GridData::GridInputType gridInputType = ui->rdoPoint->isChecked() ? GridData::POINT : GridData::POLYGON;
+        GridDataInputType gridInputType = ui->rdoPoint->isChecked() ? GridDataInputType::POINT : GridDataInputType::POLYGON;
         QString inputFile = ui->edtInputFile->text();
-        GridInformationType gridInformationType = GridInformationType::toGridInformationType(ui->cbxGridInformation->currentText());
+        GridDataType gridDataType = GridDataType::toGridDataType(ui->cbxGridInformation->currentText());
         double exponent = ui->edtExponent->text().toDouble();
         double radius = ui->edtRadius->text().toDouble();
         GridData tempGridData;
 
-        tempGridData.setGridInputType(gridInputType);
+        tempGridData.setGridDataInputType(gridInputType);
         tempGridData.setInputFile(inputFile);
-        tempGridData.setGridInformationType(gridInformationType);
+        tempGridData.setGridDataType(gridDataType);
         tempGridData.setShow(true);
 
-        if (gridInputType == GridData::POLYGON) {
+        if (gridInputType == GridDataInputType::POLYGON) {
             tempGridData.setExponent(exponent);
             tempGridData.setRadius(radius);
         }
 
         try {
-            tempGridData.buildData();
+            tempGridData.build();
 
             if (gridData == NULL) {
-                if (gridInputType == GridData::POLYGON && !tempGridData.getGridDataPolygon().is_simple()) {
-                    QMessageBox::critical(this, tr("Grid Data"), tr("Invalid polygon."));
-                    return;
-                }
+                // if (gridInputType == GridDataInputType::POLYGON && !tempGridData.getGridDataPolygon().is_simple()) {
+                //     QMessageBox::critical(this, tr("Grid Data"), tr("Invalid polygon."));
+                //     return;
+                // }
 
                 gridData = new GridData();
             }
 
-            gridData->copy(tempGridData);
+            // gridData->copy(tempGridData);
 
             this->accept();
         } catch (GridDataException &e) {

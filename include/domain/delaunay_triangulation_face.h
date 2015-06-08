@@ -8,12 +8,8 @@
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
-#include "cell_info.h"
-#include "grid_information_type.h"
-
 class DelaunayTriangulationFace : public CGAL::Delaunay_mesh_face_base_2<K> {
 private:
-    QSet<CellInfo*> cellInfoSet;
     int nestingLevel;
 
 public:
@@ -22,9 +18,6 @@ public:
     int getNestingLevel() const;
     void setNestingLevel(const int nestingLevel);
     bool isInDomain();
-    CellInfo* getCellInfo(GridInformationType &gridInformationType);
-    void addCellInfo(CellInfo *cellInfo);
-    QSet<CellInfo*>& getCellInfoSet();
 };
 
 #endif // DELAUNAY_TRIANGULATION_FACE_H

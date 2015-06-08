@@ -45,11 +45,15 @@ GridDataDialog::~GridDataDialog() {
     delete ui;
 }
 
-void GridDataDialog::setRealCoordinate(const Point &point) {
-    QString x = QString::number(point.x(), 'f', 6);
-    QString y = QString::number(point.y(), 'f', 6);
+void GridDataDialog::setCoordinate(double &x, double &y) {
+    QString xStr = QString::number(x, 'f', 6);
+    QString yStr = QString::number(y, 'f', 6);
 
-    ui->lblUTMCoordinate->setText(QString("Easting: %1, Northing: %2").arg(x).arg(y));
+    ui->lblUTMCoordinate->setText(QString("Easting: %1, Northing: %2").arg(xStr).arg(yStr));
+}
+
+void GridDataDialog::setArea(const double &area) {
+    ui->lblDomainArea->setText(QString("Area: %1 m\u00B2").arg(area, 0, 'f', 3));
 }
 
 void GridDataDialog::on_cbxConfiguration_currentIndexChanged(const QString &configurationName) {
@@ -74,8 +78,8 @@ void GridDataDialog::on_cbxConfiguration_currentIndexChanged(const QString &conf
             QWidget *checkBoxWidget = createCheckBoxWidget(gridData);
 
             ui->tblGridInformation->insertRow(rowCount);
-            ui->tblGridInformation->setItem(rowCount, 0, new QTableWidgetItem(gridData->gridInputTypeToString()));
-            ui->tblGridInformation->setItem(rowCount, 1, new QTableWidgetItem(gridData->getGridInformationType().toString()));
+            ui->tblGridInformation->setItem(rowCount, 0, new QTableWidgetItem(gridData->gridDataInputTypeToString()));
+            ui->tblGridInformation->setItem(rowCount, 1, new QTableWidgetItem(gridData->getGridDataType().toString()));
             ui->tblGridInformation->setCellWidget(rowCount, 2, checkBoxWidget);
         }
 
@@ -118,8 +122,8 @@ void GridDataDialog::on_btnAddGridInfomation_clicked() {
         currentGridDataConfiguration->addGridData(gridData);
 
         ui->tblGridInformation->insertRow(rowCount);
-        ui->tblGridInformation->setItem(rowCount, 0, new QTableWidgetItem(gridData->gridInputTypeToString()));
-        ui->tblGridInformation->setItem(rowCount, 1, new QTableWidgetItem(gridData->getGridInformationType().toString()));
+        ui->tblGridInformation->setItem(rowCount, 0, new QTableWidgetItem(gridData->gridDataInputTypeToString()));
+        ui->tblGridInformation->setItem(rowCount, 1, new QTableWidgetItem(gridData->getGridDataType().toString()));
         ui->tblGridInformation->setCellWidget(rowCount, 2, checkBoxWidget);
     }
 }
@@ -133,8 +137,8 @@ void GridDataDialog::on_tblGridInformation_itemDoubleClicked(QTableWidgetItem *i
         QTableWidgetItem *inputTypeItem = ui->tblGridInformation->item(item->row(), 0);
         QTableWidgetItem *gridInformationItem = ui->tblGridInformation->item(item->row(), 1);
 
-        inputTypeItem->setText(gridData->gridInputTypeToString());
-        gridInformationItem->setText(gridData->getGridInformationType().toString());
+        inputTypeItem->setText(gridData->gridDataInputTypeToString());
+        gridInformationItem->setText(gridData->getGridDataType().toString());
     }
 }
 
@@ -222,9 +226,9 @@ void GridDataDialog::on_btnSaveAsNewConfiguration_clicked() {
             GridData *gridData = gridDataVector.at(i);
             GridData *newGridData = new GridData();
 
-            newGridData->setGridInputType(gridData->getGridInputType());
+            newGridData->setGridDataInputType(gridData->getGridDataInputType());
             newGridData->setInputFile(gridData->getInputFile());
-            newGridData->setGridInformationType(gridData->getGridInformationType());
+            newGridData->setGridDataType(gridData->getGridDataType());
             newGridData->setExponent(gridData->getExponent());
             newGridData->setRadius(gridData->getRadius());
             newGridData->setShow(gridData->getShow());

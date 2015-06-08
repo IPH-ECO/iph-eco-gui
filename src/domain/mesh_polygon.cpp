@@ -11,12 +11,11 @@
 
 const QString MeshPolygon::BOUNDARY_POLYGON_FILENAME = "Main";
 
-// To be removed
 const double MeshPolygon::DEFAULT_MINIMUM_ANGLE = 20.7;
 
 const double MeshPolygon::DEFAULT_MAXIMUM_EDGE_LENGTH = 0.5;
 
-MeshPolygon::MeshPolygon(const QString &filename, MeshPolygonType meshPolygonType) : filename(filename), meshPolygonType(meshPolygonType) {}
+MeshPolygon::MeshPolygon(const QString &filename, const MeshPolygonType &meshPolygonType) : filename(filename), meshPolygonType(meshPolygonType) {}
 
 void MeshPolygon::build() {
     QFile kmlFile(this->filename);
@@ -124,11 +123,10 @@ double MeshPolygon::area() {
     return filteredPolygon->ComputeArea();
 }
 
-// Refactor to return a pointer
+// To be removed
 MeshPolygon& MeshPolygon::operator=(const MeshPolygon &meshPolygon) {
     this->filename = meshPolygon.getFilename();
     this->meshPolygonType = meshPolygon.getMeshPolygonType();
-    // To be removed
     this->minimumAngle = meshPolygon.getMinimumAngle();
     this->maximumEdgeLength = meshPolygon.getMaximumEdgeLength();
 
@@ -163,7 +161,6 @@ vtkPolygon* MeshPolygon::getFilteredPolygon() const {
     return filteredPolygon;
 }
 
-// To be removed
 void MeshPolygon::setMinimumAngle(const double &minimumAngle) {
     this->minimumAngle = minimumAngle;
 }
@@ -185,7 +182,6 @@ double MeshPolygon::getMaximumEdgeLength() const {
     return maximumEdgeLength;
 }
 
-// To be removed
 void MeshPolygon::setOptimalParameters() {
     double *bounds = this->filteredPolygon->GetPoints()->GetBounds();
     double width = bounds[1] - bounds[0];

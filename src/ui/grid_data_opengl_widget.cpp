@@ -7,8 +7,7 @@
 #include "include/utility/cgal_definitions.h"
 #include "include/domain/structured_mesh.h"
 #include "include/domain/unstructured_mesh.h"
-#include "include/utility/opengl_util.h"
-#include "include/domain/grid_information_type.h"
+#include "include/domain/grid_data_type.h"
 
 using boost::numeric::ublas::matrix;
 
@@ -162,36 +161,36 @@ void GridDataOpenGLWidget::setGridDataConfiguration(GridDataConfiguration *gridD
 }
 
 void GridDataOpenGLWidget::mouseMoveEvent(QMouseEvent *event) {
-    Point realCoordinate = OpenGLUtil::mapCoordinate(this, event, left, right, top, bottom);
+    // Point realCoordinate = OpenGLUtil::mapCoordinate(this, event, left, right, top, bottom);
 
-    _parent->setRealCoordinate(realCoordinate);
+    // _parent->setRealCoordinate(realCoordinate);
 }
 
 void GridDataOpenGLWidget::mousePressEvent(QMouseEvent *event) {
-    if (gridDataConfiguration == NULL || gridDataConfiguration->getMesh() == NULL) {
-        return;
-    }
+    // if (gridDataConfiguration == NULL || gridDataConfiguration->getMesh() == NULL) {
+    //     return;
+    // }
 
-    Point realCoordinate = OpenGLUtil::mapCoordinate(this, event, left, right, top, bottom);
-    QSet<CellInfo*> cellInfoSet = gridDataConfiguration->queryCells(realCoordinate);
+    // Point realCoordinate = OpenGLUtil::mapCoordinate(this, event, left, right, top, bottom);
+    // QSet<CellInfo*> cellInfoSet = gridDataConfiguration->queryCells(realCoordinate);
 
-    if (!cellInfoSet.isEmpty()) {
-        CellUpdateDialog *cellUpdateDialog = new CellUpdateDialog((QWidget*) this->parent(), cellInfoSet);
-        int exitCode = cellUpdateDialog->exec();
+    // if (!cellInfoSet.isEmpty()) {
+    //     CellUpdateDialog *cellUpdateDialog = new CellUpdateDialog((QWidget*) this->parent(), cellInfoSet);
+    //     int exitCode = cellUpdateDialog->exec();
 
-        if (exitCode == QDialog::Accepted) {
-            QList<CellInfo> cellInfoList = cellUpdateDialog->getCellInfoList();
+    //     if (exitCode == QDialog::Accepted) {
+    //         QList<CellInfo> cellInfoList = cellUpdateDialog->getCellInfoList();
 
-            for (int i = 0; i < cellInfoList.count(); i++) {
-                const CellInfo &cellInfo = cellInfoList.at(i);
+    //         for (int i = 0; i < cellInfoList.count(); i++) {
+    //             const CellInfo &cellInfo = cellInfoList.at(i);
 
-                for (QSet<CellInfo*>::iterator it = cellInfoSet.begin(); it != cellInfoSet.end(); it++) {
-                    if (cellInfo.getGridInformationType() == (*it)->getGridInformationType()) {
-                        (*it)->setWeight(cellInfo.getWeight());
-                        break;
-                    }
-                }
-            }
-        }
-    }
+    //             for (QSet<CellInfo*>::iterator it = cellInfoSet.begin(); it != cellInfoSet.end(); it++) {
+    //                 if (cellInfo.getGridInformationType() == (*it)->getGridInformationType()) {
+    //                     (*it)->setWeight(cellInfo.getWeight());
+    //                     break;
+    //                 }
+    //             }
+    //         }
+    //     }
+    // }
 }

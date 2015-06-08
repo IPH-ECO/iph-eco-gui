@@ -10,7 +10,6 @@
 #include <QJsonDocument>
 #include <QJsonArray>
 #include <GeographicLib/GeoCoords.hpp>
-#include <QDebug>
 
 Mesh::Mesh() : boundaryPolygon(NULL), coordinatesDistance(0.0), showBoundaryEdges(true), showMesh(true) {}
 

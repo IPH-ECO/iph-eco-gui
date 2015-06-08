@@ -7,14 +7,17 @@
 #include "include/exceptions/grid_data_exception.h"
 #include "include/utility/cgal_definitions.h"
 
+#include <vtkParticleReader.h>
+#include <vtkDoubleArray.h>
+
 GridData::GridData() {}
 
-GridData::GridInputType GridData::getGridInputType() const {
-    return gridInputType;
+GridDataInputType GridData::getGridDataInputType() const {
+    return gridDataInputType;
 }
 
-void GridData::setGridInputType(const GridData::GridInputType gridInputType) {
-    this->gridInputType = gridInputType;
+void GridData::setGridDataInputType(const GridDataInputType &gridDataInputType) {
+    this->gridDataInputType = gridDataInputType;
 }
 
 QString GridData::getInputFile() const {
@@ -25,12 +28,12 @@ void GridData::setInputFile(const QString &inputFile) {
     this->inputFile = inputFile;
 }
 
-GridInformationType GridData::getGridInformationType() const {
-    return gridInformationType;
+GridDataType GridData::getGridDataType() const {
+    return gridDataType;
 }
 
-void GridData::setGridInformationType(const GridInformationType &gridInformationType) {
-    this->gridInformationType = gridInformationType;
+void GridData::setGridDataType(const GridDataType &gridDataType) {
+    this->gridDataType = gridDataType;
 }
 
 double GridData::getExponent() const {
@@ -57,100 +60,63 @@ void GridData::setShow(bool show) {
     this->show = show;
 }
 
-QSet<GridDataPoint>& GridData::getGridDataPoints() {
-    return this->dataPoints;
+vtkPolyData* GridData::getData() const {
+    return this->data;
 }
 
-GridDataPolygon& GridData::getGridDataPolygon() {
-    return this->dataPolygon;
-}
+void GridData::build() {
+    vtkSmartPointer<vtkParticleReader> reader = vtkSmartPointer<vtkParticleReader>::New();
 
-double GridData::getMinValue() const {
-    return minValue;
-}
+    reader->SetFileName(this->inputFile.toStdString().c_str());
+    reader->SetDataTypeToDouble();
+    reader->SetFileTypeToText();
+    reader->SetDataByteOrderToBigEndian();
+    reader->Update();
 
-double GridData::getMaxValue() const {
-    return maxValue;
-}
+    // if (!inputFileHandle.open(QIODevice::ReadOnly | QIODevice::Text)) {
+    //     throw GridDataException(QString("Unable to open Input File. Error: %1").arg(inputFileHandle.errorString()));
+    // }
 
-void GridData::buildData() {
-    QFile inputFileHandle(inputFile);
+    data = vtkSmartPointer<vtkPolyData>::New();
+    data->DeepCopy(reader->GetOutput());
 
-    if (!inputFileHandle.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        throw GridDataException(QString("Unable to open Input File. Error: %1").arg(inputFileHandle.errorString()));
+    vtkSmartPointer<vtkPoints> points = data->GetPoints();
+    vtkIdType numberOfPoints = points->GetNumberOfPoints();
+
+    if (numberOfPoints == 0) {
+        throw GridDataException("No points returned in grid data file.");
     }
 
-    QTextStream in(&inputFileHandle);
-    QList<Point> dataPolygonTempList;
-    bool isPolygonDataSet = false, isMinValueSet = false, isMaxValueSet = false;
+    for (vtkIdType i = 0; i < numberOfPoints; i++) {
+        double point[3];
 
-    dataPoints.clear();
-    dataPolygon.clear();
+        points->GetPoint(i, point);
 
-    while (!in.atEnd()) {
-        QString line = in.readLine();
-        QStringList coordinate = line.split(',');
-
-        if (coordinate.count() == 3) {
-            GeographicLib::GeoCoords utmCoordinate(coordinate.at(1).toDouble(), coordinate.at(0).toDouble());
-            Point point(utmCoordinate.Easting(), utmCoordinate.Northing());
-            double data = coordinate.at(2).toDouble();
-
-            if (!isMinValueSet || data < minValue) {
-                minValue = data;
-                isMinValueSet = true;
-            }
-            if (!isMaxValueSet || data > maxValue) {
-                maxValue = data;
-                isMaxValueSet = true;
-            }
-
-            if (this->gridInputType == GridData::POINT) {
-                GridDataPoint dataPoint(point, data);
-                dataPoints.insert(dataPoint);
-            } else {
-                if (!isPolygonDataSet) {
-                    dataPolygon.setData(coordinate.at(2).toDouble());
-                    isPolygonDataSet = true;
-                }
-                // Avoid duplicates
-                if (!dataPolygonTempList.contains(point)) {
-                    dataPolygon.push_back(point);
-                    dataPolygonTempList.append(point);
-                }
-            }
-        }
-    }
-
-    inputFileHandle.close();
-
-    if (dataPoints.isEmpty() && dataPolygon.is_empty()) {
-        throw GridDataException("Error: invalid file contents.");
+        GeographicLib::GeoCoords utmCoordinate(point[0], point[1]);
+        points->SetPoint(i, utmCoordinate.Easting(), utmCoordinate.Northing(), 0.0);
     }
 }
 
-void GridData::copy(GridData &srcGridData) {
-    this->gridInputType = srcGridData.getGridInputType();
-    this->gridInformationType = srcGridData.getGridInformationType();
-    this->inputFile = srcGridData.getInputFile();
-    this->show = srcGridData.getShow();
-    this->minValue = srcGridData.getMinValue();
-    this->maxValue = srcGridData.getMaxValue();
+// void GridData::copy(GridData &srcGridData) {
+//     this->gridDataInputType = srcGridData.getGridDataInputType();
+//     this->gridDataType = srcGridData.getGridDataType();
+//     this->inputFile = srcGridData.getInputFile();
+//     this->show = srcGridData.getShow();
 
-    if (srcGridData.getGridInputType() == POINT) {
-        this->exponent = srcGridData.getExponent();
-        this->radius = srcGridData.getRadius();
-        this->dataPoints = srcGridData.getGridDataPoints();
-    } else {
-        this->dataPolygon = srcGridData.getGridDataPolygon();
-    }
-}
+//     if (srcGridData.getGridDataInputType() == GridDataInputType::POINT) {
+//         this->exponent = srcGridData.getExponent();
+//         this->radius = srcGridData.getRadius();
+//         this->dataPoints = srcGridData.getGridDataPoints();
+//     } else {
+//         this->dataPolygon = srcGridData.getGridDataPolygon();
+//     }
+// }
 
-QString GridData::gridInputTypeToString() const {
-    switch (gridInputType) {
-    case POINT:
+QString GridData::gridDataInputTypeToString() const {
+    switch (gridDataInputType) {
+    case GridDataInputType::POINT:
         return "Point";
-    case POLYGON:
+    case GridDataInputType::POLYGON:
         return "Polygon";
     default:
         return "";

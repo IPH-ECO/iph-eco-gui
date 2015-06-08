@@ -1,63 +1,49 @@
 #ifndef GRID_DATA_H
 #define GRID_DATA_H
 
+#include "grid_data_type.h"
+
 #include <QObject>
 #include <QSet>
-#include "grid_information_type.h"
-#include "grid_data_polygon.h"
-#include "grid_data_point.h"
+#include <vtkSmartPointer.h>
+#include <vtkPolyData.h>
+
+enum class GridDataInputType { POINT = 1, POLYGON };
 
 class GridData : public QObject {
     Q_OBJECT
-public:
-    enum GridInputType { POINT = 1, POLYGON };
-
 private:
-    GridInputType gridInputType;
-    GridInformationType gridInformationType;
+    GridDataInputType gridDataInputType;
+    vtkSmartPointer<vtkPolyData> data;
+    GridDataType gridDataType;
     QString inputFile;
     double exponent;
     double radius;
-    bool show;
-    QSet<GridDataPoint> dataPoints;
-    GridDataPolygon dataPolygon;
-    double minValue;
-    double maxValue;
+    bool show; //?
 
 public:
     GridData();
 
-    GridInputType getGridInputType() const;
-    void setGridInputType(const GridInputType gridInputType);
-    GridInformationType getGridInformationType() const;
-    void setGridInformationType(const GridInformationType &gridInformationType);
+    GridDataInputType getGridDataInputType() const;
+    void setGridDataInputType(const GridDataInputType &gridDataInputType);
+    GridDataType getGridDataType() const;
+    void setGridDataType(const GridDataType &gridDataType);
     QString getInputFile() const;
     void setInputFile(const QString &inputFile);
     double getExponent() const;
     void setExponent(const double &exponent);
     double getRadius() const;
     void setRadius(const double &radius);
-    bool getShow() const;
-    QSet<GridDataPoint>& getGridDataPoints();
-    GridDataPolygon& getGridDataPolygon();
-    double getMinValue() const;
-    double getMaxValue() const;
+    vtkPolyData* getData() const;
+    bool getShow() const; //?
 
-    void buildData();
-    void copy(GridData &srcGridData);
+    void build();
+    // void copy(GridData &srcGridData); //?
 
-    QString gridInputTypeToString() const;
+    QString gridDataInputTypeToString() const;
 
 public slots:
     void setShow(bool show);
 };
-
-inline bool operator==(const GridDataPoint &dataPoint1, const GridDataPoint &dataPoint2) {
-    return dataPoint1.getPoint().x() == dataPoint2.getPoint().x() && dataPoint1.getPoint().y() == dataPoint2.getPoint().y();
-}
-
-inline uint qHash(const GridDataPoint &dataPoint) {
-    return qHash(QString::number(dataPoint.getPoint().x()) + QString::number(dataPoint.getPoint().y()));
-}
 
 #endif // GRID_DATA_H

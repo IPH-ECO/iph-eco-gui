@@ -3,21 +3,21 @@
 
 #include <QMessageBox>
 
-CellUpdateDialog::CellUpdateDialog(QWidget *parent, QSet<CellInfo*> &cellInfoSet) :
-    QDialog(parent), ui(new Ui::CellUpdateDialog), cellInfoSet(cellInfoSet)
+CellUpdateDialog::CellUpdateDialog(QWidget *parent) :
+    QDialog(parent), ui(new Ui::CellUpdateDialog)
 {
     ui->setupUi(this);
     ui->tblGridValues->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 
-    for (QSet<CellInfo*>::const_iterator it = cellInfoSet.begin(); it != cellInfoSet.end(); it++) {
-        int rowCount = ui->tblGridValues->rowCount();
-        QTableWidgetItem *gridInformationItem = new QTableWidgetItem((*it)->getGridInformationType().toString());
+    // for (QSet<CellInfo*>::const_iterator it = cellInfoSet.begin(); it != cellInfoSet.end(); it++) {
+    //     int rowCount = ui->tblGridValues->rowCount();
+    //     QTableWidgetItem *gridInformationItem = new QTableWidgetItem((*it)->getGridInformationType().toString());
 
-        gridInformationItem->setFlags(gridInformationItem->flags() & ~Qt::ItemIsEditable);
-        ui->tblGridValues->insertRow(rowCount);
-        ui->tblGridValues->setItem(rowCount, 0, gridInformationItem);
-        ui->tblGridValues->setItem(rowCount, 1, new QTableWidgetItem(QString::number((*it)->getWeight())));
-    }
+    //     gridInformationItem->setFlags(gridInformationItem->flags() & ~Qt::ItemIsEditable);
+    //     ui->tblGridValues->insertRow(rowCount);
+    //     ui->tblGridValues->setItem(rowCount, 0, gridInformationItem);
+    //     ui->tblGridValues->setItem(rowCount, 1, new QTableWidgetItem(QString::number((*it)->getWeight())));
+    // }
 }
 
 CellUpdateDialog::~CellUpdateDialog() {
@@ -32,16 +32,16 @@ void CellUpdateDialog::on_buttonBox_clicked(QAbstractButton *button) {
     }
 }
 
-QList<CellInfo> CellUpdateDialog::getCellInfoList() {
-    QList<CellInfo> cellInfoList;
+// QList<CellInfo> CellUpdateDialog::getCellInfoList() {
+//     QList<CellInfo> cellInfoList;
 
-    for (int i = 0; i < ui->tblGridValues->rowCount(); i++) {
-        QString gridInformationStr = ui->tblGridValues->item(i, 0)->text();
-        double weight = ui->tblGridValues->item(i, 1)->text().toDouble();
+//     for (int i = 0; i < ui->tblGridValues->rowCount(); i++) {
+//         QString gridInformationStr = ui->tblGridValues->item(i, 0)->text();
+//         double weight = ui->tblGridValues->item(i, 1)->text().toDouble();
 
-        //FIX: Set grid data properly
-        cellInfoList.push_back(CellInfo(NULL, GridInformationType::toGridInformationType(gridInformationStr), weight));
-    }
+//         //FIX: Set grid data properly
+//         cellInfoList.push_back(CellInfo(NULL, GridInformationType::toGridInformationType(gridInformationStr), weight));
+//     }
 
-    return cellInfoList;
-}
+//     return cellInfoList;
+// }

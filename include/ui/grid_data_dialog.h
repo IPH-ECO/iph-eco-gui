@@ -20,7 +20,10 @@ public:
     explicit GridDataDialog(QWidget *parent = 0);
     ~GridDataDialog();
 
-    void setRealCoordinate(const Point &point);
+    void setArea(const double &area);
+
+public slots:
+    void setCoordinate(double &x, double &y);
 
 private slots:
     void on_cbxMesh_currentIndexChanged(const QString &meshName);
