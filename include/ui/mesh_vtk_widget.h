@@ -1,5 +1,5 @@
-#ifndef STRUCTURED_MESH_VTK_WIDGET_H
-#define STRUCTURED_MESH_VTK_WIDGET_H
+#ifndef MESH_VTK_WIDGET_H
+#define MESH_VTK_WIDGET_H
 
 #include <QWidget>
 #include <QVTKWidget.h>
@@ -8,7 +8,7 @@
 
 #include "include/domain/mesh.h"
 
-class StructuredMeshVTKWidget : public QVTKWidget {
+class MeshVTKWidget : public QVTKWidget {
 	Q_OBJECT
 private:
 	vtkSmartPointer<vtkRenderer> renderer;
@@ -16,12 +16,12 @@ private:
 	vtkSmartPointer<vtkActor> gridActor;
 
 public:
-    StructuredMeshVTKWidget(QWidget *parent);
-    ~StructuredMeshVTKWidget();
+    MeshVTKWidget(QWidget *parent);
+    ~MeshVTKWidget();
     void render(Mesh *mesh);
     void clear();
     void showBoundaryEdges(const bool &show);
     void showMesh(const bool &show);
 };
 
-#endif // STRUCTURED_MESH_VTK_WIDGET_H
+#endif // MESH_VTK_WIDGET_H

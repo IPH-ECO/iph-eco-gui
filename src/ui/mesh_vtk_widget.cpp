@@ -1,4 +1,4 @@
-#include "include/ui/structured_mesh_vtk_widget.h"
+#include "include/ui/mesh_vtk_widget.h"
 
 #include <vtkSmartPointer.h>
 #include <vtkPolyData.h>
@@ -11,17 +11,16 @@
 #include <vtkPolyDataMapper.h>
 #include <vtkRenderWindow.h>
 #include <QList>
-#include <QDebug>
 
 #include "include/ui/structured_mesh_dialog.h"
 #include "include/ui/unstructured_mesh_dialog.h"
 #include "include/utility/mouse_interactor.h"
 
-StructuredMeshVTKWidget::StructuredMeshVTKWidget(QWidget *parent) : QVTKWidget(parent) {}
+MeshVTKWidget::MeshVTKWidget(QWidget *parent) : QVTKWidget(parent) {}
 
-StructuredMeshVTKWidget::~StructuredMeshVTKWidget() {}
+MeshVTKWidget::~MeshVTKWidget() {}
 
-void StructuredMeshVTKWidget::render(Mesh *mesh) {
+void MeshVTKWidget::render(Mesh *mesh) {
     MeshPolygon *boundaryPolygon = mesh->getBoundaryPolygon();
 
     if (boundaryPolygon->getFilteredPolygon() == NULL) {
@@ -118,14 +117,14 @@ void StructuredMeshVTKWidget::render(Mesh *mesh) {
     renderWindow->Render();
 }
 
-void StructuredMeshVTKWidget::clear() {
+void MeshVTKWidget::clear() {
     if (renderer != NULL) {
         renderer->RemoveAllViewProps();
         this->update();
     }
 }
 
-void StructuredMeshVTKWidget::showBoundaryEdges(const bool &show) {
+void MeshVTKWidget::showBoundaryEdges(const bool &show) {
     if (show) {
         this->boundaryEdgesActor->VisibilityOn();
     } else {
@@ -134,7 +133,7 @@ void StructuredMeshVTKWidget::showBoundaryEdges(const bool &show) {
     this->update();
 }
 
-void StructuredMeshVTKWidget::showMesh(const bool &show) {
+void MeshVTKWidget::showMesh(const bool &show) {
     if (show) {
         this->gridActor->VisibilityOn();
     } else {

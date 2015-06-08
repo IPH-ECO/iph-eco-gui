@@ -727,7 +727,7 @@
    <item row="0" column="2">
     <layout class="QVBoxLayout" name="verticalLayout_4">
      <item>
-      <widget class="StructuredMeshVTKWidget" name="structuredMeshVTKWidget" native="true">
+      <widget class="MeshVTKWidget" name="meshVTKWidget" native="true">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
          <horstretch>0</horstretch>
@@ -760,9 +760,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>StructuredMeshVTKWidget</class>
+   <class>MeshVTKWidget</class>
    <extends>QWidget</extends>
-   <header>include/ui/structured_mesh_vtk_widget.h</header>
+   <header>include/ui/mesh_vtk_widget.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

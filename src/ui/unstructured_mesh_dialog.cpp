@@ -97,12 +97,12 @@ void UnstructuredMeshDialog::on_btnRemoveIsland_clicked() {
 
 void UnstructuredMeshDialog::on_chkShowBoundaryEdges_clicked(bool checked) {
     currentMesh->setShowBoundaryEdges(checked);
-    ui->structuredMeshVTKWidget->showBoundaryEdges(checked);
+    ui->meshVTKWidget->showBoundaryEdges(checked);
 }
 
 void UnstructuredMeshDialog::on_chkShowMesh_clicked(bool checked) {
     currentMesh->setShowMesh(checked);
-    ui->structuredMeshVTKWidget->showMesh(checked);
+    ui->meshVTKWidget->showMesh(checked);
 }
 
 void UnstructuredMeshDialog::on_btnGenerateDomain_clicked() {
@@ -113,7 +113,7 @@ void UnstructuredMeshDialog::on_btnGenerateDomain_clicked() {
     try {
         currentMesh->addMeshPolygon(boundaryFileStr, MeshPolygonType::BOUNDARY);
         currentMesh->generate();
-        ui->structuredMeshVTKWidget->render(currentMesh);
+        ui->meshVTKWidget->render(currentMesh);
     } catch(const MeshPolygonException &e) {
         QMessageBox::critical(this, tr("Unstructured Mesh Generation"), e.what());
         return;
@@ -230,7 +230,7 @@ void UnstructuredMeshDialog::on_btnGenerateMesh_clicked() {
         boundaryPolygon->setMinimumAngle(ui->sbxMinimumAngle->value());
         boundaryPolygon->setMaximumEdgeLength(ui->sbxMaximumEdgeLength->value());
         currentMesh->generate();
-        ui->structuredMeshVTKWidget->render(currentMesh);
+        ui->meshVTKWidget->render(currentMesh);
     } catch (const MeshPolygonException &e) {
         QMessageBox::critical(this, tr("Unstructured Mesh Generation"), e.what());
     } catch (const std::exception& e) {
@@ -263,7 +263,7 @@ void UnstructuredMeshDialog::on_cbxMeshName_currentIndexChanged(int index) {
             ui->lstIslands->addItem((*it)->getFilename());
         }
 
-        ui->structuredMeshVTKWidget->render(currentMesh);
+        ui->meshVTKWidget->render(currentMesh);
     } else {
         resetMeshForm();
     }
@@ -317,7 +317,7 @@ void UnstructuredMeshDialog::on_btnRemoveMesh_clicked() {
 
         ui->cbxMeshName->removeItem(ui->cbxMeshName->currentIndex());
         ui->cbxMeshName->setCurrentIndex(-1);
-        ui->structuredMeshVTKWidget->clear();
+        ui->meshVTKWidget->clear();
     }
 }
 
@@ -336,7 +336,7 @@ void UnstructuredMeshDialog::resetMeshForm() {
     unsavedMesh->clear();
     currentMesh = unsavedMesh;
 
-    ui->structuredMeshVTKWidget->clear();
+    ui->meshVTKWidget->clear();
     ui->edtMeshName->clear();
     ui->edtBoundaryFileLine->clear();
     ui->lstIslands->clear();
