@@ -6,14 +6,8 @@
 #include <QFile>
 #include <QIODevice>
 #include <QXmlStreamReader>
-#include <QJsonDocument>
-#include <QJsonArray>
-#include <QtMath>
 #include <GeographicLib/GeoCoords.hpp>
 #include <vtkPoints.h>
-#include <vtkMath.h>
-
-#include <QDebug>
 
 const QString MeshPolygon::BOUNDARY_POLYGON_FILENAME = "Main";
 
@@ -79,25 +73,32 @@ void MeshPolygon::filter(double &distanceFilter) {
         filteredPolygon = originalPolygon;
     } else {
         filteredPolygon = vtkSmartPointer<vtkPolygon>::New();
-        double *p0 = originalPolygon->GetPoints()->GetPoint(0);
+        double p1[3];
         int count = 1;
+        vtkIdType i = 1;
 
-        filteredPolygon->GetPoints()->InsertNextPoint(p0);
-        filteredPolygon->GetPointIds()->InsertNextId(0);
+        originalPolygon->GetPoints()->GetPoint(0, p1);
+        filteredPolygon->GetPoints()->InsertPoint(0, p1);
+        filteredPolygon->GetPointIds()->InsertId(0, 0);
 
-        for (vtkIdType i = 1; i < originalPolygon->GetPoints()->GetNumberOfPoints(); i++) {
-            double *p1 = originalPolygon->GetPoints()->GetPoint(i);
-            double pointsDistance = vtkMath::Distance2BetweenPoints(p0, p1);
+        while (i < originalPolygon->GetPoints()->GetNumberOfPoints()) {
+            double p2[3];
 
-            if (pointsDistance >= distanceFilter) {
-                double x = p0[0] + (p1[0] - p0[0]) * distanceFilter / pointsDistance;
-                double y = p0[1] + (p1[1] - p0[1]) * distanceFilter / pointsDistance;
+            originalPolygon->GetPoints()->GetPoint(i, p2);
 
-                p0[0] = x;
-                p0[1] = y;
-                p0[2] = 0.0;
-                filteredPolygon->GetPoints()->InsertNextPoint(p0);
-                filteredPolygon->GetPointIds()->InsertNextId(count);
+            double pointsDistance = sqrt(pow(p2[0] - p1[0], 2.0) + pow(p2[1] - p1[1], 2.0));
+
+            if (pointsDistance < distanceFilter) {
+                i++;
+            } else {
+                double x = p1[0] + (p2[0] - p1[0]) * distanceFilter / pointsDistance;
+                double y = p1[1] + (p2[1] - p1[1]) * distanceFilter / pointsDistance;
+
+                p1[0] = x;
+                p1[1] = y;
+                p1[2] = 0.0;
+                filteredPolygon->GetPoints()->InsertPoint(count, p1);
+                filteredPolygon->GetPointIds()->InsertId(count, count);
                 count++;
             }
         }
@@ -173,7 +174,7 @@ double MeshPolygon::getMinimumAngle() const {
 
 double MeshPolygon::getMinimumAngleInCGALRepresentation() const {
     // http://doc.cgal.org/latest/Mesh_2/classCGAL_1_1Delaunay__mesh__size__criteria__2.html
-    return qPow(sin(minimumAngle * M_PI / 180), 2.0);
+    return pow(sin(minimumAngle * M_PI / 180), 2.0);
 }
 
 void MeshPolygon::setMaximumEdgeLength(const double &maximumEdgeLength) {

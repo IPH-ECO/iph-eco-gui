@@ -1,20 +1,12 @@
 #include "include/ui/structured_mesh_dialog.h"
 #include "ui_structured_mesh_dialog.h"
 
-#include <CGAL/assertions_behaviour.h>
-#include <QDebug>
-
 #include "include/application/iph_application.h"
-#include "include/domain/unstructured_mesh.h"
-#include "include/exceptions/mesh_exception.h"
 #include "include/exceptions/mesh_polygon_exception.h"
 
 StructuredMeshDialog::StructuredMeshDialog(QWidget *parent) :
-    QDialog(parent),
-    BOUNDARY_DEFAULT_DIR_KEY("boundary_default_dir"),
-    ui(new Ui::StructuredMeshDialog),
-    unsavedMesh(new StructuredMesh()),
-    currentMesh(unsavedMesh)
+    QDialog(parent), BOUNDARY_DEFAULT_DIR_KEY("boundary_default_dir"), ui(new Ui::StructuredMeshDialog),
+    unsavedMesh(new StructuredMesh()), currentMesh(unsavedMesh)
 {
     ui->setupUi(this);
 
@@ -53,7 +45,12 @@ void StructuredMeshDialog::setArea(const double &area) {
 void StructuredMeshDialog::on_btnBoundaryFileBrowser_clicked() {
     QString boundaryFilePath = QFileDialog::getOpenFileName(this, tr("Select a boundary file"), getDefaultDirectory(), "Keyhole Markup Language file (*.kml)");
 
+    if (boundaryFilePath.isEmpty()) {
+        return;
+    }
+
     ui->edtBoundaryFileLine->setText(boundaryFilePath);
+    appSettings->setValue(BOUNDARY_DEFAULT_DIR_KEY, QFileInfo(boundaryFilePath).absolutePath());
 }
 
 void StructuredMeshDialog::on_btnAddIsland_clicked() {
@@ -71,7 +68,7 @@ void StructuredMeshDialog::on_btnAddIsland_clicked() {
     try {
         currentMesh->addMeshPolygon(islandFile, MeshPolygonType::ISLAND);
         ui->lstIslands->addItem(islandFile);
-    } catch (MeshPolygonException &ex) {
+    } catch (const MeshPolygonException &ex) {
         QMessageBox::critical(this, tr("Structured Mesh Generation"), ex.what());
     }
 }
@@ -102,14 +99,6 @@ void StructuredMeshDialog::on_chkShowMesh_clicked(bool checked) {
 }
 
 void StructuredMeshDialog::on_btnGenerateMesh_clicked() {
-    QString meshName = ui->edtMeshName->text();
-
-    if (meshName.isEmpty()) {
-        ui->edtMeshName->setFocus();
-        QMessageBox::warning(this, tr("Structured Mesh Generation"), tr("Please input the mesh name."));
-        return;
-    }
-
     QString boundaryFileStr = ui->edtBoundaryFileLine->text();
     QFile boundaryFile(boundaryFileStr);
     QFileInfo boundaryFileInfo(boundaryFile);
@@ -119,14 +108,10 @@ void StructuredMeshDialog::on_btnGenerateMesh_clicked() {
         return;
     }
 
-    uint resolution = ui->sbxResolution->value();
-
     enableMeshForm(true);
 
-    currentMesh->setName(meshName);
-    currentMesh->setResolution(resolution);
+    currentMesh->setResolution(ui->sbxResolution->value());
 
-    CGAL::Failure_behaviour old_behaviour = CGAL::set_error_behaviour(CGAL::THROW_EXCEPTION);
     try {
         currentMesh->addMeshPolygon(boundaryFileStr, MeshPolygonType::BOUNDARY);
         currentMesh->generate();
@@ -134,16 +119,21 @@ void StructuredMeshDialog::on_btnGenerateMesh_clicked() {
     } catch (const MeshPolygonException& e) {
         QMessageBox::critical(this, tr("Structured Mesh Generation"), e.what());
     }
-    CGAL::set_error_behaviour(old_behaviour);
 }
 
 void StructuredMeshDialog::on_btnSaveMesh_clicked() {
     QString meshName = ui->cbxMeshName->currentIndex() == -1 ? ui->edtMeshName->text() : ui->cbxMeshName->currentText();
-    Project *project = IPHApplication::getCurrentProject();
+
+    if (meshName.isEmpty()) {
+        QMessageBox::warning(this, tr("Structured Mesh Generation"), tr("Mesh name can't be empty."));
+        return;
+    }
 
     currentMesh->setName(meshName);
 
     if (ui->cbxMeshName->currentIndex() == -1) {
+        Project *project = IPHApplication::getCurrentProject();
+
         if (project->containsMesh(meshName)) {
             QMessageBox::critical(this, tr("Structured Mesh Generation"), tr("Mesh name already used."));
             return;
@@ -208,19 +198,17 @@ void StructuredMeshDialog::resetMeshForm() {
 
 void StructuredMeshDialog::on_cbxMeshName_currentIndexChanged(int index) {
     if (index > -1) {
-        enableMeshForm(true);
-        ui->btnRemoveMesh->setEnabled(true);
-
         QString meshName = ui->cbxMeshName->currentText();
         currentMesh = static_cast<StructuredMesh*>(IPHApplication::getCurrentProject()->getMesh(meshName));
         MeshPolygon *boundaryPolygon = currentMesh->getBoundaryPolygon();
         QList<MeshPolygon*> islands = currentMesh->getIslands();
 
+        enableMeshForm(true);
+        ui->btnRemoveMesh->setEnabled(true);
         ui->edtMeshName->setText(currentMesh->getName());
         ui->edtBoundaryFileLine->setText(boundaryPolygon->getFilename());
         ui->sbxResolution->setValue(currentMesh->getResolution());
         ui->btnCancelMesh->setText("Done");
-
         ui->lstIslands->clear();
         for (QList<MeshPolygon*>::const_iterator it = islands.begin(); it != islands.end(); it++) {
             ui->lstIslands->addItem((*it)->getFilename());

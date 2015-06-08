@@ -14,8 +14,6 @@
 
 Mesh::Mesh() : boundaryPolygon(NULL), coordinatesDistance(0.0), showBoundaryEdges(true), showMesh(true) {}
 
-Mesh::Mesh(QString &_name) : boundaryPolygon(NULL), name(_name), coordinatesDistance(0.0), showBoundaryEdges(true), showMesh(true) {}
-
 Mesh::~Mesh() {
     this->clear();
 }

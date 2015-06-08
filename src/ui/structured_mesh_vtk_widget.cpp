@@ -11,15 +11,17 @@
 #include <vtkPolyDataMapper.h>
 #include <vtkRenderWindow.h>
 #include <QList>
+#include <QDebug>
 
 #include "include/ui/structured_mesh_dialog.h"
+#include "include/ui/unstructured_mesh_dialog.h"
 #include "include/utility/mouse_interactor.h"
 
 StructuredMeshVTKWidget::StructuredMeshVTKWidget(QWidget *parent) : QVTKWidget(parent) {}
 
 StructuredMeshVTKWidget::~StructuredMeshVTKWidget() {}
 
-void StructuredMeshVTKWidget::render(StructuredMesh *mesh) {
+void StructuredMeshVTKWidget::render(Mesh *mesh) {
     MeshPolygon *boundaryPolygon = mesh->getBoundaryPolygon();
 
     if (boundaryPolygon->getFilteredPolygon() == NULL) {
@@ -89,9 +91,6 @@ void StructuredMeshVTKWidget::render(StructuredMesh *mesh) {
 
     renderer->AddActor(this->gridActor);
 
-    StructuredMeshDialog *structuredMeshDialog = (StructuredMeshDialog*) this->parent();
-    structuredMeshDialog->setArea(mesh->area());
-
     vtkSmartPointer<vtkRenderWindow> renderWindow = vtkSmartPointer<vtkRenderWindow>::New();
     vtkSmartPointer<vtkWorldPointPicker> worldPointPicker = vtkSmartPointer<vtkWorldPointPicker>::New();
     vtkSmartPointer<vtkRenderWindowInteractor> renderWindowInteractor = vtkSmartPointer<vtkRenderWindowInteractor>::New();
@@ -99,9 +98,15 @@ void StructuredMeshVTKWidget::render(StructuredMesh *mesh) {
     
     mouseInteractor->SetDefaultRenderer(renderer);
     
-    StructuredMeshDialog *parent = (StructuredMeshDialog*) this->parent();
-    QObject::connect(mouseInteractor, SIGNAL(coordinateChanged(double&, double&)), parent, SLOT(setCoordinate(double&, double&)));
-    parent->setArea(mesh->area());
+    if (mesh->instanceOf("StructuredMesh")) {
+        StructuredMeshDialog *structuredMeshDialog = (StructuredMeshDialog*) this->parent();
+        QObject::connect(mouseInteractor, SIGNAL(coordinateChanged(double&, double&)), structuredMeshDialog, SLOT(setCoordinate(double&, double&)));
+        structuredMeshDialog->setArea(mesh->area());
+    } else {
+        UnstructuredMeshDialog *unstructuredMeshDialog = (UnstructuredMeshDialog*) this->parent();
+        QObject::connect(mouseInteractor, SIGNAL(coordinateChanged(double&, double&)), unstructuredMeshDialog, SLOT(setCoordinate(double&, double&)));
+        unstructuredMeshDialog->setArea(mesh->area());
+    }
 
     renderWindowInteractor->SetInteractorStyle(mouseInteractor);
     renderWindowInteractor->SetPicker(worldPointPicker);

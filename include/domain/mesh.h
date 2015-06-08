@@ -4,7 +4,7 @@
 #include <QHash>
 #include <QJsonObject>
 #include <QList>
-
+#include <vtkPolyData.h>
 #include "mesh_polygon.h"
 
 class Mesh {
@@ -25,7 +25,6 @@ private:
 
 public:
     Mesh();
-    Mesh(QString &_name);
     virtual ~Mesh();
 
     void setName(const QString &name);
@@ -47,8 +46,9 @@ public:
 
     double area();
 
-    virtual bool isGenerated() = 0;
     virtual bool instanceOf(const QString &type) = 0;
+    virtual vtkPolyData* getGrid() = 0;
+    virtual void generate() = 0;
     virtual void clear();
 };
 

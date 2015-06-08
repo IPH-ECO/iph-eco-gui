@@ -6,7 +6,7 @@
 #include <vtkRenderer.h>
 #include <vtkActor.h>
 
-#include "include/domain/structured_mesh.h"
+#include "include/domain/mesh.h"
 
 class StructuredMeshVTKWidget : public QVTKWidget {
 	Q_OBJECT
@@ -18,7 +18,7 @@ private:
 public:
     StructuredMeshVTKWidget(QWidget *parent);
     ~StructuredMeshVTKWidget();
-    void render(StructuredMesh *mesh);
+    void render(Mesh *mesh);
     void clear();
     void showBoundaryEdges(const bool &show);
     void showMesh(const bool &show);

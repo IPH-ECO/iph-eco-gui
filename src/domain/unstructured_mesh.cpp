@@ -1,44 +1,48 @@
 #include "include/domain/unstructured_mesh.h"
 
-#include <QFile>
-#include <QStringList>
-#include <QIODevice>
-#include <QXmlStreamReader>
-#include <QtMath>
-#include <GeographicLib/GeoCoords.hpp>
+#include <vtkPoints.h>
+#include <vtkPolygon.h>
+#include <vtkPolyData.h>
+#include <vtkCellArray.h>
+#include <vtkTriangle.h>
+#include <QDebug>
 
 UnstructuredMesh::UnstructuredMesh() {}
 
-UnstructuredMesh::UnstructuredMesh(QString &_name) : Mesh(_name) {}
-
 void UnstructuredMesh::generate() {
-    const MeshPolygon *boundaryPolygon = getBoundaryPolygon();
-
     if (boundaryPolygon == NULL) {
-        throw MeshException("No boundary vertices found.");
+        throw MeshException("No boundary defined.");
     }
 
-    if (isGenerated()) {
-        return;
+    QList<MeshPolygon*> polygons = islands;
+
+    polygons.prepend(boundaryPolygon);
+
+    CDT cdt;
+
+    for (QList<MeshPolygon*>::const_iterator it = polygons.begin(); it != polygons.end(); it++) {
+        vtkPolygon *polygon = (*it)->getFilteredPolygon();
+        vtkIdType numberOfPoints = polygon->GetPoints()->GetNumberOfPoints();
+
+        for (vtkIdType i = 0; i < numberOfPoints; i++) {
+            double vtkPoint1[3], vtkPoint2[3];
+            vtkIdType j = i == numberOfPoints - 1 ? 0 : i + 1;
+
+            polygon->GetPoints()->GetPoint(i, vtkPoint1);
+            polygon->GetPoints()->GetPoint(j, vtkPoint2);
+
+            Point cgalPoint1(vtkPoint1[0], vtkPoint1[1]);
+            Point cgalPoint2(vtkPoint2[0], vtkPoint2[1]);
+
+            cdt.insert(cgalPoint1);
+            cdt.insert_constraint(cgalPoint1, cgalPoint2);
+        }
     }
 
-    // for (QList<MeshPolygon>::const_iterator it = domain.begin(); it != domain.end(); it++) {
-    //     ulong polygonVerticesCount = it->size();
+    Criteria criteria(boundaryPolygon->getMinimumAngleInCGALRepresentation(), boundaryPolygon->getMaximumEdgeLength());
+    Mesher mesher(cdt, criteria);
 
-    //     cdt.insert(it->vertices_begin(), it->vertices_end());
-
-    //     for (ulong j = 0; j < polygonVerticesCount; j++) {
-    //         Point p1 = (*it)[j];
-    //         Point p2 = (*it)[j == polygonVerticesCount - 1 ? 0 : j + 1];
-
-    //         cdt.insert_constraint(p1, p2);
-    //     }
-    // }
-
-    // Criteria criteria(boundaryPolygon->getMinimumAngleInCGALRepresentation(), boundaryPolygon->getMaximumEdgeLength());
-    // Mesher mesher(cdt, criteria);
-
-    // mesher.refine_mesh();
+    mesher.refine_mesh();
 
     /*for (QList<MeshPolygon>::const_iterator it = domain.begin(); it != domain.end(); it++) {
         if (!it->isRefinementArea()) {
@@ -53,36 +57,46 @@ void UnstructuredMesh::generate() {
         mesher.refine_mesh();
     }*/
 
-    mark_domains();
-}
+    mark_domains(cdt);
 
-const CDT* UnstructuredMesh::getCDT() {
-    return &cdt;
-}
+    vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
+    vtkSmartPointer<vtkCellArray> triangles = vtkSmartPointer<vtkCellArray>::New();
+    vtkSmartPointer<vtkTriangle> _vtkTriangle = vtkSmartPointer<vtkTriangle>::New();
+    polyData = vtkSmartPointer<vtkPolyData>::New();
+    vtkIdType i = 0;
 
-void UnstructuredMesh::clearCDT() {
-    this->cdt.clear();
-}
+    for (CDT::Finite_faces_iterator fit = cdt.finite_faces_begin(); fit != cdt.finite_faces_end(); ++fit) {
+        if (!fit->info().isInDomain()) {
+            continue;
+        }
 
-// void UnstructuredMesh::buildDomain(const QString &filename) {
-//     cdt.clear();
-//     Mesh::buildDomain(filename);
-// }
+        CGAL::Triangle_2<K> cgalTriangle = cdt.triangle(fit);
+        Point a(cgalTriangle[0]), b(cgalTriangle[1]), c(cgalTriangle[2]);
 
-void UnstructuredMesh::clear() {
-    cdt.clear();
-    Mesh::clear();
-}
+        _vtkTriangle->GetPointIds()->SetId(0, i++);
+        _vtkTriangle->GetPointIds()->SetId(1, i++);
+        _vtkTriangle->GetPointIds()->SetId(2, i++);
 
-bool UnstructuredMesh::isGenerated() {
-    return cdt.number_of_vertices() > 0;
+        points->InsertNextPoint(a.x(), a.y(), 0.0);
+        points->InsertNextPoint(b.x(), b.y(), 0.0);
+        points->InsertNextPoint(c.x(), c.y(), 0.0);
+
+        triangles->InsertNextCell(_vtkTriangle);
+    }
+
+    polyData->SetPoints(points);
+    polyData->SetPolys(triangles);
 }
 
 bool UnstructuredMesh::instanceOf(const QString &type) {
     return type.contains("UnstructuredMesh");
 }
 
-void UnstructuredMesh::mark_domains(CDT::Face_handle start, int index, QList<CDT::Edge>& border) {
+vtkPolyData* UnstructuredMesh::getGrid() {
+    return polyData;
+}
+
+void UnstructuredMesh::mark_domains(CDT &cdt, CDT::Face_handle start, int index, QList<CDT::Edge>& border) {
     if (start->info().getNestingLevel() != -1) {
         return;
     }
@@ -115,14 +129,14 @@ void UnstructuredMesh::mark_domains(CDT::Face_handle start, int index, QList<CDT
     }
 }
 
-void UnstructuredMesh::mark_domains() {
+void UnstructuredMesh::mark_domains(CDT &cdt) {
     for (CDT::All_faces_iterator it = cdt.all_faces_begin(); it != cdt.all_faces_end(); it++) {
         it->info().setNestingLevel(-1);
     }
 
     QList<CDT::Edge> border;
 
-    mark_domains(cdt.infinite_face(), 0, border);
+    mark_domains(cdt, cdt.infinite_face(), 0, border);
 
     while (!border.empty()) {
         CDT::Edge e = border.front();
@@ -131,7 +145,7 @@ void UnstructuredMesh::mark_domains() {
         border.pop_front();
 
         if (n->info().getNestingLevel() == -1) {
-            mark_domains(n, e.first->info().getNestingLevel() + 1, border);
+            mark_domains(cdt, n, e.first->info().getNestingLevel() + 1, border);
         }
     }
 }

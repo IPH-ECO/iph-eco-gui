@@ -119,7 +119,7 @@ void GridDataConfiguration::processGridData(GridData *gridData) {
 
     if (dynamic_cast<UnstructuredMesh*>(mesh) != NULL) {
         UnstructuredMesh *unstructuredMesh = static_cast<UnstructuredMesh*>(mesh);
-        const CDT *cdt = unstructuredMesh->getCDT();
+        const CDT *cdt = NULL; //unstructuredMesh->getCDT();
 
         for (CDT::Finite_faces_iterator fit = cdt->finite_faces_begin(); fit != cdt->finite_faces_end(); ++fit) {
             if (!fit->info().isInDomain() || fit->info().getCellInfo(gridInformationType) != NULL) {
@@ -201,7 +201,7 @@ double GridDataConfiguration::calculateNearestWeight(QSet<GridDataPoint> &dataPo
 QSet<CellInfo*> GridDataConfiguration::queryCells(Point &point) {
     if (dynamic_cast<UnstructuredMesh*>(mesh) != NULL) {
         UnstructuredMesh *unstructuredMesh = static_cast<UnstructuredMesh*>(mesh);
-        const CDT *cdt = unstructuredMesh->getCDT();
+        const CDT *cdt = NULL; //unstructuredMesh->getCDT();
 
         for (CDT::Finite_faces_iterator fit = cdt->finite_faces_begin(); fit != cdt->finite_faces_end(); ++fit) {
             if (!fit->info().isInDomain()) {

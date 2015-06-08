@@ -9,23 +9,17 @@
 
 class UnstructuredMesh : public Mesh {
 private:
-    CDT cdt;
+    vtkSmartPointer<vtkPolyData> polyData;
 
-    void mark_domains(CDT::Face_handle start, int index, QList<CDT::Edge>& border);
-    void mark_domains();
+    void mark_domains(CDT &cdt, CDT::Face_handle start, int index, QList<CDT::Edge>& border);
+    void mark_domains(CDT &cdt);
 
 public:
     UnstructuredMesh();
-    UnstructuredMesh(QString &_name);
-
-    void generate();
-
-    const CDT* getCDT();
-    void clearCDT();
 
     virtual bool instanceOf(const QString &type);
-    virtual bool isGenerated();
-    virtual void clear();
+    virtual void generate();
+    virtual vtkPolyData* getGrid();
 };
 
 #endif // UNSTRUCTURED_MESH_H

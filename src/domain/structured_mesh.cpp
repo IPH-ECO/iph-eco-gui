@@ -3,14 +3,9 @@
 #include <vtkPolygon.h>
 #include <vtkPoints.h>
 #include <vtkCellArray.h>
-#include <vtkPolyData.h>
 #include <vtkQuad.h>
 
 StructuredMesh::StructuredMesh() : resolution(100) {}
-
-StructuredMesh::StructuredMesh(QString &name) : Mesh(name), resolution(1) {}
-
-StructuredMesh::StructuredMesh(QString &name, uint &resolution) : Mesh(name), resolution(resolution) {}
 
 uint StructuredMesh::getResolution() const {
     return resolution;
@@ -33,9 +28,9 @@ void StructuredMesh::generate() {
     vtkSmartPointer<vtkCellArray> quads = vtkSmartPointer<vtkCellArray>::New();
     int columns = (bounds[1] - bounds[0]) / this->resolution; // xmax - xmin
     int rows = (bounds[3] - bounds[2]) / this->resolution; // ymax - ymin
-    int count = 0;
     double x = bounds[0];
     double y = bounds[2];
+    int count = 0;
 
     points->SetNumberOfPoints(columns * rows * 4);
 
@@ -71,11 +66,6 @@ void StructuredMesh::generate() {
     polyData = vtkSmartPointer<vtkPolyData>::New();
     polyData->SetPoints(points);
     polyData->SetPolys(quads);
-}
-
-bool StructuredMesh::isGenerated() {
-    // return grid.size1() > 0;
-    return true;
 }
 
 bool StructuredMesh::instanceOf(const QString &type) {

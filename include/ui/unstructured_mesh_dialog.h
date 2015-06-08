@@ -1,10 +1,8 @@
 #ifndef UNSTRUCTURED_MESH_DIALOG_H
 #define UNSTRUCTURED_MESH_DIALOG_H
 
+#include <QDialog>
 #include <QWidget>
-#include <QFileDialog>
-#include <QInputDialog>
-#include <QMessageBox>
 #include <QSettings>
 
 #include "include/domain/unstructured_mesh.h"
@@ -19,6 +17,8 @@ class UnstructuredMeshDialog : public QDialog {
 public:
     explicit UnstructuredMeshDialog(QWidget *parent = 0);
     ~UnstructuredMeshDialog();
+    
+    void setArea(const double &area);
 
 public slots:
     void setCoordinate(double &x, double &y);
@@ -29,7 +29,7 @@ private slots:
     void on_btnAddIsland_clicked();
     void on_btnRemoveIsland_clicked();
     void on_btnGenerateDomain_clicked();
-    void on_chkShowBoundaryEdges_clicked();
+    void on_chkShowBoundaryEdges_clicked(bool checked);
 
     // Mesh tab events
     void on_lstCoordinateFiles_itemSelectionChanged();
@@ -38,7 +38,7 @@ private slots:
     void on_sbxMaximumEdgeLength_valueChanged(double value);
     void on_sbxMinimumAngle_valueChanged(double value);
     void on_btnGenerateMesh_clicked();
-    void on_chkShowMesh_clicked();
+    void on_chkShowMesh_clicked(bool checked);
 
     // General dialog events
     void on_cbxMeshName_currentIndexChanged(int index);
