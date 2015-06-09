@@ -10,8 +10,8 @@
 class Mesh {
 protected:
     QString name;
-    double coordinatesDistance;
     MeshPolygon *boundaryPolygon;
+    double coordinatesDistance;
     QList<MeshPolygon*> islands;
     QList<MeshPolygon*> refinementAreas;
 

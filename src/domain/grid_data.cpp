@@ -79,7 +79,7 @@ void GridData::build() {
 
     data = vtkSmartPointer<vtkPolyData>::New();
     data->DeepCopy(reader->GetOutput());
-
+    
     vtkSmartPointer<vtkPoints> points = data->GetPoints();
     vtkIdType numberOfPoints = points->GetNumberOfPoints();
 
@@ -92,7 +92,7 @@ void GridData::build() {
 
         points->GetPoint(i, point);
 
-        GeographicLib::GeoCoords utmCoordinate(point[0], point[1]);
+        GeographicLib::GeoCoords utmCoordinate(point[1], point[0]);
         points->SetPoint(i, utmCoordinate.Easting(), utmCoordinate.Northing(), 0.0);
     }
 }

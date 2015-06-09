@@ -47,7 +47,7 @@ void GridInformationDialog::on_rdoPolygon_toggled(bool checked) {
 }
 
 void GridInformationDialog::on_btnBrowseInputFile_clicked() {
-    QString gridDataFile = QFileDialog::getOpenFileName(this, tr("Select a grid data file"), getDefaultDirectory(), tr("XYZ files (*.xyz *.txt)"));
+    QString gridDataFile = QFileDialog::getOpenFileName(this, tr("Select a grid data file"), getDefaultDirectory(), tr("XYZA files (*.xyza *.txt)"));
 
     ui->edtInputFile->setText(gridDataFile);
 }
@@ -73,26 +73,10 @@ void GridInformationDialog::on_bottomButtons_clicked(QAbstractButton *button) {
             return;
         }
 
-        GridDataInputType gridInputType = ui->rdoPoint->isChecked() ? GridDataInputType::POINT : GridDataInputType::POLYGON;
-        QString inputFile = ui->edtInputFile->text();
-        GridDataType gridDataType = GridDataType::toGridDataType(ui->cbxGridInformation->currentText());
-        double exponent = ui->edtExponent->text().toDouble();
-        double radius = ui->edtRadius->text().toDouble();
-        GridData tempGridData;
-
-        tempGridData.setGridDataInputType(gridInputType);
-        tempGridData.setInputFile(inputFile);
-        tempGridData.setGridDataType(gridDataType);
-        tempGridData.setShow(true);
-
-        if (gridInputType == GridDataInputType::POLYGON) {
-            tempGridData.setExponent(exponent);
-            tempGridData.setRadius(radius);
-        }
-
         try {
-            tempGridData.build();
-
+            GridDataInputType gridInputType = ui->rdoPoint->isChecked() ? GridDataInputType::POINT : GridDataInputType::POLYGON;
+            GridDataType gridDataType = GridDataType::toGridDataType(ui->cbxGridInformation->currentText());
+            
             if (gridData == NULL) {
                 // if (gridInputType == GridDataInputType::POLYGON && !tempGridData.getGridDataPolygon().is_simple()) {
                 //     QMessageBox::critical(this, tr("Grid Data"), tr("Invalid polygon."));
@@ -100,9 +84,16 @@ void GridInformationDialog::on_bottomButtons_clicked(QAbstractButton *button) {
                 // }
 
                 gridData = new GridData();
+                gridData->setGridDataInputType(gridInputType);
+                gridData->setInputFile(ui->edtInputFile->text());
+                gridData->setGridDataType(gridDataType);
+                gridData->setShow(true);
             }
-
-            // gridData->copy(tempGridData);
+            
+            if (gridInputType == GridDataInputType::POLYGON) {
+                gridData->setExponent(ui->edtExponent->text().toDouble());
+                gridData->setRadius(ui->edtRadius->text().toDouble());
+            }
 
             this->accept();
         } catch (GridDataException &e) {

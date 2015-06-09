@@ -39,8 +39,8 @@ private slots:
 
 private:
     Ui::GridDataDialog *ui;
-    GridDataConfiguration *unsavedGridDataConfiguration;
-    GridDataConfiguration *currentGridDataConfiguration;
+    GridDataConfiguration *unsavedConfiguration;
+    GridDataConfiguration *currentConfiguration;
     
     QWidget* createCheckBoxWidget(GridData *gridData);
     void toggleGridDataConfigurationForm(bool enable);

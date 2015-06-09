@@ -1,6 +1,11 @@
 #include "include/ui/grid_data_dialog.h"
 #include "ui_grid_data_dialog.h"
 
+#include "include/application/iph_application.h"
+#include "include/domain/structured_mesh.h"
+#include "include/domain/unstructured_mesh.h"
+#include "include/exceptions/grid_data_exception.h"
+
 #include <QFileDialog>
 #include <QInputDialog>
 #include <QTableWidgetItem>
@@ -9,39 +14,32 @@
 #include <QCheckBox>
 #include <QObject>
 #include <QHBoxLayout>
-#include <QDebug>
-
-#include "include/application/iph_application.h"
-#include "include/domain/structured_mesh.h"
-#include "include/domain/unstructured_mesh.h"
-#include "include/exceptions/grid_data_exception.h"
+#include <QProgressDialog>
 
 GridDataDialog::GridDataDialog(QWidget *parent) :
     QDialog(parent), ui(new Ui::GridDataDialog),
-    unsavedGridDataConfiguration(new GridDataConfiguration()), currentGridDataConfiguration(unsavedGridDataConfiguration)
+    unsavedConfiguration(new GridDataConfiguration()), currentConfiguration(unsavedConfiguration)
 {
     ui->setupUi(this);
     ui->tblGridInformation->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 
     Project *project = IPHApplication::getCurrentProject();
     QSet<Mesh*> meshes = project->getMeshes();
+    QSet<GridDataConfiguration*> configurations = project->getGridDataConfigurations();
 
-    for (QSet<Mesh*>::iterator i = meshes.begin(); i != meshes.end(); ++i) {
-        ui->cbxMesh->addItem((*i)->getName());
+    for (QSet<Mesh*>::const_iterator it = meshes.begin(); it != meshes.end(); ++it) {
+        ui->cbxMesh->addItem((*it)->getName());
     }
     ui->cbxMesh->setCurrentIndex(-1);
 
-    QSet<GridDataConfiguration*> gridDataConfigurations = project->getGridDataConfigurations();
-    for (QSet<GridDataConfiguration*>::const_iterator it = gridDataConfigurations.begin(); it != gridDataConfigurations.end(); it++) {
+    for (QSet<GridDataConfiguration*>::const_iterator it = configurations.begin(); it != configurations.end(); it++) {
         ui->cbxConfiguration->addItem((*it)->getName());
     }
     ui->cbxConfiguration->setCurrentIndex(-1);
-
-    ui->gridDataOpenGLWidget->setGridDataConfiguration(currentGridDataConfiguration);
 }
 
 GridDataDialog::~GridDataDialog() {
-    delete unsavedGridDataConfiguration;
+    delete unsavedConfiguration;
     delete ui;
 }
 
@@ -60,17 +58,17 @@ void GridDataDialog::on_cbxConfiguration_currentIndexChanged(const QString &conf
     ui->tblGridInformation->setRowCount(0);
 
     if (configurationName.isEmpty()) {
-        currentGridDataConfiguration = unsavedGridDataConfiguration;
+        currentConfiguration = unsavedConfiguration;
         toggleGridDataConfigurationForm(false);
         ui->edtConfigurationName->clear();
         ui->cbxMesh->setCurrentIndex(-1);
     } else {
         Project *project = IPHApplication::getCurrentProject();
-        currentGridDataConfiguration = project->getGridDataConfiguration(configurationName);
-        QVector<GridData*> &gridDataVector = currentGridDataConfiguration->getGridDataVector();
+        currentConfiguration = project->getGridDataConfiguration(configurationName);
+        QVector<GridData*> gridDataVector = currentConfiguration->getGridDataVector();
 
-        ui->edtConfigurationName->setText(currentGridDataConfiguration->getName());
-        ui->cbxMesh->setCurrentText(currentGridDataConfiguration->getMesh()->getName());
+        ui->edtConfigurationName->setText(currentConfiguration->getName());
+        ui->cbxMesh->setCurrentText(currentConfiguration->getMesh()->getName());
 
         for (int i = 0; i < gridDataVector.count(); i++) {
             int rowCount = ui->tblGridInformation->rowCount();
@@ -86,7 +84,7 @@ void GridDataDialog::on_cbxConfiguration_currentIndexChanged(const QString &conf
         toggleGridDataConfigurationForm(true);
     }
 
-    ui->gridDataOpenGLWidget->setGridDataConfiguration(currentGridDataConfiguration);
+    ui->gridDataVTKWidget->render(currentConfiguration);
 }
 
 void GridDataDialog::on_cbxMesh_currentIndexChanged(const QString &meshName) {
@@ -97,15 +95,15 @@ void GridDataDialog::on_cbxMesh_currentIndexChanged(const QString &meshName) {
         Project *project = IPHApplication::getCurrentProject();
         mesh = project->getMesh(meshName);
 
-        if (dynamic_cast<UnstructuredMesh*>(mesh) != NULL) {
+        if (mesh->instanceOf("UnstructuredMesh")) {
             mesh = static_cast<UnstructuredMesh*>(mesh);
         } else {
             mesh = static_cast<StructuredMesh*>(mesh);
         }
     }
 
-    currentGridDataConfiguration->setMesh(mesh);
-    ui->gridDataOpenGLWidget->update();
+    currentConfiguration->setMesh(mesh);
+    ui->gridDataVTKWidget->render(currentConfiguration);
     ui->btnAddGridInfomation->setEnabled(isMeshNamePresent);
     ui->btnRemoveGridInformation->setEnabled(isMeshNamePresent);
 }
@@ -118,18 +116,29 @@ void GridDataDialog::on_btnAddGridInfomation_clicked() {
         int rowCount = ui->tblGridInformation->rowCount();
         GridData *gridData = gridInformationDialog->getGridData();
         QWidget *checkBoxWidget = createCheckBoxWidget(gridData);
+        int maximum = currentConfiguration->getMesh()->getGrid()->GetNumberOfCells();
+        
+        QProgressDialog *progressDialog = new QProgressDialog(tr("Interpolating grid data..."), tr("Cancel"), 0, maximum - 1, this);
+        QObject::connect(currentConfiguration, SIGNAL(updateProgress(int)), progressDialog, SLOT(setValue(int)));
+        QObject::connect(progressDialog, SIGNAL(canceled()), currentConfiguration, SLOT(cancelInterpolation()));
+        progressDialog->setWindowModality(Qt::WindowModal);
 
-        currentGridDataConfiguration->addGridData(gridData);
-
-        ui->tblGridInformation->insertRow(rowCount);
-        ui->tblGridInformation->setItem(rowCount, 0, new QTableWidgetItem(gridData->gridDataInputTypeToString()));
-        ui->tblGridInformation->setItem(rowCount, 1, new QTableWidgetItem(gridData->getGridDataType().toString()));
-        ui->tblGridInformation->setCellWidget(rowCount, 2, checkBoxWidget);
+        currentConfiguration->addGridData(gridData);
+        
+        if (currentConfiguration->interpolationWasCanceled()) {
+            currentConfiguration->cancelInterpolation(false); // Set false for future computations
+            currentConfiguration->removeGridData(gridData);
+        } else {
+            ui->tblGridInformation->insertRow(rowCount);
+            ui->tblGridInformation->setItem(rowCount, 0, new QTableWidgetItem(gridData->gridDataInputTypeToString()));
+            ui->tblGridInformation->setItem(rowCount, 1, new QTableWidgetItem(gridData->getGridDataType().toString()));
+            ui->tblGridInformation->setCellWidget(rowCount, 2, checkBoxWidget);
+        }
     }
 }
 
 void GridDataDialog::on_tblGridInformation_itemDoubleClicked(QTableWidgetItem *item) {
-    GridData *gridData = currentGridDataConfiguration->getGridData(item->row());
+    GridData *gridData = currentConfiguration->getGridData(item->row());
     GridInformationDialog *gridInformationDialog = new GridInformationDialog(this, gridData);
     int exitCode = gridInformationDialog->exec();
 
@@ -146,9 +155,9 @@ void GridDataDialog::on_btnRemoveGridInformation_clicked() {
     int currentRow = ui->tblGridInformation->currentRow();
 
     if (currentRow > -1 && QMessageBox::Yes == QMessageBox::question(this, tr("Grid Data"), tr("Are you sure?"))) {
-        currentGridDataConfiguration->removeGridData(currentRow);
+        currentConfiguration->removeGridData(currentRow);
         ui->tblGridInformation->removeRow(currentRow);
-        ui->gridDataOpenGLWidget->update();
+        ui->gridDataVTKWidget->update();
     }
 }
 
@@ -186,12 +195,12 @@ void GridDataDialog::on_btnSaveConfiguration_clicked() {
     GridDataConfiguration *gridDataConfiguration = project->getGridDataConfiguration(configurationName);
 
     if (gridDataConfiguration == NULL && ui->cbxConfiguration->currentIndex() == -1) {
-        currentGridDataConfiguration->setName(configurationName);
-        currentGridDataConfiguration->setMesh(mesh);
-        project->addGridDataConfiguration(currentGridDataConfiguration);
+        currentConfiguration->setName(configurationName);
+        currentConfiguration->setMesh(mesh);
+        project->addGridDataConfiguration(currentConfiguration);
 
-        unsavedGridDataConfiguration = new GridDataConfiguration();
-        currentGridDataConfiguration = unsavedGridDataConfiguration;
+        unsavedConfiguration = new GridDataConfiguration();
+        currentConfiguration = unsavedConfiguration;
 
         ui->cbxConfiguration->addItem(configurationName);
         ui->cbxConfiguration->setCurrentText(configurationName);
@@ -203,8 +212,8 @@ void GridDataDialog::on_btnSaveConfiguration_clicked() {
             return;
         }
 
-        currentGridDataConfiguration->setName(configurationName);
-        currentGridDataConfiguration->setMesh(mesh);
+        currentConfiguration->setName(configurationName);
+        currentConfiguration->setMesh(mesh);
         ui->cbxConfiguration->setItemText(ui->cbxConfiguration->currentIndex(), configurationName);
     }
 }
@@ -217,7 +226,7 @@ void GridDataDialog::on_btnSaveAsNewConfiguration_clicked() {
         Project *project = IPHApplication::getCurrentProject();
         QString meshName = ui->cbxMesh->currentText();
         Mesh *mesh = project->getMesh(meshName);
-        QVector<GridData*> gridDataVector = currentGridDataConfiguration->getGridDataVector();
+        QVector<GridData*> gridDataVector = currentConfiguration->getGridDataVector();
 
         newConfiguration->setName(newConfigurationName);
         newConfiguration->setMesh(mesh);
@@ -236,7 +245,7 @@ void GridDataDialog::on_btnSaveAsNewConfiguration_clicked() {
             newConfiguration->addGridData(newGridData);
         }
 
-        currentGridDataConfiguration = newConfiguration;
+        currentConfiguration = newConfiguration;
 
         ui->cbxConfiguration->addItem(newConfigurationName);
         ui->cbxConfiguration->setCurrentText(newConfigurationName);
@@ -251,7 +260,7 @@ void GridDataDialog::on_btnRemoveConfiguration_clicked() {
 
         ui->cbxConfiguration->removeItem(ui->cbxConfiguration->currentIndex());
         ui->cbxConfiguration->setCurrentIndex(-1);
-        ui->gridDataOpenGLWidget->setGridDataConfiguration(NULL);
+        ui->gridDataVTKWidget->render(NULL);
     }
 }
 
@@ -279,6 +288,6 @@ bool GridDataDialog::isConfigurationValid() {
 }
 
 void GridDataDialog::on_chkShowMesh_toggled(bool checked) {
-    currentGridDataConfiguration->setShowMesh(checked);
-    ui->gridDataOpenGLWidget->update();
+    currentConfiguration->setShowMesh(checked);
+    ui->gridDataVTKWidget->update();
 }
