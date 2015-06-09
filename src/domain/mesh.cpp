@@ -11,7 +11,7 @@
 #include <QJsonArray>
 #include <GeographicLib/GeoCoords.hpp>
 
-Mesh::Mesh() : boundaryPolygon(NULL), coordinatesDistance(0.0), showBoundaryEdges(true), showMesh(true) {}
+Mesh::Mesh() : boundaryPolygon(NULL), coordinatesDistance(0.0), generationCanceled(false), showBoundaryEdges(true), showMesh(true) {}
 
 Mesh::~Mesh() {
     this->clear();
@@ -72,6 +72,10 @@ QList<MeshPolygon*> Mesh::getIslands() {
 
 QList<MeshPolygon*> Mesh::getRefinementAreas() {
     return refinementAreas;
+}
+
+void Mesh::cancelGeneration(bool value) {
+    this->generationCanceled = value;
 }
 
 void Mesh::removeMeshPolygon(const QString &filename, const MeshPolygonType &meshPolygonType) {

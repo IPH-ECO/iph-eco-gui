@@ -4,6 +4,7 @@
 #include <vtkPoints.h>
 #include <vtkCellArray.h>
 #include <vtkQuad.h>
+#include <QApplication>
 
 StructuredMesh::StructuredMesh() : resolution(100) {}
 
@@ -19,26 +20,33 @@ vtkPolyData* StructuredMesh::getGrid() {
     return polyData;
 }
 
+bool StructuredMesh::instanceOf(const QString &type) {
+    return type.contains("StructuredMesh");
+}
+
 void StructuredMesh::generate() {
     ulong bounds[4];
-
+    
     computeBounds(bounds);
-
+    
     vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
     vtkSmartPointer<vtkCellArray> quads = vtkSmartPointer<vtkCellArray>::New();
     int columns = (bounds[1] - bounds[0]) / this->resolution; // xmax - xmin
     int rows = (bounds[3] - bounds[2]) / this->resolution; // ymax - ymin
     double x = bounds[0];
     double y = bounds[2];
-    int count = 0;
-
+    int count = 0, currentStep = 0;
+    
     points->SetNumberOfPoints(columns * rows * 4);
-
-    for (int i = 0; i < rows; i++) {
-        for (int j = 0; j < columns; j++) {
+    
+    for (int i = 0; i < rows && !generationCanceled; i++) {
+        for (int j = 0; j < columns && !generationCanceled; j++) {
+            emit updateProgress(currentStep++);
+            QApplication::processEvents();
+            
             double quadCenter[3] = { x + this->resolution / 2.0, y + this->resolution / 2.0, 0.0 };
             bool includeQuad = this->pointInMesh(quadCenter);
-
+            
             if (includeQuad) {
                 vtkSmartPointer<vtkQuad> quad = vtkSmartPointer<vtkQuad>::New();
                 double quadCoordinates[4][3] = {
@@ -47,29 +55,27 @@ void StructuredMesh::generate() {
                     { x + this->resolution, y + this->resolution, 0.0 },
                     { x, y + this->resolution }
                 };
-
+                
                 for (int k = 0; k < 4; k++) {
                     quad->GetPointIds()->SetId(k, count);
                     points->SetPoint(count, quadCoordinates[k]);
                     count++;
                 }
-
+                
                 quads->InsertNextCell(quad);
             }
-
+            
             x += this->resolution;
         }
         x = bounds[0];
         y += this->resolution;
     }
-
-    polyData = vtkSmartPointer<vtkPolyData>::New();
-    polyData->SetPoints(points);
-    polyData->SetPolys(quads);
-}
-
-bool StructuredMesh::instanceOf(const QString &type) {
-    return type.contains("StructuredMesh");
+    
+    if (!generationCanceled) {
+        polyData = vtkSmartPointer<vtkPolyData>::New();
+        polyData->SetPoints(points);
+        polyData->SetPolys(quads);
+    }
 }
 
 void StructuredMesh::computeBounds(ulong *points) {

@@ -30,7 +30,6 @@ public:
     void setMesh(Mesh *mesh);
     QVector<GridData*> getGridDataVector();
     void interpolate(GridData *gridData);
-    bool interpolationWasCanceled() const;
     bool getShowMesh() const;
     void setShowMesh(const bool showMesh);
 

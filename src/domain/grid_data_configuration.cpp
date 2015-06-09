@@ -215,7 +215,3 @@ double GridDataConfiguration::calculateNearestWeight(vtkPolyData *gridPolyData, 
 void GridDataConfiguration::cancelInterpolation(bool value) {
     this->interpolationCanceled = value;
 }
-
-bool GridDataConfiguration::interpolationWasCanceled() const {
-    return interpolationCanceled;
-}

@@ -1,19 +1,21 @@
 #ifndef MESH_H
 #define MESH_H
 
-#include <QHash>
-#include <QJsonObject>
-#include <QList>
-#include <vtkPolyData.h>
 #include "mesh_polygon.h"
+#include <QHash>
+#include <QList>
+#include <QObject>
+#include <vtkPolyData.h>
 
-class Mesh {
+class Mesh : public QObject {
+    Q_OBJECT
 protected:
     QString name;
     MeshPolygon *boundaryPolygon;
     double coordinatesDistance;
     QList<MeshPolygon*> islands;
     QList<MeshPolygon*> refinementAreas;
+    bool generationCanceled;
 
     // Transient attributes
     bool showBoundaryEdges;
@@ -34,7 +36,7 @@ public:
     MeshPolygon* getBoundaryPolygon();
     QList<MeshPolygon*> getIslands();
     QList<MeshPolygon*> getRefinementAreas();
-
+    
     MeshPolygon* addMeshPolygon(const QString &filename, const MeshPolygonType &meshPolygonType);
     void removeMeshPolygon(const QString &filename, const MeshPolygonType &meshPolygonType);
     MeshPolygon* getMeshPolygon(const QString &filename, const MeshPolygonType &meshPolygonType);
@@ -50,6 +52,12 @@ public:
     virtual vtkPolyData* getGrid() = 0;
     virtual void generate() = 0;
     virtual void clear();
+    
+signals:
+    void updateProgress(int value);
+    
+public slots:
+    void cancelGeneration(bool value = true);
 };
 
 #endif // MESH_H

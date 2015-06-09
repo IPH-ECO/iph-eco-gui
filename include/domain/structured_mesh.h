@@ -8,7 +8,6 @@ private:
     uint resolution;
     vtkSmartPointer<vtkPolyData> polyData;
 
-    void computeBounds(ulong *points);
     bool pointInMesh(double *point);
 
 public:
@@ -16,6 +15,7 @@ public:
 
     uint getResolution() const;
     void setResolution(const uint &resolution);
+    void computeBounds(ulong *points);
 
     virtual bool instanceOf(const QString &type);
     virtual vtkPolyData* getGrid();

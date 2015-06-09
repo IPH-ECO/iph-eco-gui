@@ -3,6 +3,7 @@
 
 #include "include/application/iph_application.h"
 #include "include/exceptions/mesh_polygon_exception.h"
+#include <QProgressDialog>
 
 StructuredMeshDialog::StructuredMeshDialog(QWidget *parent) :
     QDialog(parent), BOUNDARY_DEFAULT_DIR_KEY("boundary_default_dir"), ui(new Ui::StructuredMeshDialog),
@@ -110,15 +111,34 @@ void StructuredMeshDialog::on_btnGenerateMesh_clicked() {
 
     enableMeshForm(true);
 
-    currentMesh->setResolution(ui->sbxResolution->value());
-
     try {
         currentMesh->addMeshPolygon(boundaryFileStr, MeshPolygonType::BOUNDARY);
-        currentMesh->generate();
-        ui->meshVTKWidget->render(currentMesh);
     } catch (const MeshPolygonException& e) {
         QMessageBox::critical(this, tr("Structured Mesh Generation"), e.what());
+        return;
     }
+    
+    ulong bounds[4];
+    
+    currentMesh->setResolution(ui->sbxResolution->value());
+    currentMesh->computeBounds(bounds);
+    
+    int columns = (bounds[1] - bounds[0]) / currentMesh->getResolution(); // xmax - xmin
+    int rows = (bounds[3] - bounds[2]) / currentMesh->getResolution(); // ymax - ymin
+    QProgressDialog *progressDialog = new QProgressDialog(tr("Generating mesh..."), tr("Cancel"), 0, columns * rows - 1, this);
+    QObject::connect(currentMesh, SIGNAL(updateProgress(int)), progressDialog, SLOT(setValue(int)));
+    QObject::connect(progressDialog, SIGNAL(canceled()), currentMesh, SLOT(cancelGeneration()));
+    progressDialog->setMinimumDuration(500);
+    progressDialog->setWindowModality(Qt::WindowModal);
+    
+    currentMesh->generate();
+    
+    if (progressDialog->wasCanceled()) {
+        currentMesh->cancelGeneration(false); // Set false for future computations
+    } else {
+        ui->meshVTKWidget->render(currentMesh);
+    }
+    delete progressDialog;
 }
 
 void StructuredMeshDialog::on_btnSaveMesh_clicked() {

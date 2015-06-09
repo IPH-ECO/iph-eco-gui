@@ -121,11 +121,12 @@ void GridDataDialog::on_btnAddGridInfomation_clicked() {
         QProgressDialog *progressDialog = new QProgressDialog(tr("Interpolating grid data..."), tr("Cancel"), 0, maximum - 1, this);
         QObject::connect(currentConfiguration, SIGNAL(updateProgress(int)), progressDialog, SLOT(setValue(int)));
         QObject::connect(progressDialog, SIGNAL(canceled()), currentConfiguration, SLOT(cancelInterpolation()));
+        progressDialog->setMinimumDuration(500);
         progressDialog->setWindowModality(Qt::WindowModal);
 
         currentConfiguration->addGridData(gridData);
         
-        if (currentConfiguration->interpolationWasCanceled()) {
+        if (progressDialog->wasCanceled()) {
             currentConfiguration->cancelInterpolation(false); // Set false for future computations
             currentConfiguration->removeGridData(gridData);
         } else {
@@ -134,6 +135,7 @@ void GridDataDialog::on_btnAddGridInfomation_clicked() {
             ui->tblGridInformation->setItem(rowCount, 1, new QTableWidgetItem(gridData->getGridDataType().toString()));
             ui->tblGridInformation->setCellWidget(rowCount, 2, checkBoxWidget);
         }
+        delete progressDialog;
     }
 }
 
