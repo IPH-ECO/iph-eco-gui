@@ -15,10 +15,9 @@ void UnstructuredMesh::generate() {
     }
 
     QList<MeshPolygon*> polygons = islands;
-
-    polygons.prepend(boundaryPolygon);
-
     CDT cdt;
+    
+    polygons.prepend(boundaryPolygon);
 
     for (QList<MeshPolygon*>::const_iterator it = polygons.begin(); it != polygons.end(); it++) {
         vtkPolygon *polygon = (*it)->getFilteredPolygon();
