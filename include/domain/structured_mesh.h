@@ -6,7 +6,6 @@
 class StructuredMesh : public Mesh {
 private:
     uint resolution;
-    vtkSmartPointer<vtkPolyData> polyData;
 
     bool pointInMesh(double *point);
 
@@ -18,7 +17,6 @@ public:
     void computeBounds(ulong *points);
 
     virtual bool instanceOf(const QString &type);
-    virtual vtkPolyData* getGrid();
     virtual void generate();
 };
 

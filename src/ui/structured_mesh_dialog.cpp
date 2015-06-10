@@ -165,7 +165,7 @@ void StructuredMeshDialog::on_btnSaveMesh_clicked() {
         ui->cbxMeshName->addItem(meshName);
         ui->cbxMeshName->setCurrentText(meshName);
     } else {
-        ui->cbxMeshName->setItemText(ui->cbxMeshName->currentIndex(), currentMesh->getName());
+        ui->cbxMeshName->setItemText(ui->cbxMeshName->currentIndex(), meshName);
     }
 }
 

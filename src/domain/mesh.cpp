@@ -10,11 +10,20 @@
 #include <QJsonDocument>
 #include <QJsonArray>
 #include <GeographicLib/GeoCoords.hpp>
+#include <vtkXMLPolyDataWriter.h>
 
-Mesh::Mesh() : boundaryPolygon(NULL), coordinatesDistance(0.0), generationCanceled(false), showBoundaryEdges(true), showMesh(true) {}
+Mesh::Mesh() : id(0), boundaryPolygon(NULL), coordinatesDistance(0.0), generationCanceled(false), showBoundaryEdges(true), showMesh(true) {}
 
 Mesh::~Mesh() {
     this->clear();
+}
+
+void Mesh::setId(const uint &id) {
+    this->id = id;
+}
+
+uint Mesh::getId() const {
+    return id;
 }
 
 void Mesh::setName(const QString &name) {
@@ -74,6 +83,20 @@ QList<MeshPolygon*> Mesh::getRefinementAreas() {
     return refinementAreas;
 }
 
+vtkPolyData* Mesh::getGrid() {
+    return polyData;
+}
+
+QString Mesh::getGridAsString() {
+    vtkSmartPointer<vtkXMLPolyDataWriter> writer = vtkSmartPointer<vtkXMLPolyDataWriter>::New();
+    
+    writer->SetInputData(this->polyData);
+    writer->WriteToOutputStringOn();
+    writer->SetDataModeToAscii(); // TODO: evaluate if this call is needed
+    
+    return writer->GetOutputString().c_str();
+}
+
 void Mesh::cancelGeneration(bool value) {
     this->generationCanceled = value;
 }
@@ -90,6 +113,7 @@ void Mesh::removeMeshPolygon(const QString &filename, const MeshPolygonType &mes
     }
 }
 
+// Refactor
 MeshPolygon* Mesh::getMeshPolygon(const QString &filename, const MeshPolygonType &meshPolygonType) {
     // QList<MeshPolygon>::iterator it = qFind(domain.begin(), domain.end(), meshPolygon);
 

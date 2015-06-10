@@ -44,7 +44,7 @@ private:
     
     QWidget* createCheckBoxWidget(GridData *gridData);
     void toggleGridDataConfigurationForm(bool enable);
-    bool isConfigurationValid();
+    bool isConfigurationValid(const QString &configurationName);
 };
 
 #endif // GRID_DATA_DIALOG_H

@@ -1,17 +1,9 @@
 #include "include/domain/project.h"
-Project::Project(QString &_name, QString &_description, bool &_hydrodynamic, bool &_sediment, bool &_waterQuality) :
-        name(_name), description(_description), hydrodynamic(_hydrodynamic), waterQuality(_waterQuality),
-        sediment(_sediment), meshes(QSet<Mesh*>()), dirty(false)
+
+Project::Project(const QString &name, const QString &description, const bool &hydrodynamic, const bool &sediment, const bool &waterQuality) :
+        name(name), description(description), hydrodynamic(hydrodynamic), waterQuality(waterQuality),
+        sediment(sediment), dirty(false)
 {}
-
-void Project::setId(const qint8 &id) {
-    this->id = id;
-    this->setDirty(true);
-}
-
-qint8 Project::getId() const {
-    return this->id;
-}
 
 void Project::setName(const QString &name) {
     this->name = name;
@@ -67,24 +59,23 @@ bool Project::getSediment() const {
     return sediment;
 }
 
-const QSet<Mesh*>& Project::getMeshes() {
+QSet<Mesh*> Project::getMeshes() const {
     return meshes;
 }
 
 bool Project::addMesh(Mesh *mesh) {
-    if (!containsMesh(mesh)) {
-        this->meshes.insert(mesh);
-        this->setDirty(true);
-        return true;
+    if (meshes.contains(mesh)) {
+        return false;
     }
-    return false;
+    
+    meshes.insert(mesh);
+    
+    return true;
 }
 
 void Project::removeMesh(Mesh *mesh) {
-    Mesh *m = getMesh(mesh);
-
-    this->meshes.remove(m);
-    delete m;
+    meshes.remove(mesh);
+    delete mesh;
     this->setDirty(true);
 }
 
@@ -92,22 +83,8 @@ bool Project::containsMesh(const QString &meshName) {
     return this->getMesh(meshName) != NULL;
 }
 
-bool Project::containsMesh(Mesh *mesh) {
-    return this->meshes.contains(mesh);
-}
-
-Mesh* Project::getMesh(Mesh *mesh) {
-    for (QSet<Mesh*>::iterator it = meshes.begin(); it != meshes.end(); it++) {
-        if ((*it)->getName() == mesh->getName() && typeid(*it) == typeid(mesh)) {
-            return *it;
-        }
-    }
-
-    return NULL;
-}
-
-Mesh* Project::getMesh(const QString &meshName) {
-    for (QSet<Mesh*>::iterator it = meshes.begin(); it != meshes.end(); it++) {
+Mesh* Project::getMesh(const QString &meshName) const {
+    for (QSet<Mesh*>::const_iterator it = meshes.begin(); it != meshes.end(); it++) {
         if ((*it)->getName() == meshName) {
             return *it;
         }
@@ -148,7 +125,7 @@ GridDataConfiguration* Project::getGridDataConfiguration(const QString &configur
     return NULL;
 }
 
-QSet<GridDataConfiguration*>& Project::getGridDataConfigurations() {
+QSet<GridDataConfiguration*> Project::getGridDataConfigurations() const {
     return gridDataConfigurations;
 }
 

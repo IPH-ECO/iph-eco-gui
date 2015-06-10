@@ -16,10 +16,6 @@ void StructuredMesh::setResolution(const uint &resolution) {
     this->resolution = resolution;
 }
 
-vtkPolyData* StructuredMesh::getGrid() {
-    return polyData;
-}
-
 bool StructuredMesh::instanceOf(const QString &type) {
     return type.contains("StructuredMesh");
 }
