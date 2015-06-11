@@ -2,7 +2,6 @@
 #define DATABASEEXCEPTION_H
 
 #include <exception>
-
 #include <QString>
 
 class DatabaseException : public std::exception {

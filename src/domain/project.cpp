@@ -5,7 +5,7 @@ Project::Project(const QString &name, const QString &description, const bool &hy
         sediment(sediment), dirty(false)
 {}
 
-void Project::setId(const uint id) {
+void Project::setId(const uint &id) {
     if (!isPersisted()) {
         this->id = id;
     }

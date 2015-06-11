@@ -1,5 +1,5 @@
-#ifndef PROJECTDAO_H
-#define PROJECTDAO_H
+#ifndef PROJECT_DAO_H
+#define PROJECT_DAO_H
 
 #include "include/domain/project.h"
 #include <QSqlDatabase>
@@ -10,6 +10,8 @@ private:
     
     void saveMeshes(QSqlDatabase &db, Project *project);
     void saveMeshPolygons(QSqlDatabase &db, Mesh *mesh);
+    void loadMeshes(QSqlDatabase &db, Project *project);
+    void loadMeshPolygons(QSqlDatabase &db, Mesh *mesh);
 public:
     ProjectDAO(const QString &_databaseName);
 
@@ -17,4 +19,4 @@ public:
     void save(Project *project);
 };
 
-#endif // PROJECTDAO_H
+#endif // PROJECT_DAO_H

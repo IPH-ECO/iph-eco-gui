@@ -3,11 +3,11 @@
 #include "include/exceptions/database_exception.h"
 #include "include/utility/database_utility.h"
 #include "include/domain/structured_mesh.h"
+#include "include/domain/unstructured_mesh.h"
 
-#include <QString>
 #include <QSqlQuery>
-#include <QVariant>
 #include <QSqlError>
+#include <QVariant>
 #include <QSet>
 
 ProjectDAO::ProjectDAO(const QString &_databaseName) : databaseName(_databaseName) {}
@@ -32,9 +32,60 @@ Project* ProjectDAO::open() {
     bool waterQuality = query.value("water_quality").toBool();
 
     Project *project = new Project(name, description, hydrodynamic, sediment, waterQuality);
+    project->setId(query.value("id").toUInt());
     project->setFilename(this->databaseName);
+    
+    loadMeshes(db, project);
 
     return project;
+}
+
+void ProjectDAO::loadMeshes(QSqlDatabase &db, Project *project) {
+    QSqlQuery query(db);
+    
+    query.prepare("select * from mesh");
+    query.exec();
+    
+    while (query.next()) {
+        QString meshType = query.value("type").toString();
+        Mesh *mesh = NULL;
+        
+        if (meshType == "StructuredMesh") {
+            mesh = new StructuredMesh();
+            static_cast<StructuredMesh*>(mesh)->setResolution(query.value("resolution").toUInt());
+        } else {
+            mesh = new UnstructuredMesh();
+        }
+        
+        mesh->setId(query.value("id").toUInt());
+        mesh->setName(query.value("name").toString());
+        mesh->setCoordinatesDistance(query.value("coordinates_distance").toDouble());
+        mesh->loadMeshPolygonsFromStringPolyData(query.value("poly_data").toString());
+        project->addMesh(mesh);
+        
+        loadMeshPolygons(db, mesh);
+    }
+}
+
+void ProjectDAO::loadMeshPolygons(QSqlDatabase &db, Mesh *mesh) {
+    QSqlQuery query(db);
+    
+    query.prepare("select * from mesh_polygon where mesh_id = :m");
+    query.bindValue(":m", mesh->getId());
+    query.exec();
+    
+    while (query.next()) {
+        MeshPolygon *meshPolygon = new MeshPolygon();
+        meshPolygon->setId(query.value("id").toUInt());
+        meshPolygon->setMeshPolygonType(static_cast<MeshPolygonType>(query.value("type").toInt()));
+        meshPolygon->loadPolygonsFromStringPolyData(query.value("poly_data").toString());
+        if (mesh->instanceOf("UnstructuredMesh")) {
+            meshPolygon->setMinimumAngle(query.value("minimum_angle").toDouble());
+            meshPolygon->setMaximumEdgeLength(query.value("maximum_edge_length").toDouble());
+        }
+        
+        mesh->addMeshPolygon(meshPolygon);
+    }
 }
 
 void ProjectDAO::save(Project *project) {
@@ -66,15 +117,16 @@ void ProjectDAO::save(Project *project) {
         project->setId(1);
         saveMeshes(db, project);
         QSqlDatabase::database().commit();
+        DatabaseUtility::disconnect(db);
     } catch (const DatabaseException &e) {
         QSqlDatabase::database().rollback();
-        DatabaseUtility::disconnect(db);
+//        DatabaseUtility::disconnect(db);
         throw e;
+    } catch (const std::exception &e) {
+        throw DatabaseException(e.what());
     }
 
     project->setDirty(false);
-
-    DatabaseUtility::disconnect(db);
 }
 
 void ProjectDAO::saveMeshes(QSqlDatabase &db, Project *project) {

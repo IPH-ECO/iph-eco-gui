@@ -19,6 +19,8 @@ const double MeshPolygon::DEFAULT_MINIMUM_ANGLE = 20.7;
 
 const double MeshPolygon::DEFAULT_MAXIMUM_EDGE_LENGTH = 0.5;
 
+MeshPolygon::MeshPolygon() : id(0) {}
+
 MeshPolygon::MeshPolygon(const QString &filename, const MeshPolygonType &meshPolygonType) : id(0), meshPolygonType(meshPolygonType), filename(filename) {}
 
 void MeshPolygon::build() {
@@ -162,12 +164,6 @@ vtkPolygon* MeshPolygon::getFilteredPolygon() const {
 }
 
 QString MeshPolygon::getPolyDataAsString() {
-    vtkSmartPointer<vtkCellArray> polygons = vtkSmartPointer<vtkCellArray>::New();
-    
-    polygons->SetNumberOfCells(2);
-    polygons->InsertNextCell(originalPolygon);
-    polygons->InsertNextCell(filteredPolygon);
-    
     vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
     vtkIdType count = 0;
     
@@ -181,8 +177,12 @@ QString MeshPolygon::getPolyDataAsString() {
     }
     
     vtkSmartPointer<vtkPolyData> polyData = vtkSmartPointer<vtkPolyData>::New();
+    vtkSmartPointer<vtkCellArray> polygons = vtkSmartPointer<vtkCellArray>::New();
     
-    polyData->SetPoints(points); // Test if needed
+    polygons->InsertNextCell(originalPolygon);
+    polygons->InsertNextCell(filteredPolygon);
+    
+    polyData->SetPoints(points);
     polyData->SetPolys(polygons);
     
     vtkSmartPointer<vtkXMLPolyDataWriter> writer = vtkSmartPointer<vtkXMLPolyDataWriter>::New();
@@ -201,13 +201,13 @@ void MeshPolygon::loadPolygonsFromStringPolyData(const QString &polyDataStr) {
     
     reader->SetInputString(polyDataStr.toStdString());
     reader->ReadFromInputStringOn();
+    reader->Update();
     
     vtkPolyData *polyData = reader->GetOutput();
     vtkPolygon *polygon = vtkPolygon::SafeDownCast(polyData->GetCell(0));
     originalPolygon = vtkSmartPointer<vtkPolygon>::New();
     
     originalPolygon->DeepCopy(polygon);
-    // Test if is necessary to load polyData points and points id list
     
     polygon = vtkPolygon::SafeDownCast(polyData->GetCell(1));
     filteredPolygon = vtkSmartPointer<vtkPolygon>::New();

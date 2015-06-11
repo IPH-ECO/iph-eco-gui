@@ -56,22 +56,26 @@ MeshPolygon* Mesh::addMeshPolygon(const QString &filename, const MeshPolygonType
         throw e;
     }
 
-    switch (meshPolygonType) {
-        case MeshPolygonType::BOUNDARY:
-        delete this->boundaryPolygon;
-        this->boundaryPolygon = meshPolygon;
-        break;
-
-        case MeshPolygonType::ISLAND:
-        this->islands.append(meshPolygon);
-        break;
-
-        case MeshPolygonType::REFINEMENT_AREA:
-        this->refinementAreas.append(meshPolygon);
-        break;
-    }
+    addMeshPolygon(meshPolygon);
 
     return meshPolygon;
+}
+
+void Mesh::addMeshPolygon(MeshPolygon *meshPolygon) {
+    switch (meshPolygon->getMeshPolygonType()) {
+        case MeshPolygonType::BOUNDARY:
+            delete this->boundaryPolygon;
+            this->boundaryPolygon = meshPolygon;
+            break;
+            
+        case MeshPolygonType::ISLAND:
+            this->islands.append(meshPolygon);
+            break;
+            
+        case MeshPolygonType::REFINEMENT_AREA:
+            this->refinementAreas.append(meshPolygon);
+            break;
+    }
 }
 
 MeshPolygon* Mesh::getBoundaryPolygon() {
@@ -95,8 +99,9 @@ void Mesh::loadMeshPolygonsFromStringPolyData(const QString &polyDataStr) {
     
     reader->SetInputString(polyDataStr.toStdString());
     reader->ReadFromInputStringOn();
+    reader->Update();
     
-    polyData = vtkSmartPointer<vtkPolyData>();
+    polyData = vtkSmartPointer<vtkPolyData>::New();
     polyData->DeepCopy(reader->GetOutput());
 }
 
