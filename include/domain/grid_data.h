@@ -38,7 +38,6 @@ public:
     bool getShow() const; //?
 
     void build();
-    // void copy(GridData &srcGridData); //?
 
     QString gridDataInputTypeToString() const;
 

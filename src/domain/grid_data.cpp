@@ -7,8 +7,9 @@
 #include "include/exceptions/grid_data_exception.h"
 #include "include/utility/cgal_definitions.h"
 
-#include <vtkParticleReader.h>
+#include <vtkSimplePointsReader.h>
 #include <vtkDoubleArray.h>
+#include <vtkPointData.h>
 
 GridData::GridData() {}
 
@@ -65,28 +66,25 @@ vtkPolyData* GridData::getData() const {
 }
 
 void GridData::build() {
-    vtkSmartPointer<vtkParticleReader> reader = vtkSmartPointer<vtkParticleReader>::New();
+    vtkSmartPointer<vtkSimplePointsReader> reader = vtkSmartPointer<vtkSimplePointsReader>::New();
 
     reader->SetFileName(this->inputFile.toStdString().c_str());
-    reader->SetDataTypeToDouble();
-    reader->SetFileTypeToText();
-    reader->SetDataByteOrderToBigEndian();
     reader->Update();
-
-    // if (!inputFileHandle.open(QIODevice::ReadOnly | QIODevice::Text)) {
-    //     throw GridDataException(QString("Unable to open Input File. Error: %1").arg(inputFileHandle.errorString()));
-    // }
 
     data = vtkSmartPointer<vtkPolyData>::New();
     data->DeepCopy(reader->GetOutput());
     
-    vtkSmartPointer<vtkPoints> points = data->GetPoints();
+    vtkPoints *points = data->GetPoints();
     vtkIdType numberOfPoints = points->GetNumberOfPoints();
 
     if (numberOfPoints == 0) {
         throw GridDataException("No points returned in grid data file.");
     }
+    
+    vtkSmartPointer<vtkDoubleArray> scalars = vtkSmartPointer<vtkDoubleArray>::New();
 
+    scalars->SetNumberOfComponents(1);
+    
     for (vtkIdType i = 0; i < numberOfPoints; i++) {
         double point[3];
 
@@ -94,23 +92,11 @@ void GridData::build() {
 
         GeographicLib::GeoCoords utmCoordinate(point[1], point[0]);
         points->SetPoint(i, utmCoordinate.Easting(), utmCoordinate.Northing(), 0.0);
+        scalars->InsertNextTuple1(point[2]);
     }
+    
+    data->GetPointData()->SetScalars(scalars);
 }
-
-// void GridData::copy(GridData &srcGridData) {
-//     this->gridDataInputType = srcGridData.getGridDataInputType();
-//     this->gridDataType = srcGridData.getGridDataType();
-//     this->inputFile = srcGridData.getInputFile();
-//     this->show = srcGridData.getShow();
-
-//     if (srcGridData.getGridDataInputType() == GridDataInputType::POINT) {
-//         this->exponent = srcGridData.getExponent();
-//         this->radius = srcGridData.getRadius();
-//         this->dataPoints = srcGridData.getGridDataPoints();
-//     } else {
-//         this->dataPolygon = srcGridData.getGridDataPolygon();
-//     }
-// }
 
 QString GridData::gridDataInputTypeToString() const {
     switch (gridDataInputType) {

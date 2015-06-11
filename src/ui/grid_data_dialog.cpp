@@ -158,9 +158,8 @@ void GridDataDialog::on_tblGridInformation_itemDoubleClicked(QTableWidgetItem *i
 
 void GridDataDialog::on_btnRemoveGridInformation_clicked() {
     int currentRow = ui->tblGridInformation->currentRow();
-    QMessageBox::StandardButton question = QMessageBox::question(this, tr("Grid Data"), tr("Are you sure?"));
 
-    if (currentRow > -1 && question == QMessageBox::Yes) {
+    if (currentRow > -1 && QMessageBox::question(this, tr("Grid Data"), tr("Are you sure?")) == QMessageBox::Yes) {
         currentConfiguration->removeGridData(currentRow);
         ui->tblGridInformation->removeRow(currentRow);
         ui->gridDataVTKWidget->clear(); // FIX: Must update the map
