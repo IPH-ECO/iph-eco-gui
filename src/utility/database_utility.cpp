@@ -20,63 +20,50 @@ void DatabaseUtility::disconnect(QSqlDatabase &database) {
     QSqlDatabase::removeDatabase(database.connectionName());
 }
 
-void DatabaseUtility::createApplicationDatabase(QSqlDatabase &database) {
+void DatabaseUtility::createApplicationTables(QSqlDatabase &database) {
     QStringList sql;
 
     //TODO: Finish tables creation
 
-    sql << "drop table if exists project";
-    sql << "create table project (" \
-       "id integer primary key, " \
-       "name varchar(255) not null, " \
-       "description text, " \
-       "hydrodynamic boolean," \
-       "water_quality boolean," \
-       "sediment boolean" \
-    ")";
-
-    sql << "drop table if exists structured_mesh";
-    sql << "create table structured_mesh (" \
+    sql << "create table if not exists project (" \
            "id integer primary key, " \
            "name varchar(255) not null, " \
-           "resolution integer not null, " \
-           "data text not null, " \
-           "project_id integer" \
+           "description text, " \
+           "hydrodynamic boolean default false," \
+           "water_quality boolean default false," \
+           "sediment boolean default false" \
     ")";
 
-    sql << "drop table if exists islands";
-    sql << "create table islands (" \
+    sql << "create table if not exists mesh (" \
            "id integer primary key, " \
-           "mesh_type varchar(255) not null, " \
-           "coordinates_json text not null" \
+           "name varchar(255) not null, " \
+           "type varchar(255) not null, " \
+           "coordinates_distance float default 0, " \
+           "poly_data text not null, " \
+           "resolution integer " \
     ")";
 
-    sql << "drop table if exists unstructured_mesh";
-    sql << "create table unstructured_mesh (" \
+    sql << "create table if not exists mesh_polygon (" \
            "id integer primary key, " \
-           "data text not null, " \
-           "radius float not null, " \
-           "project_id integer" \
+           "type varchar(255) not null, " \
+           "poly_data text not null, " \
+           "minimum_angle float, " \
+           "maximum_edge_length float, " \
+           "mesh_id integer not null"
     ")";
 
-    QSqlDatabase::database().transaction();
     QSqlQuery query(database);
 
     for (int i = 0; i < sql.count(); i++) {
         query.prepare(sql.at(i));
 
         if (!query.exec()) {
-            QSqlDatabase::database().rollback();
-            DatabaseUtility::disconnect(database);
-
             throw DatabaseException(QString("The following error ocurred during database creation: %1").arg(query.lastError().text()));
         }
     }
 
     query.prepare(QString("pragma application_id = %1").arg(IPHApplication::getApplicationId()));
     query.exec();
-
-    QSqlDatabase::database().commit();
 }
 
 bool DatabaseUtility::isDatabaseValid(QSqlDatabase &database) {

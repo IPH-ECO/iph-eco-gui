@@ -11,6 +11,7 @@
 #include <QJsonArray>
 #include <GeographicLib/GeoCoords.hpp>
 #include <vtkXMLPolyDataWriter.h>
+#include <vtkXMLPolyDataReader.h>
 
 Mesh::Mesh() : id(0), boundaryPolygon(NULL), coordinatesDistance(0.0), generationCanceled(false), showBoundaryEdges(true), showMesh(true) {}
 
@@ -19,7 +20,9 @@ Mesh::~Mesh() {
 }
 
 void Mesh::setId(const uint &id) {
-    this->id = id;
+    if (!isPersisted()) {
+        this->id = id;
+    }
 }
 
 uint Mesh::getId() const {
@@ -87,14 +90,26 @@ vtkPolyData* Mesh::getGrid() {
     return polyData;
 }
 
+void Mesh::loadMeshPolygonsFromStringPolyData(const QString &polyDataStr) {
+    vtkSmartPointer<vtkXMLPolyDataReader> reader = vtkSmartPointer<vtkXMLPolyDataReader>::New();
+    
+    reader->SetInputString(polyDataStr.toStdString());
+    reader->ReadFromInputStringOn();
+    
+    polyData = vtkSmartPointer<vtkPolyData>();
+    polyData->DeepCopy(reader->GetOutput());
+}
+
 QString Mesh::getGridAsString() {
     vtkSmartPointer<vtkXMLPolyDataWriter> writer = vtkSmartPointer<vtkXMLPolyDataWriter>::New();
     
+    writer->SetFileName("MeshPolyData");
     writer->SetInputData(this->polyData);
     writer->WriteToOutputStringOn();
-    writer->SetDataModeToAscii(); // TODO: evaluate if this call is needed
+    writer->Update();
+    writer->Write();
     
-    return writer->GetOutputString().c_str();
+    return QString::fromStdString(writer->GetOutputString());
 }
 
 void Mesh::cancelGeneration(bool value) {
@@ -164,4 +179,8 @@ double Mesh::area() {
     }
 
     return area;
+}
+
+bool Mesh::isPersisted() const {
+    return this->id != 0;
 }

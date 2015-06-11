@@ -5,7 +5,7 @@
 #include <vtkSmartPointer.h>
 #include <vtkPolygon.h>
 
-enum class MeshPolygonType { BOUNDARY, ISLAND, REFINEMENT_AREA };
+enum class MeshPolygonType { BOUNDARY = 1, ISLAND, REFINEMENT_AREA };
 
 class MeshPolygon {
 private:
@@ -51,6 +51,8 @@ public:
     void setMaximumEdgeLength(const double &maximumEdgeLength);
     double getMaximumEdgeLength() const;
     void setOptimalParameters();
+    
+    bool isPersisted() const;
 
     inline bool isBoundary() const {
         return this->meshPolygonType == MeshPolygonType::BOUNDARY;

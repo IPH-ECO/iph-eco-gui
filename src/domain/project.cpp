@@ -1,9 +1,19 @@
 #include "include/domain/project.h"
 
 Project::Project(const QString &name, const QString &description, const bool &hydrodynamic, const bool &sediment, const bool &waterQuality) :
-        name(name), description(description), hydrodynamic(hydrodynamic), waterQuality(waterQuality),
+        id(0), name(name), description(description), hydrodynamic(hydrodynamic), waterQuality(waterQuality),
         sediment(sediment), dirty(false)
 {}
+
+void Project::setId(const uint id) {
+    if (!isPersisted()) {
+        this->id = id;
+    }
+}
+
+uint Project::getId() const {
+    return id;
+}
 
 void Project::setName(const QString &name) {
     this->name = name;
@@ -127,6 +137,10 @@ GridDataConfiguration* Project::getGridDataConfiguration(const QString &configur
 
 QSet<GridDataConfiguration*> Project::getGridDataConfigurations() const {
     return gridDataConfigurations;
+}
+
+bool Project::isPersisted() const {
+    return this->id != 0;
 }
 
 void Project::setDirty(const bool &dirty) {

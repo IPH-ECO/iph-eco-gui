@@ -128,7 +128,9 @@ double MeshPolygon::area() {
 }
 
 void MeshPolygon::setId(const uint &id) {
-    this->id = id;
+    if (!isPersisted()) {
+        this->id = id;
+    }
 }
 
 uint MeshPolygon::getId() const {
@@ -185,11 +187,13 @@ QString MeshPolygon::getPolyDataAsString() {
     
     vtkSmartPointer<vtkXMLPolyDataWriter> writer = vtkSmartPointer<vtkXMLPolyDataWriter>::New();
     
+    writer->SetFileName("MeshPolygonData");
     writer->SetInputData(polyData);
     writer->WriteToOutputStringOn();
-    writer->SetDataModeToAscii();
+    writer->Update();
+    writer->Write();
     
-    return writer->GetOutputString().c_str();
+    return QString::fromStdString(writer->GetOutputString());
 }
 
 void MeshPolygon::loadPolygonsFromStringPolyData(const QString &polyDataStr) {
@@ -241,4 +245,8 @@ void MeshPolygon::setOptimalParameters() {
 
     this->maximumEdgeLength = optimalEdgeLength;
     this->minimumAngle = DEFAULT_MINIMUM_ANGLE;
+}
+
+bool MeshPolygon::isPersisted() const {
+    return this->id != 0;
 }

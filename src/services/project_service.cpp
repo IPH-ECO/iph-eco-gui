@@ -19,8 +19,7 @@ void ProjectService::open(const QString &filename) {
 }
 
 void ProjectService::save(Project *project) {
-    QString filename = project->getFilename();
-    ProjectDAO projectDAO(filename);
+    ProjectDAO projectDAO(project->getFilename());
 
     projectDAO.save(project);
 }
