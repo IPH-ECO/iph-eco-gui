@@ -236,7 +236,7 @@ double MeshPolygon::getMaximumEdgeLength() const {
     return maximumEdgeLength;
 }
 
-void MeshPolygon::setOptimalParameters() {
+void MeshPolygon::setInitialCriteria() {
     double *bounds = this->filteredPolygon->GetPoints()->GetBounds();
     double width = bounds[1] - bounds[0];
     double height = bounds[3] - bounds[2];

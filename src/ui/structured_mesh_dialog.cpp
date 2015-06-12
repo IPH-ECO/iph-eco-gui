@@ -11,7 +11,6 @@ StructuredMeshDialog::StructuredMeshDialog(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    appSettings = new QSettings(QApplication::organizationName(), QApplication::applicationName(), this);
     Project *project = IPHApplication::getCurrentProject();
     QSet<Mesh*> meshes = project->getMeshes();
 
@@ -21,6 +20,8 @@ StructuredMeshDialog::StructuredMeshDialog(QWidget *parent) :
         }
     }
     ui->cbxMeshName->setCurrentIndex(-1);
+    
+    appSettings = new QSettings(QApplication::organizationName(), QApplication::applicationName(), this);
 }
 
 StructuredMeshDialog::~StructuredMeshDialog() {

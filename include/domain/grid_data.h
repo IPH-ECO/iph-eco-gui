@@ -1,8 +1,6 @@
 #ifndef GRID_DATA_H
 #define GRID_DATA_H
 
-#include "grid_data_type.h"
-
 #include <QObject>
 #include <QSet>
 #include <vtkSmartPointer.h>
@@ -10,20 +8,27 @@
 
 enum class GridDataInputType { POINT = 1, POLYGON };
 
+enum class GridDataType { BATHYMETRY = 1, WIND_REDUCTION, CHEZY, WETLAND_AREA };
+
 class GridData : public QObject {
     Q_OBJECT
 private:
+    uint id;
+    QString name;
     GridDataInputType gridDataInputType;
     vtkSmartPointer<vtkPolyData> data;
     GridDataType gridDataType;
     QString inputFile;
     double exponent;
     double radius;
-    bool show; //?
 
 public:
     GridData();
 
+    uint getId() const;
+    void setId(const uint &id);
+    QString getName() const;
+    void setName(const QString &name);
     GridDataInputType getGridDataInputType() const;
     void setGridDataInputType(const GridDataInputType &gridDataInputType);
     GridDataType getGridDataType() const;
@@ -35,14 +40,12 @@ public:
     double getRadius() const;
     void setRadius(const double &radius);
     vtkPolyData* getData() const;
-    bool getShow() const; //?
+    
+    QString gridDataInputTypeToString() const;
+    QString gridDataTypeToString() const;
+    static GridDataType toGridDataType(const QString &gridDataTypeStr);
 
     void build();
-
-    QString gridDataInputTypeToString() const;
-
-public slots:
-    void setShow(bool show);
 };
 
 #endif // GRID_DATA_H

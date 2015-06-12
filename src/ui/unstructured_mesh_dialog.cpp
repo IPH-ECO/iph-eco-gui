@@ -8,7 +8,6 @@
 #include <QInputDialog>
 #include <QMessageBox>
 #include <CGAL/assertions_behaviour.h>
-#include <QDebug>
 
 UnstructuredMeshDialog::UnstructuredMeshDialog(QWidget *parent) :
     QDialog(parent), BOUNDARY_DEFAULT_DIR_KEY("boundary_default_dir"), ui(new Ui::UnstructuredMeshDialog),
@@ -16,7 +15,6 @@ UnstructuredMeshDialog::UnstructuredMeshDialog(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    appSettings = new QSettings(QApplication::organizationName(), QApplication::applicationName(), this);
     Project *project = IPHApplication::getCurrentProject();
     QSet<Mesh*> meshes = project->getMeshes();
 
@@ -27,6 +25,8 @@ UnstructuredMeshDialog::UnstructuredMeshDialog(QWidget *parent) :
     }
     ui->cbxMeshName->setCurrentIndex(-1);
     ui->lstCoordinateFiles->addItem(MeshPolygon::BOUNDARY_POLYGON_FILENAME);
+    
+    appSettings = new QSettings(QApplication::organizationName(), QApplication::applicationName(), this);
 }
 
 UnstructuredMeshDialog::~UnstructuredMeshDialog() {
@@ -121,9 +121,6 @@ void UnstructuredMeshDialog::on_btnGenerateDomain_clicked() {
 
     MeshPolygon* boundaryPolygon = currentMesh->getBoundaryPolygon();
 
-    // Refactor
-    boundaryPolygon->setOptimalParameters();
-
     ui->lstCoordinateFiles->setCurrentRow(0);
     ui->sbxMaximumEdgeLength->setValue(boundaryPolygon->getMaximumEdgeLength());
     ui->sbxMinimumAngle->setValue(boundaryPolygon->getMinimumAngle());
@@ -157,9 +154,8 @@ void UnstructuredMeshDialog::on_btnAddCoordinatesFile_clicked() {
     }
 
     try {
-        MeshPolygon *newRefinementPolygon = currentMesh->addMeshPolygon(refinementFileStr, MeshPolygonType::REFINEMENT_AREA);
+        currentMesh->addMeshPolygon(refinementFileStr, MeshPolygonType::REFINEMENT_AREA);
 
-        newRefinementPolygon->setOptimalParameters();
         ui->lstCoordinateFiles->addItem(refinementFileStr);
         ui->lstCoordinateFiles->setCurrentRow(ui->lstCoordinateFiles->count() - 1);
     } catch (const MeshPolygonException &ex) {

@@ -98,7 +98,7 @@
        </layout>
       </item>
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_5">
+       <layout class="QVBoxLayout" name="verticalLayout_5">
         <property name="spacing">
          <number>0</number>
         </property>
@@ -127,6 +127,11 @@
           </attribute>
           <column>
            <property name="text">
+            <string>Name</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
             <string>Input Type</string>
            </property>
           </column>
@@ -137,17 +142,26 @@
           </column>
           <column>
            <property name="text">
-            <string>View on Map</string>
+            <string>Points</string>
            </property>
           </column>
          </widget>
         </item>
         <item>
-         <layout class="QVBoxLayout" name="verticalLayout_2">
+         <layout class="QHBoxLayout" name="horizontalLayout_2">
+          <property name="spacing">
+           <number>8</number>
+          </property>
+          <property name="topMargin">
+           <number>10</number>
+          </property>
           <item>
-           <widget class="QPushButton" name="btnAddGridInfomation">
+           <widget class="QToolButton" name="btnAddGridInfomation">
             <property name="enabled">
              <bool>false</bool>
+            </property>
+            <property name="toolTip">
+             <string>Add grid data</string>
             </property>
             <property name="text">
              <string/>
@@ -156,10 +170,65 @@
              <iconset resource="../../icons.qrc">
               <normaloff>:/icons/list-add.png</normaloff>:/icons/list-add.png</iconset>
             </property>
+            <property name="iconSize">
+             <size>
+              <width>24</width>
+              <height>24</height>
+             </size>
+            </property>
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="btnRemoveGridInformation">
+           <widget class="QToolButton" name="btnRemoveGridInformation">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="toolTip">
+             <string>Remove grid data</string>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+            <property name="icon">
+             <iconset resource="../../icons.qrc">
+              <normaloff>:/icons/list-delete.png</normaloff>:/icons/list-delete.png</iconset>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>24</width>
+              <height>24</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QToolButton" name="btnShowGridPoints">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="toolTip">
+             <string>Show/Hide input points</string>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+            <property name="icon">
+             <iconset resource="../../icons.qrc">
+              <normaloff>:/icons/show-hide-points.png</normaloff>:/icons/show-hide-points.png</iconset>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>24</width>
+              <height>24</height>
+             </size>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QToolButton" name="btnShowInterpolation">
             <property name="enabled">
              <bool>false</bool>
             </property>
@@ -168,19 +237,28 @@
             </property>
             <property name="icon">
              <iconset resource="../../icons.qrc">
-              <normaloff>:/icons/list-remove.png</normaloff>:/icons/list-remove.png</iconset>
+              <normaloff>:/icons/interpolation-result.png</normaloff>:/icons/interpolation-result.png</iconset>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>24</width>
+              <height>24</height>
+             </size>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
             </property>
            </widget>
           </item>
           <item>
-           <spacer name="verticalSpacer_2">
+           <spacer name="horizontalSpacer">
             <property name="orientation">
-             <enum>Qt::Vertical</enum>
+             <enum>Qt::Horizontal</enum>
             </property>
             <property name="sizeHint" stdset="0">
              <size>
-              <width>20</width>
-              <height>40</height>
+              <width>40</width>
+              <height>20</height>
              </size>
             </property>
            </spacer>
@@ -333,8 +411,6 @@
   <tabstop>cbxConfiguration</tabstop>
   <tabstop>edtConfigurationName</tabstop>
   <tabstop>cbxMesh</tabstop>
-  <tabstop>tblGridInformation</tabstop>
-  <tabstop>btnAddGridInfomation</tabstop>
   <tabstop>btnRemoveGridInformation</tabstop>
   <tabstop>btnDoneConfiguration</tabstop>
   <tabstop>btnRemoveConfiguration</tabstop>

@@ -2,7 +2,6 @@
 #define GRID_DATA_DIALOG_H
 
 #include <QDialog>
-#include <QSettings>
 #include <QWidget>
 #include <QTableWidgetItem>
 
@@ -42,7 +41,6 @@ private:
     GridDataConfiguration *unsavedConfiguration;
     GridDataConfiguration *currentConfiguration;
     
-    QWidget* createCheckBoxWidget(GridData *gridData);
     void toggleGridDataConfigurationForm(bool enable);
     bool isConfigurationValid(const QString &configurationName);
 };

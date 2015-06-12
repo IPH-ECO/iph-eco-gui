@@ -1,17 +1,33 @@
 #include "include/domain/grid_data.h"
 
+#include "include/exceptions/grid_data_exception.h"
+#include "include/utility/cgal_definitions.h"
+
 #include <QFile>
 #include <QTextStream>
 #include <QStringList>
 #include <GeographicLib/GeoCoords.hpp>
-#include "include/exceptions/grid_data_exception.h"
-#include "include/utility/cgal_definitions.h"
-
 #include <vtkSimplePointsReader.h>
 #include <vtkDoubleArray.h>
 #include <vtkPointData.h>
 
-GridData::GridData() {}
+GridData::GridData() : id(0) {}
+
+uint GridData::getId() const {
+    return id;
+}
+
+void GridData::setId(const uint &id) {
+    this->id = id;
+}
+
+QString GridData::getName() const {
+    return name;
+}
+
+void GridData::setName(const QString &name) {
+    this->name = name;
+}
 
 GridDataInputType GridData::getGridDataInputType() const {
     return gridDataInputType;
@@ -51,14 +67,6 @@ double GridData::getRadius() const {
 
 void GridData::setRadius(const double &radius) {
     this->radius = radius;
-}
-
-bool GridData::getShow() const {
-    return show;
-}
-
-void GridData::setShow(bool show) {
-    this->show = show;
 }
 
 vtkPolyData* GridData::getData() const {
@@ -104,8 +112,32 @@ QString GridData::gridDataInputTypeToString() const {
         return "Point";
     case GridDataInputType::POLYGON:
         return "Polygon";
-    default:
-        return "";
     }
 }
 
+QString GridData::gridDataTypeToString() const {
+    switch (gridDataType) {
+        case GridDataType::BATHYMETRY:
+            return "Bathymetry";
+        case GridDataType::WIND_REDUCTION:
+            return "Wind Reduction Coefficient";
+        case GridDataType::CHEZY:
+            return "Chezy Coefficient";
+        case GridDataType::WETLAND_AREA:
+            return "Wetland Area";
+    }
+}
+
+GridDataType GridData::toGridDataType(const QString &gridDataTypeStr) {
+    if (gridDataTypeStr == "Bathymetry") {
+        return GridDataType::BATHYMETRY;
+    }
+    if (gridDataTypeStr == "Wind Reduction Coefficient") {
+        return GridDataType::WIND_REDUCTION;
+    }
+    if (gridDataTypeStr == "Chezy Coefficient") {
+        return GridDataType::CHEZY;
+    }
+    
+    return GridDataType::WETLAND_AREA;
+}

@@ -76,6 +76,16 @@ void GridDataConfiguration::removeGridData(int i) {
     delete gridData;
 }
 
+bool GridDataConfiguration::containsGridData(const QString &gridDataName) {
+    for (int i = 0; i < gridDataVector.size(); i++) {
+        if (gridDataVector.at(i)->getName() == gridDataName) {
+            return true;
+        }
+    }
+    
+    return false;
+}
+
 GridData* GridDataConfiguration::getGridData(int i) {
     if (i < gridDataVector.count()) {
         return gridDataVector.at(i);
@@ -85,13 +95,12 @@ GridData* GridDataConfiguration::getGridData(int i) {
 }
 
 void GridDataConfiguration::interpolate(GridData *gridData) {
-    GridDataType gridDataType = gridData->getGridDataType();
     vtkPolyData *gridPolyData = gridData->getData();
     vtkDoubleArray *gridDataScalars = vtkDoubleArray::SafeDownCast(gridPolyData->GetPointData()->GetScalars());
     double *gridDataPointer = static_cast<double*>(gridPolyData->GetPoints()->GetData()->GetVoidPointer(0));
     vtkIdType gridNumberOfPoints = gridPolyData->GetPoints()->GetNumberOfPoints();
     vtkPolyData *meshPolyData = mesh->getGrid();
-    const char *gridDataInputTypeStr = gridDataType.toString().toStdString().c_str();
+    const char *gridDataInputTypeStr = gridData->gridDataTypeToString().toStdString().c_str();
     vtkSmartPointer<vtkDoubleArray> weightsArray = vtkDoubleArray::SafeDownCast(meshPolyData->GetCellData()->GetArray(gridDataInputTypeStr));
 
     if (weightsArray == NULL) {

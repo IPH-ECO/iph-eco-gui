@@ -36,7 +36,7 @@ public:
     bool addGridData(GridData *gridData);
     void removeGridData(GridData *gridData);
     void removeGridData(int i);
-    bool containsGridData(GridData *gridData);
+    bool containsGridData(const QString &gridDataName);
     GridData* getGridData(int i);
     
 signals:

@@ -1,30 +1,32 @@
 #include "include/ui/grid_information_dialog.h"
 #include "ui_grid_information_dialog.h"
 
+#include "include/exceptions/grid_data_exception.h"
+
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QDebug>
 
-#include "include/exceptions/grid_data_exception.h"
-
-GridInformationDialog::GridInformationDialog(QDialog *parent, GridData *gridData) :
-    QDialog(parent), GRID_INFORMATION_DEFAULT_DIR_KEY("grid_data_default_dir"), ui(new Ui::GridInformationDialog), gridData(gridData)
+GridInformationDialog::GridInformationDialog(QDialog *parent, GridDataConfiguration *gridConfiguration, GridData *gridData) :
+    QDialog(parent), GRID_DATA_DEFAULT_DIR_KEY("grid_data_default_dir"), ui(new Ui::GridInformationDialog),
+    gridConfiguration(gridConfiguration), gridData(gridData)
 {
     ui->setupUi(this);
 
     appSettings = new QSettings(QApplication::organizationName(), QApplication::applicationName(), this);
 
     if (gridData != NULL) {
-    	if (gridData->getGridDataInputType() == GridDataInputType::POINT) {
-    		ui->rdoPoint->setChecked(true);
-    	} else {
-    		ui->rdoPolygon->setChecked(true);
-    	}
-
+        ui->edtName->setText(gridData->getName());
     	ui->edtInputFile->setText(gridData->getInputFile());
-        ui->cbxGridInformation->setCurrentText(gridData->getGridDataType().toString());
-        ui->edtExponent->setText(QString::number(gridData->getExponent()));
-        ui->edtRadius->setText(QString::number(gridData->getRadius()));
+        ui->cbxGridInformation->setCurrentText(gridData->gridDataTypeToString());
+        
+        if (gridData->getGridDataInputType() == GridDataInputType::POINT) {
+            ui->rdoPoint->setChecked(true);
+            ui->edtExponent->setText(QString::number(gridData->getExponent()));
+            ui->edtRadius->setText(QString::number(gridData->getRadius()));
+        } else {
+            ui->rdoPolygon->setChecked(true);
+        }
     }
 }
 
@@ -33,7 +35,7 @@ GridInformationDialog::~GridInformationDialog() {
 }
 
 QString GridInformationDialog::getDefaultDirectory() {
-    return appSettings->value(GRID_INFORMATION_DEFAULT_DIR_KEY).toString().isEmpty() ? QDir::homePath() : appSettings->value(GRID_INFORMATION_DEFAULT_DIR_KEY).toString();
+    return appSettings->value(GRID_DATA_DEFAULT_DIR_KEY).toString().isEmpty() ? QDir::homePath() : appSettings->value(GRID_DATA_DEFAULT_DIR_KEY).toString();
 }
 
 void GridInformationDialog::on_rdoPoint_toggled(bool checked) {
@@ -47,9 +49,14 @@ void GridInformationDialog::on_rdoPolygon_toggled(bool checked) {
 }
 
 void GridInformationDialog::on_btnBrowseInputFile_clicked() {
-    QString gridDataFile = QFileDialog::getOpenFileName(this, tr("Select a grid data file"), getDefaultDirectory(), tr("XYZA files (*.xyza *.txt)"));
+    QString gridDataFile = QFileDialog::getOpenFileName(this, tr("Select a grid data file"), getDefaultDirectory(), tr("XYZ files (*.xyz *.txt)"));
 
+    if (gridDataFile.isEmpty()) {
+        return;
+    }
+    
     ui->edtInputFile->setText(gridDataFile);
+    appSettings->setValue(GRID_DATA_DEFAULT_DIR_KEY, QFileInfo(gridDataFile).absolutePath());
 }
 
 GridData* GridInformationDialog::getGridData() {
@@ -58,12 +65,25 @@ GridData* GridInformationDialog::getGridData() {
 
 void GridInformationDialog::on_bottomButtons_clicked(QAbstractButton *button) {
     if (ui->bottomButtons->standardButton(button) == QDialogButtonBox::Save) {
+        QString gridDataName = ui->edtName->text();
+        
+        if (gridDataName.isEmpty()) {
+            QMessageBox::warning(this, tr("Grid Data"), tr("Name can't be blank."));
+            return;
+        }
+        
+        if (gridConfiguration->containsGridData(gridDataName)) {
+            QMessageBox::warning(this, tr("Grid Data"), tr("Name already used in this configuration."));
+            return;
+        }
+        
         if (!ui->rdoPoint->isChecked() && !ui->rdoPolygon->isChecked()) {
             QMessageBox::warning(this, tr("Grid Data"), tr("Please select a input type."));
             return;
         }
 
-        if (ui->edtInputFile->text().isEmpty()) {
+        QString inputFile = ui->edtInputFile->text();
+        if (inputFile.isEmpty()) {
             QMessageBox::warning(this, tr("Grid Data"), tr("Please select a input file."));
             return;
         }
@@ -75,19 +95,14 @@ void GridInformationDialog::on_bottomButtons_clicked(QAbstractButton *button) {
 
         try {
             GridDataInputType gridInputType = ui->rdoPoint->isChecked() ? GridDataInputType::POINT : GridDataInputType::POLYGON;
-            GridDataType gridDataType = GridDataType::toGridDataType(ui->cbxGridInformation->currentText());
+            GridDataType gridDataType = GridData::toGridDataType(ui->cbxGridInformation->currentText());
             
             if (gridData == NULL) {
-                // if (gridInputType == GridDataInputType::POLYGON && !tempGridData.getGridDataPolygon().is_simple()) {
-                //     QMessageBox::critical(this, tr("Grid Data"), tr("Invalid polygon."));
-                //     return;
-                // }
-
                 gridData = new GridData();
+                gridData->setName(gridDataName);
                 gridData->setGridDataInputType(gridInputType);
-                gridData->setInputFile(ui->edtInputFile->text());
+                gridData->setInputFile(inputFile);
                 gridData->setGridDataType(gridDataType);
-                gridData->setShow(true);
             }
             
             if (gridInputType == GridDataInputType::POLYGON) {

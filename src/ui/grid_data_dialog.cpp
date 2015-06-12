@@ -8,12 +8,9 @@
 
 #include <QFileDialog>
 #include <QInputDialog>
-#include <QTableWidgetItem>
 #include <QMessageBox>
 #include <QVector>
-#include <QCheckBox>
 #include <QObject>
-#include <QHBoxLayout>
 #include <QProgressDialog>
 
 GridDataDialog::GridDataDialog(QWidget *parent) :
@@ -77,12 +74,12 @@ void GridDataDialog::on_cbxConfiguration_currentIndexChanged(const QString &conf
         for (int i = 0; i < gridDataVector.count(); i++) {
             int rowCount = ui->tblGridInformation->rowCount();
             GridData *gridData = gridDataVector.at(i);
-            QWidget *checkBoxWidget = createCheckBoxWidget(gridData);
 
             ui->tblGridInformation->insertRow(rowCount);
-            ui->tblGridInformation->setItem(rowCount, 0, new QTableWidgetItem(gridData->gridDataInputTypeToString()));
-            ui->tblGridInformation->setItem(rowCount, 1, new QTableWidgetItem(gridData->getGridDataType().toString()));
-            ui->tblGridInformation->setCellWidget(rowCount, 2, checkBoxWidget);
+            ui->tblGridInformation->setItem(rowCount, 0, new QTableWidgetItem(gridData->getName()));
+            ui->tblGridInformation->setItem(rowCount, 1, new QTableWidgetItem(gridData->gridDataInputTypeToString()));
+            ui->tblGridInformation->setItem(rowCount, 2, new QTableWidgetItem(gridData->gridDataTypeToString()));
+            ui->tblGridInformation->setItem(rowCount, 3, new QTableWidgetItem(gridData->getData()->GetNumberOfPoints()));
         }
 
         ui->gridDataVTKWidget->render(currentConfiguration);
@@ -112,13 +109,12 @@ void GridDataDialog::on_cbxMesh_currentIndexChanged(const QString &meshName) {
 }
 
 void GridDataDialog::on_btnAddGridInfomation_clicked() {
-    GridInformationDialog *gridInformationDialog = new GridInformationDialog(this, NULL);
+    GridInformationDialog *gridInformationDialog = new GridInformationDialog(this, currentConfiguration, NULL);
     int exitCode = gridInformationDialog->exec();
 
     if (exitCode == QDialog::Accepted) {
         int rowCount = ui->tblGridInformation->rowCount();
         GridData *gridData = gridInformationDialog->getGridData();
-        QWidget *checkBoxWidget = createCheckBoxWidget(gridData);
         int maximum = currentConfiguration->getMesh()->getGrid()->GetNumberOfCells();
         
         QProgressDialog *progressDialog = new QProgressDialog(tr("Interpolating grid data..."), tr("Cancel"), 0, maximum - 1, this);
@@ -133,10 +129,15 @@ void GridDataDialog::on_btnAddGridInfomation_clicked() {
             currentConfiguration->cancelInterpolation(false); // Set false for future computations
             currentConfiguration->removeGridData(gridData);
         } else {
+            ui->btnShowGridPoints->setEnabled(true);
+            ui->btnShowGridPoints->toggled(false);
+            ui->btnShowInterpolation->setEnabled(true);
+            ui->btnShowInterpolation->toggled(false);
             ui->tblGridInformation->insertRow(rowCount);
-            ui->tblGridInformation->setItem(rowCount, 0, new QTableWidgetItem(gridData->gridDataInputTypeToString()));
-            ui->tblGridInformation->setItem(rowCount, 1, new QTableWidgetItem(gridData->getGridDataType().toString()));
-            ui->tblGridInformation->setCellWidget(rowCount, 2, checkBoxWidget);
+            ui->tblGridInformation->setItem(rowCount, 0, new QTableWidgetItem(gridData->getName()));
+            ui->tblGridInformation->setItem(rowCount, 1, new QTableWidgetItem(gridData->gridDataInputTypeToString()));
+            ui->tblGridInformation->setItem(rowCount, 2, new QTableWidgetItem(gridData->gridDataTypeToString()));
+            ui->tblGridInformation->setItem(rowCount, 3, new QTableWidgetItem(gridData->getData()->GetNumberOfPoints()));
         }
         delete progressDialog;
     }
@@ -144,7 +145,7 @@ void GridDataDialog::on_btnAddGridInfomation_clicked() {
 
 void GridDataDialog::on_tblGridInformation_itemDoubleClicked(QTableWidgetItem *item) {
     GridData *gridData = currentConfiguration->getGridData(item->row());
-    GridInformationDialog *gridInformationDialog = new GridInformationDialog(this, gridData);
+    GridInformationDialog *gridInformationDialog = new GridInformationDialog(this, currentConfiguration, gridData);
     int exitCode = gridInformationDialog->exec();
 
     if (exitCode == QDialog::Accepted) {
@@ -152,7 +153,7 @@ void GridDataDialog::on_tblGridInformation_itemDoubleClicked(QTableWidgetItem *i
         QTableWidgetItem *gridInformationItem = ui->tblGridInformation->item(item->row(), 1);
 
         inputTypeItem->setText(gridData->gridDataInputTypeToString());
-        gridInformationItem->setText(gridData->getGridDataType().toString());
+        gridInformationItem->setText(gridData->gridDataTypeToString());
     }
 }
 
@@ -162,24 +163,14 @@ void GridDataDialog::on_btnRemoveGridInformation_clicked() {
     if (currentRow > -1 && QMessageBox::question(this, tr("Grid Data"), tr("Are you sure?")) == QMessageBox::Yes) {
         currentConfiguration->removeGridData(currentRow);
         ui->tblGridInformation->removeRow(currentRow);
+        if (ui->tblGridInformation->rowCount() == 0) {
+            ui->btnShowGridPoints->setEnabled(false);
+            ui->btnShowGridPoints->toggled(false);
+            ui->btnShowInterpolation->setEnabled(false);
+            ui->btnShowInterpolation->toggled(false);
+        }
         ui->gridDataVTKWidget->clear(); // FIX: Must update the map
     }
-}
-
-QWidget* GridDataDialog::createCheckBoxWidget(GridData *gridData) {
-    QWidget *widget = new QWidget(ui->tblGridInformation);
-    QCheckBox *checkBox = new QCheckBox();
-    QHBoxLayout *layout = new QHBoxLayout(widget);
-
-    layout->addWidget(checkBox);
-    layout->setAlignment(Qt::AlignCenter);
-    layout->setContentsMargins(0,0,0,0);
-    widget->setLayout(layout);
-
-    checkBox->setChecked(gridData->getShow());
-    QObject::connect(checkBox, SIGNAL(clicked(bool)), gridData, SLOT(setShow(bool)));
-
-    return widget;
 }
 
 void GridDataDialog::toggleGridDataConfigurationForm(bool enable) {

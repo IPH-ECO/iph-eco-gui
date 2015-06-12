@@ -55,6 +55,10 @@ MeshPolygon* Mesh::addMeshPolygon(const QString &filename, const MeshPolygonType
         delete meshPolygon;
         throw e;
     }
+    
+    if (instanceOf("UnstructuredMesh")) {
+        meshPolygon->setInitialCriteria();
+    }
 
     addMeshPolygon(meshPolygon);
 

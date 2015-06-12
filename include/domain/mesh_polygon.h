@@ -50,7 +50,7 @@ public:
     double getMinimumAngleInCGALRepresentation() const;
     void setMaximumEdgeLength(const double &maximumEdgeLength);
     double getMaximumEdgeLength() const;
-    void setOptimalParameters();
+    void setInitialCriteria();
     
     bool isPersisted() const;
 
