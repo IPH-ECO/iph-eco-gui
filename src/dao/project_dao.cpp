@@ -117,10 +117,9 @@ void ProjectDAO::save(Project *project) {
         project->setId(1);
         saveMeshes(db, project);
         QSqlDatabase::database().commit();
-        DatabaseUtility::disconnect(db);
     } catch (const DatabaseException &e) {
         QSqlDatabase::database().rollback();
-//        DatabaseUtility::disconnect(db);
+        DatabaseUtility::disconnect(db);
         throw e;
     } catch (const std::exception &e) {
         throw DatabaseException(e.what());
@@ -137,7 +136,7 @@ void ProjectDAO::saveMeshes(QSqlDatabase &db, Project *project) {
         QString sql;
         
         if (mesh->isPersisted()) {
-            sql = "update mesh set name = :n, type = :t, poly_data = :p, coordinates_distance = :c, resolution = :r";
+            sql = "update mesh set name = :n, type = :t, poly_data = :p, coordinates_distance = :c, resolution = :r where id = " + QString::number(mesh->getId());
         } else {
             sql = "insert into mesh (name, type, coordinates_distance, poly_data, resolution) values (:n, :t, :c, :p, :r)";
         }
@@ -148,8 +147,8 @@ void ProjectDAO::saveMeshes(QSqlDatabase &db, Project *project) {
         query.prepare(sql);
         query.bindValue(":n", mesh->getName());
         query.bindValue(":t", meshType);
-        query.bindValue(":c", mesh->getCoordinatesDistance());
         query.bindValue(":p", mesh->getGridAsString());
+        query.bindValue(":c", mesh->getCoordinatesDistance());
         
         if (mesh->instanceOf("StructuredMesh")) {
             query.bindValue(":r", static_cast<StructuredMesh*>(mesh)->getResolution());
@@ -176,7 +175,7 @@ void ProjectDAO::saveMeshPolygons(QSqlDatabase &db, Mesh *mesh) {
         QString sql;
         
         if (meshPolygon->isPersisted()) {
-            sql = "update mesh_polygon set type = :t, poly_data = :p, minimum_angle = :mi, maximum_edge_length = :ma where mesh_id = :me";
+            sql = "update mesh_polygon set type = :t, poly_data = :p, minimum_angle = :mi, maximum_edge_length = :ma where mesh_id = :me and id = " + QString::number(meshPolygon->getId());
         } else {
             sql = "insert into mesh_polygon (type, poly_data, minimum_angle, maximum_edge_length, mesh_id) values (:t, :p, :mi, :ma, :me)";
         }
