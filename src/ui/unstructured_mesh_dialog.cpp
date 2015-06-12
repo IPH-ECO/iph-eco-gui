@@ -105,27 +105,6 @@ void UnstructuredMeshDialog::on_chkShowMesh_clicked(bool checked) {
     ui->meshVTKWidget->showMesh(checked);
 }
 
-void UnstructuredMeshDialog::on_btnGenerateDomain_clicked() {
-    QString boundaryFileStr = ui->edtBoundaryFileLine->text();
-
-    currentMesh->setCoordinatesDistance(ui->sbxCoordinatesDistance->value());
-
-    try {
-        currentMesh->addMeshPolygon(boundaryFileStr, MeshPolygonType::BOUNDARY);
-        currentMesh->generate();
-        ui->meshVTKWidget->render(currentMesh);
-    } catch(const MeshPolygonException &e) {
-        QMessageBox::critical(this, tr("Unstructured Mesh Generation"), e.what());
-        return;
-    }
-
-    MeshPolygon* boundaryPolygon = currentMesh->getBoundaryPolygon();
-
-    ui->lstCoordinateFiles->setCurrentRow(0);
-    ui->sbxMaximumEdgeLength->setValue(boundaryPolygon->getMaximumEdgeLength());
-    ui->sbxMinimumAngle->setValue(boundaryPolygon->getMinimumAngle());
-}
-
 void UnstructuredMeshDialog::on_lstCoordinateFiles_itemSelectionChanged() {
     if (ui->lstCoordinateFiles->currentRow() > 0) {
         QString filename = ui->lstCoordinateFiles->currentItem()->text();
@@ -203,6 +182,40 @@ void UnstructuredMeshDialog::on_sbxMinimumAngle_valueChanged(double value) {
             boundaryPolygon->setMinimumAngle(value);
         }
     }
+}
+
+void UnstructuredMeshDialog::on_btnGenerateDomain_clicked() {
+    QString boundaryFileStr = ui->edtBoundaryFileLine->text();
+    QFile boundaryFile(boundaryFileStr);
+    QFileInfo boundaryFileInfo(boundaryFile);
+    
+    if (!boundaryFileInfo.exists() || !boundaryFileInfo.isFile()) {
+        QMessageBox::warning(this, tr("Unstructured Mesh Generation"), tr("Boundary file not found."));
+        return;
+    }
+    
+    enableMeshForm(true);
+    currentMesh->setCoordinatesDistance(ui->sbxCoordinatesDistance->value());
+    
+    MeshPolygon* boundaryPolygon = NULL;
+    
+    CGAL::Failure_behaviour old_behaviour = CGAL::set_error_behaviour(CGAL::THROW_EXCEPTION);
+    try {
+        boundaryPolygon = currentMesh->addMeshPolygon(boundaryFileStr, MeshPolygonType::BOUNDARY);
+        currentMesh->generate();
+    } catch(const MeshPolygonException &e) {
+        QMessageBox::critical(this, tr("Unstructured Mesh Generation"), e.what());
+        return;
+    } catch (const std::exception& e) {
+        QMessageBox::critical(this, tr("Unstructured Mesh Generation"), tr("This triangulation does not deal with intersecting constraints."));
+        return;
+    }
+    CGAL::set_error_behaviour(old_behaviour);
+    
+    ui->meshVTKWidget->render(currentMesh);
+    ui->lstCoordinateFiles->setCurrentRow(0);
+    ui->sbxMaximumEdgeLength->setValue(boundaryPolygon->getMaximumEdgeLength());
+    ui->sbxMinimumAngle->setValue(boundaryPolygon->getMinimumAngle());
 }
 
 void UnstructuredMeshDialog::on_btnGenerateMesh_clicked() {
