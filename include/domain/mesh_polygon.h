@@ -5,11 +5,11 @@
 #include <vtkSmartPointer.h>
 #include <vtkPolygon.h>
 
-enum class MeshPolygonType { BOUNDARY, ISLAND, REFINEMENT_AREA };
+enum class MeshPolygonType { BOUNDARY = 1, ISLAND, REFINEMENT_AREA };
 
 class MeshPolygon {
 private:
-    QString filename;
+    uint id;
     MeshPolygonType meshPolygonType;
     vtkSmartPointer<vtkPolygon> originalPolygon;
     vtkSmartPointer<vtkPolygon> filteredPolygon;
@@ -17,6 +17,9 @@ private:
     // Used by unstructured mesh
     double minimumAngle;
     double maximumEdgeLength;
+    
+    // Transient
+    QString filename;
 
 public:
     static const QString BOUNDARY_POLYGON_FILENAME;
@@ -31,22 +34,25 @@ public:
     bool pointInPolygon(double *point);
     double area();
 
-    MeshPolygon& operator=(const MeshPolygon &meshPolygon);
-    bool operator==(const MeshPolygon &meshPolygon);
-
+    void setId(const uint &id);
+    uint getId() const;
     void setFilename(const QString &filename);
     QString getFilename() const;
     void setMeshPolygonType(const MeshPolygonType &meshPolygonType);
     MeshPolygonType getMeshPolygonType() const;
     vtkPolygon* getOriginalPolygon() const;
     vtkPolygon* getFilteredPolygon() const;
-
+    QString getPolyDataAsString();
+    void loadPolygonsFromStringPolyData(const QString &polyDataStr);
+    
     void setMinimumAngle(const double &minimumAngle);
     double getMinimumAngle() const;
     double getMinimumAngleInCGALRepresentation() const;
     void setMaximumEdgeLength(const double &maximumEdgeLength);
     double getMaximumEdgeLength() const;
     void setOptimalParameters();
+    
+    bool isPersisted() const;
 
     inline bool isBoundary() const {
         return this->meshPolygonType == MeshPolygonType::BOUNDARY;

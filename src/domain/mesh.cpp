@@ -10,11 +10,23 @@
 #include <QJsonDocument>
 #include <QJsonArray>
 #include <GeographicLib/GeoCoords.hpp>
+#include <vtkXMLPolyDataWriter.h>
+#include <vtkXMLPolyDataReader.h>
 
-Mesh::Mesh() : boundaryPolygon(NULL), coordinatesDistance(0.0), generationCanceled(false), showBoundaryEdges(true), showMesh(true) {}
+Mesh::Mesh() : id(0), boundaryPolygon(NULL), coordinatesDistance(0.0), generationCanceled(false), showBoundaryEdges(true), showMesh(true) {}
 
 Mesh::~Mesh() {
     this->clear();
+}
+
+void Mesh::setId(const uint &id) {
+    if (!isPersisted()) {
+        this->id = id;
+    }
+}
+
+uint Mesh::getId() const {
+    return id;
 }
 
 void Mesh::setName(const QString &name) {
@@ -44,22 +56,26 @@ MeshPolygon* Mesh::addMeshPolygon(const QString &filename, const MeshPolygonType
         throw e;
     }
 
-    switch (meshPolygonType) {
-        case MeshPolygonType::BOUNDARY:
-        delete this->boundaryPolygon;
-        this->boundaryPolygon = meshPolygon;
-        break;
-
-        case MeshPolygonType::ISLAND:
-        this->islands.append(meshPolygon);
-        break;
-
-        case MeshPolygonType::REFINEMENT_AREA:
-        this->refinementAreas.append(meshPolygon);
-        break;
-    }
+    addMeshPolygon(meshPolygon);
 
     return meshPolygon;
+}
+
+void Mesh::addMeshPolygon(MeshPolygon *meshPolygon) {
+    switch (meshPolygon->getMeshPolygonType()) {
+        case MeshPolygonType::BOUNDARY:
+            delete this->boundaryPolygon;
+            this->boundaryPolygon = meshPolygon;
+            break;
+            
+        case MeshPolygonType::ISLAND:
+            this->islands.append(meshPolygon);
+            break;
+            
+        case MeshPolygonType::REFINEMENT_AREA:
+            this->refinementAreas.append(meshPolygon);
+            break;
+    }
 }
 
 MeshPolygon* Mesh::getBoundaryPolygon() {
@@ -72,6 +88,33 @@ QList<MeshPolygon*> Mesh::getIslands() {
 
 QList<MeshPolygon*> Mesh::getRefinementAreas() {
     return refinementAreas;
+}
+
+vtkPolyData* Mesh::getGrid() {
+    return polyData;
+}
+
+void Mesh::loadMeshPolygonsFromStringPolyData(const QString &polyDataStr) {
+    vtkSmartPointer<vtkXMLPolyDataReader> reader = vtkSmartPointer<vtkXMLPolyDataReader>::New();
+    
+    reader->SetInputString(polyDataStr.toStdString());
+    reader->ReadFromInputStringOn();
+    reader->Update();
+    
+    polyData = vtkSmartPointer<vtkPolyData>::New();
+    polyData->DeepCopy(reader->GetOutput());
+}
+
+QString Mesh::getGridAsString() {
+    vtkSmartPointer<vtkXMLPolyDataWriter> writer = vtkSmartPointer<vtkXMLPolyDataWriter>::New();
+    
+    writer->SetFileName("MeshPolyData");
+    writer->SetInputData(this->polyData);
+    writer->WriteToOutputStringOn();
+    writer->Update();
+    writer->Write();
+    
+    return QString::fromStdString(writer->GetOutputString());
 }
 
 void Mesh::cancelGeneration(bool value) {
@@ -90,6 +133,7 @@ void Mesh::removeMeshPolygon(const QString &filename, const MeshPolygonType &mes
     }
 }
 
+// Refactor
 MeshPolygon* Mesh::getMeshPolygon(const QString &filename, const MeshPolygonType &meshPolygonType) {
     // QList<MeshPolygon>::iterator it = qFind(domain.begin(), domain.end(), meshPolygon);
 
@@ -140,4 +184,8 @@ double Mesh::area() {
     }
 
     return area;
+}
+
+bool Mesh::isPersisted() const {
+    return this->id != 0;
 }

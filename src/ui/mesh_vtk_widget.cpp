@@ -16,6 +16,8 @@
 #include "include/ui/unstructured_mesh_dialog.h"
 #include "include/utility/mouse_interactor.h"
 
+vtkStandardNewMacro(MouseInteractor);
+
 MeshVTKWidget::MeshVTKWidget(QWidget *parent) : QVTKWidget(parent) {}
 
 MeshVTKWidget::~MeshVTKWidget() {}

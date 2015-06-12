@@ -91,10 +91,6 @@ bool UnstructuredMesh::instanceOf(const QString &type) {
     return type.contains("UnstructuredMesh");
 }
 
-vtkPolyData* UnstructuredMesh::getGrid() {
-    return polyData;
-}
-
 void UnstructuredMesh::mark_domains(CDT &cdt, CDT::Face_handle start, int index, QList<CDT::Edge>& border) {
     if (start->info().getNestingLevel() != -1) {
         return;

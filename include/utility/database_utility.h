@@ -14,7 +14,7 @@ class DatabaseUtility {
 public:
     static QSqlDatabase connect(QString &database_name);
     static void disconnect(QSqlDatabase &database);
-    static void createApplicationDatabase(QSqlDatabase &database);
+    static void createApplicationTables(QSqlDatabase &database);
     static bool isDatabaseValid(QSqlDatabase &database);
 };
 

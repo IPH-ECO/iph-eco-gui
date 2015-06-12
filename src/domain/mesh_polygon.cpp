@@ -7,6 +7,10 @@
 #include <QIODevice>
 #include <QXmlStreamReader>
 #include <GeographicLib/GeoCoords.hpp>
+#include <vtkXMLPolyDataWriter.h>
+#include <vtkXMLPolyDataReader.h>
+#include <vtkPolyData.h>
+#include <vtkCellArray.h>
 #include <vtkPoints.h>
 
 const QString MeshPolygon::BOUNDARY_POLYGON_FILENAME = "Main";
@@ -15,7 +19,9 @@ const double MeshPolygon::DEFAULT_MINIMUM_ANGLE = 20.7;
 
 const double MeshPolygon::DEFAULT_MAXIMUM_EDGE_LENGTH = 0.5;
 
-MeshPolygon::MeshPolygon(const QString &filename, const MeshPolygonType &meshPolygonType) : filename(filename), meshPolygonType(meshPolygonType) {}
+MeshPolygon::MeshPolygon() : id(0) {}
+
+MeshPolygon::MeshPolygon(const QString &filename, const MeshPolygonType &meshPolygonType) : id(0), meshPolygonType(meshPolygonType), filename(filename) {}
 
 void MeshPolygon::build() {
     QFile kmlFile(this->filename);
@@ -123,18 +129,14 @@ double MeshPolygon::area() {
     return filteredPolygon->ComputeArea();
 }
 
-// To be removed
-MeshPolygon& MeshPolygon::operator=(const MeshPolygon &meshPolygon) {
-    this->filename = meshPolygon.getFilename();
-    this->meshPolygonType = meshPolygon.getMeshPolygonType();
-    this->minimumAngle = meshPolygon.getMinimumAngle();
-    this->maximumEdgeLength = meshPolygon.getMaximumEdgeLength();
-
-    return *this;
+void MeshPolygon::setId(const uint &id) {
+    if (!isPersisted()) {
+        this->id = id;
+    }
 }
 
-bool MeshPolygon::operator==(const MeshPolygon &meshPolygon) {
-    return this->filename == meshPolygon.getFilename() && this->meshPolygonType == meshPolygon.getMeshPolygonType();
+uint MeshPolygon::getId() const {
+    return id;
 }
 
 void MeshPolygon::setFilename(const QString &filename) {
@@ -159,6 +161,58 @@ vtkPolygon* MeshPolygon::getOriginalPolygon() const {
 
 vtkPolygon* MeshPolygon::getFilteredPolygon() const {
     return filteredPolygon;
+}
+
+QString MeshPolygon::getPolyDataAsString() {
+    vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
+    vtkIdType count = 0;
+    
+    points->SetNumberOfPoints(originalPolygon->GetPoints()->GetNumberOfPoints() + filteredPolygon->GetPoints()->GetNumberOfPoints());
+    
+    for (vtkIdType i = 0; i < originalPolygon->GetPoints()->GetNumberOfPoints(); i++) {
+        points->SetPoint(count++, originalPolygon->GetPoints()->GetPoint(i));
+    }
+    for (vtkIdType i = 0; i < filteredPolygon->GetPoints()->GetNumberOfPoints(); i++) {
+        points->SetPoint(count++, filteredPolygon->GetPoints()->GetPoint(i));
+    }
+    
+    vtkSmartPointer<vtkPolyData> polyData = vtkSmartPointer<vtkPolyData>::New();
+    vtkSmartPointer<vtkCellArray> polygons = vtkSmartPointer<vtkCellArray>::New();
+    
+    polygons->InsertNextCell(originalPolygon);
+    polygons->InsertNextCell(filteredPolygon);
+    
+    polyData->SetPoints(points);
+    polyData->SetPolys(polygons);
+    
+    vtkSmartPointer<vtkXMLPolyDataWriter> writer = vtkSmartPointer<vtkXMLPolyDataWriter>::New();
+    
+    writer->SetFileName("MeshPolygonData");
+    writer->SetInputData(polyData);
+    writer->WriteToOutputStringOn();
+    writer->Update();
+    writer->Write();
+    
+    return QString::fromStdString(writer->GetOutputString());
+}
+
+void MeshPolygon::loadPolygonsFromStringPolyData(const QString &polyDataStr) {
+    vtkSmartPointer<vtkXMLPolyDataReader> reader = vtkSmartPointer<vtkXMLPolyDataReader>::New();
+    
+    reader->SetInputString(polyDataStr.toStdString());
+    reader->ReadFromInputStringOn();
+    reader->Update();
+    
+    vtkPolyData *polyData = reader->GetOutput();
+    vtkPolygon *polygon = vtkPolygon::SafeDownCast(polyData->GetCell(0));
+    originalPolygon = vtkSmartPointer<vtkPolygon>::New();
+    
+    originalPolygon->DeepCopy(polygon);
+    
+    polygon = vtkPolygon::SafeDownCast(polyData->GetCell(1));
+    filteredPolygon = vtkSmartPointer<vtkPolygon>::New();
+    
+    filteredPolygon->DeepCopy(polygon);
 }
 
 void MeshPolygon::setMinimumAngle(const double &minimumAngle) {
@@ -191,4 +245,8 @@ void MeshPolygon::setOptimalParameters() {
 
     this->maximumEdgeLength = optimalEdgeLength;
     this->minimumAngle = DEFAULT_MINIMUM_ANGLE;
+}
+
+bool MeshPolygon::isPersisted() const {
+    return this->id != 0;
 }

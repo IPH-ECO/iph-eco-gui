@@ -6,6 +6,7 @@
 #include <vtkObjectFactory.h>
 #include <vtkRendererCollection.h>
 #include <vtkAbstractPicker.h>
+#include <vtkRenderWindow.h>
 
 class MouseInteractor : public QObject, public vtkInteractorStyleTrackballCamera {
     Q_OBJECT
