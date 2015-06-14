@@ -81,7 +81,6 @@ void GridDataVTKWidget::render(GridData *gridData) {
     gridDataActor = vtkSmartPointer<vtkActor>::New();
     gridDataActor->GetProperty()->SetColor(0, 0, 0);
     gridDataActor->GetProperty()->SetRepresentationToPoints();
-    gridDataActor->GetProperty()->SetPointSize(3);
     gridDataActor->SetMapper(gridDataMapper);
     
     if (showGridDataPoints) {
