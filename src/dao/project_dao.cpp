@@ -130,6 +130,7 @@ void ProjectDAO::save(Project *project) {
 
 void ProjectDAO::saveMeshes(QSqlDatabase &db, Project *project) {
     QSet<Mesh*> meshes = project->getMeshes();
+    QStringList meshIds;
     
     for (QSet<Mesh*>::const_iterator it = meshes.begin(); it != meshes.end(); it++) {
         Mesh *mesh = *it;
@@ -161,18 +162,39 @@ void ProjectDAO::saveMeshes(QSqlDatabase &db, Project *project) {
         }
         
         mesh->setId(query.lastInsertId().toUInt());
+        meshIds.append(QString::number(mesh->getId()));
         saveMeshPolygons(db, mesh);
     }
+    
+    QSqlQuery query(db);
+    QString meshDeleteSql, meshPolygonDeleteSql;
+    
+    if (meshIds.isEmpty()) {
+        meshDeleteSql = "delete from mesh";
+        meshPolygonDeleteSql = "delete from mesh_polygon";
+    } else {
+        QString meshIdsStr = meshIds.join(",");
+        
+        meshDeleteSql = "delete from mesh where id not in (" + meshIdsStr + ")";
+        meshPolygonDeleteSql = "delete from mesh_polygon where mesh_id not in (" + meshIdsStr + ")";
+    }
+    
+    query.prepare(meshDeleteSql);
+    query.exec();
+    
+    query.prepare(meshPolygonDeleteSql);
+    query.exec();
 }
 
 void ProjectDAO::saveMeshPolygons(QSqlDatabase &db, Mesh *mesh) {
     QList<MeshPolygon*> meshPolygons = mesh->getIslands() + mesh->getRefinementAreas();
+    QStringList meshPolygonIds;
+    QString sql;
     
     meshPolygons.prepend(mesh->getBoundaryPolygon());
     
     for (QList<MeshPolygon*>::const_iterator it = meshPolygons.begin(); it != meshPolygons.end(); it++) {
         MeshPolygon *meshPolygon = *it;
-        QString sql;
         
         if (meshPolygon->isPersisted()) {
             sql = "update mesh_polygon set type = :t, poly_data = :p, minimum_angle = :mi, maximum_edge_length = :ma where mesh_id = :me and id = " + QString::number(meshPolygon->getId());
@@ -199,5 +221,11 @@ void ProjectDAO::saveMeshPolygons(QSqlDatabase &db, Mesh *mesh) {
         }
         
         meshPolygon->setId(query.lastInsertId().toUInt());
+        meshPolygonIds.append(QString::number(meshPolygon->getId()));
     }
+    
+    QSqlQuery query(db);
+    
+    query.prepare("delete from mesh_polygon where id not in (" + meshPolygonIds.join(",") + ") and mesh_id = " + QString::number(mesh->getId()));
+    query.exec();
 }
