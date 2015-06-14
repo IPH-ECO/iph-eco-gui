@@ -19,6 +19,7 @@ protected:
     QList<MeshPolygon*> refinementAreas;
     vtkSmartPointer<vtkPolyData> polyData;
     
+    // Move to UI classes
     // Transient attributes
     bool generationCanceled;
     bool showBoundaryEdges;
@@ -41,9 +42,9 @@ public:
     MeshPolygon* getBoundaryPolygon();
     QList<MeshPolygon*> getIslands();
     QList<MeshPolygon*> getRefinementAreas();
-    vtkPolyData* getGrid();
+    vtkPolyData* getPolyData();
     QString getMeshPolygonsAsString();
-    QString getGridAsString();
+    QString getPolyDataAsString() const;
     void loadMeshPolygonsFromStringPolyData(const QString &polyDataStr);
     
     MeshPolygon* addMeshPolygon(const QString &filename, const MeshPolygonType &meshPolygonType);

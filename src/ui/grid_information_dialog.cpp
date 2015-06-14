@@ -5,17 +5,17 @@
 
 #include <QFileDialog>
 #include <QMessageBox>
-#include <QDebug>
 
-GridInformationDialog::GridInformationDialog(QDialog *parent, GridDataConfiguration *gridConfiguration, GridData *gridData) :
+GridInformationDialog::GridInformationDialog(QDialog *parent, GridDataConfiguration *gridConfiguration, GridData *gridData, Mesh *mesh) :
     QDialog(parent), GRID_DATA_DEFAULT_DIR_KEY("grid_data_default_dir"), ui(new Ui::GridInformationDialog),
-    gridConfiguration(gridConfiguration), gridData(gridData)
+    gridConfiguration(gridConfiguration), gridData(gridData), mesh(mesh)
 {
     ui->setupUi(this);
 
     appSettings = new QSettings(QApplication::organizationName(), QApplication::applicationName(), this);
 
-    if (gridData != NULL) {
+    if (gridData != nullptr) {
+        mesh = gridData->getMesh();
         ui->edtName->setText(gridData->getName());
     	ui->edtInputFile->setText(gridData->getInputFile());
         ui->cbxGridInformation->setCurrentText(gridData->gridDataTypeToString());
@@ -72,7 +72,7 @@ void GridInformationDialog::on_bottomButtons_clicked(QAbstractButton *button) {
             return;
         }
         
-        if (gridConfiguration->containsGridData(gridDataName)) {
+        if (gridConfiguration->getGridData(gridDataName) != NULL) {
             QMessageBox::warning(this, tr("Grid Data"), tr("Name already used in this configuration."));
             return;
         }
@@ -98,14 +98,14 @@ void GridInformationDialog::on_bottomButtons_clicked(QAbstractButton *button) {
             GridDataType gridDataType = GridData::toGridDataType(ui->cbxGridInformation->currentText());
             
             if (gridData == NULL) {
-                gridData = new GridData();
+                gridData = new GridData(mesh);
                 gridData->setName(gridDataName);
                 gridData->setGridDataInputType(gridInputType);
                 gridData->setInputFile(inputFile);
                 gridData->setGridDataType(gridDataType);
             }
             
-            if (gridInputType == GridDataInputType::POLYGON) {
+            if (gridInputType == GridDataInputType::POINT) {
                 gridData->setExponent(ui->edtExponent->text().toDouble());
                 gridData->setRadius(ui->edtRadius->text().toDouble());
             }

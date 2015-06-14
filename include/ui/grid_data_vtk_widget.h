@@ -1,21 +1,31 @@
 #ifndef GRID_DATA_VTK_WIDGET_H
 #define GRID_DATA_VTK_WIDGET_H
 
+#include "include/domain/grid_data.h"
+
 #include <QWidget>
 #include <QVTKWidget.h>
 #include <vtkRenderer.h>
-
-#include "include/domain/grid_data_configuration.h"
+#include <vtkActor.h>
 
 class GridDataVTKWidget : public QVTKWidget {
 	Q_OBJECT
 private:
 	vtkSmartPointer<vtkRenderer> renderer;
-
+    vtkSmartPointer<vtkActor> meshActor;
+    vtkSmartPointer<vtkActor> gridDataActor;
+    
+    bool showMesh;
+    bool showGridDataPoints;
+    bool showInterpolationResult;
 public:
     GridDataVTKWidget(QWidget *parent);
     ~GridDataVTKWidget();
-    void render(GridDataConfiguration *mesh);
+    void render(Mesh *mesh);
+    void render(GridData *gridData);
+    void setShowMesh(const bool &value);
+    void setShowGridDataPoints(const bool &value);
+    void setShowInterpolationResult(const bool &value);
     void clear();
 };
 

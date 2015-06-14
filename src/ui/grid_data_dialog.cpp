@@ -12,10 +12,11 @@
 #include <QVector>
 #include <QObject>
 #include <QProgressDialog>
+#include <QDebug>
 
 GridDataDialog::GridDataDialog(QWidget *parent) :
     QDialog(parent), ui(new Ui::GridDataDialog),
-    unsavedConfiguration(new GridDataConfiguration()), currentConfiguration(unsavedConfiguration)
+    unsavedConfiguration(new GridDataConfiguration()), currentConfiguration(unsavedConfiguration), currentMesh(nullptr)
 {
     ui->setupUi(this);
     ui->tblGridInformation->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
@@ -33,6 +34,8 @@ GridDataDialog::GridDataDialog(QWidget *parent) :
         ui->cbxConfiguration->addItem((*it)->getName());
     }
     ui->cbxConfiguration->setCurrentIndex(-1);
+    
+    ui->gridDataVTKWidget->clear();
 }
 
 GridDataDialog::~GridDataDialog() {
@@ -53,23 +56,20 @@ void GridDataDialog::setArea(const double &area) {
 
 void GridDataDialog::on_cbxConfiguration_currentIndexChanged(const QString &configurationName) {
     ui->tblGridInformation->setRowCount(0);
-
+    ui->gridDataVTKWidget->clear();
+    
     if (configurationName.isEmpty()) {
-        delete unsavedConfiguration;
-        unsavedConfiguration = new GridDataConfiguration();
-        currentConfiguration = unsavedConfiguration;
-        
         toggleGridDataConfigurationForm(false);
         ui->edtConfigurationName->clear();
         ui->cbxMesh->setCurrentIndex(-1);
-        ui->gridDataVTKWidget->clear();
     } else {
         Project *project = IPHApplication::getCurrentProject();
         currentConfiguration = project->getGridDataConfiguration(configurationName);
         QVector<GridData*> gridDataVector = currentConfiguration->getGridDataVector();
+        currentMesh = gridDataVector.at(0)->getMesh();
 
         ui->edtConfigurationName->setText(currentConfiguration->getName());
-        ui->cbxMesh->setCurrentText(currentConfiguration->getMesh()->getName());
+//        ui->cbxMesh->setCurrentText(currentConfiguration->getMesh()->getName());
 
         for (int i = 0; i < gridDataVector.count(); i++) {
             int rowCount = ui->tblGridInformation->rowCount();
@@ -79,65 +79,71 @@ void GridDataDialog::on_cbxConfiguration_currentIndexChanged(const QString &conf
             ui->tblGridInformation->setItem(rowCount, 0, new QTableWidgetItem(gridData->getName()));
             ui->tblGridInformation->setItem(rowCount, 1, new QTableWidgetItem(gridData->gridDataInputTypeToString()));
             ui->tblGridInformation->setItem(rowCount, 2, new QTableWidgetItem(gridData->gridDataTypeToString()));
-            ui->tblGridInformation->setItem(rowCount, 3, new QTableWidgetItem(gridData->getData()->GetNumberOfPoints()));
+            ui->tblGridInformation->setItem(rowCount, 3, new QTableWidgetItem(QString::number(gridData->getInputPolyData()->GetNumberOfPoints())));
         }
 
-        ui->gridDataVTKWidget->render(currentConfiguration);
+        ui->gridDataVTKWidget->render(currentMesh);
         toggleGridDataConfigurationForm(true);
     }
 }
 
 void GridDataDialog::on_cbxMesh_currentIndexChanged(const QString &meshName) {
-    Mesh *mesh = NULL;
     bool isMeshNamePresent = !meshName.isEmpty();
 
     if (isMeshNamePresent) {
         Project *project = IPHApplication::getCurrentProject();
-        mesh = project->getMesh(meshName);
+        currentMesh = project->getMesh(meshName);
 
-        if (mesh->instanceOf("UnstructuredMesh")) {
-            mesh = static_cast<UnstructuredMesh*>(mesh);
+        if (currentMesh->instanceOf("UnstructuredMesh")) {
+            currentMesh = static_cast<UnstructuredMesh*>(currentMesh);
         } else {
-            mesh = static_cast<StructuredMesh*>(mesh);
+            currentMesh = static_cast<StructuredMesh*>(currentMesh);
         }
     }
 
-    currentConfiguration->setMesh(mesh);
-    ui->gridDataVTKWidget->render(currentConfiguration);
+    ui->gridDataVTKWidget->render(currentMesh);
     ui->btnAddGridInfomation->setEnabled(isMeshNamePresent);
     ui->btnRemoveGridInformation->setEnabled(isMeshNamePresent);
+//    ui->btnShowGridDataPoints->setEnabled(isMeshNamePresent);
+//    ui->btnShowGridDataPoints->toggled(false);
+//    ui->btnShowInterpolationResult->setEnabled(isMeshNamePresent);
+//    ui->btnShowInterpolationResult->toggled(false);
+    ui->btnShowMesh->setEnabled(isMeshNamePresent);
+    ui->btnShowMesh->setChecked(isMeshNamePresent);
 }
 
 void GridDataDialog::on_btnAddGridInfomation_clicked() {
-    GridInformationDialog *gridInformationDialog = new GridInformationDialog(this, currentConfiguration, NULL);
+    GridInformationDialog *gridInformationDialog = new GridInformationDialog(this, currentConfiguration, nullptr, currentMesh);
     int exitCode = gridInformationDialog->exec();
 
     if (exitCode == QDialog::Accepted) {
         int rowCount = ui->tblGridInformation->rowCount();
         GridData *gridData = gridInformationDialog->getGridData();
-        int maximum = currentConfiguration->getMesh()->getGrid()->GetNumberOfCells();
+        int maximum = gridData->getMesh()->getPolyData()->GetNumberOfCells();
         
         QProgressDialog *progressDialog = new QProgressDialog(tr("Interpolating grid data..."), tr("Cancel"), 0, maximum - 1, this);
-        QObject::connect(currentConfiguration, SIGNAL(updateProgress(int)), progressDialog, SLOT(setValue(int)));
-        QObject::connect(progressDialog, SIGNAL(canceled()), currentConfiguration, SLOT(cancelInterpolation()));
+        QObject::connect(gridData, SIGNAL(updateProgress(int)), progressDialog, SLOT(setValue(int)));
+        QObject::connect(progressDialog, SIGNAL(canceled()), gridData, SLOT(cancelInterpolation()));
         progressDialog->setMinimumDuration(500);
         progressDialog->setWindowModality(Qt::WindowModal);
 
-        currentConfiguration->addGridData(gridData);
+        gridData->interpolate();
         
         if (progressDialog->wasCanceled()) {
-            currentConfiguration->cancelInterpolation(false); // Set false for future computations
-            currentConfiguration->removeGridData(gridData);
+            gridData->cancelInterpolation(false); // Set false for future computations
         } else {
-            ui->btnShowGridPoints->setEnabled(true);
-            ui->btnShowGridPoints->toggled(false);
-            ui->btnShowInterpolation->setEnabled(true);
-            ui->btnShowInterpolation->toggled(false);
+            currentConfiguration->addGridData(gridData);
+            
+            ui->btnShowGridDataPoints->setEnabled(true);
+            ui->btnShowGridDataPoints->setChecked(false);
+            ui->btnShowInterpolationResult->setEnabled(true);
+            ui->btnShowInterpolationResult->setChecked(false);
             ui->tblGridInformation->insertRow(rowCount);
             ui->tblGridInformation->setItem(rowCount, 0, new QTableWidgetItem(gridData->getName()));
             ui->tblGridInformation->setItem(rowCount, 1, new QTableWidgetItem(gridData->gridDataInputTypeToString()));
             ui->tblGridInformation->setItem(rowCount, 2, new QTableWidgetItem(gridData->gridDataTypeToString()));
-            ui->tblGridInformation->setItem(rowCount, 3, new QTableWidgetItem(gridData->getData()->GetNumberOfPoints()));
+            ui->tblGridInformation->setItem(rowCount, 3, new QTableWidgetItem(QString::number(gridData->getInputPolyData()->GetNumberOfPoints())));
+            ui->gridDataVTKWidget->render(gridData);
         }
         delete progressDialog;
     }
@@ -164,10 +170,10 @@ void GridDataDialog::on_btnRemoveGridInformation_clicked() {
         currentConfiguration->removeGridData(currentRow);
         ui->tblGridInformation->removeRow(currentRow);
         if (ui->tblGridInformation->rowCount() == 0) {
-            ui->btnShowGridPoints->setEnabled(false);
-            ui->btnShowGridPoints->toggled(false);
-            ui->btnShowInterpolation->setEnabled(false);
-            ui->btnShowInterpolation->toggled(false);
+            ui->btnShowGridDataPoints->setEnabled(false);
+            ui->btnShowGridDataPoints->toggled(false);
+            ui->btnShowInterpolationResult->setEnabled(false);
+            ui->btnShowInterpolationResult->toggled(false);
         }
         ui->gridDataVTKWidget->clear(); // FIX: Must update the map
     }
@@ -187,10 +193,8 @@ void GridDataDialog::on_btnSaveConfiguration_clicked() {
     }
 
     Project *project = IPHApplication::getCurrentProject();
-    Mesh *mesh = project->getMesh(ui->cbxMesh->currentText());
     
     currentConfiguration->setName(configurationName);
-    currentConfiguration->setMesh(mesh);
 
     if (ui->cbxConfiguration->currentIndex() == -1) {
         project->addGridDataConfiguration(currentConfiguration);
@@ -212,15 +216,13 @@ void GridDataDialog::on_btnSaveAsNewConfiguration_clicked() {
 
     GridDataConfiguration *newConfiguration = new GridDataConfiguration();
     Project *project = IPHApplication::getCurrentProject();
-    Mesh *mesh = project->getMesh(ui->cbxMesh->currentText());
     QVector<GridData*> gridDataVector = currentConfiguration->getGridDataVector();
 
     newConfiguration->setName(newConfigurationName);
-    newConfiguration->setMesh(mesh);
 
     for (int i = 0; i < gridDataVector.count(); i++) {
         GridData *gridData = gridDataVector.at(i);
-        GridData *newGridData = new GridData();
+        GridData *newGridData = new GridData(currentMesh);
 
         newGridData->setGridDataInputType(gridData->getGridDataInputType());
         newGridData->setInputFile(gridData->getInputFile());
@@ -278,7 +280,14 @@ bool GridDataDialog::isConfigurationValid(const QString &configurationName) {
     return true;
 }
 
-void GridDataDialog::on_chkShowMesh_toggled(bool checked) {
-    currentConfiguration->setShowMesh(checked);
-    ui->gridDataVTKWidget->update();
+void GridDataDialog::on_btnShowGridDataPoints_clicked(bool checked) {
+    ui->gridDataVTKWidget->setShowGridDataPoints(checked);
+}
+
+void GridDataDialog::on_btnShowInterpolationResult_clicked(bool checked) {
+    ui->gridDataVTKWidget->setShowInterpolationResult(checked);
+}
+
+void GridDataDialog::on_btnShowMesh_clicked(bool checked) {
+    ui->gridDataVTKWidget->setShowMesh(checked);
 }

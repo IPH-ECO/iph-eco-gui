@@ -94,7 +94,7 @@ QList<MeshPolygon*> Mesh::getRefinementAreas() {
     return refinementAreas;
 }
 
-vtkPolyData* Mesh::getGrid() {
+vtkPolyData* Mesh::getPolyData() {
     return polyData;
 }
 
@@ -109,7 +109,7 @@ void Mesh::loadMeshPolygonsFromStringPolyData(const QString &polyDataStr) {
     polyData->DeepCopy(reader->GetOutput());
 }
 
-QString Mesh::getGridAsString() {
+QString Mesh::getPolyDataAsString() const {
     vtkSmartPointer<vtkXMLPolyDataWriter> writer = vtkSmartPointer<vtkXMLPolyDataWriter>::New();
     
     writer->SetFileName("MeshPolyData");

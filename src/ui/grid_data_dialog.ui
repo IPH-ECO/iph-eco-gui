@@ -202,7 +202,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QToolButton" name="btnShowGridPoints">
+           <widget class="QToolButton" name="btnShowGridDataPoints">
             <property name="enabled">
              <bool>false</bool>
             </property>
@@ -228,7 +228,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QToolButton" name="btnShowInterpolation">
+           <widget class="QToolButton" name="btnShowInterpolationResult">
             <property name="enabled">
              <bool>false</bool>
             </property>
@@ -238,6 +238,32 @@
             <property name="icon">
              <iconset resource="../../icons.qrc">
               <normaloff>:/icons/interpolation-result.png</normaloff>:/icons/interpolation-result.png</iconset>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>24</width>
+              <height>24</height>
+             </size>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QToolButton" name="btnShowMesh">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="toolTip">
+             <string>Show Mesh</string>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+            <property name="icon">
+             <iconset resource="../../icons.qrc">
+              <normaloff>:/icons/unstructured-mesh.png</normaloff>:/icons/unstructured-mesh.png</iconset>
             </property>
             <property name="iconSize">
              <size>
@@ -289,16 +315,6 @@
          <string>Options</string>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_3">
-         <item>
-          <widget class="QCheckBox" name="chkShowMesh">
-           <property name="text">
-            <string>Show Mesh</string>
-           </property>
-           <property name="checked">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
          <item>
           <widget class="QCheckBox" name="chkShowUtmCoordinates">
            <property name="text">

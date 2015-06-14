@@ -16,7 +16,7 @@ class GridInformationDialog : public QDialog {
     Q_OBJECT
 
 public:
-    explicit GridInformationDialog(QDialog *parent, GridDataConfiguration *gridConfiguration, GridData *gridData);
+    explicit GridInformationDialog(QDialog *parent, GridDataConfiguration *gridConfiguration, GridData *gridData, Mesh *mesh = nullptr);
     ~GridInformationDialog();
     GridData* getGridData();
 
@@ -33,6 +33,7 @@ private:
     QSettings *appSettings;
     GridDataConfiguration *gridConfiguration;
     GridData *gridData;
+    Mesh *mesh;
 
     QString getDefaultDirectory();
     void toggleGridDataConfigurationForm(bool enable);

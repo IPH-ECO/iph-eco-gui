@@ -147,7 +147,7 @@ void ProjectDAO::saveMeshes(QSqlDatabase &db, Project *project) {
         query.prepare(sql);
         query.bindValue(":n", mesh->getName());
         query.bindValue(":t", meshType);
-        query.bindValue(":p", mesh->getGridAsString());
+        query.bindValue(":p", mesh->getPolyDataAsString());
         query.bindValue(":c", mesh->getCoordinatesDistance());
         
         if (mesh->instanceOf("StructuredMesh")) {

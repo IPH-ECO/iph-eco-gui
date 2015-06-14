@@ -34,12 +34,15 @@ private slots:
     void on_btnRemoveConfiguration_clicked();
     void on_btnDoneConfiguration_clicked();
     void on_tblGridInformation_itemDoubleClicked(QTableWidgetItem *item);
-    void on_chkShowMesh_toggled(bool checked);
+    void on_btnShowGridDataPoints_clicked(bool checked);
+    void on_btnShowInterpolationResult_clicked(bool checked);
+    void on_btnShowMesh_clicked(bool checked);
 
 private:
     Ui::GridDataDialog *ui;
     GridDataConfiguration *unsavedConfiguration;
     GridDataConfiguration *currentConfiguration;
+    Mesh *currentMesh;
     
     void toggleGridDataConfigurationForm(bool enable);
     bool isConfigurationValid(const QString &configurationName);
