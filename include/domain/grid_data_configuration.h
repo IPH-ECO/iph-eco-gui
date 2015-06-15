@@ -28,6 +28,7 @@ public:
     void removeGridData(int i);
     GridData* getGridData(const QString &gridDataName);
     GridData* getGridData(int i);
+    Mesh* getMesh() const;
     
     bool isPersisted() const;
 };

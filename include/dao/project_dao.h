@@ -13,6 +13,8 @@ private:
     void saveMeshPolygons(QSqlDatabase &db, Mesh *mesh);
     void loadMeshes(QSqlDatabase &db, Project *project);
     void loadMeshPolygons(QSqlDatabase &db, Mesh *mesh);
+    void loadGridDataConfigurations(QSqlDatabase &db, Project *project);
+    void loadGridData(QSqlDatabase &db, GridDataConfiguration *gridDataConfiguration, Project *project);
     
     void saveGridDataConfigurations(QSqlDatabase &db, Project *project);
     void saveGridData(QSqlDatabase &db, GridDataConfiguration *gridDataConfiguration);

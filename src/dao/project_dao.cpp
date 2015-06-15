@@ -36,6 +36,7 @@ Project* ProjectDAO::open() {
     project->setFilename(this->databaseName);
     
     loadMeshes(db, project);
+    loadGridDataConfigurations(db, project);
 
     return project;
 }
@@ -70,8 +71,7 @@ void ProjectDAO::loadMeshes(QSqlDatabase &db, Project *project) {
 void ProjectDAO::loadMeshPolygons(QSqlDatabase &db, Mesh *mesh) {
     QSqlQuery query(db);
     
-    query.prepare("select * from mesh_polygon where mesh_id = :m");
-    query.bindValue(":m", mesh->getId());
+    query.prepare("select * from mesh_polygon where mesh_id = " + QString::number(mesh->getId()));
     query.exec();
     
     while (query.next()) {
@@ -79,12 +79,49 @@ void ProjectDAO::loadMeshPolygons(QSqlDatabase &db, Mesh *mesh) {
         meshPolygon->setId(query.value("id").toUInt());
         meshPolygon->setMeshPolygonType(static_cast<MeshPolygonType>(query.value("type").toInt()));
         meshPolygon->loadPolygonsFromStringPolyData(query.value("poly_data").toString());
-        if (mesh->instanceOf("UnstructuredMesh")) {
-            meshPolygon->setMinimumAngle(query.value("minimum_angle").toDouble());
-            meshPolygon->setMaximumEdgeLength(query.value("maximum_edge_length").toDouble());
-        }
+        meshPolygon->setMinimumAngle(query.value("minimum_angle").toDouble());
+        meshPolygon->setMaximumEdgeLength(query.value("maximum_edge_length").toDouble());
         
         mesh->addMeshPolygon(meshPolygon);
+    }
+}
+
+void ProjectDAO::loadGridDataConfigurations(QSqlDatabase &db, Project *project) {
+    QSqlQuery query(db);
+    
+    query.prepare("select * from grid_data_configuration");
+    query.exec();
+    
+    while (query.next()) {
+        GridDataConfiguration *configuration = new GridDataConfiguration();
+        configuration->setId(query.value("id").toUInt());
+        configuration->setName(query.value("name").toString());
+        project->addGridDataConfiguration(configuration);
+        
+        loadGridData(db, configuration, project);
+    }
+}
+
+void ProjectDAO::loadGridData(QSqlDatabase &db, GridDataConfiguration *gridDataConfiguration, Project *project) {
+    QSqlQuery query(db);
+    
+    query.prepare("select * from grid_data where grid_data_configuration_id = " + QString::number(gridDataConfiguration->getId()));
+    query.exec();
+    
+    while (query.next()) {
+        Mesh *mesh = project->getMesh(query.value("mesh_id").toUInt());
+        GridData *gridData = new GridData(mesh);
+        
+        gridData->setId(query.value("id").toUInt());
+        gridData->setName(query.value("name").toString());
+        gridData->setGridDataType(static_cast<GridDataType>(query.value("grid_type").toInt()));
+        gridData->setGridDataInputType(static_cast<GridDataInputType>(query.value("input_type").toInt()));
+        gridData->loadInputPolyDataFromStringPolyData(query.value("input_poly_data").toString());
+        gridData->setExponent(query.value("exponent").toDouble());
+        gridData->setRadius(query.value("radius").toDouble());
+        gridData->setGridDataConfiguration(gridDataConfiguration);
+        
+        gridDataConfiguration->addGridData(gridData);
     }
 }
 
@@ -300,8 +337,14 @@ void ProjectDAO::saveGridData(QSqlDatabase &db, GridDataConfiguration *gridDataC
         query.bindValue(":it", (int) gridData->getGridDataInputType());
         query.bindValue(":gt", (int) gridData->getGridDataType());
         query.bindValue(":ipd", gridData->getInputPolyDataAsString());
-        query.bindValue(":e", gridData->getExponent());
-        query.bindValue(":r", gridData->getRadius());
+        
+        if (gridData->getGridDataInputType() == GridDataInputType::POINT) {
+            query.bindValue(":e", gridData->getExponent());
+            query.bindValue(":r", gridData->getRadius());
+        } else {
+            query.bindValue(":e", "NULL");
+            query.bindValue(":r", "NULL");
+        }
         
         if (!query.exec()) {
             throw DatabaseException(QString("Unable to save grid data configurations. Error: %1.").arg(query.lastError().text()));

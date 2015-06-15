@@ -43,6 +43,7 @@ public:
     void removeMesh(Mesh *mesh);
     bool containsMesh(const QString &meshName);
     Mesh* getMesh(const QString &meshName) const;
+    Mesh* getMesh(const uint &id) const;
     QSet<Mesh*> getMeshes() const;
 
     bool addGridDataConfiguration(GridDataConfiguration *gridDataConfiguration);

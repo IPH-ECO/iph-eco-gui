@@ -46,7 +46,7 @@ void GridDataConfiguration::removeGridData(GridData *gridData) {
 }
 
 void GridDataConfiguration::removeGridData(int i) {
-    GridData *gridData = NULL;
+    GridData *gridData = nullptr;
 
     if (i < gridDataVector.count()) {
         gridData = gridDataVector.at(i);
@@ -63,7 +63,7 @@ GridData* GridDataConfiguration::getGridData(const QString &gridDataName) {
         }
     }
     
-    return NULL;
+    return nullptr;
 }
 
 GridData* GridDataConfiguration::getGridData(int i) {
@@ -71,7 +71,15 @@ GridData* GridDataConfiguration::getGridData(int i) {
         return gridDataVector.at(i);
     }
 
-    return NULL;
+    return nullptr;
+}
+
+Mesh* GridDataConfiguration::getMesh() const {
+    if (gridDataVector.isEmpty()) {
+        return nullptr;
+    }
+    
+    return gridDataVector.at(0)->getMesh();
 }
 
 bool GridDataConfiguration::isPersisted() const {

@@ -103,6 +103,16 @@ Mesh* Project::getMesh(const QString &meshName) const {
     return NULL;
 }
 
+Mesh* Project::getMesh(const uint &id) const {
+    for (QSet<Mesh*>::const_iterator it = meshes.begin(); it != meshes.end(); it++) {
+        if ((*it)->getId() == id) {
+            return *it;
+        }
+    }
+    
+    return NULL;
+}
+
 bool Project::addGridDataConfiguration(GridDataConfiguration *gridDataConfiguration) {
     if (this->gridDataConfigurations.contains(gridDataConfiguration)) {
         return false;
