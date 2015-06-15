@@ -134,22 +134,22 @@ void ProjectDAO::saveMeshes(QSqlDatabase &db, Project *project) {
     
     for (QSet<Mesh*>::const_iterator it = meshes.begin(); it != meshes.end(); it++) {
         Mesh *mesh = *it;
+        QSqlQuery query(db);
         QString sql;
         
         if (mesh->isPersisted()) {
-            sql = "update mesh set name = :n, type = :t, poly_data = :p, coordinates_distance = :c, resolution = :r where id = " + QString::number(mesh->getId());
+            query.prepare("update mesh set name = :n, type = :t, poly_data = :p, coordinates_distance = :c, resolution = :r where id = :m");
+            query.bindValue(":m", mesh->getId());
         } else {
-            sql = "insert into mesh (name, type, coordinates_distance, poly_data, resolution) values (:n, :t, :c, :p, :r)";
+            query.prepare("insert into mesh (name, type, coordinates_distance, poly_data, resolution) values (:n, :t, :c, :p, :r)");
         }
         
         QString meshType = mesh->instanceOf("StructuredMesh") ? "StructuredMesh" : "UnstructuredMesh";
-        QSqlQuery query(db);
         
-        query.prepare(sql);
         query.bindValue(":n", mesh->getName());
         query.bindValue(":t", meshType);
-        query.bindValue(":p", mesh->getPolyDataAsString());
         query.bindValue(":c", mesh->getCoordinatesDistance());
+        query.bindValue(":p", mesh->getPolyDataAsString());
         
         if (mesh->instanceOf("StructuredMesh")) {
             query.bindValue(":r", static_cast<StructuredMesh*>(mesh)->getResolution());
@@ -166,6 +166,7 @@ void ProjectDAO::saveMeshes(QSqlDatabase &db, Project *project) {
         saveMeshPolygons(db, mesh);
     }
     
+    // Handle exclusions
     QSqlQuery query(db);
     QString meshDeleteSql, meshPolygonDeleteSql;
     
@@ -189,22 +190,21 @@ void ProjectDAO::saveMeshes(QSqlDatabase &db, Project *project) {
 void ProjectDAO::saveMeshPolygons(QSqlDatabase &db, Mesh *mesh) {
     QList<MeshPolygon*> meshPolygons = mesh->getIslands() + mesh->getRefinementAreas();
     QStringList meshPolygonIds;
-    QString sql;
     
     meshPolygons.prepend(mesh->getBoundaryPolygon());
     
     for (QList<MeshPolygon*>::const_iterator it = meshPolygons.begin(); it != meshPolygons.end(); it++) {
         MeshPolygon *meshPolygon = *it;
-        
-        if (meshPolygon->isPersisted()) {
-            sql = "update mesh_polygon set type = :t, poly_data = :p, minimum_angle = :mi, maximum_edge_length = :ma where mesh_id = :me and id = " + QString::number(meshPolygon->getId());
-        } else {
-            sql = "insert into mesh_polygon (type, poly_data, minimum_angle, maximum_edge_length, mesh_id) values (:t, :p, :mi, :ma, :me)";
-        }
-        
         QSqlQuery query(db);
         
-        query.prepare(sql);
+        if (meshPolygon->isPersisted()) {
+            query.prepare("update mesh_polygon set type = :t, poly_data = :p, minimum_angle = :mi, maximum_edge_length = :ma where id = :i");
+            query.bindValue(":i", meshPolygon->getId());
+        } else {
+            query.prepare("insert into mesh_polygon (type, poly_data, minimum_angle, maximum_edge_length, mesh_id) values (:t, :p, :mi, :ma, :me)");
+            query.bindValue(":me", mesh->getId());
+        }
+        
         query.bindValue(":t", (int) meshPolygon->getMeshPolygonType());
         query.bindValue(":p", meshPolygon->getPolyDataAsString());
         if (mesh->instanceOf("UnstructuredMesh")) {
@@ -214,7 +214,6 @@ void ProjectDAO::saveMeshPolygons(QSqlDatabase &db, Mesh *mesh) {
             query.bindValue(":mi", "NULL");
             query.bindValue(":ma", "NULL");
         }
-        query.bindValue(":me", mesh->getId());
         
         if (!query.exec()) {
             throw DatabaseException(QString("Unable to save project meshes. Error: %1.").arg(query.lastError().text()));
@@ -228,4 +227,66 @@ void ProjectDAO::saveMeshPolygons(QSqlDatabase &db, Mesh *mesh) {
     
     query.prepare("delete from mesh_polygon where id not in (" + meshPolygonIds.join(",") + ") and mesh_id = " + QString::number(mesh->getId()));
     query.exec();
+}
+
+void ProjectDAO::saveGridDataConfigurations(QSqlDatabase &db, Project *project) {
+    QSet<GridDataConfiguration*> configurations = project->getGridDataConfigurations();
+    QStringList configurationIds;
+    
+    for (QSet<GridDataConfiguration*>::const_iterator it = configurations.begin(); it != configurations.end(); it++) {
+        GridDataConfiguration *configuration = *it;
+        QSqlQuery query(db);
+        
+        if (configuration->isPersisted()) {
+            query.prepare("update grid_data_configuration set name = :n where id = :i");
+            query.bindValue(":i", configuration->getId());
+        } else {
+            query.prepare("insert into grid_data_configuration (name) values (:n)");
+        }
+        
+        query.bindValue(":n", configuration->getName());
+        
+        if (!query.exec()) {
+            throw DatabaseException(QString("Unable to save grid data configurations. Error: %1.").arg(query.lastError().text()));
+        }
+        
+        configuration->setId(query.lastInsertId().toUInt());
+        configurationIds.append(QString::number(configuration->getId()));
+    }
+    
+//    QSqlQuery query(db);
+    
+//    query.prepare("delete from )
+}
+
+void ProjectDAO::saveGridData(QSqlDatabase &db, GridDataConfiguration *gridDataConfiguration) {
+    QVector<GridData*> gridDataVector = gridDataConfiguration->getGridDataVector();
+    
+    for (int i = 0; i < gridDataVector.size(); i++) {
+        GridData *gridData = gridDataVector.at(i);
+        QSqlQuery query(db);
+        
+        if (gridData->isPersisted()) {
+            query.prepare("update grid_data set name = :n, input_type = :it, grid_type = :gt, input_poly_data = :ipd1, interpolated_poly_data = :ipd2, exponent = :e, radius = :r " \
+                          "where id = :i");
+            query.bindValue(":i", gridData->getId());
+        } else {
+            query.prepare("insert into grid_data values (name, input_type, grid_type, input_poly_data, interpolated_poly_data, exponent, radius, grid_data_configuration_id, mesh_id) " \
+                          "values (:n, :it, :gt, :ipd1, :ipd2, :e, :r, :gdc, :m)");
+            query.bindValue(":gdc", gridDataConfiguration->getId());
+            query.bindValue(":m", gridData->getMesh()->getId());
+        }
+        
+        query.bindValue(":n", gridData->getName());
+        query.bindValue(":it", (int) gridData->getGridDataInputType());
+        query.bindValue(":gt", (int) gridData->getGridDataType());
+        query.bindValue(":ipd1", gridData->getInputPolyDataAsString());
+        query.bindValue(":ipd2", gridData->getName());
+        query.bindValue(":e", gridData->getExponent());
+        query.bindValue(":r", gridData->getRadius());
+        
+        if (!query.exec()) {
+            throw DatabaseException(QString("Unable to save grid data configurations. Error: %1.").arg(query.lastError().text()));
+        }
+    }
 }

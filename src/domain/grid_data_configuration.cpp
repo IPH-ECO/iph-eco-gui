@@ -1,6 +1,6 @@
 #include "include/domain/grid_data_configuration.h"
 
-GridDataConfiguration::GridDataConfiguration() {}
+GridDataConfiguration::GridDataConfiguration() : id(0) {}
 
 GridDataConfiguration::~GridDataConfiguration() {
     for (int i = 0; i < gridDataVector.size(); i++) {
@@ -8,8 +8,18 @@ GridDataConfiguration::~GridDataConfiguration() {
     }
 }
 
+uint GridDataConfiguration::getId() const {
+    return id;
+}
+
+void GridDataConfiguration::setId(const uint &id) {
+    if (!isPersisted()) {
+        this->id = id;
+    }
+}
+
 QString GridDataConfiguration::getName() const {
-    return this->name;
+    return name;
 }
 
 void GridDataConfiguration::setName(const QString &name) {
@@ -62,4 +72,8 @@ GridData* GridDataConfiguration::getGridData(int i) {
     }
 
     return NULL;
+}
+
+bool GridDataConfiguration::isPersisted() const {
+    return id != 0;
 }

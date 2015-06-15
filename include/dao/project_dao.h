@@ -2,6 +2,7 @@
 #define PROJECT_DAO_H
 
 #include "include/domain/project.h"
+#include "include/domain/grid_data_configuration.h"
 #include <QSqlDatabase>
 
 class ProjectDAO {
@@ -12,6 +13,9 @@ private:
     void saveMeshPolygons(QSqlDatabase &db, Mesh *mesh);
     void loadMeshes(QSqlDatabase &db, Project *project);
     void loadMeshPolygons(QSqlDatabase &db, Mesh *mesh);
+    
+    void saveGridDataConfigurations(QSqlDatabase &db, Project *project);
+    void saveGridData(QSqlDatabase &db, GridDataConfiguration *gridDataConfiguration);
 public:
     ProjectDAO(const QString &_databaseName);
 

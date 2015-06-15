@@ -3,12 +3,11 @@
 #include "include/utility/cgal_definitions.h"
 #include "include/exceptions/grid_data_exception.h"
 
-#include <QFile>
-#include <QTextStream>
-#include <QStringList>
 #include <GeographicLib/GeoCoords.hpp>
 #include <vtkRegularPolygonSource.h>
 #include <vtkSimplePointsReader.h>
+#include <vtkXMLPolyDataWriter.h>
+#include <vtkXMLPolyDataReader.h>
 #include <vtkDoubleArray.h>
 #include <vtkIdTypeArray.h>
 #include <vtkCellArray.h>
@@ -24,7 +23,9 @@ uint GridData::getId() const {
 }
 
 void GridData::setId(const uint &id) {
-    this->id = id;
+    if (!isPersisted()) {
+        this->id = id;
+    }
 }
 
 QString GridData::getName() const {
@@ -43,14 +44,6 @@ void GridData::setGridDataInputType(const GridDataInputType &gridDataInputType) 
     this->gridDataInputType = gridDataInputType;
 }
 
-vtkPolyData* GridData::getInputPolyData() {
-    return inputPolyData;
-}
-
-vtkPolyData* GridData::getInterpolatedPolyData() {
-    return interpolatedPolyData;
-}
-
 GridDataType GridData::getGridDataType() const {
     return gridDataType;
 }
@@ -59,12 +52,12 @@ void GridData::setGridDataType(const GridDataType &gridDataType) {
     this->gridDataType = gridDataType;
 }
 
-QString GridData::getInputFile() const {
-    return inputFile;
+vtkPolyData* GridData::getInputPolyData() {
+    return inputPolyData;
 }
 
-void GridData::setInputFile(const QString &inputFile) {
-    this->inputFile = inputFile;
+vtkPolyData* GridData::getInterpolatedPolyData() {
+    return interpolatedPolyData;
 }
 
 double GridData::getExponent() const {
@@ -83,12 +76,28 @@ void GridData::setRadius(const double &radius) {
     this->radius = radius;
 }
 
+GridDataConfiguration* GridData::getGridDataConfiguration() const {
+    return gridDataConfiguration;
+}
+
+void GridData::setGridDataConfiguration(GridDataConfiguration *gridDataConfiguration) {
+    this->gridDataConfiguration = gridDataConfiguration;
+}
+
 Mesh* GridData::getMesh() const {
     return mesh;
 }
 
 void GridData::setMesh(Mesh *mesh) {
     this->mesh = mesh;
+}
+
+QString GridData::getInputFile() const {
+    return inputFile;
+}
+
+void GridData::setInputFile(const QString &inputFile) {
+    this->inputFile = inputFile;
 }
 
 void GridData::buildInputPolyData() {
@@ -291,4 +300,31 @@ GridDataType GridData::toGridDataType(const QString &gridDataTypeStr) {
     }
     
     return GridDataType::WETLAND_AREA;
+}
+
+void GridData::loadInputPolyDataFromStringPolyData(const QString &polyDataStr) {
+    vtkSmartPointer<vtkXMLPolyDataReader> reader = vtkSmartPointer<vtkXMLPolyDataReader>::New();
+    
+    reader->SetInputString(polyDataStr.toStdString());
+    reader->ReadFromInputStringOn();
+    reader->Update();
+    
+    inputPolyData = vtkSmartPointer<vtkPolyData>::New();
+    inputPolyData->DeepCopy(reader->GetOutput());
+}
+
+QString GridData::getInputPolyDataAsString() const {
+    vtkSmartPointer<vtkXMLPolyDataWriter> writer = vtkSmartPointer<vtkXMLPolyDataWriter>::New();
+    
+    writer->SetFileName("InputPolyData");
+    writer->SetInputData(this->inputPolyData);
+    writer->WriteToOutputStringOn();
+    writer->Update();
+    writer->Write();
+    
+    return QString::fromStdString(writer->GetOutputString());
+}
+
+bool GridData::isPersisted() const {
+    return id != 0;
 }

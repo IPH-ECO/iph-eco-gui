@@ -7,6 +7,7 @@
 #include <QVTKWidget.h>
 #include <vtkRenderer.h>
 #include <vtkActor.h>
+#include <vtkPolyDataMapper.h>
 
 class GridDataVTKWidget : public QVTKWidget {
 	Q_OBJECT
@@ -14,6 +15,7 @@ private:
 	vtkSmartPointer<vtkRenderer> renderer;
     vtkSmartPointer<vtkActor> meshActor;
     vtkSmartPointer<vtkActor> gridDataActor;
+    vtkSmartPointer<vtkPolyDataMapper> meshMapper;
     
     bool showMesh;
     bool showGridDataPoints;

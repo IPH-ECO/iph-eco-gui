@@ -49,7 +49,25 @@ void DatabaseUtility::createApplicationTables(QSqlDatabase &database) {
            "poly_data text not null, " \
            "minimum_angle float, " \
            "maximum_edge_length float, " \
-           "mesh_id integer not null"
+           "mesh_id integer not null" \
+    ")";
+    
+    sql << "create table if not exists grid_data_configuration (" \
+           "id integer primary key, " \
+           "name varchar(255) not null" \
+    ")";
+    
+    sql << "create table if not exists grid_data (" \
+           "id integer primary key, " \
+           "name varchar(255) not null, " \
+           "input_type integer not null, " \
+           "grid_type integer not null, " \
+           "input_poly_data text not null, " \
+           "interpolated_poly_data text not null, " \
+           "exponent float, " \
+           "radius float, " \
+           "grid_data_configuration_id integer not null" \
+           "mesh_id integer not null" \
     ")";
 
     QSqlQuery query(database);
