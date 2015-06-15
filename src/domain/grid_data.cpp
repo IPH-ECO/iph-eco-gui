@@ -10,7 +10,6 @@
 #include <vtkXMLPolyDataReader.h>
 #include <vtkDoubleArray.h>
 #include <vtkIdTypeArray.h>
-#include <vtkCellArray.h>
 #include <vtkPointData.h>
 #include <vtkCellData.h>
 #include <vtkTriangle.h>
@@ -112,7 +111,6 @@ void GridData::buildInputPolyData() {
         throw GridDataException("No points returned in grid data file.");
     }
     
-    vtkSmartPointer<vtkCellArray> vertices = vtkSmartPointer<vtkCellArray>::New();
     vtkSmartPointer<vtkDoubleArray> weights = vtkSmartPointer<vtkDoubleArray>::New();
     weights->SetNumberOfComponents(1);
     weights->SetNumberOfTuples(numberOfPoints);
@@ -124,12 +122,10 @@ void GridData::buildInputPolyData() {
 
         GeographicLib::GeoCoords utmCoordinate(point[1], point[0]);
         inputPoints->SetPoint(i, utmCoordinate.Easting(), utmCoordinate.Northing(), 0.0);
-        vertices->InsertNextCell(i);
         weights->SetTuple1(i, point[2]);
     }
     
     inputPolyData->GetPointData()->SetScalars(weights);
-    inputPolyData->SetVerts(vertices);
 }
 
 void GridData::interpolate() {
@@ -138,8 +134,6 @@ void GridData::interpolate() {
     vtkPolyData *meshPolyData = mesh->getPolyData();
     vtkSmartPointer<vtkDoubleArray> interpolatedWeightsArray = vtkSmartPointer<vtkDoubleArray>::New();
     const char *gridDataName = name.toStdString().c_str();
-    
-    meshPolyData->GetCellData()->RemoveArray(gridDataName);
     
     interpolatedWeightsArray->SetName(gridDataName);
     interpolatedWeightsArray->SetNumberOfComponents(1);
@@ -151,7 +145,7 @@ void GridData::interpolate() {
     inputPoints->GetBounds(inputPointsBounds);
     
     for (vtkIdType i = 0; i < meshPolyData->GetNumberOfCells(); i++) {
-        double tuple[1] = { 0.0 }; // TODO: define out of range value
+        double weight = 0.0; // TODO: define out of range value
         
         if (mesh->instanceOf("UnstructuredMesh")) {
             vtkTriangle *triangle = vtkTriangle::SafeDownCast(meshPolyData->GetCell(i));
@@ -195,24 +189,29 @@ void GridData::interpolate() {
                 }
             }
             
+            if (interpolationCanceled) {
+                break;
+            }
+            
             if (inscribedPointsIndexes->GetNumberOfTuples() == 0) {
-                tuple[0] = calculateNearestWeight(cellCenter);
+                weight = calculateNearestWeight(cellCenter);
             } else {
-                tuple[0] = inverseOfDistance(inscribedPointsIndexes, cellCenter);
+                weight = inverseOfDistance(inscribedPointsIndexes, cellCenter);
             }
         } else { // GridDataInputType::POLYGON
             double *gridDataPointer = static_cast<double*>(inputPoints->GetData()->GetVoidPointer(0));
             
             if (vtkPolygon::PointInPolygon(cellCenter, inputPoints->GetNumberOfPoints(), gridDataPointer, inputPointsBounds, normal)) {
-                tuple[0] = inputPoints->GetData()->GetTuple1(0);
+                weight = inputPoints->GetData()->GetTuple1(0);
             }
         }
         
-        interpolatedWeightsArray->SetTuple(i, tuple);
+        interpolatedWeightsArray->SetTuple1(i, weight);
         emit updateProgress(i);
     }
     
     if (!interpolationCanceled) {
+        meshPolyData->GetCellData()->RemoveArray(gridDataName);
         meshPolyData->GetCellData()->AddArray(interpolatedWeightsArray);
         meshPolyData->GetCellData()->SetActiveScalars(gridDataName);
     }
@@ -229,7 +228,7 @@ double GridData::inverseOfDistance(vtkIdTypeArray *inscribedPointsIndexes, doubl
         
         double distance = sqrt(pow(point[0] - cellCenter[0], 2.0) + pow(point[1] - cellCenter[1], 2.0));
         double distancePow = pow(distance, exponent);
-        numerator += inputPolyData->GetPointData()->GetScalars()->GetTuple1(i) / distancePow;
+        numerator += inputPolyData->GetPointData()->GetScalars()->GetTuple1(tupleIndex) / distancePow;
         denominator += 1.0 / distancePow;
     }
     
