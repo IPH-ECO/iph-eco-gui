@@ -40,7 +40,7 @@ void DatabaseUtility::createApplicationTables(QSqlDatabase &database) {
            "type varchar(255) not null, " \
            "coordinates_distance float default 0, " \
            "poly_data text not null, " \
-           "resolution integer " \
+           "resolution integer" \
     ")";
 
     sql << "create table if not exists mesh_polygon (" \
@@ -65,7 +65,7 @@ void DatabaseUtility::createApplicationTables(QSqlDatabase &database) {
            "input_poly_data text not null, " \
            "exponent float, " \
            "radius float, " \
-           "grid_data_configuration_id integer not null" \
+           "grid_data_configuration_id integer not null, " \
            "mesh_id integer not null" \
     ")";
 

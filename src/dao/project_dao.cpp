@@ -116,6 +116,7 @@ void ProjectDAO::save(Project *project) {
         
         project->setId(1);
         saveMeshes(db, project);
+        saveGridDataConfigurations(db, project);
         QSqlDatabase::database().commit();
     } catch (const DatabaseException &e) {
         QSqlDatabase::database().rollback();
@@ -252,6 +253,7 @@ void ProjectDAO::saveGridDataConfigurations(QSqlDatabase &db, Project *project) 
         
         configuration->setId(query.lastInsertId().toUInt());
         configurationIds.append(QString::number(configuration->getId()));
+        saveGridData(db, configuration);
     }
     
     // Handle exclusions
@@ -288,7 +290,7 @@ void ProjectDAO::saveGridData(QSqlDatabase &db, GridDataConfiguration *gridDataC
                           "where id = :i");
             query.bindValue(":i", gridData->getId());
         } else {
-            query.prepare("insert into grid_data values (name, input_type, grid_type, input_poly_data, exponent, radius, grid_data_configuration_id, mesh_id) " \
+            query.prepare("insert into grid_data (name, input_type, grid_type, input_poly_data, exponent, radius, grid_data_configuration_id, mesh_id) " \
                           "values (:n, :it, :gt, :ipd, :e, :r, :gdc, :m)");
             query.bindValue(":gdc", gridDataConfiguration->getId());
             query.bindValue(":m", gridData->getMesh()->getId());
