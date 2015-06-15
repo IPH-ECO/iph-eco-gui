@@ -56,10 +56,6 @@ vtkPolyData* GridData::getInputPolyData() {
     return inputPolyData;
 }
 
-vtkPolyData* GridData::getInterpolatedPolyData() {
-    return interpolatedPolyData;
-}
-
 double GridData::getExponent() const {
     return exponent;
 }

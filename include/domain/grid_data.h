@@ -25,7 +25,6 @@ private:
     GridDataType gridDataType;
     GridDataInputType gridDataInputType;
     vtkSmartPointer<vtkPolyData> inputPolyData;
-    vtkSmartPointer<vtkPolyData> interpolatedPolyData;
     double exponent;
     double radius;
     GridDataConfiguration *gridDataConfiguration;

@@ -63,7 +63,6 @@ void DatabaseUtility::createApplicationTables(QSqlDatabase &database) {
            "input_type integer not null, " \
            "grid_type integer not null, " \
            "input_poly_data text not null, " \
-           "interpolated_poly_data text not null, " \
            "exponent float, " \
            "radius float, " \
            "grid_data_configuration_id integer not null" \

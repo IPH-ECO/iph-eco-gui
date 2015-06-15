@@ -267,12 +267,12 @@ void ProjectDAO::saveGridData(QSqlDatabase &db, GridDataConfiguration *gridDataC
         QSqlQuery query(db);
         
         if (gridData->isPersisted()) {
-            query.prepare("update grid_data set name = :n, input_type = :it, grid_type = :gt, input_poly_data = :ipd1, interpolated_poly_data = :ipd2, exponent = :e, radius = :r " \
+            query.prepare("update grid_data set name = :n, input_type = :it, grid_type = :gt, input_poly_data = :ipd, exponent = :e, radius = :r " \
                           "where id = :i");
             query.bindValue(":i", gridData->getId());
         } else {
-            query.prepare("insert into grid_data values (name, input_type, grid_type, input_poly_data, interpolated_poly_data, exponent, radius, grid_data_configuration_id, mesh_id) " \
-                          "values (:n, :it, :gt, :ipd1, :ipd2, :e, :r, :gdc, :m)");
+            query.prepare("insert into grid_data values (name, input_type, grid_type, input_poly_data, exponent, radius, grid_data_configuration_id, mesh_id) " \
+                          "values (:n, :it, :gt, :ipd, :e, :r, :gdc, :m)");
             query.bindValue(":gdc", gridDataConfiguration->getId());
             query.bindValue(":m", gridData->getMesh()->getId());
         }
@@ -280,8 +280,7 @@ void ProjectDAO::saveGridData(QSqlDatabase &db, GridDataConfiguration *gridDataC
         query.bindValue(":n", gridData->getName());
         query.bindValue(":it", (int) gridData->getGridDataInputType());
         query.bindValue(":gt", (int) gridData->getGridDataType());
-        query.bindValue(":ipd1", gridData->getInputPolyDataAsString());
-        query.bindValue(":ipd2", gridData->getName());
+        query.bindValue(":ipd", gridData->getInputPolyDataAsString());
         query.bindValue(":e", gridData->getExponent());
         query.bindValue(":r", gridData->getRadius());
         
