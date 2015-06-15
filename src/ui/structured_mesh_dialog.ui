@@ -277,7 +277,7 @@
              </property>
              <property name="icon">
               <iconset resource="../../icons.qrc">
-               <normaloff>:/icons/list-remove.png</normaloff>:/icons/list-remove.png</iconset>
+               <normaloff>:/icons/list-delete.png</normaloff>:/icons/list-delete.png</iconset>
              </property>
             </widget>
            </item>

@@ -43,7 +43,7 @@
    <item row="2" column="1">
     <widget class="QLineEdit" name="edtInputFile">
      <property name="text">
-      <string/>
+      <string>/Users/joaoroberto/Downloads/iph-eco/xyz_celmm.txt</string>
      </property>
     </widget>
    </item>
@@ -137,6 +137,9 @@
        <property name="text">
         <string>Point</string>
        </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
       </widget>
      </item>
      <item>
@@ -158,10 +161,10 @@
    <item row="3" column="1" colspan="2">
     <widget class="QComboBox" name="cbxGridInformation">
      <property name="currentText">
-      <string/>
+      <string>Bathymetry</string>
      </property>
      <property name="currentIndex">
-      <number>-1</number>
+      <number>0</number>
      </property>
      <item>
       <property name="text">
@@ -193,7 +196,11 @@
     </widget>
    </item>
    <item row="0" column="1" colspan="2">
-    <widget class="QLineEdit" name="edtName"/>
+    <widget class="QLineEdit" name="edtName">
+     <property name="text">
+      <string>qwer</string>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>
