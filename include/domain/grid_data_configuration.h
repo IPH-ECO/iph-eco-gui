@@ -11,7 +11,7 @@ class GridDataConfiguration : public QObject {
 private:
     uint id;
     QString name;
-    QVector<GridData*> gridDataVector;
+    QVector<GridData*> gridDataVector; // TODO: change to qset
     
 public:
     GridDataConfiguration();

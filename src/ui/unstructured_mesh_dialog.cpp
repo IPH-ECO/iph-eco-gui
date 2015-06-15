@@ -18,7 +18,7 @@ UnstructuredMeshDialog::UnstructuredMeshDialog(QWidget *parent) :
     Project *project = IPHApplication::getCurrentProject();
     QSet<Mesh*> meshes = project->getMeshes();
 
-    for (QSet<Mesh*>::iterator it = meshes.begin(); it != meshes.end(); ++it) {
+    for (QSet<Mesh*>::const_iterator it = meshes.begin(); it != meshes.end(); ++it) {
         if ((*it)->instanceOf("UnstructuredMesh")) {
             ui->cbxMeshName->addItem((*it)->getName());
         }

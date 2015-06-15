@@ -12,6 +12,7 @@
 #include <GeographicLib/GeoCoords.hpp>
 #include <vtkXMLPolyDataWriter.h>
 #include <vtkXMLPolyDataReader.h>
+#include <vtkCellData.h>
 
 Mesh::Mesh() : id(0), boundaryPolygon(NULL), coordinatesDistance(0.0), generationCanceled(false), showBoundaryEdges(true), showMesh(true) {}
 
@@ -188,6 +189,10 @@ double Mesh::area() {
     }
 
     return area;
+}
+
+void Mesh::setActiveScalars(const QString &arrayName) {
+    polyData->GetCellData()->SetActiveScalars(arrayName.toStdString().c_str());
 }
 
 bool Mesh::isPersisted() const {

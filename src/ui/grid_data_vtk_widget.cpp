@@ -14,9 +14,10 @@
 #include <vtkPolyData.h>
 #include <vtkProperty.h>
 #include <QList>
-#include <QDebug>
 
 GridDataVTKWidget::GridDataVTKWidget(QWidget *parent) : QVTKWidget(parent), showMesh(true), showGridDataPoints(true), showInterpolationResult(false) {
+    gridDataActor = vtkSmartPointer<vtkActor>::New();
+    meshActor = vtkSmartPointer<vtkActor>::New();
     renderer = vtkSmartPointer<vtkRenderer>::New();
     renderer->SetBackground(1, 1, 1);
 }
@@ -36,14 +37,13 @@ void GridDataVTKWidget::render(Mesh *mesh) {
     
     meshMapper->SetInputData(gridPolyData);
     meshMapper->SetScalarModeToUseCellData();
+    meshMapper->SetColorModeToMapScalars();
     if (this->showInterpolationResult) {
         meshMapper->ScalarVisibilityOn();
     } else {
         meshMapper->ScalarVisibilityOff();
     }
     
-    meshActor = vtkSmartPointer<vtkActor>::New();
-    meshActor->GetProperty()->LightingOff();
     meshActor->SetMapper(meshMapper);
     
     if (this->showMesh) {
@@ -85,34 +85,26 @@ void GridDataVTKWidget::render(GridData *gridData) {
     vtkSmartPointer<vtkPolyDataMapper> gridDataMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
     double *interval = gridDataInputPolyData->GetPointData()->GetScalars()->GetRange();
     vtkSmartPointer<vtkLookupTable> lut = vtkSmartPointer<vtkLookupTable>::New();
-
+    
     lut->SetTableRange(interval[0], interval[1]);
-//    lut->SetHueRange(0, 1);
-//    lut->SetSaturationRange(0, 1);
-//    lut->SetValueRange(0, 1);
-//    lut->SetAlphaRange(0, 1);
-//    lut->Build();
     
     gridDataMapper->SetInputData(gridDataInputPolyData);
-    gridDataMapper->UseLookupTableScalarRangeOn();
     gridDataMapper->SetLookupTable(lut);
-    gridDataMapper->ScalarVisibilityOn();
+    gridDataMapper->UseLookupTableScalarRangeOn();
     gridDataMapper->SetScalarModeToUsePointData();
-    gridDataMapper->SetColorModeToMapScalars();
-    
-    vtkSmartPointer<vtkScalarBarActor> scalarBar = vtkSmartPointer<vtkScalarBarActor>::New();
-    scalarBar->SetTitle(gridData->gridDataTypeToString().toStdString().c_str());
-    scalarBar->SetNumberOfLabels(5);
-    scalarBar->SetLookupTable(lut);
-    
-    gridDataActor = vtkSmartPointer<vtkActor>::New();
-    gridDataActor->SetMapper(gridDataMapper);
     
     if (showGridDataPoints) {
         gridDataActor->VisibilityOn();
     } else {
         gridDataActor->VisibilityOff();
     }
+    
+    gridDataActor->SetMapper(gridDataMapper);
+    
+    vtkSmartPointer<vtkScalarBarActor> scalarBar = vtkSmartPointer<vtkScalarBarActor>::New();
+    scalarBar->SetTitle(gridData->getName().toStdString().c_str());
+    scalarBar->SetNumberOfLabels(10);
+    scalarBar->SetLookupTable(lut);
     
     renderer->AddActor(gridDataActor);
     renderer->AddActor2D(scalarBar);
@@ -130,6 +122,7 @@ void GridDataVTKWidget::setShowMesh(const bool &value) {
 
 void GridDataVTKWidget::setShowGridDataPoints(const bool &value) {
     this->showGridDataPoints = value;
+    
     if (value) {
         gridDataActor->VisibilityOn();
     } else {
@@ -140,7 +133,7 @@ void GridDataVTKWidget::setShowGridDataPoints(const bool &value) {
 
 void GridDataVTKWidget::setShowInterpolationResult(const bool &value) {
     this->showInterpolationResult = value;
-    if (this->showInterpolationResult) {
+    if (value) {
         meshMapper->ScalarVisibilityOn();
     } else {
         meshMapper->ScalarVisibilityOff();

@@ -58,6 +58,7 @@ public:
     bool getShowMesh() const;
 
     double area();
+    void setActiveScalars(const QString &arrayName);
 
     virtual bool instanceOf(const QString &type) = 0;
     virtual void generate() = 0;

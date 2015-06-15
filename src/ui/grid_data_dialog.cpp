@@ -12,7 +12,6 @@
 #include <QVector>
 #include <QObject>
 #include <QProgressDialog>
-#include <QDebug>
 
 GridDataDialog::GridDataDialog(QWidget *parent) :
     QDialog(parent), ui(new Ui::GridDataDialog),
@@ -69,7 +68,7 @@ void GridDataDialog::on_cbxConfiguration_currentIndexChanged(const QString &conf
         currentMesh = gridDataVector.at(0)->getMesh();
 
         ui->edtConfigurationName->setText(currentConfiguration->getName());
-//        ui->cbxMesh->setCurrentText(currentConfiguration->getMesh()->getName());
+        ui->cbxMesh->setCurrentText(currentConfiguration->getMesh()->getName());
 
         for (int i = 0; i < gridDataVector.count(); i++) {
             int rowCount = ui->tblGridInformation->rowCount();
@@ -83,6 +82,10 @@ void GridDataDialog::on_cbxConfiguration_currentIndexChanged(const QString &conf
         }
 
         ui->gridDataVTKWidget->render(currentMesh);
+        ui->btnShowGridDataPoints->setEnabled(true);
+        ui->btnShowGridDataPoints->toggled(false);
+        ui->btnShowInterpolationResult->setEnabled(true);
+        ui->btnShowInterpolationResult->toggled(true);
         toggleGridDataConfigurationForm(true);
     }
 }
@@ -161,6 +164,17 @@ void GridDataDialog::on_tblGridInformation_itemDoubleClicked(QTableWidgetItem *i
         inputTypeItem->setText(gridData->gridDataInputTypeToString());
         gridInformationItem->setText(gridData->gridDataTypeToString());
     }
+}
+
+void GridDataDialog::on_tblGridInformation_itemClicked(QTableWidgetItem *item) {
+    QString gridDataName = ui->tblGridInformation->item(item->row(), 0)->text();
+    GridData *gridData = currentConfiguration->getGridData(gridDataName);
+    
+    currentMesh->setActiveScalars(gridDataName);
+    ui->gridDataVTKWidget->setShowInterpolationResult(true);
+    ui->btnShowInterpolationResult->setChecked(true);
+    ui->gridDataVTKWidget->render(gridData);
+    ui->btnEditGridInformation->setEnabled(true);
 }
 
 void GridDataDialog::on_btnRemoveGridInformation_clicked() {
