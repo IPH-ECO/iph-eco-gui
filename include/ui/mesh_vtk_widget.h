@@ -14,14 +14,18 @@ private:
 	vtkSmartPointer<vtkRenderer> renderer;
 	vtkSmartPointer<vtkActor> boundaryEdgesActor;
 	vtkSmartPointer<vtkActor> gridActor;
+    
+    bool showBoundaryEdges;
+    bool showMesh;
+    bool showUTMCoordinates;
 
 public:
     MeshVTKWidget(QWidget *parent);
     ~MeshVTKWidget();
     void render(Mesh *mesh);
     void clear();
-    void showBoundaryEdges(const bool &show);
-    void showMesh(const bool &show);
+    void setShowBoundaryEdges(const bool &show);
+    void setShowMesh(const bool &show);
 };
 
 #endif // MESH_VTK_WIDGET_H

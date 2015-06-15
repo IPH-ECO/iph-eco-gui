@@ -14,7 +14,7 @@
 #include <vtkXMLPolyDataReader.h>
 #include <vtkCellData.h>
 
-Mesh::Mesh() : id(0), boundaryPolygon(NULL), coordinatesDistance(0.0), generationCanceled(false), showBoundaryEdges(true), showMesh(true) {}
+Mesh::Mesh() : id(0), boundaryPolygon(NULL), coordinatesDistance(0.0), generationCanceled(false) {}
 
 Mesh::~Mesh() {
     this->clear();
@@ -147,22 +147,6 @@ MeshPolygon* Mesh::getMeshPolygon(const QString &filename, const MeshPolygonType
     // }
 
     // return &(*it);
-}
-
-void Mesh::setShowBoundaryEdges(const bool &toggle) {
-    this->showBoundaryEdges = toggle;
-}
-
-bool Mesh::getShowBoundaryEdges() const {
-    return this->showBoundaryEdges;
-}
-
-void Mesh::setShowMesh(const bool &toggle) {
-    this->showMesh = toggle;
-}
-
-bool Mesh::getShowMesh() const {
-    return this->showMesh;
 }
 
 void Mesh::clear() {

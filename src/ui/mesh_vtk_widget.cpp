@@ -18,7 +18,7 @@
 
 vtkStandardNewMacro(MouseInteractor);
 
-MeshVTKWidget::MeshVTKWidget(QWidget *parent) : QVTKWidget(parent) {}
+MeshVTKWidget::MeshVTKWidget(QWidget *parent) : QVTKWidget(parent), showBoundaryEdges(true), showMesh(true), showUTMCoordinates(false) {}
 
 MeshVTKWidget::~MeshVTKWidget() {}
 
@@ -65,12 +65,14 @@ void MeshVTKWidget::render(Mesh *mesh) {
 
     vtkSmartPointer<vtkPolyDataMapper> domainMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
     domainMapper->SetInputData(domainEdges->GetOutput());
-
+    
     this->boundaryEdgesActor = vtkSmartPointer<vtkActor>::New();
     this->boundaryEdgesActor->SetMapper(domainMapper);
     this->boundaryEdgesActor->GetProperty()->EdgeVisibilityOn();
 
-    if (!mesh->getShowBoundaryEdges()) {
+    if (showBoundaryEdges) {
+        this->boundaryEdgesActor->VisibilityOn();
+    } else {
         this->boundaryEdgesActor->VisibilityOff();
     }
 
@@ -80,13 +82,15 @@ void MeshVTKWidget::render(Mesh *mesh) {
     vtkSmartPointer<vtkPolyData> gridPolyData = mesh->getPolyData();
     vtkSmartPointer<vtkPolyDataMapper> gridMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
     gridMapper->SetInputData(gridPolyData);
+    gridMapper->ScalarVisibilityOff();
     
     this->gridActor = vtkSmartPointer<vtkActor>::New();
     this->gridActor->SetMapper(gridMapper);
-    // this->gridActor->GetProperty()->SetColor(1, 1, 1);
     this->gridActor->GetProperty()->EdgeVisibilityOn();
 
-    if (!mesh->getShowMesh()) {
+    if (showMesh) {
+        this->gridActor->VisibilityOn();
+    } else {
         this->gridActor->VisibilityOff();
     }
 
@@ -126,7 +130,8 @@ void MeshVTKWidget::clear() {
     }
 }
 
-void MeshVTKWidget::showBoundaryEdges(const bool &show) {
+void MeshVTKWidget::setShowBoundaryEdges(const bool &show) {
+    this->showBoundaryEdges = show;
     if (show) {
         this->boundaryEdgesActor->VisibilityOn();
     } else {
@@ -135,7 +140,8 @@ void MeshVTKWidget::showBoundaryEdges(const bool &show) {
     this->update();
 }
 
-void MeshVTKWidget::showMesh(const bool &show) {
+void MeshVTKWidget::setShowMesh(const bool &show) {
+    this->showMesh = show;
     if (show) {
         this->gridActor->VisibilityOn();
     } else {

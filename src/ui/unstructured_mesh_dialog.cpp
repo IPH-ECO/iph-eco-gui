@@ -96,13 +96,11 @@ void UnstructuredMeshDialog::on_btnRemoveIsland_clicked() {
 }
 
 void UnstructuredMeshDialog::on_chkShowBoundaryEdges_clicked(bool checked) {
-    currentMesh->setShowBoundaryEdges(checked);
-    ui->meshVTKWidget->showBoundaryEdges(checked);
+    ui->meshVTKWidget->setShowBoundaryEdges(checked);
 }
 
 void UnstructuredMeshDialog::on_chkShowMesh_clicked(bool checked) {
-    currentMesh->setShowMesh(checked);
-    ui->meshVTKWidget->showMesh(checked);
+    ui->meshVTKWidget->setShowMesh(checked);
 }
 
 void UnstructuredMeshDialog::on_lstCoordinateFiles_itemSelectionChanged() {
@@ -264,8 +262,8 @@ void UnstructuredMeshDialog::on_cbxMeshName_currentIndexChanged(int index) {
         ui->lstCoordinateFiles->setCurrentRow(0);
         ui->sbxMinimumAngle->setValue(currentMesh->getBoundaryPolygon()->getMinimumAngle());
         ui->sbxMaximumEdgeLength->setValue(currentMesh->getBoundaryPolygon()->getMaximumEdgeLength());
-        ui->chkShowBoundaryEdges->setChecked(currentMesh->getShowBoundaryEdges());
-        ui->chkShowMesh->setChecked(currentMesh->getShowMesh());
+        ui->chkShowBoundaryEdges->setChecked(true);
+        ui->chkShowMesh->setChecked(true);
         ui->btnCancelMesh->setText("Done");
         ui->lstIslands->clear();
         for (QList<MeshPolygon*>::const_iterator it = islands.begin(); it != islands.end(); it++) {

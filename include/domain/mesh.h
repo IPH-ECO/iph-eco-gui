@@ -18,13 +18,9 @@ protected:
     QList<MeshPolygon*> islands;
     QList<MeshPolygon*> refinementAreas;
     vtkSmartPointer<vtkPolyData> polyData;
-    
-    // Move to UI classes
+
     // Transient attributes
     bool generationCanceled;
-    bool showBoundaryEdges;
-    bool showMesh;
-    bool showUTMCoordinates;
 
 private:
     void filterCoordinates(MeshPolygon *meshPolygon);
@@ -51,11 +47,6 @@ public:
     void addMeshPolygon(MeshPolygon *meshPolygon);
     void removeMeshPolygon(const QString &filename, const MeshPolygonType &meshPolygonType);
     MeshPolygon* getMeshPolygon(const QString &filename, const MeshPolygonType &meshPolygonType);
-
-    void setShowBoundaryEdges(const bool &toogle);
-    bool getShowBoundaryEdges() const;
-    void setShowMesh(const bool &toogle);
-    bool getShowMesh() const;
 
     double area();
     void setActiveScalars(const QString &arrayName);

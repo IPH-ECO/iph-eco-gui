@@ -91,13 +91,11 @@ void StructuredMeshDialog::on_btnRemoveIsland_clicked() {
 }
 
 void StructuredMeshDialog::on_chkShowBoundaryEdges_clicked(bool checked) {
-    currentMesh->setShowBoundaryEdges(checked);
-    ui->meshVTKWidget->showBoundaryEdges(checked);
+    ui->meshVTKWidget->setShowBoundaryEdges(checked);
 }
 
 void StructuredMeshDialog::on_chkShowMesh_clicked(bool checked) {
-    currentMesh->setShowMesh(checked);
-    ui->meshVTKWidget->showMesh(checked);
+    ui->meshVTKWidget->setShowMesh(checked);
 }
 
 void StructuredMeshDialog::on_btnGenerateMesh_clicked() {
