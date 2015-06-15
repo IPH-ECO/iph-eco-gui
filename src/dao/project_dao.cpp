@@ -254,13 +254,30 @@ void ProjectDAO::saveGridDataConfigurations(QSqlDatabase &db, Project *project) 
         configurationIds.append(QString::number(configuration->getId()));
     }
     
-//    QSqlQuery query(db);
+    // Handle exclusions
+    QSqlQuery query(db);
+    QString configurationDeleteSql, gridDataDeleteSql;
     
-//    query.prepare("delete from )
+    if (configurationIds.isEmpty()) {
+        configurationDeleteSql = "delete from grid_data_configuration";
+        gridDataDeleteSql = "delete from grid_data";
+    } else {
+        QString configurationIdsStr = configurationIds.join(",");
+        
+        configurationDeleteSql = "delete from grid_data_configuration where id not in (" + configurationIdsStr + ")";
+        gridDataDeleteSql = "delete from grid_data where grid_data_configuration_id not in (" + configurationIdsStr + ")";
+    }
+    
+    query.prepare(configurationDeleteSql);
+    query.exec();
+    
+    query.prepare(gridDataDeleteSql);
+    query.exec();
 }
 
 void ProjectDAO::saveGridData(QSqlDatabase &db, GridDataConfiguration *gridDataConfiguration) {
     QVector<GridData*> gridDataVector = gridDataConfiguration->getGridDataVector();
+    QStringList gridDataIds;
     
     for (int i = 0; i < gridDataVector.size(); i++) {
         GridData *gridData = gridDataVector.at(i);
@@ -287,5 +304,13 @@ void ProjectDAO::saveGridData(QSqlDatabase &db, GridDataConfiguration *gridDataC
         if (!query.exec()) {
             throw DatabaseException(QString("Unable to save grid data configurations. Error: %1.").arg(query.lastError().text()));
         }
+        
+        gridData->setId(query.lastInsertId().toUInt());
+        gridDataIds.append(QString::number(gridData->getId()));
     }
+    
+    QSqlQuery query(db);
+    
+    query.prepare("delete from grid_data where id not in (" + gridDataIds.join(",") + ") and grid_data_configuration_id = " + QString::number(gridDataConfiguration->getId()));
+    query.exec();
 }
