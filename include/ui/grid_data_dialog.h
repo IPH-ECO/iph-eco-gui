@@ -28,6 +28,7 @@ private slots:
     void on_cbxMesh_currentIndexChanged(const QString &meshName);
     void on_cbxConfiguration_currentIndexChanged(const QString &configurationName);
     void on_btnAddGridInfomation_clicked();
+    void on_btnEditGridInformation_clicked();
     void on_btnRemoveGridInformation_clicked();
     void on_btnSaveConfiguration_clicked();
     void on_btnSaveAsNewConfiguration_clicked();

@@ -152,6 +152,14 @@ void GridDataDialog::on_btnAddGridInfomation_clicked() {
     }
 }
 
+void GridDataDialog::on_btnEditGridInformation_clicked() {
+    QTableWidgetItem *item = ui->tblGridInformation->currentItem();
+    
+    if (item != nullptr) {
+        on_tblGridInformation_itemDoubleClicked(item);
+    }
+}
+
 void GridDataDialog::on_tblGridInformation_itemDoubleClicked(QTableWidgetItem *item) {
     GridData *gridData = currentConfiguration->getGridData(item->row());
     GridInformationDialog *gridInformationDialog = new GridInformationDialog(this, currentConfiguration, gridData);
