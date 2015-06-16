@@ -10,6 +10,7 @@ enum class MeshPolygonType { BOUNDARY = 1, ISLAND, REFINEMENT_AREA };
 class MeshPolygon {
 private:
     uint id;
+    QString name;
     MeshPolygonType meshPolygonType;
     vtkSmartPointer<vtkPolygon> originalPolygon;
     vtkSmartPointer<vtkPolygon> filteredPolygon;
@@ -22,20 +23,17 @@ private:
     QString filename;
 
 public:
-    static const QString BOUNDARY_POLYGON_FILENAME;
+    static const QString BOUNDARY_POLYGON_NAME;
     static const double DEFAULT_MINIMUM_ANGLE;
     static const double DEFAULT_MAXIMUM_EDGE_LENGTH;
 
     MeshPolygon();
-    MeshPolygon(const QString &filename, const MeshPolygonType &meshPolygonType);
-
-    void build();
-    void filter(double &distanceFilter);
-    bool pointInPolygon(double *point);
-    double area();
+    MeshPolygon(const QString &name, const QString &filename, const MeshPolygonType &meshPolygonType);
 
     void setId(const uint &id);
     uint getId() const;
+    void setName(const QString &name);
+    QString getName() const;
     void setFilename(const QString &filename);
     QString getFilename() const;
     void setMeshPolygonType(const MeshPolygonType &meshPolygonType);
@@ -52,6 +50,10 @@ public:
     double getMaximumEdgeLength() const;
     void setInitialCriteria();
     
+    void build();
+    void filter(double &distanceFilter);
+    bool pointInPolygon(double *point);
+    double area();
     bool isPersisted() const;
 
     inline bool isBoundary() const {

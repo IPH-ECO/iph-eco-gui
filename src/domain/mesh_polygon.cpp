@@ -13,7 +13,7 @@
 #include <vtkCellArray.h>
 #include <vtkPoints.h>
 
-const QString MeshPolygon::BOUNDARY_POLYGON_FILENAME = "Main";
+const QString MeshPolygon::BOUNDARY_POLYGON_NAME = "Boundary";
 
 const double MeshPolygon::DEFAULT_MINIMUM_ANGLE = 20.7;
 
@@ -21,7 +21,8 @@ const double MeshPolygon::DEFAULT_MAXIMUM_EDGE_LENGTH = 0.5;
 
 MeshPolygon::MeshPolygon() : id(0) {}
 
-MeshPolygon::MeshPolygon(const QString &filename, const MeshPolygonType &meshPolygonType) : id(0), meshPolygonType(meshPolygonType), filename(filename) {}
+MeshPolygon::MeshPolygon(const QString &name, const QString &filename, const MeshPolygonType &meshPolygonType) :
+    id(0), name(name), meshPolygonType(meshPolygonType), filename(filename) {}
 
 void MeshPolygon::build() {
     QFile kmlFile(this->filename);
@@ -137,6 +138,14 @@ void MeshPolygon::setId(const uint &id) {
 
 uint MeshPolygon::getId() const {
     return id;
+}
+
+void MeshPolygon::setName(const QString &name) {
+    this->name = name;
+}
+
+QString MeshPolygon::getName() const {
+    return name;
 }
 
 void MeshPolygon::setFilename(const QString &filename) {

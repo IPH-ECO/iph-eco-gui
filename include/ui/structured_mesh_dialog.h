@@ -1,14 +1,15 @@
 #ifndef STRUCTURED_MESH_DIALOG_H
 #define STRUCTURED_MESH_DIALOG_H
 
+#include "include/domain/structured_mesh.h"
+
 #include <QDialog>
 #include <QWidget>
 #include <QFileDialog>
 #include <QInputDialog>
 #include <QMessageBox>
 #include <QSettings>
-
-#include "include/domain/structured_mesh.h"
+#include <QModelIndex>
 
 namespace Ui {
     class StructuredMeshDialog;
@@ -30,13 +31,13 @@ private slots:
     void on_btnBoundaryFileBrowser_clicked();
     void on_btnAddIsland_clicked();
     void on_btnRemoveIsland_clicked();
-    void on_chkShowBoundaryEdges_clicked(bool checked);
-    void on_chkShowMesh_clicked(bool checked);
     void on_btnGenerateMesh_clicked();
     void on_btnSaveMesh_clicked();
     void on_btnCancelMesh_clicked();
     void on_btnRemoveMesh_clicked();
     void on_cbxMeshName_currentIndexChanged(int index);
+    void on_lstIslands_currentTextChanged(const QString &currentText);
+    void on_islandItemEdited(const QModelIndex &topLeft, const QModelIndex &bottomRight);
 
 private:
     const QString BOUNDARY_DEFAULT_DIR_KEY;
@@ -45,6 +46,7 @@ private:
     StructuredMesh *unsavedMesh;
     StructuredMesh *currentMesh;
     QSettings *appSettings;
+    QString currentMeshPolygonName;
 
     QString getDefaultDirectory();
     void enableMeshForm(bool enable);

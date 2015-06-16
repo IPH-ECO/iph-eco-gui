@@ -43,10 +43,10 @@ public:
     QString getPolyDataAsString() const;
     void loadMeshPolygonsFromStringPolyData(const QString &polyDataStr);
     
-    MeshPolygon* addMeshPolygon(const QString &filename, const MeshPolygonType &meshPolygonType);
+    MeshPolygon* addMeshPolygon(const QString &name, const QString &filename, const MeshPolygonType &meshPolygonType);
     void addMeshPolygon(MeshPolygon *meshPolygon);
-    void removeMeshPolygon(const QString &filename, const MeshPolygonType &meshPolygonType);
-    MeshPolygon* getMeshPolygon(const QString &filename, const MeshPolygonType &meshPolygonType);
+    void removeMeshPolygon(const QString &name, const MeshPolygonType &meshPolygonType);
+    MeshPolygon* getMeshPolygon(const QString &name, const MeshPolygonType &meshPolygonType) const;
 
     double area();
     void setActiveScalars(const QString &arrayName);

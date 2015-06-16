@@ -14,7 +14,7 @@
 #include <vtkXMLPolyDataReader.h>
 #include <vtkCellData.h>
 
-Mesh::Mesh() : id(0), boundaryPolygon(NULL), coordinatesDistance(0.0), generationCanceled(false) {}
+Mesh::Mesh() : id(0), boundaryPolygon(nullptr), coordinatesDistance(0.0), generationCanceled(false) {}
 
 Mesh::~Mesh() {
     this->clear();
@@ -46,8 +46,8 @@ double Mesh::getCoordinatesDistance() const {
     return this->coordinatesDistance;
 }
 
-MeshPolygon* Mesh::addMeshPolygon(const QString &filename, const MeshPolygonType &meshPolygonType) {
-    MeshPolygon *meshPolygon = new MeshPolygon(filename, meshPolygonType);
+MeshPolygon* Mesh::addMeshPolygon(const QString &name, const QString &filename, const MeshPolygonType &meshPolygonType) {
+    MeshPolygon *meshPolygon = new MeshPolygon(name, filename, meshPolygonType);
 
     try {
         meshPolygon->build();
@@ -126,33 +126,42 @@ void Mesh::cancelGeneration(bool value) {
     this->generationCanceled = value;
 }
 
-void Mesh::removeMeshPolygon(const QString &filename, const MeshPolygonType &meshPolygonType) {
-    for (QList<MeshPolygon*>::iterator it = islands.begin(); it != islands.end(); it++) {
-        MeshPolygon *island = *it;
+void Mesh::removeMeshPolygon(const QString &name, const MeshPolygonType &meshPolygonType) {
+    if (meshPolygonType == MeshPolygonType::BOUNDARY) {
+        throw MeshException("It isn't possible to remove the boundary polygon.");
+    }
+    
+    QList<MeshPolygon*> meshPolygons = islands + refinementAreas;
+    
+    for (QList<MeshPolygon*>::const_iterator it = meshPolygons.begin(); it != meshPolygons.end(); it++) {
+        MeshPolygon *meshPolygon = *it;
 
-        if (island->getFilename() == filename && island->getMeshPolygonType() == meshPolygonType) {
-            islands.removeOne(island);
-            delete island;
+        if (meshPolygon->getName() == name && meshPolygon->getMeshPolygonType() == meshPolygonType) {
+            if (meshPolygonType == MeshPolygonType::ISLAND) {
+                islands.removeOne(meshPolygon);
+            } else {
+                refinementAreas.removeOne(meshPolygon);
+            }
+            delete meshPolygon;
             return;
         }
     }
 }
 
-// Refactor
-MeshPolygon* Mesh::getMeshPolygon(const QString &filename, const MeshPolygonType &meshPolygonType) {
-    // QList<MeshPolygon>::iterator it = qFind(domain.begin(), domain.end(), meshPolygon);
-
-    // if (it == domain.end()) {
-        return NULL;
-    // }
-
-    // return &(*it);
+MeshPolygon* Mesh::getMeshPolygon(const QString &name, const MeshPolygonType &meshPolygonType) const {
+    for (QList<MeshPolygon*>::const_iterator it = islands.begin(); it != islands.end(); it++) {
+        if ((*it)->getName() == name && (*it)->getMeshPolygonType() == meshPolygonType) {
+            return *it;
+        }
+    }
+    
+    return nullptr;
 }
 
 void Mesh::clear() {
     name.clear();
     delete boundaryPolygon;
-    boundaryPolygon = NULL;
+    boundaryPolygon = nullptr;
 
     for (QList<MeshPolygon*>::iterator it = islands.begin(); it != islands.end(); it++) {
         delete *it;

@@ -243,6 +243,9 @@
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
+           <property name="alternatingRowColors">
+            <bool>true</bool>
+           </property>
           </widget>
          </item>
          <item>
@@ -459,6 +462,10 @@
    <class>MeshVTKWidget</class>
    <extends>QWidget</extends>
    <header>include/ui/mesh_vtk_widget.h</header>
+   <slots>
+    <slot>setShowBoundaryEdges(bool)</slot>
+    <slot>setShowMesh(bool)</slot>
+   </slots>
   </customwidget>
  </customwidgets>
  <tabstops>
@@ -481,5 +488,38 @@
  <resources>
   <include location="../../icons.qrc"/>
  </resources>
- <connections/>
+ <connections>
+  <connection>
+   <sender>chkShowBoundaryEdges</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>meshVTKWidget</receiver>
+   <slot>setShowBoundaryEdges(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>230</x>
+     <y>443</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>919</x>
+     <y>380</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>chkShowMesh</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>meshVTKWidget</receiver>
+   <slot>setShowMesh(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>230</x>
+     <y>464</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>919</x>
+     <y>380</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

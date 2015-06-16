@@ -24,8 +24,10 @@ public:
     ~MeshVTKWidget();
     void render(Mesh *mesh);
     void clear();
-    void setShowBoundaryEdges(const bool &show);
-    void setShowMesh(const bool &show);
+
+public slots:
+    void setShowBoundaryEdges(bool show);
+    void setShowMesh(bool show);
 };
 
 #endif // MESH_VTK_WIDGET_H

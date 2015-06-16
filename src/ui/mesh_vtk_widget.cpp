@@ -130,7 +130,7 @@ void MeshVTKWidget::clear() {
     }
 }
 
-void MeshVTKWidget::setShowBoundaryEdges(const bool &show) {
+void MeshVTKWidget::setShowBoundaryEdges(bool show) {
     this->showBoundaryEdges = show;
     if (show) {
         this->boundaryEdgesActor->VisibilityOn();
@@ -140,7 +140,7 @@ void MeshVTKWidget::setShowBoundaryEdges(const bool &show) {
     this->update();
 }
 
-void MeshVTKWidget::setShowMesh(const bool &show) {
+void MeshVTKWidget::setShowMesh(bool show) {
     this->showMesh = show;
     if (show) {
         this->gridActor->VisibilityOn();

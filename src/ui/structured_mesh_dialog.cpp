@@ -1,8 +1,8 @@
 #include "include/ui/structured_mesh_dialog.h"
 #include "ui_structured_mesh_dialog.h"
-
 #include "include/application/iph_application.h"
 #include "include/exceptions/mesh_polygon_exception.h"
+#include "include/ui/island_form.h"
 #include <QProgressDialog>
 
 StructuredMeshDialog::StructuredMeshDialog(QWidget *parent) :
@@ -22,9 +22,11 @@ StructuredMeshDialog::StructuredMeshDialog(QWidget *parent) :
     ui->cbxMeshName->setCurrentIndex(-1);
     
     appSettings = new QSettings(QApplication::organizationName(), QApplication::applicationName(), this);
+    connect(ui->lstIslands->model(), SIGNAL(dataChanged(const QModelIndex&, const QModelIndex&)), this, SLOT(on_islandItemEdited(const QModelIndex&, const QModelIndex&)));
 }
 
 StructuredMeshDialog::~StructuredMeshDialog() {
+    delete appSettings;
     delete unsavedMesh;
     delete ui;
 }
@@ -56,46 +58,28 @@ void StructuredMeshDialog::on_btnBoundaryFileBrowser_clicked() {
 }
 
 void StructuredMeshDialog::on_btnAddIsland_clicked() {
-    QString islandFile = QFileDialog::getOpenFileName(this, tr("Select a island file"), getDefaultDirectory(), "Keyhole Markup Language file (*.kml)");
-
-    if (islandFile.isEmpty()) {
-        return;
+    IslandForm *islandForm = new IslandForm(this, currentMesh);
+    int exitCode = islandForm->exec();
+    
+    if (exitCode == QDialog::Accepted) {
+        MeshPolygon *meshPolygon = islandForm->getMeshPolygon();
+        QListWidgetItem *item = new QListWidgetItem(meshPolygon->getName());
+        item->setFlags(item->flags() | Qt::ItemIsEditable);
+        ui->lstIslands->addItem(item);
     }
-
-    if (!ui->lstIslands->findItems(islandFile, Qt::MatchExactly).empty()) {
-        QMessageBox::information(this, tr("Structured Mesh Generation"), tr("Island file already added."));
-        return;
-    }
-
-    try {
-        currentMesh->addMeshPolygon(islandFile, MeshPolygonType::ISLAND);
-        ui->lstIslands->addItem(islandFile);
-    } catch (const MeshPolygonException &ex) {
-        QMessageBox::critical(this, tr("Structured Mesh Generation"), ex.what());
-    }
+    
+    delete islandForm;
 }
 
 void StructuredMeshDialog::on_btnRemoveIsland_clicked() {
-    QListWidgetItem *currentItem = ui->lstIslands->currentItem();
-
-    if (currentItem != NULL) {
+    if (!currentMeshPolygonName.isEmpty()) {
         QMessageBox::StandardButton question = QMessageBox::question(this, tr("Structured Mesh Generation"), tr("Are you sure you want to remove the selected island?"));
 
         if (question == QMessageBox::Yes) {
-            QString islandFile = currentItem->text();
-
-            currentMesh->removeMeshPolygon(islandFile, MeshPolygonType::ISLAND);
+            currentMesh->removeMeshPolygon(currentMeshPolygonName, MeshPolygonType::ISLAND);
             ui->lstIslands->takeItem(ui->lstIslands->currentRow());
         }
     }
-}
-
-void StructuredMeshDialog::on_chkShowBoundaryEdges_clicked(bool checked) {
-    ui->meshVTKWidget->setShowBoundaryEdges(checked);
-}
-
-void StructuredMeshDialog::on_chkShowMesh_clicked(bool checked) {
-    ui->meshVTKWidget->setShowMesh(checked);
 }
 
 void StructuredMeshDialog::on_btnGenerateMesh_clicked() {
@@ -111,7 +95,7 @@ void StructuredMeshDialog::on_btnGenerateMesh_clicked() {
     enableMeshForm(true);
 
     try {
-        currentMesh->addMeshPolygon(boundaryFileStr, MeshPolygonType::BOUNDARY);
+        currentMesh->addMeshPolygon(MeshPolygon::BOUNDARY_POLYGON_NAME, boundaryFileStr, MeshPolygonType::BOUNDARY);
     } catch (const MeshPolygonException& e) {
         QMessageBox::critical(this, tr("Structured Mesh Generation"), e.what());
         return;
@@ -230,11 +214,23 @@ void StructuredMeshDialog::on_cbxMeshName_currentIndexChanged(int index) {
         ui->btnCancelMesh->setText("Done");
         ui->lstIslands->clear();
         for (QList<MeshPolygon*>::const_iterator it = islands.begin(); it != islands.end(); it++) {
-            ui->lstIslands->addItem((*it)->getFilename());
+            QListWidgetItem *item = new QListWidgetItem((*it)->getName());
+            
+            item->setFlags(item->flags() | Qt::ItemIsEditable);
+            ui->lstIslands->addItem(item);
         }
 
         ui->meshVTKWidget->render(currentMesh);
     } else {
         resetMeshForm();
     }
+}
+
+void StructuredMeshDialog::on_lstIslands_currentTextChanged(const QString &currentText) {
+    currentMeshPolygonName = currentText;
+}
+
+void StructuredMeshDialog::on_islandItemEdited(const QModelIndex &topLeft, const QModelIndex &bottomRight) {
+    MeshPolygon *meshPolygon = currentMesh->getMeshPolygon(currentMeshPolygonName, MeshPolygonType::ISLAND);
+    meshPolygon->setName(topLeft.data().toString());
 }
