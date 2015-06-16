@@ -213,6 +213,7 @@ void StructuredMeshDialog::on_cbxMeshName_currentIndexChanged(int index) {
         ui->sbxResolution->setValue(currentMesh->getResolution());
         ui->btnCancelMesh->setText("Done");
         ui->lstIslands->clear();
+        
         for (QList<MeshPolygon*>::const_iterator it = islands.begin(); it != islands.end(); it++) {
             QListWidgetItem *item = new QListWidgetItem((*it)->getName());
             

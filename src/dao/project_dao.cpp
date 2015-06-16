@@ -77,6 +77,7 @@ void ProjectDAO::loadMeshPolygons(QSqlDatabase &db, Mesh *mesh) {
     while (query.next()) {
         MeshPolygon *meshPolygon = new MeshPolygon();
         meshPolygon->setId(query.value("id").toUInt());
+        meshPolygon->setName(query.value("name").toString());
         meshPolygon->setMeshPolygonType(static_cast<MeshPolygonType>(query.value("type").toInt()));
         meshPolygon->loadPolygonsFromStringPolyData(query.value("poly_data").toString());
         meshPolygon->setMinimumAngle(query.value("minimum_angle").toDouble());
@@ -236,13 +237,14 @@ void ProjectDAO::saveMeshPolygons(QSqlDatabase &db, Mesh *mesh) {
         QSqlQuery query(db);
         
         if (meshPolygon->isPersisted()) {
-            query.prepare("update mesh_polygon set type = :t, poly_data = :p, minimum_angle = :mi, maximum_edge_length = :ma where id = :i");
+            query.prepare("update mesh_polygon set name = :n, type = :t, poly_data = :p, minimum_angle = :mi, maximum_edge_length = :ma where id = :i");
             query.bindValue(":i", meshPolygon->getId());
         } else {
-            query.prepare("insert into mesh_polygon (type, poly_data, minimum_angle, maximum_edge_length, mesh_id) values (:t, :p, :mi, :ma, :me)");
+            query.prepare("insert into mesh_polygon (name, type, poly_data, minimum_angle, maximum_edge_length, mesh_id) values (:n, :t, :p, :mi, :ma, :me)");
             query.bindValue(":me", mesh->getId());
         }
         
+        query.bindValue(":n", meshPolygon->getName());
         query.bindValue(":t", (int) meshPolygon->getMeshPolygonType());
         query.bindValue(":p", meshPolygon->getPolyDataAsString());
         if (mesh->instanceOf("UnstructuredMesh")) {

@@ -125,7 +125,7 @@
              <item>
               <widget class="QCheckBox" name="chkShowBoundaryEdges">
                <property name="text">
-                <string>Show Domain</string>
+                <string>Show Boundary Edges</string>
                </property>
                <property name="checked">
                 <bool>true</bool>
@@ -139,16 +139,6 @@
                </property>
                <property name="text">
                 <string>Show UTM Coordinates</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QCheckBox" name="chkShowVertexes">
-               <property name="enabled">
-                <bool>false</bool>
-               </property>
-               <property name="text">
-                <string>Show vertexes labels</string>
                </property>
               </widget>
              </item>
@@ -393,48 +383,6 @@
           <string>Mesh</string>
          </attribute>
          <layout class="QGridLayout" name="gridLayout_4">
-          <item row="3" column="0" colspan="3">
-           <widget class="QGroupBox" name="groupBox_4">
-            <property name="title">
-             <string>Options</string>
-            </property>
-            <layout class="QVBoxLayout" name="verticalLayout_5">
-             <item>
-              <widget class="QCheckBox" name="chkShowMesh">
-               <property name="enabled">
-                <bool>false</bool>
-               </property>
-               <property name="text">
-                <string>Show Mesh</string>
-               </property>
-               <property name="checked">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QCheckBox" name="chkShowEdges">
-               <property name="enabled">
-                <bool>false</bool>
-               </property>
-               <property name="text">
-                <string>Show edges labels</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QCheckBox" name="chkShowTriangles">
-               <property name="enabled">
-                <bool>false</bool>
-               </property>
-               <property name="text">
-                <string>Show triangles labels</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </widget>
-          </item>
           <item row="4" column="0">
            <widget class="QPushButton" name="btnGenerateMesh">
             <property name="enabled">
@@ -450,6 +398,22 @@
              <string>Generate</string>
             </property>
            </widget>
+          </item>
+          <item row="1" column="0" colspan="3">
+           <spacer name="verticalSpacer_7">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeType">
+             <enum>QSizePolicy::Fixed</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
           </item>
           <item row="0" column="0" colspan="3">
            <widget class="QGroupBox" name="groupBox">
@@ -543,7 +507,7 @@
                  <number>0</number>
                 </property>
                 <item>
-                 <widget class="QListWidget" name="lstCoordinateFiles">
+                 <widget class="QListWidget" name="lstRefinementAreas">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
                     <horstretch>0</horstretch>
@@ -612,26 +576,29 @@
             </layout>
            </widget>
           </item>
-          <item row="1" column="0" colspan="3">
-           <spacer name="verticalSpacer_7">
-            <property name="orientation">
-             <enum>Qt::Vertical</enum>
+          <item row="3" column="0" colspan="3">
+           <widget class="QGroupBox" name="groupBox_4">
+            <property name="title">
+             <string>Options</string>
             </property>
-            <property name="sizeType">
-             <enum>QSizePolicy::Fixed</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>20</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
+            <layout class="QVBoxLayout" name="verticalLayout_5">
+             <item>
+              <widget class="QCheckBox" name="chkShowMesh">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="text">
+                <string>Show Mesh</string>
+               </property>
+               <property name="checked">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
           </item>
          </layout>
-         <zorder>btnGenerateMesh</zorder>
-         <zorder>groupBox</zorder>
-         <zorder>groupBox_4</zorder>
         </widget>
        </widget>
       </item>
@@ -763,6 +730,10 @@
    <class>MeshVTKWidget</class>
    <extends>QWidget</extends>
    <header>include/ui/mesh_vtk_widget.h</header>
+   <slots>
+    <slot>setShowBoundaryEdges(bool)</slot>
+    <slot>setShowMesh(bool)</slot>
+   </slots>
   </customwidget>
  </customwidgets>
  <tabstops>
@@ -774,22 +745,52 @@
   <tabstop>sbxCoordinatesDistance</tabstop>
   <tabstop>chkShowBoundaryEdges</tabstop>
   <tabstop>chkShowUtmCoordinates</tabstop>
-  <tabstop>chkShowVertexes</tabstop>
   <tabstop>btnGenerateDomain</tabstop>
   <tabstop>btnCancelMesh</tabstop>
   <tabstop>btnRemoveMesh</tabstop>
-  <tabstop>lstCoordinateFiles</tabstop>
+  <tabstop>lstRefinementAreas</tabstop>
   <tabstop>btnAddCoordinatesFile</tabstop>
   <tabstop>btnRemoveCoordinatesFile</tabstop>
   <tabstop>sbxMinimumAngle</tabstop>
   <tabstop>sbxMaximumEdgeLength</tabstop>
   <tabstop>chkShowMesh</tabstop>
-  <tabstop>chkShowEdges</tabstop>
-  <tabstop>chkShowTriangles</tabstop>
   <tabstop>btnGenerateMesh</tabstop>
  </tabstops>
  <resources>
   <include location="../../icons.qrc"/>
  </resources>
- <connections/>
+ <connections>
+  <connection>
+   <sender>chkShowBoundaryEdges</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>meshVTKWidget</receiver>
+   <slot>setShowBoundaryEdges(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>230</x>
+     <y>519</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>919</x>
+     <y>380</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>chkShowMesh</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>meshVTKWidget</receiver>
+   <slot>setShowMesh(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>76</x>
+     <y>110</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>919</x>
+     <y>380</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

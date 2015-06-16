@@ -1,11 +1,11 @@
 #ifndef UNSTRUCTURED_MESH_DIALOG_H
 #define UNSTRUCTURED_MESH_DIALOG_H
 
+#include "include/domain/unstructured_mesh.h"
 #include <QDialog>
 #include <QWidget>
 #include <QSettings>
-
-#include "include/domain/unstructured_mesh.h"
+#include <QModelIndex>
 
 namespace Ui {
 class UnstructuredMeshDialog;
@@ -26,19 +26,19 @@ public slots:
 private slots:
     // Domain tab events
     void on_btnBoundaryFileBrowser_clicked();
+    void on_islandItemEdited(const QModelIndex &topLeft, const QModelIndex &bottomRight);
+    void on_lstIslands_currentTextChanged(const QString &currentText);
     void on_btnAddIsland_clicked();
     void on_btnRemoveIsland_clicked();
     void on_btnGenerateDomain_clicked();
-    void on_chkShowBoundaryEdges_clicked(bool checked);
 
     // Mesh tab events
-    void on_lstCoordinateFiles_itemSelectionChanged();
+    void on_lstRefinementAreas_itemSelectionChanged();
     void on_btnAddCoordinatesFile_clicked();
     void on_btnRemoveCoordinatesFile_clicked();
     void on_sbxMaximumEdgeLength_valueChanged(double value);
     void on_sbxMinimumAngle_valueChanged(double value);
     void on_btnGenerateMesh_clicked();
-    void on_chkShowMesh_clicked(bool checked);
 
     // General dialog events
     void on_cbxMeshName_currentIndexChanged(int index);
@@ -53,6 +53,8 @@ private:
     UnstructuredMesh *unsavedMesh;
     UnstructuredMesh *currentMesh;
     QSettings *appSettings;
+    QString currentIslandName;
+    QString currentRefinementAreaName;
 
     QString getDefaultDirectory();
     void resetMeshForm();

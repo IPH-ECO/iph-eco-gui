@@ -45,6 +45,7 @@ void DatabaseUtility::createApplicationTables(QSqlDatabase &database) {
 
     sql << "create table if not exists mesh_polygon (" \
            "id integer primary key, " \
+           "name varchar(255) not null, " \
            "type varchar(255) not null, " \
            "poly_data text not null, " \
            "minimum_angle float, " \
