@@ -25,7 +25,7 @@ MeshVTKWidget::~MeshVTKWidget() {}
 void MeshVTKWidget::render(Mesh *mesh) {
     MeshPolygon *boundaryPolygon = mesh->getBoundaryPolygon();
 
-    if (boundaryPolygon->getFilteredPolygon() == NULL) {
+    if (boundaryPolygon->getFilteredPolygon() == nullptr) {
         return;
     }
 
@@ -38,7 +38,7 @@ void MeshVTKWidget::render(Mesh *mesh) {
     QList<MeshPolygon*> meshPolygons = mesh->getIslands();
     int count = 0;
 
-    meshPolygons.prepend(mesh->getBoundaryPolygon());
+    meshPolygons.prepend(boundaryPolygon);
 
     for (QList<MeshPolygon*>::const_iterator it = meshPolygons.begin(); it != meshPolygons.end(); it++) {
         vtkPolygon *vtkMeshPolygon = (*it)->getFilteredPolygon();

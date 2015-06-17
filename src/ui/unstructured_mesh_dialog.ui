@@ -133,6 +133,19 @@
               </widget>
              </item>
              <item>
+              <widget class="QCheckBox" name="chkShowMesh">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="text">
+                <string>Show Mesh</string>
+               </property>
+               <property name="checked">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
               <widget class="QCheckBox" name="chkShowUtmCoordinates">
                <property name="enabled">
                 <bool>false</bool>
@@ -571,28 +584,6 @@
                  </layout>
                 </item>
                </layout>
-              </widget>
-             </item>
-            </layout>
-           </widget>
-          </item>
-          <item row="3" column="0" colspan="3">
-           <widget class="QGroupBox" name="groupBox_4">
-            <property name="title">
-             <string>Options</string>
-            </property>
-            <layout class="QVBoxLayout" name="verticalLayout_5">
-             <item>
-              <widget class="QCheckBox" name="chkShowMesh">
-               <property name="enabled">
-                <bool>false</bool>
-               </property>
-               <property name="text">
-                <string>Show Mesh</string>
-               </property>
-               <property name="checked">
-                <bool>true</bool>
-               </property>
               </widget>
              </item>
             </layout>

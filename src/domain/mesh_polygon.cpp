@@ -189,10 +189,12 @@ QString MeshPolygon::getPolyDataAsString() {
     points->SetNumberOfPoints(originalPolygon->GetPoints()->GetNumberOfPoints() + filteredPolygon->GetPoints()->GetNumberOfPoints());
     
     for (vtkIdType i = 0; i < originalPolygon->GetPoints()->GetNumberOfPoints(); i++) {
-        points->SetPoint(count++, originalPolygon->GetPoints()->GetPoint(i));
+        points->SetPoint(count, originalPolygon->GetPoints()->GetPoint(i));
+        originalPolygon->GetPointIds()->SetId(i, count++);
     }
     for (vtkIdType i = 0; i < filteredPolygon->GetPoints()->GetNumberOfPoints(); i++) {
-        points->SetPoint(count++, filteredPolygon->GetPoints()->GetPoint(i));
+        points->SetPoint(count, filteredPolygon->GetPoints()->GetPoint(i));
+        filteredPolygon->GetPointIds()->SetId(i, count++);
     }
     
     vtkSmartPointer<vtkPolyData> polyData = vtkSmartPointer<vtkPolyData>::New();
