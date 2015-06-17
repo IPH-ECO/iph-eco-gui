@@ -10,7 +10,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     MAX_RECENT_FILES(4),
     RECENT_FILES_KEY("recent_files"),
-    DEFAULT_DIR_KEY("default_dir"),
+    PROJECT_DEFAULT_DIR_KEY("default_dir"),
     ui(new Ui::MainWindow),
     mdiArea(new QMdiArea())
 {
@@ -47,7 +47,7 @@ void MainWindow::on_actionSaveProject_triggered() {
     }
 
     if (!project->getFilename().isEmpty()) {
-        appSettings->setValue(DEFAULT_DIR_KEY, QFileInfo(project->getFilename()).absoluteDir().absolutePath());
+        appSettings->setValue(PROJECT_DEFAULT_DIR_KEY, QFileInfo(project->getFilename()).absoluteDir().absolutePath());
         updateRecentFilesList(project->getFilename());
 
         try {
@@ -61,13 +61,11 @@ void MainWindow::on_actionSaveProject_triggered() {
 
 void MainWindow::on_actionSaveAsProject_triggered() {
     Project *project = IPHApplication::getCurrentProject();
-
     QString oldFilename = project->getFilename().isEmpty() ? getDefaultDirectory() : project->getFilename();
-
     QString filename = QFileDialog::getSaveFileName(this, tr("Save project as..."), oldFilename, tr("IPH-ECO Project File (*.iph)"));
 
     if (!filename.isEmpty()) {
-        appSettings->setValue(DEFAULT_DIR_KEY, QFileInfo(filename).absolutePath());
+        appSettings->setValue(PROJECT_DEFAULT_DIR_KEY, QFileInfo(filename).absolutePath());
 
         project->setFilename(filename);
 
@@ -105,6 +103,7 @@ void MainWindow::on_actionCloseProject_triggered() {
 
     IPHApplication::setCurrentProject(nullptr);
     enableMenus(false);
+    setWindowTitle("IPH-ECO");
 }
 
 void MainWindow::on_actionUnstructuredMeshGeneration_triggered() {
@@ -164,7 +163,7 @@ void MainWindow::writeSettings() {
 }
 
 QString MainWindow::getDefaultDirectory() {
-    return appSettings->value(DEFAULT_DIR_KEY).toString().isEmpty() ? QDir::homePath() : appSettings->value(DEFAULT_DIR_KEY).toString();
+    return appSettings->value(PROJECT_DEFAULT_DIR_KEY).toString().isEmpty() ? QDir::homePath() : appSettings->value(PROJECT_DEFAULT_DIR_KEY).toString();
 }
 
 void MainWindow::openProject(const QString &filename) {
@@ -175,15 +174,15 @@ void MainWindow::openProject(const QString &filename) {
     QFile file(filename);
 
     if (file.exists()) {
-        appSettings->setValue(DEFAULT_DIR_KEY, QFileInfo(filename).absoluteDir().absolutePath());
+        appSettings->setValue(PROJECT_DEFAULT_DIR_KEY, QFileInfo(filename).absoluteDir().absolutePath());
 
         try {
             ProjectService projectService;
             projectService.open(filename);
 
             enableMenus(true);
-
             updateRecentFilesList(filename);
+            setWindowTitle("IPH-ECO - " + IPHApplication::getCurrentProject()->getName());
         } catch (DatabaseException &ex) {
             QMessageBox::critical(this, "Open Project", ex.what());
         }

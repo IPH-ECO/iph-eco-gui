@@ -50,7 +50,7 @@ private slots:
 private:
     const int MAX_RECENT_FILES;
     const QString RECENT_FILES_KEY;
-    const QString DEFAULT_DIR_KEY;
+    const QString PROJECT_DEFAULT_DIR_KEY;
 
     Ui::MainWindow *ui;
     QSettings *appSettings;
