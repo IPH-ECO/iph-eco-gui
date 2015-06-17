@@ -30,7 +30,7 @@ private slots:
     void on_lstIslands_currentTextChanged(const QString &currentText);
     void on_btnAddIsland_clicked();
     void on_btnRemoveIsland_clicked();
-    void on_btnGenerateDomain_clicked();
+    void on_btnGenerateMesh1_clicked();
 
     // Mesh tab events
     void on_lstRefinementAreas_itemSelectionChanged();
@@ -38,7 +38,7 @@ private slots:
     void on_btnRemoveCoordinatesFile_clicked();
     void on_sbxMaximumEdgeLength_valueChanged(double value);
     void on_sbxMinimumAngle_valueChanged(double value);
-    void on_btnGenerateMesh_clicked();
+    void on_btnGenerateMesh2_clicked();
 
     // General dialog events
     void on_cbxMeshName_currentIndexChanged(int index);

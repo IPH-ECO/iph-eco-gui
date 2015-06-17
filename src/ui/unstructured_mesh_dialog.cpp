@@ -175,16 +175,19 @@ void UnstructuredMeshDialog::on_sbxMinimumAngle_valueChanged(double value) {
     }
 }
 
-void UnstructuredMeshDialog::on_btnGenerateDomain_clicked() {
+void UnstructuredMeshDialog::on_btnGenerateMesh1_clicked() {
     QString boundaryFileStr = ui->edtBoundaryFileLine->text();
-    QFile boundaryFile(boundaryFileStr);
-    QFileInfo boundaryFileInfo(boundaryFile);
     
-    if (!boundaryFileInfo.exists() || !boundaryFileInfo.isFile()) {
-        QMessageBox::warning(this, tr("Unstructured Mesh Generation"), tr("Boundary file not found."));
-        return;
+    if (!boundaryFileStr.isEmpty() || !currentMesh->isPersisted()) {
+        QFile boundaryFile(boundaryFileStr);
+        QFileInfo boundaryFileInfo(boundaryFile);
+        
+        if (!boundaryFileInfo.exists() || !boundaryFileInfo.isFile()) {
+            QMessageBox::warning(this, tr("Unstructured Mesh Generation"), tr("Boundary file not found."));
+            return;
+        }
     }
-    
+
     enableMeshForm(true);
     currentMesh->setCoordinatesDistance(ui->sbxCoordinatesDistance->value());
     
@@ -209,7 +212,7 @@ void UnstructuredMeshDialog::on_btnGenerateDomain_clicked() {
     ui->sbxMinimumAngle->setValue(boundaryPolygon->getMinimumAngle());
 }
 
-void UnstructuredMeshDialog::on_btnGenerateMesh_clicked() {
+void UnstructuredMeshDialog::on_btnGenerateMesh2_clicked() {
     QString boundaryFileStr = ui->edtBoundaryFileLine->text();
     QFile boundaryFile(boundaryFileStr);
     QFileInfo boundaryFileInfo(boundaryFile);

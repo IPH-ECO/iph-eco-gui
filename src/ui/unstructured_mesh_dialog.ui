@@ -176,7 +176,7 @@
            </widget>
           </item>
           <item row="10" column="0">
-           <widget class="QPushButton" name="btnGenerateDomain">
+           <widget class="QPushButton" name="btnGenerateMesh1">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -373,7 +373,7 @@
          <zorder>lblBoundaryFile</zorder>
          <zorder>edtBoundaryFileLine</zorder>
          <zorder>btnBoundaryFileBrowser</zorder>
-         <zorder>btnGenerateDomain</zorder>
+         <zorder>btnGenerateMesh1</zorder>
          <zorder>groupBox_3</zorder>
          <zorder>groupBox_5</zorder>
          <zorder>groupBox_2</zorder>
@@ -384,7 +384,7 @@
          </attribute>
          <layout class="QGridLayout" name="gridLayout_4">
           <item row="4" column="0">
-           <widget class="QPushButton" name="btnGenerateMesh">
+           <widget class="QPushButton" name="btnGenerateMesh2">
             <property name="enabled">
              <bool>true</bool>
             </property>
@@ -745,7 +745,7 @@
   <tabstop>sbxCoordinatesDistance</tabstop>
   <tabstop>chkShowBoundaryEdges</tabstop>
   <tabstop>chkShowUtmCoordinates</tabstop>
-  <tabstop>btnGenerateDomain</tabstop>
+  <tabstop>btnGenerateMesh1</tabstop>
   <tabstop>btnCancelMesh</tabstop>
   <tabstop>btnRemoveMesh</tabstop>
   <tabstop>lstRefinementAreas</tabstop>
@@ -754,7 +754,7 @@
   <tabstop>sbxMinimumAngle</tabstop>
   <tabstop>sbxMaximumEdgeLength</tabstop>
   <tabstop>chkShowMesh</tabstop>
-  <tabstop>btnGenerateMesh</tabstop>
+  <tabstop>btnGenerateMesh2</tabstop>
  </tabstops>
  <resources>
   <include location="../../icons.qrc"/>

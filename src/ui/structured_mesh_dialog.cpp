@@ -84,12 +84,15 @@ void StructuredMeshDialog::on_btnRemoveIsland_clicked() {
 
 void StructuredMeshDialog::on_btnGenerateMesh_clicked() {
     QString boundaryFileStr = ui->edtBoundaryFileLine->text();
-    QFile boundaryFile(boundaryFileStr);
-    QFileInfo boundaryFileInfo(boundaryFile);
+    
+    if (!boundaryFileStr.isEmpty() || !currentMesh->isPersisted()) {
+        QFile boundaryFile(boundaryFileStr);
+        QFileInfo boundaryFileInfo(boundaryFile);
 
-    if (!boundaryFileInfo.exists() || !boundaryFileInfo.isFile()) {
-        QMessageBox::warning(this, tr("Structured Mesh Generation"), tr("Boundary file not found."));
-        return;
+        if (!boundaryFileInfo.exists() || !boundaryFileInfo.isFile()) {
+            QMessageBox::warning(this, tr("Structured Mesh Generation"), tr("Boundary file not found."));
+            return;
+        }
     }
 
     enableMeshForm(true);
