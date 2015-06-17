@@ -22,9 +22,6 @@ protected:
     // Transient attributes
     bool generationCanceled;
 
-private:
-    void filterCoordinates(MeshPolygon *meshPolygon);
-
 public:
     Mesh();
     virtual ~Mesh();

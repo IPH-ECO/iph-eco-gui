@@ -22,7 +22,6 @@ private:
     bool showInterpolationResult;
 public:
     GridDataVTKWidget(QWidget *parent);
-    ~GridDataVTKWidget();
     void render(Mesh *mesh);
     void render(GridData *gridData);
     void setShowMesh(const bool &value);

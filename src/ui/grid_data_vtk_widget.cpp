@@ -22,8 +22,6 @@ GridDataVTKWidget::GridDataVTKWidget(QWidget *parent) : QVTKWidget(parent), show
     renderer->SetBackground(1, 1, 1);
 }
 
-GridDataVTKWidget::~GridDataVTKWidget() {}
-
 void GridDataVTKWidget::render(Mesh *mesh) {
     if (mesh == nullptr) {
         return;

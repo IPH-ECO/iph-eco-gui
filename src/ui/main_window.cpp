@@ -96,13 +96,14 @@ void MainWindow::on_actionCloseProject_triggered() {
     Project *project = IPHApplication::getCurrentProject();
 
     if (project != NULL && project->isDirty()) {
-        if (QMessageBox::question(this, tr("Project has unsaved changes"), tr("Do you want to save the changes before closing the project?"))) {
+        QMessageBox::StandardButton button = QMessageBox::question(this, tr("Project has unsaved changes"), tr("Do you want to save the changes before closing the project?"));
+        if (button == QMessageBox::Yes) {
             ProjectService projectService;
             projectService.save(project);
         }
     }
 
-    IPHApplication::setCurrentProject(0);
+    IPHApplication::setCurrentProject(nullptr);
     enableMenus(false);
 }
 

@@ -6,6 +6,7 @@ GridDataConfiguration::~GridDataConfiguration() {
     for (int i = 0; i < gridDataVector.size(); i++) {
         delete gridDataVector.at(i);
     }
+    gridDataVector.clear();
 }
 
 uint GridDataConfiguration::getId() const {

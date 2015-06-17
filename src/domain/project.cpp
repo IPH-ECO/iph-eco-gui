@@ -5,6 +5,18 @@ Project::Project(const QString &name, const QString &description, const bool &hy
         sediment(sediment), dirty(false)
 {}
 
+Project::~Project() {
+    for (QSet<Mesh*>::const_iterator it = meshes.begin(); it != meshes.end(); it++) {
+        delete *it;
+    }
+    meshes.clear();
+    
+    for (QSet<GridDataConfiguration*>::const_iterator it = gridDataConfigurations.begin(); it != gridDataConfigurations.end(); it++) {
+        delete *it;
+    }
+    gridDataConfigurations.clear();
+}
+
 void Project::setId(const uint &id) {
     if (!isPersisted()) {
         this->id = id;

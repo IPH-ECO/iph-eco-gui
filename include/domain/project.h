@@ -23,6 +23,7 @@ private:
 
 public:
     Project(const QString &name, const QString &description, const bool &hydrodynamic, const bool &sediment, const bool &waterQuality);
+    ~Project();
 
     void setId(const uint &id);
     uint getId() const;
