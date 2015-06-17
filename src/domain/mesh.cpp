@@ -52,7 +52,15 @@ MeshPolygon* Mesh::addMeshPolygon(const QString &name, const QString &filename, 
     try {
         meshPolygon->build();
         meshPolygon->filter(coordinatesDistance);
-    } catch (MeshPolygonException &e) {
+        
+        if (meshPolygonType == MeshPolygonType::BOUNDARY) {
+            for (QList<MeshPolygon*>::const_iterator it = islands.begin(); it != islands.end(); it++) {
+                MeshPolygon *islandsPolygon = *it;
+                islandsPolygon->build();
+                islandsPolygon->filter(coordinatesDistance);
+            }
+        }
+    } catch (const MeshPolygonException &e) {
         delete meshPolygon;
         throw e;
     }
