@@ -51,7 +51,7 @@ public:
     void setInitialCriteria();
     
     void build();
-    void filter(double &distanceFilter);
+    void filter(const double &distanceFilter);
     bool pointInPolygon(double *point);
     double area();
     bool isPersisted() const;

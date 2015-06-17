@@ -47,7 +47,11 @@ double Mesh::getCoordinatesDistance() const {
 }
 
 MeshPolygon* Mesh::addMeshPolygon(const QString &name, const QString &filename, const MeshPolygonType &meshPolygonType) {
-    MeshPolygon *meshPolygon = new MeshPolygon(name, filename, meshPolygonType);
+    MeshPolygon *meshPolygon = getMeshPolygon(name, meshPolygonType);
+    
+    if (meshPolygon == nullptr || !meshPolygon->isPersisted()) {
+        meshPolygon = new MeshPolygon(name, filename, meshPolygonType);
+    }
 
     try {
         meshPolygon->build();
@@ -65,7 +69,7 @@ MeshPolygon* Mesh::addMeshPolygon(const QString &name, const QString &filename, 
         throw e;
     }
     
-    if (instanceOf("UnstructuredMesh")) {
+    if (!meshPolygon->isPersisted() && instanceOf("UnstructuredMesh")) {
         meshPolygon->setInitialCriteria();
     }
 
@@ -77,7 +81,6 @@ MeshPolygon* Mesh::addMeshPolygon(const QString &name, const QString &filename, 
 void Mesh::addMeshPolygon(MeshPolygon *meshPolygon) {
     switch (meshPolygon->getMeshPolygonType()) {
         case MeshPolygonType::BOUNDARY:
-            delete this->boundaryPolygon;
             this->boundaryPolygon = meshPolygon;
             break;
             
@@ -157,9 +160,16 @@ void Mesh::removeMeshPolygon(const QString &name, const MeshPolygonType &meshPol
 }
 
 MeshPolygon* Mesh::getMeshPolygon(const QString &name, const MeshPolygonType &meshPolygonType) const {
-    for (QList<MeshPolygon*>::const_iterator it = islands.begin(); it != islands.end(); it++) {
-        if ((*it)->getName() == name && (*it)->getMeshPolygonType() == meshPolygonType) {
-            return *it;
+    QList<MeshPolygon*> meshPolygons = islands + refinementAreas;
+    
+    if (boundaryPolygon != nullptr) {
+        meshPolygons.prepend(boundaryPolygon);
+    }
+    
+    for (QList<MeshPolygon*>::const_iterator it = meshPolygons.begin(); it != meshPolygons.end(); it++) {
+        MeshPolygon *meshPolygon = *it;
+        if (meshPolygon->getName() == name && meshPolygon->getMeshPolygonType() == meshPolygonType) {
+            return meshPolygon;
         }
     }
     

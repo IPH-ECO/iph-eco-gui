@@ -5,12 +5,11 @@
 #include <vtkPolyData.h>
 #include <vtkCellArray.h>
 #include <vtkTriangle.h>
-#include <QDebug>
 
 UnstructuredMesh::UnstructuredMesh() {}
 
 void UnstructuredMesh::generate() {
-    if (boundaryPolygon == NULL) {
+    if (boundaryPolygon == nullptr) {
         throw MeshException("No boundary defined.");
     }
 
@@ -18,7 +17,7 @@ void UnstructuredMesh::generate() {
     CDT cdt;
     
     polygons.prepend(boundaryPolygon);
-
+    
     for (QList<MeshPolygon*>::const_iterator it = polygons.begin(); it != polygons.end(); it++) {
         vtkPolygon *polygon = (*it)->getFilteredPolygon();
         vtkIdType numberOfPoints = polygon->GetPoints()->GetNumberOfPoints();

@@ -25,6 +25,15 @@ MeshPolygon::MeshPolygon(const QString &name, const QString &filename, const Mes
     id(0), name(name), meshPolygonType(meshPolygonType), filename(filename) {}
 
 void MeshPolygon::build() {
+    if (this->filename.isEmpty()) {
+        if (originalPolygon == nullptr) {
+            throw MeshPolygonException("Unexpected behaviour: original mesh polygon not present.");
+        }
+        
+        // Original polygon already built
+        return;
+    }
+    
     QFile kmlFile(this->filename);
 
     if (!kmlFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
@@ -70,15 +79,16 @@ void MeshPolygon::build() {
     kmlFile.close();
 }
 
-void MeshPolygon::filter(double &distanceFilter) {
+void MeshPolygon::filter(const double &distanceFilter) {
     if (originalPolygon == NULL || originalPolygon->GetPoints()->GetNumberOfPoints() == 0) {
-        throw MeshPolygonException("Unable to filter polygon. Points not defined.");
+        throw MeshPolygonException("Unable to filter polygon. Original mesh polygon not present.");
     }
+    
+    filteredPolygon = vtkSmartPointer<vtkPolygon>::New();
 
     if (distanceFilter == 0.0) {
-        filteredPolygon = originalPolygon;
+        filteredPolygon->DeepCopy(originalPolygon);
     } else {
-        filteredPolygon = vtkSmartPointer<vtkPolygon>::New();
         double p1[3];
         int count = 1;
         vtkIdType i = 1;
