@@ -13,6 +13,7 @@
 #include <vtkPointData.h>
 #include <vtkCellData.h>
 #include <vtkTriangle.h>
+#include <QApplication>
 #include <vtkQuad.h>
 
 GridData::GridData(Mesh *mesh) : id(0), mesh(mesh), interpolationCanceled(false) {}
@@ -152,7 +153,7 @@ void GridData::interpolate() {
     
     inputPoints->GetBounds(inputPointsBounds);
     
-    for (vtkIdType i = 0; i < meshPolyData->GetNumberOfCells(); i++) {
+    for (vtkIdType i = 0; i < meshPolyData->GetNumberOfCells() && !interpolationCanceled; i++) {
         double weight = 0.0; // TODO: define out of range value
         
         if (mesh->instanceOf("UnstructuredMesh")) {
@@ -216,6 +217,7 @@ void GridData::interpolate() {
         
         interpolatedWeightsArray->SetTuple1(i, weight);
         emit updateProgress(i);
+        QApplication::processEvents();
     }
     
     if (!interpolationCanceled) {
