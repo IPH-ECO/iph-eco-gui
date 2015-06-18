@@ -43,7 +43,7 @@
    <item row="2" column="1">
     <widget class="QLineEdit" name="edtInputFile">
      <property name="text">
-      <string>/Users/joaoroberto/Downloads/iph-eco/xyz_celmm.txt</string>
+      <string/>
      </property>
     </widget>
    </item>
@@ -55,9 +55,9 @@
     </widget>
    </item>
    <item row="8" column="0" colspan="3">
-    <widget class="QDialogButtonBox" name="bottomButtons">
+    <widget class="QDialogButtonBox" name="buttonBox">
      <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Save</set>
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
      </property>
     </widget>
    </item>
@@ -161,10 +161,10 @@
    <item row="3" column="1" colspan="2">
     <widget class="QComboBox" name="cbxGridInformation">
      <property name="currentText">
-      <string>Bathymetry</string>
+      <string/>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>-1</number>
      </property>
      <item>
       <property name="text">
@@ -198,7 +198,7 @@
    <item row="0" column="1" colspan="2">
     <widget class="QLineEdit" name="edtName">
      <property name="text">
-      <string>qwer</string>
+      <string/>
      </property>
     </widget>
    </item>
@@ -215,5 +215,38 @@
   <tabstop>edtRadius</tabstop>
  </tabstops>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>GridInformationDialog</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>157</x>
+     <y>265</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>157</x>
+     <y>142</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>GridInformationDialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>157</x>
+     <y>265</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>157</x>
+     <y>142</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

@@ -96,6 +96,14 @@ void GridData::setInputFile(const QString &inputFile) {
 }
 
 void GridData::buildInputPolyData() {
+    if (this->inputFile.isEmpty()) {
+        if (this->inputPolyData == nullptr) {
+            throw GridDataException("Unexpected behaviour: grid data input points not present.");
+        }
+        
+        return;
+    }
+    
     vtkSmartPointer<vtkSimplePointsReader> reader = vtkSmartPointer<vtkSimplePointsReader>::New();
 
     reader->SetFileName(this->inputFile.toStdString().c_str());
@@ -202,7 +210,7 @@ void GridData::interpolate() {
             double *gridDataPointer = static_cast<double*>(inputPoints->GetData()->GetVoidPointer(0));
             
             if (vtkPolygon::PointInPolygon(cellCenter, inputPoints->GetNumberOfPoints(), gridDataPointer, inputPointsBounds, normal)) {
-                weight = inputPoints->GetData()->GetTuple1(0);
+                weight = inputPolyData->GetPointData()->GetScalars()->GetTuple1(0);
             }
         }
         

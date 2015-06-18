@@ -34,7 +34,6 @@ private slots:
     void on_btnSaveAsNewConfiguration_clicked();
     void on_btnRemoveConfiguration_clicked();
     void on_btnDoneConfiguration_clicked();
-    void on_tblGridInformation_itemDoubleClicked(QTableWidgetItem *item);
     void on_tblGridInformation_itemClicked(QTableWidgetItem *item);
     void on_btnShowGridDataPoints_clicked(bool checked);
     void on_btnShowInterpolationResult_clicked(bool checked);
@@ -48,6 +47,7 @@ private:
     
     void toggleGridDataConfigurationForm(bool enable);
     bool isConfigurationValid(const QString &configurationName);
+    void showGridInformationDialog(GridData *gridData);
 };
 
 #endif // GRID_DATA_DIALOG_H

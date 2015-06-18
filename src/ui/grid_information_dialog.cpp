@@ -63,58 +63,60 @@ GridData* GridInformationDialog::getGridData() {
 	return gridData;
 }
 
-void GridInformationDialog::on_bottomButtons_clicked(QAbstractButton *button) {
-    if (ui->bottomButtons->standardButton(button) == QDialogButtonBox::Save) {
-        QString gridDataName = ui->edtName->text();
+bool GridInformationDialog::isValid() {
+    if (ui->edtName->text().isEmpty()) {
+        QMessageBox::warning(this, tr("Grid Data"), tr("Name can't be blank."));
+        return false;
+    }
+    
+    if (gridConfiguration->getGridData(ui->edtName->text()) != gridData) {
+        QMessageBox::warning(this, tr("Grid Data"), tr("Name already used in this configuration."));
+        return false;
+    }
+    
+    if (!ui->rdoPoint->isChecked() && !ui->rdoPolygon->isChecked()) {
+        QMessageBox::warning(this, tr("Grid Data"), tr("Please select a input type."));
+        return false;
+    }
+    
+    if (ui->edtInputFile->text().isEmpty() && (gridData == nullptr || !gridData->isPersisted())) {
+        QMessageBox::warning(this, tr("Grid Data"), tr("Please select a input file."));
+        return false;
+    }
+    
+    if (ui->cbxGridInformation->currentIndex() == - 1) {
+        QMessageBox::warning(this, tr("Grid Data"), tr("Please select a grid information option."));
+        return false;
+    }
+    
+    return true;
+}
+
+void GridInformationDialog::accept() {
+    if (!isValid()) {
+        return;
+    }
+    
+    try {
+        GridDataInputType gridInputType = ui->rdoPoint->isChecked() ? GridDataInputType::POINT : GridDataInputType::POLYGON;
+        GridDataType gridDataType = GridData::toGridDataType(ui->cbxGridInformation->currentText());
         
-        if (gridDataName.isEmpty()) {
-            QMessageBox::warning(this, tr("Grid Data"), tr("Name can't be blank."));
-            return;
+        if (gridData == nullptr) {
+            gridData = new GridData(mesh);
         }
         
-        if (gridConfiguration->getGridData(gridDataName) != NULL) {
-            QMessageBox::warning(this, tr("Grid Data"), tr("Name already used in this configuration."));
-            return;
+        gridData->setName(ui->edtName->text());
+        gridData->setGridDataInputType(gridInputType);
+        gridData->setInputFile(ui->edtInputFile->text());
+        gridData->setGridDataType(gridDataType);
+        
+        if (gridInputType == GridDataInputType::POINT) {
+            gridData->setExponent(ui->edtExponent->text().toDouble());
+            gridData->setRadius(ui->edtRadius->text().toDouble());
         }
         
-        if (!ui->rdoPoint->isChecked() && !ui->rdoPolygon->isChecked()) {
-            QMessageBox::warning(this, tr("Grid Data"), tr("Please select a input type."));
-            return;
-        }
-
-        QString inputFile = ui->edtInputFile->text();
-        if (inputFile.isEmpty()) {
-            QMessageBox::warning(this, tr("Grid Data"), tr("Please select a input file."));
-            return;
-        }
-
-        if (ui->cbxGridInformation->currentIndex() == - 1) {
-            QMessageBox::warning(this, tr("Grid Data"), tr("Please select a grid information option."));
-            return;
-        }
-
-        try {
-            GridDataInputType gridInputType = ui->rdoPoint->isChecked() ? GridDataInputType::POINT : GridDataInputType::POLYGON;
-            GridDataType gridDataType = GridData::toGridDataType(ui->cbxGridInformation->currentText());
-            
-            if (gridData == NULL) {
-                gridData = new GridData(mesh);
-                gridData->setName(gridDataName);
-                gridData->setGridDataInputType(gridInputType);
-                gridData->setInputFile(inputFile);
-                gridData->setGridDataType(gridDataType);
-            }
-            
-            if (gridInputType == GridDataInputType::POINT) {
-                gridData->setExponent(ui->edtExponent->text().toDouble());
-                gridData->setRadius(ui->edtRadius->text().toDouble());
-            }
-
-            this->accept();
-        } catch (GridDataException &e) {
-            QMessageBox::critical(this, tr("Grid Data"), tr(e.what()));
-        }
-    } else {
-        this->reject();
+        QDialog::accept();
+    } catch (const GridDataException &e) {
+        QMessageBox::critical(this, tr("Grid Data"), tr(e.what()));
     }
 }

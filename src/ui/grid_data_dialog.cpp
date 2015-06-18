@@ -116,9 +116,13 @@ void GridDataDialog::on_cbxMesh_currentIndexChanged(const QString &meshName) {
 }
 
 void GridDataDialog::on_btnAddGridInfomation_clicked() {
-    GridInformationDialog *gridInformationDialog = new GridInformationDialog(this, currentConfiguration, nullptr, currentMesh);
-    int exitCode = gridInformationDialog->exec();
+    showGridInformationDialog(nullptr);
+}
 
+void GridDataDialog::showGridInformationDialog(GridData *gridData) {
+    GridInformationDialog *gridInformationDialog = new GridInformationDialog(this, currentConfiguration, gridData, currentMesh);
+    int exitCode = gridInformationDialog->exec();
+    
     if (exitCode == QDialog::Accepted) {
         int rowCount = ui->tblGridInformation->rowCount();
         GridData *gridData = gridInformationDialog->getGridData();
@@ -129,48 +133,60 @@ void GridDataDialog::on_btnAddGridInfomation_clicked() {
         QObject::connect(progressDialog, SIGNAL(canceled()), gridData, SLOT(cancelInterpolation()));
         progressDialog->setMinimumDuration(500);
         progressDialog->setWindowModality(Qt::WindowModal);
-
-        gridData->interpolate();
+        
+        try {
+            gridData->interpolate();
+        } catch (const GridDataException &e) {
+            QMessageBox::critical(this, tr("Grid Data"), e.what());
+            progressDialog->cancel();
+            delete progressDialog;
+            
+            if (!gridData->isPersisted()) {
+                delete gridData;
+            }
+            
+            return;
+        }
         
         if (progressDialog->wasCanceled()) {
             gridData->cancelInterpolation(false); // Set false for future computations
+            if (!gridData->isPersisted()) {
+                delete gridData;
+            }
         } else {
-            currentConfiguration->addGridData(gridData);
+            if (!gridData->isPersisted()) {
+                currentConfiguration->addGridData(gridData);
+                
+                ui->btnShowGridDataPoints->setEnabled(true);
+                ui->btnShowGridDataPoints->setChecked(false);
+                ui->btnShowInterpolationResult->setEnabled(true);
+                ui->btnShowInterpolationResult->setChecked(false);
+                ui->tblGridInformation->insertRow(rowCount);
+                ui->tblGridInformation->setItem(rowCount, 0, new QTableWidgetItem(gridData->getName()));
+                ui->tblGridInformation->setItem(rowCount, 1, new QTableWidgetItem(gridData->gridDataInputTypeToString()));
+                ui->tblGridInformation->setItem(rowCount, 2, new QTableWidgetItem(gridData->gridDataTypeToString()));
+                ui->tblGridInformation->setItem(rowCount, 3, new QTableWidgetItem(QString::number(gridData->getInputPolyData()->GetNumberOfPoints())));
+            } else {
+                QTableWidgetItem *inputTypeItem = ui->tblGridInformation->item(ui->tblGridInformation->currentRow(), 0);
+                QTableWidgetItem *gridInformationItem = ui->tblGridInformation->item(ui->tblGridInformation->currentRow(), 1);
+                
+                inputTypeItem->setText(gridData->gridDataInputTypeToString());
+                gridInformationItem->setText(gridData->gridDataTypeToString());
+            }
             
-            ui->btnShowGridDataPoints->setEnabled(true);
-            ui->btnShowGridDataPoints->setChecked(false);
-            ui->btnShowInterpolationResult->setEnabled(true);
-            ui->btnShowInterpolationResult->setChecked(false);
-            ui->tblGridInformation->insertRow(rowCount);
-            ui->tblGridInformation->setItem(rowCount, 0, new QTableWidgetItem(gridData->getName()));
-            ui->tblGridInformation->setItem(rowCount, 1, new QTableWidgetItem(gridData->gridDataInputTypeToString()));
-            ui->tblGridInformation->setItem(rowCount, 2, new QTableWidgetItem(gridData->gridDataTypeToString()));
-            ui->tblGridInformation->setItem(rowCount, 3, new QTableWidgetItem(QString::number(gridData->getInputPolyData()->GetNumberOfPoints())));
             ui->gridDataVTKWidget->render(gridData);
         }
+        
         delete progressDialog;
     }
 }
 
 void GridDataDialog::on_btnEditGridInformation_clicked() {
-    QTableWidgetItem *item = ui->tblGridInformation->currentItem();
-    
-    if (item != nullptr) {
-        on_tblGridInformation_itemDoubleClicked(item);
-    }
-}
+    int currentRow = ui->tblGridInformation->currentRow();
 
-void GridDataDialog::on_tblGridInformation_itemDoubleClicked(QTableWidgetItem *item) {
-    GridData *gridData = currentConfiguration->getGridData(item->row());
-    GridInformationDialog *gridInformationDialog = new GridInformationDialog(this, currentConfiguration, gridData);
-    int exitCode = gridInformationDialog->exec();
-
-    if (exitCode == QDialog::Accepted) {
-        QTableWidgetItem *inputTypeItem = ui->tblGridInformation->item(item->row(), 0);
-        QTableWidgetItem *gridInformationItem = ui->tblGridInformation->item(item->row(), 1);
-
-        inputTypeItem->setText(gridData->gridDataInputTypeToString());
-        gridInformationItem->setText(gridData->gridDataTypeToString());
+    if (currentRow != -1) {
+        GridData *gridData = currentConfiguration->getGridData(ui->tblGridInformation->item(currentRow, 0)->text());
+        showGridInformationDialog(gridData);
     }
 }
 
