@@ -1,5 +1,5 @@
-#ifndef PROJECTSERVICE_H
-#define PROJECTSERVICE_H
+#ifndef PROJECT_SERVICE_H
+#define PROJECT_SERVICE_H
 
 #include <QString>
 
@@ -17,4 +17,4 @@ public:
                           bool &waterQuality);
 };
 
-#endif // PROJECTSERVICE_H
+#endif // PROJECT_SERVICE_H

@@ -315,7 +315,7 @@ void UnstructuredMeshDialog::on_btnCancelMesh_clicked() {
 
 void UnstructuredMeshDialog::on_btnRemoveMesh_clicked() {
     QString meshName = ui->cbxMeshName->currentText();
-    QMessageBox::StandardButton question = QMessageBox::question(this, tr("Remove mesh"), tr("Are you sure you want to remove '") + meshName + "'?");
+    QMessageBox::StandardButton question = QMessageBox::question(this, tr("Remove mesh"), tr("Are you sure you want to remove '") + meshName + "'? Existing grid data configurations will be also removed.");
 
     if (question == QMessageBox::Yes) {
         IPHApplication::getCurrentProject()->removeMesh(currentMesh);

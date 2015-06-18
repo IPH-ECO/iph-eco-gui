@@ -1,5 +1,7 @@
 #include "include/domain/project.h"
 
+#include <QSetIterator>
+
 Project::Project(const QString &name, const QString &description, const bool &hydrodynamic, const bool &sediment, const bool &waterQuality) :
         id(0), name(name), description(description), hydrodynamic(hydrodynamic), waterQuality(waterQuality),
         sediment(sediment), dirty(false)
@@ -96,8 +98,20 @@ bool Project::addMesh(Mesh *mesh) {
 }
 
 void Project::removeMesh(Mesh *mesh) {
+    QSetIterator<GridDataConfiguration*> it(gridDataConfigurations);
+    
+    while (it.hasNext()) {
+        GridDataConfiguration *configuration = it.next();
+        
+        if (configuration->getMesh() == mesh) {
+            gridDataConfigurations.remove(configuration);
+            delete configuration;
+        }
+    }
+    
     meshes.remove(mesh);
     delete mesh;
+    
     this->setDirty(true);
 }
 
