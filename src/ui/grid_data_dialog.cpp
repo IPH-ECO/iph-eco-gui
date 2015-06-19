@@ -89,8 +89,8 @@ void GridDataDialog::on_cbxConfiguration_currentIndexChanged(const QString &conf
 
         ui->btnShowGridDataPoints->setEnabled(true);
         ui->btnShowGridDataPoints->toggled(false);
-        ui->btnShowInterpolationResult->setEnabled(true);
-        ui->btnShowInterpolationResult->toggled(true);
+        ui->btnShowColorMap->setEnabled(true);
+        ui->btnShowColorMap->toggled(true);
         toggleGridDataConfigurationForm(true);
     }
 }
@@ -159,8 +159,8 @@ void GridDataDialog::showGridInformationDialog(GridData *gridData) {
                 
                 ui->btnShowGridDataPoints->setEnabled(true);
                 ui->btnShowGridDataPoints->setChecked(false);
-                ui->btnShowInterpolationResult->setEnabled(true);
-                ui->btnShowInterpolationResult->setChecked(false);
+                ui->btnShowColorMap->setEnabled(true);
+                ui->btnShowColorMap->setChecked(false);
                 ui->tblGridInformation->insertRow(rowCount);
                 ui->tblGridInformation->setItem(rowCount, 0, new QTableWidgetItem(gridData->getName()));
                 ui->tblGridInformation->setItem(rowCount, 1, new QTableWidgetItem(gridData->gridDataInputTypeToString()));
@@ -196,7 +196,7 @@ void GridDataDialog::on_tblGridInformation_itemClicked(QTableWidgetItem *item) {
     
     currentMesh->setActiveScalars(gridDataName);
     ui->gridDataVTKWidget->setShowGridDataPoints(ui->btnShowGridDataPoints->isChecked());
-    ui->gridDataVTKWidget->setShowInterpolationResult(ui->btnShowInterpolationResult->isChecked());
+    ui->gridDataVTKWidget->setShowInterpolationResult(ui->btnShowColorMap->isChecked());
     ui->gridDataVTKWidget->render(gridData);
     ui->btnEditGridInformation->setEnabled(true);
 }
@@ -210,8 +210,8 @@ void GridDataDialog::on_btnRemoveGridInformation_clicked() {
         if (ui->tblGridInformation->rowCount() == 0) {
             ui->btnShowGridDataPoints->setEnabled(false);
             ui->btnShowGridDataPoints->toggled(false);
-            ui->btnShowInterpolationResult->setEnabled(false);
-            ui->btnShowInterpolationResult->toggled(false);
+            ui->btnShowColorMap->setEnabled(false);
+            ui->btnShowColorMap->toggled(false);
         }
         ui->gridDataVTKWidget->clear(); // FIX: Must update the map
     }

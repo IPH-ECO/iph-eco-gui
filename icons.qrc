@@ -1,5 +1,10 @@
 <RCC>
   <qresource prefix="/">
+    <file>icons/show-axis.png</file>
+    <file>icons/lock-view.png</file>
+    <file>icons/pick-individual-cell.png</file>
+    <file>icons/transform-move.png</file>
+    <file>icons/pick-cell-set.png</file>
     <file>icons/zoom-select.png</file>
     <file>icons/interpolation-result.png</file>
     <file>icons/show-hide-points.png</file>
