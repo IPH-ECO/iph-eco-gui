@@ -4,6 +4,7 @@
 #include "include/domain/grid_data.h"
 
 #include <QWidget>
+#include <QColor>
 #include <QVTKWidget.h>
 #include <vtkRenderer.h>
 #include <vtkActor.h>
@@ -24,10 +25,12 @@ public:
     GridDataVTKWidget(QWidget *parent);
     void render(Mesh *mesh);
     void render(GridData *gridData);
-    void setShowMesh(const bool &value);
-    void setShowGridDataPoints(const bool &value);
-    void setShowInterpolationResult(const bool &value);
+    void changeBackgroundColor(const double &r, const double &g, const double &b);
     void clear();
+public slots:
+    void setShowMesh(bool show);
+    void setShowGridDataPoints(bool show);
+    void setShowInterpolationResult(bool show);
 };
 
 #endif // GRID_DATA_VTK_WIDGET_H

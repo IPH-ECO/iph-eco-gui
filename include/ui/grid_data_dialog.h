@@ -35,9 +35,7 @@ private slots:
     void on_btnRemoveConfiguration_clicked();
     void on_btnDoneConfiguration_clicked();
     void on_tblGridInformation_itemClicked(QTableWidgetItem *item);
-    void on_btnShowGridDataPoints_clicked(bool checked);
-    void on_btnShowInterpolationResult_clicked(bool checked);
-    void on_btnShowMesh_clicked(bool checked);
+    void on_btnBackgroundColor_clicked();
 
 private:
     Ui::GridDataDialog *ui;

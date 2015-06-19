@@ -108,7 +108,7 @@ void GridDataVTKWidget::render(GridData *gridData) {
     renderer->AddActor2D(scalarBar);
 }
 
-void GridDataVTKWidget::setShowMesh(const bool &value) {
+void GridDataVTKWidget::setShowMesh(bool value) {
     this->showMesh = value;
     if (value) {
         meshActor->GetProperty()->EdgeVisibilityOn();
@@ -118,10 +118,9 @@ void GridDataVTKWidget::setShowMesh(const bool &value) {
     this->update();
 }
 
-void GridDataVTKWidget::setShowGridDataPoints(const bool &value) {
-    this->showGridDataPoints = value;
-    
-    if (value) {
+void GridDataVTKWidget::setShowGridDataPoints(bool show) {
+    this->showGridDataPoints = show;
+    if (show) {
         gridDataActor->VisibilityOn();
     } else {
         gridDataActor->VisibilityOff();
@@ -129,13 +128,19 @@ void GridDataVTKWidget::setShowGridDataPoints(const bool &value) {
     this->update();
 }
 
-void GridDataVTKWidget::setShowInterpolationResult(const bool &value) {
-    this->showInterpolationResult = value;
-    if (value) {
+void GridDataVTKWidget::setShowInterpolationResult(bool show) {
+    this->showInterpolationResult = show;
+    if (show) {
         meshMapper->ScalarVisibilityOn();
     } else {
         meshMapper->ScalarVisibilityOff();
     }
+    this->update();
+}
+
+void GridDataVTKWidget::changeBackgroundColor(const double &r, const double &g, const double &b) {
+    meshActor->GetProperty()->SetColor(r, g, b);
+    renderer->SetBackground(r, g, b);
     this->update();
 }
 

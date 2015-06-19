@@ -12,6 +12,8 @@
 #include <QVector>
 #include <QObject>
 #include <QProgressDialog>
+#include <QColorDialog>
+#include <QPixmap>
 
 GridDataDialog::GridDataDialog(QWidget *parent) :
     QDialog(parent), ui(new Ui::GridDataDialog),
@@ -35,6 +37,12 @@ GridDataDialog::GridDataDialog(QWidget *parent) :
     ui->cbxConfiguration->setCurrentIndex(-1);
     
     ui->gridDataVTKWidget->clear();
+    
+    QColor color = QColor("white");
+    QPixmap px(24, 24);
+    
+    px.fill(color);
+    ui->btnBackgroundColor->setIcon(px);
 }
 
 GridDataDialog::~GridDataDialog() {
@@ -55,7 +63,6 @@ void GridDataDialog::setArea(const double &area) {
 
 void GridDataDialog::on_cbxConfiguration_currentIndexChanged(const QString &configurationName) {
     ui->tblGridInformation->setRowCount(0);
-    ui->gridDataVTKWidget->clear();
     
     if (configurationName.isEmpty()) {
         toggleGridDataConfigurationForm(false);
@@ -65,7 +72,6 @@ void GridDataDialog::on_cbxConfiguration_currentIndexChanged(const QString &conf
         Project *project = IPHApplication::getCurrentProject();
         currentConfiguration = project->getGridDataConfiguration(configurationName);
         QVector<GridData*> gridDataVector = currentConfiguration->getGridDataVector();
-        currentMesh = gridDataVector.at(0)->getMesh();
 
         ui->edtConfigurationName->setText(currentConfiguration->getName());
         ui->cbxMesh->setCurrentText(currentConfiguration->getMesh()->getName());
@@ -81,7 +87,6 @@ void GridDataDialog::on_cbxConfiguration_currentIndexChanged(const QString &conf
             ui->tblGridInformation->setItem(rowCount, 3, new QTableWidgetItem(QString::number(gridData->getInputPolyData()->GetNumberOfPoints())));
         }
 
-        ui->gridDataVTKWidget->render(currentMesh);
         ui->btnShowGridDataPoints->setEnabled(true);
         ui->btnShowGridDataPoints->toggled(false);
         ui->btnShowInterpolationResult->setEnabled(true);
@@ -94,8 +99,7 @@ void GridDataDialog::on_cbxMesh_currentIndexChanged(const QString &meshName) {
     bool isMeshNamePresent = !meshName.isEmpty();
 
     if (isMeshNamePresent) {
-        Project *project = IPHApplication::getCurrentProject();
-        currentMesh = project->getMesh(meshName);
+        currentMesh = IPHApplication::getCurrentProject()->getMesh(meshName);
 
         if (currentMesh->instanceOf("UnstructuredMesh")) {
             currentMesh = static_cast<UnstructuredMesh*>(currentMesh);
@@ -107,10 +111,6 @@ void GridDataDialog::on_cbxMesh_currentIndexChanged(const QString &meshName) {
     ui->gridDataVTKWidget->render(currentMesh);
     ui->btnAddGridInfomation->setEnabled(isMeshNamePresent);
     ui->btnRemoveGridInformation->setEnabled(isMeshNamePresent);
-//    ui->btnShowGridDataPoints->setEnabled(isMeshNamePresent);
-//    ui->btnShowGridDataPoints->toggled(false);
-//    ui->btnShowInterpolationResult->setEnabled(isMeshNamePresent);
-//    ui->btnShowInterpolationResult->toggled(false);
     ui->btnShowMesh->setEnabled(isMeshNamePresent);
     ui->btnShowMesh->setChecked(isMeshNamePresent);
 }
@@ -195,8 +195,8 @@ void GridDataDialog::on_tblGridInformation_itemClicked(QTableWidgetItem *item) {
     GridData *gridData = currentConfiguration->getGridData(gridDataName);
     
     currentMesh->setActiveScalars(gridDataName);
-    ui->gridDataVTKWidget->setShowInterpolationResult(true);
-    ui->btnShowInterpolationResult->setChecked(true);
+    ui->gridDataVTKWidget->setShowGridDataPoints(ui->btnShowGridDataPoints->isChecked());
+    ui->gridDataVTKWidget->setShowInterpolationResult(ui->btnShowInterpolationResult->isChecked());
     ui->gridDataVTKWidget->render(gridData);
     ui->btnEditGridInformation->setEnabled(true);
 }
@@ -318,14 +318,14 @@ bool GridDataDialog::isConfigurationValid(const QString &configurationName) {
     return true;
 }
 
-void GridDataDialog::on_btnShowGridDataPoints_clicked(bool checked) {
-    ui->gridDataVTKWidget->setShowGridDataPoints(checked);
-}
-
-void GridDataDialog::on_btnShowInterpolationResult_clicked(bool checked) {
-    ui->gridDataVTKWidget->setShowInterpolationResult(checked);
-}
-
-void GridDataDialog::on_btnShowMesh_clicked(bool checked) {
-    ui->gridDataVTKWidget->setShowMesh(checked);
+void GridDataDialog::on_btnBackgroundColor_clicked() {
+    QColor color = QColorDialog::getColor(Qt::white, this, "Select a background color");
+    
+    if (color.isValid()) {
+        QPixmap px(24, 24);
+        px.fill(color);
+        
+        ui->gridDataVTKWidget->changeBackgroundColor(color.redF(), color.greenF(), color.blueF());
+        ui->btnBackgroundColor->setIcon(px);
+    }
 }
