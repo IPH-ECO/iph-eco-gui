@@ -6,22 +6,16 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1400</width>
-    <height>790</height>
+    <width>1129</width>
+    <height>631</height>
    </rect>
-  </property>
-  <property name="minimumSize">
-   <size>
-    <width>1400</width>
-    <height>790</height>
-   </size>
   </property>
   <property name="windowTitle">
    <string>Structured Mesh Generation</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="1">
-    <layout class="QVBoxLayout" name="verticalLayout">
+    <layout class="QVBoxLayout" name="rightWidget">
      <item>
       <widget class="MeshVTKWidget" name="meshVTKWidget" native="true">
        <property name="sizePolicy">
@@ -33,7 +27,7 @@
        <property name="minimumSize">
         <size>
          <width>800</width>
-         <height>0</height>
+         <height>600</height>
         </size>
        </property>
       </widget>
@@ -59,7 +53,7 @@
     </layout>
    </item>
    <item row="0" column="0">
-    <widget class="QWidget" name="widget" native="true">
+    <widget class="QWidget" name="leftWidget" native="true">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
        <horstretch>0</horstretch>
@@ -68,7 +62,7 @@
      </property>
      <property name="minimumSize">
       <size>
-       <width>430</width>
+       <width>300</width>
        <height>0</height>
       </size>
      </property>
@@ -187,22 +181,6 @@
            </property>
           </widget>
          </item>
-         <item row="1" column="3">
-          <widget class="QPushButton" name="btnBoundaryFileBrowser">
-           <property name="enabled">
-            <bool>true</bool>
-           </property>
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="text">
-            <string>...</string>
-           </property>
-          </widget>
-         </item>
          <item row="1" column="0">
           <widget class="QLabel" name="lblBoundaryFile">
            <property name="text">
@@ -217,6 +195,22 @@
            </property>
           </widget>
          </item>
+         <item row="1" column="3">
+          <widget class="QToolButton" name="btnBoundaryFileBrowser">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>...</string>
+           </property>
+          </widget>
+         </item>
         </layout>
        </widget>
       </item>
@@ -225,7 +219,7 @@
         <property name="maximumSize">
          <size>
           <width>16777215</width>
-          <height>200</height>
+          <height>150</height>
          </size>
         </property>
         <property name="title">
@@ -233,7 +227,7 @@
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout_4">
          <property name="spacing">
-          <number>0</number>
+          <number>2</number>
          </property>
          <item>
           <widget class="QListWidget" name="lstIslands">
@@ -251,7 +245,7 @@
          <item>
           <layout class="QVBoxLayout" name="verticalLayout_6">
            <item>
-            <widget class="QPushButton" name="btnAddIsland">
+            <widget class="QToolButton" name="btnAddIsland">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -268,7 +262,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="btnRemoveIsland">
+            <widget class="QToolButton" name="btnRemoveIsland">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                <horstretch>0</horstretch>

@@ -12,6 +12,9 @@ GridInformationDialog::GridInformationDialog(QDialog *parent, GridDataConfigurat
 {
     ui->setupUi(this);
 
+	Qt::WindowFlags flags = this->windowFlags() & (~Qt::WindowContextHelpButtonHint);
+	this->setWindowFlags(flags);
+
     appSettings = new QSettings(QApplication::organizationName(), QApplication::applicationName(), this);
 
     if (gridData != nullptr) {

@@ -15,6 +15,9 @@ UnstructuredMeshDialog::UnstructuredMeshDialog(QWidget *parent) :
 {
     ui->setupUi(this);
 
+	Qt::WindowFlags flags = this->windowFlags() | Qt::WindowMaximizeButtonHint;
+	this->setWindowFlags(flags);
+
     Project *project = IPHApplication::getCurrentProject();
     QSet<Mesh*> meshes = project->getMeshes();
 
@@ -48,7 +51,16 @@ void UnstructuredMeshDialog::setCoordinate(double &x, double &y) {
 }
 
 void UnstructuredMeshDialog::setArea(const double &area) {
-    ui->lblDomainArea->setText(QString("Area: %1 m\u00B2").arg(area, 0, 'f', 3));
+	QString areaStr("Area: ");
+
+	if (area == 0.0) {
+		areaStr += "-";
+	}
+	else {
+		areaStr += QString::number(area, 'f', 2) + " m\u00B2";
+	}
+
+	ui->lblDomainArea->setText(areaStr);
 }
 
 void UnstructuredMeshDialog::on_btnBoundaryFileBrowser_clicked() {
