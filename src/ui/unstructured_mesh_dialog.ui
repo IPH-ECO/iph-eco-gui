@@ -6,15 +6,9 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1400</width>
-    <height>790</height>
+    <width>1156</width>
+    <height>594</height>
    </rect>
-  </property>
-  <property name="minimumSize">
-   <size>
-    <width>1400</width>
-    <height>790</height>
-   </size>
   </property>
   <property name="windowTitle">
    <string>Unstructured Mesh Generation</string>
@@ -30,7 +24,7 @@
      </property>
      <property name="minimumSize">
       <size>
-       <width>430</width>
+       <width>300</width>
        <height>0</height>
       </size>
      </property>
@@ -158,22 +152,6 @@
             </layout>
            </widget>
           </item>
-          <item row="1" column="2">
-           <widget class="QPushButton" name="btnBoundaryFileBrowser">
-            <property name="enabled">
-             <bool>true</bool>
-            </property>
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="text">
-             <string>...</string>
-            </property>
-           </widget>
-          </item>
           <item row="1" column="1">
            <widget class="QLineEdit" name="edtBoundaryFileLine">
             <property name="enabled">
@@ -236,7 +214,7 @@
             <property name="maximumSize">
              <size>
               <width>16777215</width>
-              <height>200</height>
+              <height>150</height>
              </size>
             </property>
             <property name="title">
@@ -244,7 +222,7 @@
             </property>
             <layout class="QHBoxLayout" name="horizontalLayout_4">
              <property name="spacing">
-              <number>0</number>
+              <number>2</number>
              </property>
              <item>
               <widget class="QListWidget" name="lstIslands">
@@ -259,7 +237,7 @@
              <item>
               <layout class="QVBoxLayout" name="verticalLayout_6">
                <item>
-                <widget class="QPushButton" name="btnAddIsland">
+                <widget class="QToolButton" name="btnAddIsland">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                    <horstretch>0</horstretch>
@@ -276,7 +254,7 @@
                 </widget>
                </item>
                <item>
-                <widget class="QPushButton" name="btnRemoveIsland">
+                <widget class="QToolButton" name="btnRemoveIsland">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                    <horstretch>0</horstretch>
@@ -380,6 +358,22 @@
             </property>
            </spacer>
           </item>
+          <item row="1" column="2">
+           <widget class="QToolButton" name="btnBoundaryFileBrowser">
+            <property name="enabled">
+             <bool>true</bool>
+            </property>
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>...</string>
+            </property>
+           </widget>
+          </item>
          </layout>
          <zorder>lblMeshName</zorder>
          <zorder>edtMeshName</zorder>
@@ -396,38 +390,6 @@
           <string>Mesh</string>
          </attribute>
          <layout class="QGridLayout" name="gridLayout_4">
-          <item row="4" column="0">
-           <widget class="QPushButton" name="btnGenerateMesh2">
-            <property name="enabled">
-             <bool>true</bool>
-            </property>
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="text">
-             <string>Generate</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0" colspan="3">
-           <spacer name="verticalSpacer_7">
-            <property name="orientation">
-             <enum>Qt::Vertical</enum>
-            </property>
-            <property name="sizeType">
-             <enum>QSizePolicy::Fixed</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>20</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
           <item row="0" column="0" colspan="3">
            <widget class="QGroupBox" name="groupBox">
             <property name="title">
@@ -589,22 +551,38 @@
             </layout>
            </widget>
           </item>
+          <item row="2" column="0" colspan="3">
+           <spacer name="verticalSpacer_7">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>0</width>
+              <height>0</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item row="1" column="0">
+           <widget class="QPushButton" name="btnGenerateMesh2">
+            <property name="enabled">
+             <bool>true</bool>
+            </property>
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>Generate</string>
+            </property>
+           </widget>
+          </item>
          </layout>
         </widget>
        </widget>
-      </item>
-      <item>
-       <spacer name="verticalSpacer">
-        <property name="orientation">
-         <enum>Qt::Vertical</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>20</width>
-          <height>40</height>
-         </size>
-        </property>
-       </spacer>
       </item>
       <item>
        <widget class="QWidget" name="widget" native="true">
@@ -683,7 +661,7 @@
     </widget>
    </item>
    <item row="0" column="2">
-    <layout class="QVBoxLayout" name="verticalLayout_4">
+    <layout class="QVBoxLayout" name="rightWidget">
      <item>
       <widget class="MeshVTKWidget" name="meshVTKWidget" native="true">
        <property name="sizePolicy">
@@ -691,6 +669,12 @@
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>800</width>
+         <height>600</height>
+        </size>
        </property>
       </widget>
      </item>
@@ -745,7 +729,6 @@
   <tabstop>sbxMinimumAngle</tabstop>
   <tabstop>sbxMaximumEdgeLength</tabstop>
   <tabstop>chkShowMesh</tabstop>
-  <tabstop>btnGenerateMesh2</tabstop>
  </tabstops>
  <resources>
   <include location="../../icons.qrc"/>

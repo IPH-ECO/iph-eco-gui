@@ -23,7 +23,10 @@ GridDataVTKWidget::GridDataVTKWidget(QWidget *parent) : QVTKWidget(parent), show
 }
 
 void GridDataVTKWidget::render(Mesh *mesh) {
+	GridDataDialog *gridDataDialog = (GridDataDialog*) this->parent();
+
     if (mesh == nullptr) {
+		gridDataDialog->setArea(0);
         return;
     }
     
@@ -59,7 +62,6 @@ void GridDataVTKWidget::render(Mesh *mesh) {
     
     mouseInteractor->SetDefaultRenderer(renderer);
     
-    GridDataDialog *gridDataDialog = (GridDataDialog*) this->parent();
     QObject::connect(mouseInteractor, SIGNAL(coordinateChanged(double&, double&)), gridDataDialog, SLOT(setCoordinate(double&, double&)));
     gridDataDialog->setArea(mesh->area());
     

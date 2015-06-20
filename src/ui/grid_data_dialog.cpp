@@ -20,6 +20,9 @@ GridDataDialog::GridDataDialog(QWidget *parent) :
     unsavedConfiguration(new GridDataConfiguration()), currentConfiguration(unsavedConfiguration), currentMesh(nullptr)
 {
     ui->setupUi(this);
+
+	Qt::WindowFlags flags = this->windowFlags() | Qt::WindowMaximizeButtonHint;
+	this->setWindowFlags(flags);
     ui->tblGridInformation->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 
     Project *project = IPHApplication::getCurrentProject();
@@ -58,7 +61,15 @@ void GridDataDialog::setCoordinate(double &x, double &y) {
 }
 
 void GridDataDialog::setArea(const double &area) {
-    ui->lblDomainArea->setText(QString("Area: %1 m\u00B2").arg(area, 0, 'f', 3));
+	QString areaStr("Area: ");
+
+	if (area == 0.0) {
+		areaStr += "-";
+	} else {
+		areaStr += QString::number(area, 'f', 2) + " m\u00B2";
+	}
+
+    ui->lblDomainArea->setText(areaStr);
 }
 
 void GridDataDialog::on_cbxConfiguration_currentIndexChanged(const QString &configurationName) {
@@ -82,9 +93,8 @@ void GridDataDialog::on_cbxConfiguration_currentIndexChanged(const QString &conf
 
             ui->tblGridInformation->insertRow(rowCount);
             ui->tblGridInformation->setItem(rowCount, 0, new QTableWidgetItem(gridData->getName()));
-            ui->tblGridInformation->setItem(rowCount, 1, new QTableWidgetItem(gridData->gridDataInputTypeToString()));
-            ui->tblGridInformation->setItem(rowCount, 2, new QTableWidgetItem(gridData->gridDataTypeToString()));
-            ui->tblGridInformation->setItem(rowCount, 3, new QTableWidgetItem(QString::number(gridData->getInputPolyData()->GetNumberOfPoints())));
+            ui->tblGridInformation->setItem(rowCount, 1, new QTableWidgetItem(gridData->gridDataTypeToString()));
+            ui->tblGridInformation->setItem(rowCount, 2, new QTableWidgetItem(QString::number(gridData->getInputPolyData()->GetNumberOfPoints())));
         }
 
         ui->btnShowGridDataPoints->setEnabled(true);
@@ -163,9 +173,8 @@ void GridDataDialog::showGridInformationDialog(GridData *gridData) {
                 ui->btnShowColorMap->setChecked(false);
                 ui->tblGridInformation->insertRow(rowCount);
                 ui->tblGridInformation->setItem(rowCount, 0, new QTableWidgetItem(gridData->getName()));
-                ui->tblGridInformation->setItem(rowCount, 1, new QTableWidgetItem(gridData->gridDataInputTypeToString()));
-                ui->tblGridInformation->setItem(rowCount, 2, new QTableWidgetItem(gridData->gridDataTypeToString()));
-                ui->tblGridInformation->setItem(rowCount, 3, new QTableWidgetItem(QString::number(gridData->getInputPolyData()->GetNumberOfPoints())));
+                ui->tblGridInformation->setItem(rowCount, 1, new QTableWidgetItem(gridData->gridDataTypeToString()));
+                ui->tblGridInformation->setItem(rowCount, 2, new QTableWidgetItem(QString::number(gridData->getInputPolyData()->GetNumberOfPoints())));
             } else {
                 QTableWidgetItem *inputTypeItem = ui->tblGridInformation->item(ui->tblGridInformation->currentRow(), 0);
                 QTableWidgetItem *gridInformationItem = ui->tblGridInformation->item(ui->tblGridInformation->currentRow(), 1);
