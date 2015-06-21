@@ -17,12 +17,14 @@ StructuredMeshDialog::StructuredMeshDialog(QWidget *parent) :
     Project *project = IPHApplication::getCurrentProject();
     QSet<Mesh*> meshes = project->getMeshes();
 
+    ui->cbxMeshName->blockSignals(true);
     for (QSet<Mesh*>::const_iterator it = meshes.begin(); it != meshes.end(); ++it) {
         if ((*it)->instanceOf("StructuredMesh")) {
             ui->cbxMeshName->addItem((*it)->getName());
         }
     }
     ui->cbxMeshName->setCurrentIndex(-1);
+    ui->cbxMeshName->blockSignals(false);
     
     appSettings = new QSettings(QApplication::organizationName(), QApplication::applicationName(), this);
     connect(ui->lstIslands->model(), SIGNAL(dataChanged(const QModelIndex&, const QModelIndex&)), this, SLOT(on_islandItemEdited(const QModelIndex&, const QModelIndex&)));

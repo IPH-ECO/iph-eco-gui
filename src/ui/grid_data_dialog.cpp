@@ -29,15 +29,19 @@ GridDataDialog::GridDataDialog(QWidget *parent) :
     QSet<Mesh*> meshes = project->getMeshes();
     QSet<GridDataConfiguration*> configurations = project->getGridDataConfigurations();
 
+    ui->cbxMesh->blockSignals(true);
     for (QSet<Mesh*>::const_iterator it = meshes.begin(); it != meshes.end(); ++it) {
         ui->cbxMesh->addItem((*it)->getName());
     }
     ui->cbxMesh->setCurrentIndex(-1);
+    ui->cbxMesh->blockSignals(false);
 
+    ui->cbxConfiguration->blockSignals(true);
     for (QSet<GridDataConfiguration*>::const_iterator it = configurations.begin(); it != configurations.end(); it++) {
         ui->cbxConfiguration->addItem((*it)->getName());
     }
     ui->cbxConfiguration->setCurrentIndex(-1);
+    ui->cbxConfiguration->blockSignals(false);
     
     ui->gridDataVTKWidget->clear();
     

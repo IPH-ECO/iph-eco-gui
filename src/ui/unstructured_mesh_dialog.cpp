@@ -21,12 +21,15 @@ UnstructuredMeshDialog::UnstructuredMeshDialog(QWidget *parent) :
     Project *project = IPHApplication::getCurrentProject();
     QSet<Mesh*> meshes = project->getMeshes();
 
+    ui->cbxMeshName->blockSignals(true);
     for (QSet<Mesh*>::const_iterator it = meshes.begin(); it != meshes.end(); ++it) {
         if ((*it)->instanceOf("UnstructuredMesh")) {
             ui->cbxMeshName->addItem((*it)->getName());
         }
     }
     ui->cbxMeshName->setCurrentIndex(-1);
+    ui->cbxMeshName->blockSignals(false);
+    
     ui->lstRefinementAreas->addItem(MeshPolygon::BOUNDARY_POLYGON_NAME);
     
     appSettings = new QSettings(QApplication::organizationName(), QApplication::applicationName(), this);
