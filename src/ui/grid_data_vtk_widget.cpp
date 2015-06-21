@@ -7,17 +7,17 @@
 #include <vtkSmartPointer.h>
 #include <vtkRenderWindowInteractor.h>
 #include <vtkWorldPointPicker.h>
-#include <vtkScalarBarActor.h>
 #include <vtkRenderWindow.h>
+#include <vtkTextProperty.h>
 #include <vtkLookupTable.h>
 #include <vtkPointData.h>
 #include <vtkPolyData.h>
+#include <vtkCellData.h>
+#include <vtkDataArray.h>
 #include <vtkProperty.h>
 #include <QList>
 
-GridDataVTKWidget::GridDataVTKWidget(QWidget *parent) : QVTKWidget(parent), showMesh(true), showGridDataPoints(true), showInterpolationResult(false) {
-    gridDataActor = vtkSmartPointer<vtkActor>::New();
-    meshActor = vtkSmartPointer<vtkActor>::New();
+GridDataVTKWidget::GridDataVTKWidget(QWidget *parent) : QVTKWidget(parent), showMesh(true), showGridDataPoints(true), showColorMap(false) {
     renderer = vtkSmartPointer<vtkRenderer>::New();
     renderer->SetBackground(1, 1, 1);
 }
@@ -33,18 +33,11 @@ void GridDataVTKWidget::render(Mesh *mesh) {
     this->clear();
     
     // Mesh rendering
-    vtkPolyData *gridPolyData = mesh->getPolyData();
     meshMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+    meshMapper->SetInputData(mesh->getPolyData());
+    meshMapper->ScalarVisibilityOff();
     
-    meshMapper->SetInputData(gridPolyData);
-    meshMapper->SetScalarModeToUseCellData();
-    meshMapper->SetColorModeToMapScalars();
-    if (this->showInterpolationResult) {
-        meshMapper->ScalarVisibilityOn();
-    } else {
-        meshMapper->ScalarVisibilityOff();
-    }
-    
+    meshActor = vtkSmartPointer<vtkActor>::New();
     meshActor->SetMapper(meshMapper);
     
     if (this->showMesh) {
@@ -81,37 +74,75 @@ void GridDataVTKWidget::render(GridData *gridData) {
     
     render(mesh);
 
-    vtkPolyData *gridDataInputPolyData = gridData->getInputPolyData();
-    vtkSmartPointer<vtkPolyDataMapper> gridDataMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-    double *interval = gridDataInputPolyData->GetPointData()->GetScalars()->GetRange();
-    vtkSmartPointer<vtkLookupTable> lut = vtkSmartPointer<vtkLookupTable>::New();
+    vtkPolyData *inputPointsPolyData = gridData->getInputPolyData();
+    vtkSmartPointer<vtkPolyDataMapper> inputPointsMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+    vtkSmartPointer<vtkLookupTable> inputPointsTable = vtkSmartPointer<vtkLookupTable>::New();
+    double *interval = inputPointsPolyData->GetPointData()->GetScalars()->GetRange();
     
-    lut->SetTableRange(interval[0], interval[1]);
+    inputPointsTable->SetTableRange(interval[0], interval[1]);
     
-    gridDataMapper->SetInputData(gridDataInputPolyData);
-    gridDataMapper->SetLookupTable(lut);
-    gridDataMapper->UseLookupTableScalarRangeOn();
-    gridDataMapper->SetScalarModeToUsePointData();
+    inputPointsMapper->SetInputData(inputPointsPolyData);
+    inputPointsMapper->SetLookupTable(inputPointsTable);
+    inputPointsMapper->UseLookupTableScalarRangeOn();
+    inputPointsMapper->SetScalarModeToUsePointData();
+    
+    gridDataActor = vtkSmartPointer<vtkActor>::New();
+    gridDataActor->SetMapper(inputPointsMapper);
+    
+    inputPointsBar = vtkSmartPointer<vtkScalarBarActor>::New();
+    inputPointsBar->SetLookupTable(inputPointsTable);
+    inputPointsBar->SetTitle(gridData->getName().toStdString().c_str());
+    inputPointsBar->SetNumberOfLabels(4);
+    inputPointsBar->GetTitleTextProperty()->SetFontSize(8); // doesn't have effect
+    inputPointsBar->SetWidth(0.1);
+    inputPointsBar->SetHeight(0.5);
+    inputPointsBar->SetPosition(0.05, 0.05);
+
+    vtkPolyData *meshPolyData = mesh->getPolyData();
+    
+    vtkSmartPointer<vtkLookupTable> colorMapTable = vtkSmartPointer<vtkLookupTable>::New();
+    meshPolyData->GetCellData()->SetActiveScalars(gridData->getName().toStdString().c_str());
+    interval = meshPolyData->GetCellData()->GetScalars()->GetRange();
+    colorMapTable->SetTableRange(interval[0], interval[1]);
+    
+    meshMapper->SetLookupTable(colorMapTable);
+    meshMapper->UseLookupTableScalarRangeOn();
+    meshMapper->SetScalarModeToUseCellData();
+    
+    colorMapBar = vtkSmartPointer<vtkScalarBarActor>::New();
+    colorMapBar->SetLookupTable(colorMapTable);
+    colorMapBar->SetTitle("Color Map");
+    colorMapBar->SetNumberOfLabels(4);
+    colorMapBar->GetTitleTextProperty()->SetFontSize(8); // doesn't have effect
+    colorMapBar->SetWidth(0.1);
+    colorMapBar->SetHeight(0.5);
+    colorMapBar->SetPosition(0.85, 0.05);
+    
+    renderer->AddActor2D(colorMapBar);
+    
+    if (showColorMap) {
+        colorMapBar->VisibilityOn();
+        meshMapper->ScalarVisibilityOn();
+    } else {
+        colorMapBar->VisibilityOff();
+        meshMapper->ScalarVisibilityOff();
+    }
     
     if (showGridDataPoints) {
         gridDataActor->VisibilityOn();
+        inputPointsBar->VisibilityOn();
     } else {
         gridDataActor->VisibilityOff();
+        inputPointsBar->VisibilityOff();
     }
     
-    gridDataActor->SetMapper(gridDataMapper);
-    
-    vtkSmartPointer<vtkScalarBarActor> scalarBar = vtkSmartPointer<vtkScalarBarActor>::New();
-    scalarBar->SetTitle(gridData->getName().toStdString().c_str());
-    scalarBar->SetNumberOfLabels(10);
-    scalarBar->SetLookupTable(lut);
-    
     renderer->AddActor(gridDataActor);
-    renderer->AddActor2D(scalarBar);
+    renderer->AddActor2D(inputPointsBar);
 }
 
 void GridDataVTKWidget::setShowMesh(bool value) {
     this->showMesh = value;
+    
     if (value) {
         meshActor->GetProperty()->EdgeVisibilityOn();
     } else {
@@ -122,19 +153,33 @@ void GridDataVTKWidget::setShowMesh(bool value) {
 
 void GridDataVTKWidget::setShowGridDataPoints(bool show) {
     this->showGridDataPoints = show;
+    
+    if (gridDataActor == nullptr || inputPointsBar == nullptr) {
+        return;
+    }
+    
     if (show) {
         gridDataActor->VisibilityOn();
+        inputPointsBar->VisibilityOn();
     } else {
         gridDataActor->VisibilityOff();
+        inputPointsBar->VisibilityOff();
     }
     this->update();
 }
 
-void GridDataVTKWidget::setShowInterpolationResult(bool show) {
-    this->showInterpolationResult = show;
+void GridDataVTKWidget::setShowColorMap(bool show) {
+    this->showColorMap = show;
+    
+    if (meshMapper == nullptr || colorMapBar == nullptr) {
+        return;
+    }
+    
     if (show) {
+        colorMapBar->VisibilityOn();
         meshMapper->ScalarVisibilityOn();
     } else {
+        colorMapBar->VisibilityOff();
         meshMapper->ScalarVisibilityOff();
     }
     this->update();

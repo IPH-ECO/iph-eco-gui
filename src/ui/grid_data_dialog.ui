@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1153</width>
-    <height>641</height>
+    <width>1216</width>
+    <height>662</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -294,7 +294,7 @@
      </property>
      <property name="minimumSize">
       <size>
-       <width>300</width>
+       <width>350</width>
        <height>0</height>
       </size>
      </property>
@@ -570,7 +570,7 @@
            <bool>false</bool>
           </property>
           <property name="text">
-           <string>Save as New...</string>
+           <string>Save as...</string>
           </property>
          </widget>
         </item>
@@ -596,7 +596,7 @@
    <slots>
     <slot>setShowMesh(bool)</slot>
     <slot>setShowGridDataPoints(bool)</slot>
-    <slot>setShowInterpolationResult(bool)</slot>
+    <slot>setShowColorMap(bool)</slot>
    </slots>
   </customwidget>
  </customwidgets>
@@ -650,7 +650,7 @@
    <sender>btnShowColorMap</sender>
    <signal>clicked(bool)</signal>
    <receiver>gridDataVTKWidget</receiver>
-   <slot>setShowInterpolationResult(bool)</slot>
+   <slot>setShowColorMap(bool)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>571</x>

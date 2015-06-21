@@ -3,12 +3,14 @@
 
 #include "include/domain/grid_data.h"
 
-#include <QWidget>
 #include <QColor>
+#include <QWidget>
+#include <vtkActor.h>
 #include <QVTKWidget.h>
 #include <vtkRenderer.h>
-#include <vtkActor.h>
+#include <vtkContextActor.h>
 #include <vtkPolyDataMapper.h>
+#include <vtkScalarBarActor.h>
 
 class GridDataVTKWidget : public QVTKWidget {
 	Q_OBJECT
@@ -16,11 +18,14 @@ private:
 	vtkSmartPointer<vtkRenderer> renderer;
     vtkSmartPointer<vtkActor> meshActor;
     vtkSmartPointer<vtkActor> gridDataActor;
+    vtkSmartPointer<vtkActor> colorMapActor;
     vtkSmartPointer<vtkPolyDataMapper> meshMapper;
+    vtkSmartPointer<vtkScalarBarActor> inputPointsBar;
+    vtkSmartPointer<vtkScalarBarActor> colorMapBar;
     
     bool showMesh;
     bool showGridDataPoints;
-    bool showInterpolationResult;
+    bool showColorMap;
 public:
     GridDataVTKWidget(QWidget *parent);
     void render(Mesh *mesh);
@@ -30,7 +35,7 @@ public:
 public slots:
     void setShowMesh(bool show);
     void setShowGridDataPoints(bool show);
-    void setShowInterpolationResult(bool show);
+    void setShowColorMap(bool show);
 };
 
 #endif // GRID_DATA_VTK_WIDGET_H

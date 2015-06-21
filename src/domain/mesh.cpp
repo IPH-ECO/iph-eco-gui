@@ -202,10 +202,6 @@ double Mesh::area() {
     return area;
 }
 
-void Mesh::setActiveScalars(const QString &arrayName) {
-    polyData->GetCellData()->SetActiveScalars(arrayName.toStdString().c_str());
-}
-
 bool Mesh::isPersisted() const {
     return this->id != 0;
 }

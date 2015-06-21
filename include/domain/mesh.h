@@ -46,7 +46,6 @@ public:
     MeshPolygon* getMeshPolygon(const QString &name, const MeshPolygonType &meshPolygonType) const;
 
     double area();
-    void setActiveScalars(const QString &arrayName);
 
     virtual bool instanceOf(const QString &type) = 0;
     virtual void generate() = 0;
@@ -61,4 +60,3 @@ public slots:
 };
 
 #endif // MESH_H
-

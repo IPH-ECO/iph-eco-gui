@@ -207,9 +207,8 @@ void GridDataDialog::on_tblGridInformation_itemClicked(QTableWidgetItem *item) {
     QString gridDataName = ui->tblGridInformation->item(item->row(), 0)->text();
     GridData *gridData = currentConfiguration->getGridData(gridDataName);
     
-    currentMesh->setActiveScalars(gridDataName);
     ui->gridDataVTKWidget->setShowGridDataPoints(ui->btnShowGridDataPoints->isChecked());
-    ui->gridDataVTKWidget->setShowInterpolationResult(ui->btnShowColorMap->isChecked());
+    ui->gridDataVTKWidget->setShowColorMap(ui->btnShowColorMap->isChecked());
     ui->gridDataVTKWidget->render(gridData);
     ui->btnEditGridInformation->setEnabled(true);
 }
