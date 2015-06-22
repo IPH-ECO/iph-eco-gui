@@ -101,8 +101,9 @@ void GridDataVTKWidget::render(GridData *gridData) {
     vtkPolyData *meshPolyData = mesh->getPolyData();
     
     vtkSmartPointer<vtkLookupTable> colorMapTable = vtkSmartPointer<vtkLookupTable>::New();
-    meshPolyData->GetCellData()->SetActiveScalars(gridData->getName().toStdString().c_str());
-    interval = meshPolyData->GetCellData()->GetScalars()->GetRange();
+	std::string gridDataName(gridData->getName().toStdString());
+	meshPolyData->GetCellData()->SetActiveScalars(gridDataName.c_str());
+	interval = meshPolyData->GetCellData()->GetScalars(gridDataName.c_str())->GetRange();
     colorMapTable->SetTableRange(interval[0], interval[1]);
     
     meshMapper->SetLookupTable(colorMapTable);

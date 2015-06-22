@@ -83,6 +83,7 @@ void GridDataDialog::on_cbxConfiguration_currentIndexChanged(const QString &conf
         toggleGridDataConfigurationForm(false);
         ui->edtConfigurationName->clear();
         ui->cbxMesh->setCurrentIndex(-1);
+        currentConfiguration = unsavedConfiguration;
     } else {
         Project *project = IPHApplication::getCurrentProject();
         currentConfiguration = project->getGridDataConfiguration(configurationName);
@@ -124,6 +125,7 @@ void GridDataDialog::on_cbxMesh_currentIndexChanged(const QString &meshName) {
 
     ui->gridDataVTKWidget->render(currentMesh);
     ui->btnAddGridInfomation->setEnabled(isMeshNamePresent);
+    ui->btnEditGridInformation->setEnabled(isMeshNamePresent);
     ui->btnRemoveGridInformation->setEnabled(isMeshNamePresent);
     ui->btnShowMesh->setEnabled(isMeshNamePresent);
     ui->btnShowMesh->setChecked(isMeshNamePresent);
@@ -236,7 +238,8 @@ void GridDataDialog::toggleGridDataConfigurationForm(bool enable) {
 }
 
 void GridDataDialog::on_btnSaveConfiguration_clicked() {
-    QString configurationName = ui->cbxConfiguration->currentIndex() == -1 ? ui->edtConfigurationName->text() : ui->cbxConfiguration->currentText();
+    bool isNewConfiguration = ui->cbxConfiguration->currentIndex() == -1;
+    QString configurationName = isNewConfiguration ? ui->edtConfigurationName->text() : ui->cbxConfiguration->currentText();
     
     if (!isConfigurationValid(configurationName)) {
         return;
@@ -246,7 +249,7 @@ void GridDataDialog::on_btnSaveConfiguration_clicked() {
     
     currentConfiguration->setName(configurationName);
 
-    if (ui->cbxConfiguration->currentIndex() == -1) {
+    if (isNewConfiguration) {
         project->addGridDataConfiguration(currentConfiguration);
         unsavedConfiguration = new GridDataConfiguration();
 

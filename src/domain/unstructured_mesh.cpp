@@ -59,7 +59,6 @@ void UnstructuredMesh::generate() {
 
     vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
     vtkSmartPointer<vtkCellArray> triangles = vtkSmartPointer<vtkCellArray>::New();
-    vtkSmartPointer<vtkTriangle> _vtkTriangle = vtkSmartPointer<vtkTriangle>::New();
     polyData = vtkSmartPointer<vtkPolyData>::New();
     vtkIdType i = 0;
 
@@ -70,7 +69,9 @@ void UnstructuredMesh::generate() {
 
         CGAL::Triangle_2<K> cgalTriangle = cdt.triangle(fit);
         Point a(cgalTriangle[0]), b(cgalTriangle[1]), c(cgalTriangle[2]);
+		vtkSmartPointer<vtkTriangle> _vtkTriangle = vtkSmartPointer<vtkTriangle>::New();
 
+		_vtkTriangle->GetPointIds()->SetNumberOfIds(3);
         _vtkTriangle->GetPointIds()->SetId(0, i++);
         _vtkTriangle->GetPointIds()->SetId(1, i++);
         _vtkTriangle->GetPointIds()->SetId(2, i++);

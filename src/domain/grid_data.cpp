@@ -121,6 +121,7 @@ void GridData::buildInputPolyData() {
     }
     
     vtkSmartPointer<vtkDoubleArray> weights = vtkSmartPointer<vtkDoubleArray>::New();
+	weights->SetName("inputPoints");
     weights->SetNumberOfComponents(1);
     weights->SetNumberOfTuples(numberOfPoints);
     
@@ -142,9 +143,9 @@ void GridData::interpolate() {
     
     vtkPolyData *meshPolyData = mesh->getPolyData();
     vtkSmartPointer<vtkDoubleArray> interpolatedWeightsArray = vtkSmartPointer<vtkDoubleArray>::New();
-    const char *gridDataName = name.toStdString().c_str();
-    
-    interpolatedWeightsArray->SetName(gridDataName);
+    std::string gridDataName(this->name.toStdString());
+
+	interpolatedWeightsArray->SetName(gridDataName.c_str());
     interpolatedWeightsArray->SetNumberOfComponents(1);
     interpolatedWeightsArray->SetNumberOfTuples(meshPolyData->GetNumberOfCells());
     
@@ -221,9 +222,8 @@ void GridData::interpolate() {
     }
     
     if (!interpolationCanceled) {
-        meshPolyData->GetCellData()->RemoveArray(gridDataName);
+        meshPolyData->GetCellData()->RemoveArray(gridDataName.c_str());
         meshPolyData->GetCellData()->AddArray(interpolatedWeightsArray);
-        meshPolyData->GetCellData()->SetActiveScalars(gridDataName);
     }
 }
 

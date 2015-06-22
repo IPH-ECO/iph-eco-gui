@@ -127,7 +127,6 @@ QString Mesh::getPolyDataAsString() const {
     writer->SetFileName("MeshPolyData");
     writer->SetInputData(this->polyData);
     writer->WriteToOutputStringOn();
-    writer->Update();
     writer->Write();
     
     return QString::fromStdString(writer->GetOutputString());
