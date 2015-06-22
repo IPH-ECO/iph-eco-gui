@@ -39,7 +39,7 @@ void MeshPolygon::build() {
     
     QFile kmlFile(this->filename);
 
-    if (!kmlFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
+    if (!kmlFile.open(QIODevice::ReadOnly | QIODevice::Text) || kmlFile.size() == 0) {
         throw MeshPolygonException(QString("Unable to open KML file. Error: %1").arg(kmlFile.errorString()));
     }
 

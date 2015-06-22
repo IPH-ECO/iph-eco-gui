@@ -6,10 +6,10 @@
 
 class MeshPolygonException : public std::exception {
 private:
-    const char* cause;
+    char* cause;
 public:
     MeshPolygonException(const QString &cause);
-
+    
     const char* what() const throw();
 };
 

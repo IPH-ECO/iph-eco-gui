@@ -6,10 +6,10 @@
 
 class GridDataException : public std::exception {
 private:
-    const char* cause;
+    char* cause;
 public:
     GridDataException(const QString &cause);
-
+    
     const char* what() const throw();
 };
 

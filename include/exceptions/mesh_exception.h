@@ -2,12 +2,11 @@
 #define MESH_EXCEPTION_H
 
 #include <exception>
-
 #include <QString>
 
 class MeshException : public std::exception {
 private:
-    const char* cause;
+    char* cause;
 public:
     MeshException(const QString &cause);
 
