@@ -40,6 +40,9 @@
        </item>
        <item>
         <widget class="QToolButton" name="btnZoomArea">
+         <property name="toolTip">
+          <string>Zoom area</string>
+         </property>
          <property name="text">
           <string/>
          </property>
@@ -77,6 +80,9 @@
        </item>
        <item>
         <widget class="QToolButton" name="toolButton">
+         <property name="toolTip">
+          <string>Show/Hide axis</string>
+         </property>
          <property name="text">
           <string/>
          </property>
