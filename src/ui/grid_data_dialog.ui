@@ -551,6 +551,16 @@
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_14">
         <item>
+         <widget class="QPushButton" name="btnDoneConfiguration">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="text">
+           <string>Done</string>
+          </property>
+         </widget>
+        </item>
+        <item>
          <widget class="QPushButton" name="btnRemoveConfiguration">
           <property name="enabled">
            <bool>false</bool>
@@ -604,6 +614,7 @@
   <tabstop>edtConfigurationName</tabstop>
   <tabstop>cbxMesh</tabstop>
   <tabstop>btnRemoveGridInformation</tabstop>
+  <tabstop>btnDoneConfiguration</tabstop>
   <tabstop>btnRemoveConfiguration</tabstop>
   <tabstop>btnSaveConfiguration</tabstop>
  </tabstops>
