@@ -2,12 +2,14 @@
 
 #include "include/utility/cgal_definitions.h"
 #include "include/exceptions/grid_data_exception.h"
+#include "include/ui/progress_observer.h"
 
 #include <GeographicLib/GeoCoords.hpp>
 #include <vtkRegularPolygonSource.h>
 #include <vtkSimplePointsReader.h>
 #include <vtkXMLPolyDataWriter.h>
 #include <vtkXMLPolyDataReader.h>
+#include <vtkObjectFactory.h>
 #include <vtkDoubleArray.h>
 #include <vtkIdTypeArray.h>
 #include <vtkPointData.h>
@@ -15,6 +17,8 @@
 #include <vtkTriangle.h>
 #include <QApplication>
 #include <vtkQuad.h>
+
+vtkStandardNewMacro(ProgressObserver);
 
 GridData::GridData(Mesh *mesh) : id(0), mesh(mesh), interpolationCanceled(false) {}
 
@@ -106,8 +110,11 @@ void GridData::buildInputPolyData() {
     }
     
     vtkSmartPointer<vtkSimplePointsReader> reader = vtkSmartPointer<vtkSimplePointsReader>::New();
+    vtkSmartPointer<ProgressObserver> po = vtkSmartPointer<ProgressObserver>::New();
 
+    QObject::connect(po, SIGNAL(updateProgressSignal(int)), this, SLOT(updateInputPointsProgress(int)));
     reader->SetFileName(this->inputFile.toStdString().c_str());
+    reader->SetProgressObserver(po);
     reader->Update();
 
     inputPolyData = vtkSmartPointer<vtkPolyData>::New();
@@ -269,6 +276,10 @@ double GridData::calculateNearestWeight(double *cellCenter) {
 
 void GridData::cancelInterpolation(bool value) {
     this->interpolationCanceled = value;
+}
+
+void GridData::updateInputPointsProgress(int value) {
+    emit updateProgress(value);
 }
 
 QString GridData::gridDataInputTypeToString() const {

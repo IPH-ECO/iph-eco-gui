@@ -160,7 +160,7 @@ void GridDataDialog::showGridInformationDialog(GridData *gridData) {
     if (exitCode == QDialog::Accepted) {
         int rowCount = ui->tblGridInformation->rowCount();
         GridData *gridData = gridInformationDialog->getGridData();
-        int maximum = gridData->getMesh()->getPolyData()->GetNumberOfCells();
+        int maximum = gridData->getMesh()->getPolyData()->GetNumberOfCells() + 100;
         
         QProgressDialog *progressDialog = new QProgressDialog(tr("Interpolating grid data..."), tr("Cancel"), 0, maximum - 1, this);
         QObject::connect(gridData, SIGNAL(updateProgress(int)), progressDialog, SLOT(setValue(int)));

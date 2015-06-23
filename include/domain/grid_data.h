@@ -77,6 +77,7 @@ signals:
     
 public slots:
     void cancelInterpolation(bool value = true);
+    void updateInputPointsProgress(int value);
 };
 
 #endif // GRID_DATA_H
