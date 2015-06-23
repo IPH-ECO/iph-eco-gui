@@ -3,10 +3,7 @@
 GridDataConfiguration::GridDataConfiguration() : id(0) {}
 
 GridDataConfiguration::~GridDataConfiguration() {
-    for (int i = 0; i < gridDataVector.size(); i++) {
-        delete gridDataVector.at(i);
-    }
-    gridDataVector.clear();
+    this->clearGridDataVector();
 }
 
 uint GridDataConfiguration::getId() const {
@@ -73,6 +70,13 @@ GridData* GridDataConfiguration::getGridData(int i) {
     }
 
     return nullptr;
+}
+
+void GridDataConfiguration::clearGridDataVector() {
+    for (int i = 0; i < gridDataVector.size(); i++) {
+        delete gridDataVector.at(i);
+    }
+    gridDataVector.clear();
 }
 
 Mesh* GridDataConfiguration::getMesh() const {

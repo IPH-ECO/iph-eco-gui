@@ -551,16 +551,6 @@
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_14">
         <item>
-         <widget class="QPushButton" name="btnDoneConfiguration">
-          <property name="enabled">
-           <bool>false</bool>
-          </property>
-          <property name="text">
-           <string>Done</string>
-          </property>
-         </widget>
-        </item>
-        <item>
          <widget class="QPushButton" name="btnRemoveConfiguration">
           <property name="enabled">
            <bool>false</bool>
@@ -571,21 +561,24 @@
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="btnSaveAsNewConfiguration">
-          <property name="enabled">
-           <bool>false</bool>
-          </property>
-          <property name="text">
-           <string>Save as...</string>
-          </property>
-         </widget>
-        </item>
-        <item>
          <widget class="QPushButton" name="btnSaveConfiguration">
           <property name="text">
            <string>Save</string>
           </property>
          </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer_3">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
         </item>
        </layout>
       </item>
@@ -611,9 +604,7 @@
   <tabstop>edtConfigurationName</tabstop>
   <tabstop>cbxMesh</tabstop>
   <tabstop>btnRemoveGridInformation</tabstop>
-  <tabstop>btnDoneConfiguration</tabstop>
   <tabstop>btnRemoveConfiguration</tabstop>
-  <tabstop>btnSaveAsNewConfiguration</tabstop>
   <tabstop>btnSaveConfiguration</tabstop>
  </tabstops>
  <resources>

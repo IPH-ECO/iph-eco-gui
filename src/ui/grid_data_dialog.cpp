@@ -7,7 +7,6 @@
 #include "include/exceptions/grid_data_exception.h"
 
 #include <QFileDialog>
-#include <QInputDialog>
 #include <QMessageBox>
 #include <QVector>
 #include <QObject>
@@ -84,6 +83,7 @@ void GridDataDialog::on_cbxConfiguration_currentIndexChanged(const QString &conf
         ui->edtConfigurationName->clear();
         ui->cbxMesh->setCurrentIndex(-1);
         currentConfiguration = unsavedConfiguration;
+        ui->btnSaveConfiguration->setText("Save");
     } else {
         Project *project = IPHApplication::getCurrentProject();
         currentConfiguration = project->getGridDataConfiguration(configurationName);
@@ -102,6 +102,7 @@ void GridDataDialog::on_cbxConfiguration_currentIndexChanged(const QString &conf
             ui->tblGridInformation->setItem(rowCount, 2, new QTableWidgetItem(QString::number(gridData->getInputPolyData()->GetNumberOfPoints())));
         }
 
+        ui->btnSaveConfiguration->setText("Done");
         ui->btnShowGridDataPoints->setEnabled(true);
         ui->btnShowGridDataPoints->toggled(false);
         ui->btnShowColorMap->setEnabled(true);
@@ -114,6 +115,23 @@ void GridDataDialog::on_cbxMesh_currentIndexChanged(const QString &meshName) {
     bool isMeshNamePresent = !meshName.isEmpty();
 
     if (isMeshNamePresent) {
+        Mesh *configurationMesh = currentConfiguration->getMesh();
+        
+        if (currentMesh != nullptr && configurationMesh != nullptr && currentConfiguration->getMesh()->getName() != meshName && currentConfiguration->getGridDataVector().size() > 0) {
+            QString question = tr("Changing the mesh in this configuration will remove all created grid data. Are you sure?");
+            QMessageBox::StandardButton button = QMessageBox::question(this, tr("Grid Data Configuration"), question);
+            
+            if (button == QMessageBox::No) {
+                ui->cbxMesh->blockSignals(true);
+                ui->cbxMesh->setCurrentText(currentMesh->getName());
+                ui->cbxMesh->blockSignals(false);
+                return;
+            }
+            
+            currentConfiguration->clearGridDataVector();
+            ui->tblGridInformation->setRowCount(0);
+        }
+        
         currentMesh = IPHApplication::getCurrentProject()->getMesh(meshName);
 
         if (currentMesh->instanceOf("UnstructuredMesh")) {
@@ -121,11 +139,12 @@ void GridDataDialog::on_cbxMesh_currentIndexChanged(const QString &meshName) {
         } else {
             currentMesh = static_cast<StructuredMesh*>(currentMesh);
         }
+    } else {
+        currentMesh = nullptr;
     }
 
     ui->gridDataVTKWidget->render(currentMesh);
     ui->btnAddGridInfomation->setEnabled(isMeshNamePresent);
-    ui->btnEditGridInformation->setEnabled(isMeshNamePresent);
     ui->btnRemoveGridInformation->setEnabled(isMeshNamePresent);
     ui->btnShowMesh->setEnabled(isMeshNamePresent);
     ui->btnShowMesh->setChecked(isMeshNamePresent);
@@ -222,6 +241,8 @@ void GridDataDialog::on_btnRemoveGridInformation_clicked() {
         currentConfiguration->removeGridData(currentRow);
         ui->tblGridInformation->removeRow(currentRow);
         if (ui->tblGridInformation->rowCount() == 0) {
+            ui->btnEditGridInformation->setEnabled(false);
+            ui->btnRemoveConfiguration->setEnabled(false);
             ui->btnShowGridDataPoints->setEnabled(false);
             ui->btnShowGridDataPoints->toggled(false);
             ui->btnShowColorMap->setEnabled(false);
@@ -232,25 +253,20 @@ void GridDataDialog::on_btnRemoveGridInformation_clicked() {
 }
 
 void GridDataDialog::toggleGridDataConfigurationForm(bool enable) {
-    ui->btnDoneConfiguration->setEnabled(enable);
     ui->btnRemoveConfiguration->setEnabled(enable);
-    ui->btnSaveAsNewConfiguration->setEnabled(enable);
 }
 
 void GridDataDialog::on_btnSaveConfiguration_clicked() {
-    bool isNewConfiguration = ui->cbxConfiguration->currentIndex() == -1;
-    QString configurationName = isNewConfiguration ? ui->edtConfigurationName->text() : ui->cbxConfiguration->currentText();
+    QString configurationName = ui->edtConfigurationName->text();
     
     if (!isConfigurationValid(configurationName)) {
         return;
     }
-
-    Project *project = IPHApplication::getCurrentProject();
     
     currentConfiguration->setName(configurationName);
 
-    if (isNewConfiguration) {
-        project->addGridDataConfiguration(currentConfiguration);
+    if (ui->cbxConfiguration->currentIndex() == -1) {
+        IPHApplication::getCurrentProject()->addGridDataConfiguration(currentConfiguration);
         unsavedConfiguration = new GridDataConfiguration();
 
         ui->cbxConfiguration->addItem(configurationName);
@@ -258,39 +274,10 @@ void GridDataDialog::on_btnSaveConfiguration_clicked() {
     } else {
         ui->cbxConfiguration->setItemText(ui->cbxConfiguration->currentIndex(), configurationName);
     }
-}
-
-void GridDataDialog::on_btnSaveAsNewConfiguration_clicked() {
-    QString newConfigurationName = QInputDialog::getText(this, tr("Save Grid Data Configuration as New"), tr("Configuration Name"));
     
-    if (newConfigurationName.isEmpty() || isConfigurationValid(newConfigurationName)) {
-        return;
+    if (ui->btnSaveConfiguration->text() == "Done") {
+        ui->cbxConfiguration->setCurrentIndex(-1);
     }
-
-    GridDataConfiguration *newConfiguration = new GridDataConfiguration();
-    Project *project = IPHApplication::getCurrentProject();
-    QVector<GridData*> gridDataVector = currentConfiguration->getGridDataVector();
-
-    newConfiguration->setName(newConfigurationName);
-
-    for (int i = 0; i < gridDataVector.count(); i++) {
-        GridData *gridData = gridDataVector.at(i);
-        GridData *newGridData = new GridData(currentMesh);
-
-        newGridData->setGridDataInputType(gridData->getGridDataInputType());
-        newGridData->setInputFile(gridData->getInputFile());
-        newGridData->setGridDataType(gridData->getGridDataType());
-        newGridData->setExponent(gridData->getExponent());
-        newGridData->setRadius(gridData->getRadius());
-
-        newConfiguration->addGridData(newGridData);
-    }
-
-    project->addGridDataConfiguration(newConfiguration);
-    currentConfiguration = newConfiguration;
-
-    ui->cbxConfiguration->addItem(newConfigurationName);
-    ui->cbxConfiguration->setCurrentText(newConfigurationName);
 }
 
 void GridDataDialog::on_btnRemoveConfiguration_clicked() {
@@ -305,17 +292,13 @@ void GridDataDialog::on_btnRemoveConfiguration_clicked() {
     }
 }
 
-void GridDataDialog::on_btnDoneConfiguration_clicked() {
-    ui->cbxConfiguration->setCurrentIndex(-1);
-}
-
 bool GridDataDialog::isConfigurationValid(const QString &configurationName) {
     if (configurationName.isEmpty()) {
         QMessageBox::warning(this, tr("Grid Data"), tr("Please input the configuration name."));
         return false;
     }
     
-    if (ui->cbxConfiguration->findText(configurationName, Qt::MatchFixedString) != -1) {
+    if (ui->cbxConfiguration->currentText() != configurationName && ui->cbxConfiguration->findText(configurationName, Qt::MatchFixedString) != -1) {
         QMessageBox::warning(this, tr("Grid Data"), tr("Configuration name already used."));
         return false;
     }

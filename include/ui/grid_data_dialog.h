@@ -31,9 +31,7 @@ private slots:
     void on_btnEditGridInformation_clicked();
     void on_btnRemoveGridInformation_clicked();
     void on_btnSaveConfiguration_clicked();
-    void on_btnSaveAsNewConfiguration_clicked();
     void on_btnRemoveConfiguration_clicked();
-    void on_btnDoneConfiguration_clicked();
     void on_tblGridInformation_itemClicked(QTableWidgetItem *item);
     void on_btnBackgroundColor_clicked();
 
