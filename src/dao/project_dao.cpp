@@ -10,16 +10,26 @@
 #include <QVariant>
 #include <QSet>
 
-ProjectDAO::ProjectDAO(const QString &_databaseName) : databaseName(_databaseName) {}
+ProjectDAO::ProjectDAO(const QString &databaseName) :
+    databaseName(databaseName), currentProgress(0), saveCanceled(false), loadCanceled(false)
+{}
 
-Project* ProjectDAO::open() {
-    QSqlDatabase db = DatabaseUtility::connect(this->databaseName);
-
-    if (!DatabaseUtility::isDatabaseValid(db)) {
+void ProjectDAO::connectDB() {
+    if (this->database.isOpen()) {
+        return;
+    }
+    
+    this->database = DatabaseUtility::connect(this->databaseName); // TODO: Test failure
+    
+    if (!DatabaseUtility::isDatabaseValid(this->database)) {
         throw DatabaseException("Invalid IPH-ECO Project file.");
     }
+}
 
-    QSqlQuery query(db);
+Project* ProjectDAO::open() {
+    connectDB();
+
+    QSqlQuery query(this->database);
 
     query.prepare("select * from project limit 1");
     query.exec();
@@ -35,14 +45,14 @@ Project* ProjectDAO::open() {
     project->setId(query.value("id").toUInt());
     project->setFilename(this->databaseName);
     
-    loadMeshes(db, project);
-    loadGridDataConfigurations(db, project);
+    loadMeshes(project);
+    loadGridDataConfigurations(project);
 
     return project;
 }
 
-void ProjectDAO::loadMeshes(QSqlDatabase &db, Project *project) {
-    QSqlQuery query(db);
+void ProjectDAO::loadMeshes(Project *project) {
+    QSqlQuery query(this->database);
     
     query.prepare("select * from mesh");
     query.exec();
@@ -64,12 +74,12 @@ void ProjectDAO::loadMeshes(QSqlDatabase &db, Project *project) {
         mesh->loadMeshPolygonsFromStringPolyData(query.value("poly_data").toString());
         project->addMesh(mesh);
         
-        loadMeshPolygons(db, mesh);
+        loadMeshPolygons(mesh);
     }
 }
 
-void ProjectDAO::loadMeshPolygons(QSqlDatabase &db, Mesh *mesh) {
-    QSqlQuery query(db);
+void ProjectDAO::loadMeshPolygons(Mesh *mesh) {
+    QSqlQuery query(this->database);
     
     query.prepare("select * from mesh_polygon where mesh_id = " + QString::number(mesh->getId()));
     query.exec();
@@ -87,8 +97,8 @@ void ProjectDAO::loadMeshPolygons(QSqlDatabase &db, Mesh *mesh) {
     }
 }
 
-void ProjectDAO::loadGridDataConfigurations(QSqlDatabase &db, Project *project) {
-    QSqlQuery query(db);
+void ProjectDAO::loadGridDataConfigurations(Project *project) {
+    QSqlQuery query(this->database);
     
     query.prepare("select * from grid_data_configuration");
     query.exec();
@@ -99,12 +109,12 @@ void ProjectDAO::loadGridDataConfigurations(QSqlDatabase &db, Project *project) 
         configuration->setName(query.value("name").toString());
         project->addGridDataConfiguration(configuration);
         
-        loadGridData(db, configuration, project);
+        loadGridData(configuration, project);
     }
 }
 
-void ProjectDAO::loadGridData(QSqlDatabase &db, GridDataConfiguration *gridDataConfiguration, Project *project) {
-    QSqlQuery query(db);
+void ProjectDAO::loadGridData(GridDataConfiguration *gridDataConfiguration, Project *project) {
+    QSqlQuery query(this->database);
     
     query.prepare("select * from grid_data where grid_data_configuration_id = " + QString::number(gridDataConfiguration->getId()));
     query.exec();
@@ -130,6 +140,9 @@ void ProjectDAO::save(Project *project) {
     QSqlDatabase db = DatabaseUtility::connect(this->databaseName);
     QString sql;
     
+    emit updateProgress(currentProgress++);
+    emit updateProgressText("Saving project...");
+    
     QSqlDatabase::database().transaction();
     try {
         if (project->isPersisted()) {
@@ -139,7 +152,7 @@ void ProjectDAO::save(Project *project) {
             sql = "insert into project (name, description, hydrodynamic, water_quality, sediment) values (:n, :d, :h, :w, :s)";
         }
         
-        QSqlQuery query(db);
+        QSqlQuery query(this->database);
         
         query.prepare(sql);
         query.bindValue(":n", project->getName());
@@ -153,8 +166,8 @@ void ProjectDAO::save(Project *project) {
         }
         
         project->setId(1);
-        saveMeshes(db, project);
-        saveGridDataConfigurations(db, project);
+        saveMeshes(project);
+        saveGridDataConfigurations(project);
         QSqlDatabase::database().commit();
     } catch (const DatabaseException &e) {
         QSqlDatabase::database().rollback();
@@ -167,14 +180,18 @@ void ProjectDAO::save(Project *project) {
     project->setDirty(false);
 }
 
-void ProjectDAO::saveMeshes(QSqlDatabase &db, Project *project) {
+void ProjectDAO::saveMeshes(Project *project) {
     QSet<Mesh*> meshes = project->getMeshes();
     QStringList meshIds;
     
+    emit updateProgressText("Saving meshes...");
+    
     for (QSet<Mesh*>::const_iterator it = meshes.begin(); it != meshes.end(); it++) {
         Mesh *mesh = *it;
-        QSqlQuery query(db);
+        QSqlQuery query(this->database);
         QString sql;
+        
+        emit updateProgress(currentProgress++);
         
         if (mesh->isPersisted()) {
             query.prepare("update mesh set name = :n, type = :t, poly_data = :p, coordinates_distance = :c, resolution = :r where id = :m");
@@ -202,11 +219,11 @@ void ProjectDAO::saveMeshes(QSqlDatabase &db, Project *project) {
         
         mesh->setId(query.lastInsertId().toUInt());
         meshIds.append(QString::number(mesh->getId()));
-        saveMeshPolygons(db, mesh);
+        saveMeshPolygons(mesh);
     }
     
     // Handle exclusions
-    QSqlQuery query(db);
+    QSqlQuery query(this->database);
     QString meshDeleteSql, meshPolygonDeleteSql;
     
     if (meshIds.isEmpty()) {
@@ -226,7 +243,7 @@ void ProjectDAO::saveMeshes(QSqlDatabase &db, Project *project) {
     query.exec();
 }
 
-void ProjectDAO::saveMeshPolygons(QSqlDatabase &db, Mesh *mesh) {
+void ProjectDAO::saveMeshPolygons(Mesh *mesh) {
     QList<MeshPolygon*> meshPolygons = mesh->getIslands() + mesh->getRefinementAreas();
     QStringList meshPolygonIds;
     
@@ -234,7 +251,9 @@ void ProjectDAO::saveMeshPolygons(QSqlDatabase &db, Mesh *mesh) {
     
     for (QList<MeshPolygon*>::const_iterator it = meshPolygons.begin(); it != meshPolygons.end(); it++) {
         MeshPolygon *meshPolygon = *it;
-        QSqlQuery query(db);
+        QSqlQuery query(this->database);
+        
+        emit updateProgress(currentProgress++);
         
         if (meshPolygon->isPersisted()) {
             query.prepare("update mesh_polygon set name = :n, type = :t, poly_data = :p, minimum_angle = :mi, maximum_edge_length = :ma where id = :i");
@@ -263,19 +282,23 @@ void ProjectDAO::saveMeshPolygons(QSqlDatabase &db, Mesh *mesh) {
         meshPolygonIds.append(QString::number(meshPolygon->getId()));
     }
     
-    QSqlQuery query(db);
+    QSqlQuery query(this->database);
     
     query.prepare("delete from mesh_polygon where id not in (" + meshPolygonIds.join(",") + ") and mesh_id = " + QString::number(mesh->getId()));
     query.exec();
 }
 
-void ProjectDAO::saveGridDataConfigurations(QSqlDatabase &db, Project *project) {
+void ProjectDAO::saveGridDataConfigurations(Project *project) {
     QSet<GridDataConfiguration*> configurations = project->getGridDataConfigurations();
     QStringList configurationIds;
     
+    emit updateProgressText("Saving grid data...");
+    
     for (QSet<GridDataConfiguration*>::const_iterator it = configurations.begin(); it != configurations.end(); it++) {
         GridDataConfiguration *configuration = *it;
-        QSqlQuery query(db);
+        QSqlQuery query(this->database);
+        
+        emit updateProgress(currentProgress++);
         
         if (configuration->isPersisted()) {
             query.prepare("update grid_data_configuration set name = :n where id = :i");
@@ -292,11 +315,11 @@ void ProjectDAO::saveGridDataConfigurations(QSqlDatabase &db, Project *project) 
         
         configuration->setId(query.lastInsertId().toUInt());
         configurationIds.append(QString::number(configuration->getId()));
-        saveGridData(db, configuration);
+        saveGridData(configuration);
     }
     
     // Handle exclusions
-    QSqlQuery query(db);
+    QSqlQuery query(this->database);
     QString configurationDeleteSql, gridDataDeleteSql;
     
     if (configurationIds.isEmpty()) {
@@ -316,13 +339,13 @@ void ProjectDAO::saveGridDataConfigurations(QSqlDatabase &db, Project *project) 
     query.exec();
 }
 
-void ProjectDAO::saveGridData(QSqlDatabase &db, GridDataConfiguration *gridDataConfiguration) {
+void ProjectDAO::saveGridData(GridDataConfiguration *gridDataConfiguration) {
     QVector<GridData*> gridDataVector = gridDataConfiguration->getGridDataVector();
     QStringList gridDataIds;
     
     for (int i = 0; i < gridDataVector.size(); i++) {
         GridData *gridData = gridDataVector.at(i);
-        QSqlQuery query(db);
+        QSqlQuery query(this->database);
         
         if (gridData->isPersisted()) {
             query.prepare("update grid_data set name = :n, input_type = :it, grid_type = :gt, input_poly_data = :ipd, exponent = :e, radius = :r " \
@@ -356,8 +379,51 @@ void ProjectDAO::saveGridData(QSqlDatabase &db, GridDataConfiguration *gridDataC
         gridDataIds.append(QString::number(gridData->getId()));
     }
     
-    QSqlQuery query(db);
+    QSqlQuery query(this->database);
     
     query.prepare("delete from grid_data where id not in (" + gridDataIds.join(",") + ") and grid_data_configuration_id = " + QString::number(gridDataConfiguration->getId()));
     query.exec();
+}
+
+int ProjectDAO::getMaximumSaveProgress(Project *project) {
+    int saveSteps = 1;
+    QSet<Mesh*> meshes = project->getMeshes();
+    QSet<GridDataConfiguration*> configurations = project->getGridDataConfigurations();
+    
+    saveSteps += project->getMeshes().size();
+    
+    for (QSet<Mesh*>::const_iterator it = meshes.begin(); it != meshes.end(); it++) {
+        saveSteps += (*it)->getIslands().size() + 1; // plus one for boundary polygon
+    }
+    
+    for (QSet<GridDataConfiguration*>::const_iterator it = configurations.begin(); it != configurations.end(); it++) {
+        saveSteps += (*it)->getGridDataVector().size();
+    }
+    
+    return saveSteps;
+}
+
+int ProjectDAO::getMaximumLoadProgress() {
+    connectDB();
+    
+    int loadSteps = 1;
+    QSqlQuery query(this->database);
+    
+    query.exec("select count(*) from mesh");
+    loadSteps += query.value(0).toInt();
+    
+    query.exec("select count(*) from mesh_polygon");
+    loadSteps += query.value(0).toInt();
+    
+    query.exec("select count(*) from grid_data_configuration");
+    loadSteps += query.value(0).toInt();
+    
+    query.exec("select count(*) from grid_data");
+    loadSteps += query.value(0).toInt();
+    
+    return loadSteps;
+}
+
+void ProjectDAO::cancelSave(bool value) {
+    this->saveCanceled = value;
 }
