@@ -2,14 +2,12 @@
 
 #include "include/utility/cgal_definitions.h"
 #include "include/exceptions/grid_data_exception.h"
-#include "include/ui/progress_observer.h"
 
 #include <GeographicLib/GeoCoords.hpp>
 #include <vtkRegularPolygonSource.h>
 #include <vtkSimplePointsReader.h>
 #include <vtkXMLPolyDataWriter.h>
 #include <vtkXMLPolyDataReader.h>
-#include <vtkObjectFactory.h>
 #include <vtkDoubleArray.h>
 #include <vtkIdTypeArray.h>
 #include <vtkPointData.h>
@@ -17,8 +15,6 @@
 #include <vtkTriangle.h>
 #include <QApplication>
 #include <vtkQuad.h>
-
-vtkStandardNewMacro(ProgressObserver);
 
 GridData::GridData(Mesh *mesh) : id(0), mesh(mesh), interpolationCanceled(false) {}
 
@@ -101,6 +97,9 @@ void GridData::setInputFile(const QString &inputFile) {
 }
 
 void GridData::buildInputPolyData() {
+	emit updateProgress(1);
+	QApplication::processEvents();
+
     if (this->inputFile.isEmpty()) {
         if (this->inputPolyData == nullptr) {
             throw GridDataException("Unexpected behaviour: grid data input points not present.");
@@ -110,11 +109,7 @@ void GridData::buildInputPolyData() {
     }
     
     vtkSmartPointer<vtkSimplePointsReader> reader = vtkSmartPointer<vtkSimplePointsReader>::New();
-    vtkSmartPointer<ProgressObserver> po = vtkSmartPointer<ProgressObserver>::New();
-
-    QObject::connect(po, SIGNAL(updateProgressSignal(int)), this, SLOT(updateInputPointsProgress(int)));
     reader->SetFileName(this->inputFile.toStdString().c_str());
-    reader->SetProgressObserver(po);
     reader->Update();
 
     inputPolyData = vtkSmartPointer<vtkPolyData>::New();
@@ -148,6 +143,8 @@ void GridData::buildInputPolyData() {
 void GridData::interpolate() {
     buildInputPolyData();
     
+	emit updateProgressText("Interpolating grid data...");
+
     vtkPolyData *meshPolyData = mesh->getPolyData();
     vtkSmartPointer<vtkDoubleArray> interpolatedWeightsArray = vtkSmartPointer<vtkDoubleArray>::New();
     std::string gridDataName(this->name.toStdString());
@@ -224,7 +221,7 @@ void GridData::interpolate() {
         }
         
         interpolatedWeightsArray->SetTuple1(i, weight);
-        emit updateProgress(i);
+        emit updateProgress(i + 1);
         QApplication::processEvents();
     }
     
@@ -276,10 +273,6 @@ double GridData::calculateNearestWeight(double *cellCenter) {
 
 void GridData::cancelInterpolation(bool value) {
     this->interpolationCanceled = value;
-}
-
-void GridData::updateInputPointsProgress(int value) {
-    emit updateProgress(value);
 }
 
 QString GridData::gridDataInputTypeToString() const {
@@ -343,4 +336,8 @@ QString GridData::getInputPolyDataAsString() const {
 
 bool GridData::isPersisted() const {
     return id != 0;
+}
+
+int GridData::getMaximumProgress() const {
+	return mesh->getPolyData()->GetNumberOfCells();
 }

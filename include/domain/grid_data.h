@@ -71,13 +71,14 @@ public:
     void buildInputPolyData();
     void interpolate();
     bool isPersisted() const;
+	int getMaximumProgress() const;
     
 signals:
+	void updateProgressText(const QString &text);
     void updateProgress(int value);
     
 public slots:
     void cancelInterpolation(bool value = true);
-    void updateInputPointsProgress(int value);
 };
 
 #endif // GRID_DATA_H

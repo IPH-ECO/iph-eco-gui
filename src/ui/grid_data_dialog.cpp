@@ -160,9 +160,10 @@ void GridDataDialog::showGridInformationDialog(GridData *gridData) {
     if (exitCode == QDialog::Accepted) {
         int rowCount = ui->tblGridInformation->rowCount();
         GridData *gridData = gridInformationDialog->getGridData();
-        int maximum = gridData->getMesh()->getPolyData()->GetNumberOfCells() + 100;
+        int maximum = gridData->getMaximumProgress();
         
-        QProgressDialog *progressDialog = new QProgressDialog(tr("Interpolating grid data..."), tr("Cancel"), 0, maximum - 1, this);
+        QProgressDialog *progressDialog = new QProgressDialog(tr("Reading input file..."), tr("Cancel"), 0, maximum, this);
+		QObject::connect(gridData, SIGNAL(updateProgressText(const QString&)), progressDialog, SLOT(setLabelText(const QString&)));
         QObject::connect(gridData, SIGNAL(updateProgress(int)), progressDialog, SLOT(setValue(int)));
         QObject::connect(progressDialog, SIGNAL(canceled()), gridData, SLOT(cancelInterpolation()));
         progressDialog->setMinimumDuration(500);

@@ -2,14 +2,6 @@
 <ui version="4.0">
  <class>GridDataDialog</class>
  <widget class="QWidget" name="GridDataDialog">
-  <property name="geometry">
-   <rect>
-    <x>0</x>
-    <y>0</y>
-    <width>1216</width>
-    <height>662</height>
-   </rect>
-  </property>
   <property name="windowTitle">
    <string>Grid Data</string>
   </property>
