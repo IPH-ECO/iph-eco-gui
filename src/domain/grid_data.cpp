@@ -97,6 +97,9 @@ void GridData::setInputFile(const QString &inputFile) {
 }
 
 void GridData::buildInputPolyData() {
+	emit updateProgress(1);
+	QApplication::processEvents();
+
     if (this->inputFile.isEmpty()) {
         if (this->inputPolyData == nullptr) {
             throw GridDataException("Unexpected behaviour: grid data input points not present.");
@@ -106,7 +109,6 @@ void GridData::buildInputPolyData() {
     }
     
     vtkSmartPointer<vtkSimplePointsReader> reader = vtkSmartPointer<vtkSimplePointsReader>::New();
-
     reader->SetFileName(this->inputFile.toStdString().c_str());
     reader->Update();
 
@@ -141,6 +143,8 @@ void GridData::buildInputPolyData() {
 void GridData::interpolate() {
     buildInputPolyData();
     
+	emit updateProgressText("Interpolating grid data...");
+
     vtkPolyData *meshPolyData = mesh->getPolyData();
     vtkSmartPointer<vtkDoubleArray> interpolatedWeightsArray = vtkSmartPointer<vtkDoubleArray>::New();
     std::string gridDataName(this->name.toStdString());
@@ -217,7 +221,7 @@ void GridData::interpolate() {
         }
         
         interpolatedWeightsArray->SetTuple1(i, weight);
-        emit updateProgress(i);
+        emit updateProgress(i + 1);
         QApplication::processEvents();
     }
     
@@ -332,4 +336,8 @@ QString GridData::getInputPolyDataAsString() const {
 
 bool GridData::isPersisted() const {
     return id != 0;
+}
+
+int GridData::getMaximumProgress() const {
+	return mesh->getPolyData()->GetNumberOfCells();
 }

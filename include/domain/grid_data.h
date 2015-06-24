@@ -71,8 +71,10 @@ public:
     void buildInputPolyData();
     void interpolate();
     bool isPersisted() const;
+	int getMaximumProgress() const;
     
 signals:
+	void updateProgressText(const QString &text);
     void updateProgress(int value);
     
 public slots:

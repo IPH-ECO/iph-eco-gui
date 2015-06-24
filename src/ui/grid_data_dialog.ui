@@ -2,14 +2,6 @@
 <ui version="4.0">
  <class>GridDataDialog</class>
  <widget class="QWidget" name="GridDataDialog">
-  <property name="geometry">
-   <rect>
-    <x>0</x>
-    <y>0</y>
-    <width>1216</width>
-    <height>662</height>
-   </rect>
-  </property>
   <property name="windowTitle">
    <string>Grid Data</string>
   </property>
@@ -551,6 +543,16 @@
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_14">
         <item>
+         <widget class="QPushButton" name="btnDoneConfiguration">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="text">
+           <string>Done</string>
+          </property>
+         </widget>
+        </item>
+        <item>
          <widget class="QPushButton" name="btnRemoveConfiguration">
           <property name="enabled">
            <bool>false</bool>
@@ -604,6 +606,7 @@
   <tabstop>edtConfigurationName</tabstop>
   <tabstop>cbxMesh</tabstop>
   <tabstop>btnRemoveGridInformation</tabstop>
+  <tabstop>btnDoneConfiguration</tabstop>
   <tabstop>btnRemoveConfiguration</tabstop>
   <tabstop>btnSaveConfiguration</tabstop>
  </tabstops>

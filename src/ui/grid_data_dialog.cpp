@@ -102,7 +102,6 @@ void GridDataDialog::on_cbxConfiguration_currentIndexChanged(const QString &conf
             ui->tblGridInformation->setItem(rowCount, 2, new QTableWidgetItem(QString::number(gridData->getInputPolyData()->GetNumberOfPoints())));
         }
 
-        ui->btnSaveConfiguration->setText("Done");
         ui->btnShowGridDataPoints->setEnabled(true);
         ui->btnShowGridDataPoints->toggled(false);
         ui->btnShowColorMap->setEnabled(true);
@@ -119,7 +118,7 @@ void GridDataDialog::on_cbxMesh_currentIndexChanged(const QString &meshName) {
         
         if (currentMesh != nullptr && configurationMesh != nullptr && currentConfiguration->getMesh()->getName() != meshName && currentConfiguration->getGridDataVector().size() > 0) {
             QString question = tr("Changing the mesh in this configuration will remove all created grid data. Are you sure?");
-            QMessageBox::StandardButton button = QMessageBox::question(this, tr("Grid Data Configuration"), question);
+            QMessageBox::StandardButton button = QMessageBox::question(this, tr("Grid Data"), question);
             
             if (button == QMessageBox::No) {
                 ui->cbxMesh->blockSignals(true);
@@ -161,9 +160,10 @@ void GridDataDialog::showGridInformationDialog(GridData *gridData) {
     if (exitCode == QDialog::Accepted) {
         int rowCount = ui->tblGridInformation->rowCount();
         GridData *gridData = gridInformationDialog->getGridData();
-        int maximum = gridData->getMesh()->getPolyData()->GetNumberOfCells();
+        int maximum = gridData->getMaximumProgress();
         
-        QProgressDialog *progressDialog = new QProgressDialog(tr("Interpolating grid data..."), tr("Cancel"), 0, maximum - 1, this);
+        QProgressDialog *progressDialog = new QProgressDialog(tr("Reading input file..."), tr("Cancel"), 0, maximum, this);
+		QObject::connect(gridData, SIGNAL(updateProgressText(const QString&)), progressDialog, SLOT(setLabelText(const QString&)));
         QObject::connect(gridData, SIGNAL(updateProgress(int)), progressDialog, SLOT(setValue(int)));
         QObject::connect(progressDialog, SIGNAL(canceled()), gridData, SLOT(cancelInterpolation()));
         progressDialog->setMinimumDuration(500);
@@ -192,6 +192,7 @@ void GridDataDialog::showGridInformationDialog(GridData *gridData) {
             if (!gridData->isPersisted()) {
                 currentConfiguration->addGridData(gridData);
                 
+                ui->cbxConfiguration->setEnabled(true);
                 ui->btnShowGridDataPoints->setEnabled(true);
                 ui->btnShowGridDataPoints->setChecked(false);
                 ui->btnShowColorMap->setEnabled(true);
@@ -237,22 +238,28 @@ void GridDataDialog::on_tblGridInformation_itemClicked(QTableWidgetItem *item) {
 void GridDataDialog::on_btnRemoveGridInformation_clicked() {
     int currentRow = ui->tblGridInformation->currentRow();
 
-    if (currentRow > -1 && QMessageBox::question(this, tr("Grid Data"), tr("Are you sure?")) == QMessageBox::Yes) {
+    if (currentRow > -1 && QMessageBox::question(this, tr("Grid Data"), tr("Are you sure you want to remove the selected grid layer?")) == QMessageBox::Yes) {
         currentConfiguration->removeGridData(currentRow);
         ui->tblGridInformation->removeRow(currentRow);
+        ui->gridDataVTKWidget->clear();
+        
         if (ui->tblGridInformation->rowCount() == 0) {
+            if (currentConfiguration->isPersisted()) {
+                ui->cbxConfiguration->setEnabled(false);
+            }
+            
+            toggleGridDataConfigurationForm(false);
             ui->btnEditGridInformation->setEnabled(false);
-            ui->btnRemoveConfiguration->setEnabled(false);
             ui->btnShowGridDataPoints->setEnabled(false);
             ui->btnShowGridDataPoints->toggled(false);
             ui->btnShowColorMap->setEnabled(false);
             ui->btnShowColorMap->toggled(false);
         }
-        ui->gridDataVTKWidget->clear(); // FIX: Must update the map
     }
 }
 
 void GridDataDialog::toggleGridDataConfigurationForm(bool enable) {
+    ui->btnDoneConfiguration->setEnabled(enable);
     ui->btnRemoveConfiguration->setEnabled(enable);
 }
 
@@ -273,23 +280,24 @@ void GridDataDialog::on_btnSaveConfiguration_clicked() {
         ui->cbxConfiguration->setCurrentText(configurationName);
     } else {
         ui->cbxConfiguration->setItemText(ui->cbxConfiguration->currentIndex(), configurationName);
-    }
-    
-    if (ui->btnSaveConfiguration->text() == "Done") {
-        ui->cbxConfiguration->setCurrentIndex(-1);
+        toggleGridDataConfigurationForm(true);
     }
 }
 
 void GridDataDialog::on_btnRemoveConfiguration_clicked() {
-    QString configurationName = ui->cbxConfiguration->currentText();
+    QMessageBox::StandardButton button = QMessageBox::question(this, tr("Grid Data"), tr("Are you sure you want to remove this configuration?"));
 
-    if (QMessageBox::Yes == QMessageBox::question(this, tr("Remove grid data"), tr("Are you sure you want to remove '") + configurationName + "'?")) {
-        IPHApplication::getCurrentProject()->removeGridDataConfiguration(configurationName);
+    if (button == QMessageBox::Yes) {
+        IPHApplication::getCurrentProject()->removeGridDataConfiguration(ui->cbxConfiguration->currentText());
 
         ui->cbxConfiguration->removeItem(ui->cbxConfiguration->currentIndex());
         ui->cbxConfiguration->setCurrentIndex(-1);
         ui->gridDataVTKWidget->clear();
     }
+}
+
+void GridDataDialog::on_btnDoneConfiguration_clicked() {
+    ui->cbxConfiguration->setCurrentIndex(-1);
 }
 
 bool GridDataDialog::isConfigurationValid(const QString &configurationName) {

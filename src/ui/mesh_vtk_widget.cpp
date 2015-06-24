@@ -1,15 +1,15 @@
 #include "include/ui/mesh_vtk_widget.h"
 
-#include <vtkSmartPointer.h>
-#include <vtkPolyData.h>
 #include <vtkPolygon.h>
-#include <vtkCellArray.h>
-#include <vtkExtractEdges.h>
-#include <vtkRenderWindowInteractor.h>
-#include <vtkWorldPointPicker.h>
+#include <vtkPolyData.h>
 #include <vtkProperty.h>
-#include <vtkPolyDataMapper.h>
+#include <vtkCellArray.h>
+#include <vtkSmartPointer.h>
+#include <vtkExtractEdges.h>
 #include <vtkRenderWindow.h>
+#include <vtkPolyDataMapper.h>
+#include <vtkWorldPointPicker.h>
+#include <vtkRenderWindowInteractor.h>
 #include <QList>
 
 #include "include/ui/structured_mesh_dialog.h"
@@ -124,7 +124,7 @@ void MeshVTKWidget::render(Mesh *mesh) {
 }
 
 void MeshVTKWidget::clear() {
-    if (renderer != NULL) {
+    if (renderer != nullptr) {
         renderer->RemoveAllViewProps();
         this->update();
     }
