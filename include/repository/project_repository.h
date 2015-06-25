@@ -1,18 +1,17 @@
-#ifndef PROJECT_DAO_H
-#define PROJECT_DAO_H
+#ifndef PROJECT_REPOSITORY_H
+#define PROJECT_REPOSITORY_H
 
 #include "include/domain/project.h"
 #include "include/domain/grid_data_configuration.h"
 #include <QSqlDatabase>
 
-class ProjectDAO : public QObject {
+class ProjectRepository : public QObject {
     Q_OBJECT
 private:
     QSqlDatabase database;
     QString databaseName;
     int currentProgress;
-    bool saveCanceled;
-    bool loadCanceled;
+    bool operationCanceled;
     
     void connectDB();
     
@@ -27,20 +26,20 @@ private:
     void saveGridData(GridDataConfiguration *gridDataConfiguration);
 
 public:
-    ProjectDAO(const QString &_databaseName);
+    ProjectRepository(const QString &databaseName);
 
-    Project* open();
-    void save(Project *project);
+    void open();
+    void save();
     
-    int getMaximumSaveProgress(Project *project);
+    int getMaximumSaveProgress();
     int getMaximumLoadProgress();
 
 public slots:
-    void cancelSave(bool value = true);
+    void cancelOperation();
     
 signals:
     void updateProgress(int value);
     void updateProgressText(const QString &text);
 };
 
-#endif // PROJECT_DAO_H
+#endif // PROJECT_REPOSITORY_H

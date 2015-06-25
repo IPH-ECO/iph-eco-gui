@@ -5,6 +5,10 @@
 #include "include/application/iph_application.h"
 #include "include/ui/structured_mesh_dialog.h"
 #include "include/ui/grid_data_dialog.h"
+#include "include/services/project_service.h"
+#include "include/repository/project_repository.h"
+
+#include <QProgressDialog>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -33,8 +37,7 @@ MainWindow::~MainWindow() {
 void MainWindow::on_actionOpenProject_triggered() {
     on_actionCloseProject_triggered();
 
-    const QString filename = QFileDialog::getOpenFileName(this, tr("Select a project file"),
-                getDefaultDirectory(), tr("IPH-ECO Project File (*.iph)"));
+    QString filename = QFileDialog::getOpenFileName(this, tr("Select a project file"), getDefaultDirectory(), tr("IPH-ECO Project File (*.iph)"));
 
     openProject(filename);
 }
@@ -47,15 +50,31 @@ void MainWindow::on_actionSaveProject_triggered() {
     }
 
     if (!project->getFilename().isEmpty()) {
-        appSettings->setValue(PROJECT_DEFAULT_DIR_KEY, QFileInfo(project->getFilename()).absoluteDir().absolutePath());
-        updateRecentFilesList(project->getFilename());
-
+        ProjectRepository projectRepository(project->getFilename());
+        QProgressDialog *progressDialog = new QProgressDialog(this);
+        int maximum = projectRepository.getMaximumSaveProgress();
+        
+        progressDialog->setMinimum(0);
+        progressDialog->setMaximum(maximum);
+        progressDialog->setMinimumDuration(500);
+        progressDialog->setWindowModality(Qt::WindowModal);
+        
+        QObject::connect(&projectRepository, SIGNAL(updateProgressText(const QString&)), progressDialog, SLOT(setLabelText(const QString&)));
+        QObject::connect(&projectRepository, SIGNAL(updateProgress(int)), progressDialog, SLOT(setValue(int)));
+        QObject::connect(progressDialog, SIGNAL(canceled()), &projectRepository, SLOT(cancelOperation()));
+        
         try {
-            ProjectService projectService;
-            projectService.save(project);
+            projectRepository.save();
         } catch (DatabaseException &ex) {
             QMessageBox::critical(this, "Save Project", ex.what());
         }
+        
+        if (!progressDialog->wasCanceled()) {
+            appSettings->setValue(PROJECT_DEFAULT_DIR_KEY, QFileInfo(project->getFilename()).absoluteDir().absolutePath());
+            updateRecentFilesList(project->getFilename());
+        }
+        
+        delete progressDialog;
     }
 }
 
@@ -65,18 +84,30 @@ void MainWindow::on_actionSaveAsProject_triggered() {
     QString filename = QFileDialog::getSaveFileName(this, tr("Save project as..."), oldFilename, tr("IPH-ECO Project File (*.iph)"));
 
     if (!filename.isEmpty()) {
-        appSettings->setValue(PROJECT_DEFAULT_DIR_KEY, QFileInfo(filename).absolutePath());
+        ProjectRepository projectRepository(filename);
+        QProgressDialog *progressDialog = new QProgressDialog(this);
+        int maximum = projectRepository.getMaximumSaveProgress();
 
         project->setFilename(filename);
-
-        updateRecentFilesList(project->getFilename());
-
+        progressDialog->setMinimum(0);
+        progressDialog->setMaximum(maximum);
+        progressDialog->setMinimumDuration(500);
+        progressDialog->setWindowModality(Qt::WindowModal);
+        
+        QObject::connect(&projectRepository, SIGNAL(updateProgressText(const QString&)), progressDialog, SLOT(setLabelText(const QString&)));
+        QObject::connect(&projectRepository, SIGNAL(updateProgress(int)), progressDialog, SLOT(setValue(int)));
+        QObject::connect(progressDialog, SIGNAL(canceled()), &projectRepository, SLOT(cancelSave()));
+        
         try {
-            ProjectService projectService;
-            projectService.save(project);
+            projectRepository.save();
         } catch (DatabaseException &ex) {
             QMessageBox::critical(this, "Save As Project", ex.what());
         }
+        
+        appSettings->setValue(PROJECT_DEFAULT_DIR_KEY, QFileInfo(filename).absolutePath());
+        updateRecentFilesList(project->getFilename());
+        
+        delete progressDialog;
     }
 }
 
@@ -96,6 +127,7 @@ void MainWindow::on_actionCloseProject_triggered() {
     if (project != NULL && project->isDirty()) {
         QMessageBox::StandardButton button = QMessageBox::question(this, tr("Project has unsaved changes"), tr("Do you want to save the changes before closing the project?"));
         if (button == QMessageBox::Yes) {
+            
             ProjectService projectService;
             projectService.save(project);
         }
@@ -174,20 +206,41 @@ void MainWindow::openProject(const QString &filename) {
     QFile file(filename);
 
     if (file.exists()) {
-        appSettings->setValue(PROJECT_DEFAULT_DIR_KEY, QFileInfo(filename).absoluteDir().absolutePath());
-
+        QProgressDialog *progressDialog = new QProgressDialog(this);
+        
+        progressDialog->setMinimum(0);
+        progressDialog->setMinimumDuration(500);
+        progressDialog->setWindowModality(Qt::WindowModal);
+        
         try {
-            ProjectService projectService;
-            projectService.open(filename);
+            ProjectRepository projectRepository(filename);
+            int maximum = projectRepository.getMaximumLoadProgress();
+            
+            progressDialog->setMaximum(maximum);
+            
+            QObject::connect(&projectRepository, SIGNAL(updateProgressText(const QString&)), progressDialog, SLOT(setLabelText(const QString&)));
+            QObject::connect(&projectRepository, SIGNAL(updateProgress(int)), progressDialog, SLOT(setValue(int)));
+            QObject::connect(progressDialog, SIGNAL(canceled()), &projectRepository, SLOT(cancelOperation()));
 
-            enableMenus(true);
-            updateRecentFilesList(filename);
-            setWindowTitle("IPH-ECO - " + IPHApplication::getCurrentProject()->getName());
+            projectRepository.open();
+            
+            if (progressDialog->wasCanceled()) {
+                IPHApplication::setCurrentProject(nullptr);
+                enableMenus(false);
+                setWindowTitle("IPH-ECO");
+            } else {
+                enableMenus(true);
+                updateRecentFilesList(filename);
+                setWindowTitle("IPH-ECO - " + IPHApplication::getCurrentProject()->getName());
+                appSettings->setValue(PROJECT_DEFAULT_DIR_KEY, QFileInfo(filename).absoluteDir().absolutePath());
+            }
         } catch (DatabaseException &ex) {
             QMessageBox::critical(this, "Open Project", ex.what());
         }
+        
+        delete progressDialog;
     } else {
-        QMessageBox::critical(this, "Open Project", "File not found.");
+        QMessageBox::critical(this, "Open Project", "Project file not found.");
     }
 }
 

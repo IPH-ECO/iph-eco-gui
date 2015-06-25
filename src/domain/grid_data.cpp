@@ -97,7 +97,8 @@ void GridData::setInputFile(const QString &inputFile) {
 }
 
 void GridData::buildInputPolyData() {
-	emit updateProgress(1);
+    emit updateProgressText("Reading input file...");
+	emit updateProgress(0);
 	QApplication::processEvents();
 
     if (this->inputFile.isEmpty()) {
@@ -138,12 +139,15 @@ void GridData::buildInputPolyData() {
     }
     
     inputPolyData->GetPointData()->SetScalars(weights);
+    
+    emit updateProgress(1);
 }
 
 void GridData::interpolate() {
     buildInputPolyData();
     
 	emit updateProgressText("Interpolating grid data...");
+    QApplication::processEvents();
 
     vtkPolyData *meshPolyData = mesh->getPolyData();
     vtkSmartPointer<vtkDoubleArray> interpolatedWeightsArray = vtkSmartPointer<vtkDoubleArray>::New();

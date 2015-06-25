@@ -3,7 +3,7 @@
 #include <QSqlDatabase>
 
 #include "include/application/iph_application.h"
-#include "include/dao/project_dao.h"
+#include "include/repository/project_repository.h"
 
 void ProjectService::setApplicationProject(QString &name, QString &description,
                                            bool &hydrodynamic, bool &sediment, bool &waterQuality) {
@@ -12,16 +12,16 @@ void ProjectService::setApplicationProject(QString &name, QString &description,
 }
 
 void ProjectService::open(const QString &filename) {
-    ProjectDAO projectDAO(filename);
-    Project *project = projectDAO.open();
+    ProjectRepository projectRepository(filename);
+    Project *project = nullptr;
 
     IPHApplication::setCurrentProject(project);
 }
 
 void ProjectService::save(Project *project) {
-    ProjectDAO projectDAO(project->getFilename());
+    ProjectRepository projectRepository(project->getFilename());
 
-    projectDAO.save(project);
+    projectRepository.save();
 }
 
 void ProjectService::updateProperties(QString &name, QString &description,

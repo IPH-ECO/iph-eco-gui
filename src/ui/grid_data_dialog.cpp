@@ -162,12 +162,15 @@ void GridDataDialog::showGridInformationDialog(GridData *gridData) {
         GridData *gridData = gridInformationDialog->getGridData();
         int maximum = gridData->getMaximumProgress();
         
-        QProgressDialog *progressDialog = new QProgressDialog(tr("Reading input file..."), tr("Cancel"), 0, maximum, this);
-		QObject::connect(gridData, SIGNAL(updateProgressText(const QString&)), progressDialog, SLOT(setLabelText(const QString&)));
-        QObject::connect(gridData, SIGNAL(updateProgress(int)), progressDialog, SLOT(setValue(int)));
-        QObject::connect(progressDialog, SIGNAL(canceled()), gridData, SLOT(cancelInterpolation()));
+        QProgressDialog *progressDialog = new QProgressDialog(this);
+        progressDialog->setMinimum(0);
+        progressDialog->setMaximum(maximum);
         progressDialog->setMinimumDuration(500);
         progressDialog->setWindowModality(Qt::WindowModal);
+
+        QObject::connect(gridData, SIGNAL(updateProgressText(const QString&)), progressDialog, SLOT(setLabelText(const QString&)));
+        QObject::connect(gridData, SIGNAL(updateProgress(int)), progressDialog, SLOT(setValue(int)));
+        QObject::connect(progressDialog, SIGNAL(canceled()), gridData, SLOT(cancelInterpolation()));
         
         try {
             gridData->interpolate();
