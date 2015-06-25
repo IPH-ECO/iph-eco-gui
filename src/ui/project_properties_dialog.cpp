@@ -1,18 +1,16 @@
 #include "include/ui/project_properties_dialog.h"
 #include "ui_project_properties_dialog.h"
 
+#include "include/application/iph_application.h"
+#include "include/services/project_service.h"
+
 #include <QDialogButtonBox>
 #include <QMessageBox>
 
-#include "include/services/project_service.h"
-
-ProjectPropertiesDialog::ProjectPropertiesDialog(QWidget *parent, Project *project) :
-    QDialog(parent),
-    ui(new Ui::ProjectPropertiesDialog),
-    project(project)
-{
+ProjectPropertiesDialog::ProjectPropertiesDialog(QWidget *parent) : QDialog(parent), ui(new Ui::ProjectPropertiesDialog) {
+    Project *project = IPHApplication::getCurrentProject();
+    
     ui->setupUi(this);
-
     ui->edtName->setText(project->getName());
     ui->txtDescription->setPlainText(project->getDescription());
     ui->cbxHydrodynamic->setChecked(project->getHydrodynamic());
@@ -24,25 +22,20 @@ ProjectPropertiesDialog::~ProjectPropertiesDialog() {
     delete ui;
 }
 
-void ProjectPropertiesDialog::on_btnBox_clicked(QAbstractButton *button)
-{
-    if (ui->btnBox->standardButton(button) == QDialogButtonBox::Cancel) {
-        this->close();
+void ProjectPropertiesDialog::accept() {
+    if (!isFormValid()) {
         return;
     }
-
-    if (isFormValid()) {
-        QString name = ui->edtName->text();
-        QString description = ui->txtDescription->toPlainText();
-        bool hydrodynamic = ui->cbxHydrodynamic->isChecked();
-        bool sediment = ui->cbxSediment->isChecked();
-        bool waterQuality = ui->cbxWaterQuality->isChecked();
-
-        ProjectService projectService;
-        projectService.updateProperties(name, description, hydrodynamic, sediment, waterQuality);
-
-        this->close();
-    }
+    
+    Project *project = IPHApplication::getCurrentProject();
+    
+    project->setName(ui->edtName->text());
+    project->setDescription(ui->txtDescription->toPlainText());
+    project->setHydrodynamic(ui->cbxHydrodynamic->isChecked());
+    project->setSediment(ui->cbxSediment->isChecked());
+    project->setWaterQuality(ui->cbxWaterQuality->isChecked());
+    
+    QDialog::accept();
 }
 
 bool ProjectPropertiesDialog::isFormValid() {

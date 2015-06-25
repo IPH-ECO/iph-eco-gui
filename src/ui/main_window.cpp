@@ -123,7 +123,7 @@ void MainWindow::on_actionNewProject_triggered() {
 }
 
 void MainWindow::on_actionProjectProperties_triggered() {
-    ProjectPropertiesDialog projectPropertiesDialog(this, IPHApplication::getCurrentProject());
+    ProjectPropertiesDialog projectPropertiesDialog(this);
     projectPropertiesDialog.exec();
 }
 

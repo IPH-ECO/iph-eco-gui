@@ -1,10 +1,7 @@
 #ifndef PROJECTPROPERTIESDIALOG_H
 #define PROJECTPROPERTIESDIALOG_H
 
-#include <QAbstractButton>
 #include <QDialog>
-
-#include "include/domain/project.h"
 
 namespace Ui {
 class ProjectPropertiesDialog;
@@ -12,18 +9,14 @@ class ProjectPropertiesDialog;
 
 class ProjectPropertiesDialog : public QDialog {
     Q_OBJECT
-
 public:
-    explicit ProjectPropertiesDialog(QWidget *parent = 0, Project *project = 0);
+    explicit ProjectPropertiesDialog(QWidget *parent = nullptr);
     ~ProjectPropertiesDialog();
-private slots:
-    void on_btnBox_clicked(QAbstractButton *button);
-
 private:
     Ui::ProjectPropertiesDialog *ui;
-    Project *project;
-
+    
     bool isFormValid();
+    virtual void accept();
 };
 
 #endif // PROJECTPROPERTIESDIALOG_H
