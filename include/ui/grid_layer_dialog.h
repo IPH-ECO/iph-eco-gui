@@ -1,5 +1,5 @@
-#ifndef GRID_INFORMATION_DIALOG_H
-#define GRID_INFORMATION_DIALOG_H
+#ifndef GRID_LAYER_DIALOG_H
+#define GRID_LAYER_DIALOG_H
 
 #include "include/domain/grid_data_configuration.h"
 #include "include/domain/grid_data.h"
@@ -9,15 +9,15 @@
 #include <QAbstractButton>
 
 namespace Ui {
-class GridInformationDialog;
+class GridLayerDialog;
 }
 
-class GridInformationDialog : public QDialog {
+class GridLayerDialog : public QDialog {
     Q_OBJECT
 
 public:
-    explicit GridInformationDialog(QDialog *parent, GridDataConfiguration *gridConfiguration, GridData *gridData, Mesh *mesh = nullptr);
-    ~GridInformationDialog();
+    explicit GridLayerDialog(QDialog *parent, GridDataConfiguration *gridConfiguration, GridData *gridData, Mesh *mesh = nullptr);
+    ~GridLayerDialog();
     GridData* getGridData();
 
 private slots:
@@ -28,7 +28,7 @@ private slots:
 private:
     const QString GRID_DATA_DEFAULT_DIR_KEY;
 
-    Ui::GridInformationDialog *ui;
+    Ui::GridLayerDialog *ui;
     QSettings *appSettings;
     GridDataConfiguration *gridConfiguration;
     GridData *gridData;
@@ -40,4 +40,4 @@ private:
     virtual void accept();
 };
 
-#endif // GRID_INFORMATION_DIALOG_H
+#endif // GRID_LAYER_DIALOG_H

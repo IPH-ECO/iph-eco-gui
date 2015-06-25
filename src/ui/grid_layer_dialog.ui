@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>GridInformationDialog</class>
- <widget class="QDialog" name="GridInformationDialog">
+ <class>GridLayerDialog</class>
+ <widget class="QDialog" name="GridLayerDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>290</width>
-    <height>261</height>
+    <width>316</width>
+    <height>319</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Grid Information</string>
+   <string>Grid Layer</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="3" column="0">
@@ -223,7 +223,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>accepted()</signal>
-   <receiver>GridInformationDialog</receiver>
+   <receiver>GridLayerDialog</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -239,7 +239,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>rejected()</signal>
-   <receiver>GridInformationDialog</receiver>
+   <receiver>GridLayerDialog</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">

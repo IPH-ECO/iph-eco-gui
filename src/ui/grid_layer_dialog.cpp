@@ -1,13 +1,13 @@
-#include "include/ui/grid_information_dialog.h"
-#include "ui_grid_information_dialog.h"
+#include "include/ui/grid_layer_dialog.h"
+#include "ui_grid_layer_dialog.h"
 
 #include "include/exceptions/grid_data_exception.h"
 
 #include <QFileDialog>
 #include <QMessageBox>
 
-GridInformationDialog::GridInformationDialog(QDialog *parent, GridDataConfiguration *gridConfiguration, GridData *gridData, Mesh *mesh) :
-    QDialog(parent), GRID_DATA_DEFAULT_DIR_KEY("grid_data_default_dir"), ui(new Ui::GridInformationDialog),
+GridLayerDialog::GridLayerDialog(QDialog *parent, GridDataConfiguration *gridConfiguration, GridData *gridData, Mesh *mesh) :
+    QDialog(parent), GRID_DATA_DEFAULT_DIR_KEY("grid_data_default_dir"), ui(new Ui::GridLayerDialog),
     gridConfiguration(gridConfiguration), gridData(gridData), mesh(mesh)
 {
     ui->setupUi(this);
@@ -33,25 +33,25 @@ GridInformationDialog::GridInformationDialog(QDialog *parent, GridDataConfigurat
     }
 }
 
-GridInformationDialog::~GridInformationDialog() {
+GridLayerDialog::~GridLayerDialog() {
     delete ui;
 }
 
-QString GridInformationDialog::getDefaultDirectory() {
+QString GridLayerDialog::getDefaultDirectory() {
     return appSettings->value(GRID_DATA_DEFAULT_DIR_KEY).toString().isEmpty() ? QDir::homePath() : appSettings->value(GRID_DATA_DEFAULT_DIR_KEY).toString();
 }
 
-void GridInformationDialog::on_rdoPoint_toggled(bool checked) {
+void GridLayerDialog::on_rdoPoint_toggled(bool checked) {
     ui->edtExponent->setEnabled(checked);
     ui->edtRadius->setEnabled(checked);
 }
 
-void GridInformationDialog::on_rdoPolygon_toggled(bool checked) {
+void GridLayerDialog::on_rdoPolygon_toggled(bool checked) {
     ui->edtExponent->setEnabled(!checked);
     ui->edtRadius->setEnabled(!checked);
 }
 
-void GridInformationDialog::on_btnBrowseInputFile_clicked() {
+void GridLayerDialog::on_btnBrowseInputFile_clicked() {
     QString gridDataFile = QFileDialog::getOpenFileName(this, tr("Select a grid data file"), getDefaultDirectory(), tr("XYZ files (*.xyz *.txt)"));
 
     if (gridDataFile.isEmpty()) {
@@ -62,11 +62,11 @@ void GridInformationDialog::on_btnBrowseInputFile_clicked() {
     appSettings->setValue(GRID_DATA_DEFAULT_DIR_KEY, QFileInfo(gridDataFile).absolutePath());
 }
 
-GridData* GridInformationDialog::getGridData() {
+GridData* GridLayerDialog::getGridData() {
 	return gridData;
 }
 
-bool GridInformationDialog::isValid() {
+bool GridLayerDialog::isValid() {
     if (ui->edtName->text().isEmpty()) {
         QMessageBox::warning(this, tr("Grid Data"), tr("Name can't be blank."));
         return false;
@@ -95,7 +95,7 @@ bool GridInformationDialog::isValid() {
     return true;
 }
 
-void GridInformationDialog::accept() {
+void GridLayerDialog::accept() {
     if (!isValid()) {
         return;
     }

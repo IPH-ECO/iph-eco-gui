@@ -5,6 +5,7 @@
 #include "include/domain/structured_mesh.h"
 #include "include/domain/unstructured_mesh.h"
 #include "include/exceptions/grid_data_exception.h"
+#include "include/ui/grid_layer_dialog.h"
 
 #include <QFileDialog>
 #include <QMessageBox>
@@ -22,7 +23,7 @@ GridDataDialog::GridDataDialog(QWidget *parent) :
 
 	Qt::WindowFlags flags = this->windowFlags() | Qt::WindowMaximizeButtonHint;
 	this->setWindowFlags(flags);
-    ui->tblGridInformation->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    ui->tblGridLayers->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 
     Project *project = IPHApplication::getCurrentProject();
     QSet<Mesh*> meshes = project->getMeshes();
@@ -76,7 +77,7 @@ void GridDataDialog::setArea(const double &area) {
 }
 
 void GridDataDialog::on_cbxConfiguration_currentIndexChanged(const QString &configurationName) {
-    ui->tblGridInformation->setRowCount(0);
+    ui->tblGridLayers->setRowCount(0);
     
     if (configurationName.isEmpty()) {
         toggleGridDataConfigurationForm(false);
@@ -93,13 +94,13 @@ void GridDataDialog::on_cbxConfiguration_currentIndexChanged(const QString &conf
         ui->cbxMesh->setCurrentText(currentConfiguration->getMesh()->getName());
 
         for (int i = 0; i < gridDataVector.count(); i++) {
-            int rowCount = ui->tblGridInformation->rowCount();
+            int rowCount = ui->tblGridLayers->rowCount();
             GridData *gridData = gridDataVector.at(i);
 
-            ui->tblGridInformation->insertRow(rowCount);
-            ui->tblGridInformation->setItem(rowCount, 0, new QTableWidgetItem(gridData->getName()));
-            ui->tblGridInformation->setItem(rowCount, 1, new QTableWidgetItem(gridData->gridDataTypeToString()));
-            ui->tblGridInformation->setItem(rowCount, 2, new QTableWidgetItem(QString::number(gridData->getInputPolyData()->GetNumberOfPoints())));
+            ui->tblGridLayers->insertRow(rowCount);
+            ui->tblGridLayers->setItem(rowCount, 0, new QTableWidgetItem(gridData->getName()));
+            ui->tblGridLayers->setItem(rowCount, 1, new QTableWidgetItem(gridData->gridDataTypeToString()));
+            ui->tblGridLayers->setItem(rowCount, 2, new QTableWidgetItem(QString::number(gridData->getInputPolyData()->GetNumberOfPoints())));
         }
 
         ui->btnShowGridDataPoints->setEnabled(true);
@@ -128,7 +129,7 @@ void GridDataDialog::on_cbxMesh_currentIndexChanged(const QString &meshName) {
             }
             
             currentConfiguration->clearGridDataVector();
-            ui->tblGridInformation->setRowCount(0);
+            ui->tblGridLayers->setRowCount(0);
         }
         
         currentMesh = IPHApplication::getCurrentProject()->getMesh(meshName);
@@ -143,23 +144,23 @@ void GridDataDialog::on_cbxMesh_currentIndexChanged(const QString &meshName) {
     }
 
     ui->gridDataVTKWidget->render(currentMesh);
-    ui->btnAddGridInfomation->setEnabled(isMeshNamePresent);
-    ui->btnRemoveGridInformation->setEnabled(isMeshNamePresent);
+    ui->btnAddGridLayer->setEnabled(isMeshNamePresent);
+    ui->btnRemoveGridLayer->setEnabled(isMeshNamePresent);
     ui->btnShowMesh->setEnabled(isMeshNamePresent);
     ui->btnShowMesh->setChecked(isMeshNamePresent);
 }
 
-void GridDataDialog::on_btnAddGridInfomation_clicked() {
-    showGridInformationDialog(nullptr);
+void GridDataDialog::on_btnAddGridLayer_clicked() {
+    showGridLayerDialog(nullptr);
 }
 
-void GridDataDialog::showGridInformationDialog(GridData *gridData) {
-    GridInformationDialog *gridInformationDialog = new GridInformationDialog(this, currentConfiguration, gridData, currentMesh);
-    int exitCode = gridInformationDialog->exec();
+void GridDataDialog::showGridLayerDialog(GridData *gridData) {
+    GridLayerDialog *gridLayerDialog = new GridLayerDialog(this, currentConfiguration, gridData, currentMesh);
+    int exitCode = gridLayerDialog->exec();
     
     if (exitCode == QDialog::Accepted) {
-        int rowCount = ui->tblGridInformation->rowCount();
-        GridData *gridData = gridInformationDialog->getGridData();
+        int rowCount = ui->tblGridLayers->rowCount();
+        GridData *gridData = gridLayerDialog->getGridData();
         int maximum = gridData->getMaximumProgress();
         
         QProgressDialog *progressDialog = new QProgressDialog(this);
@@ -200,13 +201,13 @@ void GridDataDialog::showGridInformationDialog(GridData *gridData) {
                 ui->btnShowGridDataPoints->setChecked(false);
                 ui->btnShowColorMap->setEnabled(true);
                 ui->btnShowColorMap->setChecked(false);
-                ui->tblGridInformation->insertRow(rowCount);
-                ui->tblGridInformation->setItem(rowCount, 0, new QTableWidgetItem(gridData->getName()));
-                ui->tblGridInformation->setItem(rowCount, 1, new QTableWidgetItem(gridData->gridDataTypeToString()));
-                ui->tblGridInformation->setItem(rowCount, 2, new QTableWidgetItem(QString::number(gridData->getInputPolyData()->GetNumberOfPoints())));
+                ui->tblGridLayers->insertRow(rowCount);
+                ui->tblGridLayers->setItem(rowCount, 0, new QTableWidgetItem(gridData->getName()));
+                ui->tblGridLayers->setItem(rowCount, 1, new QTableWidgetItem(gridData->gridDataTypeToString()));
+                ui->tblGridLayers->setItem(rowCount, 2, new QTableWidgetItem(QString::number(gridData->getInputPolyData()->GetNumberOfPoints())));
             } else {
-                QTableWidgetItem *inputTypeItem = ui->tblGridInformation->item(ui->tblGridInformation->currentRow(), 0);
-                QTableWidgetItem *gridInformationItem = ui->tblGridInformation->item(ui->tblGridInformation->currentRow(), 1);
+                QTableWidgetItem *inputTypeItem = ui->tblGridLayers->item(ui->tblGridLayers->currentRow(), 0);
+                QTableWidgetItem *gridInformationItem = ui->tblGridLayers->item(ui->tblGridLayers->currentRow(), 1);
                 
                 inputTypeItem->setText(gridData->gridDataInputTypeToString());
                 gridInformationItem->setText(gridData->gridDataTypeToString());
@@ -219,40 +220,40 @@ void GridDataDialog::showGridInformationDialog(GridData *gridData) {
     }
 }
 
-void GridDataDialog::on_btnEditGridInformation_clicked() {
-    int currentRow = ui->tblGridInformation->currentRow();
+void GridDataDialog::on_btnEditGridLayer_clicked() {
+    int currentRow = ui->tblGridLayers->currentRow();
 
     if (currentRow != -1) {
-        GridData *gridData = currentConfiguration->getGridData(ui->tblGridInformation->item(currentRow, 0)->text());
-        showGridInformationDialog(gridData);
+        GridData *gridData = currentConfiguration->getGridData(ui->tblGridLayers->item(currentRow, 0)->text());
+        showGridLayerDialog(gridData);
     }
 }
 
-void GridDataDialog::on_tblGridInformation_itemClicked(QTableWidgetItem *item) {
-    QString gridDataName = ui->tblGridInformation->item(item->row(), 0)->text();
+void GridDataDialog::on_tblGridLayers_itemClicked(QTableWidgetItem *item) {
+    QString gridDataName = ui->tblGridLayers->item(item->row(), 0)->text();
     GridData *gridData = currentConfiguration->getGridData(gridDataName);
     
     ui->gridDataVTKWidget->setShowGridDataPoints(ui->btnShowGridDataPoints->isChecked());
     ui->gridDataVTKWidget->setShowColorMap(ui->btnShowColorMap->isChecked());
     ui->gridDataVTKWidget->render(gridData);
-    ui->btnEditGridInformation->setEnabled(true);
+    ui->btnEditGridLayer->setEnabled(true);
 }
 
-void GridDataDialog::on_btnRemoveGridInformation_clicked() {
-    int currentRow = ui->tblGridInformation->currentRow();
+void GridDataDialog::on_btnRemoveGridLayer_clicked() {
+    int currentRow = ui->tblGridLayers->currentRow();
 
     if (currentRow > -1 && QMessageBox::question(this, tr("Grid Data"), tr("Are you sure you want to remove the selected grid layer?")) == QMessageBox::Yes) {
         currentConfiguration->removeGridData(currentRow);
-        ui->tblGridInformation->removeRow(currentRow);
+        ui->tblGridLayers->removeRow(currentRow);
         ui->gridDataVTKWidget->clear();
         
-        if (ui->tblGridInformation->rowCount() == 0) {
+        if (ui->tblGridLayers->rowCount() == 0) {
             if (currentConfiguration->isPersisted()) {
                 ui->cbxConfiguration->setEnabled(false);
             }
             
             toggleGridDataConfigurationForm(false);
-            ui->btnEditGridInformation->setEnabled(false);
+            ui->btnEditGridLayer->setEnabled(false);
             ui->btnShowGridDataPoints->setEnabled(false);
             ui->btnShowGridDataPoints->toggled(false);
             ui->btnShowColorMap->setEnabled(false);
@@ -319,7 +320,7 @@ bool GridDataDialog::isConfigurationValid(const QString &configurationName) {
         return false;
     }
 
-    if (ui->tblGridInformation->rowCount() == 0) {
+    if (ui->tblGridLayers->rowCount() == 0) {
         QMessageBox::warning(this, tr("Grid Data"), tr("Please input at least one grid information."));
         return false;
     }

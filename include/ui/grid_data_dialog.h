@@ -1,12 +1,11 @@
 #ifndef GRID_DATA_DIALOG_H
 #define GRID_DATA_DIALOG_H
 
+#include "include/domain/grid_data_configuration.h"
+
 #include <QDialog>
 #include <QWidget>
 #include <QTableWidgetItem>
-
-#include "include/domain/grid_data_configuration.h"
-#include "include/ui/grid_information_dialog.h"
 
 namespace Ui {
 class GridDataDialog;
@@ -27,13 +26,13 @@ public slots:
 private slots:
     void on_cbxMesh_currentIndexChanged(const QString &meshName);
     void on_cbxConfiguration_currentIndexChanged(const QString &configurationName);
-    void on_btnAddGridInfomation_clicked();
-    void on_btnEditGridInformation_clicked();
-    void on_btnRemoveGridInformation_clicked();
+    void on_btnAddGridLayer_clicked();
+    void on_btnEditGridLayer_clicked();
+    void on_btnRemoveGridLayer_clicked();
     void on_btnSaveConfiguration_clicked();
     void on_btnRemoveConfiguration_clicked();
     void on_btnDoneConfiguration_clicked();
-    void on_tblGridInformation_itemClicked(QTableWidgetItem *item);
+    void on_tblGridLayers_itemClicked(QTableWidgetItem *item);
     void on_btnBackgroundColor_clicked();
 
 private:
@@ -44,7 +43,7 @@ private:
     
     void toggleGridDataConfigurationForm(bool enable);
     bool isConfigurationValid(const QString &configurationName);
-    void showGridInformationDialog(GridData *gridData);
+    void showGridLayerDialog(GridData *gridData);
 };
 
 #endif // GRID_DATA_DIALOG_H

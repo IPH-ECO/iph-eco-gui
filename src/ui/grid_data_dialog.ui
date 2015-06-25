@@ -2,6 +2,14 @@
 <ui version="4.0">
  <class>GridDataDialog</class>
  <widget class="QWidget" name="GridDataDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1186</width>
+    <height>662</height>
+   </rect>
+  </property>
   <property name="windowTitle">
    <string>Grid Data</string>
   </property>
@@ -375,7 +383,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QTableWidget" name="tblGridInformation">
+         <widget class="QTableWidget" name="tblGridLayers">
           <property name="editTriggers">
            <set>QAbstractItemView::NoEditTriggers</set>
           </property>
@@ -399,12 +407,12 @@
           </attribute>
           <column>
            <property name="text">
-            <string>Name</string>
+            <string>Layer Name</string>
            </property>
           </column>
           <column>
            <property name="text">
-            <string>Layer</string>
+            <string>Information</string>
            </property>
           </column>
           <column>
@@ -423,12 +431,12 @@
            <number>10</number>
           </property>
           <item>
-           <widget class="QToolButton" name="btnAddGridInfomation">
+           <widget class="QToolButton" name="btnAddGridLayer">
             <property name="enabled">
              <bool>false</bool>
             </property>
             <property name="toolTip">
-             <string>Add grid data</string>
+             <string>Add grid layer</string>
             </property>
             <property name="text">
              <string/>
@@ -446,12 +454,12 @@
            </widget>
           </item>
           <item>
-           <widget class="QToolButton" name="btnEditGridInformation">
+           <widget class="QToolButton" name="btnEditGridLayer">
             <property name="enabled">
              <bool>false</bool>
             </property>
             <property name="toolTip">
-             <string>Edit grid data</string>
+             <string>Edit grid layer</string>
             </property>
             <property name="text">
              <string/>
@@ -469,12 +477,12 @@
            </widget>
           </item>
           <item>
-           <widget class="QToolButton" name="btnRemoveGridInformation">
+           <widget class="QToolButton" name="btnRemoveGridLayer">
             <property name="enabled">
              <bool>false</bool>
             </property>
             <property name="toolTip">
-             <string>Remove grid data</string>
+             <string>Remove grid layer</string>
             </property>
             <property name="text">
              <string/>
@@ -605,7 +613,7 @@
   <tabstop>cbxConfiguration</tabstop>
   <tabstop>edtConfigurationName</tabstop>
   <tabstop>cbxMesh</tabstop>
-  <tabstop>btnRemoveGridInformation</tabstop>
+  <tabstop>btnRemoveGridLayer</tabstop>
   <tabstop>btnDoneConfiguration</tabstop>
   <tabstop>btnRemoveConfiguration</tabstop>
   <tabstop>btnSaveConfiguration</tabstop>
