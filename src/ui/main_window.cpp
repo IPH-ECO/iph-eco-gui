@@ -146,20 +146,17 @@ void MainWindow::on_actionCloseProject_triggered() {
 
 void MainWindow::on_actionUnstructuredMeshGeneration_triggered() {
     UnstructuredMeshDialog *unstructuredMeshDialog = new UnstructuredMeshDialog(this);
-    unstructuredMeshDialog->setModal(true);
-    unstructuredMeshDialog->show();
+    unstructuredMeshDialog->exec();
 }
 
 void MainWindow::on_actionStructuredMeshGeneration_triggered() {
     StructuredMeshDialog *structuredMeshDialog = new StructuredMeshDialog(this);
-    structuredMeshDialog->setModal(true);
-    structuredMeshDialog->show();
+    structuredMeshDialog->exec();
 }
 
 void MainWindow::on_actionGridData_triggered() {
     GridDataDialog *gridDataDialog = new GridDataDialog(this);
-    gridDataDialog->setModal(true);
-    gridDataDialog->show();
+    gridDataDialog->exec();
 }
 
 void MainWindow::on_actionSobre_triggered() {
