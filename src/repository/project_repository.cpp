@@ -12,27 +12,18 @@
 
 ProjectRepository::ProjectRepository(const QString &databaseName) : databaseName(databaseName), currentProgress(0), operationCanceled(false) {}
 
-void ProjectRepository::connectDB() {
-    if (this->database.isOpen()) {
-        return;
-    }
-    
-    this->database = DatabaseUtility::connect(this->databaseName); // TODO: Test failure
-    
-    if (!DatabaseUtility::isDatabaseValid(this->database)) {
-        throw DatabaseException("Invalid IPH-ECO Project file.");
-    }
-}
-
 void ProjectRepository::open() {
     currentProgress = 0;
-    
     emit updateProgressText("Loading project...");
     emit updateProgress(currentProgress++);
     QApplication::processEvents();
     
-    connectDB();
-
+    this->database = DatabaseUtility::connect(this->databaseName);
+    
+    if (!DatabaseUtility::isDatabaseValid(this->database)) {
+        throw DatabaseException("Invalid IPH-ECO Project file.");
+    }
+    
     QSqlQuery query(this->database);
 
     query.prepare("select * from project limit 1");
@@ -160,20 +151,19 @@ void ProjectRepository::loadGridData(GridDataConfiguration *gridDataConfiguratio
     }
 }
 
-void ProjectRepository::save() {
-    Project *project = IPHApplication::getCurrentProject();
+void ProjectRepository::save(bool makeCopy) {
     currentProgress = 0;
-    QString sql;
-    
     emit updateProgressText("Saving project...");
     emit updateProgress(currentProgress++);
     QApplication::processEvents();
     
-    connectDB();
+    this->database = DatabaseUtility::connect(this->databaseName);
+    Project *project = IPHApplication::getCurrentProject();
+    QString sql;
     
     QSqlDatabase::database().transaction();
     try {
-        if (project->isPersisted()) {
+        if (project->isPersisted() && !makeCopy) {
             sql = "update project set name = :n, description = :d, hydrodynamic = :h, water_quality = :w, sediment = :s";
         } else {
             DatabaseUtility::createApplicationTables(this->database);
@@ -468,7 +458,7 @@ int ProjectRepository::getMaximumSaveProgress() {
 }
 
 int ProjectRepository::getMaximumLoadProgress() {
-    connectDB();
+    this->database = DatabaseUtility::connect(this->databaseName);
     
     int loadSteps = 0;
     QSqlQuery query(this->database);

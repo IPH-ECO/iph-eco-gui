@@ -13,8 +13,6 @@ private:
     int currentProgress;
     bool operationCanceled;
     
-    void connectDB();
-    
     void saveMeshes(Project *project);
     void saveMeshPolygons(Mesh *mesh);
     void loadMeshes(Project *project);
@@ -29,7 +27,7 @@ public:
     ProjectRepository(const QString &databaseName);
 
     void open();
-    void save();
+    void save(bool makeCopy = false);
     
     int getMaximumSaveProgress();
     int getMaximumLoadProgress();

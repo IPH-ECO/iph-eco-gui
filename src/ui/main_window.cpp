@@ -72,6 +72,7 @@ void MainWindow::on_actionSaveProject_triggered() {
         if (!progressDialog->wasCanceled()) {
             appSettings->setValue(PROJECT_DEFAULT_DIR_KEY, QFileInfo(project->getFilename()).absoluteDir().absolutePath());
             updateRecentFilesList(project->getFilename());
+            setWindowTitle("IPH-ECO - " + project->getName());
         }
         
         delete progressDialog;
@@ -88,7 +89,6 @@ void MainWindow::on_actionSaveAsProject_triggered() {
         QProgressDialog *progressDialog = new QProgressDialog(this);
         int maximum = projectRepository.getMaximumSaveProgress();
 
-        project->setFilename(filename);
         progressDialog->setMinimum(0);
         progressDialog->setMaximum(maximum);
         progressDialog->setMinimumDuration(500);
@@ -96,16 +96,22 @@ void MainWindow::on_actionSaveAsProject_triggered() {
         
         QObject::connect(&projectRepository, SIGNAL(updateProgressText(const QString&)), progressDialog, SLOT(setLabelText(const QString&)));
         QObject::connect(&projectRepository, SIGNAL(updateProgress(int)), progressDialog, SLOT(setValue(int)));
-        QObject::connect(progressDialog, SIGNAL(canceled()), &projectRepository, SLOT(cancelSave()));
+        QObject::connect(progressDialog, SIGNAL(canceled()), &projectRepository, SLOT(cancelOperation()));
         
         try {
-            projectRepository.save();
+            projectRepository.save(true);
         } catch (DatabaseException &ex) {
             QMessageBox::critical(this, "Save As Project", ex.what());
         }
         
-        appSettings->setValue(PROJECT_DEFAULT_DIR_KEY, QFileInfo(filename).absolutePath());
-        updateRecentFilesList(project->getFilename());
+        if (progressDialog->wasCanceled()) {
+            QFile::remove(filename);
+        } else {
+            project->setFilename(filename);
+            appSettings->setValue(PROJECT_DEFAULT_DIR_KEY, QFileInfo(filename).absolutePath());
+            updateRecentFilesList(project->getFilename());
+            setWindowTitle("IPH-ECO - " + project->getName());
+        }
         
         delete progressDialog;
     }
@@ -160,7 +166,7 @@ void MainWindow::on_actionSobre_triggered() {
     QMessageBox::about(this, tr("Sobre"), tr("IPH-ECO."));
 }
 
-void MainWindow::openRecent(){
+void MainWindow::openRecent() {
     QAction *action = qobject_cast<QAction *>(sender());
     if (action) {
         openProject(action->data().toString());
