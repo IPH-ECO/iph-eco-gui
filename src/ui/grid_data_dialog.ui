@@ -36,6 +36,12 @@
            <height>24</height>
           </size>
          </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
         </widget>
        </item>
        <item>
@@ -55,6 +61,12 @@
            <width>24</width>
            <height>24</height>
           </size>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+         <property name="checked">
+          <bool>false</bool>
          </property>
         </widget>
        </item>
@@ -76,12 +88,18 @@
            <height>24</height>
           </size>
          </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+         <property name="checked">
+          <bool>false</bool>
+         </property>
         </widget>
        </item>
        <item>
-        <widget class="QToolButton" name="toolButton">
+        <widget class="QToolButton" name="btnShowAxes">
          <property name="toolTip">
-          <string>Show/Hide axis</string>
+          <string>Show/Hide axes</string>
          </property>
          <property name="text">
           <string/>
@@ -95,6 +113,12 @@
            <width>24</width>
            <height>24</height>
           </size>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
          </property>
         </widget>
        </item>
@@ -116,6 +140,12 @@
            <height>24</height>
           </size>
          </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+         <property name="checked">
+          <bool>false</bool>
+         </property>
         </widget>
        </item>
        <item>
@@ -135,6 +165,12 @@
            <width>24</width>
            <height>24</height>
           </size>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+         <property name="checked">
+          <bool>false</bool>
          </property>
         </widget>
        </item>
@@ -606,6 +642,7 @@
     <slot>setShowMesh(bool)</slot>
     <slot>setShowGridDataPoints(bool)</slot>
     <slot>setShowColorMap(bool)</slot>
+    <slot>setShowAxes(bool)</slot>
    </slots>
   </customwidget>
  </customwidgets>
@@ -667,6 +704,22 @@
     <hint type="destinationlabel">
      <x>919</x>
      <y>403</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnShowAxes</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>gridDataVTKWidget</receiver>
+   <slot>setShowAxes(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>516</x>
+     <y>30</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>772</x>
+     <y>339</y>
     </hint>
    </hints>
   </connection>

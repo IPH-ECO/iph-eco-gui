@@ -9,6 +9,7 @@
 #include <QVTKWidget.h>
 #include <vtkRenderer.h>
 #include <vtkContextActor.h>
+#include <vtkCubeAxesActor.h>
 #include <vtkPolyDataMapper.h>
 #include <vtkScalarBarActor.h>
 
@@ -17,6 +18,7 @@ class GridDataVTKWidget : public QVTKWidget {
 private:
 	vtkSmartPointer<vtkRenderer> renderer;
     vtkSmartPointer<vtkActor> meshActor;
+    vtkSmartPointer<vtkCubeAxesActor> axesActor;
     vtkSmartPointer<vtkActor> gridDataActor;
     vtkSmartPointer<vtkActor> colorMapActor;
     vtkSmartPointer<vtkPolyDataMapper> meshMapper;
@@ -24,6 +26,7 @@ private:
     vtkSmartPointer<vtkScalarBarActor> colorMapBar;
     
     bool showMesh;
+    bool showAxes;
     bool showGridDataPoints;
     bool showColorMap;
 public:
@@ -34,6 +37,7 @@ public:
     void clear();
 public slots:
     void setShowMesh(bool show);
+    void setShowAxes(bool show);
     void setShowGridDataPoints(bool show);
     void setShowColorMap(bool show);
 };

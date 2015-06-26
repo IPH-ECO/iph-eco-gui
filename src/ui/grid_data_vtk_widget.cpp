@@ -4,20 +4,21 @@
 #include "include/ui/grid_data_dialog.h"
 #include "include/utility/mouse_interactor.h"
 
-#include <vtkSmartPointer.h>
 #include <vtkRenderWindowInteractor.h>
 #include <vtkWorldPointPicker.h>
+#include <vtkTextProperty.h>
+#include <vtkSmartPointer.h>
 #include <vtkRenderWindow.h>
 #include <vtkTextProperty.h>
 #include <vtkLookupTable.h>
 #include <vtkPointData.h>
-#include <vtkPolyData.h>
-#include <vtkCellData.h>
 #include <vtkDataArray.h>
 #include <vtkProperty.h>
+#include <vtkPolyData.h>
+#include <vtkCellData.h>
 #include <QList>
 
-GridDataVTKWidget::GridDataVTKWidget(QWidget *parent) : QVTKWidget(parent), showMesh(true), showGridDataPoints(true), showColorMap(false) {
+GridDataVTKWidget::GridDataVTKWidget(QWidget *parent) : QVTKWidget(parent), showMesh(true), showAxes(true), showGridDataPoints(true) {
     renderer = vtkSmartPointer<vtkRenderer>::New();
     renderer->SetBackground(1, 1, 1);
 }
@@ -38,6 +39,7 @@ void GridDataVTKWidget::render(Mesh *mesh) {
     meshMapper->ScalarVisibilityOff();
     
     meshActor = vtkSmartPointer<vtkActor>::New();
+    meshActor->GetProperty()->LightingOff();
     meshActor->SetMapper(meshMapper);
     
     if (this->showMesh) {
@@ -47,6 +49,24 @@ void GridDataVTKWidget::render(Mesh *mesh) {
     }
     
     renderer->AddActor(meshActor);
+    
+    axesActor = vtkSmartPointer<vtkCubeAxesActor>::New();
+    axesActor->SetXUnits("m");
+    axesActor->SetXLabelFormat("%4.2f");
+    axesActor->SetYUnits("m");
+    axesActor->SetYLabelFormat("%4.2f");
+    axesActor->ZAxisVisibilityOff();
+    axesActor->GetLabelTextProperty(0)->SetColor(0, 0, 0);
+    axesActor->GetTitleTextProperty(0)->SetColor(0, 0, 0);
+    axesActor->GetXAxesLinesProperty()->SetColor(0, 0, 0);
+    axesActor->GetLabelTextProperty(1)->SetColor(0, 0, 0);
+    axesActor->GetTitleTextProperty(1)->SetColor(0, 0, 0);
+    axesActor->GetYAxesLinesProperty()->SetColor(0, 0, 0);
+    axesActor->SetBounds(mesh->getPolyData()->GetBounds());
+    axesActor->SetCamera(renderer->GetActiveCamera());
+    axesActor->SetFlyModeToStaticEdges();
+    
+    renderer->AddActor(axesActor);
     
     vtkSmartPointer<vtkRenderWindow> renderWindow = vtkSmartPointer<vtkRenderWindow>::New();
     vtkSmartPointer<vtkWorldPointPicker> worldPointPicker = vtkSmartPointer<vtkWorldPointPicker>::New();
@@ -141,13 +161,24 @@ void GridDataVTKWidget::render(GridData *gridData) {
     renderer->AddActor2D(inputPointsBar);
 }
 
-void GridDataVTKWidget::setShowMesh(bool value) {
-    this->showMesh = value;
+void GridDataVTKWidget::setShowMesh(bool show) {
+    this->showMesh = show;
     
-    if (value) {
+    if (show) {
         meshActor->GetProperty()->EdgeVisibilityOn();
     } else {
         meshActor->GetProperty()->EdgeVisibilityOff();
+    }
+    this->update();
+}
+
+void GridDataVTKWidget::setShowAxes(bool show) {
+    this->showAxes = show;
+    
+    if (show) {
+        axesActor->VisibilityOn();
+    } else {
+        axesActor->VisibilityOff();
     }
     this->update();
 }
