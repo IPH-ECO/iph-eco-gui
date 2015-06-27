@@ -204,3 +204,8 @@ double Mesh::area() {
 bool Mesh::isPersisted() const {
     return this->id != 0;
 }
+
+bool Mesh::hasArray(const QString &arrayName) {
+    std::string stdArrayName(arrayName.toStdString());
+    return polyData->GetCellData()->HasArray(stdArrayName.c_str());
+}

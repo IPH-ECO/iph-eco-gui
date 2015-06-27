@@ -46,6 +46,7 @@ public:
     MeshPolygon* getMeshPolygon(const QString &name, const MeshPolygonType &meshPolygonType) const;
 
     double area();
+    bool hasArray(const QString &arrayName);
 
     virtual bool instanceOf(const QString &type) = 0;
     virtual void generate() = 0;
