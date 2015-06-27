@@ -1,6 +1,9 @@
 #include "include/domain/project.h"
 
 #include <QSetIterator>
+#include <QStringList>
+#include <vtkCellData.h>
+#include <vtkDataArray.h>
 
 Project::Project(const QString &name, const QString &description, const bool &hydrodynamic, const bool &sediment, const bool &waterQuality) :
         id(0), name(name), description(description), hydrodynamic(hydrodynamic), waterQuality(waterQuality),
@@ -173,6 +176,30 @@ GridDataConfiguration* Project::getGridDataConfiguration(const QString &configur
 
 QSet<GridDataConfiguration*> Project::getGridDataConfigurations() const {
     return gridDataConfigurations;
+}
+
+// Remove bad references between grid data name and arrays of mesh polydata
+void Project::updateMeshPolyDataReferences() {
+    QStringList gridDataNames;
+    
+    for (QSet<GridDataConfiguration*>::const_iterator it = gridDataConfigurations.begin(); it != gridDataConfigurations.end(); it++) {
+        GridDataConfiguration *configuration = *it;
+        
+        for (int i = 0; i < configuration->getGridDataVector().size(); i++) {
+            gridDataNames << configuration->getGridDataVector().at(i)->getName();
+        }
+    }
+    
+    for (QSet<GridDataConfiguration*>::const_iterator it = gridDataConfigurations.begin(); it != gridDataConfigurations.end(); it++) {
+        GridDataConfiguration *configuration = *it;
+        vtkCellData *cellData = configuration->getMesh()->getPolyData()->GetCellData();
+    
+        for (int i = 0; i < cellData->GetNumberOfArrays(); i++) {
+            if (!gridDataNames.contains(cellData->GetArrayName(i))) {
+                cellData->RemoveArray(i);
+            }
+        }
+    }
 }
 
 bool Project::isPersisted() const {

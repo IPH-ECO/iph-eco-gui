@@ -51,6 +51,7 @@ public:
     void removeGridDataConfiguration(const QString &configurationName);
     GridDataConfiguration* getGridDataConfiguration(const QString &configurationName);
     QSet<GridDataConfiguration*> getGridDataConfigurations() const;
+    void updateMeshPolyDataReferences();
 
     //Transient gets and sets
     bool isPersisted() const;
