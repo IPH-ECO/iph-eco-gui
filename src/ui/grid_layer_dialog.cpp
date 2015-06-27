@@ -67,12 +67,14 @@ GridData* GridLayerDialog::getGridData() {
 }
 
 bool GridLayerDialog::isValid() {
-    if (ui->edtName->text().isEmpty()) {
+    QString gridDataName = ui->edtName->text();
+    
+    if (gridDataName.isEmpty()) {
         QMessageBox::warning(this, tr("Grid Data"), tr("Name can't be blank."));
         return false;
     }
     
-    if (gridConfiguration->getGridData(ui->edtName->text()) != gridData) {
+    if (gridConfiguration->getGridData(gridDataName) != nullptr && gridDataName != gridData->getName()) {
         QMessageBox::warning(this, tr("Grid Data"), tr("Name already used in this configuration."));
         return false;
     }

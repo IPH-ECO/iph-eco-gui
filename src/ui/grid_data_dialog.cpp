@@ -159,7 +159,6 @@ void GridDataDialog::showGridLayerDialog(GridData *gridData) {
     int exitCode = gridLayerDialog->exec();
     
     if (exitCode == QDialog::Accepted) {
-        int rowCount = ui->tblGridLayers->rowCount();
         GridData *gridData = gridLayerDialog->getGridData();
         int maximum = gridData->getMaximumProgress();
         
@@ -194,6 +193,8 @@ void GridDataDialog::showGridLayerDialog(GridData *gridData) {
             }
         } else {
             if (!gridData->isPersisted()) {
+                int rowCount = ui->tblGridLayers->rowCount();
+                
                 currentConfiguration->addGridData(gridData);
                 
                 ui->cbxConfiguration->setEnabled(true);
@@ -206,11 +207,14 @@ void GridDataDialog::showGridLayerDialog(GridData *gridData) {
                 ui->tblGridLayers->setItem(rowCount, 1, new QTableWidgetItem(gridData->gridDataTypeToString()));
                 ui->tblGridLayers->setItem(rowCount, 2, new QTableWidgetItem(QString::number(gridData->getInputPolyData()->GetNumberOfPoints())));
             } else {
-                QTableWidgetItem *inputTypeItem = ui->tblGridLayers->item(ui->tblGridLayers->currentRow(), 0);
-                QTableWidgetItem *gridInformationItem = ui->tblGridLayers->item(ui->tblGridLayers->currentRow(), 1);
+                int currentRow = ui->tblGridLayers->currentRow();
+                QTableWidgetItem *nameItem = ui->tblGridLayers->item(currentRow, 0);
+                QTableWidgetItem *griDataTypeItem = ui->tblGridLayers->item(currentRow, 1);
+                QTableWidgetItem *numberOfPointsItem = ui->tblGridLayers->item(currentRow, 2);
                 
-                inputTypeItem->setText(gridData->gridDataInputTypeToString());
-                gridInformationItem->setText(gridData->gridDataTypeToString());
+                nameItem->setText(gridData->getName());
+                griDataTypeItem->setText(gridData->gridDataTypeToString());
+                numberOfPointsItem->setText(QString::number(gridData->getInputPolyData()->GetNumberOfPoints()));
             }
             
             ui->gridDataVTKWidget->render(gridData);
