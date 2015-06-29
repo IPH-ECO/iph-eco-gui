@@ -152,7 +152,6 @@ void GridDataDialog::on_cbxMesh_currentIndexChanged(const QString &meshName) {
     ui->btnAddGridLayer->setEnabled(isMeshNamePresent);
     ui->btnRemoveGridLayer->setEnabled(isMeshNamePresent);
     ui->btnShowMesh->setEnabled(isMeshNamePresent);
-    ui->btnShowMesh->setChecked(isMeshNamePresent);
 }
 
 void GridDataDialog::on_btnAddGridLayer_clicked() {
@@ -236,7 +235,7 @@ void GridDataDialog::on_btnEditGridLayer_clicked() {
 }
 
 void GridDataDialog::on_tblGridLayers_currentItemChanged(QTableWidgetItem *current, QTableWidgetItem *previous) {
-    if (previous == nullptr || current->row() != previous->row()) {
+    if (current != nullptr && (previous == nullptr || current->row() != previous->row())) {
         QString gridDataName = ui->tblGridLayers->item(current->row(), 0)->text();
         GridData *gridData = currentConfiguration->getGridData(gridDataName);
         

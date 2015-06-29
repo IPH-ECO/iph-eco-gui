@@ -1,42 +1,51 @@
 #include "include/ui/grid_data_vtk_widget.h"
 
-#include "include/domain/mesh.h"
-#include "include/ui/grid_data_dialog.h"
-
-#include <vtkRenderWindowInteractor.h>
-#include <vtkWorldPointPicker.h>
-#include <vtkTextProperty.h>
-#include <vtkSmartPointer.h>
-#include <vtkRenderWindow.h>
-#include <vtkTextProperty.h>
-#include <vtkLookupTable.h>
-#include <vtkPointData.h>
-#include <vtkDataArray.h>
-#include <vtkProperty.h>
-#include <vtkPolyData.h>
 #include <vtkCellData.h>
-#include <QList>
+#include <vtkProperty.h>
+#include <vtkPointData.h>
+#include <vtkLookupTable.h>
+#include <vtkTextProperty.h>
+#include <vtkPolyDataMapper.h>
 
 vtkStandardNewMacro(GridDataMouseInteractor);
 
-GridDataVTKWidget::GridDataVTKWidget(QWidget *parent) : QVTKWidget(parent), showMesh(true), showAxes(true), showGridDataPoints(true) {
+GridDataVTKWidget::GridDataVTKWidget(QWidget *parent) : QVTKWidget(parent), currentMesh(nullptr), currentGridData(nullptr),
+    showMesh(true), showAxes(true), showColorMap(true)
+{
     renderer = vtkSmartPointer<vtkRenderer>::New();
+    renderWindow = vtkSmartPointer<vtkRenderWindow>::New();
+    worldPointPicker = vtkSmartPointer<vtkWorldPointPicker>::New();
+    renderWindowInteractor = vtkSmartPointer<vtkRenderWindowInteractor>::New();
+    mouseInteractor = vtkSmartPointer<GridDataMouseInteractor>::New();
+    
     renderer->SetBackground(1, 1, 1);
+    renderWindow->AddRenderer(renderer);
+    renderWindowInteractor->SetRenderWindow(renderWindow);
+    renderWindowInteractor->SetInteractorStyle(mouseInteractor);
+    renderWindowInteractor->SetPicker(worldPointPicker);
+    mouseInteractor->SetDefaultRenderer(renderer);
+    
+    this->SetRenderWindow(renderWindow);
+    renderWindow->Render();
 }
 
 void GridDataVTKWidget::render(Mesh *mesh) {
-	GridDataDialog *gridDataDialog = (GridDataDialog*) this->parent();
-
-    if (mesh == nullptr) {
-		gridDataDialog->setArea(0);
+    clear();
+    
+    if (mesh == nullptr || currentMesh == mesh) {
         return;
     }
     
-    this->clear();
+    currentMesh = mesh;
+    renderer->RemoveActor(meshActor);
+    renderer->RemoveActor(axesActor);
+    
+    mouseInteractor->setMesh(currentMesh);
+    mouseInteractor->clearSelection();
     
     // Mesh rendering
     meshMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-    meshMapper->SetInputData(mesh->getPolyData());
+    meshMapper->SetInputData(currentMesh->getPolyData());
     meshMapper->ScalarVisibilityOff();
     
     meshActor = vtkSmartPointer<vtkActor>::New();
@@ -48,8 +57,6 @@ void GridDataVTKWidget::render(Mesh *mesh) {
     } else {
         meshActor->GetProperty()->EdgeVisibilityOff();
     }
-    
-    renderer->AddActor(meshActor);
     
     axesActor = vtkSmartPointer<vtkCubeAxesActor>::New();
     axesActor->SetXUnits("m");
@@ -63,31 +70,19 @@ void GridDataVTKWidget::render(Mesh *mesh) {
     axesActor->GetLabelTextProperty(1)->SetColor(0, 0, 0);
     axesActor->GetTitleTextProperty(1)->SetColor(0, 0, 0);
     axesActor->GetYAxesLinesProperty()->SetColor(0, 0, 0);
-    axesActor->SetBounds(mesh->getPolyData()->GetBounds());
+    axesActor->SetBounds(currentMesh->getPolyData()->GetBounds());
     axesActor->SetCamera(renderer->GetActiveCamera());
     axesActor->SetFlyModeToStaticEdges();
     
+    if (this->showAxes) {
+        axesActor->VisibilityOn();
+    } else {
+        axesActor->VisibilityOff();
+    }
+    
+    renderer->AddActor(meshActor);
     renderer->AddActor(axesActor);
-    
-    vtkSmartPointer<vtkRenderWindow> renderWindow = vtkSmartPointer<vtkRenderWindow>::New();
-    vtkSmartPointer<vtkWorldPointPicker> worldPointPicker = vtkSmartPointer<vtkWorldPointPicker>::New();
-    vtkSmartPointer<vtkRenderWindowInteractor> renderWindowInteractor = vtkSmartPointer<vtkRenderWindowInteractor>::New();
-    mouseInteractor = vtkSmartPointer<GridDataMouseInteractor>::New();
-    mouseInteractor->SetDefaultRenderer(renderer);
-    mouseInteractor->setMesh(mesh);
-    
-    QObject::connect(mouseInteractor, SIGNAL(coordinateChanged(double&, double&)), gridDataDialog, SLOT(setCoordinate(double&, double&)));
-    gridDataDialog->setArea(mesh->area());
-    
-    renderWindowInteractor->SetInteractorStyle(mouseInteractor);
-    renderWindowInteractor->SetPicker(worldPointPicker);
-    renderWindowInteractor->SetRenderWindow(renderWindow);
-    
-    renderWindow->AddRenderer(renderer);
     renderer->ResetCamera();
-    
-    this->SetRenderWindow(renderWindow);
-    renderWindow->Render();
 }
 
 void GridDataVTKWidget::render(GridData *gridData) {
@@ -95,7 +90,8 @@ void GridDataVTKWidget::render(GridData *gridData) {
     
     render(mesh);
 
-    vtkPolyData *inputPointsPolyData = gridData->getInputPolyData();
+    currentGridData = gridData;
+    vtkPolyData *inputPointsPolyData = currentGridData->getInputPolyData();
     vtkSmartPointer<vtkPolyDataMapper> inputPointsMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
     vtkSmartPointer<vtkLookupTable> inputPointsTable = vtkSmartPointer<vtkLookupTable>::New();
     double *interval = inputPointsPolyData->GetPointData()->GetScalars()->GetRange();
@@ -112,7 +108,7 @@ void GridDataVTKWidget::render(GridData *gridData) {
     
     inputPointsBar = vtkSmartPointer<vtkScalarBarActor>::New();
     inputPointsBar->SetLookupTable(inputPointsTable);
-    inputPointsBar->SetTitle(gridData->getName().toStdString().c_str());
+    inputPointsBar->SetTitle(currentGridData->getName().toStdString().c_str());
     inputPointsBar->SetNumberOfLabels(4);
     inputPointsBar->GetTitleTextProperty()->SetFontSize(8); // doesn't have effect
     inputPointsBar->SetWidth(0.1);
@@ -121,7 +117,7 @@ void GridDataVTKWidget::render(GridData *gridData) {
 
     vtkPolyData *meshPolyData = mesh->getPolyData();
     vtkSmartPointer<vtkLookupTable> colorMapTable = vtkSmartPointer<vtkLookupTable>::New();
-	std::string gridDataName(gridData->getName().toStdString());
+	std::string gridDataName(currentGridData->getName().toStdString());
     
 	meshPolyData->GetCellData()->SetActiveScalars(gridDataName.c_str());
 	interval = meshPolyData->GetCellData()->GetScalars(gridDataName.c_str())->GetRange();
@@ -140,8 +136,6 @@ void GridDataVTKWidget::render(GridData *gridData) {
     colorMapBar->SetHeight(0.5);
     colorMapBar->SetPosition(0.85, 0.05);
     
-    renderer->AddActor2D(colorMapBar);
-    
     if (showColorMap) {
         colorMapBar->VisibilityOn();
         meshMapper->ScalarVisibilityOn();
@@ -159,6 +153,7 @@ void GridDataVTKWidget::render(GridData *gridData) {
     }
     
     renderer->AddActor(gridDataActor);
+    renderer->AddActor2D(colorMapBar);
     renderer->AddActor2D(inputPointsBar);
 }
 
@@ -193,7 +188,7 @@ void GridDataVTKWidget::setShowAxes(bool show) {
 void GridDataVTKWidget::setShowGridDataPoints(bool show) {
     this->showGridDataPoints = show;
     
-    if (gridDataActor == nullptr || inputPointsBar == nullptr) {
+    if (currentGridData == nullptr || gridDataActor == nullptr || inputPointsBar == nullptr) {
         return;
     }
     
@@ -210,7 +205,7 @@ void GridDataVTKWidget::setShowGridDataPoints(bool show) {
 void GridDataVTKWidget::setShowColorMap(bool show) {
     this->showColorMap = show;
     
-    if (meshMapper == nullptr || colorMapBar == nullptr) {
+    if (currentGridData == nullptr || meshMapper == nullptr || colorMapBar == nullptr) {
         return;
     }
     
@@ -231,10 +226,11 @@ void GridDataVTKWidget::changeBackgroundColor(const double &r, const double &g, 
 }
 
 void GridDataVTKWidget::clear() {
-    if (renderer != nullptr) {
-        renderer->RemoveAllViewProps();
-        this->update();
-    }
+    currentGridData = nullptr;
+    renderer->RemoveActor(gridDataActor);
+    renderer->RemoveActor2D(colorMapBar);
+    renderer->RemoveActor2D(inputPointsBar);
+    this->update();
 }
 
 void GridDataVTKWidget::togglePickIndividualCell(bool activate) {

@@ -4,29 +4,35 @@
 #include "include/domain/grid_data.h"
 #include "include/utility/grid_data_mouse_interactor.h"
 
-#include <QColor>
 #include <QWidget>
-#include <vtkActor.h>
 #include <QVTKWidget.h>
 #include <vtkRenderer.h>
 #include <vtkContextActor.h>
+#include <vtkRenderWindow.h>
 #include <vtkCubeAxesActor.h>
-#include <vtkPolyDataMapper.h>
 #include <vtkScalarBarActor.h>
+#include <vtkWorldPointPicker.h>
+#include <vtkRenderWindowInteractor.h>
 
 class GridDataVTKWidget : public QVTKWidget {
 	Q_OBJECT
 private:
 	vtkSmartPointer<vtkRenderer> renderer;
+    vtkSmartPointer<vtkRenderWindow> renderWindow;
+    vtkSmartPointer<vtkWorldPointPicker> worldPointPicker;
+    vtkSmartPointer<vtkRenderWindowInteractor> renderWindowInteractor;
+    vtkSmartPointer<GridDataMouseInteractor> mouseInteractor;
+    
     vtkSmartPointer<vtkActor> meshActor;
     vtkSmartPointer<vtkCubeAxesActor> axesActor;
     vtkSmartPointer<vtkActor> gridDataActor;
-    vtkSmartPointer<vtkActor> colorMapActor;
     vtkSmartPointer<vtkActor> selectionActor;
     vtkSmartPointer<vtkPolyDataMapper> meshMapper;
     vtkSmartPointer<vtkScalarBarActor> inputPointsBar;
     vtkSmartPointer<vtkScalarBarActor> colorMapBar;
-    vtkSmartPointer<GridDataMouseInteractor> mouseInteractor;
+    
+    Mesh *currentMesh;
+    GridData *currentGridData;
     
     bool showMesh;
     bool showAxes;
