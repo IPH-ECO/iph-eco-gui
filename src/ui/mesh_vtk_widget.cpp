@@ -14,9 +14,9 @@
 
 #include "include/ui/structured_mesh_dialog.h"
 #include "include/ui/unstructured_mesh_dialog.h"
-#include "include/utility/mouse_interactor.h"
+#include "include/utility/mesh_mouse_interactor.h"
 
-vtkStandardNewMacro(MouseInteractor);
+vtkStandardNewMacro(MeshMouseInteractor);
 
 MeshVTKWidget::MeshVTKWidget(QWidget *parent) : QVTKWidget(parent), showBoundaryEdges(true), showMesh(true), showUTMCoordinates(false) {}
 
@@ -99,7 +99,7 @@ void MeshVTKWidget::render(Mesh *mesh) {
     vtkSmartPointer<vtkRenderWindow> renderWindow = vtkSmartPointer<vtkRenderWindow>::New();
     vtkSmartPointer<vtkWorldPointPicker> worldPointPicker = vtkSmartPointer<vtkWorldPointPicker>::New();
     vtkSmartPointer<vtkRenderWindowInteractor> renderWindowInteractor = vtkSmartPointer<vtkRenderWindowInteractor>::New();
-    vtkSmartPointer<MouseInteractor> mouseInteractor = vtkSmartPointer<MouseInteractor>::New();
+    vtkSmartPointer<MeshMouseInteractor> mouseInteractor = vtkSmartPointer<MeshMouseInteractor>::New();
     
     mouseInteractor->SetDefaultRenderer(renderer);
     

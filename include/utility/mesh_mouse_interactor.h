@@ -1,18 +1,20 @@
-#ifndef MOUSE_INTERACTOR_H
-#define MOUSE_INTERACTOR_H
+#ifndef MESH_MOUSE_INTERACTOR_H
+#define MESH_MOUSE_INTERACTOR_H
 
-#include <vtkSmartPointer.h>
 #include <vtkInteractorStyleTrackballCamera.h>
-#include <vtkObjectFactory.h>
+#include <vtkRenderWindowInteractor.h>
 #include <vtkRendererCollection.h>
 #include <vtkAbstractPicker.h>
+#include <vtkObjectFactory.h>
 #include <vtkRenderWindow.h>
+#include <vtkSmartPointer.h>
+#include <QObject>
 
-class MouseInteractor : public QObject, public vtkInteractorStyleTrackballCamera {
+class MeshMouseInteractor : public QObject, public vtkInteractorStyleTrackballCamera {
     Q_OBJECT
 public:
-    static MouseInteractor* New();
-    vtkTypeMacro(MouseInteractor, vtkInteractorStyleTrackballCamera);
+    static MeshMouseInteractor* New();
+    vtkTypeMacro(MeshMouseInteractor, vtkInteractorStyleTrackballCamera);
 
     virtual void OnMouseMove() {
         int* mousePosition = this->Interactor->GetEventPosition();
@@ -30,4 +32,4 @@ signals:
     void coordinateChanged(double &x, double &y);
 };
 
-#endif // MOUSE_INTERACTOR_H
+#endif // MESH_MOUSE_INTERACTOR_H

@@ -2,6 +2,7 @@
 #define GRID_DATA_VTK_WIDGET_H
 
 #include "include/domain/grid_data.h"
+#include "include/utility/grid_data_mouse_interactor.h"
 
 #include <QColor>
 #include <QWidget>
@@ -21,9 +22,11 @@ private:
     vtkSmartPointer<vtkCubeAxesActor> axesActor;
     vtkSmartPointer<vtkActor> gridDataActor;
     vtkSmartPointer<vtkActor> colorMapActor;
+    vtkSmartPointer<vtkActor> selectionActor;
     vtkSmartPointer<vtkPolyDataMapper> meshMapper;
     vtkSmartPointer<vtkScalarBarActor> inputPointsBar;
     vtkSmartPointer<vtkScalarBarActor> colorMapBar;
+    vtkSmartPointer<GridDataMouseInteractor> mouseInteractor;
     
     bool showMesh;
     bool showAxes;
@@ -40,6 +43,7 @@ public slots:
     void setShowAxes(bool show);
     void setShowGridDataPoints(bool show);
     void setShowColorMap(bool show);
+    void togglePickIndividualCell(bool activate);
 };
 
 #endif // GRID_DATA_VTK_WIDGET_H

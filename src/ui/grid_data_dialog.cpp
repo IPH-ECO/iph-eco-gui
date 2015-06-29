@@ -139,11 +139,16 @@ void GridDataDialog::on_cbxMesh_currentIndexChanged(const QString &meshName) {
         } else {
             currentMesh = static_cast<StructuredMesh*>(currentMesh);
         }
+        
+        ui->btnPickIndividualCells->setEnabled(true);
     } else {
         currentMesh = nullptr;
     }
 
     ui->gridDataVTKWidget->render(currentMesh);
+    ui->btnPickIndividualCells->setChecked(false);
+    ui->gridDataVTKWidget->togglePickIndividualCell(false);
+    ui->btnPickIndividualCells->setEnabled(isMeshNamePresent);
     ui->btnAddGridLayer->setEnabled(isMeshNamePresent);
     ui->btnRemoveGridLayer->setEnabled(isMeshNamePresent);
     ui->btnShowMesh->setEnabled(isMeshNamePresent);

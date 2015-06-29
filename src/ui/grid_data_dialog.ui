@@ -123,16 +123,19 @@
         </widget>
        </item>
        <item>
-        <widget class="QToolButton" name="btnPickCellSet">
+        <widget class="QToolButton" name="btnPickIndividualCells">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
          <property name="toolTip">
-          <string>Pick cells from selected area</string>
+          <string>Pick individual cells</string>
          </property>
          <property name="text">
           <string/>
          </property>
          <property name="icon">
           <iconset resource="../../icons.qrc">
-           <normaloff>:/icons/pick-cell-set.png</normaloff>:/icons/pick-cell-set.png</iconset>
+           <normaloff>:/icons/pick-individual-cell.png</normaloff>:/icons/pick-individual-cell.png</iconset>
          </property>
          <property name="iconSize">
           <size>
@@ -143,22 +146,19 @@
          <property name="checkable">
           <bool>true</bool>
          </property>
-         <property name="checked">
-          <bool>false</bool>
-         </property>
         </widget>
        </item>
        <item>
-        <widget class="QToolButton" name="btnPickIndividualCell">
+        <widget class="QToolButton" name="btnPickCellSet">
          <property name="toolTip">
-          <string>Pick a cell</string>
+          <string>Pick cells from selected area</string>
          </property>
          <property name="text">
           <string/>
          </property>
          <property name="icon">
           <iconset resource="../../icons.qrc">
-           <normaloff>:/icons/pick-individual-cell.png</normaloff>:/icons/pick-individual-cell.png</iconset>
+           <normaloff>:/icons/pick-cell-set.png</normaloff>:/icons/pick-cell-set.png</iconset>
          </property>
          <property name="iconSize">
           <size>
@@ -643,6 +643,7 @@
     <slot>setShowGridDataPoints(bool)</slot>
     <slot>setShowColorMap(bool)</slot>
     <slot>setShowAxes(bool)</slot>
+    <slot>togglePickIndividualCell(bool)</slot>
    </slots>
   </customwidget>
  </customwidgets>
@@ -715,6 +716,22 @@
    <hints>
     <hint type="sourcelabel">
      <x>516</x>
+     <y>30</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>772</x>
+     <y>339</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnPickIndividualCells</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>gridDataVTKWidget</receiver>
+   <slot>togglePickIndividualCell(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>558</x>
      <y>30</y>
     </hint>
     <hint type="destinationlabel">
