@@ -160,6 +160,7 @@ void GridDataDialog::on_btnAddGridLayer_clicked() {
 }
 
 void GridDataDialog::showGridLayerDialog(GridData *gridData) {
+    bool isNewGridData = gridData == nullptr;
     GridLayerDialog *gridLayerDialog = new GridLayerDialog(this, currentConfiguration, gridData, currentMesh);
     int exitCode = gridLayerDialog->exec();
     
@@ -197,20 +198,17 @@ void GridDataDialog::showGridLayerDialog(GridData *gridData) {
                 delete gridData;
             }
         } else {
-            if (!gridData->isPersisted()) {
+            if (isNewGridData) {
                 int rowCount = ui->tblGridLayers->rowCount();
                 
                 currentConfiguration->addGridData(gridData);
                 
                 ui->cbxConfiguration->setEnabled(true);
-                ui->btnShowGridDataPoints->setEnabled(true);
-                ui->btnShowGridDataPoints->setChecked(false);
-                ui->btnShowColorMap->setEnabled(true);
-                ui->btnShowColorMap->setChecked(false);
                 ui->tblGridLayers->insertRow(rowCount);
                 ui->tblGridLayers->setItem(rowCount, 0, new QTableWidgetItem(gridData->getName()));
                 ui->tblGridLayers->setItem(rowCount, 1, new QTableWidgetItem(gridData->gridDataTypeToString()));
                 ui->tblGridLayers->setItem(rowCount, 2, new QTableWidgetItem(QString::number(gridData->getInputPolyData()->GetNumberOfPoints())));
+                ui->tblGridLayers->setCurrentCell(rowCount, 0);
             } else {
                 int currentRow = ui->tblGridLayers->currentRow();
                 QTableWidgetItem *nameItem = ui->tblGridLayers->item(currentRow, 0);
@@ -220,9 +218,8 @@ void GridDataDialog::showGridLayerDialog(GridData *gridData) {
                 nameItem->setText(gridData->getName());
                 griDataTypeItem->setText(gridData->gridDataTypeToString());
                 numberOfPointsItem->setText(QString::number(gridData->getInputPolyData()->GetNumberOfPoints()));
+                ui->gridDataVTKWidget->render(gridData);
             }
-            
-            ui->gridDataVTKWidget->render(gridData);
         }
         
         delete progressDialog;
@@ -238,14 +235,16 @@ void GridDataDialog::on_btnEditGridLayer_clicked() {
     }
 }
 
-void GridDataDialog::on_tblGridLayers_itemClicked(QTableWidgetItem *item) {
-    QString gridDataName = ui->tblGridLayers->item(item->row(), 0)->text();
-    GridData *gridData = currentConfiguration->getGridData(gridDataName);
-    
-    ui->gridDataVTKWidget->setShowGridDataPoints(ui->btnShowGridDataPoints->isChecked());
-    ui->gridDataVTKWidget->setShowColorMap(ui->btnShowColorMap->isChecked());
-    ui->gridDataVTKWidget->render(gridData);
-    ui->btnEditGridLayer->setEnabled(true);
+void GridDataDialog::on_tblGridLayers_currentItemChanged(QTableWidgetItem *current, QTableWidgetItem *previous) {
+    if (previous == nullptr || current->row() != previous->row()) {
+        QString gridDataName = ui->tblGridLayers->item(current->row(), 0)->text();
+        GridData *gridData = currentConfiguration->getGridData(gridDataName);
+        
+        ui->gridDataVTKWidget->setShowGridDataPoints(ui->btnShowGridDataPoints->isChecked());
+        ui->gridDataVTKWidget->setShowColorMap(ui->btnShowColorMap->isChecked());
+        ui->gridDataVTKWidget->render(gridData);
+        ui->btnEditGridLayer->setEnabled(true);
+    }
 }
 
 void GridDataDialog::on_btnRemoveGridLayer_clicked() {
@@ -253,8 +252,8 @@ void GridDataDialog::on_btnRemoveGridLayer_clicked() {
 
     if (currentRow > -1 && QMessageBox::question(this, tr("Grid Data"), tr("Are you sure you want to remove the selected grid layer?")) == QMessageBox::Yes) {
         currentConfiguration->removeGridData(currentRow);
-        ui->tblGridLayers->removeRow(currentRow);
         ui->gridDataVTKWidget->clear();
+        ui->tblGridLayers->removeRow(currentRow);
         
         if (ui->tblGridLayers->rowCount() == 0) {
             if (currentConfiguration->isPersisted()) {

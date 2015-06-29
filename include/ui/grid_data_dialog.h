@@ -32,7 +32,7 @@ private slots:
     void on_btnSaveConfiguration_clicked();
     void on_btnRemoveConfiguration_clicked();
     void on_btnDoneConfiguration_clicked();
-    void on_tblGridLayers_itemClicked(QTableWidgetItem *item);
+    void on_tblGridLayers_currentItemChanged(QTableWidgetItem *current, QTableWidgetItem *previous);
     void on_btnBackgroundColor_clicked();
 
 private:

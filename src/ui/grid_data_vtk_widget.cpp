@@ -167,10 +167,14 @@ void GridDataVTKWidget::setShowMesh(bool show) {
     
     if (show) {
         meshActor->GetProperty()->EdgeVisibilityOn();
-        selectionActor->VisibilityOn();
+        if (selectionActor != nullptr) {
+            selectionActor->VisibilityOn();
+        }
     } else {
         meshActor->GetProperty()->EdgeVisibilityOff();
-        selectionActor->VisibilityOff();
+        if (selectionActor != nullptr) {
+            selectionActor->VisibilityOff();
+        }
     }
     this->update();
 }
