@@ -2,24 +2,26 @@
 
 #include <vtkExtractSelectedPolyDataIds.h>
 #include <vtkInteractorObserver.h>
+#include <vtkLabeledDataMapper.h>
 #include <vtkPolyDataMapper.h>
 #include <vtkSelectionNode.h>
+#include <vtkCellCenters.h>
 #include <vtkCellPicker.h>
 #include <vtkSelection.h>
+#include <vtkFieldData.h>
 #include <vtkPolyData.h>
 #include <vtkProperty.h>
+#include <vtkCellData.h>
 
-GridDataMouseInteractor::GridDataMouseInteractor() : selectedCellIds(vtkSmartPointer<vtkIdTypeArray>::New()), selectionActor(nullptr), mesh(nullptr) {}
+GridDataMouseInteractor::GridDataMouseInteractor() : selectedCellIds(nullptr), selectionIdLabelsActor(nullptr), selectionActor(nullptr), mesh(nullptr) {}
 
 void GridDataMouseInteractor::OnLeftButtonDown() {
-    if (mesh == nullptr || selectionActor == nullptr) {
-        selectedCellIds->Reset();
-    } else {
+    if (mesh != nullptr && selectionActor != nullptr) {
         int *clickPosition = this->GetInteractor()->GetEventPosition();
         vtkSmartPointer<vtkCellPicker> picker = vtkSmartPointer<vtkCellPicker>::New();
         
         picker->SetTolerance(0.0005);
-        picker->Pick(clickPosition[0], clickPosition[1], 0, this->GetDefaultRenderer());
+        picker->Pick(clickPosition[0], clickPosition[1], 0, DefaultRenderer);
         
         vtkIdType cellId = picker->GetCellId();
         
@@ -54,6 +56,18 @@ void GridDataMouseInteractor::OnLeftButtonDown() {
             vtkSmartPointer<vtkPolyDataMapper> mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
             
             selectionPolyData->DeepCopy(extractSelection->GetOutput());
+            selectionPolyData->GetCellData()->SetScalars(selectedCellIds);
+            
+            vtkSmartPointer<vtkCellCenters> cellCentersFilter = vtkSmartPointer<vtkCellCenters>::New();
+            cellCentersFilter->SetInputData(selectionPolyData);
+            cellCentersFilter->Update();
+            
+            vtkSmartPointer<vtkLabeledDataMapper> labelMapper = vtkSmartPointer<vtkLabeledDataMapper>::New();
+            labelMapper->SetInputConnection(cellCentersFilter->GetOutputPort());
+            labelMapper->SetLabelModeToLabelFieldData();
+            
+            selectionIdLabelsActor->SetMapper(labelMapper);
+            
             mapper->SetInputData(selectionPolyData);
             mapper->ScalarVisibilityOff();
             selectionActor->SetMapper(mapper);
@@ -67,18 +81,29 @@ void GridDataMouseInteractor::OnLeftButtonDown() {
     vtkInteractorStyleTrackballCamera::OnLeftButtonDown();
 }
 
-void GridDataMouseInteractor::setSelectionActor(vtkActor *selectionActor) {
-    this->selectionActor = selectionActor;
+vtkActor* GridDataMouseInteractor::getSelectionActor() {
+    return selectionActor;
 }
 
-void GridDataMouseInteractor::setPickMode(const PickMode &pickMode) {
-    this->pickMode = pickMode;
+vtkActor2D* GridDataMouseInteractor::getSelectionIdLabelsActor() {
+    return selectionIdLabelsActor;
+}
+
+void GridDataMouseInteractor::activateCellPicking(const CellPickMode &cellPickMode) {
+    selectionActor = vtkSmartPointer<vtkActor>::New();
+    selectionIdLabelsActor = vtkSmartPointer<vtkActor2D>::New();
+    selectedCellIds = vtkSmartPointer<vtkIdTypeArray>::New();
+    
+    DefaultRenderer->AddActor(selectionActor);
+    DefaultRenderer->AddActor2D(selectionIdLabelsActor);
+}
+
+void GridDataMouseInteractor::deactivateCellPicking() {
+    DefaultRenderer->RemoveActor(selectionActor);
+    DefaultRenderer->RemoveActor2D(selectionIdLabelsActor);
+    DefaultRenderer->GetRenderWindow()->Render();
 }
 
 void GridDataMouseInteractor::setMesh(Mesh *mesh) {
     this->mesh = mesh;
-}
-
-void GridDataMouseInteractor::clearSelection() {
-    selectedCellIds->Reset();
 }

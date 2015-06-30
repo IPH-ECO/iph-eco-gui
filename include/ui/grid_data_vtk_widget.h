@@ -6,9 +6,6 @@
 
 #include <QWidget>
 #include <QVTKWidget.h>
-#include <vtkRenderer.h>
-#include <vtkContextActor.h>
-#include <vtkRenderWindow.h>
 #include <vtkCubeAxesActor.h>
 #include <vtkScalarBarActor.h>
 #include <vtkWorldPointPicker.h>
@@ -26,7 +23,6 @@ private:
     vtkSmartPointer<vtkActor> meshActor;
     vtkSmartPointer<vtkCubeAxesActor> axesActor;
     vtkSmartPointer<vtkActor> gridDataActor;
-    vtkSmartPointer<vtkActor> selectionActor;
     vtkSmartPointer<vtkPolyDataMapper> meshMapper;
     vtkSmartPointer<vtkScalarBarActor> inputPointsBar;
     vtkSmartPointer<vtkScalarBarActor> colorMapBar;

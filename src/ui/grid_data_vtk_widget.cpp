@@ -41,7 +41,7 @@ void GridDataVTKWidget::render(Mesh *mesh) {
     renderer->RemoveActor(axesActor);
     
     mouseInteractor->setMesh(currentMesh);
-    mouseInteractor->clearSelection();
+    mouseInteractor->deactivateCellPicking();
     
     // Mesh rendering
     meshMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
@@ -158,17 +158,22 @@ void GridDataVTKWidget::render(GridData *gridData) {
 }
 
 void GridDataVTKWidget::setShowMesh(bool show) {
+    vtkActor *selectionActor = mouseInteractor->getSelectionActor();
+    
     this->showMesh = show;
     
     if (show) {
         meshActor->GetProperty()->EdgeVisibilityOn();
+        vtkActor *selectionActor = mouseInteractor->getSelectionActor();
         if (selectionActor != nullptr) {
             selectionActor->VisibilityOn();
+            mouseInteractor->getSelectionIdLabelsActor()->VisibilityOn();
         }
     } else {
         meshActor->GetProperty()->EdgeVisibilityOff();
         if (selectionActor != nullptr) {
             selectionActor->VisibilityOff();
+            mouseInteractor->getSelectionIdLabelsActor()->VisibilityOff();
         }
     }
     this->update();
@@ -239,12 +244,8 @@ void GridDataVTKWidget::togglePickIndividualCell(bool activate) {
     }
     
     if (activate) {
-        selectionActor = vtkSmartPointer<vtkActor>::New();
-        renderer->AddActor(selectionActor);
-        mouseInteractor->setSelectionActor(selectionActor);
+        mouseInteractor->activateCellPicking(CellPickMode::INDIVIDUAL);
     } else {
-        mouseInteractor->clearSelection();
-        renderer->RemoveActor(selectionActor);
-        this->update();
+        mouseInteractor->deactivateCellPicking();
     }
 }

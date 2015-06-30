@@ -5,14 +5,16 @@
 #include "mesh_mouse_interactor.h"
 
 #include <vtkIdTypeArray.h>
+#include <vtkActor2D.h>
 
-enum class PickMode { INDIVIDUAL = 1, MULTIPLE };
+enum class CellPickMode { INDIVIDUAL = 1, MULTIPLE };
 
 class GridDataMouseInteractor : public MeshMouseInteractor {
 private:
     vtkSmartPointer<vtkIdTypeArray> selectedCellIds;
-    vtkActor *selectionActor;
-    PickMode pickMode;
+    vtkSmartPointer<vtkActor2D> selectionIdLabelsActor;
+    vtkSmartPointer<vtkActor> selectionActor;
+    CellPickMode cellPickMode;
     Mesh *mesh;
     
 public:
@@ -21,9 +23,12 @@ public:
     
     GridDataMouseInteractor();
     
+    vtkActor* getSelectionActor();
+    vtkActor2D* getSelectionIdLabelsActor();
+    
     virtual void OnLeftButtonDown();
-    void setSelectionActor(vtkActor *selectionActor);
-    void setPickMode(const PickMode &pickMode);
+    void activateCellPicking(const CellPickMode &cellPickMode);
+    void deactivateCellPicking();
     void setMesh(Mesh *mesh);
     void clearSelection();
 };
