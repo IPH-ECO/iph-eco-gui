@@ -79,7 +79,7 @@ bool GridLayerDialog::isValid() {
         return false;
     }
     
-    if (gridConfiguration->getMesh()->hasArray(gridDataName)) {
+    if (gridConfiguration->getMesh() != nullptr && gridConfiguration->getMesh()->hasArray(gridDataName)) {
         QMessageBox::warning(this, tr("Grid Data"), tr("Name already used in the selected mesh."));
         return false;
     }
