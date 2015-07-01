@@ -7,7 +7,6 @@
 #include "include/exceptions/grid_data_exception.h"
 #include "include/ui/grid_layer_dialog.h"
 
-#include <QFileDialog>
 #include <QMessageBox>
 #include <QVector>
 #include <QObject>
