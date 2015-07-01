@@ -261,9 +261,10 @@ void GridDataVTKWidget::handleMouseEvent(QMouseEvent *event) {
     if (event->type() == QEvent::MouseButtonDblClick && event->button() == Qt::LeftButton) {
         mouseInteractor->pickCell();
     } else if (event->type() == QEvent::MouseButtonRelease && event->button() == Qt::RightButton) {
-        GridDataContextMenu contextMenu(this);
+        GridDataContextMenu *contextMenu = new GridDataContextMenu(this);
         QPoint globalPosition = this->mapToGlobal(event->pos());
         
-        contextMenu.exec(globalPosition);
+        contextMenu->toggleEditWeightsAction(currentGridData != nullptr);
+        contextMenu->exec(globalPosition);
     }
 }

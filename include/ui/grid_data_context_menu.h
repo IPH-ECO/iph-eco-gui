@@ -23,6 +23,10 @@ public:
         QObject::connect(editWeightsAction, SIGNAL(triggered()), this, SLOT(editWeights()));
     }
     
+    void toggleEditWeightsAction(bool toggle) {
+        editWeightsAction->setEnabled(toggle);
+    }
+    
 private slots:
     void editWeights() {
         GridDataVTKWidget *parent = static_cast<GridDataVTKWidget*>(this->parentWidget());
