@@ -5,6 +5,7 @@
 #include <vtkLabeledDataMapper.h>
 #include <vtkPolyDataMapper.h>
 #include <vtkSelectionNode.h>
+#include <vtkTextProperty.h>
 #include <vtkCellCenters.h>
 #include <vtkCellPicker.h>
 #include <vtkSelection.h>
@@ -18,7 +19,7 @@ GridDataMouseInteractor::GridDataMouseInteractor() : selectedCellIds(nullptr), s
 void GridDataMouseInteractor::OnLeftButtonDown() {
     if (mesh != nullptr && selectionActor != nullptr) {
         int *clickPosition = this->GetInteractor()->GetEventPosition();
-        vtkSmartPointer<vtkCellPicker> picker = vtkSmartPointer<vtkCellPicker>::New();
+        vtkSmartPointer<vtkCellPicker> picker = vtkSmartPointer<vtkCellPicker>::New(); // make a attribute
         
         picker->SetTolerance(0.0005);
         picker->Pick(clickPosition[0], clickPosition[1], 0, DefaultRenderer);
@@ -65,6 +66,9 @@ void GridDataMouseInteractor::OnLeftButtonDown() {
             vtkSmartPointer<vtkLabeledDataMapper> labelMapper = vtkSmartPointer<vtkLabeledDataMapper>::New();
             labelMapper->SetInputConnection(cellCentersFilter->GetOutputPort());
             labelMapper->SetLabelModeToLabelFieldData();
+            labelMapper->SetFieldDataName("cellIds");
+            labelMapper->GetLabelTextProperty()->SetColor(0, 0, 0);
+            labelMapper->GetLabelTextProperty()->ShadowOff();
             
             selectionIdLabelsActor->SetMapper(labelMapper);
             
@@ -96,6 +100,8 @@ void GridDataMouseInteractor::activateCellPicking(const CellPickMode &cellPickMo
     
     DefaultRenderer->AddActor(selectionActor);
     DefaultRenderer->AddActor2D(selectionIdLabelsActor);
+    selectedCellIds->SetName("cellIds");
+    selectedCellIds->SetNumberOfComponents(1);
 }
 
 void GridDataMouseInteractor::deactivateCellPicking() {
