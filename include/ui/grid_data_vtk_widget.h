@@ -5,6 +5,7 @@
 #include "include/utility/grid_data_mouse_interactor.h"
 
 #include <QWidget>
+#include <QMouseEvent>
 #include <QVTKWidget.h>
 #include <vtkCubeAxesActor.h>
 #include <vtkScalarBarActor.h>
@@ -46,6 +47,7 @@ public slots:
     void setShowGridDataPoints(bool show);
     void setShowColorMap(bool show);
     void togglePickIndividualCell(bool activate);
+    void handleMouseEvent(QMouseEvent *event);
 };
 
 #endif // GRID_DATA_VTK_WIDGET_H

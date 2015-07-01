@@ -15,6 +15,7 @@ private:
     vtkSmartPointer<vtkActor2D> selectionIdLabelsActor;
     vtkSmartPointer<vtkActor> selectionActor;
     CellPickMode cellPickMode;
+    vtkIdType lastCellId;
     Mesh *mesh;
     
 public:
@@ -31,6 +32,7 @@ public:
     void deactivateCellPicking();
     void setMesh(Mesh *mesh);
     void clearSelection();
+    void pickCell();
 };
 
 #endif // GRID_DATA_MOUSE_INTERACTOR_H

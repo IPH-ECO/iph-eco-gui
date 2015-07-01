@@ -1,4 +1,5 @@
 #include "include/ui/grid_data_vtk_widget.h"
+#include "include/ui/grid_data_context_menu.h"
 
 #include <vtkCellData.h>
 #include <vtkProperty.h>
@@ -27,6 +28,8 @@ GridDataVTKWidget::GridDataVTKWidget(QWidget *parent) : QVTKWidget(parent), curr
     
     this->SetRenderWindow(renderWindow);
     renderWindow->Render();
+    
+    QObject::connect(this, SIGNAL(mouseEvent(QMouseEvent*)), this, SLOT(handleMouseEvent(QMouseEvent*)));
 }
 
 void GridDataVTKWidget::render(Mesh *mesh) {
@@ -247,5 +250,16 @@ void GridDataVTKWidget::togglePickIndividualCell(bool activate) {
         mouseInteractor->activateCellPicking(CellPickMode::INDIVIDUAL);
     } else {
         mouseInteractor->deactivateCellPicking();
+    }
+}
+
+void GridDataVTKWidget::handleMouseEvent(QMouseEvent *event) {
+    if (event->type() == QEvent::MouseButtonDblClick && event->button() == Qt::LeftButton) {
+        mouseInteractor->pickCell();
+    } else if (event->type() == QEvent::MouseButtonRelease && event->button() == Qt::RightButton) {
+        GridDataContextMenu contextMenu(this);
+        QPoint globalPosition = this->mapToGlobal(event->pos());
+        
+        contextMenu.exec(globalPosition);
     }
 }
