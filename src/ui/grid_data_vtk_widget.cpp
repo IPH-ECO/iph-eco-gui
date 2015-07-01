@@ -10,7 +10,7 @@
 
 vtkStandardNewMacro(GridDataMouseInteractor);
 
-GridDataVTKWidget::GridDataVTKWidget(QWidget *parent) : QVTKWidget(parent), currentMesh(nullptr), currentGridData(nullptr),
+GridDataVTKWidget::GridDataVTKWidget(QWidget *parent) : QVTKWidget(parent), selectedCellIds(nullptr), currentMesh(nullptr), currentGridData(nullptr),
     showMesh(true), showAxes(true), showColorMap(true)
 {
     renderer = vtkSmartPointer<vtkRenderer>::New();
@@ -247,7 +247,11 @@ void GridDataVTKWidget::togglePickIndividualCell(bool activate) {
     }
     
     if (activate) {
-        mouseInteractor->activateCellPicking(CellPickMode::INDIVIDUAL);
+        selectedCellIds = vtkSmartPointer<vtkIdTypeArray>::New();
+        selectedCellIds->SetName("cellIds");
+        selectedCellIds->SetNumberOfComponents(1);
+        
+        mouseInteractor->activateCellPicking(CellPickMode::INDIVIDUAL, selectedCellIds);
     } else {
         mouseInteractor->deactivateCellPicking();
     }

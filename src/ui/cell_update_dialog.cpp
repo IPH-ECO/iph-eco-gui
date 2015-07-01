@@ -2,22 +2,29 @@
 #include "ui_cell_update_dialog.h"
 
 #include <QMessageBox>
+#include <vtkCellData.h>
 
-CellUpdateDialog::CellUpdateDialog(QWidget *parent) :
-    QDialog(parent), ui(new Ui::CellUpdateDialog)
+CellUpdateDialog::CellUpdateDialog(GridDataVTKWidget *gridDataVTKWidget) :
+    QDialog(gridDataVTKWidget), ui(new Ui::CellUpdateDialog)
 {
     ui->setupUi(this);
     ui->tblGridValues->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-
-    // for (QSet<CellInfo*>::const_iterator it = cellInfoSet.begin(); it != cellInfoSet.end(); it++) {
-    //     int rowCount = ui->tblGridValues->rowCount();
-    //     QTableWidgetItem *gridInformationItem = new QTableWidgetItem((*it)->getGridInformationType().toString());
-
-    //     gridInformationItem->setFlags(gridInformationItem->flags() & ~Qt::ItemIsEditable);
-    //     ui->tblGridValues->insertRow(rowCount);
-    //     ui->tblGridValues->setItem(rowCount, 0, gridInformationItem);
-    //     ui->tblGridValues->setItem(rowCount, 1, new QTableWidgetItem(QString::number((*it)->getWeight())));
-    // }
+    ui->lblSelectedCells->setText("Selected cells for layer '" + gridDataVTKWidget->currentGridData->getName() + "'");
+    
+    Mesh *mesh = gridDataVTKWidget->currentMesh;
+    vtkIdTypeArray *cellIds = gridDataVTKWidget->selectedCellIds;
+    
+    for (vtkIdType i = 0; i < cellIds->GetNumberOfTuples(); i++) {
+        vtkIdType cellId = cellIds->GetTuple1(i);
+        double cellWeight = mesh->getPolyData()->GetCellData()->GetScalars()->GetTuple1(cellId);
+        int rowCount = ui->tblGridValues->rowCount();
+        QTableWidgetItem *cellIdItem = new QTableWidgetItem(QString::number(cellId));
+        
+        cellIdItem->setFlags(cellIdItem->flags() & ~Qt::ItemIsEditable);
+        ui->tblGridValues->insertRow(rowCount);
+        ui->tblGridValues->setItem(rowCount, 0, cellIdItem);
+        ui->tblGridValues->setItem(rowCount, 1, new QTableWidgetItem(QString::number(cellWeight)));
+    }
 }
 
 CellUpdateDialog::~CellUpdateDialog() {
@@ -31,17 +38,3 @@ void CellUpdateDialog::on_buttonBox_clicked(QAbstractButton *button) {
         this->reject();
     }
 }
-
-// QList<CellInfo> CellUpdateDialog::getCellInfoList() {
-//     QList<CellInfo> cellInfoList;
-
-//     for (int i = 0; i < ui->tblGridValues->rowCount(); i++) {
-//         QString gridInformationStr = ui->tblGridValues->item(i, 0)->text();
-//         double weight = ui->tblGridValues->item(i, 1)->text().toDouble();
-
-//         //FIX: Set grid data properly
-//         cellInfoList.push_back(CellInfo(NULL, GridInformationType::toGridInformationType(gridInformationStr), weight));
-//     }
-
-//     return cellInfoList;
-// }

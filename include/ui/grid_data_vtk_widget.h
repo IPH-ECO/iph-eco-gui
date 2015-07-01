@@ -3,6 +3,7 @@
 
 #include "include/domain/grid_data.h"
 #include "include/utility/grid_data_mouse_interactor.h"
+#include "cell_update_dialog.h"
 
 #include <QWidget>
 #include <QMouseEvent>
@@ -12,8 +13,13 @@
 #include <vtkWorldPointPicker.h>
 #include <vtkRenderWindowInteractor.h>
 
+class CellUpdateDialog;
+
 class GridDataVTKWidget : public QVTKWidget {
 	Q_OBJECT
+    
+    friend class CellUpdateDialog;
+    
 private:
 	vtkSmartPointer<vtkRenderer> renderer;
     vtkSmartPointer<vtkRenderWindow> renderWindow;
@@ -28,6 +34,7 @@ private:
     vtkSmartPointer<vtkScalarBarActor> inputPointsBar;
     vtkSmartPointer<vtkScalarBarActor> colorMapBar;
     
+    vtkSmartPointer<vtkIdTypeArray> selectedCellIds;
     Mesh *currentMesh;
     GridData *currentGridData;
     

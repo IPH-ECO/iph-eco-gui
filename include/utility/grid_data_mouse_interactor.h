@@ -11,10 +11,10 @@ enum class CellPickMode { INDIVIDUAL = 1, MULTIPLE };
 
 class GridDataMouseInteractor : public MeshMouseInteractor {
 private:
-    vtkSmartPointer<vtkIdTypeArray> selectedCellIds;
     vtkSmartPointer<vtkActor2D> selectionIdLabelsActor;
     vtkSmartPointer<vtkActor> selectionActor;
     CellPickMode cellPickMode;
+    vtkIdTypeArray *cellIdsArray;
     vtkIdType lastCellId;
     Mesh *mesh;
     
@@ -28,7 +28,7 @@ public:
     vtkActor2D* getSelectionIdLabelsActor();
     
     virtual void OnLeftButtonDown();
-    void activateCellPicking(const CellPickMode &cellPickMode);
+    void activateCellPicking(const CellPickMode &cellPickMode, vtkIdTypeArray *cellIdsArray);
     void deactivateCellPicking();
     void setMesh(Mesh *mesh);
     void clearSelection();

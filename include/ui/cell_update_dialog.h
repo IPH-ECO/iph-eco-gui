@@ -6,6 +6,10 @@
 #include <QSet>
 #include <QList>
 
+#include "grid_data_vtk_widget.h"
+
+class GridDataVTKWidget;
+
 namespace Ui {
 class CellUpdateDialog;
 }
@@ -14,12 +18,12 @@ class CellUpdateDialog : public QDialog {
     Q_OBJECT
 private:
     Ui::CellUpdateDialog *ui;
-    // QSet<CellInfo*> cellInfoSet;
 private slots:
+//    void on_btnSelectAll_clicked();
     void on_buttonBox_clicked(QAbstractButton *button);
 
 public:
-    explicit CellUpdateDialog(QWidget *parent);
+    explicit CellUpdateDialog(GridDataVTKWidget *gridDataVTKWidget);
     ~CellUpdateDialog();
 
     // QList<CellInfo> getCellInfoList();
