@@ -53,6 +53,7 @@ void CellUpdateDialog::on_buttonBox_clicked(QAbstractButton *button) {
             mesh->getPolyData()->GetCellData()->GetScalars()->SetTuple1(cellId, weight);
         }
         
+        mesh->getPolyData()->Modified();
         this->accept();
     } else if (standardButton == QDialogButtonBox::Reset) {
         fillGridValuesTable();

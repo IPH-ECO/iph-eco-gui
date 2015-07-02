@@ -42,6 +42,7 @@ private:
     bool showAxes;
     bool showGridDataPoints;
     bool showColorMap;
+    bool isCellPickActivated;
 public:
     GridDataVTKWidget(QWidget *parent);
     void render(Mesh *mesh);

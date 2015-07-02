@@ -11,7 +11,7 @@
 vtkStandardNewMacro(GridDataMouseInteractor);
 
 GridDataVTKWidget::GridDataVTKWidget(QWidget *parent) : QVTKWidget(parent), selectedCellIds(nullptr), currentMesh(nullptr), currentGridData(nullptr),
-    showMesh(true), showAxes(true), showColorMap(true)
+    showMesh(true), showAxes(true), showColorMap(true), isCellPickActivated(false)
 {
     renderer = vtkSmartPointer<vtkRenderer>::New();
     renderWindow = vtkSmartPointer<vtkRenderWindow>::New();
@@ -242,10 +242,7 @@ void GridDataVTKWidget::clear() {
 }
 
 void GridDataVTKWidget::togglePickIndividualCell(bool activate) {
-    if (mouseInteractor == nullptr) {
-        return;
-    }
-    
+    isCellPickActivated = activate;
     if (activate) {
         selectedCellIds = vtkSmartPointer<vtkIdTypeArray>::New();
         selectedCellIds->SetName("cellIds");
@@ -259,12 +256,15 @@ void GridDataVTKWidget::togglePickIndividualCell(bool activate) {
 
 void GridDataVTKWidget::handleMouseEvent(QMouseEvent *event) {
     if (event->type() == QEvent::MouseButtonDblClick && event->button() == Qt::LeftButton) {
-        mouseInteractor->pickCell();
+        if (isCellPickActivated) {
+            mouseInteractor->pickCell();
+        }
     } else if (event->type() == QEvent::MouseButtonRelease && event->button() == Qt::RightButton) {
         GridDataContextMenu *contextMenu = new GridDataContextMenu(this);
         QPoint globalPosition = this->mapToGlobal(event->pos());
+        bool canEditCellWeights = isCellPickActivated && selectedCellIds->GetNumberOfTuples() > 0;
         
-        contextMenu->toggleEditWeightsAction(currentGridData != nullptr);
+        contextMenu->toggleEditWeightsAction(canEditCellWeights);
         contextMenu->exec(globalPosition);
     }
 }
