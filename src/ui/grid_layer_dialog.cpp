@@ -1,8 +1,6 @@
 #include "include/ui/grid_layer_dialog.h"
 #include "ui_grid_layer_dialog.h"
 
-#include "include/exceptions/grid_data_exception.h"
-
 #include <QFileDialog>
 #include <QMessageBox>
 
@@ -30,6 +28,14 @@ GridLayerDialog::GridLayerDialog(QDialog *parent, GridDataConfiguration *gridCon
         } else {
             ui->rdoPolygon->setChecked(true);
         }
+        
+        ui->edtInputFile->setEnabled(false);
+        ui->rdoPoint->setEnabled(false);
+        ui->rdoPolygon->setEnabled(false);
+        ui->edtInputFile->setEnabled(false);
+        ui->btnBrowseInputFile->setEnabled(false);
+        ui->edtExponent->setEnabled(false);
+        ui->edtRadius->setEnabled(false);
     }
 }
 
@@ -107,26 +113,22 @@ void GridLayerDialog::accept() {
         return;
     }
     
-    try {
-        GridDataInputType gridInputType = ui->rdoPoint->isChecked() ? GridDataInputType::POINT : GridDataInputType::POLYGON;
-        GridDataType gridDataType = GridData::toGridDataType(ui->cbxGridInformation->currentText());
-        
-        if (gridData == nullptr) {
-            gridData = new GridData(mesh);
-        }
-        
-        gridData->setName(ui->edtName->text());
-        gridData->setGridDataInputType(gridInputType);
-        gridData->setInputFile(ui->edtInputFile->text());
-        gridData->setGridDataType(gridDataType);
-        
-        if (gridInputType == GridDataInputType::POINT) {
-            gridData->setExponent(ui->edtExponent->text().toDouble());
-            gridData->setRadius(ui->edtRadius->text().toDouble());
-        }
-        
-        QDialog::accept();
-    } catch (const GridDataException &e) {
-        QMessageBox::critical(this, tr("Grid Data"), tr(e.what()));
+    if (gridData == nullptr) {
+        gridData = new GridData(mesh);
     }
+    
+    GridDataInputType gridInputType = ui->rdoPoint->isChecked() ? GridDataInputType::POINT : GridDataInputType::POLYGON;
+    GridDataType gridDataType = GridData::toGridDataType(ui->cbxGridInformation->currentText());
+    
+    gridData->setName(ui->edtName->text());
+    gridData->setGridDataInputType(gridInputType);
+    gridData->setInputFile(ui->edtInputFile->text());
+    gridData->setGridDataType(gridDataType);
+
+    if (gridInputType == GridDataInputType::POINT) {
+        gridData->setExponent(ui->edtExponent->text().toDouble());
+        gridData->setRadius(ui->edtRadius->text().toDouble());
+    }
+    
+    QDialog::accept();
 }

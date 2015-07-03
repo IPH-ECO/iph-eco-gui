@@ -33,6 +33,15 @@ QString GridData::getName() const {
 }
 
 void GridData::setName(const QString &name) {
+    if (!this->name.isEmpty()) {
+        std::string stdOldName = this->name.toStdString();
+        
+        if (mesh->getPolyData()->GetCellData()->HasArray(stdOldName.c_str())) {
+            std::string stdNewName = name.toStdString();
+            mesh->getPolyData()->GetCellData()->GetArray(stdOldName.c_str())->SetName(stdNewName.c_str());
+        }
+    }
+    
     this->name = name;
 }
 

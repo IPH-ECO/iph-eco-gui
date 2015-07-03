@@ -166,39 +166,33 @@ void GridDataDialog::showGridLayerDialog(GridData *gridData) {
     
     if (exitCode == QDialog::Accepted) {
         GridData *gridData = gridLayerDialog->getGridData();
-        int maximum = gridData->getMaximumProgress();
         
-        QProgressDialog *progressDialog = new QProgressDialog(this);
-        progressDialog->setMinimum(0);
-        progressDialog->setMaximum(maximum);
-        progressDialog->setMinimumDuration(500);
-        progressDialog->setWindowModality(Qt::WindowModal);
+        if (isNewGridData) {
+            int maximum = gridData->getMaximumProgress();
+            
+            QProgressDialog *progressDialog = new QProgressDialog(this);
+            progressDialog->setMinimum(0);
+            progressDialog->setMaximum(maximum);
+            progressDialog->setMinimumDuration(500);
+            progressDialog->setWindowModality(Qt::WindowModal);
 
-        QObject::connect(gridData, SIGNAL(updateProgressText(const QString&)), progressDialog, SLOT(setLabelText(const QString&)));
-        QObject::connect(gridData, SIGNAL(updateProgress(int)), progressDialog, SLOT(setValue(int)));
-        QObject::connect(progressDialog, SIGNAL(canceled()), gridData, SLOT(cancelInterpolation()));
-        
-        try {
-            gridData->interpolate();
-        } catch (const GridDataException &e) {
-            QMessageBox::critical(this, tr("Grid Data"), e.what());
-            progressDialog->cancel();
-            delete progressDialog;
+            QObject::connect(gridData, SIGNAL(updateProgressText(const QString&)), progressDialog, SLOT(setLabelText(const QString&)));
+            QObject::connect(gridData, SIGNAL(updateProgress(int)), progressDialog, SLOT(setValue(int)));
+            QObject::connect(progressDialog, SIGNAL(canceled()), gridData, SLOT(cancelInterpolation()));
             
-            if (!gridData->isPersisted()) {
+            try {
+                gridData->interpolate();
+            } catch (const GridDataException &e) {
+                QMessageBox::critical(this, tr("Grid Data"), e.what());
+                progressDialog->cancel();
+                delete progressDialog;
                 delete gridData;
+                return;
             }
             
-            return;
-        }
-        
-        if (progressDialog->wasCanceled()) {
-            gridData->cancelInterpolation(false); // Set false for future computations
-            if (!gridData->isPersisted()) {
-                delete gridData;
-            }
-        } else {
-            if (isNewGridData) {
+            if (progressDialog->wasCanceled()) {
+                gridData->cancelInterpolation(false); // Set false for future computations
+            } else {
                 int rowCount = ui->tblGridLayers->rowCount();
                 
                 currentConfiguration->addGridData(gridData);
@@ -209,20 +203,17 @@ void GridDataDialog::showGridLayerDialog(GridData *gridData) {
                 ui->tblGridLayers->setItem(rowCount, 1, new QTableWidgetItem(gridData->gridDataTypeToString()));
                 ui->tblGridLayers->setItem(rowCount, 2, new QTableWidgetItem(QString::number(gridData->getInputPolyData()->GetNumberOfPoints())));
                 ui->tblGridLayers->setCurrentCell(rowCount, 0);
-            } else {
-                int currentRow = ui->tblGridLayers->currentRow();
-                QTableWidgetItem *nameItem = ui->tblGridLayers->item(currentRow, 0);
-                QTableWidgetItem *griDataTypeItem = ui->tblGridLayers->item(currentRow, 1);
-                QTableWidgetItem *numberOfPointsItem = ui->tblGridLayers->item(currentRow, 2);
-                
-                nameItem->setText(gridData->getName());
-                griDataTypeItem->setText(gridData->gridDataTypeToString());
-                numberOfPointsItem->setText(QString::number(gridData->getInputPolyData()->GetNumberOfPoints()));
-                ui->gridDataVTKWidget->render(gridData);
             }
+            
+            delete progressDialog;
+        } else {
+            int currentRow = ui->tblGridLayers->currentRow();
+            QTableWidgetItem *nameItem = ui->tblGridLayers->item(currentRow, 0);
+            QTableWidgetItem *griDataTypeItem = ui->tblGridLayers->item(currentRow, 1);
+            
+            nameItem->setText(gridData->getName());
+            griDataTypeItem->setText(gridData->gridDataTypeToString());
         }
-        
-        delete progressDialog;
     }
 }
 
