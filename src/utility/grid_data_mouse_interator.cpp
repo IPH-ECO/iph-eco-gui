@@ -33,7 +33,7 @@ void GridDataMouseInteractor::OnLeftButtonDown() {
 void GridDataMouseInteractor::OnLeftButtonUp() {
     vtkInteractorStyleRubberBandPick::OnLeftButtonUp();
     
-    if (cellPickMode == CellPickMode::MULTIPLE) {
+    if (cellPickMode == CellPickMode::MULTIPLE && meshPolyData != nullptr) {
         vtkSmartPointer<vtkExtractSelectedFrustum> extractor = vtkSmartPointer<vtkExtractSelectedFrustum>::New();
         extractor->PreserveTopologyOff();
         extractor->SetInputData(meshPolyData);

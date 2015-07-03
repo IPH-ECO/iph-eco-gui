@@ -143,10 +143,13 @@ void GridDataDialog::on_cbxMesh_currentIndexChanged(const QString &meshName) {
     }
 
     ui->gridDataVTKWidget->render(currentMesh);
-    ui->btnPickIndividualCells->setChecked(false);
     ui->gridDataVTKWidget->toggleCellPick(false);
+    ui->btnPickIndividualCells->setChecked(false);
+    ui->btnPickCellSet->setChecked(false);
     ui->btnPickIndividualCells->setEnabled(isMeshNamePresent);
     ui->btnPickCellSet->setEnabled(isMeshNamePresent);
+    ui->btnShowCellLabels->setEnabled(isMeshNamePresent);
+    ui->btnShowCellWeights->setEnabled(isMeshNamePresent);
     ui->btnAddGridLayer->setEnabled(isMeshNamePresent);
     ui->btnRemoveGridLayer->setEnabled(isMeshNamePresent);
     ui->btnShowMesh->setEnabled(isMeshNamePresent);
@@ -355,4 +358,18 @@ void GridDataDialog::on_btnPickCellSet_clicked(bool checked) {
     ui->gridDataVTKWidget->toggleCellPick(checked, CellPickMode::MULTIPLE);
     ui->btnPickIndividualCells->setChecked(false);
     ui->btnPickIndividualCells->setEnabled(!checked);
+}
+
+void GridDataDialog::on_btnShowCellLabels_clicked(bool checked) {
+    ui->btnShowCellWeights->setChecked(false);
+    ui->btnShowCellWeights->setEnabled(!checked);
+    ui->gridDataVTKWidget->toggleCellPick(false);
+    ui->gridDataVTKWidget->toggleCellLabels(checked);
+}
+
+void GridDataDialog::on_btnShowCellWeights_clicked(bool checked) {
+    ui->btnShowCellLabels->setChecked(false);
+    ui->btnShowCellLabels->setEnabled(!checked);
+    ui->gridDataVTKWidget->toggleCellPick(false);
+    ui->gridDataVTKWidget->toggleCellWeights(checked);
 }

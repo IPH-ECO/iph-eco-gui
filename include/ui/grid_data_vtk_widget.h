@@ -27,6 +27,8 @@ private:
     vtkSmartPointer<GridDataMouseInteractor> mouseInteractor;
     
     vtkSmartPointer<vtkActor> meshActor;
+    vtkSmartPointer<vtkActor2D> cellLabelsActor;
+    vtkSmartPointer<vtkActor> cellWeightsActor;
     vtkSmartPointer<vtkCubeAxesActor> axesActor;
     vtkSmartPointer<vtkActor> gridDataActor;
     vtkSmartPointer<vtkPolyDataMapper> meshMapper;
@@ -42,6 +44,10 @@ private:
     bool showGridDataPoints;
     bool showColorMap;
     bool isCellPickActivated;
+
+private slots:
+    void handleMouseEvent(QMouseEvent *event);
+    
 public:
     explicit GridDataVTKWidget(QWidget *parent);
     void render(Mesh *mesh);
@@ -54,7 +60,8 @@ public slots:
     void setShowGridDataPoints(bool show);
     void setShowColorMap(bool show);
     void toggleCellPick(bool activate, const CellPickMode &cellPickMode = CellPickMode::UNDEFINED);
-    void handleMouseEvent(QMouseEvent *event);
+    void toggleCellLabels(bool show);
+    void toggleCellWeights(bool show);
 };
 
 #endif // GRID_DATA_VTK_WIDGET_H

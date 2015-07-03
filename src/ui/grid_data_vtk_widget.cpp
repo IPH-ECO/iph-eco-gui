@@ -5,10 +5,13 @@
 #include <vtkCellData.h>
 #include <vtkProperty.h>
 #include <vtkPointData.h>
+#include <vtkAreaPicker.h>
+#include <vtkDoubleArray.h>
 #include <vtkLookupTable.h>
+#include <vtkCellCenters.h>
 #include <vtkTextProperty.h>
 #include <vtkPolyDataMapper.h>
-#include <vtkAreaPicker.h>
+#include <vtkLabeledDataMapper.h>
 
 vtkStandardNewMacro(GridDataMouseInteractor);
 
@@ -245,6 +248,21 @@ void GridDataVTKWidget::clear() {
     this->update();
 }
 
+void GridDataVTKWidget::handleMouseEvent(QMouseEvent *event) {
+    if (event->type() == QEvent::MouseButtonDblClick && event->button() == Qt::LeftButton) {
+        if (isCellPickActivated) {
+            mouseInteractor->pickCell();
+        }
+    } else if (event->type() == QEvent::MouseButtonRelease && event->button() == Qt::RightButton) {
+        GridDataContextMenu *contextMenu = new GridDataContextMenu(this);
+        QPoint globalPosition = this->mapToGlobal(event->pos());
+        bool canEditCellWeights = isCellPickActivated && selectedCellIds->GetNumberOfTuples() > 0;
+        
+        contextMenu->toggleEditWeightsAction(canEditCellWeights);
+        contextMenu->exec(globalPosition);
+    }
+}
+
 void GridDataVTKWidget::toggleCellPick(bool activate, const CellPickMode &cellPickMode) {
     isCellPickActivated = activate;
     mouseInteractor->deactivateCellPicking();
@@ -261,17 +279,28 @@ void GridDataVTKWidget::toggleCellPick(bool activate, const CellPickMode &cellPi
     }
 }
 
-void GridDataVTKWidget::handleMouseEvent(QMouseEvent *event) {
-    if (event->type() == QEvent::MouseButtonDblClick && event->button() == Qt::LeftButton) {
-        if (isCellPickActivated) {
-            mouseInteractor->pickCell();
-        }
-    } else if (event->type() == QEvent::MouseButtonRelease && event->button() == Qt::RightButton) {
-        GridDataContextMenu *contextMenu = new GridDataContextMenu(this);
-        QPoint globalPosition = this->mapToGlobal(event->pos());
-        bool canEditCellWeights = isCellPickActivated && selectedCellIds->GetNumberOfTuples() > 0;
+void GridDataVTKWidget::toggleCellLabels(bool show) {
+    if (show) {
+        vtkSmartPointer<vtkCellCenters> cellCentersFilter = vtkSmartPointer<vtkCellCenters>::New();
+        cellCentersFilter->SetInputData(currentMesh->getPolyData());
+        cellCentersFilter->Update();
         
-        contextMenu->toggleEditWeightsAction(canEditCellWeights);
-        contextMenu->exec(globalPosition);
+        vtkSmartPointer<vtkLabeledDataMapper> labelMapper = vtkSmartPointer<vtkLabeledDataMapper>::New();
+        labelMapper->SetInputConnection(cellCentersFilter->GetOutputPort());
+        labelMapper->SetLabelModeToLabelIds();
+        labelMapper->GetLabelTextProperty()->SetColor(0, 0, 0);
+        labelMapper->GetLabelTextProperty()->ShadowOff();
+        
+        cellLabelsActor = vtkSmartPointer<vtkActor2D>::New();
+        cellLabelsActor->SetMapper(labelMapper);
+        
+        renderer->AddActor2D(cellLabelsActor);
+    } else {
+        renderer->RemoveActor2D(cellLabelsActor);
     }
+    renderWindow->Render();
+}
+
+void GridDataVTKWidget::toggleCellWeights(bool show) {
+    
 }

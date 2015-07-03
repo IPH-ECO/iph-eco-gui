@@ -270,6 +270,9 @@
        </item>
        <item>
         <widget class="QToolButton" name="btnShowCellLabels">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
          <property name="toolTip">
           <string>Show/Hide cell labels</string>
          </property>
@@ -293,6 +296,9 @@
        </item>
        <item>
         <widget class="QToolButton" name="btnShowCellWeights">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
          <property name="toolTip">
           <string>Show/Hide cell weights</string>
          </property>
