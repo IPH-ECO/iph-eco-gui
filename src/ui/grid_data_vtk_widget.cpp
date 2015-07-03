@@ -1,5 +1,6 @@
 #include "include/ui/grid_data_vtk_widget.h"
 #include "include/ui/grid_data_context_menu.h"
+#include "include/ui/grid_data_dialog.h"
 
 #include <vtkCellData.h>
 #include <vtkProperty.h>
@@ -7,6 +8,7 @@
 #include <vtkLookupTable.h>
 #include <vtkTextProperty.h>
 #include <vtkPolyDataMapper.h>
+#include <vtkAreaPicker.h>
 
 vtkStandardNewMacro(GridDataMouseInteractor);
 
@@ -15,21 +17,23 @@ GridDataVTKWidget::GridDataVTKWidget(QWidget *parent) : QVTKWidget(parent), sele
 {
     renderer = vtkSmartPointer<vtkRenderer>::New();
     renderWindow = vtkSmartPointer<vtkRenderWindow>::New();
-    worldPointPicker = vtkSmartPointer<vtkWorldPointPicker>::New();
     renderWindowInteractor = vtkSmartPointer<vtkRenderWindowInteractor>::New();
     mouseInteractor = vtkSmartPointer<GridDataMouseInteractor>::New();
+    vtkSmartPointer<vtkAreaPicker> areaPicker = vtkSmartPointer<vtkAreaPicker>::New();
     
     renderer->SetBackground(1, 1, 1);
     renderWindow->AddRenderer(renderer);
     renderWindowInteractor->SetRenderWindow(renderWindow);
     renderWindowInteractor->SetInteractorStyle(mouseInteractor);
-    renderWindowInteractor->SetPicker(worldPointPicker);
+    renderWindowInteractor->SetPicker(areaPicker);
     mouseInteractor->SetDefaultRenderer(renderer);
     
     this->SetRenderWindow(renderWindow);
     renderWindow->Render();
     
+    GridDataDialog *gridDataDialog = static_cast<GridDataDialog*>(parent);
     QObject::connect(this, SIGNAL(mouseEvent(QMouseEvent*)), this, SLOT(handleMouseEvent(QMouseEvent*)));
+    QObject::connect(mouseInteractor, SIGNAL(coordinateChanged(double&, double&)), gridDataDialog, SLOT(setCoordinate(double&, double&)));
 }
 
 void GridDataVTKWidget::render(Mesh *mesh) {
@@ -43,7 +47,7 @@ void GridDataVTKWidget::render(Mesh *mesh) {
     renderer->RemoveActor(meshActor);
     renderer->RemoveActor(axesActor);
     
-    mouseInteractor->setMesh(currentMesh);
+    mouseInteractor->setMeshPolyData(currentMesh->getPolyData());
     mouseInteractor->deactivateCellPicking();
     
     // Mesh rendering
@@ -241,16 +245,19 @@ void GridDataVTKWidget::clear() {
     this->update();
 }
 
-void GridDataVTKWidget::togglePickIndividualCell(bool activate) {
+void GridDataVTKWidget::toggleCellPick(bool activate, const CellPickMode &cellPickMode) {
     isCellPickActivated = activate;
-    if (activate) {
+    mouseInteractor->deactivateCellPicking();
+    
+    if (activate && cellPickMode != CellPickMode::UNDEFINED) {
         selectedCellIds = vtkSmartPointer<vtkIdTypeArray>::New();
         selectedCellIds->SetName("cellIds");
         selectedCellIds->SetNumberOfComponents(1);
         
-        mouseInteractor->activateCellPicking(CellPickMode::INDIVIDUAL, selectedCellIds);
-    } else {
-        mouseInteractor->deactivateCellPicking();
+        if (cellPickMode == CellPickMode::MULTIPLE) {
+            mouseInteractor->StartSelect();
+        }
+        mouseInteractor->activateCellPicking(cellPickMode, selectedCellIds);
     }
 }
 

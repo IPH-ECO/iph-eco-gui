@@ -34,6 +34,8 @@ private slots:
     void on_btnDoneConfiguration_clicked();
     void on_tblGridLayers_currentItemChanged(QTableWidgetItem *current, QTableWidgetItem *previous);
     void on_btnBackgroundColor_clicked();
+    void on_btnPickIndividualCells_clicked(bool checked);
+    void on_btnPickCellSet_clicked(bool checked);
 
 private:
     Ui::GridDataDialog *ui;

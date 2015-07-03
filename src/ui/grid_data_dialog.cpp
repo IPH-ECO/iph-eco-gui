@@ -138,16 +138,15 @@ void GridDataDialog::on_cbxMesh_currentIndexChanged(const QString &meshName) {
         } else {
             currentMesh = static_cast<StructuredMesh*>(currentMesh);
         }
-        
-        ui->btnPickIndividualCells->setEnabled(true);
     } else {
         currentMesh = nullptr;
     }
 
     ui->gridDataVTKWidget->render(currentMesh);
     ui->btnPickIndividualCells->setChecked(false);
-    ui->gridDataVTKWidget->togglePickIndividualCell(false);
+    ui->gridDataVTKWidget->toggleCellPick(false);
     ui->btnPickIndividualCells->setEnabled(isMeshNamePresent);
+    ui->btnPickCellSet->setEnabled(isMeshNamePresent);
     ui->btnAddGridLayer->setEnabled(isMeshNamePresent);
     ui->btnRemoveGridLayer->setEnabled(isMeshNamePresent);
     ui->btnShowMesh->setEnabled(isMeshNamePresent);
@@ -344,4 +343,16 @@ void GridDataDialog::on_btnBackgroundColor_clicked() {
         ui->gridDataVTKWidget->changeBackgroundColor(color.redF(), color.greenF(), color.blueF());
         ui->btnBackgroundColor->setIcon(px);
     }
+}
+
+void GridDataDialog::on_btnPickIndividualCells_clicked(bool checked) {
+    ui->gridDataVTKWidget->toggleCellPick(checked, CellPickMode::INDIVIDUAL);
+    ui->btnPickCellSet->setChecked(false);
+    ui->btnPickCellSet->setEnabled(!checked);
+}
+
+void GridDataDialog::on_btnPickCellSet_clicked(bool checked) {
+    ui->gridDataVTKWidget->toggleCellPick(checked, CellPickMode::MULTIPLE);
+    ui->btnPickIndividualCells->setChecked(false);
+    ui->btnPickIndividualCells->setEnabled(!checked);
 }

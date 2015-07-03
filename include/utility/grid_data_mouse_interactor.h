@@ -1,26 +1,27 @@
 #ifndef GRID_DATA_MOUSE_INTERACTOR_H
 #define GRID_DATA_MOUSE_INTERACTOR_H
 
-#include "include/domain/mesh.h"
 #include "mesh_mouse_interactor.h"
 
 #include <vtkIdTypeArray.h>
+#include <vtkPolyData.h>
 #include <vtkActor2D.h>
 
-enum class CellPickMode { INDIVIDUAL = 1, MULTIPLE };
+enum class CellPickMode { INDIVIDUAL = 1, MULTIPLE, UNDEFINED };
 
 class GridDataMouseInteractor : public MeshMouseInteractor {
 private:
     vtkSmartPointer<vtkActor2D> selectionIdLabelsActor;
     vtkSmartPointer<vtkActor> selectionActor;
-    CellPickMode cellPickMode;
     vtkIdTypeArray *cellIdsArray;
+    vtkPolyData *meshPolyData;
+    CellPickMode cellPickMode;
     vtkIdType lastCellId;
-    Mesh *mesh;
     
+    void renderSelection();
 public:
     static GridDataMouseInteractor* New();
-    vtkTypeMacro(GridDataMouseInteractor, vtkInteractorStyleTrackballCamera);
+    vtkTypeMacro(GridDataMouseInteractor, vtkInteractorStyleRubberBandPick);
     
     GridDataMouseInteractor();
     
@@ -28,9 +29,11 @@ public:
     vtkActor2D* getSelectionIdLabelsActor();
     
     virtual void OnLeftButtonDown();
+    virtual void OnLeftButtonUp();
+    
     void activateCellPicking(const CellPickMode &cellPickMode, vtkIdTypeArray *cellIdsArray);
     void deactivateCellPicking();
-    void setMesh(Mesh *mesh);
+    void setMeshPolyData(vtkPolyData *meshPolyData);
     void clearSelection();
     void pickCell();
 };
