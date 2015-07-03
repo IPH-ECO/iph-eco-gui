@@ -19,7 +19,7 @@
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout_3">
        <item>
-        <widget class="QToolButton" name="btnNavigate">
+        <widget class="QToolButton" name="btnNavigateMode">
          <property name="toolTip">
           <string>Navigation mode</string>
          </property>

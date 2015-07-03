@@ -57,6 +57,7 @@ public:
     void clear();
     void toggleCellPick(bool activate, const CellPickMode &cellPickMode = CellPickMode::UNDEFINED);
     void toggleCellLabels(const CellLabelType &cellLabelType = CellLabelType::UNDEFINED);
+    void lockView(bool lock);
 public slots:
     void setShowMesh(bool show);
     void setShowAxes(bool show);

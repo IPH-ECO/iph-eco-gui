@@ -383,3 +383,19 @@ void GridDataDialog::on_btnShowCellWeights_clicked(bool checked) {
     ui->gridDataVTKWidget->toggleCellPick(false);
     ui->gridDataVTKWidget->toggleCellLabels(checked ? CellLabelType::WEIGHT : CellLabelType::UNDEFINED);
 }
+
+void GridDataDialog::on_btnLockView_clicked(bool checked) {
+    ui->btnNavigateMode->setEnabled(!checked);
+    ui->btnOriginalZoom->setEnabled(!checked);
+    ui->btnZoomArea->setEnabled(!checked);
+    ui->btnShowAxes->setEnabled(!checked);
+    ui->btnPickIndividualCells->setEnabled(!checked);
+    ui->btnPickCellSet->setEnabled(!checked);
+    ui->btnShowGridDataPoints->setEnabled(!checked);
+    ui->btnShowColorMap->setEnabled(!checked);
+    ui->btnShowMesh->setEnabled(!checked);
+    ui->btnShowCellLabels->setEnabled(!checked);
+    ui->btnShowCellWeights->setEnabled(!checked);
+    ui->btnBackgroundColor->setEnabled(!checked);
+    ui->gridDataVTKWidget->lockView(checked);
+}

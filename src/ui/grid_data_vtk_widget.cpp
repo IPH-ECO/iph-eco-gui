@@ -322,3 +322,11 @@ void GridDataVTKWidget::resetZoom() {
     renderer->ResetCamera();
     this->update();
 }
+
+void GridDataVTKWidget::lockView(bool lock) {
+    if (lock) {
+        renderWindowInteractor->Disable();
+    } else {
+        renderWindowInteractor->Enable();
+    }
+}
