@@ -15,6 +15,8 @@
 
 class CellUpdateDialog;
 
+enum class CellLabelType { ID = 1, WEIGHT, UNDEFINED };
+
 class GridDataVTKWidget : public QVTKWidget {
 	Q_OBJECT
     
@@ -28,7 +30,6 @@ private:
     
     vtkSmartPointer<vtkActor> meshActor;
     vtkSmartPointer<vtkActor2D> cellLabelsActor;
-    vtkSmartPointer<vtkActor> cellWeightsActor;
     vtkSmartPointer<vtkCubeAxesActor> axesActor;
     vtkSmartPointer<vtkActor> gridDataActor;
     vtkSmartPointer<vtkPolyDataMapper> meshMapper;
@@ -60,8 +61,7 @@ public slots:
     void setShowGridDataPoints(bool show);
     void setShowColorMap(bool show);
     void toggleCellPick(bool activate, const CellPickMode &cellPickMode = CellPickMode::UNDEFINED);
-    void toggleCellLabels(bool show);
-    void toggleCellWeights(bool show);
+    void toggleCellLabels(const CellLabelType &cellLabelType = CellLabelType::UNDEFINED);
 };
 
 #endif // GRID_DATA_VTK_WIDGET_H

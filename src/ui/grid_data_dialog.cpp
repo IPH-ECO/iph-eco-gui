@@ -349,27 +349,37 @@ void GridDataDialog::on_btnBackgroundColor_clicked() {
 }
 
 void GridDataDialog::on_btnPickIndividualCells_clicked(bool checked) {
-    ui->gridDataVTKWidget->toggleCellPick(checked, CellPickMode::INDIVIDUAL);
+    ui->btnShowCellLabels->setChecked(false);
+    ui->btnShowCellLabels->setEnabled(!checked);
+    ui->btnShowCellWeights->setChecked(false);
+    ui->btnShowCellWeights->setEnabled(!checked);
     ui->btnPickCellSet->setChecked(false);
     ui->btnPickCellSet->setEnabled(!checked);
+    ui->gridDataVTKWidget->toggleCellLabels(CellLabelType::UNDEFINED);
+    ui->gridDataVTKWidget->toggleCellPick(checked, CellPickMode::INDIVIDUAL);
 }
 
 void GridDataDialog::on_btnPickCellSet_clicked(bool checked) {
-    ui->gridDataVTKWidget->toggleCellPick(checked, CellPickMode::MULTIPLE);
+    ui->btnShowCellLabels->setChecked(false);
+    ui->btnShowCellLabels->setEnabled(!checked);
+    ui->btnShowCellWeights->setChecked(false);
+    ui->btnShowCellWeights->setEnabled(!checked);
     ui->btnPickIndividualCells->setChecked(false);
     ui->btnPickIndividualCells->setEnabled(!checked);
+    ui->gridDataVTKWidget->toggleCellLabels(CellLabelType::UNDEFINED);
+    ui->gridDataVTKWidget->toggleCellPick(checked, CellPickMode::MULTIPLE);
 }
 
 void GridDataDialog::on_btnShowCellLabels_clicked(bool checked) {
     ui->btnShowCellWeights->setChecked(false);
     ui->btnShowCellWeights->setEnabled(!checked);
     ui->gridDataVTKWidget->toggleCellPick(false);
-    ui->gridDataVTKWidget->toggleCellLabels(checked);
+    ui->gridDataVTKWidget->toggleCellLabels(checked ? CellLabelType::ID : CellLabelType::UNDEFINED);
 }
 
 void GridDataDialog::on_btnShowCellWeights_clicked(bool checked) {
     ui->btnShowCellLabels->setChecked(false);
     ui->btnShowCellLabels->setEnabled(!checked);
     ui->gridDataVTKWidget->toggleCellPick(false);
-    ui->gridDataVTKWidget->toggleCellWeights(checked);
+    ui->gridDataVTKWidget->toggleCellLabels(checked ? CellLabelType::WEIGHT : CellLabelType::UNDEFINED);
 }

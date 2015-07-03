@@ -279,15 +279,23 @@ void GridDataVTKWidget::toggleCellPick(bool activate, const CellPickMode &cellPi
     }
 }
 
-void GridDataVTKWidget::toggleCellLabels(bool show) {
-    if (show) {
+void GridDataVTKWidget::toggleCellLabels(const CellLabelType &cellLabelType) {
+    renderer->RemoveActor2D(cellLabelsActor);
+    
+    if (cellLabelType != CellLabelType::UNDEFINED) {
         vtkSmartPointer<vtkCellCenters> cellCentersFilter = vtkSmartPointer<vtkCellCenters>::New();
         cellCentersFilter->SetInputData(currentMesh->getPolyData());
         cellCentersFilter->Update();
         
         vtkSmartPointer<vtkLabeledDataMapper> labelMapper = vtkSmartPointer<vtkLabeledDataMapper>::New();
         labelMapper->SetInputConnection(cellCentersFilter->GetOutputPort());
-        labelMapper->SetLabelModeToLabelIds();
+        
+        if (cellLabelType == CellLabelType::ID) {
+            labelMapper->SetLabelModeToLabelIds();
+        } else {
+            labelMapper->SetLabelModeToLabelScalars();
+        }
+        
         labelMapper->GetLabelTextProperty()->SetColor(0, 0, 0);
         labelMapper->GetLabelTextProperty()->ShadowOff();
         
@@ -295,12 +303,7 @@ void GridDataVTKWidget::toggleCellLabels(bool show) {
         cellLabelsActor->SetMapper(labelMapper);
         
         renderer->AddActor2D(cellLabelsActor);
-    } else {
-        renderer->RemoveActor2D(cellLabelsActor);
     }
-    renderWindow->Render();
-}
-
-void GridDataVTKWidget::toggleCellWeights(bool show) {
     
+    renderWindow->Render();
 }
