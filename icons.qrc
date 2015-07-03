@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="/">
+    <file>icons/zoom-original.png</file>
     <file>icons/show-cell-weights.png</file>
     <file>icons/show-cell-labels.png</file>
     <file>icons/show-axis.png</file>

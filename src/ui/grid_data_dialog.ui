@@ -45,6 +45,26 @@
         </widget>
        </item>
        <item>
+        <widget class="QToolButton" name="btnOriginalZoom">
+         <property name="toolTip">
+          <string>Reset zoom</string>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="icon">
+          <iconset resource="../../icons.qrc">
+           <normaloff>:/icons/zoom-original.png</normaloff>:/icons/zoom-original.png</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>24</width>
+           <height>24</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="QToolButton" name="btnZoomArea">
          <property name="toolTip">
           <string>Zoom area</string>
@@ -707,8 +727,8 @@
     <slot>setShowGridDataPoints(bool)</slot>
     <slot>setShowColorMap(bool)</slot>
     <slot>setShowAxes(bool)</slot>
-    <slot>togglePickIndividualCell(bool)</slot>
-    <slot>togglePickCellSet(bool)</slot>
+    <slot>toggleZoomArea(bool)</slot>
+    <slot>resetZoom()</slot>
    </slots>
   </customwidget>
  </customwidgets>
@@ -781,6 +801,38 @@
    <hints>
     <hint type="sourcelabel">
      <x>516</x>
+     <y>30</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>772</x>
+     <y>339</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnZoomArea</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>gridDataVTKWidget</receiver>
+   <slot>toggleZoomArea(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>432</x>
+     <y>30</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>772</x>
+     <y>339</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnOriginalZoom</sender>
+   <signal>clicked()</signal>
+   <receiver>gridDataVTKWidget</receiver>
+   <slot>resetZoom()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>432</x>
      <y>30</y>
     </hint>
     <hint type="destinationlabel">

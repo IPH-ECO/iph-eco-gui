@@ -12,6 +12,7 @@
 #include <vtkTextProperty.h>
 #include <vtkPolyDataMapper.h>
 #include <vtkLabeledDataMapper.h>
+#include <vtkInteractorStyleRubberBandZoom.h>
 
 vtkStandardNewMacro(GridDataMouseInteractor);
 
@@ -263,6 +264,15 @@ void GridDataVTKWidget::handleMouseEvent(QMouseEvent *event) {
     }
 }
 
+void GridDataVTKWidget::toggleZoomArea(bool activate) {
+    if (activate) {
+        vtkSmartPointer<vtkInteractorStyleRubberBandZoom> zoomAreaInteractor = vtkSmartPointer<vtkInteractorStyleRubberBandZoom>::New();
+        renderWindowInteractor->SetInteractorStyle(zoomAreaInteractor);
+    } else {
+        renderWindowInteractor->SetInteractorStyle(mouseInteractor);
+    }
+}
+
 void GridDataVTKWidget::toggleCellPick(bool activate, const CellPickMode &cellPickMode) {
     isCellPickActivated = activate;
     mouseInteractor->deactivateCellPicking();
@@ -306,4 +316,9 @@ void GridDataVTKWidget::toggleCellLabels(const CellLabelType &cellLabelType) {
     }
     
     renderWindow->Render();
+}
+
+void GridDataVTKWidget::resetZoom() {
+    renderer->ResetCamera();
+    this->update();
 }

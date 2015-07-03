@@ -38,6 +38,7 @@ private slots:
     void on_btnPickCellSet_clicked(bool checked);
     void on_btnShowCellLabels_clicked(bool checked);
     void on_btnShowCellWeights_clicked(bool checked);
+    void on_btnZoomArea_clicked(bool checked);
 
 private:
     Ui::GridDataDialog *ui;
