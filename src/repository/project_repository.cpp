@@ -212,8 +212,6 @@ void ProjectRepository::saveMeshes(Project *project) {
         QApplication::processEvents();
     }
     
-    project->updateMeshPolyDataReferences();
-    
     for (QSet<Mesh*>::const_iterator it = meshes.begin(); it != meshes.end() && !operationCanceled; it++) {
         QSqlQuery query(this->database);
         Mesh *mesh = *it;
