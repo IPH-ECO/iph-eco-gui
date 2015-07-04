@@ -102,9 +102,9 @@
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_3">
           <item>
-           <widget class="QCheckBox" name="checkBox">
+           <widget class="QCheckBox" name="chkWeightBar">
             <property name="text">
-             <string>Weights bar</string>
+             <string>Weight bar</string>
             </property>
            </widget>
           </item>

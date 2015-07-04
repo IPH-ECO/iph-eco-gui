@@ -16,7 +16,7 @@
 #include <QApplication>
 #include <vtkQuad.h>
 
-GridData::GridData(Mesh *mesh) : id(0), mesh(mesh), interpolationCanceled(false) {}
+GridData::GridData(Mesh *mesh) : id(0), mesh(mesh), interpolationCanceled(false), weightBar(true) {}
 
 uint GridData::getId() const {
     return id;
@@ -111,6 +111,22 @@ double GridData::getMaximumRange() const {
 
 void GridData::setMaximumRange(const double &maximumRange) {
     this->maximumRange = maximumRange;
+}
+
+bool GridData::getLighting() const {
+    return lighting;
+}
+
+void GridData::setLighting(const bool &lighting) {
+    this->lighting = lighting;
+}
+
+bool GridData::getWeightBar() const {
+    return weightBar;
+}
+
+void GridData::setWeightBar(const bool &weightBar) {
+    this->weightBar = weightBar;
 }
 
 QString GridData::getInputFile() const {

@@ -66,6 +66,8 @@ void DatabaseUtility::createApplicationTables(QSqlDatabase &database) {
            "radius float, " \
            "minimum_range float default 0, " \
            "maximum_range float default 0, " \
+           "lighting bool default false, " \
+           "weight_bar bool default true, " \
            "grid_data_configuration_id integer not null, " \
            "mesh_id integer not null" \
     ")";

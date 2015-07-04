@@ -20,6 +20,8 @@ GridLayerAttributesDialog::GridLayerAttributesDialog(QWidget *parent, GridData *
     this->defaultMinimum = range[0];
     this->defaultMaximum = range[1];
     ui->lblOriginalValues->setText(QString("[%1, %2]").arg(this->defaultMinimum).arg(this->defaultMaximum));
+    ui->chkWeightBar->setChecked(gridData->getWeightBar());
+    ui->chkLighting->setChecked(gridData->getLighting());
 }
 
 GridLayerAttributesDialog::~GridLayerAttributesDialog() {
@@ -47,6 +49,8 @@ void GridLayerAttributesDialog::on_buttonBox_clicked(QAbstractButton *button) {
     
     gridData->setMinimumRange(ui->edtMinimum->text().toDouble());
     gridData->setMaximumRange(ui->edtMaximum->text().toDouble());
+    gridData->setWeightBar(ui->chkWeightBar->isChecked());
+    gridData->setLighting(ui->chkLighting->isChecked());
     gridDataDialog->getGridDataVTKWidget()->render(gridData);
     
     if (standardButton == QDialogButtonBox::Ok) {

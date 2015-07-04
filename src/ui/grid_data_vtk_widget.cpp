@@ -121,7 +121,6 @@ void GridDataVTKWidget::render(GridData *gridData) {
     inputPointsBar->SetLookupTable(inputPointsTable);
     inputPointsBar->SetTitle(currentGridData->getName().toStdString().c_str());
     inputPointsBar->SetNumberOfLabels(4);
-    inputPointsBar->GetTitleTextProperty()->SetFontSize(8); // doesn't have effect
     inputPointsBar->SetWidth(0.1);
     inputPointsBar->SetHeight(0.5);
     inputPointsBar->SetPosition(0.05, 0.05);
@@ -141,7 +140,6 @@ void GridDataVTKWidget::render(GridData *gridData) {
     colorMapBar->SetLookupTable(colorMapTable);
     colorMapBar->SetTitle("Color Map");
     colorMapBar->SetNumberOfLabels(4);
-    colorMapBar->GetTitleTextProperty()->SetFontSize(8); // doesn't have effect
     colorMapBar->SetWidth(0.1);
     colorMapBar->SetHeight(0.5);
     colorMapBar->SetPosition(0.85, 0.05);
@@ -154,6 +152,18 @@ void GridDataVTKWidget::render(GridData *gridData) {
         meshMapper->ScalarVisibilityOff();
     }
     
+    if (gridData->getWeightBar()) {
+        colorMapBar->VisibilityOn();
+    } else {
+        colorMapBar->VisibilityOff();
+    }
+    
+    if (currentGridData->getLighting()) {
+        meshActor->GetProperty()->LightingOn();
+    } else {
+        meshActor->GetProperty()->LightingOff();
+    }
+        
     if (showGridDataPoints) {
         gridDataActor->VisibilityOn();
         inputPointsBar->VisibilityOn();

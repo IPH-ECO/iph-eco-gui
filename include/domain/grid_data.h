@@ -33,6 +33,8 @@ private:
     // Visualization attributes
     double minimumRange;
     double maximumRange;
+    bool weightBar;
+    bool lighting;
     
     // Transient attributes
     QString inputFile;
@@ -66,6 +68,10 @@ public:
     void setMinimumRange(const double &minimumRange);
     double getMaximumRange() const;
     void setMaximumRange(const double &maximumRange);
+    bool getLighting() const;
+    void setLighting(const bool &lighting);
+    bool getWeightBar() const;
+    void setWeightBar(const bool &weightBar);
     
     QString getInputFile() const;
     void setInputFile(const QString &inputFile);
