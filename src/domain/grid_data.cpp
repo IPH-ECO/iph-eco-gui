@@ -97,6 +97,22 @@ void GridData::setMesh(Mesh *mesh) {
     this->mesh = mesh;
 }
 
+double GridData::getMininumRange() const {
+    return minimumRange;
+}
+
+void GridData::setMinimumRange(const double &minimumRange) {
+    this->minimumRange = minimumRange;
+}
+
+double GridData::getMaximumRange() const {
+    return maximumRange;
+}
+
+void GridData::setMaximumRange(const double &maximumRange) {
+    this->maximumRange = maximumRange;
+}
+
 QString GridData::getInputFile() const {
     return inputFile;
 }
@@ -239,6 +255,9 @@ void GridData::interpolate() {
     }
     
     if (!interpolationCanceled) {
+        double *range = interpolatedWeightsArray->GetRange();
+        this->minimumRange = range[0];
+        this->maximumRange = range[1];
         meshPolyData->GetCellData()->RemoveArray(gridDataName.c_str());
         meshPolyData->GetCellData()->AddArray(interpolatedWeightsArray);
     }

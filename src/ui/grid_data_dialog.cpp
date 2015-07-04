@@ -6,6 +6,7 @@
 #include "include/domain/unstructured_mesh.h"
 #include "include/exceptions/grid_data_exception.h"
 #include "include/ui/grid_layer_dialog.h"
+#include "include/ui/grid_layer_attributes_dialog.h"
 
 #include <QMessageBox>
 #include <QVector>
@@ -73,6 +74,10 @@ void GridDataDialog::setArea(const double &area) {
 	}
 
     ui->lblDomainArea->setText(areaStr);
+}
+
+GridDataVTKWidget* GridDataDialog::getGridDataVTKWidget() const {
+    return ui->gridDataVTKWidget;
 }
 
 void GridDataDialog::on_cbxConfiguration_currentIndexChanged(const QString &configurationName) {
@@ -236,6 +241,14 @@ void GridDataDialog::on_tblGridLayers_currentItemChanged(QTableWidgetItem *curre
         ui->gridDataVTKWidget->render(gridData);
         ui->btnEditGridLayer->setEnabled(true);
     }
+}
+
+void GridDataDialog::on_tblGridLayers_cellDoubleClicked(int row, int column) {
+    QString gridDataName = ui->tblGridLayers->item(row, 0)->text();
+    GridData *gridData = currentConfiguration->getGridData(gridDataName);
+    GridLayerAttributesDialog *dialog = new GridLayerAttributesDialog(this, gridData);
+    
+    dialog->exec();
 }
 
 void GridDataDialog::on_btnRemoveGridLayer_clicked() {

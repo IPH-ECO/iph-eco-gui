@@ -2,6 +2,7 @@
 #define GRID_DATA_DIALOG_H
 
 #include "include/domain/grid_data_configuration.h"
+#include "grid_data_vtk_widget.h"
 
 #include <QDialog>
 #include <QWidget>
@@ -19,6 +20,7 @@ public:
     ~GridDataDialog();
 
     void setArea(const double &area);
+    GridDataVTKWidget* getGridDataVTKWidget() const;
 
 public slots:
     void setCoordinate(double &x, double &y);
@@ -33,6 +35,7 @@ private slots:
     void on_btnRemoveConfiguration_clicked();
     void on_btnDoneConfiguration_clicked();
     void on_tblGridLayers_currentItemChanged(QTableWidgetItem *current, QTableWidgetItem *previous);
+    void on_tblGridLayers_cellDoubleClicked(int row, int column);
     void on_btnBackgroundColor_clicked();
     void on_btnPickIndividualCells_clicked(bool checked);
     void on_btnPickCellSet_clicked(bool checked);

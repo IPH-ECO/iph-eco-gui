@@ -131,8 +131,7 @@ void GridDataVTKWidget::render(GridData *gridData) {
 	std::string gridDataName(currentGridData->getName().toStdString());
     
 	meshPolyData->GetCellData()->SetActiveScalars(gridDataName.c_str());
-	interval = meshPolyData->GetCellData()->GetScalars(gridDataName.c_str())->GetRange();
-    colorMapTable->SetTableRange(interval[0], interval[1]);
+    colorMapTable->SetTableRange(gridData->getMininumRange(), gridData->getMaximumRange());
     
     meshMapper->SetLookupTable(colorMapTable);
     meshMapper->UseLookupTableScalarRangeOn();

@@ -30,6 +30,10 @@ private:
     GridDataConfiguration *gridDataConfiguration;
     Mesh *mesh;
     
+    // Visualization attributes
+    double minimumRange;
+    double maximumRange;
+    
     // Transient attributes
     QString inputFile;
     bool interpolationCanceled;
@@ -58,6 +62,10 @@ public:
     void setGridDataConfiguration(GridDataConfiguration *gridDataConfiguration);
     Mesh* getMesh() const;
     void setMesh(Mesh *mesh);
+    double getMininumRange() const;
+    void setMinimumRange(const double &minimumRange);
+    double getMaximumRange() const;
+    void setMaximumRange(const double &maximumRange);
     
     QString getInputFile() const;
     void setInputFile(const QString &inputFile);

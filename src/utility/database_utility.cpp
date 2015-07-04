@@ -23,8 +23,6 @@ void DatabaseUtility::disconnect(QSqlDatabase &database) {
 void DatabaseUtility::createApplicationTables(QSqlDatabase &database) {
     QStringList sql;
 
-    //TODO: Finish tables creation
-
     sql << "create table if not exists project (" \
            "id integer primary key, " \
            "name varchar(255) not null, " \
@@ -66,6 +64,8 @@ void DatabaseUtility::createApplicationTables(QSqlDatabase &database) {
            "input_poly_data text not null, " \
            "exponent float, " \
            "radius float, " \
+           "minimum_range float default 0, " \
+           "maximum_range float default 0, " \
            "grid_data_configuration_id integer not null, " \
            "mesh_id integer not null" \
     ")";

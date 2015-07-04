@@ -142,6 +142,8 @@ void ProjectRepository::loadGridData(GridDataConfiguration *gridDataConfiguratio
         gridData->loadInputPolyDataFromStringPolyData(query.value("input_poly_data").toString());
         gridData->setExponent(query.value("exponent").toDouble());
         gridData->setRadius(query.value("radius").toDouble());
+        gridData->setMinimumRange(query.value("minimum_range").toDouble());
+        gridData->setMaximumRange(query.value("maximum_range").toDouble());
         gridData->setGridDataConfiguration(gridDataConfiguration);
         
         gridDataConfiguration->addGridData(gridData);
@@ -392,12 +394,14 @@ void ProjectRepository::saveGridData(GridDataConfiguration *gridDataConfiguratio
         QSqlQuery query(this->database);
         
         if (gridData->isPersisted()) {
-            query.prepare("update grid_data set name = :n, input_type = :it, grid_type = :gt, input_poly_data = :ipd, exponent = :e, radius = :r " \
+            query.prepare("update grid_data set " \
+                          "name = :n, input_type = :it, grid_type = :gt, input_poly_data = :ipd, exponent = :e, radius = :r, minimum_range = :minr, maximum_range = :maxr " \
                           "where id = :i");
             query.bindValue(":i", gridData->getId());
         } else {
-            query.prepare("insert into grid_data (name, input_type, grid_type, input_poly_data, exponent, radius, grid_data_configuration_id, mesh_id) " \
-                          "values (:n, :it, :gt, :ipd, :e, :r, :gdc, :m)");
+            query.prepare("insert into grid_data (" \
+                          "name, input_type, grid_type, input_poly_data, exponent, radius, minimum_range, maximum_range, grid_data_configuration_id, mesh_id) " \
+                          "values (:n, :it, :gt, :ipd, :e, :r, :minr, :maxr, :gdc, :m)");
             query.bindValue(":gdc", gridDataConfiguration->getId());
             query.bindValue(":m", gridData->getMesh()->getId());
         }
@@ -414,6 +418,9 @@ void ProjectRepository::saveGridData(GridDataConfiguration *gridDataConfiguratio
             query.bindValue(":e", "NULL");
             query.bindValue(":r", "NULL");
         }
+        
+        query.bindValue(":minr", gridData->getMininumRange());
+        query.bindValue(":maxr", gridData->getMaximumRange());
         
         if (!query.exec()) {
             throw DatabaseException(QString("Unable to save grid data configurations. Error: %1.").arg(query.lastError().text()));
