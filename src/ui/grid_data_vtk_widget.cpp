@@ -153,10 +153,8 @@ void GridDataVTKWidget::render(GridData *gridData) {
     colorMapBar->SetPosition(0.85, 0.05);
     
     if (showColorMap) {
-        colorMapBar->VisibilityOn();
         meshMapper->ScalarVisibilityOn();
     } else {
-        colorMapBar->VisibilityOff();
         meshMapper->ScalarVisibilityOff();
     }
     
@@ -243,10 +241,8 @@ void GridDataVTKWidget::setShowColorMap(bool show) {
     }
     
     if (show) {
-        colorMapBar->VisibilityOn();
         meshMapper->ScalarVisibilityOn();
     } else {
-        colorMapBar->VisibilityOff();
         meshMapper->ScalarVisibilityOff();
     }
     this->update();
