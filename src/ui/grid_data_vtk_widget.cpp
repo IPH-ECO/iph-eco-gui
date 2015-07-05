@@ -5,6 +5,7 @@
 #include <vtkCellData.h>
 #include <vtkProperty.h>
 #include <vtkPointData.h>
+#include <vtkPNGWriter.h>
 #include <vtkAreaPicker.h>
 #include <vtkDoubleArray.h>
 #include <vtkLookupTable.h>
@@ -12,6 +13,7 @@
 #include <vtkTextProperty.h>
 #include <vtkPolyDataMapper.h>
 #include <vtkLabeledDataMapper.h>
+#include <vtkWindowToImageFilter.h>
 #include <vtkInteractorStyleRubberBandZoom.h>
 
 vtkStandardNewMacro(GridDataMouseInteractor);
@@ -346,4 +348,19 @@ void GridDataVTKWidget::lockView(bool lock) {
     } else {
         renderWindowInteractor->Enable();
     }
+}
+
+void GridDataVTKWidget::exportToImage(const QString &fileName) {
+    vtkSmartPointer<vtkWindowToImageFilter> windowToImageFilter = vtkSmartPointer<vtkWindowToImageFilter>::New();
+    windowToImageFilter->SetInput(renderWindow);
+    windowToImageFilter->SetMagnification(1); //set the resolution of the output image (3 times the current resolution of vtk render window)
+    windowToImageFilter->SetInputBufferTypeToRGBA(); //also record the alpha (transparency) channel
+    windowToImageFilter->ReadFrontBufferOff(); // read from the back buffer
+    windowToImageFilter->Update();
+    
+    std::string stdFileName = fileName.toStdString();
+    vtkSmartPointer<vtkPNGWriter> writer = vtkSmartPointer<vtkPNGWriter>::New();
+    writer->SetFileName(stdFileName.c_str());
+    writer->SetInputConnection(windowToImageFilter->GetOutputPort());
+    writer->Write();
 }

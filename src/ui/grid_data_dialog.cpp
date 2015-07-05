@@ -8,18 +8,21 @@
 #include "include/ui/grid_layer_dialog.h"
 #include "include/ui/grid_layer_attributes_dialog.h"
 
-#include <QMessageBox>
-#include <QVector>
-#include <QObject>
 #include <QProgressDialog>
 #include <QColorDialog>
+#include <QMessageBox>
+#include <QFileDialog>
+#include <QVector>
+#include <QObject>
 #include <QPixmap>
 
 GridDataDialog::GridDataDialog(QWidget *parent) :
-    QDialog(parent), ui(new Ui::GridDataDialog),
+    QDialog(parent), GRID_DATA_DEFAULT_DIR_KEY("grid_data_default_dir"), ui(new Ui::GridDataDialog),
     unsavedConfiguration(new GridDataConfiguration()), currentConfiguration(unsavedConfiguration), currentMesh(nullptr)
 {
     ui->setupUi(this);
+    
+    appSettings = new QSettings(QApplication::organizationName(), QApplication::applicationName(), this);
 
 	Qt::WindowFlags flags = this->windowFlags() | Qt::WindowMaximizeButtonHint;
 	this->setWindowFlags(flags);
@@ -155,6 +158,7 @@ void GridDataDialog::on_cbxMesh_currentIndexChanged(const QString &meshName) {
     ui->btnPickCellSet->setEnabled(isMeshNamePresent);
     ui->btnShowCellLabels->setEnabled(isMeshNamePresent);
     ui->btnShowCellWeights->setEnabled(isMeshNamePresent);
+    ui->btnExport->setEnabled(isMeshNamePresent);
     ui->btnAddGridLayer->setEnabled(isMeshNamePresent);
     ui->btnRemoveGridLayer->setEnabled(isMeshNamePresent);
     ui->btnShowMesh->setEnabled(isMeshNamePresent);
@@ -402,4 +406,17 @@ void GridDataDialog::on_btnLockView_clicked(bool checked) {
     ui->btnShowCellWeights->setEnabled(!checked);
     ui->btnBackgroundColor->setEnabled(!checked);
     ui->gridDataVTKWidget->lockView(checked);
+}
+
+QString GridDataDialog::getDefaultDirectory() {
+    return appSettings->value(GRID_DATA_DEFAULT_DIR_KEY).toString().isEmpty() ? QDir::homePath() : appSettings->value(GRID_DATA_DEFAULT_DIR_KEY).toString();
+}
+
+void GridDataDialog::on_btnExport_clicked() {
+    QString fileName = QFileDialog::getSaveFileName(this, tr("Export to PNG"), getDefaultDirectory(), tr("Portable Network Graphics (*.png)"));
+    
+    if (!fileName.isEmpty()) {
+        ui->gridDataVTKWidget->exportToImage(fileName);
+        QMessageBox::information(this, tr("Grid Data"), tr("Map exported."));
+    }
 }

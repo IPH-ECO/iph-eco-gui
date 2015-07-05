@@ -1,5 +1,7 @@
 <RCC>
   <qresource prefix="/">
+    <file>icons/image-x-generic.png</file>
+    <file>icons/edit-clear.png</file>
     <file>icons/zoom-original.png</file>
     <file>icons/show-cell-weights.png</file>
     <file>icons/show-cell-labels.png</file>

@@ -6,6 +6,7 @@
 
 #include <QDialog>
 #include <QWidget>
+#include <QSettings>
 #include <QTableWidgetItem>
 
 namespace Ui {
@@ -42,16 +43,21 @@ private slots:
     void on_btnShowCellLabels_clicked(bool checked);
     void on_btnShowCellWeights_clicked(bool checked);
     void on_btnLockView_clicked(bool checked);
+    void on_btnExport_clicked();
 
 private:
+    const QString GRID_DATA_DEFAULT_DIR_KEY;
+    
     Ui::GridDataDialog *ui;
     GridDataConfiguration *unsavedConfiguration;
     GridDataConfiguration *currentConfiguration;
     Mesh *currentMesh;
+    QSettings *appSettings;
     
     void toggleGridDataConfigurationForm(bool enable);
     bool isConfigurationValid(const QString &configurationName);
     void showGridLayerDialog(GridData *gridData);
+    QString getDefaultDirectory();
 };
 
 #endif // GRID_DATA_DIALOG_H
