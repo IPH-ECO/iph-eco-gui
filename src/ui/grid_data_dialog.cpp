@@ -79,7 +79,7 @@ void GridDataDialog::setArea(const double &area) {
     ui->lblDomainArea->setText(areaStr);
 }
 
-GridDataVTKWidget* GridDataDialog::getGridDataVTKWidget() const {
+GridDataVTKWidget* GridDataDialog::getGridDataVTKWidget() {
     return ui->gridDataVTKWidget;
 }
 

@@ -2,37 +2,26 @@
 #define GRID_DATA_CONTEXT_MENU_H
 
 #include "grid_data_vtk_widget.h"
-#include "cell_update_dialog.h"
 
 #include <QWidget>
 #include <QAction>
 #include <QMenu>
-#include <QIcon>
+
+class GridDataVTKWidget;
 
 class GridDataContextMenu : public QMenu {
     Q_OBJECT
 private:
+    GridDataVTKWidget *vtkWidget;
     QAction *editWeightsAction;
-    
-public:
-    explicit GridDataContextMenu(QWidget *parent) : QMenu(parent) {
-        editWeightsAction = new QAction(QIcon(":/icons/document-properties.png"), tr("&Edit cells weights"), this);
-        
-        addAction(editWeightsAction);
-        
-        QObject::connect(editWeightsAction, SIGNAL(triggered()), this, SLOT(editWeights()));
-    }
-    
-    void toggleEditWeightsAction(bool toggle) {
-        editWeightsAction->setEnabled(toggle);
-    }
-    
+    QAction *editGridLayerAttributesAction;
 private slots:
-    void editWeights() {
-        GridDataVTKWidget *parent = static_cast<GridDataVTKWidget*>(this->parentWidget());
-        CellUpdateDialog *cellUpdateDialog = new CellUpdateDialog(parent);
-        cellUpdateDialog->exec();
-    }
+    void editGridLayerAttributes();
+    void editWeights();
+public:
+    explicit GridDataContextMenu(QWidget *parent);
+    void toggleGridLayerAttributesAction(bool toggle);
+    void toggleEditWeightsAction(bool toggle);
 };
 
 #endif // GRID_DATA_CONTEXT_MENU_H

@@ -4,6 +4,7 @@
 #include "include/domain/grid_data.h"
 #include "include/utility/grid_data_mouse_interactor.h"
 #include "cell_update_dialog.h"
+#include "grid_data_context_menu.h"
 
 #include <QWidget>
 #include <QMouseEvent>
@@ -13,6 +14,7 @@
 #include <vtkWorldPointPicker.h>
 #include <vtkRenderWindowInteractor.h>
 
+class GridDataContextMenu;
 class CellUpdateDialog;
 
 enum class CellLabelType { ID = 1, WEIGHT, UNDEFINED };
@@ -20,6 +22,7 @@ enum class CellLabelType { ID = 1, WEIGHT, UNDEFINED };
 class GridDataVTKWidget : public QVTKWidget {
 	Q_OBJECT
     
+    friend class GridDataContextMenu;
     friend class CellUpdateDialog;
     
 private:

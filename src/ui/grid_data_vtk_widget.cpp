@@ -272,10 +272,11 @@ void GridDataVTKWidget::handleMouseEvent(QMouseEvent *event) {
             mouseInteractor->pickCell();
         }
     } else if (event->type() == QEvent::MouseButtonRelease && event->button() == Qt::RightButton) {
-        GridDataContextMenu *contextMenu = new GridDataContextMenu(this);
+        GridDataContextMenu *contextMenu = new GridDataContextMenu(this->parentWidget()); // GridDataDialog
         QPoint globalPosition = this->mapToGlobal(event->pos());
         bool canEditCellWeights = isCellPickActivated && selectedCellIds->GetNumberOfTuples() > 0;
         
+        contextMenu->toggleGridLayerAttributesAction(currentGridData != nullptr);
         contextMenu->toggleEditWeightsAction(canEditCellWeights);
         contextMenu->exec(globalPosition);
     }

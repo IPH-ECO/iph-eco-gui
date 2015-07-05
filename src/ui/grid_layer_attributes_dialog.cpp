@@ -93,8 +93,6 @@ void GridLayerAttributesDialog::on_buttonBox_clicked(QAbstractButton *button) {
         return;
     }
     
-    GridDataDialog *gridDataDialog = static_cast<GridDataDialog*>(parent());
-    
     // Map tab
     gridData->setMinimumRange(ui->edtMinimum->text().toDouble());
     gridData->setMaximumRange(ui->edtMaximum->text().toDouble());
@@ -107,6 +105,8 @@ void GridLayerAttributesDialog::on_buttonBox_clicked(QAbstractButton *button) {
     gridData->setLineColor(this->currentLineColor.name());
     gridData->setLineStyle(ui->cbxLineStyle->currentIndex() == 0 ? 0xFFFF : 0xF0F0);
     gridData->setLineWidth(ui->sbxLineWidth->value());
+    
+    GridDataDialog *gridDataDialog = static_cast<GridDataDialog*>(parentWidget());
     gridDataDialog->getGridDataVTKWidget()->render(gridData);
     
     if (standardButton == QDialogButtonBox::Ok) {

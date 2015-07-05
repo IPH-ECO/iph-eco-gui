@@ -23,6 +23,7 @@ void NewProjectDialog::accept() {
     Project *project = new Project(name, description, hydrodynamic, sediment, waterQuality);
     IPHApplication::setCurrentProject(project);
     
+    static_cast<QDialog*>(this->parent())->setWindowTitle("IPH-ECO - " + name);
     emit enableParentMenu(true);
     QDialog::accept();
 }

@@ -21,7 +21,7 @@ public:
     ~GridDataDialog();
 
     void setArea(const double &area);
-    GridDataVTKWidget* getGridDataVTKWidget() const;
+    GridDataVTKWidget* getGridDataVTKWidget();
 
 public slots:
     void setCoordinate(double &x, double &y);
