@@ -319,9 +319,11 @@ void GridDataVTKWidget::toggleCellLabels(const CellLabelType &cellLabelType) {
             labelMapper->SetLabelModeToLabelIds();
         } else {
             labelMapper->SetLabelModeToLabelScalars();
+            labelMapper->SetLabelFormat("%.4f");
         }
         
         labelMapper->GetLabelTextProperty()->SetColor(0, 0, 0);
+        labelMapper->GetLabelTextProperty()->BoldOff();
         labelMapper->GetLabelTextProperty()->ShadowOff();
         
         cellLabelsActor = vtkSmartPointer<vtkActor2D>::New();
