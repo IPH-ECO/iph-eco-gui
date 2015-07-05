@@ -16,7 +16,7 @@
 #include <QApplication>
 #include <vtkQuad.h>
 
-GridData::GridData(Mesh *mesh) : id(0), mesh(mesh), interpolationCanceled(false), weightBar(true) {}
+GridData::GridData(Mesh *mesh) : id(0), mesh(mesh), weightBar(true), lineColor("#000000"), lineStyle(0xFFFF), lineWidth(1), interpolationCanceled(false) {}
 
 uint GridData::getId() const {
     return id;
@@ -127,6 +127,30 @@ bool GridData::getWeightBar() const {
 
 void GridData::setWeightBar(const bool &weightBar) {
     this->weightBar = weightBar;
+}
+
+QString GridData::getLineColor() const {
+    return lineColor;
+}
+
+void GridData::setLineColor(const QString &lineColor) {
+    this->lineColor = lineColor;
+}
+
+int GridData::getLineStyle() const {
+    return lineStyle;
+}
+
+void GridData::setLineStyle(const int &lineStyle) {
+    this->lineStyle = lineStyle;
+}
+
+int GridData::getLineWidth() const {
+    return lineWidth;
+}
+
+void GridData::setLineWidth(const int &lineWidth) {
+    this->lineWidth = lineWidth;
 }
 
 QString GridData::getInputFile() const {

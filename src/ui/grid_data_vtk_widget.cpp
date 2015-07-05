@@ -102,6 +102,12 @@ void GridDataVTKWidget::render(GridData *gridData) {
     render(mesh);
 
     currentGridData = gridData;
+    
+    QColor lineColor(gridData->getLineColor());
+    meshActor->GetProperty()->SetEdgeColor(lineColor.redF(), lineColor.greenF(), lineColor.blueF());
+    meshActor->GetProperty()->SetLineStipplePattern(gridData->getLineStyle());
+    meshActor->GetProperty()->SetLineWidth(gridData->getLineWidth());
+    
     vtkPolyData *inputPointsPolyData = currentGridData->getInputPolyData();
     vtkSmartPointer<vtkPolyDataMapper> inputPointsMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
     vtkSmartPointer<vtkLookupTable> inputPointsTable = vtkSmartPointer<vtkLookupTable>::New();

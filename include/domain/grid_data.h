@@ -35,6 +35,9 @@ private:
     double maximumRange;
     bool weightBar;
     bool lighting;
+    QString lineColor;
+    int lineStyle;
+    int lineWidth;
     
     // Transient attributes
     QString inputFile;
@@ -72,6 +75,12 @@ public:
     void setLighting(const bool &lighting);
     bool getWeightBar() const;
     void setWeightBar(const bool &weightBar);
+    QString getLineColor() const;
+    void setLineColor(const QString &lineColor);
+    int getLineStyle() const;
+    void setLineStyle(const int &lineStyle);
+    int getLineWidth() const;
+    void setLineWidth(const int &lineWidth);
     
     QString getInputFile() const;
     void setInputFile(const QString &inputFile);

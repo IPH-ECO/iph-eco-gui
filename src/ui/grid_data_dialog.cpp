@@ -45,7 +45,7 @@ GridDataDialog::GridDataDialog(QWidget *parent) :
     
     ui->gridDataVTKWidget->clear();
     
-    QColor color = QColor("white");
+    QColor color = QColor(Qt::white);
     QPixmap px(24, 24);
     
     px.fill(color);

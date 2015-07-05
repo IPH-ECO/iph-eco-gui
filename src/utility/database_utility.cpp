@@ -68,6 +68,9 @@ void DatabaseUtility::createApplicationTables(QSqlDatabase &database) {
            "maximum_range float default 0, " \
            "lighting bool default false, " \
            "weight_bar bool default true, " \
+           "line_color varchar(50) default '#000000', " \
+           "line_style int default x'FFFF', " \
+           "line_width int default 1, " \
            "grid_data_configuration_id integer not null, " \
            "mesh_id integer not null" \
     ")";

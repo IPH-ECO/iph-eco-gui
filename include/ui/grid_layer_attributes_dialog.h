@@ -3,6 +3,7 @@
 
 #include "include/domain/grid_data.h"
 
+#include <QColor>
 #include <QDialog>
 #include <QAbstractButton>
 
@@ -17,10 +18,12 @@ private:
     double defaultMinimum;
     double defaultMaximum;
     GridData *gridData;
+    QColor currentLineColor;
     
     bool isValid();
 private slots:
     void on_btnUseOriginalValues_clicked();
+    void on_btnLineColor_clicked();
     void on_buttonBox_clicked(QAbstractButton *button);
 public:
     explicit GridLayerAttributesDialog(QWidget *parent, GridData *gridData);
