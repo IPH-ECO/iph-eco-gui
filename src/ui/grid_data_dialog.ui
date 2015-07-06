@@ -320,7 +320,7 @@
           <bool>false</bool>
          </property>
          <property name="toolTip">
-          <string>Show/Hide cell weights</string>
+          <string>Show/Hide interpolated values</string>
          </property>
          <property name="text">
           <string/>
