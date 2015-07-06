@@ -17,7 +17,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>2</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tab">
       <attribute name="title">
@@ -89,10 +89,11 @@
         </widget>
        </item>
        <item>
-        <widget class="QGroupBox" name="groupBox_2">
+        <widget class="QGroupBox" name="colorTemplateLayout">
          <property name="title">
           <string>Color Template</string>
          </property>
+         <layout class="QGridLayout" name="gridLayout_3"/>
         </widget>
        </item>
        <item>
@@ -104,7 +105,7 @@
           <item>
            <widget class="QCheckBox" name="chkWeightBar">
             <property name="text">
-             <string>Weight bar</string>
+             <string>Values bar</string>
             </property>
            </widget>
           </item>

@@ -1,14 +1,18 @@
 #include "include/ui/grid_layer_attributes_dialog.h"
 #include "ui_grid_layer_attributes_dialog.h"
 
+#include "include/domain/color_gradient.h"
+
 #include <vtkPolyData.h>
 #include <vtkCellData.h>
 #include <QDialogButtonBox>
+#include <QLinearGradient>
 #include <QColorDialog>
 #include <QMessageBox>
 #include <QPainter>
 #include <QPixmap>
 #include <QBrush>
+#include <QRect>
 #include <QPen>
 
 #include "include/ui/grid_data_dialog.h"
@@ -58,6 +62,48 @@ GridLayerAttributesDialog::GridLayerAttributesDialog(QWidget *parent, GridData *
     ui->cbxLineStyle->setCurrentIndex(gridData->getLineStyle() != 0xFFFF);
     
     ui->sbxLineWidth->setValue(gridData->getLineWidth());
+    
+    int buttonWidth = 60, buttonHeight = 16;
+    int row = 0, column = 0;
+    
+    for (int i = 0; i < ColorGradientTemplate::colorGradients.size(); i++) {
+        if (i % 5 == 0) {
+            row++;
+            column = 0;
+        }
+        
+        QPixmap icon(buttonWidth, buttonHeight);
+        QRect rectangle(0, 0, buttonWidth, buttonHeight);
+        QList<QColor> colors = ColorGradientTemplate::getColors(i);
+        QLinearGradient gradient(rectangle.topLeft(), rectangle.topRight());
+        
+        for (int c = 0; c < colors.size(); c++) {
+            gradient.setColorAt(c / ((double) colors.size() - 1), colors[c]);
+        }
+        
+        QPainter painter(&icon);
+        painter.fillRect(rectangle, gradient);
+        
+        QString templateName = ColorGradientTemplate::getTemplateName(i);
+        QToolButton *colorGradientButton = new QToolButton(ui->colorTemplateLayout);
+        colorGradientButton->setIcon(icon);
+        colorGradientButton->setCheckable(true);
+        colorGradientButton->setIconSize(QSize(buttonWidth, buttonHeight));
+        colorGradientButton->setToolTip(templateName);
+        
+        if (templateName == ColorGradientTemplate::defaultTemplateName) {
+            this->defaultMapColorGradientButton = colorGradientButton;
+        }
+        
+        if (gridData->getMapColorGradient() == templateName) {
+            this->currentMapColorGradientButton = colorGradientButton;
+            this->currentMapColorGradientButton->setChecked(true);
+        }
+        
+        QObject::connect(colorGradientButton, SIGNAL(clicked(bool)), this, SLOT(colorGradientButtonClicked(bool)));
+        
+        static_cast<QGridLayout*>(ui->colorTemplateLayout->layout())->addWidget(colorGradientButton, row, column++);
+    }
 }
 
 GridLayerAttributesDialog::~GridLayerAttributesDialog() {
@@ -81,6 +127,16 @@ void GridLayerAttributesDialog::on_btnLineColor_clicked() {
     }
 }
 
+void GridLayerAttributesDialog::colorGradientButtonClicked(bool checked) {
+    if (checked) {
+        this->currentMapColorGradientButton->setChecked(false);
+        this->currentMapColorGradientButton = static_cast<QToolButton*>(QObject::sender());
+    } else {
+        this->currentMapColorGradientButton = this->defaultMapColorGradientButton;
+        this->currentMapColorGradientButton->setChecked(true);
+    }
+}
+
 void GridLayerAttributesDialog::on_buttonBox_clicked(QAbstractButton *button) {
     QDialogButtonBox::StandardButton standardButton = ui->buttonBox->standardButton(button);
     
@@ -98,6 +154,7 @@ void GridLayerAttributesDialog::on_buttonBox_clicked(QAbstractButton *button) {
     gridData->setMaximumRange(ui->edtMaximum->text().toDouble());
     gridData->setWeightBar(ui->chkWeightBar->isChecked());
     gridData->setLighting(ui->chkLighting->isChecked());
+    gridData->setMapColorGradient(this->currentMapColorGradientButton->toolTip());
     
     // Points tab
     

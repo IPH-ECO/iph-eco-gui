@@ -71,6 +71,8 @@ void DatabaseUtility::createApplicationTables(QSqlDatabase &database) {
            "line_color varchar(50) default '#000000', " \
            "line_style int default x'FFFF', " \
            "line_width int default 1, " \
+           "map_color_gradient varchar(255) default 'Default', " \
+           "points_color_gradient varchar(255) default 'Default', " \
            "grid_data_configuration_id integer not null, " \
            "mesh_id integer not null" \
     ")";

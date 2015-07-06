@@ -5,6 +5,7 @@
 
 #include <QColor>
 #include <QDialog>
+#include <QToolButton>
 #include <QAbstractButton>
 
 namespace Ui {
@@ -19,11 +20,14 @@ private:
     double defaultMaximum;
     GridData *gridData;
     QColor currentLineColor;
+    QToolButton *currentMapColorGradientButton;
+    QToolButton *defaultMapColorGradientButton;
     
     bool isValid();
 private slots:
     void on_btnUseOriginalValues_clicked();
     void on_btnLineColor_clicked();
+    void colorGradientButtonClicked(bool checked);
     void on_buttonBox_clicked(QAbstractButton *button);
 public:
     explicit GridLayerAttributesDialog(QWidget *parent, GridData *gridData);

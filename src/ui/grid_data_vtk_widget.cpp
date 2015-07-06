@@ -1,4 +1,5 @@
 #include "include/ui/grid_data_vtk_widget.h"
+#include "include/domain/color_gradient.h"
 #include "include/ui/grid_data_context_menu.h"
 #include "include/ui/grid_data_dialog.h"
 
@@ -14,6 +15,7 @@
 #include <vtkPolyDataMapper.h>
 #include <vtkLabeledDataMapper.h>
 #include <vtkWindowToImageFilter.h>
+#include <vtkColorTransferFunction.h>
 #include <vtkInteractorStyleRubberBandZoom.h>
 
 vtkStandardNewMacro(GridDataMouseInteractor);
@@ -134,18 +136,26 @@ void GridDataVTKWidget::render(GridData *gridData) {
     inputPointsBar->SetPosition(0.05, 0.05);
 
     vtkPolyData *meshPolyData = mesh->getPolyData();
-    vtkSmartPointer<vtkLookupTable> colorMapTable = vtkSmartPointer<vtkLookupTable>::New();
+//    vtkSmartPointer<vtkLookupTable> colorMapTable = vtkSmartPointer<vtkLookupTable>::New();
 	std::string gridDataName(currentGridData->getName().toStdString());
+    vtkSmartPointer<vtkColorTransferFunction> mapColorTransferFunction = vtkSmartPointer<vtkColorTransferFunction>::New();
+    QList<QColor> colors = ColorGradientTemplate::getColors(gridData->getMapColorGradient());
+    double range = gridData->getMaximumRange() - gridData->getMininumRange(); // rename to interval
+    
+    for (int i = 0; i < colors.size(); i++) {
+        mapColorTransferFunction->AddRGBPoint(gridData->getMininumRange() + (i * range / (double) colors.size()), colors[i].redF(), colors[i].greenF(), colors[i].blueF());
+    }
     
 	meshPolyData->GetCellData()->SetActiveScalars(gridDataName.c_str());
-    colorMapTable->SetTableRange(gridData->getMininumRange(), gridData->getMaximumRange());
+//    colorMapTable->SetTableRange(gridData->getMininumRange(), gridData->getMaximumRange());
     
-    meshMapper->SetLookupTable(colorMapTable);
+    meshMapper->SetLookupTable(mapColorTransferFunction);
     meshMapper->UseLookupTableScalarRangeOn();
     meshMapper->SetScalarModeToUseCellData();
     
     colorMapBar = vtkSmartPointer<vtkScalarBarActor>::New();
-    colorMapBar->SetLookupTable(colorMapTable);
+//    colorMapBar->SetLookupTable(colorMapTable);
+    colorMapBar->SetLookupTable(mapColorTransferFunction);
     colorMapBar->SetTitle("Color Map");
     colorMapBar->SetNumberOfLabels(4);
     colorMapBar->SetWidth(0.1);

@@ -38,6 +38,8 @@ private:
     QString lineColor;
     int lineStyle;
     int lineWidth;
+    QString mapColorGradient;
+    QString pointsColorGradient;
     
     // Transient attributes
     QString inputFile;
@@ -81,6 +83,10 @@ public:
     void setLineStyle(const int &lineStyle);
     int getLineWidth() const;
     void setLineWidth(const int &lineWidth);
+    QString getMapColorGradient() const;
+    void setMapColorGradient(const QString &mapColorGradient);
+    QString getPointsColorGradient() const;
+    void setPointsColorGradient(const QString &pointsColorGradient);
     
     QString getInputFile() const;
     void setInputFile(const QString &inputFile);

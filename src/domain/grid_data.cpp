@@ -1,5 +1,6 @@
 #include "include/domain/grid_data.h"
 
+#include "include/domain/color_gradient.h"
 #include "include/utility/cgal_definitions.h"
 #include "include/exceptions/grid_data_exception.h"
 
@@ -16,7 +17,11 @@
 #include <QApplication>
 #include <vtkQuad.h>
 
-GridData::GridData(Mesh *mesh) : id(0), mesh(mesh), weightBar(true), lineColor("#000000"), lineStyle(0xFFFF), lineWidth(1), interpolationCanceled(false) {}
+GridData::GridData(Mesh *mesh) :
+    id(0), mesh(mesh), weightBar(true), lineColor("#000000"), lineStyle(0xFFFF), lineWidth(1),
+    mapColorGradient(ColorGradientTemplate::defaultTemplateName), pointsColorGradient(ColorGradientTemplate::defaultTemplateName),
+    interpolationCanceled(false)
+{}
 
 uint GridData::getId() const {
     return id;
@@ -151,6 +156,22 @@ int GridData::getLineWidth() const {
 
 void GridData::setLineWidth(const int &lineWidth) {
     this->lineWidth = lineWidth;
+}
+
+QString GridData::getMapColorGradient() const {
+    return mapColorGradient;
+}
+
+void GridData::setMapColorGradient(const QString &mapColorGradient) {
+    this->mapColorGradient = mapColorGradient;
+}
+
+QString GridData::getPointsColorGradient() const {
+    return pointsColorGradient;
+}
+
+void GridData::setPointsColorGradient(const QString &pointsColorGradient) {
+    this->pointsColorGradient = pointsColorGradient;
 }
 
 QString GridData::getInputFile() const {
