@@ -30,7 +30,7 @@ GridLayerAttributesDialog::GridLayerAttributesDialog(QWidget *parent, GridData *
     this->defaultMinimum = range[0];
     this->defaultMaximum = range[1];
     ui->lblOriginalValues->setText(QString("[%1, %2]").arg(this->defaultMinimum).arg(this->defaultMaximum));
-    ui->chkWeightBar->setChecked(gridData->getWeightBar());
+    ui->chkMapLegend->setChecked(gridData->getMapLegend());
     ui->chkLighting->setChecked(gridData->getLighting());
     
     // Line tab setup
@@ -152,7 +152,7 @@ void GridLayerAttributesDialog::on_buttonBox_clicked(QAbstractButton *button) {
     // Map tab
     gridData->setMinimumRange(ui->edtMinimum->text().toDouble());
     gridData->setMaximumRange(ui->edtMaximum->text().toDouble());
-    gridData->setWeightBar(ui->chkWeightBar->isChecked());
+    gridData->setMapLegend(ui->chkMapLegend->isChecked());
     gridData->setLighting(ui->chkLighting->isChecked());
     gridData->setMapColorGradient(this->currentMapColorGradientButton->toolTip());
     

@@ -33,7 +33,7 @@ private:
     // Visualization attributes
     double minimumRange;
     double maximumRange;
-    bool weightBar;
+    bool mapLegend;
     bool lighting;
     QString lineColor;
     int lineStyle;
@@ -75,8 +75,8 @@ public:
     void setMaximumRange(const double &maximumRange);
     bool getLighting() const;
     void setLighting(const bool &lighting);
-    bool getWeightBar() const;
-    void setWeightBar(const bool &weightBar);
+    bool getMapLegend() const;
+    void setMapLegend(const bool &mapLegend);
     QString getLineColor() const;
     void setLineColor(const QString &lineColor);
     int getLineStyle() const;

@@ -18,7 +18,7 @@
 #include <vtkQuad.h>
 
 GridData::GridData(Mesh *mesh) :
-    id(0), mesh(mesh), weightBar(true), lineColor("#000000"), lineStyle(0xFFFF), lineWidth(1),
+    id(0), mesh(mesh), mapLegend(true), lineColor("#000000"), lineStyle(0xFFFF), lineWidth(1),
     mapColorGradient(ColorGradientTemplate::defaultTemplateName), pointsColorGradient(ColorGradientTemplate::defaultTemplateName),
     interpolationCanceled(false)
 {}
@@ -126,12 +126,12 @@ void GridData::setLighting(const bool &lighting) {
     this->lighting = lighting;
 }
 
-bool GridData::getWeightBar() const {
-    return weightBar;
+bool GridData::getMapLegend() const {
+    return mapLegend;
 }
 
-void GridData::setWeightBar(const bool &weightBar) {
-    this->weightBar = weightBar;
+void GridData::setMapLegend(const bool &mapLegend) {
+    this->mapLegend = mapLegend;
 }
 
 QString GridData::getLineColor() const {

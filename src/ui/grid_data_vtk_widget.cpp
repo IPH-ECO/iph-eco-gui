@@ -168,7 +168,7 @@ void GridDataVTKWidget::render(GridData *gridData) {
         meshMapper->ScalarVisibilityOff();
     }
     
-    if (gridData->getWeightBar()) {
+    if (gridData->getMapLegend()) {
         colorMapBar->VisibilityOn();
     } else {
         colorMapBar->VisibilityOff();

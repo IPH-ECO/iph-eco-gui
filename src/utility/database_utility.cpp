@@ -67,7 +67,7 @@ void DatabaseUtility::createApplicationTables(QSqlDatabase &database) {
            "minimum_range float default 0, " \
            "maximum_range float default 0, " \
            "lighting bool default false, " \
-           "weight_bar bool default true, " \
+           "map_legend bool default true, " \
            "line_color varchar(50) default '#000000', " \
            "line_style int default x'FFFF', " \
            "line_width int default 1, " \

@@ -38,7 +38,9 @@ const QList<ColorGradient> ColorGradientTemplate::colorGradients = {
     ColorGradient("Gray", "#070707,#787878,#FFFFFF"),
     ColorGradient("Hot", "#0414FF,#04ECFF,#04FF15,#ECFF04,#FF1504"),
     ColorGradient("Rainbow", "#E200FB,#1900FB,#00FB3E,#FBFB00,#FB1500"),
-    ColorGradient("Levels", "#FFFFFF,#767676,#040404")
+    ColorGradient("Levels", "#FFFFFF,#767676,#040404"),
+    ColorGradient("BuPu", "#FFFFFF,#8D8EC2,#570655"),
+    ColorGradient("YlOrBr", "#FFFFFF,#F17E1D,#722B08")
 };
 
 QString ColorGradientTemplate::getTemplateName(int index) {

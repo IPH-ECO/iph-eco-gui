@@ -103,9 +103,16 @@
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_3">
           <item>
-           <widget class="QCheckBox" name="chkWeightBar">
+           <widget class="QCheckBox" name="chkInvertColorTemplate">
             <property name="text">
-             <string>Values bar</string>
+             <string>Invert color template</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="chkMapLegend">
+            <property name="text">
+             <string>Legend</string>
             </property>
            </widget>
           </item>
