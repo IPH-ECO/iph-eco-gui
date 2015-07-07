@@ -11,6 +11,7 @@
 #include <vtkDoubleArray.h>
 #include <vtkLookupTable.h>
 #include <vtkCellCenters.h>
+#include <vtkExtractEdges.h>
 #include <vtkTextProperty.h>
 #include <vtkPolyDataMapper.h>
 #include <vtkLabeledDataMapper.h>
@@ -52,25 +53,33 @@ void GridDataVTKWidget::render(Mesh *mesh) {
     }
     
     currentMesh = mesh;
+    vtkPolyData *meshPolyData = currentMesh->getPolyData();
+    
     renderer->RemoveActor(meshActor);
     renderer->RemoveActor(axesActor);
     
-    mouseInteractor->setMeshPolyData(currentMesh->getPolyData());
+    mouseInteractor->setMeshPolyData(meshPolyData);
     mouseInteractor->deactivateCellPicking();
+    
+    vtkSmartPointer<vtkExtractEdges> extractEdges = vtkSmartPointer<vtkExtractEdges>::New();
+    extractEdges->SetInputData(meshPolyData);
+    extractEdges->Update();
     
     // Mesh rendering
     meshMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-    meshMapper->SetInputData(currentMesh->getPolyData());
+    meshMapper->SetInputConnection(extractEdges->GetOutputPort());
     meshMapper->ScalarVisibilityOff();
+    meshMapper->SetResolveCoincidentTopologyToShiftZBuffer();
     
     meshActor = vtkSmartPointer<vtkActor>::New();
-    meshActor->GetProperty()->LightingOff();
     meshActor->SetMapper(meshMapper);
+    meshActor->GetProperty()->LightingOff();
+    meshActor->GetProperty()->SetColor(0, 0, 0);
     
     if (this->showMesh) {
-        meshActor->GetProperty()->EdgeVisibilityOn();
+        meshActor->VisibilityOn();
     } else {
-        meshActor->GetProperty()->EdgeVisibilityOff();
+        meshActor->VisibilityOff();
     }
     
     axesActor = vtkSmartPointer<vtkCubeAxesActor>::New();
@@ -98,6 +107,103 @@ void GridDataVTKWidget::render(Mesh *mesh) {
     renderer->AddActor(meshActor);
     renderer->AddActor(axesActor);
     renderer->ResetCamera();
+}
+
+void GridDataVTKWidget::render(GridData *gridData) {
+    Mesh *mesh = gridData->getMesh();
+    
+    render(mesh);
+
+    currentGridData = gridData;
+    
+    QColor lineColor(gridData->getMeshLineColor());
+    
+    meshActor->GetProperty()->SetColor(lineColor.redF(), lineColor.greenF(), lineColor.blueF());
+    meshActor->GetProperty()->SetLineStipplePattern(gridData->getMeshLineStyle());
+    meshActor->GetProperty()->SetLineWidth(gridData->getMeshLineWidth());
+    meshActor->GetProperty()->SetOpacity(gridData->getMeshOpacity() / 100.0);
+    
+    vtkPolyData *inputPointsPolyData = currentGridData->getInputPolyData();
+    vtkColorTransferFunction *pointsColorTransferFunction = buildColorTransferFunction(false);
+    vtkSmartPointer<vtkPolyDataMapper> inputPointsMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+    
+    inputPointsMapper->SetInputData(inputPointsPolyData);
+    inputPointsMapper->SetLookupTable(pointsColorTransferFunction);
+    inputPointsMapper->UseLookupTableScalarRangeOn();
+    inputPointsMapper->SetScalarModeToUsePointData();
+    
+    gridDataActor = vtkSmartPointer<vtkActor>::New();
+    gridDataActor->SetMapper(inputPointsMapper);
+    gridDataActor->GetProperty()->SetOpacity(gridData->getPointsOpacity() / 100.0);
+    gridDataActor->GetProperty()->SetPointSize(gridData->getPointsSize());
+    
+    std::string inputPointsBarTitle = currentGridData->getName().toStdString();
+    
+    inputPointsBar = vtkSmartPointer<vtkScalarBarActor>::New();
+    inputPointsBar->SetLookupTable(pointsColorTransferFunction);
+    inputPointsBar->SetTitle(inputPointsBarTitle.c_str());
+    inputPointsBar->SetNumberOfLabels(4);
+    inputPointsBar->SetWidth(0.1);
+    inputPointsBar->SetHeight(0.5);
+    inputPointsBar->SetPosition(0.05, 0.05);
+
+    vtkPolyData *meshPolyData = mesh->getPolyData();
+	std::string gridDataName(currentGridData->getName().toStdString());
+    vtkColorTransferFunction *mapColorTransferFunction = buildColorTransferFunction(true);
+
+    meshPolyData->GetCellData()->SetActiveScalars(gridDataName.c_str());
+    gridMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+    gridMapper->SetInputData(meshPolyData);
+    gridMapper->SetLookupTable(mapColorTransferFunction);
+    gridMapper->UseLookupTableScalarRangeOn();
+    gridMapper->SetScalarModeToUseCellData();
+    
+    gridActor = vtkSmartPointer<vtkActor>::New();
+    gridActor->SetMapper(gridMapper);
+    gridActor->GetProperty()->EdgeVisibilityOff();
+    
+    colorMapBar = vtkSmartPointer<vtkScalarBarActor>::New();
+    colorMapBar->SetLookupTable(mapColorTransferFunction);
+    colorMapBar->SetTitle("Color Map");
+    colorMapBar->SetNumberOfLabels(4);
+    colorMapBar->SetWidth(0.1);
+    colorMapBar->SetHeight(0.5);
+    colorMapBar->SetPosition(0.85, 0.05);
+    
+    if (gridData->getMapLegend()) {
+        colorMapBar->VisibilityOn();
+    } else {
+        colorMapBar->VisibilityOff();
+    }
+    
+    if (gridData->getPointsLegend()) {
+        inputPointsBar->VisibilityOn();
+    } else {
+        inputPointsBar->VisibilityOff();
+    }
+    
+    if (currentGridData->getMapLighting()) {
+        gridActor->GetProperty()->LightingOn();
+    } else {
+        gridActor->GetProperty()->LightingOff();
+    }
+    
+    if (showColorMap) {
+        gridMapper->ScalarVisibilityOn();
+    } else {
+        gridMapper->ScalarVisibilityOff();
+    }
+    
+    if (showGridDataPoints) {
+        gridDataActor->VisibilityOn();
+    } else {
+        gridDataActor->VisibilityOff();
+    }
+    
+    renderer->AddActor(gridActor);
+    renderer->AddActor(gridDataActor);
+    renderer->AddActor2D(colorMapBar);
+    renderer->AddActor2D(inputPointsBar);
 }
 
 vtkColorTransferFunction* GridDataVTKWidget::buildColorTransferFunction(bool isColorMap) {
@@ -139,109 +245,20 @@ vtkColorTransferFunction* GridDataVTKWidget::buildColorTransferFunction(bool isC
     return colorTransferFunction;
 }
 
-void GridDataVTKWidget::render(GridData *gridData) {
-    Mesh *mesh = gridData->getMesh();
-    
-    render(mesh);
-
-    currentGridData = gridData;
-    
-    QColor lineColor(gridData->getMeshLineColor());
-    meshActor->GetProperty()->SetEdgeColor(lineColor.redF(), lineColor.greenF(), lineColor.blueF());
-    meshActor->GetProperty()->SetLineStipplePattern(gridData->getMeshLineStyle());
-    meshActor->GetProperty()->SetLineWidth(gridData->getMeshLineWidth());
-    meshActor->GetProperty()->SetOpacity(gridData->getMapOpacity() / 100.0);
-    
-    vtkPolyData *inputPointsPolyData = currentGridData->getInputPolyData();
-    vtkColorTransferFunction *pointsColorTransferFunction = buildColorTransferFunction(false);
-    vtkSmartPointer<vtkPolyDataMapper> inputPointsMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-    
-    inputPointsMapper->SetInputData(inputPointsPolyData);
-    inputPointsMapper->SetLookupTable(pointsColorTransferFunction);
-    inputPointsMapper->UseLookupTableScalarRangeOn();
-    inputPointsMapper->SetScalarModeToUsePointData();
-    
-    gridDataActor = vtkSmartPointer<vtkActor>::New();
-    gridDataActor->SetMapper(inputPointsMapper);
-    gridDataActor->GetProperty()->SetOpacity(gridData->getPointsOpacity() / 100.0);
-    gridDataActor->GetProperty()->SetPointSize(gridData->getPointsSize());
-    
-    std::string inputPointsBarTitle = currentGridData->getName().toStdString();
-    
-    inputPointsBar = vtkSmartPointer<vtkScalarBarActor>::New();
-    inputPointsBar->SetLookupTable(pointsColorTransferFunction);
-    inputPointsBar->SetTitle(inputPointsBarTitle.c_str());
-    inputPointsBar->SetNumberOfLabels(4);
-    inputPointsBar->SetWidth(0.1);
-    inputPointsBar->SetHeight(0.5);
-    inputPointsBar->SetPosition(0.05, 0.05);
-
-    vtkPolyData *meshPolyData = mesh->getPolyData();
-	std::string gridDataName(currentGridData->getName().toStdString());
-    vtkColorTransferFunction *mapColorTransferFunction = buildColorTransferFunction(true);
-    
-    meshPolyData->GetCellData()->SetActiveScalars(gridDataName.c_str());
-    meshMapper->SetLookupTable(mapColorTransferFunction);
-    meshMapper->UseLookupTableScalarRangeOn();
-    meshMapper->SetScalarModeToUseCellData();
-    
-    colorMapBar = vtkSmartPointer<vtkScalarBarActor>::New();
-    colorMapBar->SetLookupTable(mapColorTransferFunction);
-    colorMapBar->SetTitle("Color Map");
-    colorMapBar->SetNumberOfLabels(4);
-    colorMapBar->SetWidth(0.1);
-    colorMapBar->SetHeight(0.5);
-    colorMapBar->SetPosition(0.85, 0.05);
-    
-    if (gridData->getMapLegend()) {
-        colorMapBar->VisibilityOn();
-    } else {
-        colorMapBar->VisibilityOff();
-    }
-    
-    if (gridData->getPointsLegend()) {
-        inputPointsBar->VisibilityOn();
-    } else {
-        inputPointsBar->VisibilityOff();
-    }
-    
-    if (currentGridData->getMapLighting()) {
-        meshActor->GetProperty()->LightingOn();
-    } else {
-        meshActor->GetProperty()->LightingOff();
-    }
-    
-    if (showColorMap) {
-        meshMapper->ScalarVisibilityOn();
-    } else {
-        meshMapper->ScalarVisibilityOff();
-    }
-    
-    if (showGridDataPoints) {
-        gridDataActor->VisibilityOn();
-    } else {
-        gridDataActor->VisibilityOff();
-    }
-    
-    renderer->AddActor(gridDataActor);
-    renderer->AddActor2D(colorMapBar);
-    renderer->AddActor2D(inputPointsBar);
-}
-
 void GridDataVTKWidget::setShowMesh(bool show) {
     vtkActor *selectionActor = mouseInteractor->getSelectionActor();
     
     this->showMesh = show;
     
     if (show) {
-        meshActor->GetProperty()->EdgeVisibilityOn();
+        meshActor->VisibilityOn();
         vtkActor *selectionActor = mouseInteractor->getSelectionActor();
         if (selectionActor != nullptr) {
             selectionActor->VisibilityOn();
             mouseInteractor->getSelectionIdLabelsActor()->VisibilityOn();
         }
     } else {
-        meshActor->GetProperty()->EdgeVisibilityOff();
+        meshActor->VisibilityOff();
         if (selectionActor != nullptr) {
             selectionActor->VisibilityOff();
             mouseInteractor->getSelectionIdLabelsActor()->VisibilityOff();
@@ -286,9 +303,9 @@ void GridDataVTKWidget::setShowColorMap(bool show) {
     }
     
     if (show) {
-        meshMapper->ScalarVisibilityOn();
+        gridMapper->ScalarVisibilityOn();
     } else {
-        meshMapper->ScalarVisibilityOff();
+        gridMapper->ScalarVisibilityOff();
     }
     this->update();
 }

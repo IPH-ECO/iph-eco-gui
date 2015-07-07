@@ -33,10 +33,12 @@ private:
     vtkSmartPointer<GridDataMouseInteractor> mouseInteractor;
     
     vtkSmartPointer<vtkActor> meshActor;
+    vtkSmartPointer<vtkActor> gridActor;
     vtkSmartPointer<vtkActor2D> cellLabelsActor;
     vtkSmartPointer<vtkCubeAxesActor> axesActor;
     vtkSmartPointer<vtkActor> gridDataActor;
     vtkSmartPointer<vtkPolyDataMapper> meshMapper;
+    vtkSmartPointer<vtkPolyDataMapper> gridMapper;
     vtkSmartPointer<vtkScalarBarActor> inputPointsBar;
     vtkSmartPointer<vtkScalarBarActor> colorMapBar;
     
