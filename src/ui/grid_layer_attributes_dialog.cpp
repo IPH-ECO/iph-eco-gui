@@ -74,17 +74,17 @@ void GridLayerAttributesDialog::setupMeshTab() {
     Qt::PenStyle styles[2] = { Qt::SolidLine, Qt::DashLine };
     
     for (int i = 0; i < 2; i++) {
-        QPixmap pix(120, 14);
-        pix.fill(Qt::white);
+        QPixmap pix(150, 14);
+        pix.fill(Qt::transparent);
         
         QBrush brush(Qt::black);
         QPen pen(brush, 2, styles[i]);
         QPainter painter(&pix);
         
         painter.setPen(pen);
-        painter.drawLine(2, 8, 118, 8);
+        painter.drawLine(2, 8, 148, 8);
         
-        ui->cbxLineStyle->setIconSize(QSize(120, 14));
+        ui->cbxLineStyle->setIconSize(QSize(150, 14));
         ui->cbxLineStyle->addItem(QIcon(pix), "");
     }
     
