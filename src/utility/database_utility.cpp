@@ -64,15 +64,28 @@ void DatabaseUtility::createApplicationTables(QSqlDatabase &database) {
            "input_poly_data text not null, " \
            "exponent float, " \
            "radius float, " \
-           "minimum_range float default 0, " \
-           "maximum_range float default 0, " \
-           "lighting bool default false, " \
-           "map_legend bool default true, " \
-           "line_color varchar(50) default '#000000', " \
-           "line_style int default x'FFFF', " \
-           "line_width int default 1, " \
+           
+           "map_minimum_range float default 0, " \
+           "map_maximum_range float default 0, " \
            "map_color_gradient varchar(255) default 'Default', " \
+           "map_invert_color_gradient bool default false, " \
+           "map_opacity int default 100, " \
+           "map_lighting bool default false, " \
+           "map_legend bool default true, " \
+
+           "points_minimum_range float default 0, " \
+           "points_maximum_range float default 0, " \
            "points_color_gradient varchar(255) default 'Default', " \
+           "points_invert_color_gradient bool default false, " \
+           "points_opacity int default 100, " \
+           "points_size int default 1, " \
+           "points_legend bool default false, " \
+           
+           "mesh_line_color varchar(50) default '#000000', " \
+           "mesh_line_style int default x'FFFF', " \
+           "mesh_line_width int default 1, " \
+           "mesh_opacity int default 100, " \
+
            "grid_data_configuration_id integer not null, " \
            "mesh_id integer not null" \
     ")";

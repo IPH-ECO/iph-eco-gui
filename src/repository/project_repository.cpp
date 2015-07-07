@@ -142,16 +142,29 @@ void ProjectRepository::loadGridData(GridDataConfiguration *gridDataConfiguratio
         gridData->loadInputPolyDataFromStringPolyData(query.value("input_poly_data").toString());
         gridData->setExponent(query.value("exponent").toDouble());
         gridData->setRadius(query.value("radius").toDouble());
-        gridData->setMinimumRange(query.value("minimum_range").toDouble());
-        gridData->setMaximumRange(query.value("maximum_range").toDouble());
-        gridData->setLighting(query.value("lighting").toBool());
-        gridData->setMapLegend(query.value("map_legend").toBool());
-        gridData->setGridDataConfiguration(gridDataConfiguration);
-        gridData->setLineColor(query.value("line_color").toString());
-        gridData->setLineStyle(query.value("line_style").toInt());
-        gridData->setLineWidth(query.value("line_width").toInt());
+
+        gridData->setMapMinimumRange(query.value("map_minimum_range").toDouble());
+        gridData->setMapMaximumRange(query.value("map_maximum_range").toDouble());
         gridData->setMapColorGradient(query.value("map_color_gradient").toString());
+        gridData->setMapInvertColorGradient(query.value("map_invert_color_gradient").toBool());
+        gridData->setMapOpacity(query.value("map_opacity").toInt());
+        gridData->setMapLighting(query.value("map_lighting").toBool());
+        gridData->setMapLegend(query.value("map_legend").toBool());
+        
+        gridData->setPointsMinimumRange(query.value("points_minimum_range").toDouble());
+        gridData->setPointsMaximumRange(query.value("points_maximum_range").toDouble());
         gridData->setPointsColorGradient(query.value("points_color_gradient").toString());
+        gridData->setPointsInvertColorGradient(query.value("points_invert_color_gradient").toBool());
+        gridData->setPointsOpacity(query.value("points_opacity").toInt());
+        gridData->setPointsSize(query.value("points_size").toInt());
+        gridData->setPointsLegend(query.value("points_legend").toBool());
+
+        gridData->setMeshLineColor(query.value("mesh_line_color").toString());
+        gridData->setMeshLineStyle(query.value("mesh_line_style").toInt());
+        gridData->setMeshLineWidth(query.value("mesh_line_width").toInt());
+        gridData->setMeshOpacity(query.value("mesh_opacity").toInt());
+
+        gridData->setGridDataConfiguration(gridDataConfiguration);
         
         gridDataConfiguration->addGridData(gridData);
         
@@ -403,14 +416,19 @@ void ProjectRepository::saveGridData(GridDataConfiguration *gridDataConfiguratio
         if (gridData->isPersisted()) {
             query.prepare("update grid_data set " \
                           "name = :n, input_type = :it, grid_type = :gt, input_poly_data = :ipd, exponent = :e, radius = :r, " \
-                          "minimum_range = :minr, maximum_range = :maxr, lighting = :li, map_legend = :ml, line_color = :lc, line_style = :ls, line_width = :lw, " \
-                          "map_color_gradient = :mcg, points_color_gradient = :pcg " \
+                          "map_minimum_range = :mminr, map_maximum_range = :mmaxr, map_color_gradient = :mcg, map_invert_color_gradient = :micg, map_opacity = :mop, map_lighting = :mli, map_legend = :mle, " \
+                          "points_minimum_range = :pminr, points_maximum_range = :pmaxr, points_color_gradient = :pcg, points_invert_color_gradient = :picg, points_opacity = :pop, points_size = :psz, points_legend = :ple, " \
+                          "mesh_line_color = :mlc, mesh_line_style = :mls, mesh_line_width = :mlw, mesh_opacity = :meop " \
                           "where id = :i");
             query.bindValue(":i", gridData->getId());
         } else {
             query.prepare("insert into grid_data (" \
-                          "name, input_type, grid_type, input_poly_data, exponent, radius, minimum_range, maximum_range, lighting, map_legend, line_color, line_style, line_width, map_color_gradient, points_color_gradient, grid_data_configuration_id, mesh_id) " \
-                          "values (:n, :it, :gt, :ipd, :e, :r, :minr, :maxr, :li, :ml, :lc, :ls, :lw, :mcg, :pcg, :gdc, :m)");
+                          "name, input_type, grid_type, input_poly_data, exponent, radius, " \
+                          "map_minimum_range, map_maximum_range, map_color_gradient, map_invert_color_gradient, map_opacity, map_lighting, map_legend, " \
+                          "points_minimum_range, points_maximum_range, points_color_gradient, points_invert_color_gradient, points_opacity, points_size, points_legend, " \
+                          "mesh_line_color, mesh_line_style, mesh_line_width, mesh_opacity, " \
+                          "grid_data_configuration_id, mesh_id) " \
+                          "values (:n, :it, :gt, :ipd, :e, :r, :mminr, :mmaxr, :mcg, :micg, :mop, :mli, :mle, :pminr, :pmaxr, :pcg, :picg, :pop, :psz, :ple, :mlc, :mls, :mlw, :meop, :gdc, :m)");
             query.bindValue(":gdc", gridDataConfiguration->getId());
             query.bindValue(":m", gridData->getMesh()->getId());
         }
@@ -428,15 +446,26 @@ void ProjectRepository::saveGridData(GridDataConfiguration *gridDataConfiguratio
             query.bindValue(":r", "NULL");
         }
         
-        query.bindValue(":minr", gridData->getMininumRange());
-        query.bindValue(":maxr", gridData->getMaximumRange());
-        query.bindValue(":li", gridData->getLighting());
-        query.bindValue(":ml", gridData->getMapLegend());
-        query.bindValue(":lc", gridData->getLineColor());
-        query.bindValue(":ls", gridData->getLineStyle());
-        query.bindValue(":lw", gridData->getLineWidth());
+        query.bindValue(":mminr", gridData->getMapMininumRange());
+        query.bindValue(":mmaxr", gridData->getMapMaximumRange());
         query.bindValue(":mcg", gridData->getMapColorGradient());
+        query.bindValue(":micg", gridData->getMapInvertColorGradient());
+        query.bindValue(":mop", gridData->getMapOpacity());
+        query.bindValue(":mli", gridData->getMapLighting());
+        query.bindValue(":mle", gridData->getMapLegend());
+
+        query.bindValue(":pminr", gridData->getPointsMininumRange());
+        query.bindValue(":pmaxr", gridData->getPointsMaximumRange());
         query.bindValue(":pcg", gridData->getPointsColorGradient());
+        query.bindValue(":picg", gridData->getPointsInvertColorGradient());
+        query.bindValue(":pop", gridData->getPointsOpacity());
+        query.bindValue(":psz", gridData->getPointsSize());
+        query.bindValue(":ple", gridData->getPointsLegend());
+
+        query.bindValue(":mlc", gridData->getMeshLineColor());
+        query.bindValue(":mls", gridData->getMeshLineStyle());
+        query.bindValue(":mlw", gridData->getMeshLineWidth());
+        query.bindValue(":meop", gridData->getMeshOpacity());
         
         if (!query.exec()) {
             throw DatabaseException(QString("Unable to save grid data configurations. Error: %1.").arg(query.lastError().text()));

@@ -12,6 +12,7 @@
 #include <vtkCubeAxesActor.h>
 #include <vtkScalarBarActor.h>
 #include <vtkWorldPointPicker.h>
+#include <vtkColorTransferFunction.h>
 #include <vtkRenderWindowInteractor.h>
 
 class GridDataContextMenu;
@@ -48,6 +49,8 @@ private:
     bool showGridDataPoints;
     bool showColorMap;
     bool isCellPickActivated;
+    
+    vtkColorTransferFunction* buildColorTransferFunction(bool isColorMap);
 
 private slots:
     void handleMouseEvent(QMouseEvent *event);

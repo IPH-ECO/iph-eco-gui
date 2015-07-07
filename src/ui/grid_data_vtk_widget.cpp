@@ -100,6 +100,45 @@ void GridDataVTKWidget::render(Mesh *mesh) {
     renderer->ResetCamera();
 }
 
+vtkColorTransferFunction* GridDataVTKWidget::buildColorTransferFunction(bool isColorMap) {
+    vtkColorTransferFunction *colorTransferFunction = vtkColorTransferFunction::New();
+    QList<QColor> colors;
+    bool invertScalarBar;
+    double minimumRange;
+    double maximumRange;
+    double interval;
+    
+    if (isColorMap) {
+        colors = ColorGradientTemplate::getColors(currentGridData->getMapColorGradient());
+        invertScalarBar = currentGridData->getMapInvertColorGradient();
+        minimumRange = currentGridData->getMapMininumRange();
+        maximumRange = currentGridData->getMapMaximumRange();
+        interval = currentGridData->getMapMaximumRange() - currentGridData->getMapMininumRange();
+    } else {
+        colors = ColorGradientTemplate::getColors(currentGridData->getPointsColorGradient());
+        invertScalarBar = currentGridData->getPointsInvertColorGradient();
+        minimumRange = currentGridData->getPointsMininumRange();
+        maximumRange = currentGridData->getPointsMaximumRange();
+        interval = currentGridData->getPointsMaximumRange() - currentGridData->getPointsMininumRange();
+    }
+    
+    if (invertScalarBar) {
+        for (int i = colors.size() - 1, j = 0; i > 0; i--, j++) {
+            double x = minimumRange + j * interval / (double) colors.size();
+            colorTransferFunction->AddRGBPoint(x, colors[i].redF(), colors[i].greenF(), colors[i].blueF());
+        }
+        colorTransferFunction->AddRGBPoint(maximumRange, colors.first().redF(), colors.first().greenF(), colors.first().blueF());
+    } else {
+        for (int i = 0; i < colors.size() - 1; i++) {
+            double x = minimumRange + i * interval / (double) colors.size();
+            colorTransferFunction->AddRGBPoint(x, colors[i].redF(), colors[i].greenF(), colors[i].blueF());
+        }
+        colorTransferFunction->AddRGBPoint(maximumRange, colors.last().redF(), colors.last().greenF(), colors.last().blueF());
+    }
+    
+    return colorTransferFunction;
+}
+
 void GridDataVTKWidget::render(GridData *gridData) {
     Mesh *mesh = gridData->getMesh();
     
@@ -107,54 +146,46 @@ void GridDataVTKWidget::render(GridData *gridData) {
 
     currentGridData = gridData;
     
-    QColor lineColor(gridData->getLineColor());
+    QColor lineColor(gridData->getMeshLineColor());
     meshActor->GetProperty()->SetEdgeColor(lineColor.redF(), lineColor.greenF(), lineColor.blueF());
-    meshActor->GetProperty()->SetLineStipplePattern(gridData->getLineStyle());
-    meshActor->GetProperty()->SetLineWidth(gridData->getLineWidth());
+    meshActor->GetProperty()->SetLineStipplePattern(gridData->getMeshLineStyle());
+    meshActor->GetProperty()->SetLineWidth(gridData->getMeshLineWidth());
+    meshActor->GetProperty()->SetOpacity(gridData->getMapOpacity() / 100.0);
     
     vtkPolyData *inputPointsPolyData = currentGridData->getInputPolyData();
+    vtkColorTransferFunction *pointsColorTransferFunction = buildColorTransferFunction(false);
     vtkSmartPointer<vtkPolyDataMapper> inputPointsMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-    vtkSmartPointer<vtkLookupTable> inputPointsTable = vtkSmartPointer<vtkLookupTable>::New();
-    double *interval = inputPointsPolyData->GetPointData()->GetScalars()->GetRange();
-    
-    inputPointsTable->SetTableRange(interval[0], interval[1]);
     
     inputPointsMapper->SetInputData(inputPointsPolyData);
-    inputPointsMapper->SetLookupTable(inputPointsTable);
+    inputPointsMapper->SetLookupTable(pointsColorTransferFunction);
     inputPointsMapper->UseLookupTableScalarRangeOn();
     inputPointsMapper->SetScalarModeToUsePointData();
     
     gridDataActor = vtkSmartPointer<vtkActor>::New();
     gridDataActor->SetMapper(inputPointsMapper);
+    gridDataActor->GetProperty()->SetOpacity(gridData->getPointsOpacity() / 100.0);
+    gridDataActor->GetProperty()->SetPointSize(gridData->getPointsSize());
+    
+    std::string inputPointsBarTitle = currentGridData->getName().toStdString();
     
     inputPointsBar = vtkSmartPointer<vtkScalarBarActor>::New();
-    inputPointsBar->SetLookupTable(inputPointsTable);
-    inputPointsBar->SetTitle(currentGridData->getName().toStdString().c_str());
+    inputPointsBar->SetLookupTable(pointsColorTransferFunction);
+    inputPointsBar->SetTitle(inputPointsBarTitle.c_str());
     inputPointsBar->SetNumberOfLabels(4);
     inputPointsBar->SetWidth(0.1);
     inputPointsBar->SetHeight(0.5);
     inputPointsBar->SetPosition(0.05, 0.05);
 
     vtkPolyData *meshPolyData = mesh->getPolyData();
-//    vtkSmartPointer<vtkLookupTable> colorMapTable = vtkSmartPointer<vtkLookupTable>::New();
 	std::string gridDataName(currentGridData->getName().toStdString());
-    vtkSmartPointer<vtkColorTransferFunction> mapColorTransferFunction = vtkSmartPointer<vtkColorTransferFunction>::New();
-    QList<QColor> colors = ColorGradientTemplate::getColors(gridData->getMapColorGradient());
-    double range = gridData->getMaximumRange() - gridData->getMininumRange(); // rename to interval
+    vtkColorTransferFunction *mapColorTransferFunction = buildColorTransferFunction(true);
     
-    for (int i = 0; i < colors.size(); i++) {
-        mapColorTransferFunction->AddRGBPoint(gridData->getMininumRange() + (i * range / (double) colors.size()), colors[i].redF(), colors[i].greenF(), colors[i].blueF());
-    }
-    
-	meshPolyData->GetCellData()->SetActiveScalars(gridDataName.c_str());
-//    colorMapTable->SetTableRange(gridData->getMininumRange(), gridData->getMaximumRange());
-    
+    meshPolyData->GetCellData()->SetActiveScalars(gridDataName.c_str());
     meshMapper->SetLookupTable(mapColorTransferFunction);
     meshMapper->UseLookupTableScalarRangeOn();
     meshMapper->SetScalarModeToUseCellData();
     
     colorMapBar = vtkSmartPointer<vtkScalarBarActor>::New();
-//    colorMapBar->SetLookupTable(colorMapTable);
     colorMapBar->SetLookupTable(mapColorTransferFunction);
     colorMapBar->SetTitle("Color Map");
     colorMapBar->SetNumberOfLabels(4);
@@ -162,30 +193,34 @@ void GridDataVTKWidget::render(GridData *gridData) {
     colorMapBar->SetHeight(0.5);
     colorMapBar->SetPosition(0.85, 0.05);
     
-    if (showColorMap) {
-        meshMapper->ScalarVisibilityOn();
-    } else {
-        meshMapper->ScalarVisibilityOff();
-    }
-    
     if (gridData->getMapLegend()) {
         colorMapBar->VisibilityOn();
     } else {
         colorMapBar->VisibilityOff();
     }
     
-    if (currentGridData->getLighting()) {
+    if (gridData->getPointsLegend()) {
+        inputPointsBar->VisibilityOn();
+    } else {
+        inputPointsBar->VisibilityOff();
+    }
+    
+    if (currentGridData->getMapLighting()) {
         meshActor->GetProperty()->LightingOn();
     } else {
         meshActor->GetProperty()->LightingOff();
     }
-        
+    
+    if (showColorMap) {
+        meshMapper->ScalarVisibilityOn();
+    } else {
+        meshMapper->ScalarVisibilityOff();
+    }
+    
     if (showGridDataPoints) {
         gridDataActor->VisibilityOn();
-        inputPointsBar->VisibilityOn();
     } else {
         gridDataActor->VisibilityOff();
-        inputPointsBar->VisibilityOff();
     }
     
     renderer->AddActor(gridDataActor);

@@ -5,6 +5,7 @@
 
 #include <vtkPolyData.h>
 #include <vtkCellData.h>
+#include <vtkPointData.h>
 #include <QDialogButtonBox>
 #include <QLinearGradient>
 #include <QColorDialog>
@@ -22,21 +23,49 @@ GridLayerAttributesDialog::GridLayerAttributesDialog(QWidget *parent, GridData *
 {
     ui->setupUi(this);
     
-    // Map tab setup
-    ui->edtMinimum->setText(QString::number(gridData->getMininumRange()));
-    ui->edtMaximum->setText(QString::number(gridData->getMaximumRange()));
-    
+    this->setupMapTab();
+    this->setupPointsTab();
+    this->setupMeshTab();
+
+    this->setFixedSize(this->sizeHint());
+}
+
+GridLayerAttributesDialog::~GridLayerAttributesDialog() {
+    delete ui;
+}
+
+void GridLayerAttributesDialog::setupMapTab() {
     double *range = gridData->getMesh()->getPolyData()->GetCellData()->GetScalars(gridData->getName().toStdString().c_str())->GetRange();
-    this->defaultMinimum = range[0];
-    this->defaultMaximum = range[1];
-    ui->lblOriginalValues->setText(QString("[%1, %2]").arg(this->defaultMinimum).arg(this->defaultMaximum));
+    this->defaultMapMinimum = range[0];
+    this->defaultMapMaximum = range[1];
+    
+    ui->edtMapMinimum->setText(QString::number(gridData->getMapMininumRange()));
+    ui->edtMapMaximum->setText(QString::number(gridData->getMapMaximumRange()));
+    ui->lblMapOriginalValues->setText(QString("[%1, %2]").arg(this->defaultMapMinimum).arg(this->defaultMapMaximum));
+    this->setupColorGradientTemplates(defaultMapColorGradientButton, currentMapColorGradientButton, true);
+    ui->chkMapInvertColorTemplate->setChecked(gridData->getMapInvertColorGradient());
+    ui->sldMapOpacity->setValue(gridData->getMapOpacity());
     ui->chkMapLegend->setChecked(gridData->getMapLegend());
-    ui->chkLighting->setChecked(gridData->getLighting());
+    ui->chkMapLighting->setChecked(gridData->getMapLighting());
+}
+
+void GridLayerAttributesDialog::setupPointsTab() {
+    double *range = gridData->getInputPolyData()->GetPointData()->GetScalars()->GetRange();
+    this->defaultPointsMinimum = range[0];
+    this->defaultPointsMaximum = range[1];
     
-    // Line tab setup
-    
-    // Mesh tab setup
-    this->currentLineColor = QColor(gridData->getLineColor());
+    ui->edtPointsMinimum->setText(QString::number(gridData->getPointsMininumRange()));
+    ui->edtPointsMaximum->setText(QString::number(gridData->getPointsMaximumRange()));
+    ui->lblPointsOriginalValues->setText(QString("[%1, %2]").arg(this->defaultPointsMinimum).arg(this->defaultPointsMaximum));
+    this->setupColorGradientTemplates(defaultPointsColorGradientButton, currentPointsColorGradientButton, false);
+    ui->chkPointsInvertColorTemplate->setChecked(gridData->getPointsInvertColorGradient());
+    ui->sldPointsOpacity->setValue(gridData->getPointsOpacity());
+    ui->spbPointsSize->setValue(gridData->getPointsSize());
+    ui->chkPointsLegend->setChecked(gridData->getPointsLegend());
+}
+
+void GridLayerAttributesDialog::setupMeshTab() {
+    this->currentLineColor = QColor(gridData->getMeshLineColor());
     QPixmap px(16, 16);
     
     px.fill(currentLineColor);
@@ -59,10 +88,13 @@ GridLayerAttributesDialog::GridLayerAttributesDialog(QWidget *parent, GridData *
         ui->cbxLineStyle->addItem(QIcon(pix), "");
     }
     
-    ui->cbxLineStyle->setCurrentIndex(gridData->getLineStyle() != 0xFFFF);
-    
-    ui->sbxLineWidth->setValue(gridData->getLineWidth());
-    
+    ui->cbxLineStyle->setCurrentIndex(gridData->getMeshLineStyle() != 0xFFFF);
+    ui->sbxLineWidth->setValue(gridData->getMeshLineWidth());
+    ui->sldMeshOpacity->setValue(gridData->getMeshOpacity());
+}
+
+void GridLayerAttributesDialog::setupColorGradientTemplates(QToolButton *&defaultButton, QToolButton *&currentButton, bool isMapTab) {
+    QGridLayout *layout = static_cast<QGridLayout*>(isMapTab ? ui->mapColorTemplateLayout->layout() : ui->pointsColorTemplateLayout->layout());
     int buttonWidth = 60, buttonHeight = 16;
     int row = 0, column = 0;
     
@@ -85,34 +117,39 @@ GridLayerAttributesDialog::GridLayerAttributesDialog(QWidget *parent, GridData *
         painter.fillRect(rectangle, gradient);
         
         QString templateName = ColorGradientTemplate::getTemplateName(i);
-        QToolButton *colorGradientButton = new QToolButton(ui->colorTemplateLayout);
+        QToolButton *colorGradientButton = new QToolButton(layout->widget());
         colorGradientButton->setIcon(icon);
         colorGradientButton->setCheckable(true);
         colorGradientButton->setIconSize(QSize(buttonWidth, buttonHeight));
         colorGradientButton->setToolTip(templateName);
         
         if (templateName == ColorGradientTemplate::defaultTemplateName) {
-            this->defaultMapColorGradientButton = colorGradientButton;
+            defaultButton = colorGradientButton;
         }
         
-        if (gridData->getMapColorGradient() == templateName) {
-            this->currentMapColorGradientButton = colorGradientButton;
-            this->currentMapColorGradientButton->setChecked(true);
+        if (isMapTab && gridData->getMapColorGradient() == templateName) {
+            currentButton = colorGradientButton;
+            currentButton->setChecked(true);
+        }
+        if (!isMapTab && gridData->getPointsColorGradient() == templateName) {
+            currentButton = colorGradientButton;
+            currentButton->setChecked(true);
         }
         
         QObject::connect(colorGradientButton, SIGNAL(clicked(bool)), this, SLOT(colorGradientButtonClicked(bool)));
         
-        static_cast<QGridLayout*>(ui->colorTemplateLayout->layout())->addWidget(colorGradientButton, row, column++);
+        layout->addWidget(colorGradientButton, row, column++);
     }
 }
 
-GridLayerAttributesDialog::~GridLayerAttributesDialog() {
-    delete ui;
+void GridLayerAttributesDialog::on_btnUseMapOriginalValues_clicked() {
+    ui->edtMapMinimum->setText(QString::number(this->defaultMapMinimum));
+    ui->edtMapMaximum->setText(QString::number(this->defaultMapMaximum));
 }
 
-void GridLayerAttributesDialog::on_btnUseOriginalValues_clicked() {
-    ui->edtMinimum->setText(QString::number(this->defaultMinimum));
-    ui->edtMaximum->setText(QString::number(this->defaultMaximum));
+void GridLayerAttributesDialog::on_btnUsePointsOriginalValues_clicked() {
+    ui->edtPointsMinimum->setText(QString::number(this->defaultPointsMinimum));
+    ui->edtPointsMaximum->setText(QString::number(this->defaultPointsMaximum));
 }
 
 void GridLayerAttributesDialog::on_btnLineColor_clicked() {
@@ -128,12 +165,16 @@ void GridLayerAttributesDialog::on_btnLineColor_clicked() {
 }
 
 void GridLayerAttributesDialog::colorGradientButtonClicked(bool checked) {
+    bool isMapTab = ui->tabWidget->tabText(ui->tabWidget->tabBar()->currentIndex()) == "Map";
+    QToolButton *&currentButton = isMapTab ? currentMapColorGradientButton : currentPointsColorGradientButton;
+    QToolButton *defaultButton = isMapTab ? defaultMapColorGradientButton : defaultPointsColorGradientButton;
+    
     if (checked) {
-        this->currentMapColorGradientButton->setChecked(false);
-        this->currentMapColorGradientButton = static_cast<QToolButton*>(QObject::sender());
+        currentButton->setChecked(false);
+        currentButton = static_cast<QToolButton*>(QObject::sender());
     } else {
-        this->currentMapColorGradientButton = this->defaultMapColorGradientButton;
-        this->currentMapColorGradientButton->setChecked(true);
+        currentButton = defaultButton;
+        currentButton->setChecked(true);
     }
 }
 
@@ -150,18 +191,28 @@ void GridLayerAttributesDialog::on_buttonBox_clicked(QAbstractButton *button) {
     }
     
     // Map tab
-    gridData->setMinimumRange(ui->edtMinimum->text().toDouble());
-    gridData->setMaximumRange(ui->edtMaximum->text().toDouble());
-    gridData->setMapLegend(ui->chkMapLegend->isChecked());
-    gridData->setLighting(ui->chkLighting->isChecked());
+    gridData->setMapMinimumRange(ui->edtMapMinimum->text().toDouble());
+    gridData->setMapMaximumRange(ui->edtMapMaximum->text().toDouble());
     gridData->setMapColorGradient(this->currentMapColorGradientButton->toolTip());
+    gridData->setMapInvertColorGradient(ui->chkMapInvertColorTemplate->isChecked());
+    gridData->setMapOpacity(ui->sldMapOpacity->value());
+    gridData->setMapLegend(ui->chkMapLegend->isChecked());
+    gridData->setMapLighting(ui->chkMapLighting->isChecked());
     
     // Points tab
+    gridData->setPointsMinimumRange(ui->edtPointsMinimum->text().toDouble());
+    gridData->setPointsMaximumRange(ui->edtPointsMaximum->text().toDouble());
+    gridData->setPointsColorGradient(this->currentPointsColorGradientButton->toolTip());
+    gridData->setPointsInvertColorGradient(ui->chkPointsInvertColorTemplate->isChecked());
+    gridData->setPointsOpacity(ui->sldPointsOpacity->value());
+    gridData->setPointsSize(ui->spbPointsSize->value());
+    gridData->setPointsLegend(ui->chkPointsLegend->isChecked());
     
     // Mesh tab
-    gridData->setLineColor(this->currentLineColor.name());
-    gridData->setLineStyle(ui->cbxLineStyle->currentIndex() == 0 ? 0xFFFF : 0xF0F0);
-    gridData->setLineWidth(ui->sbxLineWidth->value());
+    gridData->setMeshLineColor(this->currentLineColor.name());
+    gridData->setMeshLineStyle(ui->cbxLineStyle->currentIndex() == 0 ? 0xFFFF : 0xF0F0);
+    gridData->setMeshLineWidth(ui->sbxLineWidth->value());
+    gridData->setMeshOpacity(ui->sldMeshOpacity->value());
     
     GridDataDialog *gridDataDialog = static_cast<GridDataDialog*>(parentWidget());
     gridDataDialog->getGridDataVTKWidget()->render(gridData);
@@ -172,13 +223,30 @@ void GridLayerAttributesDialog::on_buttonBox_clicked(QAbstractButton *button) {
 }
 
 bool GridLayerAttributesDialog::isValid() {
-    if (ui->edtMinimum->text().isEmpty()) {
-        QMessageBox::warning(this, tr("Grid Layer"), tr("Minimum range can't be empty"));
-        return false;
-    }
-    if (ui->edtMaximum->text().isEmpty()) {
-        QMessageBox::warning(this, tr("Grid Layer"), tr("Maximum range can't be empty"));
-        return false;
+    bool isMapTab = ui->tabWidget->tabText(ui->tabWidget->tabBar()->currentIndex()) == "Map";
+    
+    if (isMapTab) {
+        if (ui->edtMapMinimum->text().isEmpty()) {
+            QMessageBox::warning(this, tr("Grid Layer"), tr("Minimum range can't be empty"));
+            return false;
+        }
+        if (ui->edtMapMaximum->text().isEmpty()) {
+            QMessageBox::warning(this, tr("Grid Layer"), tr("Maximum range can't be empty"));
+            return false;
+        }
+    } else {
+        bool isPointsTab = ui->tabWidget->tabText(ui->tabWidget->tabBar()->currentIndex()) == "Points";
+        
+        if (isPointsTab) {
+            if (ui->edtPointsMinimum->text().isEmpty()) {
+                QMessageBox::warning(this, tr("Grid Layer"), tr("Minimum range can't be empty"));
+                return false;
+            }
+            if (ui->edtPointsMaximum->text().isEmpty()) {
+                QMessageBox::warning(this, tr("Grid Layer"), tr("Maximum range can't be empty"));
+                return false;
+            }
+        }
     }
     
     return true;

@@ -31,15 +31,26 @@ private:
     Mesh *mesh;
     
     // Visualization attributes
-    double minimumRange;
-    double maximumRange;
-    bool mapLegend;
-    bool lighting;
-    QString lineColor;
-    int lineStyle;
-    int lineWidth;
+    double mapMinimumRange;
+    double mapMaximumRange;
     QString mapColorGradient;
+    bool mapInvertColorGradient;
+    int mapOpacity;
+    bool mapLegend;
+    bool mapLighting;
+    
+    double pointsMinimumRange;
+    double pointsMaximumRange;
     QString pointsColorGradient;
+    bool pointsInvertColorGradient;
+    int pointsOpacity;
+    int pointsSize;
+    bool pointsLegend;
+    
+    QString meshLineColor;
+    int meshLineStyle;
+    int meshLineWidth;
+    int meshOpacity;
     
     // Transient attributes
     QString inputFile;
@@ -69,24 +80,45 @@ public:
     void setGridDataConfiguration(GridDataConfiguration *gridDataConfiguration);
     Mesh* getMesh() const;
     void setMesh(Mesh *mesh);
-    double getMininumRange() const;
-    void setMinimumRange(const double &minimumRange);
-    double getMaximumRange() const;
-    void setMaximumRange(const double &maximumRange);
-    bool getLighting() const;
-    void setLighting(const bool &lighting);
-    bool getMapLegend() const;
-    void setMapLegend(const bool &mapLegend);
-    QString getLineColor() const;
-    void setLineColor(const QString &lineColor);
-    int getLineStyle() const;
-    void setLineStyle(const int &lineStyle);
-    int getLineWidth() const;
-    void setLineWidth(const int &lineWidth);
+    
+    double getMapMininumRange() const;
+    void setMapMinimumRange(const double &mapMinimumRange);
+    double getMapMaximumRange() const;
+    void setMapMaximumRange(const double &mapMaximumRange);
     QString getMapColorGradient() const;
     void setMapColorGradient(const QString &mapColorGradient);
+    bool getMapInvertColorGradient() const;
+    void setMapInvertColorGradient(const bool &mapInvertColorGradient);
+    int getMapOpacity() const;
+    void setMapOpacity(const int &mapOpacity);
+    bool getMapLegend() const;
+    void setMapLegend(const bool &mapLegend);
+    bool getMapLighting() const;
+    void setMapLighting(const bool &mapLighting);
+    
+    double getPointsMininumRange() const;
+    void setPointsMinimumRange(const double &pointsMinimumRange);
+    double getPointsMaximumRange() const;
+    void setPointsMaximumRange(const double &pointsMaximumRange);
     QString getPointsColorGradient() const;
     void setPointsColorGradient(const QString &pointsColorGradient);
+    bool getPointsInvertColorGradient() const;
+    void setPointsInvertColorGradient(const bool &pointsInvertColorGradient);
+    int getPointsOpacity() const;
+    void setPointsOpacity(const int &pointsOpacity);
+    int getPointsSize() const;
+    void setPointsSize(const int &pointsSize);
+    bool getPointsLegend() const;
+    void setPointsLegend(const bool &pointsLegend);
+    
+    QString getMeshLineColor() const;
+    void setMeshLineColor(const QString &meshLineColor);
+    int getMeshLineStyle() const;
+    void setMeshLineStyle(const int &meshLineStyle);
+    int getMeshLineWidth() const;
+    void setMeshLineWidth(const int &meshLineWidth);
+    int getMeshOpacity() const;
+    void setMeshOpacity(const int &meshOpacity);
     
     QString getInputFile() const;
     void setInputFile(const QString &inputFile);
