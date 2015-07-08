@@ -234,6 +234,10 @@ bool GridLayerAttributesDialog::isValid() {
             QMessageBox::warning(this, tr("Grid Layer"), tr("Maximum range can't be empty"));
             return false;
         }
+        if (ui->edtMapMinimum->text().toDouble() > ui->edtMapMaximum->text().toDouble()) {
+            QMessageBox::warning(this, tr("Grid Layer"), tr("Invalid range."));
+            return false;
+        }
     } else {
         bool isPointsTab = ui->tabWidget->tabText(ui->tabWidget->tabBar()->currentIndex()) == "Points";
         
@@ -244,6 +248,10 @@ bool GridLayerAttributesDialog::isValid() {
             }
             if (ui->edtPointsMaximum->text().isEmpty()) {
                 QMessageBox::warning(this, tr("Grid Layer"), tr("Maximum range can't be empty"));
+                return false;
+            }
+            if (ui->edtPointsMinimum->text().toDouble() > ui->edtPointsMaximum->text().toDouble()) {
+                QMessageBox::warning(this, tr("Grid Layer"), tr("Invalid range."));
                 return false;
             }
         }
