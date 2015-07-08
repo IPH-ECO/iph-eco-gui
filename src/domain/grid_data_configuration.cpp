@@ -39,6 +39,7 @@ bool GridDataConfiguration::addGridData(GridData *gridData) {
 }
 
 void GridDataConfiguration::removeGridData(GridData *gridData) {
+    gridData->getMesh()->removeArray(gridData->getName());
     gridDataVector.removeOne(gridData);
     delete gridData;
 }
@@ -48,6 +49,7 @@ void GridDataConfiguration::removeGridData(int i) {
 
     if (i < gridDataVector.count()) {
         gridData = gridDataVector.at(i);
+        gridData->getMesh()->removeArray(gridData->getName());
         gridDataVector.remove(i);
     }
 

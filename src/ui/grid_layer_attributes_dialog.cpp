@@ -223,38 +223,30 @@ void GridLayerAttributesDialog::on_buttonBox_clicked(QAbstractButton *button) {
 }
 
 bool GridLayerAttributesDialog::isValid() {
-    bool isMapTab = ui->tabWidget->tabText(ui->tabWidget->tabBar()->currentIndex()) == "Map";
+    if (ui->edtMapMinimum->text().isEmpty()) {
+        QMessageBox::warning(this, tr("Grid Layer"), tr("Minimum range can't be empty on Map tab"));
+        return false;
+    }
+    if (ui->edtMapMaximum->text().isEmpty()) {
+        QMessageBox::warning(this, tr("Grid Layer"), tr("Maximum range can't be empty on Map tab"));
+        return false;
+    }
+    if (ui->edtMapMinimum->text().toDouble() > ui->edtMapMaximum->text().toDouble()) {
+        QMessageBox::warning(this, tr("Grid Layer"), tr("Invalid range on Map tab."));
+        return false;
+    }
     
-    if (isMapTab) {
-        if (ui->edtMapMinimum->text().isEmpty()) {
-            QMessageBox::warning(this, tr("Grid Layer"), tr("Minimum range can't be empty"));
-            return false;
-        }
-        if (ui->edtMapMaximum->text().isEmpty()) {
-            QMessageBox::warning(this, tr("Grid Layer"), tr("Maximum range can't be empty"));
-            return false;
-        }
-        if (ui->edtMapMinimum->text().toDouble() > ui->edtMapMaximum->text().toDouble()) {
-            QMessageBox::warning(this, tr("Grid Layer"), tr("Invalid range."));
-            return false;
-        }
-    } else {
-        bool isPointsTab = ui->tabWidget->tabText(ui->tabWidget->tabBar()->currentIndex()) == "Points";
-        
-        if (isPointsTab) {
-            if (ui->edtPointsMinimum->text().isEmpty()) {
-                QMessageBox::warning(this, tr("Grid Layer"), tr("Minimum range can't be empty"));
-                return false;
-            }
-            if (ui->edtPointsMaximum->text().isEmpty()) {
-                QMessageBox::warning(this, tr("Grid Layer"), tr("Maximum range can't be empty"));
-                return false;
-            }
-            if (ui->edtPointsMinimum->text().toDouble() > ui->edtPointsMaximum->text().toDouble()) {
-                QMessageBox::warning(this, tr("Grid Layer"), tr("Invalid range."));
-                return false;
-            }
-        }
+    if (ui->edtPointsMinimum->text().isEmpty()) {
+        QMessageBox::warning(this, tr("Grid Layer"), tr("Minimum range can't be empty on Points tab"));
+        return false;
+    }
+    if (ui->edtPointsMaximum->text().isEmpty()) {
+        QMessageBox::warning(this, tr("Grid Layer"), tr("Maximum range can't be empty on Points tab"));
+        return false;
+    }
+    if (ui->edtPointsMinimum->text().toDouble() > ui->edtPointsMaximum->text().toDouble()) {
+        QMessageBox::warning(this, tr("Grid Layer"), tr("Invalid range on Points tab."));
+        return false;
     }
     
     return true;

@@ -209,3 +209,8 @@ bool Mesh::hasArray(const QString &arrayName) {
     std::string stdArrayName(arrayName.toStdString());
     return polyData->GetCellData()->HasArray(stdArrayName.c_str());
 }
+
+void Mesh::removeArray(const QString &arrayName) {
+    std::string stdArrayName(arrayName.toStdString());
+    polyData->GetCellData()->RemoveArray(stdArrayName.c_str());
+}

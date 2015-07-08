@@ -47,6 +47,7 @@ public:
 
     double area();
     bool hasArray(const QString &arrayName);
+    void removeArray(const QString &arrayName);
 
     virtual bool instanceOf(const QString &type) = 0;
     virtual void generate() = 0;

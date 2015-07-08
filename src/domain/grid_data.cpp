@@ -274,15 +274,16 @@ void GridData::buildInputPolyData() {
     reader->SetFileName(this->inputFile.toStdString().c_str());
     reader->Update();
 
-    inputPolyData = vtkSmartPointer<vtkPolyData>::New();
-    inputPolyData->DeepCopy(reader->GetOutput());
-    
-    vtkPoints *inputPoints = inputPolyData->GetPoints();
-    vtkIdType numberOfPoints = inputPoints->GetNumberOfPoints();
+    vtkIdType numberOfPoints = reader->GetOutput()->GetPoints()->GetNumberOfPoints();
     
     if (numberOfPoints == 0) {
         throw GridDataException("No points returned in grid data file.");
     }
+    
+    inputPolyData = vtkSmartPointer<vtkPolyData>::New();
+    inputPolyData->DeepCopy(reader->GetOutput());
+    
+    vtkPoints *inputPoints = inputPolyData->GetPoints();
     
     vtkSmartPointer<vtkDoubleArray> weights = vtkSmartPointer<vtkDoubleArray>::New();
 	weights->SetName("inputPoints");
