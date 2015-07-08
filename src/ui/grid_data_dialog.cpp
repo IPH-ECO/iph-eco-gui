@@ -240,8 +240,8 @@ void GridDataDialog::on_tblGridLayers_currentItemChanged(QTableWidgetItem *curre
         QString gridDataName = ui->tblGridLayers->item(current->row(), 0)->text();
         GridData *gridData = currentConfiguration->getGridData(gridDataName);
         
-        ui->gridDataVTKWidget->setShowGridDataPoints(ui->btnShowGridDataPoints->isChecked());
-        ui->gridDataVTKWidget->setShowColorMap(ui->btnShowColorMap->isChecked());
+        ui->gridDataVTKWidget->toggleMapPoints(ui->btnShowGridDataPoints->isChecked());
+        ui->gridDataVTKWidget->toggleMap(ui->btnShowColorMap->isChecked());
         ui->gridDataVTKWidget->render(gridData);
         ui->btnEditGridLayer->setEnabled(true);
     }

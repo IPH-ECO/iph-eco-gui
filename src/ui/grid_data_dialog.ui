@@ -730,10 +730,10 @@
    <extends>QWidget</extends>
    <header>include/ui/grid_data_vtk_widget.h</header>
    <slots>
-    <slot>setShowMesh(bool)</slot>
-    <slot>setShowGridDataPoints(bool)</slot>
-    <slot>setShowColorMap(bool)</slot>
-    <slot>setShowAxes(bool)</slot>
+    <slot>toggleMesh(bool)</slot>
+    <slot>toggleMapPoints(bool)</slot>
+    <slot>toggleMap(bool)</slot>
+    <slot>toggleAxes(bool)</slot>
     <slot>toggleZoomArea(bool)</slot>
     <slot>resetZoom()</slot>
    </slots>
@@ -756,7 +756,7 @@
    <sender>btnShowMesh</sender>
    <signal>clicked(bool)</signal>
    <receiver>gridDataVTKWidget</receiver>
-   <slot>setShowMesh(bool)</slot>
+   <slot>toggleMesh(bool)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>613</x>
@@ -772,7 +772,7 @@
    <sender>btnShowGridDataPoints</sender>
    <signal>clicked(bool)</signal>
    <receiver>gridDataVTKWidget</receiver>
-   <slot>setShowGridDataPoints(bool)</slot>
+   <slot>toggleMapPoints(bool)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>529</x>
@@ -788,7 +788,7 @@
    <sender>btnShowColorMap</sender>
    <signal>clicked(bool)</signal>
    <receiver>gridDataVTKWidget</receiver>
-   <slot>setShowColorMap(bool)</slot>
+   <slot>toggleMap(bool)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>571</x>
@@ -804,7 +804,7 @@
    <sender>btnShowAxes</sender>
    <signal>clicked(bool)</signal>
    <receiver>gridDataVTKWidget</receiver>
-   <slot>setShowAxes(bool)</slot>
+   <slot>toggleAxes(bool)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>516</x>

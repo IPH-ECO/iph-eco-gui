@@ -33,23 +33,22 @@ private:
     vtkSmartPointer<GridDataMouseInteractor> mouseInteractor;
     
     vtkSmartPointer<vtkActor> meshActor;
-    vtkSmartPointer<vtkActor> gridActor;
-    vtkSmartPointer<vtkActor2D> cellLabelsActor;
     vtkSmartPointer<vtkCubeAxesActor> axesActor;
-    vtkSmartPointer<vtkActor> gridDataActor;
-    vtkSmartPointer<vtkPolyDataMapper> meshMapper;
-    vtkSmartPointer<vtkPolyDataMapper> gridMapper;
-    vtkSmartPointer<vtkScalarBarActor> inputPointsBar;
-    vtkSmartPointer<vtkScalarBarActor> colorMapBar;
+    vtkSmartPointer<vtkActor> mapActor;
+    vtkSmartPointer<vtkScalarBarActor> mapBarActor;
+    vtkSmartPointer<vtkActor> mapPointsActor;
+    vtkSmartPointer<vtkScalarBarActor> mapPointsBarActor;
+    vtkSmartPointer<vtkActor2D> cellLabelsActor;
     
     vtkSmartPointer<vtkIdTypeArray> selectedCellIds;
+    
     Mesh *currentMesh;
     GridData *currentGridData;
     
     bool showMesh;
     bool showAxes;
-    bool showGridDataPoints;
-    bool showColorMap;
+    bool showMapPoints;
+    bool showMap;
     bool isCellPickActivated;
     
     vtkColorTransferFunction* buildColorTransferFunction(bool isColorMap);
@@ -68,10 +67,10 @@ public:
     void lockView(bool lock);
     void exportToImage(const QString &fileName);
 public slots:
-    void setShowMesh(bool show);
-    void setShowAxes(bool show);
-    void setShowGridDataPoints(bool show);
-    void setShowColorMap(bool show);
+    void toggleMesh(bool show);
+    void toggleAxes(bool show);
+    void toggleMapPoints(bool show);
+    void toggleMap(bool show);
     void toggleZoomArea(bool activate);
     void resetZoom();
 };
