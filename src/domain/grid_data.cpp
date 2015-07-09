@@ -462,8 +462,8 @@ QString GridData::gridDataTypeToString() const {
             return "Bathymetry";
         case GridDataType::WIND_REDUCTION:
             return "Wind Reduction Coefficient";
-        case GridDataType::CHEZY:
-            return "Chezy Coefficient";
+        case GridDataType::ROUGHNESS:
+            return "Roughness";
         case GridDataType::WETLAND_AREA:
             return "Wetland Area";
     }
@@ -476,8 +476,8 @@ GridDataType GridData::toGridDataType(const QString &gridDataTypeStr) {
     if (gridDataTypeStr == "Wind Reduction Coefficient") {
         return GridDataType::WIND_REDUCTION;
     }
-    if (gridDataTypeStr == "Chezy Coefficient") {
-        return GridDataType::CHEZY;
+    if (gridDataTypeStr == "Roughness") {
+        return GridDataType::ROUGHNESS;
     }
     
     return GridDataType::WETLAND_AREA;

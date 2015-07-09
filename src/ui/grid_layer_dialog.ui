@@ -110,10 +110,10 @@
    <item row="3" column="1" colspan="2">
     <widget class="QComboBox" name="cbxGridInformation">
      <property name="currentText">
-      <string/>
+      <string>Bathymetry</string>
      </property>
      <property name="currentIndex">
-      <number>-1</number>
+      <number>0</number>
      </property>
      <item>
       <property name="text">
@@ -127,7 +127,7 @@
      </item>
      <item>
       <property name="text">
-       <string>Chezy Coefficient</string>
+       <string>Roughness</string>
       </property>
      </item>
      <item>

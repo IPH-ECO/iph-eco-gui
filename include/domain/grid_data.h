@@ -15,7 +15,7 @@ class GridDataConfiguration;
 
 enum class GridDataInputType { POINT = 1, POLYGON };
 
-enum class GridDataType { BATHYMETRY = 1, WIND_REDUCTION, CHEZY, WETLAND_AREA };
+enum class GridDataType { BATHYMETRY = 1, WIND_REDUCTION, ROUGHNESS, WETLAND_AREA };
 
 class GridData : public QObject {
     Q_OBJECT
