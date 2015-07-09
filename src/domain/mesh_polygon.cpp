@@ -1,4 +1,7 @@
-#define _USE_MATH_DEFINES
+#if defined(_WIN32) || defined(_WIN64)
+    #define _USE_MATH_DEFINES
+#endif
+
 #include <cmath>
 
 #include "include/domain/mesh_polygon.h"
