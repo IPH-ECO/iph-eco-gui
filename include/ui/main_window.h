@@ -41,6 +41,7 @@ private slots:
 
     //Input
     void on_actionGridData_triggered();
+    void on_actionHydrodynamicData_triggered();
 
     void enableMenus(bool enable);
     void openRecent();

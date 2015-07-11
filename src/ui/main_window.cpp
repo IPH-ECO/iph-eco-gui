@@ -5,6 +5,7 @@
 #include "include/application/iph_application.h"
 #include "include/ui/structured_mesh_dialog.h"
 #include "include/ui/grid_data_dialog.h"
+#include "include/ui/hydrodynamic_data_dialog.h"
 #include "include/services/project_service.h"
 #include "include/repository/project_repository.h"
 
@@ -157,6 +158,11 @@ void MainWindow::on_actionStructuredMeshGeneration_triggered() {
 void MainWindow::on_actionGridData_triggered() {
     GridDataDialog *gridDataDialog = new GridDataDialog(this);
     gridDataDialog->exec();
+}
+
+void MainWindow::on_actionHydrodynamicData_triggered() {
+    HydrodynamicDataDialog *hydrodynamicDataDialog = new HydrodynamicDataDialog(this);
+    hydrodynamicDataDialog->exec();
 }
 
 void MainWindow::on_actionSobre_triggered() {

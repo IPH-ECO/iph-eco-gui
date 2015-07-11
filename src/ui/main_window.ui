@@ -73,7 +73,7 @@
      <string>Input</string>
     </property>
     <addaction name="actionGridData"/>
-    <addaction name="actionInitial_Conditions"/>
+    <addaction name="actionHydrodynamicData"/>
     <addaction name="actionEnvironmental_Variables"/>
     <addaction name="actionSediment_Data"/>
     <addaction name="actionMeteorology_Data"/>
@@ -230,7 +230,7 @@
     <string>Grid Data</string>
    </property>
   </action>
-  <action name="actionInitial_Conditions">
+  <action name="actionHydrodynamicData">
    <property name="text">
     <string>Hydrodynamic Data</string>
    </property>
