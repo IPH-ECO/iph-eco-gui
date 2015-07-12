@@ -13,9 +13,14 @@ class HydrodynamicDataDialog : public QDialog {
     Q_OBJECT
 private:
     Ui::HydrodynamicDataDialog *ui;
-    QTreeWidgetItem* chezyItem;
-    QTreeWidgetItem* manningItem;
-    QTreeWidgetItem* whiteColebrookItem;
+    
+    void hideParametersItems();
+    void setupParametersTree();
+    void setupDefaultItems();
+    void lookupParameters();
+    bool isCheckableProcess(QTreeWidgetItem *item) const;
+    bool hasChildChecked(QTreeWidgetItem *item, QTreeWidgetItem *excludedItem) const;
+    void toggleParameterItem(QTreeWidgetItem *item);
 private slots:
     void on_trwProcesses_itemChanged(QTreeWidgetItem *item, int column);
 public:
