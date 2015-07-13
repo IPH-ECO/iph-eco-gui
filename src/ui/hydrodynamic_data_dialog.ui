@@ -428,6 +428,16 @@
               <string>Use values defined at Grid Data for Chezy</string>
              </property>
             </item>
+            <item>
+             <property name="text">
+              <string>Use values defined at Grid Data for Manning</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Use values defined at Grid Data for White-Colebrook</string>
+             </property>
+            </item>
            </item>
            <item>
             <property name="text">
