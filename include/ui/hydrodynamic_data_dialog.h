@@ -15,12 +15,11 @@ private:
     Ui::HydrodynamicDataDialog *ui;
     
     void hideParametersItems();
-    void setupParametersTree();
     void setupDefaultItems();
-    void lookupParameters();
+    void buildParametersMap();
+    bool isCheckable(QTreeWidgetItem *item) const;
     bool isCheckableProcess(QTreeWidgetItem *item) const;
     bool hasChildChecked(QTreeWidgetItem *item, QTreeWidgetItem *excludedItem) const;
-    void toggleParameterItem(QTreeWidgetItem *item);
 private slots:
     void on_trwProcesses_itemChanged(QTreeWidgetItem *item, int column);
 public:

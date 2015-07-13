@@ -88,7 +88,7 @@
             </property>
             <item>
              <property name="text">
-              <string>Based on Air density (kg/m3)</string>
+              <string>Based on air density (kg/m3)</string>
              </property>
             </item>
             <item>
@@ -340,7 +340,7 @@
             </property>
             <item>
              <property name="text">
-              <string>Based on Air density (kg/m3)</string>
+              <string>Based on air density (kg/m3)</string>
              </property>
             </item>
             <item>
