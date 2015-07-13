@@ -345,61 +345,56 @@
             </item>
             <item>
              <property name="text">
-              <string>Based on Wind Drag coefficient</string>
+              <string>Wind drag coefficient constant</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Linear function for wind drag coefficient</string>
              </property>
              <item>
               <property name="text">
-               <string>Constant</string>
+               <string>Breakpoint A</string>
               </property>
+              <item>
+               <property name="text">
+                <string>Coefficient c1</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Wind Speed w1</string>
+               </property>
+              </item>
              </item>
              <item>
               <property name="text">
-               <string>Linear function</string>
+               <string>Breakpoint B</string>
               </property>
               <item>
                <property name="text">
-                <string>Breakpoint A</string>
+                <string>Coefficient c2</string>
                </property>
-               <item>
-                <property name="text">
-                 <string>Coefficient c1</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Wind Speed w1</string>
-                </property>
-               </item>
               </item>
               <item>
                <property name="text">
-                <string>Breakpoint B</string>
+                <string>Wind Speed w2</string>
                </property>
-               <item>
-                <property name="text">
-                 <string>Coefficient c2</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Wind Speed w2</string>
-                </property>
-               </item>
+              </item>
+             </item>
+             <item>
+              <property name="text">
+               <string>Breakpoint C</string>
+              </property>
+              <item>
+               <property name="text">
+                <string>Coefficient c3</string>
+               </property>
               </item>
               <item>
                <property name="text">
-                <string>Breakpoint C</string>
+                <string>Wind Speed w3</string>
                </property>
-               <item>
-                <property name="text">
-                 <string>Coefficient c3</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Wind Speed w3</string>
-                </property>
-               </item>
               </item>
              </item>
             </item>

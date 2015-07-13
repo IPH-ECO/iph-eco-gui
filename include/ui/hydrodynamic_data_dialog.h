@@ -20,6 +20,7 @@ private:
     bool isCheckable(QTreeWidgetItem *item) const;
     bool isCheckableProcess(QTreeWidgetItem *item) const;
     bool hasChildChecked(QTreeWidgetItem *item, QTreeWidgetItem *excludedItem) const;
+    QString getCheckableProcessIdentifier(QTreeWidgetItem *item);
 private slots:
     void on_trwProcesses_itemChanged(QTreeWidgetItem *item, int column);
 public:

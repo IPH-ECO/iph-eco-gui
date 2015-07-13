@@ -57,23 +57,24 @@ HydrodynamicDataDialog::~HydrodynamicDataDialog() {
 
 void HydrodynamicDataDialog::buildParametersMap() {
     QStringList leafSiblingsParameters = {
-        "Constant", "Linear function", "Smagorinsky Model", "Zero-Equation Model", "Generic Length Scale Model", "Mellor and Yamada Turbulence Model",
-        "ELCOM Mixing Model", "Eulerian-Lagrangian Method", "Second Order MUSCL Method", "High-order ENO/WENO Method", "No advection scheme",
-        "Barotropic and the baroclinic contributions to the hydrostatic pressure", "Non-hydrostatic pressure"
+        "Based on air density (kg/m3)", "Constant", "Linear function", "Smagorinsky Model", "Zero-Equation Model", "Generic Length Scale Model",
+        "Mellor and Yamada Turbulence Model", "ELCOM Mixing Model", "Eulerian-Lagrangian Method", "Second Order MUSCL Method", "High-order ENO/WENO Method",
+        "No advection scheme", "Barotropic and the baroclinic contributions to the hydrostatic pressure", "Non-hydrostatic pressure"
     };
     QStringList siblingsParameters = {
-        "Turbulence Model in the bottom boundary layers", "Based on air density (kg/m3)", "Coriolis factor"
+        "Turbulence Model in the bottom boundary layers", "Coriolis factor"
     };
     
     ui->trwProcesses->blockSignals(true);
     for (QTreeWidgetItemIterator it(ui->trwProcesses, QTreeWidgetItemIterator::All); *it; it++) {
         QTreeWidgetItem *processItem = *it;
-        QTreeWidgetItem *processParentItem = processItem->parent();
-        QString processItemName = processItem->text(0);
         
         if (!isCheckable(processItem)) {
             continue;
         }
+        
+        QTreeWidgetItem *processParentItem = processItem->parent();
+        QString processItemName = processItem->text(0);
         
         if (siblingsParameters.contains(processItemName, Qt::CaseInsensitive)) {
             QTreeWidgetItem *parameterItem = ui->trwParameters->findItems(processItemName, Qt::MatchStartsWith | Qt::MatchRecursive).first();
@@ -97,16 +98,9 @@ void HydrodynamicDataDialog::buildParametersMap() {
         }
         
         if (isCheckableProcess(processParentItem)) {
-            QString processParentItemText = processParentItem->text(0).split(" ")[0];
-            QTreeWidgetItem *parameterItem = nullptr;
-            
-            if (processItemName.contains("Constant")) {
-                QString parameterName = QString("%1 constant").arg(processParentItemText);
-                parameterItem = ui->trwParameters->findItems(parameterName, Qt::MatchStartsWith | Qt::MatchRecursive).first();
-            } else {
-                QString parameterName = QString("%1 for %2").arg(processItemName).arg(processParentItemText);
-                parameterItem = ui->trwParameters->findItems(parameterName, Qt::MatchStartsWith | Qt::MatchRecursive).first();
-            }
+            QString processParentItemText = getCheckableProcessIdentifier(processParentItem);
+            QString parameterName = processItemName.contains("Constant") ? processParentItemText + " constant" : processItemName + " for " + processParentItemText;
+            QTreeWidgetItem *parameterItem = ui->trwParameters->findItems(parameterName, Qt::MatchStartsWith | Qt::MatchRecursive).first();;
             
             processItem->setData(0, Qt::UserRole, QVariant::fromValue(HydrodynamicDataNode(parameterItem, false)));
         }
@@ -137,7 +131,8 @@ bool HydrodynamicDataDialog::isCheckable(QTreeWidgetItem *item) const {
 }
 
 bool HydrodynamicDataDialog::isCheckableProcess(QTreeWidgetItem *item) const {
-    return QStringList({ "Chezy", "Manning", "White-Colebrook" }).contains(item->text(0).split(" ")[0]);
+    QString itemText = item->text(0);
+    return QStringList({ "Chezy", "Manning", "White-Colebrook" }).contains(itemText.split(" ")[0]) || "Based on Wind Drag coefficient" == itemText;
 }
 
 bool HydrodynamicDataDialog::hasChildChecked(QTreeWidgetItem *item, QTreeWidgetItem *excludedItem) const {
@@ -150,6 +145,16 @@ bool HydrodynamicDataDialog::hasChildChecked(QTreeWidgetItem *item, QTreeWidgetI
     }
     
     return false;
+}
+
+QString HydrodynamicDataDialog::getCheckableProcessIdentifier(QTreeWidgetItem *item) {
+    QString itemText = item->text(0);
+    
+    if (itemText == "Based on Wind Drag coefficient") {
+        return "Wind drag coefficient";
+    }
+    
+    return itemText.split(" ")[0];
 }
 
 void HydrodynamicDataDialog::on_trwProcesses_itemChanged(QTreeWidgetItem *item, int column) {
