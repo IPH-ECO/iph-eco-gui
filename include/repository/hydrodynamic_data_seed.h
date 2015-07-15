@@ -41,8 +41,9 @@ public:
 
         HydrodynamicParameter *paWindStress = new HydrodynamicParameter("windStress", "Wind stress on water surface", nullptr, false);
         HydrodynamicParameter *paAirDensity = new HydrodynamicParameter("airDensity", "Air density (kg/m\u00b3)", paWindStress);
-        HydrodynamicParameter *paWindDragConstant = new HydrodynamicParameter("windDragConstant", "Wind drag coefficient constant", paWindStress);
-        HydrodynamicParameter *paWindDragLinearFunction = new HydrodynamicParameter("windDragLinearFunction", "Wind drag linear function");
+        HydrodynamicParameter *paWindDrag = new HydrodynamicParameter("windDrag", "Wind drag coefficient", paWindStress);
+        HydrodynamicParameter *paWindDragConstant = new HydrodynamicParameter("windDragConstant", "Constant", paWindDrag);
+        HydrodynamicParameter *paWindDragLinearFunction = new HydrodynamicParameter("windDragLinearFunction", "Linear function", paWindDrag);
         HydrodynamicParameter *paWindDragBreakpointA = new HydrodynamicParameter("windDragBreakpointA", "Breakpoint A", paWindDragLinearFunction);
         HydrodynamicParameter *paWindDragC1 = new HydrodynamicParameter("windDragCoefficientC1", "Coefficient c1", paWindDragBreakpointA);
         HydrodynamicParameter *paWindDragW1 = new HydrodynamicParameter("windDragWindSpeedW1", "Wind Speed w1", paWindDragBreakpointA);
@@ -53,7 +54,7 @@ public:
         HydrodynamicParameter *paWindDragC3 = new HydrodynamicParameter("windDragCoefficientC3", "Coefficient c3", paWindDragBreakpointC);
         HydrodynamicParameter *paWindDragW3 = new HydrodynamicParameter("windDragWindSpeedW3", "Wind Speed w3", paWindDragBreakpointC);
 
-        parameters << paWindStress << paAirDensity << paWindDragConstant << paWindDragLinearFunction;
+        parameters << paWindStress << paAirDensity << paWindDrag << paWindDragConstant << paWindDragLinearFunction;
         parameters << paWindDragBreakpointA << paWindDragC1 << paWindDragW1;
         parameters << paWindDragBreakpointB << paWindDragC2 << paWindDragW2;
         parameters << paWindDragBreakpointC << paWindDragC3 << paWindDragW3;
@@ -84,7 +85,7 @@ public:
         HydrodynamicParameter *paGenericLengthScaleModel = new HydrodynamicParameter("genericLengthScaleModel", "Generic Length Scale Model", paVerticalEddy);
         HydrodynamicParameter *paMellorYamadaModel = new HydrodynamicParameter("mellorAndYamadaTurbulenceModel", "Mellor and Yamada Turbulence Model", paVerticalEddy);
         HydrodynamicParameter *paElcomMixingModel = new HydrodynamicParameter("elcomMixingModel", "ELCOM Mixing Model", paVerticalEddy);
-        HydrodynamicParameter *paTurbulenceModel = new HydrodynamicParameter("turbulenceModelInBottomBoundaryLayers", "Turbulence model in the bottom boundary layers", paViscosityDiffusivity);
+        HydrodynamicParameter *paTurbulenceModel = new HydrodynamicParameter("turbulenceModelInBottomBoundaryLayers", "Turbulence model in the bottom boundary layers", paViscosityDiffusivity, true, false);
 
         parameters << paViscosityDiffusivity << paHorizontalEddy << paHorizontalEddyConstant << paSmagorinskyModel << paSmagorinskyCoefficient;
         parameters << paBackgroundHorizontalEddy << paVerticalEddy << paVerticalEddyConstant << paZeroEquationModel << paVerticalEddyViscosity;
@@ -115,7 +116,7 @@ public:
         // Processes
         HydrodynamicProcess *prWindStress = new HydrodynamicProcess("windStress", "Wind stress on water surface");
         HydrodynamicProcess *prAirDensity = new HydrodynamicProcess("airDensity", "Based on air density (kg/m\u00b3)", prWindStress, true, paAirDensity);
-        HydrodynamicProcess *prWindDrag = new HydrodynamicProcess("windDrag", "Based on wind drag coefficient", prWindStress);
+        HydrodynamicProcess *prWindDrag = new HydrodynamicProcess("windDrag", "Based on wind drag coefficient", prWindStress, true, paWindDrag);
         HydrodynamicProcess *prWindDragConstant = new HydrodynamicProcess("windDragConstant", "Constant", prWindDrag, true, paWindDragConstant);
         HydrodynamicProcess *prWindDragLinearFunction = new HydrodynamicProcess("windDragLinearFunction", "Linear function", prWindDrag, true, paWindDragLinearFunction);
 
@@ -123,13 +124,13 @@ public:
 
         HydrodynamicProcess *prBottomRoughness = new HydrodynamicProcess("bottomRoughness", "Bottom roughness");
         HydrodynamicProcess *prRoughnessFormulation = new HydrodynamicProcess("roughnessFormulation", "Roughness formulation", prBottomRoughness);
-        HydrodynamicProcess *prChezy = new HydrodynamicProcess("roughnessChezy", "Chezy (m\u207b\u00bd/s)", prRoughnessFormulation, true);
+        HydrodynamicProcess *prChezy = new HydrodynamicProcess("roughnessChezy", "Chezy (m\u207b\u00bd/s)", prRoughnessFormulation, true, paChezyConstant);
         HydrodynamicProcess *prChezyConstant = new HydrodynamicProcess("roughnessChezyConstant", "Constant", prChezy, true, paChezyConstant);
         HydrodynamicProcess *prChezyGridData = new HydrodynamicProcess("roughnessChezyUseGridData", "Use values defined at Grid Data", prChezy, true, paChezyGridData);
-        HydrodynamicProcess *prManning = new HydrodynamicProcess("roughnessManning", "Manning (m\u207b\u2153/s)", prRoughnessFormulation, true);
+        HydrodynamicProcess *prManning = new HydrodynamicProcess("roughnessManning", "Manning (m\u207b\u2153/s)", prRoughnessFormulation, true, paManningConstant);
         HydrodynamicProcess *prManningConstant = new HydrodynamicProcess("roughnessManningConstant", "Constant", prManning, true, paManningConstant);
         HydrodynamicProcess *prManningGridData = new HydrodynamicProcess("roughnessManningUseGridData", "Use values defined at Grid Data", prManning, true, paManningGridData);
-        HydrodynamicProcess *prWhiteColebrook = new HydrodynamicProcess("roughnessWhiteColebrook", "White-Colebrook (m)", prRoughnessFormulation, true);
+        HydrodynamicProcess *prWhiteColebrook = new HydrodynamicProcess("roughnessWhiteColebrook", "White-Colebrook (m)", prRoughnessFormulation, true, paWhiteColebrookConstant);
         HydrodynamicProcess *prWhiteColebrookConstant = new HydrodynamicProcess("roughnessWhiteColebrookConstant", "Constant", prWhiteColebrook, true, paWhiteColebrookConstant);
         HydrodynamicProcess *prWhiteColebrookGridData = new HydrodynamicProcess("roughnessWhiteColebrookUseGridData", "Use values defined at Grid Data", prWhiteColebrook, true, paWhiteColebrookGridData);
 
@@ -146,7 +147,7 @@ public:
         HydrodynamicProcess *prGenericLengthScaleModel = new HydrodynamicProcess("genericLengthScaleModel", "Generic Length Scale Model", prVerticalEddy, true, paGenericLengthScaleModel);
         HydrodynamicProcess *prMellorYamadaModel = new HydrodynamicProcess("mellorAndYamadaTurbulenceModel", "Mellor and Yamada Turbulence Model", prVerticalEddy, true, paMellorYamadaModel);
         HydrodynamicProcess *prElcomModel = new HydrodynamicProcess("elcomMixingModel", "ELCOM Mixing Model", prVerticalEddy, true, paElcomMixingModel);
-        HydrodynamicProcess *prTurbulenceModel = new HydrodynamicProcess("turbulenceModelInBottomBoundaryLayers", "Turbulence model in the bottom boundary layers", prViscosityDiffusivity, true, paViscosityDiffusivity);
+        HydrodynamicProcess *prTurbulenceModel = new HydrodynamicProcess("turbulenceModelInBottomBoundaryLayers", "Turbulence model in the bottom boundary layers", prViscosityDiffusivity, true, paTurbulenceModel);
 
         processes << prViscosityDiffusivity << prHorizontalEddy << prHorizontalEddyConstant << prSmagorinskyModel;
         processes << prVerticalEddy << prVerticalEddyConstant << prZeroEquationModel << prGenericLengthScaleModel;
@@ -186,7 +187,7 @@ public:
     }
 
     HydrodynamicParameter* findParameterNodeByName(const QString &name) const {
-        return findByName<HydrodynamicParameter>(processes, name)
+        return findByName<HydrodynamicParameter>(parameters, name);
     }
 };
 
