@@ -16,7 +16,7 @@ private:
     bool checkable;
     bool checked;
     QList<HydrodynamicProcess*> children;
-    QTreeWidgetItem *widgetItem;
+    QTreeWidgetItem *itemWidget;
 public:
     HydrodynamicProcess(const QString &name, const QString &label, HydrodynamicProcess *parent = nullptr, bool checkable = false, HydrodynamicParameter *targetParameter = nullptr) :
         name(name), label(label), parent(parent), targetParameter(targetParameter), checkable(checkable), checked(false)
@@ -57,12 +57,12 @@ public:
     void setChecked(bool checked) {
         this->checked = checked;
 
-        if (this->checkable && this->widgetItem != nullptr) {
-            Qt::CheckState checkState = this->widgetItem->checkState(0);
+        if (this->checkable && this->itemWidget != nullptr) {
+            Qt::CheckState checkState = this->itemWidget->checkState(0);
             bool changeCheckState = (!checked && checkState == Qt::Checked) || (checked && checkState == Qt::Unchecked);
             
             if (changeCheckState) {
-                this->widgetItem->setCheckState(0, checked ? Qt::Checked : Qt::Unchecked);
+                this->itemWidget->setCheckState(0, checked ? Qt::Checked : Qt::Unchecked);
             }
         }
     }
@@ -79,15 +79,15 @@ public:
         return checkable == true && children.size() > 0;
     }
     
-    QTreeWidgetItem* getWidgetItem() const {
-        return widgetItem;
+    QTreeWidgetItem* getItemWidget() const {
+        return itemWidget;
     }
     
-    void setWidgetItem(QTreeWidgetItem *widgetItem) {
-        this->widgetItem = widgetItem;
+    void setItemWidget(QTreeWidgetItem *itemWidget) {
+        this->itemWidget = itemWidget;
         
         if (this->checkable) {
-            this->widgetItem->setCheckState(0, checked ? Qt::Checked : Qt::Unchecked);
+            this->itemWidget->setCheckState(0, checked ? Qt::Checked : Qt::Unchecked);
         }
     }
     
@@ -138,7 +138,7 @@ public:
             HydrodynamicProcess *child = children[i];
             if (child->isCheckable() && child->isChecked()) {
                 child->setChecked(false);
-                child->getWidgetItem()->setCheckState(0, Qt::Unchecked);
+                child->getItemWidget()->setCheckState(0, Qt::Unchecked);
             }
         }
     }
@@ -151,7 +151,7 @@ public:
             
             if (sibling->isCheckable() && sibling->isChecked()) {
                 sibling->setChecked(false);
-                sibling->getWidgetItem()->setCheckState(0, Qt::Unchecked);
+                sibling->getItemWidget()->setCheckState(0, Qt::Unchecked);
             }
         }
     }

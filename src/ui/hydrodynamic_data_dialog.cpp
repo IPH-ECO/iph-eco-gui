@@ -4,6 +4,7 @@
 #include "include/domain/hydrodynamic_parameter.h"
 
 #include <QTreeWidgetItemIterator>
+#include <QMessageBox>
 #include <QLineEdit>
 #include <iostream>
 
@@ -50,7 +51,7 @@ void HydrodynamicDataDialog::setupItems() {
             item = new QTreeWidgetItem(parentItem, QStringList(process->getLabel()));
         }
         
-        process->setWidgetItem(item);
+        process->setItemWidget(item);
         item->setData(0, Qt::UserRole, QVariant(process->getName()));
     }
     ui->trwProcesses->blockSignals(false);
@@ -77,12 +78,33 @@ void HydrodynamicDataDialog::setupItems() {
             }
             
             item = new QTreeWidgetItem(parentItem, QStringList(parameter->getLabel()));
+            
+            if (parameter->isEditable()) {
+                QLineEdit *lineEdit = new QLineEdit(ui->trwParameters);
+                
+                lineEdit->setAlignment(Qt::AlignRight);
+                lineEdit->setObjectName(parameter->getName());
+                lineEdit->setText(QString::number(parameter->getDefaultValue())); // TODO: change to the value persisted
+                ui->trwParameters->setItemWidget(item, 1, lineEdit);
+            }
         }
         
         parameter->setItemWidget(item);
         item->setData(0, Qt::UserRole, QVariant(parameter->getName()));
     }
     ui->trwParameters->blockSignals(false);
+
+    for (int i = 0; i < processes.size(); i++) {
+        if (!processes[i]->isCheckable() || processes[i]->isCheckableGroup()) {
+            continue;
+        }
+        
+        if (processes[i]->isChecked()) {
+            on_trwProcesses_itemChanged(processes[i]->getItemWidget(), 0);
+        } else {
+            processes[i]->getTargetParameter()->getItemWidget()->setHidden(true);
+        }
+    }
 }
 
 void HydrodynamicDataDialog::expandTrees() {
@@ -111,8 +133,24 @@ void HydrodynamicDataDialog::expandTrees() {
 }
 
 void HydrodynamicDataDialog::on_btnDone_clicked() {
-    QLineEdit *edt = ui->trwParameters->findChild<QLineEdit*>("gravityAcceleration");
-    std::cout << edt->text().toStdString();
+    QList<HydrodynamicParameter*> parameters = seed->getParameters();
+    
+    for (int i = 0; i < parameters.size(); i++) {
+        HydrodynamicParameter *parameter = parameters[i];
+        
+        if (parameter->isEditable() && !parameter->getItemWidget()->isHidden()) {
+            QLineEdit *lineEdit = static_cast<QLineEdit*>(ui->trwParameters->itemWidget(parameter->getItemWidget(), 1));
+            
+            if (!parameter->isInRange(lineEdit->text().toDouble())) {
+                double rangeMinimum = parameter->getRangeMinimum();
+                double rangeMaximum = parameter->getRangeMaximum();
+                QString message = QString("%1 must be between %2 and %3.").arg(parameter->getLabel()).arg(rangeMinimum).arg(rangeMaximum);
+                
+                QMessageBox::warning(this, "Hydrodynamic Data", message);
+                break;
+            }
+        }
+    }
 }
 
 void HydrodynamicDataDialog::on_trwProcesses_itemChanged(QTreeWidgetItem *item, int column) {

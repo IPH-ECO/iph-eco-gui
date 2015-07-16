@@ -13,15 +13,15 @@ private:
     HydrodynamicParameter *parent;
     bool editable;
     bool hideSiblings;
-    double defaultValue;
     double value;
+    double defaultValue;
     double rangeMininum;
     double rangeMaximum;
     QList<HydrodynamicParameter*> children;
     QTreeWidgetItem* itemWidget;
 public:
     HydrodynamicParameter(const QString &name, const QString &label, HydrodynamicParameter *parent = nullptr, bool editable = true, bool hideSiblings = true) :
-        name(name), label(label), parent(parent), editable(editable), hideSiblings(hideSiblings)
+        name(name), label(label), parent(parent), editable(editable), hideSiblings(hideSiblings), rangeMininum(0), rangeMaximum(0)
     {
         if (parent != nullptr) {
             parent->children.append(this);
@@ -62,6 +62,34 @@ public:
     
     void setEditable(bool editable) {
         this->editable = editable;
+    }
+
+    double getDefaultValue() const {
+        return defaultValue;
+    }
+
+    void setDefaultValue(double defaultValue) {
+        this->defaultValue = defaultValue;
+    }
+
+    double getRangeMinimum() const {
+        return rangeMininum;
+    }
+
+    void setRangeMinimum(double rangeMininum) {
+        this->rangeMininum = rangeMininum;
+    }
+
+    double getRangeMaximum() const {
+        return rangeMaximum;
+    }
+
+    void setRangeMaximum(double rangeMaximum) {
+        this->rangeMaximum = rangeMaximum;
+    }
+    
+    inline bool isInRange(double value) const {
+        return (rangeMininum == 0 && rangeMaximum == 0) || (value >= rangeMininum && value <= rangeMaximum);
     }
     
     void toggleHierarchyVisibility(bool hide) const {
