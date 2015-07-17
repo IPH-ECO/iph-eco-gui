@@ -7,7 +7,6 @@
 
 class HydrodynamicParameter {
 private:
-    uint id;
     QString name;
     QString label;
     HydrodynamicParameter *parent;
@@ -20,13 +19,7 @@ private:
     QList<HydrodynamicParameter*> children;
     QTreeWidgetItem* itemWidget;
 public:
-    HydrodynamicParameter(const QString &name, const QString &label, HydrodynamicParameter *parent = nullptr, bool editable = true, bool hideSiblings = true) :
-        name(name), label(label), parent(parent), editable(editable), hideSiblings(hideSiblings), rangeMininum(0), rangeMaximum(0)
-    {
-        if (parent != nullptr) {
-            parent->children.append(this);
-        }
-    }
+    HydrodynamicParameter() : parent(nullptr), editable(true), hideSiblings(true), rangeMininum(0), rangeMaximum(0) {}
     
     QString getName() const {
         return name;
@@ -48,6 +41,14 @@ public:
         return parent;
     }
     
+    void setParent(HydrodynamicParameter *parent) {
+        this->parent = parent;
+        
+        if (parent != nullptr) {
+            parent->children.append(this);
+        }
+    }
+    
     double getValue() const {
         return value;
     }
@@ -62,6 +63,14 @@ public:
     
     void setEditable(bool editable) {
         this->editable = editable;
+    }
+    
+    bool isSiblingsHidden() const {
+        return hideSiblings;
+    }
+    
+    void setSiblingsHidden(bool hideSiblings) {
+        this->hideSiblings = hideSiblings;
     }
 
     double getDefaultValue() const {

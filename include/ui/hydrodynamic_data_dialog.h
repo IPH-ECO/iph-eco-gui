@@ -1,7 +1,7 @@
 #ifndef HYDRODYNAMIC_DATA_DIALOG_H
 #define HYDRODYNAMIC_DATA_DIALOG_H
 
-#include "include/repository/hydrodynamic_data_seed.h"
+#include "include/repository/hydrodynamic_data_repository.h"
 
 #include <QDialog>
 #include <QWidget>
@@ -15,7 +15,7 @@ class HydrodynamicDataDialog : public QDialog {
     Q_OBJECT
 private:
     Ui::HydrodynamicDataDialog *ui;
-    HydrodynamicDataSeed *seed;
+    HydrodynamicDataRepository *hydrodynamicDataRepository;
     
     void setupItems();
     void expandTrees();

@@ -1,0 +1,932 @@
+{
+    "parameters": [
+        {
+            "defaultValue": 3.5893636530247942e+246,
+            "editable": false,
+            "hideSiblings": true,
+            "label": "Constants",
+            "name": "constants",
+            "parentName": "",
+            "rangeMaximum": 0,
+            "rangeMinimum": 0
+        },
+        {
+            "defaultValue": 9.8100000000000005,
+            "editable": true,
+            "hideSiblings": true,
+            "label": "Gravity acceleration (m/s\u00b2)",
+            "name": "gravityAcceleration",
+            "parentName": "constants",
+            "rangeMaximum": 9.8300000000000001,
+            "rangeMinimum": 9.7799999999999994
+        },
+        {
+            "defaultValue": 1000,
+            "editable": true,
+            "hideSiblings": true,
+            "label": "Water density of reference (kg/m\u00b3)",
+            "name": "waterDensity",
+            "parentName": "constants",
+            "rangeMaximum": 0,
+            "rangeMinimum": 0
+        },
+        {
+            "defaultValue": 20,
+            "editable": true,
+            "hideSiblings": true,
+            "label": "Water temperature of reference (\u00b0C)",
+            "name": "waterTemperature",
+            "parentName": "constants",
+            "rangeMaximum": 100,
+            "rangeMinimum": -100
+        },
+        {
+            "defaultValue": 20,
+            "editable": true,
+            "hideSiblings": true,
+            "label": "Air temperature of reference (\u00b0C)",
+            "name": "airTemperature",
+            "parentName": "constants",
+            "rangeMaximum": 100,
+            "rangeMinimum": -100
+        },
+        {
+            "defaultValue": 0,
+            "editable": false,
+            "hideSiblings": true,
+            "label": "Numerical Parameters",
+            "name": "numericalParameters",
+            "parentName": "",
+            "rangeMaximum": 0,
+            "rangeMinimum": 0
+        },
+        {
+            "defaultValue": 0.55000000000000004,
+            "editable": true,
+            "hideSiblings": true,
+            "label": "Theta coefficient (-)",
+            "name": "thetaCoefficient",
+            "parentName": "numericalParameters",
+            "rangeMaximum": 1,
+            "rangeMinimum": 0
+        },
+        {
+            "defaultValue": 0.050000000000000003,
+            "editable": true,
+            "hideSiblings": true,
+            "label": "Threshold depth for Wet and Dry Algorithm",
+            "name": "thresholdDepth",
+            "parentName": "numericalParameters",
+            "rangeMaximum": 1.7976931348623157e+308,
+            "rangeMinimum": 0
+        },
+        {
+            "defaultValue": 0,
+            "editable": true,
+            "hideSiblings": true,
+            "label": "Smoothing time",
+            "name": "smoothingTime",
+            "parentName": "numericalParameters",
+            "rangeMaximum": 0,
+            "rangeMinimum": 0
+        },
+        {
+            "defaultValue": 0,
+            "editable": false,
+            "hideSiblings": true,
+            "label": "Wind stress on water surface",
+            "name": "windStress",
+            "parentName": "",
+            "rangeMaximum": 0,
+            "rangeMinimum": 0
+        },
+        {
+            "defaultValue": 0,
+            "editable": true,
+            "hideSiblings": true,
+            "label": "Air density (kg/m\u00b3)",
+            "name": "airDensity",
+            "parentName": "windStress",
+            "rangeMaximum": 0,
+            "rangeMinimum": 0
+        },
+        {
+            "defaultValue": 0,
+            "editable": false,
+            "hideSiblings": true,
+            "label": "Wind drag coefficient",
+            "name": "windDrag",
+            "parentName": "windStress",
+            "rangeMaximum": 0,
+            "rangeMinimum": 0
+        },
+        {
+            "defaultValue": 9.9999999999999995e-08,
+            "editable": true,
+            "hideSiblings": true,
+            "label": "Constant",
+            "name": "windDragConstant",
+            "parentName": "windDrag",
+            "rangeMaximum": 0.001,
+            "rangeMinimum": 1e-10
+        },
+        {
+            "defaultValue": 0,
+            "editable": false,
+            "hideSiblings": true,
+            "label": "Linear function",
+            "name": "windDragLinearFunction",
+            "parentName": "windDrag",
+            "rangeMaximum": 0,
+            "rangeMinimum": 0
+        },
+        {
+            "defaultValue": 0,
+            "editable": false,
+            "hideSiblings": true,
+            "label": "Breakpoint A",
+            "name": "windDragBreakpointA",
+            "parentName": "windDragLinearFunction",
+            "rangeMaximum": 0,
+            "rangeMinimum": 0
+        },
+        {
+            "defaultValue": 0,
+            "editable": true,
+            "hideSiblings": true,
+            "label": "Coefficient c1",
+            "name": "windDragCoefficientC1",
+            "parentName": "windDragBreakpointA",
+            "rangeMaximum": 0,
+            "rangeMinimum": 0
+        },
+        {
+            "defaultValue": 0,
+            "editable": true,
+            "hideSiblings": true,
+            "label": "Wind Speed w1",
+            "name": "windDragWindSpeedW1",
+            "parentName": "windDragBreakpointA",
+            "rangeMaximum": 0,
+            "rangeMinimum": 0
+        },
+        {
+            "defaultValue": 0,
+            "editable": false,
+            "hideSiblings": true,
+            "label": "Breakpoint B",
+            "name": "windDragBreakpointB",
+            "parentName": "windDragLinearFunction",
+            "rangeMaximum": 0,
+            "rangeMinimum": 0
+        },
+        {
+            "defaultValue": 0,
+            "editable": true,
+            "hideSiblings": true,
+            "label": "Coefficient c2",
+            "name": "windDragCoefficientC2",
+            "parentName": "windDragBreakpointB",
+            "rangeMaximum": 0,
+            "rangeMinimum": 0
+        },
+        {
+            "defaultValue": 0,
+            "editable": true,
+            "hideSiblings": true,
+            "label": "Wind Speed w2",
+            "name": "windDragWindSpeedW2",
+            "parentName": "windDragBreakpointB",
+            "rangeMaximum": 0,
+            "rangeMinimum": 0
+        },
+        {
+            "defaultValue": 0,
+            "editable": false,
+            "hideSiblings": true,
+            "label": "Breakpoint C",
+            "name": "windDragBreakpointC",
+            "parentName": "windDragLinearFunction",
+            "rangeMaximum": 0,
+            "rangeMinimum": 0
+        },
+        {
+            "defaultValue": 0,
+            "editable": true,
+            "hideSiblings": true,
+            "label": "Coefficient c3",
+            "name": "windDragCoefficientC3",
+            "parentName": "windDragBreakpointC",
+            "rangeMaximum": 0,
+            "rangeMinimum": 0
+        },
+        {
+            "defaultValue": 0,
+            "editable": true,
+            "hideSiblings": true,
+            "label": "Wind Speed w3",
+            "name": "windDragWindSpeedW3",
+            "parentName": "windDragBreakpointC",
+            "rangeMaximum": 0,
+            "rangeMinimum": 0
+        },
+        {
+            "defaultValue": 0,
+            "editable": false,
+            "hideSiblings": true,
+            "label": "Bottom roughness",
+            "name": "bottomRoughness",
+            "parentName": "",
+            "rangeMaximum": 0,
+            "rangeMinimum": 0
+        },
+        {
+            "defaultValue": 0,
+            "editable": true,
+            "hideSiblings": true,
+            "label": "Chezy constant",
+            "name": "roughnessChezyConstant",
+            "parentName": "bottomRoughness",
+            "rangeMaximum": 0,
+            "rangeMinimum": 0
+        },
+        {
+            "defaultValue": 0,
+            "editable": true,
+            "hideSiblings": true,
+            "label": "Manning constant",
+            "name": "roughnessManningConstant",
+            "parentName": "bottomRoughness",
+            "rangeMaximum": 0,
+            "rangeMinimum": 0
+        },
+        {
+            "defaultValue": 0,
+            "editable": true,
+            "hideSiblings": true,
+            "label": "White-Colebrook constant",
+            "name": "roughnessWhiteColebrookConstant",
+            "parentName": "bottomRoughness",
+            "rangeMaximum": 0,
+            "rangeMinimum": 0
+        },
+        {
+            "defaultValue": 0,
+            "editable": false,
+            "hideSiblings": true,
+            "label": "Use values defined at Grid Data for Chezy",
+            "name": "roughnessChezyUseGridData",
+            "parentName": "bottomRoughness",
+            "rangeMaximum": 0,
+            "rangeMinimum": 0
+        },
+        {
+            "defaultValue": 0,
+            "editable": false,
+            "hideSiblings": true,
+            "label": "Use values defined at Grid Data for Manning",
+            "name": "roughnessManningUseGridData",
+            "parentName": "bottomRoughness",
+            "rangeMaximum": 0,
+            "rangeMinimum": 0
+        },
+        {
+            "defaultValue": 0,
+            "editable": false,
+            "hideSiblings": true,
+            "label": "Use values defined at Grid Data for White-Colebrook",
+            "name": "roughnessWhiteColebrookUseGridData",
+            "parentName": "bottomRoughness",
+            "rangeMaximum": 0,
+            "rangeMinimum": 0
+        },
+        {
+            "defaultValue": 0,
+            "editable": false,
+            "hideSiblings": true,
+            "label": "Viscosity/Diffusivity (Turbulence Model)",
+            "name": "viscosityDiffusivityFormulation",
+            "parentName": "",
+            "rangeMaximum": 0,
+            "rangeMinimum": 0
+        },
+        {
+            "defaultValue": 0,
+            "editable": false,
+            "hideSiblings": true,
+            "label": "Horizontal eddy viscosity/diffusivity",
+            "name": "horizontalEddyVD",
+            "parentName": "viscosityDiffusivityFormulation",
+            "rangeMaximum": 0,
+            "rangeMinimum": 0
+        },
+        {
+            "defaultValue": 0,
+            "editable": false,
+            "hideSiblings": true,
+            "label": "Constant",
+            "name": "horizontalEddyConstant",
+            "parentName": "horizontalEddyVD",
+            "rangeMaximum": 0,
+            "rangeMinimum": 0
+        },
+        {
+            "defaultValue": 1,
+            "editable": true,
+            "hideSiblings": true,
+            "label": "Horizontal eddy viscosity",
+            "name": "horizontalEddyViscosity",
+            "parentName": "horizontalEddyConstant",
+            "rangeMaximum": 1000,
+            "rangeMinimum": 1e-10
+        },
+        {
+            "defaultValue": 1,
+            "editable": true,
+            "hideSiblings": true,
+            "label": "Horizontal eddy diffusivity",
+            "name": "horizontalEddyDiffusivity",
+            "parentName": "horizontalEddyConstant",
+            "rangeMaximum": 1000,
+            "rangeMinimum": 1e-10
+        },
+        {
+            "defaultValue": 0,
+            "editable": false,
+            "hideSiblings": true,
+            "label": "Smagorinsky model",
+            "name": "smagorinskyModel",
+            "parentName": "horizontalEddyVD",
+            "rangeMaximum": 0,
+            "rangeMinimum": 0
+        },
+        {
+            "defaultValue": 0.14999999999999999,
+            "editable": true,
+            "hideSiblings": true,
+            "label": "Smagorinsky coefficient",
+            "name": "smagorinskyCoefficient",
+            "parentName": "smagorinskyModel",
+            "rangeMaximum": 0.5,
+            "rangeMinimum": 0.10000000000000001
+        },
+        {
+            "defaultValue": 1.0000000000000001e-05,
+            "editable": true,
+            "hideSiblings": true,
+            "label": "Background horizontal eddy diffusivity",
+            "name": "backgroundHorizontalEddyDiffusivity",
+            "parentName": "smagorinskyModel",
+            "rangeMaximum": 0.10000000000000001,
+            "rangeMinimum": 1e-10
+        },
+        {
+            "defaultValue": 0,
+            "editable": false,
+            "hideSiblings": true,
+            "label": "Vertical eddy viscosity/diffusivity",
+            "name": "verticalEddyVD",
+            "parentName": "viscosityDiffusivityFormulation",
+            "rangeMaximum": 0,
+            "rangeMinimum": 0
+        },
+        {
+            "defaultValue": 0,
+            "editable": false,
+            "hideSiblings": true,
+            "label": "Constant",
+            "name": "verticalEddyConstant",
+            "parentName": "verticalEddyVD",
+            "rangeMaximum": 0,
+            "rangeMinimum": 0
+        },
+        {
+            "defaultValue": 1,
+            "editable": true,
+            "hideSiblings": true,
+            "label": "Vertical eddy viscosity",
+            "name": "verticalEddyViscosity",
+            "parentName": "verticalEddyConstant",
+            "rangeMaximum": 1000,
+            "rangeMinimum": 1e-10
+        },
+        {
+            "defaultValue": 1,
+            "editable": true,
+            "hideSiblings": true,
+            "label": "Vertical eddy diffusivity",
+            "name": "verticalEddyDiffusivity",
+            "parentName": "verticalEddyConstant",
+            "rangeMaximum": 1000,
+            "rangeMinimum": 1e-10
+        },
+        {
+            "defaultValue": 0,
+            "editable": false,
+            "hideSiblings": true,
+            "label": "Zero-Equation Model",
+            "name": "zeroEquationModel",
+            "parentName": "verticalEddyVD",
+            "rangeMaximum": 0,
+            "rangeMinimum": 0
+        },
+        {
+            "defaultValue": 0.01,
+            "editable": true,
+            "hideSiblings": true,
+            "label": "Reference vertical eddy viscosity",
+            "name": "refVerticalEddyViscosity",
+            "parentName": "zeroEquationModel",
+            "rangeMaximum": 1,
+            "rangeMinimum": 1e-10
+        },
+        {
+            "defaultValue": 0.0001,
+            "editable": true,
+            "hideSiblings": true,
+            "label": "Background vertical eddy viscosity",
+            "name": "backgroundVerticalEddyViscosity",
+            "parentName": "zeroEquationModel",
+            "rangeMaximum": 1,
+            "rangeMinimum": 1e-10
+        },
+        {
+            "defaultValue": 1.0000000000000001e-05,
+            "editable": true,
+            "hideSiblings": true,
+            "label": "Background vertical eddy diffusivity",
+            "name": "backgroundVerticalEddyDiffusivity",
+            "parentName": "zeroEquationModel",
+            "rangeMaximum": 1,
+            "rangeMinimum": 1e-10
+        },
+        {
+            "defaultValue": 0,
+            "editable": true,
+            "hideSiblings": true,
+            "label": "Generic Length Scale Model",
+            "name": "genericLengthScaleModel",
+            "parentName": "verticalEddyVD",
+            "rangeMaximum": 0,
+            "rangeMinimum": 0
+        },
+        {
+            "defaultValue": 0,
+            "editable": true,
+            "hideSiblings": true,
+            "label": "Mellor and Yamada Turbulence Model",
+            "name": "mellorAndYamadaTurbulenceModel",
+            "parentName": "verticalEddyVD",
+            "rangeMaximum": 0,
+            "rangeMinimum": 0
+        },
+        {
+            "defaultValue": 0,
+            "editable": true,
+            "hideSiblings": true,
+            "label": "ELCOM Mixing Model",
+            "name": "elcomMixingModel",
+            "parentName": "verticalEddyVD",
+            "rangeMaximum": 0,
+            "rangeMinimum": 0
+        },
+        {
+            "defaultValue": 0,
+            "editable": false,
+            "hideSiblings": false,
+            "label": "Turbulence model in the bottom boundary layers",
+            "name": "turbulenceModelInBottomBoundaryLayers",
+            "parentName": "viscosityDiffusivityFormulation",
+            "rangeMaximum": 0,
+            "rangeMinimum": 0
+        },
+        {
+            "defaultValue": 0,
+            "editable": false,
+            "hideSiblings": true,
+            "label": "Advection Scheme for Momentum Equation",
+            "name": "advectionScheme",
+            "parentName": "",
+            "rangeMaximum": 0,
+            "rangeMinimum": 0
+        },
+        {
+            "defaultValue": 0,
+            "editable": false,
+            "hideSiblings": true,
+            "label": "Eulerian-Lagrangian Method",
+            "name": "eulerianLagrangianMethod",
+            "parentName": "advectionScheme",
+            "rangeMaximum": 0,
+            "rangeMinimum": 0
+        },
+        {
+            "defaultValue": 10,
+            "editable": true,
+            "hideSiblings": true,
+            "label": "Number of sub-time steps",
+            "name": "numberOfSubTimeSteps",
+            "parentName": "eulerianLagrangianMethod",
+            "rangeMaximum": 1000,
+            "rangeMinimum": 1
+        },
+        {
+            "defaultValue": 0,
+            "editable": false,
+            "hideSiblings": true,
+            "label": "Second Order MUSCL Method",
+            "name": "secondOrderMusclMethod",
+            "parentName": "advectionScheme",
+            "rangeMaximum": 0,
+            "rangeMinimum": 0
+        },
+        {
+            "defaultValue": 0,
+            "editable": false,
+            "hideSiblings": true,
+            "label": "High-order ENO/WENO Method",
+            "name": "highOrderEnoWenoMethod",
+            "parentName": "advectionScheme",
+            "rangeMaximum": 0,
+            "rangeMinimum": 0
+        },
+        {
+            "defaultValue": 0,
+            "editable": false,
+            "hideSiblings": true,
+            "label": "No advection scheme",
+            "name": "noAdvectionScheme",
+            "parentName": "advectionScheme",
+            "rangeMaximum": 0,
+            "rangeMinimum": 0
+        },
+        {
+            "defaultValue": 0,
+            "editable": false,
+            "hideSiblings": true,
+            "label": "Pressure",
+            "name": "pressure",
+            "parentName": "",
+            "rangeMaximum": 0,
+            "rangeMinimum": 0
+        },
+        {
+            "defaultValue": 0,
+            "editable": true,
+            "hideSiblings": true,
+            "label": "Barotropic and the baroclinic contributions to the hydrostatic pressure",
+            "name": "barotropicAndBaroclinicContribuitions",
+            "parentName": "pressure",
+            "rangeMaximum": 0,
+            "rangeMinimum": 0
+        },
+        {
+            "defaultValue": 0,
+            "editable": false,
+            "hideSiblings": true,
+            "label": "Non-hydrostatic pressure",
+            "name": "nonHydrostaticPressure",
+            "parentName": "pressure",
+            "rangeMaximum": 0,
+            "rangeMinimum": 0
+        },
+        {
+            "defaultValue": 0,
+            "editable": false,
+            "hideSiblings": true,
+            "label": "No pressure simulation",
+            "name": "noPressureSimulation",
+            "parentName": "pressure",
+            "rangeMaximum": 0,
+            "rangeMinimum": 0
+        },
+        {
+            "defaultValue": 0,
+            "editable": false,
+            "hideSiblings": true,
+            "label": "Coriolis factor",
+            "name": "coriolisFactor",
+            "parentName": "",
+            "rangeMaximum": 0,
+            "rangeMinimum": 0
+        },
+        {
+            "defaultValue": 0,
+            "editable": true,
+            "hideSiblings": true,
+            "label": "Coriolis coefficient",
+            "name": "coriolisCoefficient",
+            "parentName": "coriolisFactor",
+            "rangeMaximum": 0,
+            "rangeMinimum": 0
+        },
+        {
+            "defaultValue": 7.2921000000000002e-05,
+            "editable": true,
+            "hideSiblings": true,
+            "label": "Earth's rotation speed (rad/s)",
+            "name": "earthsRotationSpeed",
+            "parentName": "coriolisFactor",
+            "rangeMaximum": 1,
+            "rangeMinimum": 0
+        }
+    ],
+    "processes": [
+        {
+            "checkable": false,
+            "checked": false,
+            "label": "Wind stress on water surface",
+            "name": "windStress",
+            "parentName": "",
+            "targetParameter": ""
+        },
+        {
+            "checkable": true,
+            "checked": false,
+            "label": "Based on air density (kg/m\u00b3)",
+            "name": "airDensity",
+            "parentName": "windStress",
+            "targetParameter": "airDensity"
+        },
+        {
+            "checkable": true,
+            "checked": false,
+            "label": "Based on wind drag coefficient",
+            "name": "windDrag",
+            "parentName": "windStress",
+            "targetParameter": "windDrag"
+        },
+        {
+            "checkable": true,
+            "checked": true,
+            "label": "Constant",
+            "name": "windDragConstant",
+            "parentName": "windDrag",
+            "targetParameter": "windDragConstant"
+        },
+        {
+            "checkable": true,
+            "checked": false,
+            "label": "Linear function",
+            "name": "windDragLinearFunction",
+            "parentName": "windDrag",
+            "targetParameter": "windDragLinearFunction"
+        },
+        {
+            "checkable": false,
+            "checked": false,
+            "label": "Bottom roughness",
+            "name": "bottomRoughness",
+            "parentName": "",
+            "targetParameter": ""
+        },
+        {
+            "checkable": false,
+            "checked": false,
+            "label": "Roughness formulation",
+            "name": "roughnessFormulation",
+            "parentName": "bottomRoughness",
+            "targetParameter": ""
+        },
+        {
+            "checkable": true,
+            "checked": false,
+            "label": "Chezy (m\u207b\u00bd/s)",
+            "name": "roughnessChezy",
+            "parentName": "roughnessFormulation",
+            "targetParameter": "roughnessChezyConstant"
+        },
+        {
+            "checkable": true,
+            "checked": true,
+            "label": "Constant",
+            "name": "roughnessChezyConstant",
+            "parentName": "roughnessChezy",
+            "targetParameter": "roughnessChezyConstant"
+        },
+        {
+            "checkable": true,
+            "checked": false,
+            "label": "Use values defined at Grid Data",
+            "name": "roughnessChezyUseGridData",
+            "parentName": "roughnessChezy",
+            "targetParameter": "roughnessChezyUseGridData"
+        },
+        {
+            "checkable": true,
+            "checked": false,
+            "label": "Manning (m\u207b\u2153/s)",
+            "name": "roughnessManning",
+            "parentName": "roughnessFormulation",
+            "targetParameter": "roughnessManningConstant"
+        },
+        {
+            "checkable": true,
+            "checked": false,
+            "label": "Constant",
+            "name": "roughnessManningConstant",
+            "parentName": "roughnessManning",
+            "targetParameter": "roughnessManningConstant"
+        },
+        {
+            "checkable": true,
+            "checked": false,
+            "label": "Use values defined at Grid Data",
+            "name": "roughnessManningUseGridData",
+            "parentName": "roughnessManning",
+            "targetParameter": "roughnessManningConstant"
+        },
+        {
+            "checkable": true,
+            "checked": false,
+            "label": "White-Colebrook (m)",
+            "name": "roughnessWhiteColebrook",
+            "parentName": "roughnessFormulation",
+            "targetParameter": "roughnessWhiteColebrookConstant"
+        },
+        {
+            "checkable": true,
+            "checked": false,
+            "label": "Constant",
+            "name": "roughnessWhiteColebrookConstant",
+            "parentName": "roughnessWhiteColebrook",
+            "targetParameter": "roughnessWhiteColebrookConstant"
+        },
+        {
+            "checkable": true,
+            "checked": false,
+            "label": "Use values defined at Grid Data",
+            "name": "roughnessWhiteColebrookUseGridData",
+            "parentName": "roughnessWhiteColebrook",
+            "targetParameter": "roughnessWhiteColebrookUseGridData"
+        },
+        {
+            "checkable": false,
+            "checked": false,
+            "label": "Viscosity/Diffusivity (Turbulence Model)",
+            "name": "viscosityDiffusivity",
+            "parentName": "",
+            "targetParameter": ""
+        },
+        {
+            "checkable": false,
+            "checked": false,
+            "label": "Horizontal eddy viscosity/diffusivity",
+            "name": "horizontalEddyViscosityDifusivity",
+            "parentName": "viscosityDiffusivity",
+            "targetParameter": ""
+        },
+        {
+            "checkable": true,
+            "checked": true,
+            "label": "Constant",
+            "name": "horizontalEddyViscosityDifusivityConstant",
+            "parentName": "horizontalEddyViscosityDifusivity",
+            "targetParameter": "horizontalEddyConstant"
+        },
+        {
+            "checkable": true,
+            "checked": false,
+            "label": "Smagorinsky model",
+            "name": "smagorinskyModel",
+            "parentName": "horizontalEddyViscosityDifusivity",
+            "targetParameter": "smagorinskyModel"
+        },
+        {
+            "checkable": false,
+            "checked": false,
+            "label": "Vertical eddy viscosity/diffusivity",
+            "name": "verticalEddyViscosityDifusivity",
+            "parentName": "viscosityDiffusivity",
+            "targetParameter": ""
+        },
+        {
+            "checkable": true,
+            "checked": true,
+            "label": "Constant",
+            "name": "verticalEddyViscosityDifusivityConstant",
+            "parentName": "verticalEddyViscosityDifusivity",
+            "targetParameter": "verticalEddyConstant"
+        },
+        {
+            "checkable": true,
+            "checked": false,
+            "label": "Zero-Equation Model",
+            "name": "zeroEquationModel",
+            "parentName": "verticalEddyViscosityDifusivity",
+            "targetParameter": "zeroEquationModel"
+        },
+        {
+            "checkable": true,
+            "checked": false,
+            "label": "Generic Length Scale Model",
+            "name": "genericLengthScaleModel",
+            "parentName": "verticalEddyViscosityDifusivity",
+            "targetParameter": "genericLengthScaleModel"
+        },
+        {
+            "checkable": true,
+            "checked": false,
+            "label": "Mellor and Yamada Turbulence Model",
+            "name": "mellorAndYamadaTurbulenceModel",
+            "parentName": "verticalEddyViscosityDifusivity",
+            "targetParameter": "mellorAndYamadaTurbulenceModel"
+        },
+        {
+            "checkable": true,
+            "checked": false,
+            "label": "ELCOM Mixing Model",
+            "name": "elcomMixingModel",
+            "parentName": "verticalEddyViscosityDifusivity",
+            "targetParameter": "elcomMixingModel"
+        },
+        {
+            "checkable": true,
+            "checked": false,
+            "label": "Turbulence model in the bottom boundary layers",
+            "name": "turbulenceModelInBottomBoundaryLayers",
+            "parentName": "viscosityDiffusivity",
+            "targetParameter": "turbulenceModelInBottomBoundaryLayers"
+        },
+        {
+            "checkable": false,
+            "checked": false,
+            "label": "Advection Scheme for Momentum Equation",
+            "name": "advectionScheme",
+            "parentName": "",
+            "targetParameter": ""
+        },
+        {
+            "checkable": true,
+            "checked": true,
+            "label": "Eulerian-Lagrangian Method",
+            "name": "eulerianLagrangianMethod",
+            "parentName": "advectionScheme",
+            "targetParameter": "eulerianLagrangianMethod"
+        },
+        {
+            "checkable": true,
+            "checked": false,
+            "label": "Second Order MUSCL Method",
+            "name": "secondOrderMusclMethod",
+            "parentName": "advectionScheme",
+            "targetParameter": "secondOrderMusclMethod"
+        },
+        {
+            "checkable": true,
+            "checked": false,
+            "label": "High-order ENO/WENO Method",
+            "name": "highOrderEnoWenoMethod",
+            "parentName": "advectionScheme",
+            "targetParameter": "highOrderEnoWenoMethod"
+        },
+        {
+            "checkable": true,
+            "checked": false,
+            "label": "No advection scheme",
+            "name": "noAdvectionScheme",
+            "parentName": "advectionScheme",
+            "targetParameter": "noAdvectionScheme"
+        },
+        {
+            "checkable": false,
+            "checked": false,
+            "label": "Pressure",
+            "name": "pressure",
+            "parentName": "",
+            "targetParameter": ""
+        },
+        {
+            "checkable": true,
+            "checked": false,
+            "label": "Barotropic and the baroclinic contributions to the hydrostatic pressure",
+            "name": "barotropicAndBaroclinicContribuitions",
+            "parentName": "pressure",
+            "targetParameter": "barotropicAndBaroclinicContribuitions"
+        },
+        {
+            "checkable": true,
+            "checked": false,
+            "label": "Non-hydrostatic pressure",
+            "name": "nonHydrostaticPressure",
+            "parentName": "pressure",
+            "targetParameter": "nonHydrostaticPressure"
+        },
+        {
+            "checkable": true,
+            "checked": true,
+            "label": "No pressure simulation",
+            "name": "noPressureSimulation",
+            "parentName": "pressure",
+            "targetParameter": "noPressureSimulation"
+        },
+        {
+            "checkable": true,
+            "checked": false,
+            "label": "Coriolis factor",
+            "name": "coriolisFactor",
+            "parentName": "",
+            "targetParameter": "coriolisFactor"
+        }
+    ]
+}

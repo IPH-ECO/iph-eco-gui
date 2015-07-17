@@ -9,7 +9,7 @@
 #include <iostream>
 
 HydrodynamicDataDialog::HydrodynamicDataDialog(QWidget *parent) :
-    QDialog(parent), ui(new Ui::HydrodynamicDataDialog), seed(new HydrodynamicDataSeed)
+    QDialog(parent), ui(new Ui::HydrodynamicDataDialog), hydrodynamicDataRepository(new HydrodynamicDataRepository)
 {
     ui->setupUi(this);
     ui->trwParameters->header()->setStretchLastSection(false);
@@ -24,38 +24,9 @@ HydrodynamicDataDialog::~HydrodynamicDataDialog() {
 }
 
 void HydrodynamicDataDialog::setupItems() {
-    QList<HydrodynamicProcess*> processes = seed->getProcesses();
-    QList<HydrodynamicParameter*> parameters = seed->getParameters();
+    QList<HydrodynamicParameter*> parameters = hydrodynamicDataRepository->getParameters();
+    QList<HydrodynamicProcess*> processes = hydrodynamicDataRepository->getProcesses();
 
-    // Processes
-    ui->trwProcesses->blockSignals(true);
-    for (int i = 0; i < processes.size(); i++) {
-        HydrodynamicProcess *process = processes[i];
-        QTreeWidgetItem *item = nullptr;
-
-        if (process->getParent() == nullptr) {
-            item = new QTreeWidgetItem(ui->trwProcesses, QStringList(process->getLabel()));
-        } else {
-            QTreeWidgetItem *parentItem = nullptr;
-            QTreeWidgetItemIterator it(ui->trwProcesses);
-
-            while (*it) {
-                QString itemName = (*it)->data(0, Qt::UserRole).toString();
-                if (itemName == process->getParent()->getName()) {
-                    parentItem = *it;
-                    break;
-                }
-                it++;
-            }
-
-            item = new QTreeWidgetItem(parentItem, QStringList(process->getLabel()));
-        }
-        
-        process->setItemWidget(item);
-        item->setData(0, Qt::UserRole, QVariant(process->getName()));
-    }
-    ui->trwProcesses->blockSignals(false);
-    
     // Parameters
     ui->trwParameters->blockSignals(true);
     for (int i = 0; i < parameters.size(); i++) {
@@ -93,6 +64,35 @@ void HydrodynamicDataDialog::setupItems() {
         item->setData(0, Qt::UserRole, QVariant(parameter->getName()));
     }
     ui->trwParameters->blockSignals(false);
+    
+    // Processes
+    ui->trwProcesses->blockSignals(true);
+    for (int i = 0; i < processes.size(); i++) {
+        HydrodynamicProcess *process = processes[i];
+        QTreeWidgetItem *item = nullptr;
+        
+        if (process->getParent() == nullptr) {
+            item = new QTreeWidgetItem(ui->trwProcesses, QStringList(process->getLabel()));
+        } else {
+            QTreeWidgetItem *parentItem = nullptr;
+            QTreeWidgetItemIterator it(ui->trwProcesses);
+            
+            while (*it) {
+                QString itemName = (*it)->data(0, Qt::UserRole).toString();
+                if (itemName == process->getParent()->getName()) {
+                    parentItem = *it;
+                    break;
+                }
+                it++;
+            }
+            
+            item = new QTreeWidgetItem(parentItem, QStringList(process->getLabel()));
+        }
+        
+        process->setItemWidget(item);
+        item->setData(0, Qt::UserRole, QVariant(process->getName()));
+    }
+    ui->trwProcesses->blockSignals(false);
 
     for (int i = 0; i < processes.size(); i++) {
         if (!processes[i]->isCheckable() || processes[i]->isCheckableGroup()) {
@@ -133,7 +133,7 @@ void HydrodynamicDataDialog::expandTrees() {
 }
 
 void HydrodynamicDataDialog::on_btnDone_clicked() {
-    QList<HydrodynamicParameter*> parameters = seed->getParameters();
+    QList<HydrodynamicParameter*> parameters = hydrodynamicDataRepository->getParameters();
     
     for (int i = 0; i < parameters.size(); i++) {
         HydrodynamicParameter *parameter = parameters[i];
@@ -155,7 +155,7 @@ void HydrodynamicDataDialog::on_btnDone_clicked() {
 
 void HydrodynamicDataDialog::on_trwProcesses_itemChanged(QTreeWidgetItem *item, int column) {
     QTreeWidgetItem *parent = item->parent();
-    HydrodynamicProcess *process = seed->findProcessByName(item->data(0, Qt::UserRole).toString()); // findProcessByWidgetItem?
+    HydrodynamicProcess *process = hydrodynamicDataRepository->findProcessByName(item->data(0, Qt::UserRole).toString()); // findProcessByWidgetItem?
     
     process->setChecked(item->checkState(0) == Qt::Checked);
     

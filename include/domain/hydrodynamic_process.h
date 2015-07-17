@@ -8,7 +8,6 @@
 
 class HydrodynamicProcess {
 private:
-    uint id;
     QString name;
     QString label;
     HydrodynamicProcess *parent;
@@ -18,13 +17,7 @@ private:
     QList<HydrodynamicProcess*> children;
     QTreeWidgetItem *itemWidget;
 public:
-    HydrodynamicProcess(const QString &name, const QString &label, HydrodynamicProcess *parent = nullptr, bool checkable = false, HydrodynamicParameter *targetParameter = nullptr) :
-        name(name), label(label), parent(parent), targetParameter(targetParameter), checkable(checkable), checked(false)
-    {
-        if (parent != nullptr) {
-            parent->children.append(this);
-        }
-    }
+    HydrodynamicProcess() : parent(nullptr), targetParameter(nullptr), checkable(false), itemWidget(nullptr) {}
     
     QString getName() const {
         return name;
@@ -71,8 +64,20 @@ public:
         return parent;
     }
     
+    void setParent(HydrodynamicProcess *parent) {
+        this->parent = parent;
+        
+        if (parent != nullptr) {
+            parent->children.append(this);
+        }
+    }
+    
     HydrodynamicParameter* getTargetParameter() const {
         return targetParameter;
+    }
+    
+    void setTargetParameter(HydrodynamicParameter *targetParameter) {
+        this->targetParameter = targetParameter;
     }
 
     bool isCheckableGroup() const {
