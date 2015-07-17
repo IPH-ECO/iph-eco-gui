@@ -10,6 +10,7 @@ private:
     QList<HydrodynamicParameter*> parameters;
     QList<HydrodynamicProcess*> processes;
 public:
+    ~HydrodynamicDataRepository();
     QList<HydrodynamicParameter*> getParameters();
     QList<HydrodynamicProcess*> getProcesses();
     

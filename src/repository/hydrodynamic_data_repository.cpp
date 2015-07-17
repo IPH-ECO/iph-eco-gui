@@ -5,6 +5,15 @@
 #include <QJsonArray>
 #include <QFile>
 
+HydrodynamicDataRepository::~HydrodynamicDataRepository() {
+    for (int i = 0; i < parameters.size(); i++) {
+        delete parameters[i];
+    }
+    for (int i = 0; i < processes.size(); i++) {
+        delete processes[i];
+    }
+}
+
 QList<HydrodynamicParameter*> HydrodynamicDataRepository::getParameters() {
     if (parameters.isEmpty()) {
         Project *project = IPHApplication::getCurrentProject();

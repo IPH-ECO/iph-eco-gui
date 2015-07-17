@@ -462,7 +462,7 @@
         },
         {
             "defaultValue": 0,
-            "editable": true,
+            "editable": false,
             "hideSiblings": true,
             "label": "Generic Length Scale Model",
             "name": "genericLengthScaleModel",
@@ -472,7 +472,7 @@
         },
         {
             "defaultValue": 0,
-            "editable": true,
+            "editable": false,
             "hideSiblings": true,
             "label": "Mellor and Yamada Turbulence Model",
             "name": "mellorAndYamadaTurbulenceModel",
@@ -482,7 +482,7 @@
         },
         {
             "defaultValue": 0,
-            "editable": true,
+            "editable": false,
             "hideSiblings": true,
             "label": "ELCOM Mixing Model",
             "name": "elcomMixingModel",
@@ -572,7 +572,7 @@
         },
         {
             "defaultValue": 0,
-            "editable": true,
+            "editable": false,
             "hideSiblings": true,
             "label": "Barotropic and the baroclinic contributions to the hydrostatic pressure",
             "name": "barotropicAndBaroclinicContribuitions",
@@ -734,7 +734,7 @@
             "label": "Use values defined at Grid Data",
             "name": "roughnessManningUseGridData",
             "parentName": "roughnessManning",
-            "targetParameter": "roughnessManningConstant"
+            "targetParameter": "roughnessManningUseGridData"
         },
         {
             "checkable": true,
