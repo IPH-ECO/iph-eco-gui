@@ -1,9 +1,15 @@
 #include "include/repository/hydrodynamic_data_repository.h"
+#include "include/application/iph_application.h"
+#include "include/exceptions/database_exception.h"
 
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QFile>
+
+HydrodynamicDataRepository::HydrodynamicDataRepository() {
+    databaseUtility = DatabaseUtility::getInstance();
+}
 
 HydrodynamicDataRepository::~HydrodynamicDataRepository() {
     for (int i = 0; i < parameters.size(); i++) {
@@ -16,14 +22,14 @@ HydrodynamicDataRepository::~HydrodynamicDataRepository() {
 
 QList<HydrodynamicParameter*> HydrodynamicDataRepository::getParameters() {
     if (parameters.isEmpty()) {
-        Project *project = IPHApplication::getCurrentProject();
         QFile dataFile(":/data/hydrodynamic_data.json");
-    
+        
         dataFile.open(QFile::ReadOnly);
         
         QJsonDocument jsonDocument = QJsonDocument::fromJson(dataFile.readAll());
         QJsonObject jsonObject = jsonDocument.object();
         QJsonArray jsonParameters = jsonObject["parameters"].toArray();
+        QSqlQuery query(databaseUtility->getDatabase());
         
         for (int i = 0; i < jsonParameters.size(); i++) {
             QJsonObject jsonParameter = jsonParameters[i].toObject();
@@ -33,7 +39,6 @@ QList<HydrodynamicParameter*> HydrodynamicDataRepository::getParameters() {
             parameter->setLabel(jsonParameter["label"].toString());
             parameter->setEditable(jsonParameter["editable"].toBool());
             parameter->setSiblingsHidden(jsonParameter["hideSiblings"].toBool());
-            parameter->setDefaultValue(jsonParameter["defaultValue"].toDouble());
             parameter->setRangeMinimum(jsonParameter["rangeMinimum"].toDouble());
             parameter->setRangeMaximum(jsonParameter["rangeMaximum"].toDouble());
             
@@ -53,6 +58,21 @@ QList<HydrodynamicParameter*> HydrodynamicDataRepository::getParameters() {
             }
             
             parameter->setParent(parentParameter);
+            
+            Project *project = IPHApplication::getCurrentProject();
+            
+            if (project->isPersisted()) {
+                databaseUtility->connect(project->getFilename());
+                
+                query.prepare("select value from hydrodynamic_data_parameter where name = :n");
+                query.bindValue(":n", parameter->getName());
+                query.exec();
+                
+                parameter->setValue(query.isValid() ? query.value("value").toDouble() : jsonParameter["defaultValue"].toDouble());
+            } else {
+                parameter->setValue(jsonParameter["defaultValue"].toDouble());
+            }
+            
             parameters.append(parameter);
         }
         

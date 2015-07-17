@@ -3,12 +3,12 @@
 
 #include "include/domain/project.h"
 #include "include/domain/grid_data_configuration.h"
-#include <QSqlDatabase>
+#include "include/utility/database_utility.h"
 
 class ProjectRepository : public QObject {
     Q_OBJECT
 private:
-    QSqlDatabase database;
+    DatabaseUtility *databaseUtility;
     QString databaseName;
     int currentProgress;
     bool operationCanceled;

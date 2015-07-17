@@ -6,7 +6,6 @@
 #include <QTreeWidgetItemIterator>
 #include <QMessageBox>
 #include <QLineEdit>
-#include <iostream>
 
 HydrodynamicDataDialog::HydrodynamicDataDialog(QWidget *parent) :
     QDialog(parent), ui(new Ui::HydrodynamicDataDialog), hydrodynamicDataRepository(new HydrodynamicDataRepository)
@@ -55,7 +54,7 @@ void HydrodynamicDataDialog::setupItems() {
                 
                 lineEdit->setAlignment(Qt::AlignRight);
                 lineEdit->setObjectName(parameter->getName());
-                lineEdit->setText(QString::number(parameter->getDefaultValue())); // TODO: change to the value persisted
+                lineEdit->setText(QString::number(parameter->getValue()));
                 ui->trwParameters->setItemWidget(item, 1, lineEdit);
             }
         }
@@ -140,8 +139,11 @@ void HydrodynamicDataDialog::on_btnDone_clicked() {
         
         if (parameter->isEditable() && !parameter->getItemWidget()->isHidden()) {
             QLineEdit *lineEdit = static_cast<QLineEdit*>(ui->trwParameters->itemWidget(parameter->getItemWidget(), 1));
+            double value = lineEdit->text().toDouble();
             
-            if (!parameter->isInRange(lineEdit->text().toDouble())) {
+            if (parameter->isInRange(value)) {
+                parameter->setValue(value);
+            } else {
                 double rangeMinimum = parameter->getRangeMinimum();
                 double rangeMaximum = parameter->getRangeMaximum();
                 QString message = QString("%1 must be between %2 and %3.").arg(parameter->getLabel()).arg(rangeMinimum).arg(rangeMaximum);

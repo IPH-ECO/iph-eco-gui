@@ -7,15 +7,20 @@
 #include <QSqlQuery>
 #include <QSqlError>
 
-#include "include/application/iph_application.h"
-#include "include/exceptions/database_exception.h"
-
 class DatabaseUtility {
+private:
+    static DatabaseUtility *instance;
+    QSqlDatabase database;
+    
+    DatabaseUtility();
 public:
-    static QSqlDatabase connect(QString &database_name);
-    static void disconnect(QSqlDatabase &database);
-    static void createApplicationTables(QSqlDatabase &database);
-    static bool isDatabaseValid(QSqlDatabase &database);
+    static DatabaseUtility* getInstance();
+    
+    void connect(const QString &databaseName);
+    void disconnect();
+    void createApplicationTables();
+    bool isDatabaseValid();
+    QSqlDatabase getDatabase() const;
 };
 
 #endif // DATABASEUTILITY_H

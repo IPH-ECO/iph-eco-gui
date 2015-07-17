@@ -13,7 +13,6 @@ private:
     bool editable;
     bool hideSiblings;
     double value;
-    double defaultValue;
     double rangeMininum;
     double rangeMaximum;
     QList<HydrodynamicParameter*> children;
@@ -71,14 +70,6 @@ public:
     
     void setSiblingsHidden(bool hideSiblings) {
         this->hideSiblings = hideSiblings;
-    }
-
-    double getDefaultValue() const {
-        return defaultValue;
-    }
-
-    void setDefaultValue(double defaultValue) {
-        this->defaultValue = defaultValue;
     }
 
     double getRangeMinimum() const {

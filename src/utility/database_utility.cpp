@@ -1,5 +1,8 @@
 #include "include/utility/database_utility.h"
 
+#include "include/application/iph_application.h"
+#include "include/exceptions/database_exception.h"
+
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
@@ -7,25 +10,37 @@
 #include <QFile>
 #include <QList>
 
-QSqlDatabase DatabaseUtility::connect(QString &database_name) {
-    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", QUuid::createUuid().toString());
-    db.setDatabaseName(database_name);
+DatabaseUtility* DatabaseUtility::instance = nullptr;
 
-    if (!db.open()) {
-        throw DatabaseException(QString("The following error ocurred during database connection: %1").arg(db.lastError().text()));
+DatabaseUtility::DatabaseUtility() {}
+
+DatabaseUtility* DatabaseUtility::getInstance() {
+    if (instance == nullptr) {
+        instance = new DatabaseUtility();
     }
-
-    return db;
+    
+    return instance;
 }
 
-void DatabaseUtility::disconnect(QSqlDatabase &database) {
+void DatabaseUtility::connect(const QString &database_name) {
+    if (!database.isOpen()) {
+        database = QSqlDatabase::addDatabase("QSQLITE", QUuid::createUuid().toString());
+        database.setDatabaseName(database_name);
+
+        if (!database.open()) {
+            throw DatabaseException(QString("The following error ocurred during database connection: %1").arg(database.lastError().text()));
+        }
+    }
+}
+
+void DatabaseUtility::disconnect() {
     if (database.isOpen()) {
         database.close();
     }
     QSqlDatabase::removeDatabase(database.connectionName());
 }
 
-void DatabaseUtility::createApplicationTables(QSqlDatabase &database) {
+void DatabaseUtility::createApplicationTables() {
     QStringList sql;
 
     sql << "create table if not exists project (" \
@@ -169,7 +184,7 @@ void DatabaseUtility::createApplicationTables(QSqlDatabase &database) {
     }
 }*/
 
-bool DatabaseUtility::isDatabaseValid(QSqlDatabase &database) {
+bool DatabaseUtility::isDatabaseValid() {
     QSqlQuery query(database);
 
     query.prepare("pragma application_id");
@@ -177,4 +192,8 @@ bool DatabaseUtility::isDatabaseValid(QSqlDatabase &database) {
     query.next();
 
     return query.value(0).toInt() == IPHApplication::getApplicationId();
+}
+
+QSqlDatabase DatabaseUtility::getDatabase() const {
+    return database;
 }

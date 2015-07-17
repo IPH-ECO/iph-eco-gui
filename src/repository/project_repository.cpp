@@ -1,16 +1,19 @@
 #include "include/repository/project_repository.h"
 
+#include "include/application/iph_application.h"
 #include "include/exceptions/database_exception.h"
-#include "include/utility/database_utility.h"
 #include "include/domain/structured_mesh.h"
 #include "include/domain/unstructured_mesh.h"
 
+#include <QApplication>
 #include <QSqlQuery>
 #include <QSqlError>
 #include <QVariant>
 #include <QSet>
 
-ProjectRepository::ProjectRepository(const QString &databaseName) : databaseName(databaseName), currentProgress(0), operationCanceled(false) {}
+ProjectRepository::ProjectRepository(const QString &databaseName) : databaseName(databaseName), currentProgress(0), operationCanceled(false) {
+    databaseUtility = DatabaseUtility::getInstance();
+}
 
 void ProjectRepository::open() {
     currentProgress = 0;
@@ -18,13 +21,13 @@ void ProjectRepository::open() {
     emit updateProgress(currentProgress++);
     QApplication::processEvents();
     
-    this->database = DatabaseUtility::connect(this->databaseName);
+    databaseUtility->connect(this->databaseName);
     
-    if (!DatabaseUtility::isDatabaseValid(this->database)) {
+    if (!databaseUtility->isDatabaseValid()) {
         throw DatabaseException("Invalid IPH-ECO Project file.");
     }
     
-    QSqlQuery query(this->database);
+    QSqlQuery query(databaseUtility->getDatabase());
 
     query.prepare("select * from project limit 1");
     query.exec();
@@ -49,7 +52,7 @@ void ProjectRepository::open() {
 }
 
 void ProjectRepository::loadMeshes(Project *project) {
-    QSqlQuery query(this->database);
+    QSqlQuery query(databaseUtility->getDatabase());
     
     emit updateProgressText("Loading meshes...");
     QApplication::processEvents();
@@ -82,7 +85,7 @@ void ProjectRepository::loadMeshes(Project *project) {
 }
 
 void ProjectRepository::loadMeshPolygons(Mesh *mesh) {
-    QSqlQuery query(this->database);
+    QSqlQuery query(databaseUtility->getDatabase());
     
     query.prepare("select * from mesh_polygon where mesh_id = " + QString::number(mesh->getId()));
     query.exec();
@@ -104,7 +107,7 @@ void ProjectRepository::loadMeshPolygons(Mesh *mesh) {
 }
 
 void ProjectRepository::loadGridDataConfigurations(Project *project) {
-    QSqlQuery query(this->database);
+    QSqlQuery query(databaseUtility->getDatabase());
     
     emit updateProgressText("Loading grid data...");
     QApplication::processEvents();
@@ -126,7 +129,7 @@ void ProjectRepository::loadGridDataConfigurations(Project *project) {
 }
 
 void ProjectRepository::loadGridData(GridDataConfiguration *gridDataConfiguration, Project *project) {
-    QSqlQuery query(this->database);
+    QSqlQuery query(databaseUtility->getDatabase());
     
     query.prepare("select * from grid_data where grid_data_configuration_id = " + QString::number(gridDataConfiguration->getId()));
     query.exec();
@@ -179,20 +182,21 @@ void ProjectRepository::save(bool makeCopy) {
     emit updateProgress(currentProgress++);
     QApplication::processEvents();
     
-    this->database = DatabaseUtility::connect(this->databaseName);
     Project *project = IPHApplication::getCurrentProject();
     QString sql;
+    
+    databaseUtility->connect(project->getFilename());
     
     QSqlDatabase::database().transaction();
     try {
         if (project->isPersisted() && !makeCopy) {
             sql = "update project set name = :n, description = :d, hydrodynamic = :h, water_quality = :w, sediment = :s";
         } else {
-            DatabaseUtility::createApplicationTables(this->database);
+            databaseUtility->createApplicationTables();
             sql = "insert into project (name, description, hydrodynamic, water_quality, sediment) values (:n, :d, :h, :w, :s)";
         }
         
-        QSqlQuery query(this->database);
+        QSqlQuery query(databaseUtility->getDatabase());
         
         query.prepare(sql);
         query.bindValue(":n", project->getName());
@@ -216,7 +220,7 @@ void ProjectRepository::save(bool makeCopy) {
         }
     } catch (const DatabaseException &e) {
         QSqlDatabase::database().rollback();
-        DatabaseUtility::disconnect(this->database);
+        databaseUtility->disconnect();
         throw e;
     } catch (const std::exception &e) {
         throw DatabaseException(e.what());
@@ -235,7 +239,7 @@ void ProjectRepository::saveMeshes(Project *project) {
     }
     
     for (QSet<Mesh*>::const_iterator it = meshes.begin(); it != meshes.end() && !operationCanceled; it++) {
-        QSqlQuery query(this->database);
+        QSqlQuery query(databaseUtility->getDatabase());
         Mesh *mesh = *it;
         QString sql;
         
@@ -276,7 +280,7 @@ void ProjectRepository::saveMeshes(Project *project) {
     }
     
     // Handle exclusions
-    QSqlQuery query(this->database);
+    QSqlQuery query(databaseUtility->getDatabase());
     QString meshDeleteSql, meshPolygonDeleteSql;
     
     if (meshIds.isEmpty()) {
@@ -304,7 +308,7 @@ void ProjectRepository::saveMeshPolygons(Mesh *mesh) {
     
     for (QList<MeshPolygon*>::const_iterator it = meshPolygons.begin(); it != meshPolygons.end() && !operationCanceled; it++) {
         MeshPolygon *meshPolygon = *it;
-        QSqlQuery query(this->database);
+        QSqlQuery query(databaseUtility->getDatabase());
         
         if (meshPolygon->isPersisted()) {
             query.prepare("update mesh_polygon set name = :n, type = :t, poly_data = :p, minimum_angle = :mi, maximum_edge_length = :ma where id = :i");
@@ -340,7 +344,7 @@ void ProjectRepository::saveMeshPolygons(Mesh *mesh) {
         return;
     }
     
-    QSqlQuery query(this->database);
+    QSqlQuery query(databaseUtility->getDatabase());
     
     query.prepare("delete from mesh_polygon where id not in (" + meshPolygonIds.join(",") + ") and mesh_id = " + QString::number(mesh->getId()));
     query.exec();
@@ -357,7 +361,7 @@ void ProjectRepository::saveGridDataConfigurations(Project *project) {
     
     for (QSet<GridDataConfiguration*>::const_iterator it = configurations.begin(); it != configurations.end() && !operationCanceled; it++) {
         GridDataConfiguration *configuration = *it;
-        QSqlQuery query(this->database);
+        QSqlQuery query(databaseUtility->getDatabase());
         
         if (configuration->isPersisted()) {
             query.prepare("update grid_data_configuration set name = :n where id = :i");
@@ -385,7 +389,7 @@ void ProjectRepository::saveGridDataConfigurations(Project *project) {
     }
     
     // Handle exclusions
-    QSqlQuery query(this->database);
+    QSqlQuery query(databaseUtility->getDatabase());
     QString configurationDeleteSql, gridDataDeleteSql;
     
     if (configurationIds.isEmpty()) {
@@ -411,7 +415,7 @@ void ProjectRepository::saveGridData(GridDataConfiguration *gridDataConfiguratio
     
     for (int i = 0; i < gridDataVector.size() && !operationCanceled; i++) {
         GridData *gridData = gridDataVector.at(i);
-        QSqlQuery query(this->database);
+        QSqlQuery query(databaseUtility->getDatabase());
         
         if (gridData->isPersisted()) {
             query.prepare("update grid_data set " \
@@ -482,7 +486,7 @@ void ProjectRepository::saveGridData(GridDataConfiguration *gridDataConfiguratio
         return;
     }
     
-    QSqlQuery query(this->database);
+    QSqlQuery query(databaseUtility->getDatabase());
     
     query.prepare("delete from grid_data where id not in (" + gridDataIds.join(",") + ") and grid_data_configuration_id = " + QString::number(gridDataConfiguration->getId()));
     query.exec();
@@ -510,10 +514,10 @@ int ProjectRepository::getMaximumSaveProgress() {
 }
 
 int ProjectRepository::getMaximumLoadProgress() {
-    this->database = DatabaseUtility::connect(this->databaseName);
+    databaseUtility->connect(this->databaseName);
     
     int loadSteps = 0;
-    QSqlQuery query(this->database);
+    QSqlQuery query(databaseUtility->getDatabase());
     
     query.exec("select count(*) from mesh");
     query.next();
