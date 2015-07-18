@@ -45,6 +45,7 @@ void ProjectRepository::open() {
     
     loadMeshes(project);
     loadGridDataConfigurations(project);
+    loadHydrodynamicConfigurations(project);
     
     if (!operationCanceled) {
         IPHApplication::setCurrentProject(project);
@@ -176,6 +177,48 @@ void ProjectRepository::loadGridData(GridDataConfiguration *gridDataConfiguratio
     }
 }
 
+void ProjectRepository::loadHydrodynamicConfigurations(Project *project) {
+    QSqlQuery query(databaseUtility->getDatabase());
+    
+    emit updateProgressText("Loading hydrodynamic data...");
+    QApplication::processEvents();
+    
+    query.prepare("select * from hydrodynamic_configuration");
+    query.exec();
+    
+    while (query.next() && !operationCanceled) {
+        HydrodynamicConfiguration *configuration = new HydrodynamicConfiguration();
+        configuration->setId(query.value("id").toUInt());
+        configuration->setName(query.value("name").toString());
+        project->addHydrodynamicConfiguration(configuration);
+        
+        emit updateProgress(currentProgress++);
+        QApplication::processEvents();
+        
+        loadHydrodynamicParameter(configuration, project);
+    }
+}
+
+void ProjectRepository::loadHydrodynamicParameter(HydrodynamicConfiguration *configuration, Project *project) {
+    QSqlQuery query(databaseUtility->getDatabase());
+    
+    query.prepare("select * from hydrodynamic_parameter where hydrodynamic_configuration_id = " + QString::number(configuration->getId()));
+    query.exec();
+    
+    while (query.next() && !operationCanceled) {
+        HydrodynamicParameter *parameter = new HydrodynamicParameter();
+        parameter->setId(query.value("id").toUInt());
+        parameter->setName(query.value("name").toString());
+        parameter->setValue(query.value("value").toDouble());
+        parameter->setSelected(query.value("selected").toDouble());
+
+        configuration->addHydrodynamicParameter(parameter);
+
+        emit updateProgress(currentProgress++);
+        QApplication::processEvents();
+    }
+}
+
 void ProjectRepository::save(bool makeCopy) {
     currentProgress = 0;
     emit updateProgressText("Saving project...");
@@ -212,6 +255,7 @@ void ProjectRepository::save(bool makeCopy) {
         project->setId(1);
         saveMeshes(project);
         saveGridDataConfigurations(project);
+        saveHydrodynamicConfigurations(project);
         
         if (operationCanceled) {
             QSqlDatabase::database().rollback();
@@ -492,6 +536,80 @@ void ProjectRepository::saveGridData(GridDataConfiguration *gridDataConfiguratio
     query.exec();
 }
 
+void ProjectRepository::saveHydrodynamicConfigurations(Project *project) {
+    QSet<HydrodynamicConfiguration*> configurations = project->getHydrodynamicConfigurations();
+    QStringList configurationIds;
+    
+    if (!configurations.isEmpty()) {
+        emit updateProgressText("Saving hydrodynamic data...");
+        QApplication::processEvents();
+    }
+    
+    for (QSet<HydrodynamicConfiguration*>::const_iterator it = configurations.begin(); it != configurations.end() && !operationCanceled; it++) {
+        HydrodynamicConfiguration *configuration = *it;
+        QSqlQuery query(databaseUtility->getDatabase());
+        
+        if (configuration->isPersisted()) {
+            query.prepare("update hydrodynamic_configuration set name = :n where id = :i");
+            query.bindValue(":i", configuration->getId());
+        } else {
+            query.prepare("insert into hydrodynamic_configuration (name) values (:n)");
+        }
+        
+        query.bindValue(":n", configuration->getName());
+        
+        if (!query.exec()) {
+            throw DatabaseException(QString("Unable to save hydrodynamic data configurations. Error: %1.").arg(query.lastError().text()));
+        }
+        
+        emit updateProgress(currentProgress++);
+        QApplication::processEvents();
+        
+        configuration->setId(query.lastInsertId().toUInt());
+        configurationIds.append(QString::number(configuration->getId()));
+        saveHydrodynamicParameters(configuration);
+    }
+}
+
+void ProjectRepository::saveHydrodynamicParameters(HydrodynamicConfiguration *configuration) {
+    QList<HydrodynamicParameter*> parameters = configuration->getParameters();
+    QSqlQuery query(databaseUtility->getDatabase());
+    QStringList parameterIds;
+
+    for (int i = 0; i < parameters.size() && !operationCanceled; i++) {
+        HydrodynamicParameter *parameter = parameters[i];
+
+        if (parameter->isPersisted()) {
+            query.prepare("update hydrodynamic_parameter set value = :v, selected = :s where id = :i");
+            query.bindValue(":i", parameter->getId());
+        } else {
+            query.prepare("insert into hydrodynamic_parameter (name, value, selected, hydrodynamic_configuration_id) values (:n, :v, :s, :h)");
+            query.bindValue(":n", parameter->getName());
+            query.bindValue(":h", configuration->getId());
+        }
+
+        query.bindValue(":v", parameter->getValue());
+        query.bindValue(":s", parameter->isSelected());
+
+        if (!query.exec()) {
+            throw DatabaseException(QString("Unable to save hydrodynamic parameters. Error: %1.").arg(query.lastError().text()));
+        }
+
+        emit updateProgress(currentProgress++);
+        QApplication::processEvents();
+
+        parameter->setId(query.lastInsertId().toUInt());
+        parameterIds.append(QString::number(parameter->getId()));
+    }
+
+    if (operationCanceled) {
+        return;
+    }
+
+    query.prepare("delete from hydrodynamic_parameter where id not in (" + parameterIds.join(",") + ") and hydrodynamic_configuration_id = " + configuration->getId());
+    query.exec();
+}
+
 int ProjectRepository::getMaximumSaveProgress() {
     int saveSteps = 0;
     Project *project = IPHApplication::getCurrentProject();
@@ -532,6 +650,14 @@ int ProjectRepository::getMaximumLoadProgress() {
     loadSteps += query.value(0).toInt();
     
     query.exec("select count(*) from grid_data");
+    query.next();
+    loadSteps += query.value(0).toInt();
+
+    query.exec("select count(*) from hydrodynamic_configuration");
+    query.next();
+    loadSteps += query.value(0).toInt();
+
+    query.exec("select count(*) from hydrodynamic_parameter");
     query.next();
     loadSteps += query.value(0).toInt();
     

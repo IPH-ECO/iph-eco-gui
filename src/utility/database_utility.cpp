@@ -110,9 +110,17 @@ void DatabaseUtility::createApplicationTables() {
         "mesh_id integer not null" \
     ")";
     
+    sql << "create table if not exists hydrodynamic_configuration (" \
+        "id integer primary key, " \
+        "name varchar(255) not null" \
+    ")";
+    
     sql << "create table if not exists hydrodynamic_parameter (" \
-        "name varchar(255) primary key, " \
-        "value float default null"
+        "id integer primary key, " \
+        "name varchar(255) not null, " \
+        "value float default null, " \
+        "selected bool default false, " \
+        "hydrodynamic_configuration_id integer not null"
     ")";
     
     QSqlQuery query(database);
@@ -128,61 +136,6 @@ void DatabaseUtility::createApplicationTables() {
     query.prepare(QString("pragma application_id = %1").arg(IPHApplication::getApplicationId()));
     query.exec();
 }
-
-/*void DatabaseUtility::seedHydrodynamicDataTables(QSqlDatabase &database) {
-    QFile seedsFile(":/data/seed/hydrodynamic_data.json");
-    
-    seedsFile.open(QFile::ReadOnly);
-    
-    QJsonDocument jsonDocument = QJsonDocument::fromJson(seedsFile.readAll());
-    QJsonObject jsonObject = jsonDocument.object();
-    QJsonArray jsonParameters = jsonObject["parameters"].toArray();
-    
-    for (int i = 0; i < jsonParameters.size(); i++) {
-        QJsonObject jsonParameter = jsonParameters[i].toObject();
-        QString parentName = jsonParameter["parentName"].toString();
-        QSqlQuery query(database);
-        QString sql = "insert into hydrodynamic_parameter (name, label, parent_name, editable, hide_siblings, default_value, range_minimum, range_maximum) "
-                      "values (:na, :la, :pa, :ed, :hs, :dv, :rmin, :rmax)";
-        
-        query.prepare(sql);
-        query.bindValue(":na", jsonParameter["name"].toString());
-        query.bindValue(":la", jsonParameter["label"].toString());
-        query.bindValue(":pa", parentName.isEmpty() ? QVariant(QVariant::String) : parentName);
-        query.bindValue(":ed", jsonParameter["editable"].toBool());
-        query.bindValue(":hs", jsonParameter["hideSiblings"].toBool());
-        query.bindValue(":dv", jsonParameter["defaultValue"].toDouble());
-        query.bindValue(":rmin", jsonParameter["rangeMinimum"].toDouble());
-        query.bindValue(":rmax", jsonParameter["rangeMaximumaultValue"].toDouble());
-        
-        if (!query.exec()) {
-            throw DatabaseException(QString("An error occurred when seeding application tables: %1").arg(query.lastError().text()));
-        }
-    }
-    
-    QJsonArray jsonProcesses = jsonObject["processes"].toArray();
-    
-    for (int i = 0; i < jsonProcesses.size(); i++) {
-        QJsonObject jsonProcess = jsonProcesses[i].toObject();
-        QString parentName = jsonProcess["parentName"].toString();
-        QString targetParameter = jsonProcess["targetParameter"].toString();
-        QSqlQuery query(database);
-        QString sql = "insert into hydrodynamic_process (name, label, parent_name, target_parameter, checkable, checked) "
-                      "values (:na, :la, :pa, :ta, :ce, :cd)";
-        
-        query.prepare(sql);
-        query.bindValue(":na", jsonProcess["name"].toString());
-        query.bindValue(":la", jsonProcess["label"].toString());
-        query.bindValue(":pa", parentName.isEmpty() ? QVariant(QVariant::String) : parentName);
-        query.bindValue(":ta", targetParameter.isEmpty() ? QVariant(QVariant::String) : targetParameter);
-        query.bindValue(":ce", jsonProcess["checkable"].toBool());
-        query.bindValue(":cd", jsonProcess["checked"].toBool());
-        
-        if (!query.exec()) {
-            throw DatabaseException(QString("An error occurred when seeding application tables: %1").arg(query.lastError().text()));
-        }
-    }
-}*/
 
 bool DatabaseUtility::isDatabaseValid() {
     QSqlQuery query(database);

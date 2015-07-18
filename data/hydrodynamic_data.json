@@ -113,6 +113,7 @@
         {
             "defaultValue": 0,
             "editable": false,
+            "isSelected": true,
             "hideSiblings": true,
             "label": "Wind drag coefficient",
             "name": "windDrag",
@@ -123,6 +124,7 @@
         {
             "defaultValue": 9.9999999999999995e-08,
             "editable": true,
+            "isSelected": true,
             "hideSiblings": true,
             "label": "Constant",
             "name": "windDragConstant",
@@ -243,6 +245,7 @@
         {
             "defaultValue": 0,
             "editable": true,
+            "isSelected": true,
             "hideSiblings": true,
             "label": "Chezy constant",
             "name": "roughnessChezyConstant",
@@ -323,6 +326,7 @@
         {
             "defaultValue": 0,
             "editable": false,
+            "isSelected": true,
             "hideSiblings": true,
             "label": "Constant",
             "name": "horizontalEddyConstant",
@@ -393,6 +397,7 @@
         {
             "defaultValue": 0,
             "editable": false,
+            "isSelected": true,
             "hideSiblings": true,
             "label": "Constant",
             "name": "verticalEddyConstant",
@@ -403,6 +408,7 @@
         {
             "defaultValue": 1,
             "editable": true,
+            "isSelected": true,
             "hideSiblings": true,
             "label": "Vertical eddy viscosity",
             "name": "verticalEddyViscosity",
@@ -413,6 +419,7 @@
         {
             "defaultValue": 1,
             "editable": true,
+            "isSelected": true,
             "hideSiblings": true,
             "label": "Vertical eddy diffusivity",
             "name": "verticalEddyDiffusivity",
@@ -513,6 +520,7 @@
         {
             "defaultValue": 0,
             "editable": false,
+            "isSelected": true,
             "hideSiblings": true,
             "label": "Eulerian-Lagrangian Method",
             "name": "eulerianLagrangianMethod",
@@ -523,6 +531,7 @@
         {
             "defaultValue": 10,
             "editable": true,
+            "isSelected": true,
             "hideSiblings": true,
             "label": "Number of sub-time steps",
             "name": "numberOfSubTimeSteps",
@@ -593,6 +602,7 @@
         {
             "defaultValue": 0,
             "editable": false,
+            "isSelected": true,
             "hideSiblings": true,
             "label": "No pressure simulation",
             "name": "noPressureSimulation",
@@ -658,7 +668,6 @@
         },
         {
             "checkable": true,
-            "checked": true,
             "label": "Constant",
             "name": "windDragConstant",
             "parentName": "windDrag",
@@ -698,7 +707,6 @@
         },
         {
             "checkable": true,
-            "checked": true,
             "label": "Constant",
             "name": "roughnessChezyConstant",
             "parentName": "roughnessChezy",
@@ -778,7 +786,6 @@
         },
         {
             "checkable": true,
-            "checked": true,
             "label": "Constant",
             "name": "horizontalEddyViscosityDifusivityConstant",
             "parentName": "horizontalEddyViscosityDifusivity",
@@ -802,7 +809,6 @@
         },
         {
             "checkable": true,
-            "checked": true,
             "label": "Constant",
             "name": "verticalEddyViscosityDifusivityConstant",
             "parentName": "verticalEddyViscosityDifusivity",
@@ -858,7 +864,6 @@
         },
         {
             "checkable": true,
-            "checked": true,
             "label": "Eulerian-Lagrangian Method",
             "name": "eulerianLagrangianMethod",
             "parentName": "advectionScheme",
@@ -914,7 +919,6 @@
         },
         {
             "checkable": true,
-            "checked": true,
             "label": "No pressure simulation",
             "name": "noPressureSimulation",
             "parentName": "pressure",

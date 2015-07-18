@@ -5,11 +5,18 @@
 #include <QString>
 #include <QList>
 
+#include "hydrodynamic_process.h"
+
+class HydrodynamicProcess;
+
 class HydrodynamicParameter {
 private:
+    uint id;
     QString name;
     QString label;
+    bool selected;
     HydrodynamicParameter *parent;
+    HydrodynamicProcess *process;
     bool editable;
     bool hideSiblings;
     double value;
@@ -18,7 +25,19 @@ private:
     QList<HydrodynamicParameter*> children;
     QTreeWidgetItem* itemWidget;
 public:
-    HydrodynamicParameter() : parent(nullptr), editable(true), hideSiblings(true), rangeMininum(0), rangeMaximum(0) {}
+    HydrodynamicParameter() : selected(false), parent(nullptr), process(nullptr), editable(true), hideSiblings(true), rangeMininum(0), rangeMaximum(0) {}
+
+    uint getId() const {
+        return id;
+    }
+
+    void setId(uint id) {
+        this->id = id;
+    }
+
+    bool isPersisted() const {
+        return id != 0;
+    }
     
     QString getName() const {
         return name;
@@ -36,6 +55,14 @@ public:
         this->label = label;
     }
     
+    bool isSelected() const {
+        return selected;
+    }
+    
+    void setSelected(bool selected) {
+        this->selected = selected;
+    }
+    
     HydrodynamicParameter* getParent() const {
         return parent;
     }
@@ -46,6 +73,14 @@ public:
         if (parent != nullptr) {
             parent->children.append(this);
         }
+    }
+    
+    HydrodynamicProcess* getProcess() const {
+        return process;
+    }
+    
+    void setProcess(HydrodynamicProcess *process) {
+        this->process = process;
     }
     
     double getValue() const {

@@ -19,9 +19,14 @@ private:
     void loadMeshPolygons(Mesh *mesh);
     void loadGridDataConfigurations(Project *project);
     void loadGridData(GridDataConfiguration *gridDataConfiguration, Project *project);
+    void loadHydrodynamicConfigurations(Project *project);
+    void loadHydrodynamicParameter(HydrodynamicConfiguration *configuration, Project *project);
     
     void saveGridDataConfigurations(Project *project);
     void saveGridData(GridDataConfiguration *gridDataConfiguration);
+
+    void saveHydrodynamicConfigurations(Project *project);
+    void saveHydrodynamicParameters(HydrodynamicConfiguration *configuration);
 
 public:
     ProjectRepository(const QString &databaseName);

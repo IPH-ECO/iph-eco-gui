@@ -5,6 +5,7 @@
 
 #include "mesh.h"
 #include "grid_data_configuration.h"
+#include "hydrodynamic_configuration.h"
 
 class Project {
 private:
@@ -17,6 +18,7 @@ private:
     bool sediment;
     QSet<Mesh*> meshes;
     QSet<GridDataConfiguration*> gridDataConfigurations;
+    QSet<HydrodynamicConfiguration*> hydrodynamicConfigurations;
 
     //Transient attributes
     bool dirty;
@@ -51,6 +53,11 @@ public:
     void removeGridDataConfiguration(const QString &configurationName);
     GridDataConfiguration* getGridDataConfiguration(const QString &configurationName);
     QSet<GridDataConfiguration*> getGridDataConfigurations() const;
+    
+    bool addHydrodynamicConfiguration(HydrodynamicConfiguration *hydrodynamicConfiguration);
+    void removeHydrodynamicConfiguration(const QString &configurationName);
+    HydrodynamicConfiguration* getHydrodynamicConfiguration(const QString &configurationName);
+    QSet<HydrodynamicConfiguration*> getHydrodynamicConfigurations() const;
     
     //Transient gets and sets
     bool isPersisted() const;

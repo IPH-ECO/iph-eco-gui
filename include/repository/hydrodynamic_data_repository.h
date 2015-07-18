@@ -7,14 +7,17 @@
 
 class HydrodynamicDataRepository {
 private:
-    DatabaseUtility *databaseUtility;
+    static HydrodynamicDataRepository *instance;
+
+    HydrodynamicDataRepository();
     QList<HydrodynamicParameter*> parameters;
     QList<HydrodynamicProcess*> processes;
     
     template<typename T> T* findByName(const QList<T*> &list, const QString &name) const;
 public:
-    HydrodynamicDataRepository();
+    static HydrodynamicDataRepository* getInstance();
     ~HydrodynamicDataRepository();
+    
     QList<HydrodynamicParameter*> getParameters();
     QList<HydrodynamicProcess*> getProcesses();
     

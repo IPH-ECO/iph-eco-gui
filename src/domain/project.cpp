@@ -116,7 +116,7 @@ void Project::removeMesh(Mesh *mesh) {
 }
 
 bool Project::containsMesh(const QString &meshName) {
-    return this->getMesh(meshName) != NULL;
+    return this->getMesh(meshName) != nullptr;
 }
 
 Mesh* Project::getMesh(const QString &meshName) const {
@@ -126,7 +126,7 @@ Mesh* Project::getMesh(const QString &meshName) const {
         }
     }
 
-    return NULL;
+    return nullptr;
 }
 
 Mesh* Project::getMesh(const uint &id) const {
@@ -136,7 +136,7 @@ Mesh* Project::getMesh(const uint &id) const {
         }
     }
     
-    return NULL;
+    return nullptr;
 }
 
 bool Project::addGridDataConfiguration(GridDataConfiguration *gridDataConfiguration) {
@@ -153,7 +153,7 @@ bool Project::addGridDataConfiguration(GridDataConfiguration *gridDataConfigurat
 void Project::removeGridDataConfiguration(const QString &configurationName) {
     GridDataConfiguration *gridDataConfiguration = getGridDataConfiguration(configurationName);
 
-    if (gridDataConfiguration != NULL) {
+    if (gridDataConfiguration != nullptr) {
         gridDataConfigurations.remove(gridDataConfiguration);
         delete gridDataConfiguration;
     }
@@ -168,11 +168,47 @@ GridDataConfiguration* Project::getGridDataConfiguration(const QString &configur
         }
     }
 
-    return NULL;
+    return nullptr;
 }
 
 QSet<GridDataConfiguration*> Project::getGridDataConfigurations() const {
     return gridDataConfigurations;
+}
+
+bool Project::addHydrodynamicConfiguration(HydrodynamicConfiguration *hydrodynamicConfiguration) {
+    if (this->hydrodynamicConfigurations.contains(hydrodynamicConfiguration)) {
+        return false;
+    }
+    
+    this->hydrodynamicConfigurations.insert(hydrodynamicConfiguration);
+    this->setDirty(true);
+    
+    return true;
+}
+
+void Project::removeHydrodynamicConfiguration(const QString &configurationName) {
+    HydrodynamicConfiguration *hydrodynamicConfiguration = getHydrodynamicConfiguration(configurationName);
+    
+    if (hydrodynamicConfiguration != nullptr) {
+        hydrodynamicConfigurations.remove(hydrodynamicConfiguration);
+        delete hydrodynamicConfiguration;
+    }
+    
+    this->setDirty(true);
+}
+
+HydrodynamicConfiguration* Project::getHydrodynamicConfiguration(const QString &configurationName) {
+    for (QSet<HydrodynamicConfiguration*>::const_iterator it = hydrodynamicConfigurations.begin(); it != hydrodynamicConfigurations.end(); it++) {
+        if ((*it)->getName() == configurationName) {
+            return *it;
+        }
+    }
+    
+    return nullptr;
+}
+
+QSet<HydrodynamicConfiguration*> Project::getHydrodynamicConfigurations() const {
+    return hydrodynamicConfigurations;
 }
 
 bool Project::isPersisted() const {

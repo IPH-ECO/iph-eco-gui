@@ -6,6 +6,8 @@
 #include <QString>
 #include <QList>
 
+class HydrodynamicParameter;
+
 class HydrodynamicProcess {
 private:
     QString name;
