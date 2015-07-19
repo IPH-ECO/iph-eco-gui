@@ -22,49 +22,51 @@ HydrodynamicDataDialog::HydrodynamicDataDialog(QWidget *parent) :
 }
 
 HydrodynamicDataDialog::~HydrodynamicDataDialog() {
-    delete hydrodynamicDataRepository;
     delete unsavedConfiguration;
     delete ui;
 }
 
 void HydrodynamicDataDialog::setupItems() {
-    QList<HydrodynamicParameter*> defaultParameters = hydrodynamicDataRepository->getParameters();
-    QList<HydrodynamicProcess*> processes = hydrodynamicDataRepository->getProcesses();
+    hydrodynamicDataRepository->buildParameters(currentConfiguration);
+
+    QList<HydrodynamicParameter*> parameters = currentConfiguration->getParameters();
+    QList<HydrodynamicProcess*> processes = hydrodynamicDataRepository->getProcesses(currentConfiguration);
     
     // Parameters
     ui->trwParameters->blockSignals(true);
-    for (int i = 0; i < defaultParameters.size(); i++) {
-        HydrodynamicParameter *defaultParameter = defaultParameters[i];
+    for (int i = 0; i < parameters.size(); i++) {
+        HydrodynamicParameter *parameter = parameters[i];
         QTreeWidgetItem *item = nullptr;
         
-        if (defaultParameter->getParent() == nullptr) {
-            item = new QTreeWidgetItem(ui->trwParameters, QStringList(defaultParameter->getLabel()));
+        if (parameter->getParent() == nullptr) {
+            item = new QTreeWidgetItem(ui->trwParameters, QStringList(parameter->getLabel()));
         } else {
             QTreeWidgetItem *parentItem = nullptr;
             QTreeWidgetItemIterator it(ui->trwParameters);
             
             while (*it) {
                 QString itemName = (*it)->data(0, Qt::UserRole).toString();
-                if (itemName == defaultParameter->getParent()->getName()) {
+                if (itemName == parameter->getParent()->getName()) {
                     parentItem = *it;
                     break;
                 }
                 it++;
             }
             
-            item = new QTreeWidgetItem(parentItem, QStringList(defaultParameter->getLabel()));
+            item = new QTreeWidgetItem(parentItem, QStringList(parameter->getLabel()));
             
-            if (defaultParameter->isEditable()) {
+            if (parameter->isEditable()) {
                 QLineEdit *lineEdit = new QLineEdit(ui->trwParameters);
                 
                 lineEdit->setAlignment(Qt::AlignRight);
-                lineEdit->setObjectName(defaultParameter->getName());
+                lineEdit->setObjectName(parameter->getName());
+                lineEdit->setText(QString::number(parameter->getValue()));
                 ui->trwParameters->setItemWidget(item, 1, lineEdit);
             }
         }
         
-        defaultParameter->setItemWidget(item);
-        item->setData(0, Qt::UserRole, QVariant(defaultParameter->getName()));
+        parameter->setItemWidget(item);
+        item->setData(0, Qt::UserRole, QVariant(parameter->getName()));
     }
     ui->trwParameters->blockSignals(false);
     
@@ -97,23 +99,14 @@ void HydrodynamicDataDialog::setupItems() {
     }
     ui->trwProcesses->blockSignals(false);
     
-    currentConfiguration->setParameters(defaultParameters);
-    QList<HydrodynamicParameter*> configurationParameters = currentConfiguration->getParameters();
-    
-    for (int i = 0; i < configurationParameters.size(); i++) {
-        HydrodynamicParameter *configurationParameter = configurationParameters[i];
-        HydrodynamicProcess *process = configurationParameter->getProcess();
-        QLineEdit *lineEdit = ui->trwParameters->findChild<QLineEdit*>(configurationParameter->getName());
-        
-        if (process != nullptr) {
-            if (configurationParameter->isSelected()) {
-                process->getItemWidget()->setCheckState(0, Qt::Checked);
-            } else {
-                process->getTargetParameter()->getItemWidget()->setHidden(true);
-            }
+    for (int i = 0; i < processes.size(); i++) {
+        if (!processes[i]->isCheckable() || processes[i]->isCheckableGroup()) {
+            continue;
         }
-        if (lineEdit != nullptr) {
-            lineEdit->setText(QString::number(configurationParameter->getValue()));
+        if (processes[i]->isChecked()) {
+            on_trwProcesses_itemChanged(processes[i]->getItemWidget(), 0);
+        } else {
+            processes[i]->getTargetParameter()->getItemWidget()->setHidden(true);
         }
     }
 }
@@ -162,13 +155,30 @@ void HydrodynamicDataDialog::on_cbxConfiguration_currentIndexChanged(const QStri
 
 void HydrodynamicDataDialog::on_btnDone_clicked() {
     ui->cbxConfiguration->setCurrentIndex(-1);
-    /*QList<HydrodynamicParameter*> parameters = hydrodynamicDataRepository->getParameters();
+}
+
+void HydrodynamicDataDialog::on_btnSave_clicked() {
+    QString configurationName = ui->edtConfigurationName->text();
+    
+    if (configurationName.isEmpty()) {
+        QMessageBox::warning(this, tr("Hydrodynamic Data"), tr("Configuration name can't be empty."));
+        return;
+    }
+    
+    QList<HydrodynamicParameter*> parameters = currentConfiguration->getParameters();
     
     for (int i = 0; i < parameters.size(); i++) {
         HydrodynamicParameter *parameter = parameters[i];
+        QTreeWidgetItem *item = parameter->getItemWidget();
+        QTreeWidgetItem *parentItem = item->parent();
         
-        if (parameter->isEditable() && !parameter->getItemWidget()->isHidden()) {
-            QLineEdit *lineEdit = static_cast<QLineEdit*>(ui->trwParameters->itemWidget(parameter->getItemWidget(), 1));
+        if ((item != nullptr && item->isHidden()) || (parentItem != nullptr && parentItem->isHidden())) {
+            continue;
+        }
+        
+        QLineEdit *lineEdit = static_cast<QLineEdit*>(ui->trwParameters->findChild<QLineEdit*>(parameter->getName()));
+        
+        if (lineEdit != nullptr) {
             double value = lineEdit->text().toDouble();
             
             if (parameter->isInRange(value)) {
@@ -179,18 +189,9 @@ void HydrodynamicDataDialog::on_btnDone_clicked() {
                 QString message = QString("%1 must be between %2 and %3.").arg(parameter->getLabel()).arg(rangeMinimum).arg(rangeMaximum);
                 
                 QMessageBox::warning(this, "Hydrodynamic Data", message);
-                break;
+                return;
             }
         }
-    }*/
-}
-
-void HydrodynamicDataDialog::on_btnSave_clicked() {
-    QString configurationName = ui->edtConfigurationName->text();
-    
-    if (configurationName.isEmpty()) {
-        QMessageBox::warning(this, tr("Hydrodynamic Data"), tr("Configuration name can't be empty."));
-        return;
     }
     
     currentConfiguration->setName(configurationName);
@@ -210,7 +211,7 @@ void HydrodynamicDataDialog::on_btnSave_clicked() {
 
 void HydrodynamicDataDialog::on_trwProcesses_itemChanged(QTreeWidgetItem *item, int column) {
     QTreeWidgetItem *parent = item->parent();
-    HydrodynamicProcess *process = hydrodynamicDataRepository->findProcessByName(item->data(0, Qt::UserRole).toString()); // findProcessByWidgetItem?
+    HydrodynamicProcess *process = hydrodynamicDataRepository->findProcessByName(item->data(0, Qt::UserRole).toString());
     
     process->setChecked(item->checkState(0) == Qt::Checked);
     
@@ -263,7 +264,7 @@ void HydrodynamicDataDialog::on_trwProcesses_itemChanged(QTreeWidgetItem *item, 
     
     if (process->isCheckable()) {
         HydrodynamicParameter *parameter = process->getTargetParameter();
-        parameter->setSelected(process->isChecked());
+//        parameter->setSelected(process->isChecked());
         parameter->toggleHierarchyVisibility(process->isChecked());
     }
 }

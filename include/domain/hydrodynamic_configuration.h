@@ -43,23 +43,17 @@ public:
                 parameter->setName(defaultParameter->getName());
                 parameter->setSelected(defaultParameter->isSelected());
                 parameter->setValue(defaultParameter->getValue());
+                parameter->setLabel(defaultParameter->getLabel());
+                parameter->setRangeMinimum(defaultParameter->getRangeMinimum());
+                parameter->setRangeMaximum(defaultParameter->getRangeMaximum());
                 parameter->setProcess(defaultParameter->getProcess());
+                parameter->setItemWidget(defaultParameter->getItemWidget());
                 
                 this->parameters.append(parameter);
             }
         }
     }
     
-    HydrodynamicParameter* findParameterByName(const QString &name) {
-        for (int i = 0; i < parameters.size(); i++) {
-            if (parameters[i]->getName() == name) {
-                return parameters[i];
-            }
-        }
-        
-        return nullptr;
-    }
-
 	bool addHydrodynamicParameter(HydrodynamicParameter *hydrodynamicParameter) {
 		if (parameters.contains(hydrodynamicParameter)) {
 			return false;
@@ -72,6 +66,16 @@ public:
 
 	QList<HydrodynamicParameter*> getParameters() const {
 		return parameters;
+	}
+
+	HydrodynamicParameter* getParameter(const QString &name) {
+		for (int i = 0; i < parameters.size(); i++) {
+			if (parameters[i]->getName() == name) {
+				return parameters[i];
+			}
+		}
+
+		return nullptr;
 	}
 };
 

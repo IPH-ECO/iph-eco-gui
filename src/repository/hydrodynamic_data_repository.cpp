@@ -3,10 +3,17 @@
 
 #include <QJsonDocument>
 #include <QJsonObject>
-#include <QJsonArray>
 #include <QFile>
 
 HydrodynamicDataRepository* HydrodynamicDataRepository::instance = nullptr;
+
+HydrodynamicDataRepository* HydrodynamicDataRepository::getInstance() {
+    if (instance == nullptr) {
+        instance = new HydrodynamicDataRepository();
+    }
+    
+    return instance;
+}
 
 HydrodynamicDataRepository::HydrodynamicDataRepository() {
     QFile dataFile(":/data/hydrodynamic_data.json");
@@ -15,42 +22,11 @@ HydrodynamicDataRepository::HydrodynamicDataRepository() {
     
     QJsonDocument jsonDocument = QJsonDocument::fromJson(dataFile.readAll());
     QJsonObject jsonObject = jsonDocument.object();
-    QJsonArray jsonParameters = jsonObject["parameters"].toArray();
     
-    for (int i = 0; i < jsonParameters.size(); i++) {
-        QJsonObject jsonParameter = jsonParameters[i].toObject();
-        HydrodynamicParameter *parameter = new HydrodynamicParameter();
-        
-        parameter->setName(jsonParameter["name"].toString());
-        parameter->setValue(jsonParameter["defaultValue"].toDouble());
-        parameter->setSelected(jsonParameter["isSelected"].toBool());
-        parameter->setLabel(jsonParameter["label"].toString());
-        parameter->setEditable(jsonParameter["editable"].toBool());
-        parameter->setSiblingsHidden(jsonParameter["hideSiblings"].toBool());
-        parameter->setRangeMinimum(jsonParameter["rangeMinimum"].toDouble());
-        parameter->setRangeMaximum(jsonParameter["rangeMaximum"].toDouble());
-        
-        QString parentName = jsonParameter["parentName"].toString();
-        HydrodynamicParameter *parentParameter = nullptr;
-        
-        if (!parentName.isEmpty()) {
-            QList<HydrodynamicParameter*>::const_iterator it = parameters.constEnd();
-            
-            while (it != parameters.constBegin()) {
-                it--;
-                if ((*it)->getName() == parentName) {
-                    parentParameter = *it;
-                    break;
-                }
-            }
-        }
-        
-        parameter->setParent(parentParameter);
-        
-        parameters.append(parameter);
-    }
-
-    QJsonArray jsonProcesses = jsonObject["processes"].toArray();
+    dataFile.close();
+    
+    this->jsonParameters = jsonObject["parameters"].toArray();
+    this->jsonProcesses = jsonObject["processes"].toArray();
     
     for (int i = 0; i < jsonProcesses.size(); i++) {
         QJsonObject jsonProcess = jsonProcesses[i].toObject();
@@ -59,14 +35,6 @@ HydrodynamicDataRepository::HydrodynamicDataRepository() {
         process->setName(jsonProcess["name"].toString());
         process->setLabel(jsonProcess["label"].toString());
         process->setCheckable(jsonProcess["checkable"].toBool());
-        
-        HydrodynamicParameter *targetParameter = this->findParameterByName(jsonProcess["targetParameter"].toString());
-        process->setTargetParameter(targetParameter);
-        
-        if (targetParameter != nullptr) {
-            targetParameter->setProcess(process);
-//            process->setChecked(targetParameter->isSelected());
-        }
         
         QString parentName = jsonProcess["parentName"].toString();
         HydrodynamicProcess *parentProcess = nullptr;
@@ -86,52 +54,63 @@ HydrodynamicDataRepository::HydrodynamicDataRepository() {
         process->setParent(parentProcess);
         processes.append(process);
     }
+}
+
+HydrodynamicDataRepository::~HydrodynamicDataRepository() {}
+
+void HydrodynamicDataRepository::buildParameters(HydrodynamicConfiguration *configuration) {
+    for (int i = 0; i < jsonParameters.size(); i++) {
+        QJsonObject jsonParameter = jsonParameters[i].toObject();
+        QString parameterName = jsonParameter["name"].toString();
+        HydrodynamicParameter *parameter = configuration->getParameter(parameterName);
+
+        if (parameter == nullptr) {
+            parameter = new HydrodynamicParameter();
+            parameter->setValue(jsonParameter["defaultValue"].toDouble());
+            parameter->setSelected(jsonParameter["isSelected"].toBool());
+            parameter->setLabel(jsonParameter["label"].toString());
+        }
+
+        parameter->setName(parameterName);
+        parameter->setEditable(jsonParameter["editable"].toBool());
+        parameter->setSiblingsHidden(jsonParameter["hideSiblings"].toBool());
+        parameter->setRangeMinimum(jsonParameter["rangeMinimum"].toDouble());
+        parameter->setRangeMaximum(jsonParameter["rangeMaximum"].toDouble());
+        
+        if (!parameter->getParent()) {
+            HydrodynamicParameter *parentParameter = configuration->getParameter(jsonParameter["parentName"].toString());
+            parameter->setParent(parentParameter);
+        }
+
+        configuration->addHydrodynamicParameter(parameter);
+    }
+}
+
+QList<HydrodynamicProcess*> HydrodynamicDataRepository::getProcesses(HydrodynamicConfiguration *configuration) {
+    for (int i = 0; i < jsonProcesses.size(); i++) {
+        QJsonObject jsonProcess = jsonProcesses[i].toObject();
+        HydrodynamicProcess *process = processes[i];
+        HydrodynamicParameter *targetParameter = configuration->getParameter(jsonProcess["targetParameter"].toString());
+
+        process->setTargetParameter(targetParameter);
+        
+        if (targetParameter != nullptr) {
+            process->setChecked(targetParameter->isSelected());
+            targetParameter->setProcess(process);
+        }
+    }
     
-    dataFile.close();
-}
-
-HydrodynamicDataRepository::~HydrodynamicDataRepository() {
-    for (int i = 0; i < parameters.size(); i++) {
-        delete parameters[i];
-    }
-    for (int i = 0; i < processes.size(); i++) {
-        delete processes[i];
-    }
-}
-
-HydrodynamicDataRepository* HydrodynamicDataRepository::getInstance() {
-    if (instance == nullptr) {
-        instance = new HydrodynamicDataRepository();
-    }
-    
-    return instance;
-}
-
-QList<HydrodynamicParameter*> HydrodynamicDataRepository::getParameters() {
-    return parameters;
-}
-
-QList<HydrodynamicProcess*> HydrodynamicDataRepository::getProcesses() {
     return processes;
 }
 
-template<typename T>
-T* HydrodynamicDataRepository::findByName(const QList<T*> &list, const QString &name) const {
-    for (int i = 0; i < list.size(); i++) {
-        T *element = list[i];
+HydrodynamicProcess* HydrodynamicDataRepository::findProcessByName(const QString &name) const {
+    for (int i = 0; i < processes.size(); i++) {
+        HydrodynamicProcess *process = processes[i];
         
-        if (element->getName() == name) {
-            return element;
+        if (process->getName() == name) {
+            return process;
         }
     }
     
     return nullptr;
-}
-
-HydrodynamicProcess* HydrodynamicDataRepository::findProcessByName(const QString &name) const {
-    return findByName<HydrodynamicProcess>(processes, name);
-}
-
-HydrodynamicParameter* HydrodynamicDataRepository::findParameterByName(const QString &name) const {
-    return findByName<HydrodynamicParameter>(parameters, name);
 }

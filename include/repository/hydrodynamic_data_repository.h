@@ -1,28 +1,27 @@
 #ifndef HYDRODYNAMIC_DATA_REPOSITORY_H
 #define HYDRODYNAMIC_DATA_REPOSITORY_H
 
+#include <QJsonArray>
+
 #include "include/utility/database_utility.h"
-#include "include/domain/hydrodynamic_parameter.h"
-#include "include/domain/hydrodynamic_process.h"
+#include "include/domain/hydrodynamic_configuration.h"
 
 class HydrodynamicDataRepository {
 private:
     static HydrodynamicDataRepository *instance;
 
-    HydrodynamicDataRepository();
-    QList<HydrodynamicParameter*> parameters;
+    QJsonArray jsonParameters;
+    QJsonArray jsonProcesses;
     QList<HydrodynamicProcess*> processes;
-    
-    template<typename T> T* findByName(const QList<T*> &list, const QString &name) const;
+
+    HydrodynamicDataRepository();
 public:
     static HydrodynamicDataRepository* getInstance();
     ~HydrodynamicDataRepository();
-    
-    QList<HydrodynamicParameter*> getParameters();
-    QList<HydrodynamicProcess*> getProcesses();
-    
+
+    void buildParameters(HydrodynamicConfiguration *configuration);
+    QList<HydrodynamicProcess*> getProcesses(HydrodynamicConfiguration *configuration);
     HydrodynamicProcess* findProcessByName(const QString &name) const;
-    HydrodynamicParameter* findParameterByName(const QString &name) const;
 };
 
 #endif // HYDRODYNAMIC_DATA_REPOSITORY_H
