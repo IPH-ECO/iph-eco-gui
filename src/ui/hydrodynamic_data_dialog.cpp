@@ -7,6 +7,7 @@
 #include <QTreeWidgetItemIterator>
 #include <QMessageBox>
 #include <QLineEdit>
+#include <QSet>
 
 HydrodynamicDataDialog::HydrodynamicDataDialog(QWidget *parent) :
     QDialog(parent), ui(new Ui::HydrodynamicDataDialog), unsavedConfiguration(new HydrodynamicConfiguration), currentConfiguration(unsavedConfiguration)
@@ -16,9 +17,18 @@ HydrodynamicDataDialog::HydrodynamicDataDialog(QWidget *parent) :
     ui->setupUi(this);
     ui->trwParameters->header()->setStretchLastSection(false);
     ui->trwParameters->header()->setSectionResizeMode(0, QHeaderView::Stretch);
+    
+    Project *project = IPHApplication::getCurrentProject();
+    QSet<HydrodynamicConfiguration*> configurations = project->getHydrodynamicConfigurations();
+    
+    ui->cbxConfiguration->blockSignals(true);
+    for (QSet<HydrodynamicConfiguration*>::const_iterator it = configurations.begin(); it != configurations.end(); ++it) {
+        ui->cbxConfiguration->addItem((*it)->getName());
+    }
+    ui->cbxConfiguration->setCurrentIndex(-1);
+    ui->cbxConfiguration->blockSignals(false);
 
     this->setupItems();
-    this->expandTrees();
 }
 
 HydrodynamicDataDialog::~HydrodynamicDataDialog() {
@@ -51,6 +61,13 @@ void HydrodynamicDataDialog::setupItems() {
                     break;
                 }
                 it++;
+            }
+            
+            if (parentItem == nullptr) {
+                HydrodynamicParameter *parentParameter = parameter->getParent();
+                parentItem = new QTreeWidgetItem(ui->trwParameters, QStringList(parentParameter->getLabel()));
+                parentItem->setData(0, Qt::UserRole, QVariant(parameter->getParent()->getName()));
+                parentParameter->setItemWidget(parentItem);
             }
             
             item = new QTreeWidgetItem(parentItem, QStringList(parameter->getLabel()));
@@ -109,6 +126,8 @@ void HydrodynamicDataDialog::setupItems() {
             processes[i]->getTargetParameter()->getItemWidget()->setHidden(true);
         }
     }
+    
+    this->expandTrees();
 }
 
 void HydrodynamicDataDialog::expandTrees() {
@@ -144,6 +163,10 @@ void HydrodynamicDataDialog::on_cbxConfiguration_currentIndexChanged(const QStri
         currentConfiguration = project->getHydrodynamicConfiguration(configurationName);
         
         ui->edtConfigurationName->setText(currentConfiguration->getName());
+        ui->trwProcesses->clear();
+        ui->trwParameters->clear();
+        
+        this->setupItems();
     } else {
         ui->edtConfigurationName->clear();
         currentConfiguration = unsavedConfiguration;
@@ -169,27 +192,29 @@ void HydrodynamicDataDialog::on_btnSave_clicked() {
     
     for (int i = 0; i < parameters.size(); i++) {
         HydrodynamicParameter *parameter = parameters[i];
-        QTreeWidgetItem *item = parameter->getItemWidget();
-        QTreeWidgetItem *parentItem = item->parent();
         
-        if ((item != nullptr && item->isHidden()) || (parentItem != nullptr && parentItem->isHidden())) {
+        if (!parameter->isPersistable() || !parameter->isSelected()) {
             continue;
         }
         
-        QLineEdit *lineEdit = static_cast<QLineEdit*>(ui->trwParameters->findChild<QLineEdit*>(parameter->getName()));
+        QTreeWidgetItem *item = parameter->getItemWidget();
         
-        if (lineEdit != nullptr) {
-            double value = lineEdit->text().toDouble();
+        if (item) {
+            QLineEdit *lineEdit = static_cast<QLineEdit*>(ui->trwParameters->itemWidget(item, 1));
             
-            if (parameter->isInRange(value)) {
-                parameter->setValue(value);
-            } else {
-                double rangeMinimum = parameter->getRangeMinimum();
-                double rangeMaximum = parameter->getRangeMaximum();
-                QString message = QString("%1 must be between %2 and %3.").arg(parameter->getLabel()).arg(rangeMinimum).arg(rangeMaximum);
+            if (lineEdit != nullptr) {
+                double value = lineEdit->text().toDouble();
                 
-                QMessageBox::warning(this, "Hydrodynamic Data", message);
-                return;
+                if (parameter->isInRange(value)) {
+                    parameter->setValue(value);
+                } else {
+                    double rangeMinimum = parameter->getRangeMinimum();
+                    double rangeMaximum = parameter->getRangeMaximum();
+                    QString message = QString("%1 must be between %2 and %3.").arg(parameter->getLabel()).arg(rangeMinimum).arg(rangeMaximum);
+                    
+                    QMessageBox::warning(this, "Hydrodynamic Data", message);
+                    return;
+                }
             }
         }
     }
@@ -264,7 +289,7 @@ void HydrodynamicDataDialog::on_trwProcesses_itemChanged(QTreeWidgetItem *item, 
     
     if (process->isCheckable()) {
         HydrodynamicParameter *parameter = process->getTargetParameter();
-//        parameter->setSelected(process->isChecked());
+        parameter->setSelected(process->isChecked());
         parameter->toggleHierarchyVisibility(process->isChecked());
     }
 }

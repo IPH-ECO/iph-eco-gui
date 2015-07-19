@@ -6,8 +6,6 @@
 #include <QString>
 #include <QList>
 
-class HydrodynamicParameter;
-
 class HydrodynamicProcess {
 private:
     QString name;
@@ -80,6 +78,7 @@ public:
     
     void setTargetParameter(HydrodynamicParameter *targetParameter) {
         this->targetParameter = targetParameter;
+        this->itemWidget = nullptr;
     }
 
     bool isCheckableGroup() const {

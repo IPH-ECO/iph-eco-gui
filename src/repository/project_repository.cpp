@@ -578,6 +578,10 @@ void ProjectRepository::saveHydrodynamicParameters(HydrodynamicConfiguration *co
 
     for (int i = 0; i < parameters.size() && !operationCanceled; i++) {
         HydrodynamicParameter *parameter = parameters[i];
+        
+        if (!parameter->isPersistable()) {
+            continue;
+        }
 
         if (parameter->isPersisted()) {
             query.prepare("update hydrodynamic_parameter set value = :v, selected = :s where id = :i");

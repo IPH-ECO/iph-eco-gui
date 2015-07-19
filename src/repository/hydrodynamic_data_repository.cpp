@@ -67,12 +67,13 @@ void HydrodynamicDataRepository::buildParameters(HydrodynamicConfiguration *conf
         if (parameter == nullptr) {
             parameter = new HydrodynamicParameter();
             parameter->setValue(jsonParameter["defaultValue"].toDouble());
-            parameter->setSelected(jsonParameter["isSelected"].toBool());
-            parameter->setLabel(jsonParameter["label"].toString());
+            parameter->setSelected(jsonParameter["selected"].toBool());
         }
 
         parameter->setName(parameterName);
+        parameter->setLabel(jsonParameter["label"].toString());
         parameter->setEditable(jsonParameter["editable"].toBool());
+        parameter->setPersistable(jsonParameter["persistable"].toBool());
         parameter->setSiblingsHidden(jsonParameter["hideSiblings"].toBool());
         parameter->setRangeMinimum(jsonParameter["rangeMinimum"].toDouble());
         parameter->setRangeMaximum(jsonParameter["rangeMaximum"].toDouble());
@@ -96,7 +97,6 @@ QList<HydrodynamicProcess*> HydrodynamicDataRepository::getProcesses(Hydrodynami
         
         if (targetParameter != nullptr) {
             process->setChecked(targetParameter->isSelected());
-            targetParameter->setProcess(process);
         }
     }
     

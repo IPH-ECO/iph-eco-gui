@@ -5,27 +5,25 @@
 #include <QString>
 #include <QList>
 
-#include "hydrodynamic_process.h"
-
-class HydrodynamicProcess;
-
 class HydrodynamicParameter {
 private:
     uint id;
     QString name;
     QString label;
-    bool selected;
-    HydrodynamicParameter *parent;
-    HydrodynamicProcess *process;
-    bool editable;
-    bool hideSiblings;
     double value;
+    bool selected;
+    
+    // Trasient attributes
+    HydrodynamicParameter *parent;
+    bool editable;
+    bool persistable;
+    bool hideSiblings;
     double rangeMininum;
     double rangeMaximum;
     QList<HydrodynamicParameter*> children;
     QTreeWidgetItem* itemWidget;
 public:
-    HydrodynamicParameter() : selected(false), parent(nullptr), process(nullptr), editable(true), hideSiblings(true), rangeMininum(0), rangeMaximum(0) {}
+    HydrodynamicParameter() : selected(false), parent(nullptr), editable(true), persistable(false), hideSiblings(true), rangeMininum(0), rangeMaximum(0) {}
 
     uint getId() const {
         return id;
@@ -55,6 +53,14 @@ public:
         this->label = label;
     }
     
+    double getValue() const {
+        return value;
+    }
+    
+    void setValue(double value) {
+        this->value = value;
+    }
+    
     bool isSelected() const {
         return selected;
     }
@@ -75,28 +81,20 @@ public:
         }
     }
     
-    HydrodynamicProcess* getProcess() const {
-        return process;
-    }
-    
-    void setProcess(HydrodynamicProcess *process) {
-        this->process = process;
-    }
-    
-    double getValue() const {
-        return value;
-    }
-    
-    void setValue(double value) {
-        this->value = value;
-    }
-    
     bool isEditable() const {
         return editable;
     }
     
     void setEditable(bool editable) {
         this->editable = editable;
+    }
+    
+    bool isPersistable() const {
+        return persistable;
+    }
+    
+    void setPersistable(bool persistable) {
+        this->persistable = persistable;
     }
     
     bool isSiblingsHidden() const {
@@ -127,6 +125,14 @@ public:
         return (rangeMininum == 0 && rangeMaximum == 0) || (value >= rangeMininum && value <= rangeMaximum);
     }
     
+    QTreeWidgetItem* getItemWidget() const {
+        return itemWidget;
+    }
+    
+    void setItemWidget(QTreeWidgetItem *itemWidget) {
+        this->itemWidget = itemWidget;
+    }
+    
     void toggleHierarchyVisibility(bool hide) const {
         if (hideSiblings) {
             QList<HydrodynamicParameter*> siblings = getSiblings();
@@ -153,14 +159,6 @@ public:
         }
         
         return siblings;
-    }
-    
-    QTreeWidgetItem* getItemWidget() const {
-        return itemWidget;
-    }
-    
-    void setItemWidget(QTreeWidgetItem *itemWidget) {
-        this->itemWidget = itemWidget;
     }
 };
 

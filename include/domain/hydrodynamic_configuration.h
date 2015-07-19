@@ -34,26 +34,6 @@ public:
 		this->name = name;
 	}
     
-    void setParameters(const QList<HydrodynamicParameter*> &defaultParameters) {
-        if (this->parameters.isEmpty()) {
-            for (int i = 0; i < defaultParameters.size(); i++) {
-                HydrodynamicParameter *defaultParameter = defaultParameters[i];
-                HydrodynamicParameter *parameter = new HydrodynamicParameter();
-                
-                parameter->setName(defaultParameter->getName());
-                parameter->setSelected(defaultParameter->isSelected());
-                parameter->setValue(defaultParameter->getValue());
-                parameter->setLabel(defaultParameter->getLabel());
-                parameter->setRangeMinimum(defaultParameter->getRangeMinimum());
-                parameter->setRangeMaximum(defaultParameter->getRangeMaximum());
-                parameter->setProcess(defaultParameter->getProcess());
-                parameter->setItemWidget(defaultParameter->getItemWidget());
-                
-                this->parameters.append(parameter);
-            }
-        }
-    }
-    
 	bool addHydrodynamicParameter(HydrodynamicParameter *hydrodynamicParameter) {
 		if (parameters.contains(hydrodynamicParameter)) {
 			return false;
