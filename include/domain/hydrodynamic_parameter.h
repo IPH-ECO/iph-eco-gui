@@ -142,16 +142,16 @@ public:
         this->itemWidget = itemWidget;
     }
     
-    void toggleHierarchyVisibility(bool hide) const {
+    void toggleHierarchyVisibility(bool hide) {
         if (hideSiblings) {
             QList<HydrodynamicParameter*> siblings = getSiblings();
             
             for (int i = 0; i < siblings.size(); i++) {
-                siblings[i]->getItemWidget()->setHidden(hide);
+                siblings[i]->toggleSubTreeVisibility(hide);
             }
         }
         
-        this->itemWidget->setHidden(!hide);
+        this->toggleSubTreeVisibility(!hide);
     }
 
     QList<HydrodynamicParameter*> getSiblings() const {
@@ -168,6 +168,14 @@ public:
         }
         
         return siblings;
+    }
+    
+    void toggleSubTreeVisibility(bool hide) {
+        this->itemWidget->setHidden(hide);
+        
+        for (int i = 0; i < children.size(); i++) {
+            children[i]->toggleSubTreeVisibility(hide);
+        }
     }
     
     QList<HydrodynamicParameter*> getChildren() const {

@@ -79,9 +79,15 @@ void HydrodynamicDataRepository::buildParameters(HydrodynamicConfiguration *conf
         parameter->setRangeMinimum(jsonParameter["rangeMinimum"].toDouble());
         parameter->setRangeMaximum(jsonParameter["rangeMaximum"].toDouble());
         
+        HydrodynamicParameter *parentParameter = nullptr;
+        
         if (!parameter->getParent()) {
-            HydrodynamicParameter *parentParameter = configuration->getParameter(jsonParameter["parentName"].toString());
+            parentParameter = configuration->getParameter(jsonParameter["parentName"].toString(QString::null));
             parameter->setParent(parentParameter);
+        }
+        
+        if (parentParameter) {
+            parentParameter->setSelected(parameter->isSelected());
         }
 
         configuration->addHydrodynamicParameter(parameter);

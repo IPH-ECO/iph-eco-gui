@@ -210,7 +210,7 @@ void ProjectRepository::loadHydrodynamicParameter(HydrodynamicConfiguration *con
         parameter->setId(query.value("id").toUInt());
         parameter->setName(query.value("name").toString());
         parameter->setValue(query.value("value").toDouble());
-        parameter->setSelected(query.value("selected").toDouble());
+        parameter->setSelected(query.value("selected").toBool());
 
         configuration->addHydrodynamicParameter(parameter);
 

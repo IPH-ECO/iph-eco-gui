@@ -116,7 +116,7 @@ void HydrodynamicDataDialog::setupItems() {
         if (processes[i]->isChecked()) {
             on_trwProcesses_itemChanged(processes[i]->getItemWidget(), 0);
         } else {
-            processes[i]->getTargetParameter()->getItemWidget()->setHidden(true);
+            processes[i]->getTargetParameter()->toggleSubTreeVisibility(true);
         }
     }
     
@@ -188,15 +188,7 @@ void HydrodynamicDataDialog::on_btnSave_clicked() {
     for (int i = 0; i < parameters.size(); i++) {
         HydrodynamicParameter *parameter = parameters[i];
         QTreeWidgetItem *item = parameter->getItemWidget();
-        QTreeWidgetItem *itemParent = item->parent();
-        bool isSubTreeHidden = item->isHidden();
-
-        while (!isSubTreeHidden && itemParent) {
-            isSubTreeHidden = itemParent->isHidden();
-            itemParent = itemParent->parent();
-        }
-
-        parameter->setSelected(!isSubTreeHidden);
+        parameter->setSelected(!item->isHidden());
 
         if (!parameter->isPersistable()) {
             continue;
