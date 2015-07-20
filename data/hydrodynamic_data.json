@@ -7,6 +7,7 @@
             "label": "Constants",
             "name": "constants",
             "parentName": "",
+            "order": 0,
             "rangeMaximum": 0,
             "rangeMinimum": 0
         },
@@ -65,6 +66,7 @@
             "label": "Numerical Parameters",
             "name": "numericalParameters",
             "parentName": "",
+            "order": 1,
             "rangeMaximum": 0,
             "rangeMinimum": 0
         },
@@ -111,6 +113,7 @@
             "label": "Wind stress on water surface",
             "name": "windStress",
             "parentName": "",
+            "order": 2,
             "rangeMaximum": 0,
             "rangeMinimum": 0
         },
@@ -258,11 +261,13 @@
         {
             "defaultValue": 0,
             "editable": false,
+            "selected": true,
             "hideSiblings": true,
             "persistable": true,
             "label": "Bottom roughness",
             "name": "bottomRoughness",
             "parentName": "",
+            "order": 3,
             "rangeMaximum": 0,
             "rangeMinimum": 0
         },
@@ -337,6 +342,7 @@
             "label": "Viscosity/Diffusivity (Turbulence Model)",
             "name": "viscosityDiffusivityFormulation",
             "parentName": "",
+            "order": 4,
             "rangeMaximum": 0,
             "rangeMinimum": 0
         },
@@ -549,11 +555,13 @@
         {
             "defaultValue": 0,
             "editable": false,
+            "selected": true,
             "hideSiblings": true,
             "persistable": true,
             "label": "Advection Scheme for Momentum Equation",
             "name": "advectionScheme",
             "parentName": "",
+            "order": 5,
             "rangeMaximum": 0,
             "rangeMinimum": 0
         },
@@ -617,6 +625,7 @@
             "label": "Pressure",
             "name": "pressure",
             "parentName": "",
+            "order": 6,
             "rangeMaximum": 0,
             "rangeMinimum": 0
         },
@@ -658,6 +667,7 @@
             "label": "Coriolis factor",
             "name": "coriolisFactor",
             "parentName": "",
+            "order": 7,
             "rangeMaximum": 0,
             "rangeMinimum": 0
         },

@@ -36,54 +36,47 @@ HydrodynamicDataDialog::~HydrodynamicDataDialog() {
     delete ui;
 }
 
+void HydrodynamicDataDialog::addParameterItemWidget(HydrodynamicParameter *parameter) {
+    if (parameter->getItemWidget()) {
+        return;
+    }
+    
+    QTreeWidgetItem *item = nullptr;
+    
+    if (parameter->getParent()) {
+        item = new QTreeWidgetItem(parameter->getParent()->getItemWidget(), QStringList(parameter->getLabel()));
+    } else {
+        item = new QTreeWidgetItem(ui->trwParameters, QStringList(parameter->getLabel()));
+    }
+    
+    parameter->setItemWidget(item);
+    item->setData(0, Qt::UserRole, QVariant(parameter->getName()));
+    
+    if (parameter->isEditable()) {
+        QLineEdit *lineEdit = new QLineEdit(ui->trwParameters);
+        
+        lineEdit->setAlignment(Qt::AlignRight);
+        lineEdit->setObjectName(parameter->getName());
+        lineEdit->setText(QString::number(parameter->getValue()));
+        ui->trwParameters->setItemWidget(item, 1, lineEdit);
+    }
+    
+    for (int i = 0; i < parameter->getChildren().size(); i++) {
+        addParameterItemWidget(parameter->getChild(i));
+    }
+}
+
 void HydrodynamicDataDialog::setupItems() {
     hydrodynamicDataRepository->buildParameters(currentConfiguration);
 
     QList<HydrodynamicParameter*> parameters = currentConfiguration->getParameters();
     QList<HydrodynamicProcess*> processes = hydrodynamicDataRepository->getProcesses(currentConfiguration);
+    QList<HydrodynamicParameter*> rootParameters = currentConfiguration->getRootParameters();
     
     // Parameters
     ui->trwParameters->blockSignals(true);
-    for (int i = 0; i < parameters.size(); i++) {
-        HydrodynamicParameter *parameter = parameters[i];
-        QTreeWidgetItem *item = nullptr;
-        
-        if (parameter->getParent() == nullptr) {
-            item = new QTreeWidgetItem(ui->trwParameters, QStringList(parameter->getLabel()));
-        } else {
-            QTreeWidgetItem *parentItem = nullptr;
-            QTreeWidgetItemIterator it(ui->trwParameters);
-            
-            while (*it) {
-                QString itemName = (*it)->data(0, Qt::UserRole).toString();
-                if (itemName == parameter->getParent()->getName()) {
-                    parentItem = *it;
-                    break;
-                }
-                it++;
-            }
-            
-            if (parentItem == nullptr) {
-                HydrodynamicParameter *parentParameter = parameter->getParent();
-                parentItem = new QTreeWidgetItem(ui->trwParameters, QStringList(parentParameter->getLabel()));
-                parentItem->setData(0, Qt::UserRole, QVariant(parameter->getParent()->getName()));
-                parentParameter->setItemWidget(parentItem);
-            }
-            
-            item = new QTreeWidgetItem(parentItem, QStringList(parameter->getLabel()));
-            
-            if (parameter->isEditable()) {
-                QLineEdit *lineEdit = new QLineEdit(ui->trwParameters);
-                
-                lineEdit->setAlignment(Qt::AlignRight);
-                lineEdit->setObjectName(parameter->getName());
-                lineEdit->setText(QString::number(parameter->getValue()));
-                ui->trwParameters->setItemWidget(item, 1, lineEdit);
-            }
-        }
-        
-        parameter->setItemWidget(item);
-        item->setData(0, Qt::UserRole, QVariant(parameter->getName()));
+    for (int i = 0; i < rootParameters.size(); i++) {
+        addParameterItemWidget(rootParameters[i]);
     }
     ui->trwParameters->blockSignals(false);
     
@@ -158,15 +151,13 @@ void HydrodynamicDataDialog::expandTrees() {
 void HydrodynamicDataDialog::on_cbxConfiguration_currentIndexChanged(const QString &configurationName) {
     bool isConfigurationNamePresent = !configurationName.isEmpty();
     
+    currentConfiguration->removeItemWidgets();
+
     if (isConfigurationNamePresent) {
         Project *project = IPHApplication::getCurrentProject();
         currentConfiguration = project->getHydrodynamicConfiguration(configurationName);
         
         ui->edtConfigurationName->setText(currentConfiguration->getName());
-        ui->trwProcesses->clear();
-        ui->trwParameters->clear();
-        
-        this->setupItems();
     } else {
         ui->edtConfigurationName->clear();
         currentConfiguration = unsavedConfiguration;
@@ -174,6 +165,10 @@ void HydrodynamicDataDialog::on_cbxConfiguration_currentIndexChanged(const QStri
     
     ui->btnSave->setEnabled(isConfigurationNamePresent);
     ui->btnRemove->setEnabled(isConfigurationNamePresent);
+    ui->trwProcesses->clear();
+    ui->trwParameters->clear();
+    
+    this->setupItems();
 }
 
 void HydrodynamicDataDialog::on_btnDone_clicked() {
@@ -193,7 +188,7 @@ void HydrodynamicDataDialog::on_btnSave_clicked() {
     for (int i = 0; i < parameters.size(); i++) {
         HydrodynamicParameter *parameter = parameters[i];
         
-        if (!parameter->isPersistable() || !parameter->isSelected()) {
+        if (!parameter->isPersistable()) {
             continue;
         }
         
@@ -221,6 +216,7 @@ void HydrodynamicDataDialog::on_btnSave_clicked() {
     
     currentConfiguration->setName(configurationName);
 
+    ui->cbxConfiguration->blockSignals(true);
     if (ui->cbxConfiguration->currentIndex() == -1) {
         IPHApplication::getCurrentProject()->addHydrodynamicConfiguration(currentConfiguration);
         unsavedConfiguration = new HydrodynamicConfiguration();
@@ -232,6 +228,7 @@ void HydrodynamicDataDialog::on_btnSave_clicked() {
         ui->btnRemove->setEnabled(true);
         ui->btnDone->setEnabled(true);
     }
+    ui->cbxConfiguration->blockSignals(false);
 }
 
 void HydrodynamicDataDialog::on_trwProcesses_itemChanged(QTreeWidgetItem *item, int column) {
@@ -289,7 +286,6 @@ void HydrodynamicDataDialog::on_trwProcesses_itemChanged(QTreeWidgetItem *item, 
     
     if (process->isCheckable()) {
         HydrodynamicParameter *parameter = process->getTargetParameter();
-        parameter->setSelected(process->isChecked());
         parameter->toggleHierarchyVisibility(process->isChecked());
     }
 }

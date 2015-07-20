@@ -57,6 +57,26 @@ public:
 
 		return nullptr;
 	}
+    
+    QList<HydrodynamicParameter*> getRootParameters() const {
+        QList<HydrodynamicParameter*> rootParameters;
+        
+        for (int i = 0; i < parameters.size(); i++) {
+            if (!parameters[i]->getParent()) {
+                rootParameters.append(parameters[i]);
+            }
+        }
+        
+        qSort(rootParameters.begin(), rootParameters.end(), HydrodynamicParameter::sort);
+        
+        return rootParameters;
+    }
+
+    void removeItemWidgets() {
+		for (int i = 0; i < parameters.size(); i++) {
+			parameters[i]->setItemWidget(nullptr);
+    	}
+    }
 };
 
 #endif // HYDRODYNAMIC_CONFIGURATION_H

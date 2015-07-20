@@ -20,6 +20,7 @@ private:
     HydrodynamicConfiguration *unsavedConfiguration;
     HydrodynamicConfiguration *currentConfiguration;
     
+    void addParameterItemWidget(HydrodynamicParameter *parameter);
     void setupItems();
     void expandTrees();
 private slots:

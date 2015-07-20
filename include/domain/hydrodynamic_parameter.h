@@ -18,12 +18,13 @@ private:
     bool editable;
     bool persistable;
     bool hideSiblings;
+    int order;
     double rangeMininum;
     double rangeMaximum;
     QList<HydrodynamicParameter*> children;
     QTreeWidgetItem* itemWidget;
 public:
-    HydrodynamicParameter() : selected(false), parent(nullptr), editable(true), persistable(false), hideSiblings(true), rangeMininum(0), rangeMaximum(0) {}
+    HydrodynamicParameter() : selected(false), parent(nullptr), editable(true), persistable(false), hideSiblings(true), rangeMininum(0), rangeMaximum(0), itemWidget(nullptr) {}
 
     uint getId() const {
         return id;
@@ -76,7 +77,7 @@ public:
     void setParent(HydrodynamicParameter *parent) {
         this->parent = parent;
         
-        if (parent != nullptr) {
+        if (parent) {
             parent->children.append(this);
         }
     }
@@ -103,6 +104,14 @@ public:
     
     void setSiblingsHidden(bool hideSiblings) {
         this->hideSiblings = hideSiblings;
+    }
+    
+    int getOrder() const {
+        return order;
+    }
+    
+    void setOrder(int order) {
+        this->order = order;
     }
 
     double getRangeMinimum() const {
@@ -159,6 +168,18 @@ public:
         }
         
         return siblings;
+    }
+    
+    QList<HydrodynamicParameter*> getChildren() const {
+        return children;
+    }
+    
+    HydrodynamicParameter* getChild(int i) const {
+        return children[i];
+    }
+    
+    static bool sort(HydrodynamicParameter *p1, HydrodynamicParameter *p2) {
+        return p1->order < p2->order;
     }
 };
 
