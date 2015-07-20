@@ -187,29 +187,35 @@ void HydrodynamicDataDialog::on_btnSave_clicked() {
     
     for (int i = 0; i < parameters.size(); i++) {
         HydrodynamicParameter *parameter = parameters[i];
-        
+        QTreeWidgetItem *item = parameter->getItemWidget();
+        QTreeWidgetItem *itemParent = item->parent();
+        bool isSubTreeHidden = item->isHidden();
+
+        while (!isSubTreeHidden && itemParent) {
+            isSubTreeHidden = itemParent->isHidden();
+            itemParent = itemParent->parent();
+        }
+
+        parameter->setSelected(!isSubTreeHidden);
+
         if (!parameter->isPersistable()) {
             continue;
         }
         
-        QTreeWidgetItem *item = parameter->getItemWidget();
-        
-        if (item) {
-            QLineEdit *lineEdit = static_cast<QLineEdit*>(ui->trwParameters->itemWidget(item, 1));
+        QLineEdit *lineEdit = static_cast<QLineEdit*>(ui->trwParameters->itemWidget(item, 1));
+
+        if (lineEdit != nullptr && parameter->isSelected()) {
+            double value = lineEdit->text().toDouble();
             
-            if (lineEdit != nullptr) {
-                double value = lineEdit->text().toDouble();
+            if (parameter->isInRange(value)) {
+                parameter->setValue(value);
+            } else {
+                double rangeMinimum = parameter->getRangeMinimum();
+                double rangeMaximum = parameter->getRangeMaximum();
+                QString message = QString("%1 must be between %2 and %3.").arg(parameter->getLabel()).arg(rangeMinimum).arg(rangeMaximum);
                 
-                if (parameter->isInRange(value)) {
-                    parameter->setValue(value);
-                } else {
-                    double rangeMinimum = parameter->getRangeMinimum();
-                    double rangeMaximum = parameter->getRangeMaximum();
-                    QString message = QString("%1 must be between %2 and %3.").arg(parameter->getLabel()).arg(rangeMinimum).arg(rangeMaximum);
-                    
-                    QMessageBox::warning(this, "Hydrodynamic Data", message);
-                    return;
-                }
+                QMessageBox::warning(this, "Hydrodynamic Data", message);
+                return;
             }
         }
     }
