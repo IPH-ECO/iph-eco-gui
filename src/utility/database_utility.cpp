@@ -37,7 +37,7 @@ void DatabaseUtility::disconnect() {
     if (database.isOpen()) {
         database.close();
     }
-    QSqlDatabase::removeDatabase(database.connectionName());
+    QSqlDatabase::removeDatabase(database.databaseName());
 }
 
 void DatabaseUtility::createApplicationTables() {

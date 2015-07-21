@@ -32,6 +32,7 @@ public:
     ProjectRepository(const QString &databaseName);
 
     void open();
+    void close();
     void save(bool makeCopy = false);
     
     int getMaximumSaveProgress();

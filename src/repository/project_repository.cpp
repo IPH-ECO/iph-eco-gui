@@ -52,6 +52,10 @@ void ProjectRepository::open() {
     }
 }
 
+void ProjectRepository::close() {
+    databaseUtility->disconnect();
+}
+
 void ProjectRepository::loadMeshes(Project *project) {
     QSqlQuery query(databaseUtility->getDatabase());
     
@@ -264,7 +268,6 @@ void ProjectRepository::save(bool makeCopy) {
         }
     } catch (const DatabaseException &e) {
         QSqlDatabase::database().rollback();
-        databaseUtility->disconnect();
         throw e;
     } catch (const std::exception &e) {
         throw DatabaseException(e.what());

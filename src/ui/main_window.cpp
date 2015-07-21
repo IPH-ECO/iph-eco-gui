@@ -134,12 +134,14 @@ void MainWindow::on_actionCloseProject_triggered() {
     if (project != NULL && project->isDirty()) {
         QMessageBox::StandardButton button = QMessageBox::question(this, tr("Project has unsaved changes"), tr("Do you want to save the changes before closing the project?"));
         if (button == QMessageBox::Yes) {
-            
             ProjectService projectService;
             projectService.save(project);
         }
     }
 
+    ProjectRepository projectRepository(project->getFilename());
+    
+    projectRepository.close();
     IPHApplication::setCurrentProject(nullptr);
     enableMenus(false);
     setWindowTitle("IPH-ECO");
