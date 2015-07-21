@@ -114,7 +114,9 @@ bool HydrodynamicProcess::hasSiblingChecked() const {
     QList<HydrodynamicProcess*> siblings = getSiblings();
     
     for (int i = 0; i < siblings.size(); i++) {
-        if (siblings[i]->isCheckable() && siblings[i]->isChecked()) {
+        HydrodynamicProcess *sibling = siblings[i];
+        
+        if (!sibling->isCheckable() || sibling->isChecked()) {
             return true;
         }
     }

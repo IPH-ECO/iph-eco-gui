@@ -288,12 +288,11 @@ void HydrodynamicDataDialog::on_trwProcesses_itemChanged(QTreeWidgetItem *item, 
                         ui->trwProcesses->blockSignals(false);
                     }
                 } else {
-                    // TODO: Fix implementation. A single item must be uncheckable
-//                    if (!hasChildChecked(parent, item)) {
-//                        ui->trwProcesses->blockSignals(true);
-//                        item->setCheckState(0, Qt::Checked);
-//                        ui->trwProcesses->blockSignals(false);
-//                    }
+                    if (!process->hasSiblingChecked()) {
+                        ui->trwProcesses->blockSignals(true);
+                        process->setChecked(true);
+                        ui->trwProcesses->blockSignals(false);
+                    }
                 }
             }
         }
