@@ -47,7 +47,8 @@ void MainWindow::on_actionSaveProject_triggered() {
     Project *project = IPHApplication::getCurrentProject();
 
     if (project->getFilename().isEmpty()) {
-        project->setFilename(QFileDialog::getSaveFileName(this, tr("Save IPH-ECO Project"), getDefaultDirectory(), tr("IPH-ECHO Project file (*.iph)")));
+        QString absoluteFileName = getDefaultDirectory() + "/" + project->getName();
+        project->setFilename(QFileDialog::getSaveFileName(this, tr("Save IPH-ECO Project"), absoluteFileName, tr("IPH-ECHO Project file (*.iph)")));
     }
 
     if (!project->getFilename().isEmpty()) {
