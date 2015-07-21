@@ -16,15 +16,15 @@ private:
     // Trasient attributes
     HydrodynamicParameter *parent;
     bool editable;
-    bool persistable;
     bool hideSiblings;
+    int parentValue;
     int order;
     double rangeMininum;
     double rangeMaximum;
     QList<HydrodynamicParameter*> children;
     QTreeWidgetItem* itemWidget;
 public:
-    HydrodynamicParameter() : selected(false), parent(nullptr), editable(true), persistable(false), hideSiblings(true), rangeMininum(0), rangeMaximum(0), itemWidget(nullptr) {}
+    HydrodynamicParameter() : selected(false), parent(nullptr), editable(true), hideSiblings(true), rangeMininum(0), rangeMaximum(0), itemWidget(nullptr) {}
 
     uint getId() const {
         return id;
@@ -90,20 +90,20 @@ public:
         this->editable = editable;
     }
     
-    bool isPersistable() const {
-        return persistable;
-    }
-    
-    void setPersistable(bool persistable) {
-        this->persistable = persistable;
-    }
-    
     bool isSiblingsHidden() const {
         return hideSiblings;
     }
     
     void setSiblingsHidden(bool hideSiblings) {
         this->hideSiblings = hideSiblings;
+    }
+
+    int getParentValue() const {
+        return parentValue;
+    }
+
+    void setParentValue(int parentValue) {
+        this->parentValue = parentValue;
     }
     
     int getOrder() const {

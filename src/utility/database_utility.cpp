@@ -22,10 +22,10 @@ DatabaseUtility* DatabaseUtility::getInstance() {
     return instance;
 }
 
-void DatabaseUtility::connect(const QString &database_name) {
+void DatabaseUtility::connect(const QString &databaseName) {
     if (!database.isOpen()) {
         database = QSqlDatabase::addDatabase("QSQLITE", QUuid::createUuid().toString());
-        database.setDatabaseName(database_name);
+        database.setDatabaseName(databaseName);
 
         if (!database.open()) {
             throw DatabaseException(QString("The following error ocurred during database connection: %1").arg(database.lastError().text()));

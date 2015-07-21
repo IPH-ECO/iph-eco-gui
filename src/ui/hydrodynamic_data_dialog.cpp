@@ -188,26 +188,28 @@ void HydrodynamicDataDialog::on_btnSave_clicked() {
     for (int i = 0; i < parameters.size(); i++) {
         HydrodynamicParameter *parameter = parameters[i];
         QTreeWidgetItem *item = parameter->getItemWidget();
-        parameter->setSelected(!item->isHidden());
-
-        if (!parameter->isPersistable()) {
-            continue;
-        }
-        
         QLineEdit *lineEdit = static_cast<QLineEdit*>(ui->trwParameters->itemWidget(item, 1));
-
-        if (lineEdit != nullptr && parameter->isSelected()) {
-            double value = lineEdit->text().toDouble();
+        
+        parameter->setSelected(!item->isHidden());
+        
+        if (parameter->isSelected()) {
+            if (parameter->getParentValue() > -1) {
+                parameter->getParent()->setValue(parameter->getParentValue());
+            }
             
-            if (parameter->isInRange(value)) {
-                parameter->setValue(value);
-            } else {
-                double rangeMinimum = parameter->getRangeMinimum();
-                double rangeMaximum = parameter->getRangeMaximum();
-                QString message = QString("%1 must be between %2 and %3.").arg(parameter->getLabel()).arg(rangeMinimum).arg(rangeMaximum);
+            if (lineEdit != nullptr) {
+                double value = lineEdit->text().toDouble();
                 
-                QMessageBox::warning(this, "Hydrodynamic Data", message);
-                return;
+                if (parameter->isInRange(value)) {
+                    parameter->setValue(value);
+                } else {
+                    double rangeMinimum = parameter->getRangeMinimum();
+                    double rangeMaximum = parameter->getRangeMaximum();
+                    QString message = QString("%1 must be between %2 and %3.").arg(parameter->getLabel()).arg(rangeMinimum).arg(rangeMaximum);
+                    
+                    QMessageBox::warning(this, "Hydrodynamic Data", message);
+                    return;
+                }
             }
         }
     }
