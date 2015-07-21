@@ -12,71 +12,20 @@ private:
 	QString name;
 	QList<HydrodynamicParameter*> parameters;
 public:
-    HydrodynamicConfiguration() : id(0) {}
+    HydrodynamicConfiguration();
+    ~HydrodynamicConfiguration();
 
-	uint getId() const {
-		return id;
-	}
+	uint getId() const;
+	void setId(uint id);
+	QString getName() const;
+	void setName(const QString &name);
 
-	void setId(uint id) {
-		this->id = id;
-	}
-
-	bool isPersisted() const {
-		return id != 0;
-	}
-
-	QString getName() const {
-		return name;
-	}
-
-	void setName(const QString &name) {
-		this->name = name;
-	}
-    
-	bool addHydrodynamicParameter(HydrodynamicParameter *hydrodynamicParameter) {
-		if (parameters.contains(hydrodynamicParameter)) {
-			return false;
-		}
-
-		parameters.append(hydrodynamicParameter);
-
-		return true;
-	}
-
-	QList<HydrodynamicParameter*> getParameters() const {
-		return parameters;
-	}
-
-	HydrodynamicParameter* getParameter(const QString &name) {
-		for (int i = 0; i < parameters.size(); i++) {
-			if (parameters[i]->getName() == name) {
-				return parameters[i];
-			}
-		}
-
-		return nullptr;
-	}
-    
-    QList<HydrodynamicParameter*> getRootParameters() const {
-        QList<HydrodynamicParameter*> rootParameters;
-        
-        for (int i = 0; i < parameters.size(); i++) {
-            if (!parameters[i]->getParent()) {
-                rootParameters.append(parameters[i]);
-            }
-        }
-        
-        qSort(rootParameters.begin(), rootParameters.end(), HydrodynamicParameter::sort);
-        
-        return rootParameters;
-    }
-
-    void removeItemWidgets() {
-		for (int i = 0; i < parameters.size(); i++) {
-			parameters[i]->setItemWidget(nullptr);
-    	}
-    }
+	bool addHydrodynamicParameter(HydrodynamicParameter *hydrodynamicParameter);
+	QList<HydrodynamicParameter*> getParameters() const;
+	HydrodynamicParameter* getParameter(const QString &name) const;
+    QList<HydrodynamicParameter*> getRootParameters() const;
+    void removeItemWidgets();
+	bool isPersisted() const;
 };
 
 #endif // HYDRODYNAMIC_CONFIGURATION_H

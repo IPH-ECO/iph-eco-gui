@@ -26,6 +26,7 @@ private:
 private slots:
     void on_cbxConfiguration_currentIndexChanged(const QString &configurationName);
     void on_trwProcesses_itemChanged(QTreeWidgetItem *item, int column);
+    void on_btnRemove_clicked();
     void on_btnDone_clicked();
     void on_btnSave_clicked();
 public:

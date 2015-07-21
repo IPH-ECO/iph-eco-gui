@@ -17,6 +17,7 @@ HydrodynamicDataDialog::HydrodynamicDataDialog(QWidget *parent) :
     ui->setupUi(this);
     ui->trwParameters->header()->setStretchLastSection(false);
     ui->trwParameters->header()->setSectionResizeMode(0, QHeaderView::Stretch);
+    ui->btnRemove->setEnabled(false);
     
     Project *project = IPHApplication::getCurrentProject();
     QSet<HydrodynamicConfiguration*> configurations = project->getHydrodynamicConfigurations();
@@ -163,12 +164,24 @@ void HydrodynamicDataDialog::on_cbxConfiguration_currentIndexChanged(const QStri
         currentConfiguration = unsavedConfiguration;
     }
     
-    ui->btnSave->setEnabled(isConfigurationNamePresent);
+    ui->btnDone->setEnabled(isConfigurationNamePresent);
     ui->btnRemove->setEnabled(isConfigurationNamePresent);
     ui->trwProcesses->clear();
     ui->trwParameters->clear();
     
     this->setupItems();
+}
+
+void HydrodynamicDataDialog::on_btnRemove_clicked() {
+    QMessageBox::StandardButton question = QMessageBox::question(this, tr("Hydrodynamic Data"), tr("Are you sure you want to remove the selected configuration?"));
+    
+    if (question == QMessageBox::Yes) {
+        IPHApplication::getCurrentProject()->removeHydrodynamicConfiguration(ui->cbxConfiguration->currentText());
+        currentConfiguration = unsavedConfiguration;
+        
+        ui->cbxConfiguration->removeItem(ui->cbxConfiguration->currentIndex());
+        ui->cbxConfiguration->setCurrentIndex(-1);
+    }
 }
 
 void HydrodynamicDataDialog::on_btnDone_clicked() {
@@ -229,6 +242,8 @@ void HydrodynamicDataDialog::on_btnSave_clicked() {
         ui->btnDone->setEnabled(true);
     }
     ui->cbxConfiguration->blockSignals(false);
+    
+    ui->btnDone->setEnabled(true);
 }
 
 void HydrodynamicDataDialog::on_trwProcesses_itemChanged(QTreeWidgetItem *item, int column) {

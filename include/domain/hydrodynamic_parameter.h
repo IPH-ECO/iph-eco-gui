@@ -24,170 +24,44 @@ private:
     QList<HydrodynamicParameter*> children;
     QTreeWidgetItem* itemWidget;
 public:
-    HydrodynamicParameter() : selected(false), parent(nullptr), editable(true), hideSiblings(true), rangeMininum(0), rangeMaximum(0), itemWidget(nullptr) {}
+    HydrodynamicParameter();
 
-    uint getId() const {
-        return id;
-    }
-
-    void setId(uint id) {
-        this->id = id;
-    }
-
-    bool isPersisted() const {
-        return id != 0;
-    }
+    uint getId() const;
+    void setId(uint id);
+    bool isPersisted() const;
+    QString getName() const;
+    void setName(const QString& name);
+    QString getLabel() const;
+    void setLabel(const QString &label);
+    double getValue() const;
+    void setValue(double value);
+    bool isSelected() const;
+    void setSelected(bool selected);
+    HydrodynamicParameter* getParent() const;
+    void setParent(HydrodynamicParameter *parent);
+    bool isEditable() const;
+    void setEditable(bool editable);
+    bool isSiblingsHidden() const;
+    void setSiblingsHidden(bool hideSiblings);
+    int getParentValue() const;
+    void setParentValue(int parentValue);
+    int getOrder() const;
+    void setOrder(int order);
+    double getRangeMinimum() const;
+    void setRangeMinimum(double rangeMininum);
+    double getRangeMaximum() const;
+    void setRangeMaximum(double rangeMaximum);
+    QTreeWidgetItem* getItemWidget() const;
+    void setItemWidget(QTreeWidgetItem *itemWidget);
+    void toggleHierarchyVisibility(bool hide);
+    QList<HydrodynamicParameter*> getSiblings() const;
+    void toggleSubTreeVisibility(bool hide);
+    QList<HydrodynamicParameter*> getChildren() const;
+    HydrodynamicParameter* getChild(int i) const;
     
-    QString getName() const {
-        return name;
-    }
-    
-    void setName(const QString& name) {
-        this->name = name;
-    }
-
-    QString getLabel() const {
-        return label;
-    }
-    
-    void setLabel(const QString &label) {
-        this->label = label;
-    }
-    
-    double getValue() const {
-        return value;
-    }
-    
-    void setValue(double value) {
-        this->value = value;
-    }
-    
-    bool isSelected() const {
-        return selected;
-    }
-    
-    void setSelected(bool selected) {
-        this->selected = selected;
-    }
-    
-    HydrodynamicParameter* getParent() const {
-        return parent;
-    }
-    
-    void setParent(HydrodynamicParameter *parent) {
-        this->parent = parent;
-        
-        if (parent) {
-            parent->children.append(this);
-        }
-    }
-    
-    bool isEditable() const {
-        return editable;
-    }
-    
-    void setEditable(bool editable) {
-        this->editable = editable;
-    }
-    
-    bool isSiblingsHidden() const {
-        return hideSiblings;
-    }
-    
-    void setSiblingsHidden(bool hideSiblings) {
-        this->hideSiblings = hideSiblings;
-    }
-
-    int getParentValue() const {
-        return parentValue;
-    }
-
-    void setParentValue(int parentValue) {
-        this->parentValue = parentValue;
-    }
-    
-    int getOrder() const {
-        return order;
-    }
-    
-    void setOrder(int order) {
-        this->order = order;
-    }
-
-    double getRangeMinimum() const {
-        return rangeMininum;
-    }
-
-    void setRangeMinimum(double rangeMininum) {
-        this->rangeMininum = rangeMininum;
-    }
-
-    double getRangeMaximum() const {
-        return rangeMaximum;
-    }
-
-    void setRangeMaximum(double rangeMaximum) {
-        this->rangeMaximum = rangeMaximum;
-    }
-    
+    static bool sort(HydrodynamicParameter *p1, HydrodynamicParameter *p2);
     inline bool isInRange(double value) const {
         return (rangeMininum == 0 && rangeMaximum == 0) || (value >= rangeMininum && value <= rangeMaximum);
-    }
-    
-    QTreeWidgetItem* getItemWidget() const {
-        return itemWidget;
-    }
-    
-    void setItemWidget(QTreeWidgetItem *itemWidget) {
-        this->itemWidget = itemWidget;
-    }
-    
-    void toggleHierarchyVisibility(bool hide) {
-        if (hideSiblings) {
-            QList<HydrodynamicParameter*> siblings = getSiblings();
-            
-            for (int i = 0; i < siblings.size(); i++) {
-                siblings[i]->toggleSubTreeVisibility(hide);
-            }
-        }
-        
-        this->toggleSubTreeVisibility(!hide);
-    }
-
-    QList<HydrodynamicParameter*> getSiblings() const {
-        QList<HydrodynamicParameter*> siblings;
-        
-        if (parent != nullptr) {
-            for (int i = 0; i < parent->children.size(); i++) {
-                HydrodynamicParameter *sibling = parent->children[i];
-                
-                if (sibling != this) {
-                    siblings.append(sibling);
-                }
-            }
-        }
-        
-        return siblings;
-    }
-    
-    void toggleSubTreeVisibility(bool hide) {
-        this->itemWidget->setHidden(hide);
-        
-        for (int i = 0; i < children.size(); i++) {
-            children[i]->toggleSubTreeVisibility(hide);
-        }
-    }
-    
-    QList<HydrodynamicParameter*> getChildren() const {
-        return children;
-    }
-    
-    HydrodynamicParameter* getChild(int i) const {
-        return children[i];
-    }
-    
-    static bool sort(HydrodynamicParameter *p1, HydrodynamicParameter *p2) {
-        return p1->order < p2->order;
     }
 };
 
