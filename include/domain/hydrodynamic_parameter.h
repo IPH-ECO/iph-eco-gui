@@ -5,15 +5,18 @@
 #include <QString>
 #include <QList>
 
+enum class HydrodynamicParameterType { PROCESS_INPUT = 1, ENVIRONMENT_VARIABLE };
+
 class HydrodynamicParameter {
 private:
     uint id;
     QString name;
-    QString label;
     double value;
     bool selected;
+    HydrodynamicParameterType type;
     
     // Trasient attributes
+    QString label;
     HydrodynamicParameter *parent;
     bool editable;
     bool hideSiblings;
@@ -37,6 +40,8 @@ public:
     void setValue(double value);
     bool isSelected() const;
     void setSelected(bool selected);
+    HydrodynamicParameterType getType() const;
+    void setType(const HydrodynamicParameterType &type);
     HydrodynamicParameter* getParent() const;
     void setParent(HydrodynamicParameter *parent);
     bool isEditable() const;
@@ -59,7 +64,18 @@ public:
     QList<HydrodynamicParameter*> getChildren() const;
     HydrodynamicParameter* getChild(int i) const;
     
+    static HydrodynamicParameterType mapTypeFromString(const QString &typeStr);
+    static QString mapStringFromType(const HydrodynamicParameterType &type);
     static bool sort(HydrodynamicParameter *p1, HydrodynamicParameter *p2);
+    
+    inline bool isProcessInput() const {
+        return type == HydrodynamicParameterType::PROCESS_INPUT;
+    }
+    
+    inline bool isEnvironmentVariable() const {
+        return type == HydrodynamicParameterType::ENVIRONMENT_VARIABLE;
+    }
+    
     inline bool isInRange(double value) const {
         return (rangeMininum == 0 && rangeMaximum == 0) || (value >= rangeMininum && value <= rangeMaximum);
     }

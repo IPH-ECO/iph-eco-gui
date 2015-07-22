@@ -46,6 +46,14 @@ void HydrodynamicParameter::setSelected(bool selected) {
     this->selected = selected;
 }
 
+HydrodynamicParameterType HydrodynamicParameter::getType() const {
+    return type;
+}
+
+void HydrodynamicParameter::setType(const HydrodynamicParameterType &type) {
+    this->type = type;
+}
+
 HydrodynamicParameter* HydrodynamicParameter::getParent() const {
     return parent;
 }
@@ -156,6 +164,22 @@ QList<HydrodynamicParameter*> HydrodynamicParameter::getChildren() const {
 
 HydrodynamicParameter* HydrodynamicParameter::getChild(int i) const {
     return children[i];
+}
+
+HydrodynamicParameterType HydrodynamicParameter::mapTypeFromString(const QString &typeStr) {
+    if (typeStr == "environmentVariable") {
+        return HydrodynamicParameterType::ENVIRONMENT_VARIABLE;
+    }
+    
+    return HydrodynamicParameterType::PROCESS_INPUT;
+}
+
+QString HydrodynamicParameter::mapStringFromType(const HydrodynamicParameterType &type) {
+    if (type == HydrodynamicParameterType::ENVIRONMENT_VARIABLE) {
+        return "environmentVariable";
+    }
+    
+    return "processInput";
 }
 
 bool HydrodynamicParameter::sort(HydrodynamicParameter *p1, HydrodynamicParameter *p2) {

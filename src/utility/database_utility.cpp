@@ -118,6 +118,7 @@ void DatabaseUtility::createApplicationTables() {
     sql << "create table if not exists hydrodynamic_parameter (" \
         "id integer primary key, " \
         "name varchar(255) not null, " \
+        "type varchar(255) not null, " \
         "value float default null, " \
         "selected bool default false, " \
         "hydrodynamic_configuration_id integer not null"

@@ -213,6 +213,7 @@ void ProjectRepository::loadHydrodynamicParameter(HydrodynamicConfiguration *con
         HydrodynamicParameter *parameter = new HydrodynamicParameter();
         parameter->setId(query.value("id").toUInt());
         parameter->setName(query.value("name").toString());
+        parameter->setType(HydrodynamicParameter::mapTypeFromString(query.value("type").toString()));
         parameter->setValue(query.value("value").toDouble());
         parameter->setSelected(query.value("selected").toBool());
 
@@ -586,8 +587,9 @@ void ProjectRepository::saveHydrodynamicParameters(HydrodynamicConfiguration *co
             query.prepare("update hydrodynamic_parameter set value = :v, selected = :s where id = :i");
             query.bindValue(":i", parameter->getId());
         } else {
-            query.prepare("insert into hydrodynamic_parameter (name, value, selected, hydrodynamic_configuration_id) values (:n, :v, :s, :h)");
+            query.prepare("insert into hydrodynamic_parameter (name, type, value, selected, hydrodynamic_configuration_id) values (:n, :t, :v, :s, :h)");
             query.bindValue(":n", parameter->getName());
+            query.bindValue(":t", HydrodynamicParameter::mapStringFromType(parameter->getType()));
             query.bindValue(":h", configuration->getId());
         }
 
