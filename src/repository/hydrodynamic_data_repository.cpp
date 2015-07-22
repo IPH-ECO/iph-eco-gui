@@ -68,12 +68,10 @@ void HydrodynamicDataRepository::buildParameters(HydrodynamicConfiguration *conf
             parameter = new HydrodynamicParameter();
             parameter->setValue(jsonParameter["defaultValue"].toDouble());
             parameter->setSelected(jsonParameter["selected"].toBool());
+            parameter->setType(HydrodynamicParameter::mapTypeFromString(jsonParameter["type"].toString()));
         }
         
-        QString parameterType = jsonParameter["type"].toString();
-
         parameter->setName(parameterName);
-        parameter->setType(HydrodynamicParameter::mapTypeFromString(parameterType));
         parameter->setLabel(jsonParameter["label"].toString());
         parameter->setEditable(jsonParameter["editable"].toBool());
         parameter->setSiblingsHidden(jsonParameter["hideSiblings"].toBool());
@@ -81,6 +79,7 @@ void HydrodynamicDataRepository::buildParameters(HydrodynamicConfiguration *conf
         parameter->setOrder(jsonParameter["order"].toInt(-1));
         parameter->setRangeMinimum(jsonParameter["rangeMinimum"].toDouble());
         parameter->setRangeMaximum(jsonParameter["rangeMaximum"].toDouble());
+        parameter->setItemWidget(nullptr);
         
         HydrodynamicParameter *parentParameter = nullptr;
         

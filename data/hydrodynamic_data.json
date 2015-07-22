@@ -687,25 +687,25 @@
             "defaultValue": 0,
             "label": "Free-surface elevation",
             "name": "envFreeSurfaceElevation",
-            "type": "environmentVariable"
+            "type": "initialCondition"
         },
         {
             "defaultValue": 0,
             "label": "Water velocity - X Component",
             "name":  "envWaterVelocityX",
-            "type": "environmentVariable"
+            "type": "initialCondition"
         },
         {
             "defaultValue": 0,
             "label": "Water velocity - Y Component",
-            "name":  "envWaterVelocityX",
-            "type": "environmentVariable"
+            "name":  "envWaterVelocityY",
+            "type": "initialCondition"
         },
         {
             "defaultValue": 0,
             "label": "Water velocity - Z Component",
-            "name":  "envWaterVelocityX",
-            "type": "environmentVariable"
+            "name":  "envWaterVelocityZ",
+            "type": "initialCondition"
         }
     ],
     "processes": [

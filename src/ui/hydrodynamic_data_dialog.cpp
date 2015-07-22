@@ -38,7 +38,7 @@ HydrodynamicDataDialog::~HydrodynamicDataDialog() {
 }
 
 void HydrodynamicDataDialog::addParameterItemWidget(HydrodynamicParameter *parameter) {
-    if (parameter->isEnvironmentVariable() || parameter->getItemWidget()) {
+    if (!parameter->isProcessInput() || parameter->getItemWidget()) {
         return;
     }
     
@@ -151,13 +151,10 @@ void HydrodynamicDataDialog::expandTrees() {
 
 void HydrodynamicDataDialog::on_cbxConfiguration_currentIndexChanged(const QString &configurationName) {
     bool isConfigurationNamePresent = !configurationName.isEmpty();
-    
-    currentConfiguration->removeItemWidgets();
 
     if (isConfigurationNamePresent) {
         Project *project = IPHApplication::getCurrentProject();
         currentConfiguration = project->getHydrodynamicConfiguration(configurationName);
-        
         ui->edtConfigurationName->setText(currentConfiguration->getName());
     } else {
         ui->edtConfigurationName->clear();
@@ -227,7 +224,7 @@ void HydrodynamicDataDialog::on_btnSave_clicked() {
                     }
                 }
             }
-        } else if (parameter->isEnvironmentVariable()) {
+        } else if (parameter->isInitialCondition()) {
             
         }
     }

@@ -167,16 +167,16 @@ HydrodynamicParameter* HydrodynamicParameter::getChild(int i) const {
 }
 
 HydrodynamicParameterType HydrodynamicParameter::mapTypeFromString(const QString &typeStr) {
-    if (typeStr == "environmentVariable") {
-        return HydrodynamicParameterType::ENVIRONMENT_VARIABLE;
+    if (typeStr == "initialCondition") {
+        return HydrodynamicParameterType::INITIAL_CONDITION;
     }
     
     return HydrodynamicParameterType::PROCESS_INPUT;
 }
 
 QString HydrodynamicParameter::mapStringFromType(const HydrodynamicParameterType &type) {
-    if (type == HydrodynamicParameterType::ENVIRONMENT_VARIABLE) {
-        return "environmentVariable";
+    if (type == HydrodynamicParameterType::INITIAL_CONDITION) {
+        return "initialCondition";
     }
     
     return "processInput";

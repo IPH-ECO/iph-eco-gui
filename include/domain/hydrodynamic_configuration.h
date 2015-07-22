@@ -24,7 +24,6 @@ public:
 	QList<HydrodynamicParameter*> getParameters() const;
 	HydrodynamicParameter* getParameter(const QString &name) const;
     QList<HydrodynamicParameter*> getRootParameters() const;
-    void removeItemWidgets();
 	bool isPersisted() const;
 };
 

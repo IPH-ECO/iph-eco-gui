@@ -66,9 +66,3 @@ QList<HydrodynamicParameter*> HydrodynamicConfiguration::getRootParameters() con
     
     return rootParameters;
 }
-
-void HydrodynamicConfiguration::removeItemWidgets() {
-	for (int i = 0; i < parameters.size(); i++) {
-		parameters[i]->setItemWidget(nullptr);
-	}
-}

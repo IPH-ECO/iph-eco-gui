@@ -5,7 +5,7 @@
 #include <QString>
 #include <QList>
 
-enum class HydrodynamicParameterType { PROCESS_INPUT = 1, ENVIRONMENT_VARIABLE };
+enum class HydrodynamicParameterType { PROCESS_INPUT = 1, INITIAL_CONDITION };
 
 class HydrodynamicParameter {
 private:
@@ -72,8 +72,8 @@ public:
         return type == HydrodynamicParameterType::PROCESS_INPUT;
     }
     
-    inline bool isEnvironmentVariable() const {
-        return type == HydrodynamicParameterType::ENVIRONMENT_VARIABLE;
+    inline bool isInitialCondition() const {
+        return type == HydrodynamicParameterType::INITIAL_CONDITION;
     }
     
     inline bool isInRange(double value) const {
