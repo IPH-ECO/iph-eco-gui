@@ -5,6 +5,7 @@
 #include "include/domain/hydrodynamic_parameter.h"
 
 #include <QTreeWidgetItemIterator>
+#include <QFormLayout>
 #include <QMessageBox>
 #include <QLineEdit>
 #include <QSet>
@@ -122,6 +123,20 @@ void HydrodynamicDataDialog::setupItems() {
     }
     
     this->expandTrees();
+    
+    // Initial conditions
+    for (int i = 0; i < parameters.size(); i++) {
+        if (parameters[i]->isInitialCondition()) {
+            HydrodynamicParameter *parameter = parameters[i];
+            QFormLayout *layout = static_cast<QFormLayout*>(ui->initialConditionsTab->layout());
+            QLabel *label = new QLabel(parameter->getLabel(), ui->initialConditionsTab);
+            QLineEdit *lineEdit = new QLineEdit(ui->initialConditionsTab);
+            
+            lineEdit->setText(QString::number(parameter->getValue()));
+            lineEdit->setAlignment(Qt::AlignRight);
+            layout->addRow(label, lineEdit);
+        }
+    }
 }
 
 void HydrodynamicDataDialog::expandTrees() {
