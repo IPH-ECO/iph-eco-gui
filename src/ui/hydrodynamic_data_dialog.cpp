@@ -3,6 +3,7 @@
 
 #include "include/application/iph_application.h"
 #include "include/domain/hydrodynamic_parameter.h"
+#include "include/ui/time_series_dialog.h"
 
 #include <QTreeWidgetItemIterator>
 #include <QFormLayout>
@@ -18,6 +19,7 @@ HydrodynamicDataDialog::HydrodynamicDataDialog(QWidget *parent) :
     ui->setupUi(this);
     ui->trwParameters->header()->setStretchLastSection(false);
     ui->trwParameters->header()->setSectionResizeMode(0, QHeaderView::Stretch);
+    ui->tblBoundaryConditions->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     ui->btnRemove->setEnabled(false);
     
     Project *project = IPHApplication::getCurrentProject();
@@ -319,4 +321,17 @@ void HydrodynamicDataDialog::on_trwProcesses_itemChanged(QTreeWidgetItem *item, 
         HydrodynamicParameter *parameter = process->getTargetParameter();
         parameter->toggleHierarchyVisibility(process->isChecked());
     }
+}
+
+void HydrodynamicDataDialog::on_rdoWaterLevel_clicked(bool checked) {
+    ui->lblElementLabel->setText("Cells");
+}
+
+void HydrodynamicDataDialog::on_rdoWaterFlow_clicked(bool checked) {
+    ui->lblElementLabel->setText("Edges");
+}
+
+void HydrodynamicDataDialog::on_btnTimeSeries_clicked() {
+    TimeSeriesDialog *timeSeriesDialog = new TimeSeriesDialog(this);
+    timeSeriesDialog->exec();
 }

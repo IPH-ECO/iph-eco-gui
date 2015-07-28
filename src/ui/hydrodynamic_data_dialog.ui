@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1035</width>
-    <height>661</height>
+    <width>1230</width>
+    <height>662</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -59,7 +59,7 @@
      <item>
       <widget class="QTabWidget" name="tabWidget">
        <property name="currentIndex">
-        <number>0</number>
+        <number>3</number>
        </property>
        <widget class="QWidget" name="tab_3">
         <attribute name="title">
@@ -145,6 +145,160 @@
         <attribute name="title">
          <string>Boundary Conditions</string>
         </attribute>
+        <layout class="QVBoxLayout" name="verticalLayout">
+         <item>
+          <widget class="QTableWidget" name="tblBoundaryConditions">
+           <column>
+            <property name="text">
+             <string>Type</string>
+            </property>
+           </column>
+           <column>
+            <property name="text">
+             <string>Function</string>
+            </property>
+           </column>
+          </widget>
+         </item>
+         <item>
+          <widget class="QGroupBox" name="groupBox">
+           <property name="title">
+            <string>Add/Edit boundary condition</string>
+           </property>
+           <layout class="QGridLayout" name="gridLayout_4">
+            <item row="2" column="0">
+             <widget class="QLabel" name="label_6">
+              <property name="text">
+               <string>Function</string>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="0">
+             <widget class="QLabel" name="lblConstant">
+              <property name="text">
+               <string>Value</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="0">
+             <widget class="QLabel" name="label_3">
+              <property name="text">
+               <string>Type</string>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="1">
+             <widget class="QLineEdit" name="edtConstant">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>80</width>
+                <height>16777215</height>
+               </size>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="1">
+             <widget class="QRadioButton" name="rdoConstant">
+              <property name="text">
+               <string>Constant</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+              <attribute name="buttonGroup">
+               <string notr="true">buttonGroup_2</string>
+              </attribute>
+             </widget>
+            </item>
+            <item row="2" column="2">
+             <widget class="QRadioButton" name="rdoTimeSeries">
+              <property name="text">
+               <string>Time Series</string>
+              </property>
+              <attribute name="buttonGroup">
+               <string notr="true">buttonGroup_2</string>
+              </attribute>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QRadioButton" name="rdoWaterLevel">
+              <property name="text">
+               <string>Water Level</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+              <attribute name="buttonGroup">
+               <string notr="true">buttonGroup</string>
+              </attribute>
+             </widget>
+            </item>
+            <item row="0" column="2">
+             <widget class="QRadioButton" name="rdoWaterFlow">
+              <property name="text">
+               <string>Water Flow</string>
+              </property>
+              <attribute name="buttonGroup">
+               <string notr="true">buttonGroup</string>
+              </attribute>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QLabel" name="lblElementLabel">
+              <property name="text">
+               <string>Cells</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="3">
+             <spacer name="horizontalSpacer_2">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeType">
+               <enum>QSizePolicy::Fixed</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>25</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item row="1" column="1" colspan="3">
+             <widget class="QLabel" name="lblElementIds">
+              <property name="text">
+               <string>-</string>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="2">
+             <widget class="QPushButton" name="btnTimeSeries">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="text">
+               <string>...</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+        </layout>
        </widget>
       </widget>
      </item>
@@ -189,10 +343,152 @@
     </layout>
    </item>
    <item>
-    <layout class="QVBoxLayout" name="leftWidget"/>
+    <layout class="QVBoxLayout" name="leftWidget">
+     <item>
+      <widget class="QVTKWidget" name="vtkWidget">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>800</width>
+         <height>562</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QVTKWidget</class>
+   <extends>QWidget</extends>
+   <header>QVTKWidget.h</header>
+  </customwidget>
+ </customwidgets>
+ <tabstops>
+  <tabstop>cbxConfiguration</tabstop>
+  <tabstop>edtConfigurationName</tabstop>
+  <tabstop>tabWidget</tabstop>
+  <tabstop>tblBoundaryConditions</tabstop>
+  <tabstop>rdoWaterLevel</tabstop>
+  <tabstop>rdoWaterFlow</tabstop>
+  <tabstop>rdoConstant</tabstop>
+  <tabstop>rdoTimeSeries</tabstop>
+  <tabstop>edtConstant</tabstop>
+  <tabstop>btnTimeSeries</tabstop>
+  <tabstop>btnDone</tabstop>
+  <tabstop>btnRemove</tabstop>
+  <tabstop>btnSave</tabstop>
+  <tabstop>trwProcesses</tabstop>
+  <tabstop>trwParameters</tabstop>
+ </tabstops>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>rdoTimeSeries</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>lblConstant</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>308</x>
+     <y>524</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>77</x>
+     <y>552</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>rdoTimeSeries</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>edtConstant</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>308</x>
+     <y>524</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>181</x>
+     <y>552</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>rdoTimeSeries</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>btnTimeSeries</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>278</x>
+     <y>520</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>252</x>
+     <y>553</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>rdoConstant</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>lblConstant</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>170</x>
+     <y>520</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>83</x>
+     <y>552</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>rdoConstant</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>edtConstant</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>170</x>
+     <y>520</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>163</x>
+     <y>552</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>rdoConstant</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>btnTimeSeries</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>170</x>
+     <y>520</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>252</x>
+     <y>553</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <buttongroups>
+  <buttongroup name="buttonGroup"/>
+  <buttongroup name="buttonGroup_2"/>
+ </buttongroups>
 </ui>
