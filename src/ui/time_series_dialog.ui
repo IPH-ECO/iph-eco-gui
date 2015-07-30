@@ -6,14 +6,75 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>507</width>
-    <height>398</height>
+    <width>681</width>
+    <height>536</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Time Series</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QPushButton" name="btnAddEntry">
+       <property name="text">
+        <string>Add entry</string>
+       </property>
+       <property name="icon">
+        <iconset resource="../../icons.qrc">
+         <normaloff>:/icons/list-add.png</normaloff>:/icons/list-add.png</iconset>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btnImportCSV">
+       <property name="text">
+        <string>Import CSV...</string>
+       </property>
+       <property name="icon">
+        <iconset resource="../../icons.qrc">
+         <normaloff>:/icons/application-x-applix-spreadsheet.png</normaloff>:/icons/application-x-applix-spreadsheet.png</iconset>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btnRemoveSelected">
+       <property name="text">
+        <string>Remove selected</string>
+       </property>
+       <property name="icon">
+        <iconset resource="../../icons.qrc">
+         <normaloff>:/icons/list-delete.png</normaloff>:/icons/list-delete.png</iconset>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btnClear">
+       <property name="text">
+        <string>Clear</string>
+       </property>
+       <property name="icon">
+        <iconset resource="../../icons.qrc">
+         <normaloff>:/icons/edit-clear-list.png</normaloff>:/icons/edit-clear-list.png</iconset>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
    <item>
     <widget class="QTableWidget" name="tblTimeSeries">
      <column>
@@ -24,11 +85,6 @@
      <column>
       <property name="text">
        <string>Value</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Actions</string>
       </property>
      </column>
     </widget>
@@ -45,7 +101,9 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="../../icons.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>buttonBox</sender>
