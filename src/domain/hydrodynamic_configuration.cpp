@@ -29,6 +29,22 @@ void HydrodynamicConfiguration::setName(const QString &name) {
 	this->name = name;
 }
 
+Mesh* HydrodynamicConfiguration::getMesh() const {
+	return mesh;
+}
+
+void HydrodynamicConfiguration::setMesh(Mesh *mesh) {
+	this->mesh = mesh;
+}
+
+QList<int> HydrodynamicConfiguration::getBoundaryConditions() const {
+	return boundaryConditions;
+}
+
+void HydrodynamicConfiguration::setBoundaryConditions(const QList<int> &boundaryConditions) {
+	this->boundaryConditions = boundaryConditions;
+}
+
 bool HydrodynamicConfiguration::addHydrodynamicParameter(HydrodynamicParameter *hydrodynamicParameter) {
 	if (parameters.contains(hydrodynamicParameter)) {
 		return false;
@@ -65,4 +81,11 @@ QList<HydrodynamicParameter*> HydrodynamicConfiguration::getRootParameters() con
     qSort(rootParameters.begin(), rootParameters.end(), HydrodynamicParameter::sort);
     
     return rootParameters;
+}
+
+void HydrodynamicConfiguration::clearBoundaryConditions() {
+	for (int i = 0; i < boundaryConditions.size(); i++) {
+//        delete boundaryConditions.at(i);
+    }
+    boundaryConditions.clear();
 }

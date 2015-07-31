@@ -192,8 +192,11 @@ void ProjectRepository::loadHydrodynamicConfigurations(Project *project) {
     
     while (query.next() && !operationCanceled) {
         HydrodynamicConfiguration *configuration = new HydrodynamicConfiguration();
+        Mesh *mesh = project->getMesh(query.value("mesh_id").toUInt());
+
         configuration->setId(query.value("id").toUInt());
         configuration->setName(query.value("name").toString());
+        configuration->setMesh(mesh);
         project->addHydrodynamicConfiguration(configuration);
         
         emit updateProgress(currentProgress++);
@@ -554,13 +557,14 @@ void ProjectRepository::saveHydrodynamicConfigurations(Project *project) {
         QSqlQuery query(databaseUtility->getDatabase());
         
         if (configuration->isPersisted()) {
-            query.prepare("update hydrodynamic_configuration set name = :n where id = :i");
+            query.prepare("update hydrodynamic_configuration set name = :n, mesh_id = :m where id = :i");
             query.bindValue(":i", configuration->getId());
         } else {
-            query.prepare("insert into hydrodynamic_configuration (name) values (:n)");
+            query.prepare("insert into hydrodynamic_configuration (name, mesh_id) values (:n, :m)");
         }
         
         query.bindValue(":n", configuration->getName());
+        query.bindValue(":m", configuration->getMesh()->getId());
         
         if (!query.exec()) {
             throw DatabaseException(QString("Unable to save hydrodynamic data configurations. Error: %1.").arg(query.lastError().text()));

@@ -586,7 +586,7 @@
             </property>
             <property name="icon">
              <iconset resource="../../icons.qrc">
-              <normaloff>:/icons/list-add.png</normaloff>:/icons/list-add.png</iconset>
+              <normaloff>:/icons/document-new.png</normaloff>:/icons/document-new.png</iconset>
             </property>
             <property name="iconSize">
              <size>
@@ -632,7 +632,7 @@
             </property>
             <property name="icon">
              <iconset resource="../../icons.qrc">
-              <normaloff>:/icons/list-delete.png</normaloff>:/icons/list-delete.png</iconset>
+              <normaloff>:/icons/document-close.png</normaloff>:/icons/document-close.png</iconset>
             </property>
             <property name="iconSize">
              <size>

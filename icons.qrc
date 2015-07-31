@@ -1,5 +1,7 @@
 <RCC>
   <qresource prefix="/">
+    <file>icons/cell-picker-multiple.png</file>
+    <file>icons/cell-picker-single.png</file>
     <file>icons/edit-clear-list.png</file>
     <file>icons/application-x-applix-spreadsheet.png</file>
     <file>icons/format-list-unordered.png</file>

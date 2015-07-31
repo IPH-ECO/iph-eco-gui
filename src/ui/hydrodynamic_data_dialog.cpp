@@ -2,8 +2,10 @@
 #include "ui_hydrodynamic_data_dialog.h"
 
 #include "include/application/iph_application.h"
+#include "include/domain/unstructured_mesh.h"
+#include "include/domain/structured_mesh.h"
 #include "include/domain/hydrodynamic_parameter.h"
-#include "include/ui/time_series_dialog.h"
+#include "include/ui/boundary_condition_dialog.h"
 
 #include <QTreeWidgetItemIterator>
 #include <QFormLayout>
@@ -12,7 +14,8 @@
 #include <QSet>
 
 HydrodynamicDataDialog::HydrodynamicDataDialog(QWidget *parent) :
-    QDialog(parent), ui(new Ui::HydrodynamicDataDialog), unsavedConfiguration(new HydrodynamicConfiguration), currentConfiguration(unsavedConfiguration)
+    QDialog(parent), ui(new Ui::HydrodynamicDataDialog),
+    unsavedConfiguration(new HydrodynamicConfiguration), currentConfiguration(unsavedConfiguration), currentMesh(nullptr)
 {
     hydrodynamicDataRepository = HydrodynamicDataRepository::getInstance();
     
@@ -31,6 +34,15 @@ HydrodynamicDataDialog::HydrodynamicDataDialog(QWidget *parent) :
     }
     ui->cbxConfiguration->setCurrentIndex(-1);
     ui->cbxConfiguration->blockSignals(false);
+
+    QSet<Mesh*> meshes = project->getMeshes();
+
+    ui->cbxMesh->blockSignals(true);
+    for (QSet<Mesh*>::const_iterator it = meshes.begin(); it != meshes.end(); ++it) {
+        ui->cbxMesh->addItem((*it)->getName());
+    }
+    ui->cbxMesh->setCurrentIndex(-1);
+    ui->cbxMesh->blockSignals(false);
 
     this->setupItems();
 }
@@ -186,6 +198,52 @@ void HydrodynamicDataDialog::on_cbxConfiguration_currentIndexChanged(const QStri
     this->setupItems();
 }
 
+void HydrodynamicDataDialog::on_cbxMesh_currentIndexChanged(const QString &meshName) {
+    bool isMeshNamePresent = !meshName.isEmpty();
+
+    if (isMeshNamePresent) {
+        Mesh *mesh = currentConfiguration->getMesh();
+        
+        if (currentMesh != nullptr && mesh != nullptr && currentConfiguration->getMesh()->getName() != meshName && currentConfiguration->getBoundaryConditions().size() > 0) {
+            QString question = tr("Changing the mesh in this configuration will remove all created boundary conditions. Are you sure?");
+            QMessageBox::StandardButton button = QMessageBox::question(this, tr("Hydrodynamic Data"), question);
+            
+            if (button == QMessageBox::No) {
+                ui->cbxMesh->blockSignals(true);
+                ui->cbxMesh->setCurrentText(currentMesh->getName());
+                ui->cbxMesh->blockSignals(false);
+                return;
+            }
+            
+            currentConfiguration->clearBoundaryConditions();
+            ui->tblBoundaryConditions->setRowCount(0);
+        }
+        
+        currentMesh = IPHApplication::getCurrentProject()->getMesh(meshName);
+
+        if (currentMesh->instanceOf("UnstructuredMesh")) {
+            currentMesh = static_cast<UnstructuredMesh*>(currentMesh);
+        } else {
+            currentMesh = static_cast<StructuredMesh*>(currentMesh);
+        }
+    } else {
+        currentMesh = nullptr;
+    }
+
+    ui->vtkWidget->render(currentMesh);
+//    ui->vtkWidget->toggleCellPick(false);
+    // ui->btnPickIndividualCells->setChecked(false);
+    // ui->btnPickCellSet->setChecked(false);
+    // ui->btnPickIndividualCells->setEnabled(isMeshNamePresent);
+    // ui->btnPickCellSet->setEnabled(isMeshNamePresent);
+    // ui->btnShowCellLabels->setEnabled(isMeshNamePresent);
+    // ui->btnShowCellWeights->setEnabled(isMeshNamePresent);
+    // ui->btnExport->setEnabled(isMeshNamePresent);
+//    ui->btnAddBoundaryCondition->setEnabled(isMeshNamePresent);
+//    ui->btnRemoveBoundaryCondition->setEnabled(isMeshNamePresent);
+    // ui->btnShowMesh->setEnabled(isMeshNamePresent);
+}
+
 void HydrodynamicDataDialog::on_btnRemove_clicked() {
     QMessageBox::StandardButton question = QMessageBox::question(this, tr("Hydrodynamic Data"), tr("Are you sure you want to remove the selected configuration?"));
     
@@ -323,15 +381,28 @@ void HydrodynamicDataDialog::on_trwProcesses_itemChanged(QTreeWidgetItem *item, 
     }
 }
 
-void HydrodynamicDataDialog::on_rdoWaterLevel_clicked(bool checked) {
-    ui->lblElementLabel->setText("Cells");
+void HydrodynamicDataDialog::on_btnAddBoundaryCondition_clicked() {
+    BoundaryConditionDialog *boundaryConditionDialog = new BoundaryConditionDialog(nullptr);
+    
+    boundaryConditionDialog->setWindowModality(Qt::WindowModal);
+    boundaryConditionDialog->setHydrodynamicDataDialog(this);
+    boundaryConditionDialog->show();
+    
+    toggleWidgets(false);
 }
 
-void HydrodynamicDataDialog::on_rdoWaterFlow_clicked(bool checked) {
-    ui->lblElementLabel->setText("Edges");
+void HydrodynamicDataDialog::on_btnEditBoundaryCondition_clicked() {
+    
 }
 
-void HydrodynamicDataDialog::on_btnTimeSeries_clicked() {
-    TimeSeriesDialog *timeSeriesDialog = new TimeSeriesDialog(this);
-    timeSeriesDialog->exec();
+void HydrodynamicDataDialog::on_btnRemoveBoundaryCondition_clicked() {
+    
+}
+
+void HydrodynamicDataDialog::toggleWidgets(bool enable) {
+    ui->cbxConfiguration->setEnabled(enable);
+    ui->cbxMesh->setEnabled(enable);
+    ui->btnAddBoundaryCondition->setEnabled(enable);
+    ui->btnEditBoundaryCondition->setEnabled(enable);
+    ui->btnRemoveBoundaryCondition->setEnabled(enable);
 }
