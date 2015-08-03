@@ -21,12 +21,14 @@ private:
     void loadGridData(GridDataConfiguration *gridDataConfiguration, Project *project);
     void loadHydrodynamicConfigurations(Project *project);
     void loadHydrodynamicParameter(HydrodynamicConfiguration *configuration, Project *project);
+    void loadBoundaryConditions(HydrodynamicConfiguration *configuration, Project *project);
     
     void saveGridDataConfigurations(Project *project);
     void saveGridData(GridDataConfiguration *gridDataConfiguration);
 
     void saveHydrodynamicConfigurations(Project *project);
     void saveHydrodynamicParameters(HydrodynamicConfiguration *configuration);
+    void saveBoundaryConditions(HydrodynamicConfiguration *configuration);
 
 public:
     ProjectRepository(const QString &databaseName);

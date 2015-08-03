@@ -27,8 +27,11 @@
       <string>Constant</string>
      </property>
      <property name="checked">
-      <bool>false</bool>
+      <bool>true</bool>
      </property>
+     <attribute name="buttonGroup">
+      <string notr="true">buttonGroup_2</string>
+     </attribute>
     </widget>
    </item>
    <item row="5" column="0" colspan="3">
@@ -96,6 +99,9 @@
      <property name="text">
       <string>Water Flow</string>
      </property>
+     <attribute name="buttonGroup">
+      <string notr="true">buttonGroup</string>
+     </attribute>
     </widget>
    </item>
    <item row="2" column="2">
@@ -103,6 +109,9 @@
      <property name="text">
       <string>Time Series</string>
      </property>
+     <attribute name="buttonGroup">
+      <string notr="true">buttonGroup_2</string>
+     </attribute>
     </widget>
    </item>
    <item row="3" column="1">
@@ -129,6 +138,9 @@
      <property name="checked">
       <bool>true</bool>
      </property>
+     <attribute name="buttonGroup">
+      <string notr="true">buttonGroup</string>
+     </attribute>
     </widget>
    </item>
    <item row="2" column="0">
@@ -176,5 +188,73 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>rdoConstant</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>edtConstant</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>162</x>
+     <y>72</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>155</x>
+     <y>100</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>rdoConstant</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>btnTimeSeries</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>162</x>
+     <y>72</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>244</x>
+     <y>101</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>rdoTimeSeries</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>btnTimeSeries</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>270</x>
+     <y>72</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>244</x>
+     <y>101</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>rdoTimeSeries</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>edtConstant</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>270</x>
+     <y>72</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>155</x>
+     <y>100</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
+ <buttongroups>
+  <buttongroup name="buttonGroup"/>
+  <buttongroup name="buttonGroup_2"/>
+ </buttongroups>
 </ui>

@@ -2,8 +2,8 @@
 
 #include "include/application/iph_application.h"
 #include "include/exceptions/database_exception.h"
-#include "include/domain/structured_mesh.h"
 #include "include/domain/unstructured_mesh.h"
+#include "include/domain/structured_mesh.h"
 
 #include <QApplication>
 #include <QSqlQuery>
@@ -222,6 +222,28 @@ void ProjectRepository::loadHydrodynamicParameter(HydrodynamicConfiguration *con
 
         configuration->addHydrodynamicParameter(parameter);
 
+        emit updateProgress(currentProgress++);
+        QApplication::processEvents();
+    }
+}
+
+void ProjectRepository::loadBoundaryConditions(HydrodynamicConfiguration *configuration, Project *project) {
+    QSqlQuery query(databaseUtility->getDatabase());
+    
+    query.prepare("select * from boundary_condition where configuration_id = " + QString::number(configuration->getId()) + " input_module = " + (int) InputModule::HYDRODYNAMIC);
+    query.exec();
+    
+    while (query.next() && !operationCanceled) {
+        BoundaryCondition *boundaryCondition = new BoundaryCondition();
+        boundaryCondition->setId(query.value("id").toUInt());
+        boundaryCondition->setType((BoundaryConditionType) query.value("type").toInt());
+        boundaryCondition->setObjectIds(query.value("object_ids").toString());
+        boundaryCondition->setFunction(query.value("function").toString());
+        boundaryCondition->setConstantValue(query.value("constant_value").toDouble());
+        boundaryCondition->setInputModule((InputModule) query.value("input_module").toInt());
+        
+        configuration->addBoundaryCondition(boundaryCondition);
+        
         emit updateProgress(currentProgress++);
         QApplication::processEvents();
     }
@@ -619,6 +641,47 @@ void ProjectRepository::saveHydrodynamicParameters(HydrodynamicConfiguration *co
     query.exec();
 }
 
+void ProjectRepository::saveBoundaryConditions(HydrodynamicConfiguration *configuration) {
+    QList<BoundaryCondition*> boundaryConditions = configuration->getBoundaryConditions();
+    QSqlQuery query(databaseUtility->getDatabase());
+    QStringList boundaryConditionIds;
+
+    for (int i = 0; i < boundaryConditions.size() && !operationCanceled; i++) {
+        BoundaryCondition *boundaryCondition = boundaryConditions[i];
+
+        if (boundaryCondition->isPersisted()) {
+            query.prepare("update boundary_condition set type = :t, object_ids = :o, function = :f, constant_value = :c where id = :i");
+            query.bindValue(":i", boundaryCondition->getId());
+        } else {
+            query.prepare("insert into boundary_condition (type, object_ids, function, constant_value, input_module, configuration_id) values (:t, :o, :f, :c, :i, :ci)");
+            query.bindValue(":i", (int) boundaryCondition->getInputModule());
+            query.bindValue(":ci", configuration->getId());
+        }
+
+        query.bindValue(":t", (int) boundaryCondition->getType());
+        query.bindValue(":o", boundaryCondition->getObjectIdsStr());
+        query.bindValue(":f", boundaryCondition->getFunction());
+        query.bindValue(":c", boundaryCondition->getConstantValue());
+
+        if (!query.exec()) {
+            throw DatabaseException(QString("Unable to save hydrodynamic boundary conditions. Error: %1.").arg(query.lastError().text()));
+        }
+
+        emit updateProgress(currentProgress++);
+        QApplication::processEvents();
+
+        boundaryCondition->setId(query.lastInsertId().toUInt());
+        boundaryConditionIds.append(QString::number(boundaryCondition->getId()));
+    }
+
+    if (operationCanceled) {
+        return;
+    }
+
+    query.prepare("delete from boundary_condition where id not in (" + boundaryConditionIds.join(",") + ") and configuration_id = " + configuration->getId() + " and input_module = " + (int) InputModule::HYDRODYNAMIC);
+    query.exec();
+}
+
 int ProjectRepository::getMaximumSaveProgress() {
     int saveSteps = 0;
     Project *project = IPHApplication::getCurrentProject();
@@ -667,6 +730,10 @@ int ProjectRepository::getMaximumLoadProgress() {
     loadSteps += query.value(0).toInt();
 
     query.exec("select count(*) from hydrodynamic_parameter");
+    query.next();
+    loadSteps += query.value(0).toInt();
+    
+    query.exec("select count(*) from boundary_condition");
     query.next();
     loadSteps += query.value(0).toInt();
     

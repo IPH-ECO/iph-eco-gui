@@ -1,5 +1,5 @@
-#ifndef GRID_DATA_MOUSE_INTERACTOR_H
-#define GRID_DATA_MOUSE_INTERACTOR_H
+#ifndef HYDRODYNAMIC_MOUSE_INTERACTOR_H
+#define HYDRODYNAMIC_MOUSE_INTERACTOR_H
 
 #include "include/application/iph_types.h"
 #include "mesh_mouse_interactor.h"
@@ -8,7 +8,7 @@
 #include <vtkPolyData.h>
 #include <vtkActor2D.h>
 
-class GridDataMouseInteractor : public MeshMouseInteractor {
+class HydrodynamicMouseInteractor : public MeshMouseInteractor {
 private:
     vtkSmartPointer<vtkActor2D> selectionIdLabelsActor;
     vtkSmartPointer<vtkActor> selectionActor;
@@ -19,10 +19,10 @@ private:
     
     void renderSelection();
 public:
-    static GridDataMouseInteractor* New();
-    vtkTypeMacro(GridDataMouseInteractor, vtkInteractorStyleRubberBandPick);
+    static HydrodynamicMouseInteractor* New();
+    vtkTypeMacro(HydrodynamicMouseInteractor, vtkInteractorStyleRubberBandPick);
     
-    GridDataMouseInteractor();
+    HydrodynamicMouseInteractor();
     
     vtkActor* getSelectionActor();
     vtkActor2D* getSelectionIdLabelsActor();
@@ -30,11 +30,10 @@ public:
     virtual void OnLeftButtonDown();
     virtual void OnLeftButtonUp();
     
-    void activateCellPicking(const CellPickMode &cellPickMode, vtkIdTypeArray *cellIdsArray);
-    void deactivateCellPicking();
+    void activateCellPicker(const CellPickMode &cellPickMode, vtkIdTypeArray *cellIdsArray);
+    void deactivateCellPicker();
     void setMeshPolyData(vtkPolyData *meshPolyData);
-    void clearSelection();
     void pickCell();
 };
 
-#endif // GRID_DATA_MOUSE_INTERACTOR_H
+#endif // HYDRODYNAMIC_MOUSE_INTERACTOR_H

@@ -1,8 +1,9 @@
 #ifndef HYDRODYNAMIC_CONFIGURATION_H
 #define HYDRODYNAMIC_CONFIGURATION_H
 
-#include "include/domain/hydrodynamic_process.h"
 #include "include/domain/mesh.h"
+#include "include/domain/boundary_condition.h"
+#include "include/domain/hydrodynamic_process.h"
 
 #include <QString>
 #include <QList>
@@ -13,7 +14,7 @@ private:
 	QString name;
 	QList<HydrodynamicParameter*> parameters;
     Mesh *mesh;
-	QList<int> boundaryConditions;
+	QList<BoundaryCondition*> boundaryConditions;
 public:
     HydrodynamicConfiguration();
     ~HydrodynamicConfiguration();
@@ -24,8 +25,10 @@ public:
 	void setName(const QString &name);
 	Mesh* getMesh() const;
 	void setMesh(Mesh *mesh);
-	QList<int> getBoundaryConditions() const;
-	void setBoundaryConditions(const QList<int> &boundaryConditions);
+	bool addBoundaryCondition(BoundaryCondition *boundaryCondition);
+	QList<BoundaryCondition*> getBoundaryConditions() const;
+	void setBoundaryConditions(const QList<BoundaryCondition*> &boundaryConditions);
+    void removeBoundaryCondition(int i);
 
 	bool addHydrodynamicParameter(HydrodynamicParameter *hydrodynamicParameter);
 	QList<HydrodynamicParameter*> getParameters() const;

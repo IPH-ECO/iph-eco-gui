@@ -124,6 +124,16 @@ void DatabaseUtility::createApplicationTables() {
         "selected bool default false, " \
         "hydrodynamic_configuration_id integer not null"
     ")";
+
+    sql << "create table if not exists boundary_condition (" \
+        "id integer primary key, " \
+        "type varchar(255) not null, " \
+        "object_ids varchar(255) not null, " \
+        "function varchar(255) not null, " \
+        "constant_value float default null, " \
+        "input_module integer not null, " \
+        "configuration_id integer not null"
+    ")";
     
     QSqlQuery query(database);
 

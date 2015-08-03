@@ -8,14 +8,17 @@
 #include "include/ui/boundary_condition_dialog.h"
 
 #include <QTreeWidgetItemIterator>
+#include <QColorDialog>
 #include <QFormLayout>
 #include <QMessageBox>
 #include <QLineEdit>
+#include <QPixmap>
+#include <QColor>
 #include <QSet>
 
 HydrodynamicDataDialog::HydrodynamicDataDialog(QWidget *parent) :
     QDialog(parent), ui(new Ui::HydrodynamicDataDialog),
-    unsavedConfiguration(new HydrodynamicConfiguration), currentConfiguration(unsavedConfiguration), currentMesh(nullptr)
+    unsavedConfiguration(new HydrodynamicConfiguration), currentConfiguration(unsavedConfiguration), currentMesh(nullptr), isBoundaryConditionOpen(false)
 {
     hydrodynamicDataRepository = HydrodynamicDataRepository::getInstance();
     
@@ -45,6 +48,12 @@ HydrodynamicDataDialog::HydrodynamicDataDialog(QWidget *parent) :
     ui->cbxMesh->blockSignals(false);
 
     this->setupItems();
+
+    QColor color = QColor(Qt::white);
+    QPixmap px(24, 24);
+    
+    px.fill(color);
+    ui->btnBackgroundColor->setIcon(px);
 }
 
 HydrodynamicDataDialog::~HydrodynamicDataDialog() {
@@ -231,17 +240,8 @@ void HydrodynamicDataDialog::on_cbxMesh_currentIndexChanged(const QString &meshN
     }
 
     ui->vtkWidget->render(currentMesh);
-//    ui->vtkWidget->toggleCellPick(false);
-    // ui->btnPickIndividualCells->setChecked(false);
-    // ui->btnPickCellSet->setChecked(false);
-    // ui->btnPickIndividualCells->setEnabled(isMeshNamePresent);
-    // ui->btnPickCellSet->setEnabled(isMeshNamePresent);
-    // ui->btnShowCellLabels->setEnabled(isMeshNamePresent);
-    // ui->btnShowCellWeights->setEnabled(isMeshNamePresent);
-    // ui->btnExport->setEnabled(isMeshNamePresent);
-//    ui->btnAddBoundaryCondition->setEnabled(isMeshNamePresent);
-//    ui->btnRemoveBoundaryCondition->setEnabled(isMeshNamePresent);
-    // ui->btnShowMesh->setEnabled(isMeshNamePresent);
+    ui->btnAddBoundaryCondition->setEnabled(isMeshNamePresent);
+    ui->btnShowMesh->setEnabled(isMeshNamePresent);
 }
 
 void HydrodynamicDataDialog::on_btnRemove_clicked() {
@@ -396,13 +396,73 @@ void HydrodynamicDataDialog::on_btnEditBoundaryCondition_clicked() {
 }
 
 void HydrodynamicDataDialog::on_btnRemoveBoundaryCondition_clicked() {
+    int currentRow = ui->tblBoundaryConditions->currentRow();
     
+    if (currentRow > -1 && QMessageBox::question(this, tr("Hydrodynamic Data"), tr("Are you sure you want to remove the selected boundary condtion?")) == QMessageBox::Yes) {
+        currentConfiguration->removeBoundaryCondition(currentRow);
+        ui->tblBoundaryConditions->removeRow(currentRow);
+        
+        if (ui->tblBoundaryConditions->rowCount() == 0 && currentConfiguration->isPersisted()) {
+            ui->cbxConfiguration->setEnabled(false);
+        }
+    }
+}
+
+void HydrodynamicDataDialog::closeEvent(QCloseEvent *event) {
+    if (isBoundaryConditionOpen) {
+        event->ignore();
+    } else {
+        QDialog::closeEvent(event);
+    }
 }
 
 void HydrodynamicDataDialog::toggleWidgets(bool enable) {
-    ui->cbxConfiguration->setEnabled(enable);
-    ui->cbxMesh->setEnabled(enable);
-    ui->btnAddBoundaryCondition->setEnabled(enable);
-    ui->btnEditBoundaryCondition->setEnabled(enable);
-    ui->btnRemoveBoundaryCondition->setEnabled(enable);
+    isBoundaryConditionOpen = !enable;
+    
+    for (int i = 0; i < ui->leftLayout->count(); i++) {
+        QWidget *widget = ui->leftLayout->itemAt(i)->widget();
+        
+        if (widget != nullptr) {
+            widget->setEnabled(enable);
+        }
+    }
+    
+    for (int i = 0; i < ui->configurationLayout->count(); i++) {
+        QWidget *widget = ui->configurationLayout->itemAt(i)->widget();
+        
+        if (widget != nullptr) {
+            widget->setEnabled(enable);
+        }
+    }
+    
+    for (int i = 0; i < ui->actionsLayout->count(); i++) {
+        QWidget *widget = ui->actionsLayout->itemAt(i)->widget();
+        
+        if (widget != nullptr) {
+            widget->setEnabled(enable);
+        }
+    }
+}
+
+void HydrodynamicDataDialog::on_btnBackgroundColor_clicked() {
+    QColor color = QColorDialog::getColor(Qt::white, this, "Select a background color");
+    
+    if (color.isValid()) {
+        QPixmap px(24, 24);
+        px.fill(color);
+        
+        ui->vtkWidget->changeBackgroundColor(color.redF(), color.greenF(), color.blueF());
+        ui->btnBackgroundColor->setIcon(px);
+    }
+}
+
+void HydrodynamicDataDialog::setCoordinate(double &x, double &y) {
+    QString xStr = QString::number(x, 'f', 6);
+    QString yStr = QString::number(y, 'f', 6);
+
+    ui->lblUTMCoordinate->setText(QString("Easting: %1, Northing: %2").arg(xStr).arg(yStr));
+}
+
+void HydrodynamicDataDialog::togglePicker(bool enable, const CellPickMode &cellPickMode) {
+    ui->vtkWidget->toggleCellPick(enable, cellPickMode);
 }

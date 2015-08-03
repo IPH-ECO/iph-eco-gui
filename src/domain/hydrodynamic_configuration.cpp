@@ -37,12 +37,26 @@ void HydrodynamicConfiguration::setMesh(Mesh *mesh) {
 	this->mesh = mesh;
 }
 
-QList<int> HydrodynamicConfiguration::getBoundaryConditions() const {
+bool HydrodynamicConfiguration::addBoundaryCondition(BoundaryCondition *boundaryCondition) {
+	if (boundaryConditions.contains(boundaryCondition)) {
+		return false;
+	}
+
+	boundaryConditions.append(boundaryCondition);
+
+	return true;
+}
+
+QList<BoundaryCondition*> HydrodynamicConfiguration::getBoundaryConditions() const {
 	return boundaryConditions;
 }
 
-void HydrodynamicConfiguration::setBoundaryConditions(const QList<int> &boundaryConditions) {
+void HydrodynamicConfiguration::setBoundaryConditions(const QList<BoundaryCondition*> &boundaryConditions) {
 	this->boundaryConditions = boundaryConditions;
+}
+
+void HydrodynamicConfiguration::removeBoundaryCondition(int i) {
+    this->boundaryConditions.removeAt(i);
 }
 
 bool HydrodynamicConfiguration::addHydrodynamicParameter(HydrodynamicParameter *hydrodynamicParameter) {

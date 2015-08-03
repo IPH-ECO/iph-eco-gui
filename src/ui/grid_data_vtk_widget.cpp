@@ -253,7 +253,7 @@ void GridDataVTKWidget::toggleMesh(bool show) {
     
     if (show) {
         meshActor->VisibilityOn();
-        vtkActor *selectionActor = mouseInteractor->getSelectionActor();
+        selectionActor = mouseInteractor->getSelectionActor();
         if (selectionActor != nullptr) {
             selectionActor->VisibilityOn();
             mouseInteractor->getSelectionIdLabelsActor()->VisibilityOn();
