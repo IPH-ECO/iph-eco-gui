@@ -38,6 +38,7 @@ public:
 	void render(Mesh *mesh);
     void toggleCellPick(bool activate, const CellPickMode &cellPickMode = CellPickMode::UNDEFINED);
     vtkIdTypeArray* getSelectedCellIds() const;
+    MeshMouseInteractor* getMouseInteractor() const;
 
 public slots:
     void resetZoom();
@@ -45,6 +46,7 @@ public slots:
     void toggleAxes(bool show);
     void toggleMesh(bool show);
     void changeBackgroundColor(const double &r, const double &g, const double &b);
+    void clearSelection();
 };
 
 #endif // HYDRODYNAMIC_VTK_WIDGET_H

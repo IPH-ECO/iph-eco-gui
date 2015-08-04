@@ -9,6 +9,7 @@
 #include <vtkActor2D.h>
 
 class HydrodynamicMouseInteractor : public MeshMouseInteractor {
+    Q_OBJECT
 private:
     vtkSmartPointer<vtkActor2D> selectionIdLabelsActor;
     vtkSmartPointer<vtkActor> selectionActor;
@@ -32,8 +33,11 @@ public:
     
     void activateCellPicker(const CellPickMode &cellPickMode, vtkIdTypeArray *cellIdsArray);
     void deactivateCellPicker();
+    void clearSelection();
     void setMeshPolyData(vtkPolyData *meshPolyData);
     void pickCell();
+signals:
+    void objectSelected();
 };
 
 #endif // HYDRODYNAMIC_MOUSE_INTERACTOR_H

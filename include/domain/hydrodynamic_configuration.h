@@ -27,6 +27,7 @@ public:
 	void setMesh(Mesh *mesh);
 	bool addBoundaryCondition(BoundaryCondition *boundaryCondition);
 	QList<BoundaryCondition*> getBoundaryConditions() const;
+    BoundaryCondition* getBoundaryCondition(int i) const;
 	void setBoundaryConditions(const QList<BoundaryCondition*> &boundaryConditions);
     void removeBoundaryCondition(int i);
 

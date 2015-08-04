@@ -18,7 +18,7 @@
 
 HydrodynamicDataDialog::HydrodynamicDataDialog(QWidget *parent) :
     QDialog(parent), ui(new Ui::HydrodynamicDataDialog),
-    unsavedConfiguration(new HydrodynamicConfiguration), currentConfiguration(unsavedConfiguration), currentMesh(nullptr), isBoundaryConditionOpen(false)
+    unsavedConfiguration(new HydrodynamicConfiguration), currentConfiguration(unsavedConfiguration), currentMesh(nullptr), boundaryConditionDialog(nullptr)
 {
     hydrodynamicDataRepository = HydrodynamicDataRepository::getInstance();
     
@@ -382,9 +382,8 @@ void HydrodynamicDataDialog::on_trwProcesses_itemChanged(QTreeWidgetItem *item, 
 }
 
 void HydrodynamicDataDialog::on_btnAddBoundaryCondition_clicked() {
-    BoundaryConditionDialog *boundaryConditionDialog = new BoundaryConditionDialog(nullptr);
+    boundaryConditionDialog = new BoundaryConditionDialog(currentConfiguration, nullptr);
     
-    boundaryConditionDialog->setWindowModality(Qt::WindowModal);
     boundaryConditionDialog->setHydrodynamicDataDialog(this);
     boundaryConditionDialog->show();
     
@@ -392,7 +391,14 @@ void HydrodynamicDataDialog::on_btnAddBoundaryCondition_clicked() {
 }
 
 void HydrodynamicDataDialog::on_btnEditBoundaryCondition_clicked() {
+    int row = ui->tblBoundaryConditions->currentRow();
+    BoundaryCondition *boundaryCondition = currentConfiguration->getBoundaryCondition(row);
+    boundaryConditionDialog = new BoundaryConditionDialog(currentConfiguration, boundaryCondition);
     
+    boundaryConditionDialog->setHydrodynamicDataDialog(this);
+    boundaryConditionDialog->show();
+    
+    toggleWidgets(false);
 }
 
 void HydrodynamicDataDialog::on_btnRemoveBoundaryCondition_clicked() {
@@ -409,16 +415,15 @@ void HydrodynamicDataDialog::on_btnRemoveBoundaryCondition_clicked() {
 }
 
 void HydrodynamicDataDialog::closeEvent(QCloseEvent *event) {
-    if (isBoundaryConditionOpen) {
+    if (boundaryConditionDialog != nullptr && boundaryConditionDialog->isVisible()) {
         event->ignore();
     } else {
+        boundaryConditionDialog = nullptr;
         QDialog::closeEvent(event);
     }
 }
 
 void HydrodynamicDataDialog::toggleWidgets(bool enable) {
-    isBoundaryConditionOpen = !enable;
-    
     for (int i = 0; i < ui->leftLayout->count(); i++) {
         QWidget *widget = ui->leftLayout->itemAt(i)->widget();
         
@@ -465,4 +470,12 @@ void HydrodynamicDataDialog::setCoordinate(double &x, double &y) {
 
 void HydrodynamicDataDialog::togglePicker(bool enable, const CellPickMode &cellPickMode) {
     ui->vtkWidget->toggleCellPick(enable, cellPickMode);
+}
+
+void HydrodynamicDataDialog::on_tblBoundaryConditions_currentItemChanged(QTableWidgetItem *current, QTableWidgetItem *previous) {
+    if (current != nullptr && (previous == nullptr || current->row() != previous->row())) {
+        boundaryConditionDialog->boundaryCondition = currentConfiguration->getBoundaryCondition(current->row());
+        ui->btnEditBoundaryCondition->setEnabled(true);
+        ui->btnRemoveBoundaryCondition->setEnabled(true);
+    }
 }

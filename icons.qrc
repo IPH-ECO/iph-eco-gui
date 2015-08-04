@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="/">
+    <file>icons/edit-clear-2.png</file>
     <file>icons/cell-picker-multiple.png</file>
     <file>icons/cell-picker-single.png</file>
     <file>icons/edit-clear-list.png</file>

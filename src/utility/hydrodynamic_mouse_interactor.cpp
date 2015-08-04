@@ -117,6 +117,7 @@ void HydrodynamicMouseInteractor::renderSelection() {
     selectionActor->GetProperty()->SetLineStipplePattern(0xF0F0);
     
     this->GetDefaultRenderer()->GetRenderWindow()->Render();
+    emit objectSelected();
 }
 
 vtkActor* HydrodynamicMouseInteractor::getSelectionActor() {
@@ -139,14 +140,21 @@ void HydrodynamicMouseInteractor::deactivateCellPicker() {
     this->CurrentMode = 0; // VTKISRBP_ORIENT
 }
 
-void HydrodynamicMouseInteractor::setMeshPolyData(vtkPolyData *meshPolyData) {
-    this->meshPolyData = meshPolyData;
+void HydrodynamicMouseInteractor::clearSelection() {
+    if (cellIdsArray != nullptr) {
+        this->cellIdsArray->Reset();
+    }
     
-    this->deactivateCellPicker();
     this->GetDefaultRenderer()->RemoveActor(selectionActor);
     this->GetDefaultRenderer()->RemoveActor2D(selectionIdLabelsActor);
     this->GetDefaultRenderer()->GetRenderWindow()->Render();
+}
+
+void HydrodynamicMouseInteractor::setMeshPolyData(vtkPolyData *meshPolyData) {
+    this->meshPolyData = meshPolyData;
     
+    this->clearSelection();
+    this->deactivateCellPicker();
     this->selectionActor = vtkSmartPointer<vtkActor>::New();
     this->selectionIdLabelsActor = vtkSmartPointer<vtkActor2D>::New();
 }

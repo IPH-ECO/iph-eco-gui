@@ -12,19 +12,27 @@ namespace Ui {
 	class BoundaryConditionDialog;
 }
 
+class HydrodynamicDataDialog;
+
 class BoundaryConditionDialog : public QDialog {
 	Q_OBJECT
+    
+    friend class HydrodynamicDataDialog;
 private:
 	Ui::BoundaryConditionDialog *ui;
+    HydrodynamicConfiguration *configuration;
+    BoundaryCondition *boundaryCondition;
+    QList<TimeSeries*> timeSeriesList;
     QToolButton *btnSingleCellPicker;
     QToolButton *btnMultipleCellPicker;
     HydrodynamicDataDialog *hydrodynamicDataDialog;
     
     void closeEvent(QCloseEvent *event);
-    void accept();
-    void reject();
+    virtual void accept();
+    virtual void reject();
+    bool isValid();
 public:
-	explicit BoundaryConditionDialog(QWidget *parent);
+	explicit BoundaryConditionDialog(HydrodynamicConfiguration *configuration, BoundaryCondition *boundaryCondition);
     ~BoundaryConditionDialog();
     
     void setHydrodynamicDataDialog(HydrodynamicDataDialog *dialog);
@@ -34,6 +42,8 @@ private slots:
     void on_btnTimeSeries_clicked();
     void btnSingleCellPicker_clicked(bool checked);
     void btnMultipleCellPicker_clicked(bool checked);
+    void btnClearSelection_clicked();
+    void showObjectIds();
 };
 
 #endif // BOUNDARY_CONDITION_DIALOG_H

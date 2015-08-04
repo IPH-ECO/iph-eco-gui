@@ -51,6 +51,14 @@ QList<BoundaryCondition*> HydrodynamicConfiguration::getBoundaryConditions() con
 	return boundaryConditions;
 }
 
+BoundaryCondition* HydrodynamicConfiguration::getBoundaryCondition(int i) const {
+    if (i >= boundaryConditions.size()) {
+        return nullptr;
+    }
+    
+    return boundaryConditions[i];
+}
+
 void HydrodynamicConfiguration::setBoundaryConditions(const QList<BoundaryCondition*> &boundaryConditions) {
 	this->boundaryConditions = boundaryConditions;
 }

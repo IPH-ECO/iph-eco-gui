@@ -5,15 +5,27 @@
 #include <QFileDialog>
 #include <QStringList>
 #include <QMessageBox>
+#include <QDateTime>
 #include <QIODevice>
 #include <QFile>
 
-enum CustomDialogButtons { IMPORT_CSV = 1 };
-
-TimeSeriesDialog::TimeSeriesDialog(QWidget *parent) : QDialog(parent), HYDRODYNAMIC_DEFAULT_DIR_KEY("default_hydrodynamic_dir"), ui(new Ui::TimeSeriesDialog) {
+TimeSeriesDialog::TimeSeriesDialog(QWidget *parent, BoundaryCondition *boundaryCondition) :
+    QDialog(parent), HYDRODYNAMIC_DEFAULT_DIR_KEY("default_hydrodynamic_dir"), ui(new Ui::TimeSeriesDialog)
+{
     ui->setupUi(this);
     ui->tblTimeSeries->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     appSettings = new QSettings(QApplication::organizationName(), QApplication::applicationName(), this);
+    
+    if (boundaryCondition) {
+        QList<TimeSeries*> timeSeriesList = boundaryCondition->getTimeSeriesList();
+        
+        for (int i = 0; i < timeSeriesList.size(); i++) {
+            ui->tblTimeSeries->insertRow(i);
+            ui->tblTimeSeries->setItem(i, 0, new QTableWidgetItem(timeSeriesList[i]->getTimestamp()));
+            ui->tblTimeSeries->setItem(i, 1, new QTableWidgetItem(QString::number(timeSeriesList[i]->getValue())));
+            i++;
+        }
+    }
 }
 
 TimeSeriesDialog::~TimeSeriesDialog() {
@@ -23,10 +35,6 @@ TimeSeriesDialog::~TimeSeriesDialog() {
 
 QString TimeSeriesDialog::getDefaultDirectory() {
     return appSettings->value(HYDRODYNAMIC_DEFAULT_DIR_KEY).toString().isEmpty() ? QDir::homePath() : appSettings->value(HYDRODYNAMIC_DEFAULT_DIR_KEY).toString();
-}
-
-QMap<QString, double> TimeSeriesDialog::getTimeSeries() const {
-    return timeSeries;
 }
 
 void TimeSeriesDialog::on_btnAddEntry_clicked() {
@@ -41,7 +49,7 @@ void TimeSeriesDialog::on_btnImportCSV_clicked() {
         QStringList tokens;
         
         if (csvFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-            QMap<QString, double> tempTimeSeries;
+            QList<TimeSeries> tempTimeSeriesList;
             int i = 1;
             
             while (!csvFile.atEnd()) {
@@ -53,23 +61,24 @@ void TimeSeriesDialog::on_btnImportCSV_clicked() {
                     csvFile.close();
                     return;
                 } else {
-                    tempTimeSeries.insert(tokens[0], tokens[1].toDouble());
+                    TimeSeries tempTimeSeries;
+                    tempTimeSeries.setTimestamp(tokens[0]);
+                    tempTimeSeries.setValue(tokens[1].toDouble());
+                    
+                    tempTimeSeriesList.append(tempTimeSeries);
                 }
                 i++;
             }
             
-            if (tempTimeSeries.isEmpty()) {
+            if (tempTimeSeriesList.isEmpty()) {
                 QMessageBox::critical(this, tr("Time Series"), tr("Unable to parse empty file."));
             } else {
-                timeSeries = tempTimeSeries;
-                i = 0;
-                
                 ui->tblTimeSeries->setRowCount(0);
                 
-                for (QMap<QString, double>::const_iterator it = timeSeries.begin(); it != timeSeries.end(); it++) {
+                for (int i = 0; i < tempTimeSeriesList.size(); i++) {
                     ui->tblTimeSeries->insertRow(i);
-                    ui->tblTimeSeries->setItem(i, 0, new QTableWidgetItem(it.key()));
-                    ui->tblTimeSeries->setItem(i, 1, new QTableWidgetItem(QString::number(it.value())));
+                    ui->tblTimeSeries->setItem(i, 0, new QTableWidgetItem(tempTimeSeriesList[i].getTimestamp()));
+                    ui->tblTimeSeries->setItem(i, 1, new QTableWidgetItem(QString::number(tempTimeSeriesList[i].getValue())));
                     i++;
                 }
             }
@@ -100,4 +109,40 @@ void TimeSeriesDialog::on_btnClear_clicked() {
     if (button == QMessageBox::Yes) {
         ui->tblTimeSeries->setRowCount(0);
     }
+}
+
+bool TimeSeriesDialog::isValid() {
+    for (int i = 0; i < ui->tblTimeSeries->rowCount(); i++) {
+        QString timestamp = ui->tblTimeSeries->item(i, 0)->text();
+        QDateTime dateTime = QDateTime::fromString(timestamp, Qt::ISODate);
+        
+        if (!dateTime.isValid()) {
+            QMessageBox::warning(this, tr("Time Series"), tr("Invalid timestamp format at line ") + QString::number(i + 1));
+            return false;
+        }
+    }
+    
+    return true;
+}
+
+void TimeSeriesDialog::accept() {
+    if (!isValid()) {
+        return;
+    }
+    
+    QList<TimeSeries*> timeSeriesList;
+    
+    for (int i = 0; i < ui->tblTimeSeries->rowCount(); i++) {
+        TimeSeries *timeSeries = new TimeSeries();
+        timeSeries->setTimestamp(ui->tblTimeSeries->item(i, 0)->text());
+        timeSeries->setValue(ui->tblTimeSeries->item(i, 1)->text().toDouble());
+        
+        timeSeriesList.append(timeSeries);
+    }
+    
+    QDialog::accept();
+}
+
+QList<TimeSeries*> TimeSeriesDialog::getTimeSeriesList() const {
+    return timeSeriesList;
 }

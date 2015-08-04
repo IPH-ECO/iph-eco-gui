@@ -238,11 +238,33 @@ void ProjectRepository::loadBoundaryConditions(HydrodynamicConfiguration *config
         boundaryCondition->setId(query.value("id").toUInt());
         boundaryCondition->setType((BoundaryConditionType) query.value("type").toInt());
         boundaryCondition->setObjectIds(query.value("object_ids").toString());
-        boundaryCondition->setFunction(query.value("function").toString());
+        boundaryCondition->setFunction((BoundaryConditionFunction) query.value("function").toInt());
         boundaryCondition->setConstantValue(query.value("constant_value").toDouble());
         boundaryCondition->setInputModule((InputModule) query.value("input_module").toInt());
         
         configuration->addBoundaryCondition(boundaryCondition);
+        
+        emit updateProgress(currentProgress++);
+        QApplication::processEvents();
+
+        loadTimeSeries(boundaryCondition);
+    }
+}
+
+void ProjectRepository::loadTimeSeries(BoundaryCondition *boundaryCondition) {
+    QSqlQuery query(databaseUtility->getDatabase());
+    QList<TimeSeries*> timeSeriesList;
+    
+    query.prepare("select * from time_series where boundary_condition_id = " + QString::number(boundaryCondition->getId()));
+    query.exec();
+    
+    while (query.next() && !operationCanceled) {
+        TimeSeries *timeSeries = new TimeSeries();
+        timeSeries->setId(query.value("id").toUInt());
+        timeSeries->setTimestamp(query.value("timestamp").toString());
+        timeSeries->setValue(query.value("value").toDouble());
+        
+        boundaryCondition->addTimeSeries(timeSeries);
         
         emit updateProgress(currentProgress++);
         QApplication::processEvents();
@@ -660,7 +682,7 @@ void ProjectRepository::saveBoundaryConditions(HydrodynamicConfiguration *config
 
         query.bindValue(":t", (int) boundaryCondition->getType());
         query.bindValue(":o", boundaryCondition->getObjectIdsStr());
-        query.bindValue(":f", boundaryCondition->getFunction());
+        query.bindValue(":f", (int) boundaryCondition->getFunction());
         query.bindValue(":c", boundaryCondition->getConstantValue());
 
         if (!query.exec()) {
@@ -672,6 +694,8 @@ void ProjectRepository::saveBoundaryConditions(HydrodynamicConfiguration *config
 
         boundaryCondition->setId(query.lastInsertId().toUInt());
         boundaryConditionIds.append(QString::number(boundaryCondition->getId()));
+
+        saveTimeSeries(boundaryCondition);
     }
 
     if (operationCanceled) {
@@ -679,6 +703,44 @@ void ProjectRepository::saveBoundaryConditions(HydrodynamicConfiguration *config
     }
 
     query.prepare("delete from boundary_condition where id not in (" + boundaryConditionIds.join(",") + ") and configuration_id = " + configuration->getId() + " and input_module = " + (int) InputModule::HYDRODYNAMIC);
+    query.exec();
+}
+
+void ProjectRepository::saveTimeSeries(BoundaryCondition *boundaryCondition) {
+    QList<TimeSeries*> timeSeriesList = boundaryCondition->getTimeSeriesList();
+    QSqlQuery query(databaseUtility->getDatabase());
+    QStringList timeSeriesIds;
+    
+    for (int i = 0; i < timeSeriesList.size() && !operationCanceled; i++) {
+        TimeSeries *timeSeries = timeSeriesList[i];
+        
+        if (timeSeries->isPersisted()) {
+            query.prepare("update time_series set timestamp = :t, value = :v where id = :i");
+            query.bindValue(":i", timeSeries->getId());
+        } else {
+            query.prepare("insert into time_series (timestamp, value, boundary_condition_id) values (:t, :v, :b)");
+            query.bindValue(":b", boundaryCondition->getId());
+        }
+        
+        query.bindValue(":t", timeSeries->getTimestamp());
+        query.bindValue(":v", timeSeries->getValue());
+        
+        if (!query.exec()) {
+            throw DatabaseException(QString("Unable to save timestamps. Error: %1.").arg(query.lastError().text()));
+        }
+        
+        emit updateProgress(currentProgress++);
+        QApplication::processEvents();
+        
+        timeSeries->setId(query.lastInsertId().toUInt());
+        timeSeriesIds.append(QString::number(timeSeries->getId()));
+    }
+    
+    if (operationCanceled) {
+        return;
+    }
+    
+    query.prepare("delete from time_series where id not in (" + timeSeriesIds.join(",") + ") and boundary_condition_id = " + boundaryCondition->getId());
     query.exec();
 }
 

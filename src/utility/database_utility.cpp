@@ -113,7 +113,7 @@ void DatabaseUtility::createApplicationTables() {
     sql << "create table if not exists hydrodynamic_configuration (" \
         "id integer primary key, " \
         "name varchar(255) not null, " \
-        "mesh_id integer not null"
+        "mesh_id integer not null" \
     ")";
     
     sql << "create table if not exists hydrodynamic_parameter (" \
@@ -122,7 +122,7 @@ void DatabaseUtility::createApplicationTables() {
         "type varchar(255) not null, " \
         "value float default null, " \
         "selected bool default false, " \
-        "hydrodynamic_configuration_id integer not null"
+        "hydrodynamic_configuration_id integer not null" \
     ")";
 
     sql << "create table if not exists boundary_condition (" \
@@ -132,7 +132,14 @@ void DatabaseUtility::createApplicationTables() {
         "function varchar(255) not null, " \
         "constant_value float default null, " \
         "input_module integer not null, " \
-        "configuration_id integer not null"
+        "configuration_id integer not null" \
+    ")";
+    
+    sql << "create table if not exists time_series (" \
+        "id integer primary key, " \
+        "timestamp text not null, " \
+        "value float default 0, " \
+        "boundary_condition_id integer not null" \
     ")";
     
     QSqlQuery query(database);

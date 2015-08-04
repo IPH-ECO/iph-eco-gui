@@ -13,7 +13,9 @@ uint BoundaryCondition::getId() const {
 }
 
 void BoundaryCondition::setId(uint id) {
-	this->id = id;
+	if (!isPersisted()) {
+		this->id = id;
+	}
 }
 
 bool BoundaryCondition::isPersisted() const {
@@ -22,6 +24,10 @@ bool BoundaryCondition::isPersisted() const {
 
 BoundaryConditionType BoundaryCondition::getType() const {
 	return type;
+}
+
+QString BoundaryCondition::getTypeStr() const {
+    return type == BoundaryConditionType::WATER_LEVEL ? "Water Level" : "Water Flow";
 }
 
 void BoundaryCondition::setType(const BoundaryConditionType &type) {
@@ -48,11 +54,15 @@ void BoundaryCondition::setObjectIds(const QString &objectIdsStr) {
 	}
 }
 
-QString BoundaryCondition::getFunction() const {
+BoundaryConditionFunction BoundaryCondition::getFunction() const {
 	return function;
 }
 
-void BoundaryCondition::setFunction(const QString &function) {
+QString BoundaryCondition::getFunctionStr() const {
+    return function == BoundaryConditionFunction::CONSTANT ? "Constant" : "Time Series";
+}
+
+void BoundaryCondition::setFunction(const BoundaryConditionFunction &function) {
 	this->function = function;
 }
 
@@ -82,18 +92,25 @@ QString BoundaryCondition::getObjectIdsStr() const {
 	return objectIdsStr.join(",");
 }
 
-BoundaryConditionType BoundaryCondition::mapTypeFromString(const QString &typeStr) {
-	if (typeStr == "Water Level") {
-		return BoundaryConditionType::WATER_LEVEL;
-	}
-
-	return BoundaryConditionType::WATER_FLOW;
+QList<TimeSeries*> BoundaryCondition::getTimeSeriesList() const {
+	return timeSeriesList;
 }
 
-QString BoundaryCondition::mapStringFromType(const BoundaryConditionType &type) {
-	if (type == BoundaryConditionType::WATER_LEVEL) {
-		return "Water Level";
+void BoundaryCondition::setTimeSeriesList(const QList<TimeSeries*> &timeSeriesList) {
+    for (int i = 0; i < this->timeSeriesList.size(); i++) {
+        delete this->timeSeriesList[i];
+    }
+    this->timeSeriesList.clear();
+    
+	this->timeSeriesList = timeSeriesList;
+}
+
+bool BoundaryCondition::addTimeSeries(TimeSeries *timeSeries) {
+	if (timeSeriesList.contains(timeSeries)) {
+		return false;
 	}
 
-	return "Water Flow";
+	timeSeriesList.append(timeSeries);
+
+	return true;
 }

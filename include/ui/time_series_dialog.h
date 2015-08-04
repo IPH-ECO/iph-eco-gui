@@ -1,10 +1,12 @@
 #ifndef TIME_SERIES_DIALOG_H
 #define TIME_SERIES_DIALOG_H
 
+#include "include/domain/boundary_condition.h"
+
 #include <QSettings>
 #include <QDialog>
 #include <QWidget>
-#include <QMap>
+#include <QList>
 
 namespace Ui {
 	class TimeSeriesDialog;
@@ -15,16 +17,19 @@ class TimeSeriesDialog : public QDialog {
 private:
     const QString HYDRODYNAMIC_DEFAULT_DIR_KEY;
 
-    QMap<QString, double> timeSeries;
     QSettings *appSettings;
 	Ui::TimeSeriesDialog *ui;
-    
-public:
-	explicit TimeSeriesDialog(QWidget *parent);
-    ~TimeSeriesDialog();
+    QList<TimeSeries*> timeSeriesList;
     
     QString getDefaultDirectory();
-    QMap<QString, double> getTimeSeries() const;
+    bool isValid();
+    virtual void accept();
+    
+public:
+	explicit TimeSeriesDialog(QWidget *parent, BoundaryCondition *boundaryCondition);
+    ~TimeSeriesDialog();
+    
+    QList<TimeSeries*> getTimeSeriesList() const;
     
 private slots:
     void on_btnAddEntry_clicked();
