@@ -63,7 +63,7 @@ void BoundaryConditionDialog::on_rdoWaterLevel_clicked(bool checked) {
     if (checked) {
         ui->lblElementLabel->setText("Cells");
         ui->lblElementIds->setText("-");
-//        hydrodynamicDataDialog->ui->vtkWidget->getSelectedCellIds()->Reset();
+        hydrodynamicDataDialog->ui->vtkWidget->getMouseInteractor()->clearSelection();
     }
 }
 
@@ -154,7 +154,8 @@ void BoundaryConditionDialog::btnClearSelection_clicked() {
     QMessageBox::StandardButton button = QMessageBox::question(this, tr("Hydrodynamic Data"), question);
     
     if (button == QMessageBox::Yes) {
-        hydrodynamicDataDialog->ui->vtkWidget->clearSelection();
+        hydrodynamicDataDialog->ui->vtkWidget->getMouseInteractor()->clearSelection();
+        ui->lblElementIds->setText("-");
     }
 }
 

@@ -160,7 +160,7 @@ vtkIdTypeArray* HydrodynamicVTKWidget::getSelectedCellIds() const {
     return selectedCellIds;
 }
 
-MeshMouseInteractor* HydrodynamicVTKWidget::getMouseInteractor() const {
+HydrodynamicMouseInteractor* HydrodynamicVTKWidget::getMouseInteractor() const {
     return mouseInteractor;
 }
 
@@ -168,8 +168,4 @@ void HydrodynamicVTKWidget::handleMouseEvent(QMouseEvent *event) {
     if (event->type() == QEvent::MouseButtonDblClick && event->button() == Qt::LeftButton && isCellPickActivated) {
         mouseInteractor->pickCell();
     }
-}
-
-void HydrodynamicVTKWidget::clearSelection() {
-    mouseInteractor->clearSelection();
 }
