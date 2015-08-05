@@ -107,7 +107,7 @@ QList<HydrodynamicParameter*> HydrodynamicConfiguration::getRootParameters() con
 
 void HydrodynamicConfiguration::clearBoundaryConditions() {
 	for (int i = 0; i < boundaryConditions.size(); i++) {
-//        delete boundaryConditions.at(i);
+        delete boundaryConditions[i];
     }
     boundaryConditions.clear();
 }

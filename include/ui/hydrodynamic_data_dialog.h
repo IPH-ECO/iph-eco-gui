@@ -51,8 +51,6 @@ private slots:
 public:
     explicit HydrodynamicDataDialog(QWidget *parent);
     ~HydrodynamicDataDialog();
-    
-    void togglePicker(bool enable, const CellPickMode &cellPickMode = CellPickMode::UNDEFINED);
 public slots:
     void setCoordinate(double &x, double &y);
 };

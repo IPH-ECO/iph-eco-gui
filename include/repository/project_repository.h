@@ -22,7 +22,7 @@ private:
     
     void loadHydrodynamicConfigurations(Project *project);
     void loadHydrodynamicParameter(HydrodynamicConfiguration *configuration, Project *project);
-    void loadBoundaryConditions(HydrodynamicConfiguration *configuration, Project *project);
+    void loadBoundaryConditions(HydrodynamicConfiguration *configuration);
     void loadTimeSeries(BoundaryCondition *boundaryCondition);
     
     void saveGridDataConfigurations(Project *project);

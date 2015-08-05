@@ -10,21 +10,18 @@
 #include <QFile>
 
 TimeSeriesDialog::TimeSeriesDialog(QWidget *parent, BoundaryCondition *boundaryCondition) :
-    QDialog(parent), HYDRODYNAMIC_DEFAULT_DIR_KEY("default_hydrodynamic_dir"), ui(new Ui::TimeSeriesDialog)
+    QDialog(parent), HYDRODYNAMIC_DEFAULT_DIR_KEY("default_hydrodynamic_dir"), ui(new Ui::TimeSeriesDialog), boundaryCondition(boundaryCondition)
 {
     ui->setupUi(this);
     ui->tblTimeSeries->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     appSettings = new QSettings(QApplication::organizationName(), QApplication::applicationName(), this);
     
-    if (boundaryCondition) {
-        QList<TimeSeries*> timeSeriesList = boundaryCondition->getTimeSeriesList();
-        
-        for (int i = 0; i < timeSeriesList.size(); i++) {
-            ui->tblTimeSeries->insertRow(i);
-            ui->tblTimeSeries->setItem(i, 0, new QTableWidgetItem(timeSeriesList[i]->getTimestamp()));
-            ui->tblTimeSeries->setItem(i, 1, new QTableWidgetItem(QString::number(timeSeriesList[i]->getValue())));
-            i++;
-        }
+    QList<TimeSeries*> timeSeriesList = boundaryCondition->getTimeSeriesList();
+    
+    for (int i = 0; i < timeSeriesList.size(); i++) {
+        ui->tblTimeSeries->insertRow(i);
+        ui->tblTimeSeries->setItem(i, 0, new QTableWidgetItem(timeSeriesList[i]->getTimestamp()));
+        ui->tblTimeSeries->setItem(i, 1, new QTableWidgetItem(QString::number(timeSeriesList[i]->getValue())));
     }
 }
 
@@ -45,6 +42,8 @@ void TimeSeriesDialog::on_btnImportCSV_clicked() {
     QString filename = QFileDialog::getOpenFileName(this, tr("Select a CSV file"), getDefaultDirectory(), tr("Comma Separated Values file (*.csv)"));
     
     if (!filename.isEmpty()) {
+        appSettings->setValue(HYDRODYNAMIC_DEFAULT_DIR_KEY, QFileInfo(filename).absoluteDir().absolutePath());
+        
         QFile csvFile(filename);
         QStringList tokens;
         
@@ -79,7 +78,6 @@ void TimeSeriesDialog::on_btnImportCSV_clicked() {
                     ui->tblTimeSeries->insertRow(i);
                     ui->tblTimeSeries->setItem(i, 0, new QTableWidgetItem(tempTimeSeriesList[i].getTimestamp()));
                     ui->tblTimeSeries->setItem(i, 1, new QTableWidgetItem(QString::number(tempTimeSeriesList[i].getValue())));
-                    i++;
                 }
             }
             
@@ -117,7 +115,7 @@ bool TimeSeriesDialog::isValid() {
         QDateTime dateTime = QDateTime::fromString(timestamp, Qt::ISODate);
         
         if (!dateTime.isValid()) {
-            QMessageBox::warning(this, tr("Time Series"), tr("Invalid timestamp format at line ") + QString::number(i + 1));
+            QMessageBox::warning(this, tr("Time Series"), tr("Invalid timestamp format at row ") + QString::number(i + 1));
             return false;
         }
     }
@@ -140,9 +138,7 @@ void TimeSeriesDialog::accept() {
         timeSeriesList.append(timeSeries);
     }
     
+    boundaryCondition->setTimeSeriesList(timeSeriesList);
+    
     QDialog::accept();
-}
-
-QList<TimeSeries*> TimeSeriesDialog::getTimeSeriesList() const {
-    return timeSeriesList;
 }

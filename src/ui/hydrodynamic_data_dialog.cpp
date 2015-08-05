@@ -194,9 +194,19 @@ void HydrodynamicDataDialog::on_cbxConfiguration_currentIndexChanged(const QStri
         Project *project = IPHApplication::getCurrentProject();
         currentConfiguration = project->getHydrodynamicConfiguration(configurationName);
         ui->edtConfigurationName->setText(currentConfiguration->getName());
+        ui->cbxMesh->setCurrentText(currentConfiguration->getMesh()->getName());
+        
+        QList<BoundaryCondition*> boundaryConditions = currentConfiguration->getBoundaryConditions();
+        
+        for (int i = 0; i < boundaryConditions.size(); i++) {
+            ui->tblBoundaryConditions->insertRow(i);
+            ui->tblBoundaryConditions->setItem(i, 0, new QTableWidgetItem(boundaryConditions[i]->getTypeStr()));
+            ui->tblBoundaryConditions->setItem(i, 1, new QTableWidgetItem(boundaryConditions[i]->getFunctionStr()));
+        }
     } else {
         ui->edtConfigurationName->clear();
         currentConfiguration = unsavedConfiguration;
+//        ui->tblBoundaryConditions->setRowCount(0);
     }
     
     ui->btnDone->setEnabled(isConfigurationNamePresent);
@@ -235,11 +245,13 @@ void HydrodynamicDataDialog::on_cbxMesh_currentIndexChanged(const QString &meshN
         } else {
             currentMesh = static_cast<StructuredMesh*>(currentMesh);
         }
+        
+        currentConfiguration->setMesh(currentMesh);
     } else {
         currentMesh = nullptr;
     }
 
-    ui->vtkWidget->render(currentMesh);
+    ui->vtkWidget->render(currentConfiguration);
     ui->btnAddBoundaryCondition->setEnabled(isMeshNamePresent);
     ui->btnShowMesh->setEnabled(isMeshNamePresent);
 }
@@ -468,13 +480,8 @@ void HydrodynamicDataDialog::setCoordinate(double &x, double &y) {
     ui->lblUTMCoordinate->setText(QString("Easting: %1, Northing: %2").arg(xStr).arg(yStr));
 }
 
-void HydrodynamicDataDialog::togglePicker(bool enable, const CellPickMode &cellPickMode) {
-    ui->vtkWidget->toggleCellPick(enable, cellPickMode);
-}
-
 void HydrodynamicDataDialog::on_tblBoundaryConditions_currentItemChanged(QTableWidgetItem *current, QTableWidgetItem *previous) {
     if (current != nullptr && (previous == nullptr || current->row() != previous->row())) {
-        boundaryConditionDialog->boundaryCondition = currentConfiguration->getBoundaryCondition(current->row());
         ui->btnEditBoundaryCondition->setEnabled(true);
         ui->btnRemoveBoundaryCondition->setEnabled(true);
     }

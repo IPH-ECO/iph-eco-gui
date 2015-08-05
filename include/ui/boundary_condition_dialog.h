@@ -22,10 +22,10 @@ private:
 	Ui::BoundaryConditionDialog *ui;
     HydrodynamicConfiguration *configuration;
     BoundaryCondition *boundaryCondition;
-    QList<TimeSeries*> timeSeriesList;
     QToolButton *btnSingleCellPicker;
     QToolButton *btnMultipleCellPicker;
     HydrodynamicDataDialog *hydrodynamicDataDialog;
+    bool isNewBoundaryCondition;
     
     void closeEvent(QCloseEvent *event);
     virtual void accept();

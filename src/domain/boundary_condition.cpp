@@ -2,7 +2,9 @@
 
 #include <QStringList>
 
-BoundaryCondition::BoundaryCondition() : id(0) {}
+BoundaryCondition::BoundaryCondition() : id(0) {
+    objectIds = vtkIdTypeArray::New();
+}
 
 BoundaryCondition::~BoundaryCondition() {
 	objectIds->Delete();
@@ -39,6 +41,7 @@ vtkIdTypeArray* BoundaryCondition::getObjectIds() const {
 }
 
 void BoundaryCondition::setObjectIds(vtkIdTypeArray *objectIds) {
+    this->objectIds->Delete();
 	this->objectIds = objectIds;
 }
 
@@ -46,8 +49,7 @@ void BoundaryCondition::setObjectIds(const QString &objectIdsStr) {
 	QStringList objectIdsStrList = objectIdsStr.split(",");
 	vtkIdType size = objectIdsStrList.size();
 
-    objectIds = vtkIdTypeArray::New();
-	objectIds->SetNumberOfTuples(size);
+    objectIds->SetNumberOfTuples(size);
 
 	for (vtkIdType i = 0; i < size; i++) {
 		objectIds->SetTuple1(i, objectIdsStrList[i].toUInt());

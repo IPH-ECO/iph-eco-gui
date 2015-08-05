@@ -141,7 +141,7 @@ void HydrodynamicVTKWidget::changeBackgroundColor(const double &r, const double 
     this->update();
 }
 
-void HydrodynamicVTKWidget::toggleCellPick(bool activate, const CellPickMode &cellPickMode) {
+void HydrodynamicVTKWidget::togglePicker(bool activate, const CellPickMode &cellPickMode) {
     isCellPickActivated = activate;
     
     if (activate) {

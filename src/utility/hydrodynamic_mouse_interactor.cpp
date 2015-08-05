@@ -65,7 +65,7 @@ void HydrodynamicMouseInteractor::OnLeftButtonUp() {
 }
 
 void HydrodynamicMouseInteractor::pickCell() {
-    if (lastCellId != -1 && meshPolyData != nullptr && selectionActor != nullptr) {
+    if (lastCellId != -1 && meshPolyData != nullptr) {
         bool inSelectionArray = false;
         
         for (vtkIdType i = 0; i < cellIdsArray->GetNumberOfTuples(); i++) {
@@ -133,14 +133,6 @@ void HydrodynamicMouseInteractor::renderSelection() {
     
     this->GetDefaultRenderer()->GetRenderWindow()->Render();
     emit objectSelected();
-}
-
-vtkActor* HydrodynamicMouseInteractor::getSelectionActor() {
-    return selectionActor;
-}
-
-vtkActor2D* HydrodynamicMouseInteractor::getSelectionIdLabelsActor() {
-    return selectionIdLabelsActor;
 }
 
 void HydrodynamicMouseInteractor::activateCellPicker(const CellPickMode &cellPickMode, vtkIdTypeArray *cellIdsArray) {

@@ -203,6 +203,7 @@ void ProjectRepository::loadHydrodynamicConfigurations(Project *project) {
         QApplication::processEvents();
         
         loadHydrodynamicParameter(configuration, project);
+        loadBoundaryConditions(configuration);
     }
 }
 
@@ -227,10 +228,12 @@ void ProjectRepository::loadHydrodynamicParameter(HydrodynamicConfiguration *con
     }
 }
 
-void ProjectRepository::loadBoundaryConditions(HydrodynamicConfiguration *configuration, Project *project) {
+void ProjectRepository::loadBoundaryConditions(HydrodynamicConfiguration *configuration) {
     QSqlQuery query(databaseUtility->getDatabase());
+    QString configurationId = QString::number(configuration->getId());
+    QString inputModule = QString::number((int) InputModule::HYDRODYNAMIC);
     
-    query.prepare("select * from boundary_condition where configuration_id = " + QString::number(configuration->getId()) + " input_module = " + (int) InputModule::HYDRODYNAMIC);
+    query.prepare("select * from boundary_condition where configuration_id = " + configurationId + " and input_module = " + inputModule);
     query.exec();
     
     while (query.next() && !operationCanceled) {
@@ -620,6 +623,7 @@ void ProjectRepository::saveHydrodynamicConfigurations(Project *project) {
         configuration->setId(query.lastInsertId().toUInt());
         configurationIds.append(QString::number(configuration->getId()));
         saveHydrodynamicParameters(configuration);
+        saveBoundaryConditions(configuration);
     }
 }
 
@@ -796,6 +800,10 @@ int ProjectRepository::getMaximumLoadProgress() {
     loadSteps += query.value(0).toInt();
     
     query.exec("select count(*) from boundary_condition");
+    query.next();
+    loadSteps += query.value(0).toInt();
+    
+    query.exec("select count(*) from time_series");
     query.next();
     loadSteps += query.value(0).toInt();
     
