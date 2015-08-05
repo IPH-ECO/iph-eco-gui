@@ -206,7 +206,6 @@ void HydrodynamicDataDialog::on_cbxConfiguration_currentIndexChanged(const QStri
     } else {
         ui->edtConfigurationName->clear();
         currentConfiguration = unsavedConfiguration;
-//        ui->tblBoundaryConditions->setRowCount(0);
     }
     
     ui->btnDone->setEnabled(isConfigurationNamePresent);
@@ -235,7 +234,6 @@ void HydrodynamicDataDialog::on_cbxMesh_currentIndexChanged(const QString &meshN
             }
             
             currentConfiguration->clearBoundaryConditions();
-            ui->tblBoundaryConditions->setRowCount(0);
         }
         
         currentMesh = IPHApplication::getCurrentProject()->getMesh(meshName);
@@ -251,6 +249,7 @@ void HydrodynamicDataDialog::on_cbxMesh_currentIndexChanged(const QString &meshN
         currentMesh = nullptr;
     }
 
+    ui->tblBoundaryConditions->setRowCount(0);
     ui->vtkWidget->render(currentConfiguration);
     ui->btnAddBoundaryCondition->setEnabled(isMeshNamePresent);
     ui->btnShowMesh->setEnabled(isMeshNamePresent);
@@ -333,6 +332,17 @@ void HydrodynamicDataDialog::on_btnSave_clicked() {
     ui->cbxConfiguration->blockSignals(false);
     
     ui->btnDone->setEnabled(true);
+}
+
+void HydrodynamicDataDialog::on_btnShowCellLabels_clicked(bool checked) {
+    for (BoundaryCondition *boundaryCondition : currentConfiguration->getBoundaryConditions()) {
+        if (checked) {
+            boundaryCondition->getLabelsActor()->VisibilityOn();
+        } else {
+            boundaryCondition->getLabelsActor()->VisibilityOff();
+        }
+    }
+    ui->vtkWidget->update();
 }
 
 void HydrodynamicDataDialog::on_trwProcesses_itemChanged(QTreeWidgetItem *item, int column) {

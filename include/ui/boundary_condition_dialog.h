@@ -40,6 +40,7 @@ private slots:
     void on_rdoWaterLevel_clicked(bool checked);
     void on_rdoWaterFlow_clicked(bool checked);
     void on_btnTimeSeries_clicked();
+    void on_btnCellColor_clicked();
     void btnSingleCellPicker_clicked(bool checked);
     void btnMultipleCellPicker_clicked(bool checked);
     void btnClearSelection_clicked();

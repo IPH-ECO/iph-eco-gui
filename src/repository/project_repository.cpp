@@ -244,6 +244,7 @@ void ProjectRepository::loadBoundaryConditions(HydrodynamicConfiguration *config
         boundaryCondition->setFunction((BoundaryConditionFunction) query.value("function").toInt());
         boundaryCondition->setConstantValue(query.value("constant_value").toDouble());
         boundaryCondition->setInputModule((InputModule) query.value("input_module").toInt());
+        boundaryCondition->setCellColor(query.value("cell_color").toString());
         
         configuration->addBoundaryCondition(boundaryCondition);
         
@@ -676,10 +677,10 @@ void ProjectRepository::saveBoundaryConditions(HydrodynamicConfiguration *config
         BoundaryCondition *boundaryCondition = boundaryConditions[i];
 
         if (boundaryCondition->isPersisted()) {
-            query.prepare("update boundary_condition set type = :t, object_ids = :o, function = :f, constant_value = :c where id = :i");
+            query.prepare("update boundary_condition set type = :t, object_ids = :o, function = :f, constant_value = :c, cell_color = :cc where id = :i");
             query.bindValue(":i", boundaryCondition->getId());
         } else {
-            query.prepare("insert into boundary_condition (type, object_ids, function, constant_value, input_module, configuration_id) values (:t, :o, :f, :c, :i, :ci)");
+            query.prepare("insert into boundary_condition (type, object_ids, function, constant_value, input_module, cell_color, configuration_id) values (:t, :o, :f, :c, :i, :cc, :ci)");
             query.bindValue(":i", (int) boundaryCondition->getInputModule());
             query.bindValue(":ci", configuration->getId());
         }
@@ -688,6 +689,7 @@ void ProjectRepository::saveBoundaryConditions(HydrodynamicConfiguration *config
         query.bindValue(":o", boundaryCondition->getObjectIdsStr());
         query.bindValue(":f", (int) boundaryCondition->getFunction());
         query.bindValue(":c", boundaryCondition->getConstantValue());
+        query.bindValue(":cc", boundaryCondition->getCellColor());
 
         if (!query.exec()) {
             throw DatabaseException(QString("Unable to save hydrodynamic boundary conditions. Error: %1.").arg(query.lastError().text()));

@@ -477,6 +477,32 @@
         </widget>
        </item>
        <item>
+        <widget class="QToolButton" name="btnShowCellLabels">
+         <property name="enabled">
+          <bool>true</bool>
+         </property>
+         <property name="toolTip">
+          <string>Show/Hide cell labels</string>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="icon">
+          <iconset resource="../../icons.qrc">
+           <normaloff>:/icons/show-cell-labels.png</normaloff>:/icons/show-cell-labels.png</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>24</width>
+           <height>24</height>
+          </size>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="QToolButton" name="btnBackgroundColor">
          <property name="toolTip">
           <string>Change background color</string>

@@ -13,9 +13,11 @@
 #include <vtkSelection.h>
 #include <vtkProperty.h>
 #include <vtkCellData.h>
+#include <QColor>
 
 HydrodynamicMouseInteractor::HydrodynamicMouseInteractor() :
-    selectionIdLabelsActor(nullptr), selectionActor(nullptr), cellIdsArray(nullptr), meshPolyData(nullptr), cellPickMode(CellPickMode::UNDEFINED), lastCellId(-1)
+    meshPolyData(nullptr), hydrodynamicConfiguration(nullptr), boundaryCondition(nullptr),
+    cellPickMode(CellPickMode::UNDEFINED), lastCellId(-1)
 {}
 
 void HydrodynamicMouseInteractor::OnLeftButtonDown() {
@@ -46,18 +48,21 @@ void HydrodynamicMouseInteractor::OnLeftButtonUp() {
         if (selectionPolyData->GetCellData()->HasArray("vtkOriginalCellIds")) {
             vtkIdTypeArray *selectedCellsArray = vtkIdTypeArray::SafeDownCast(selectionPolyData->GetCellData()->GetScalars("vtkOriginalCellIds"));
             
-            for (vtkIdType i = 0; i < selectedCellsArray->GetNumberOfTuples(); i++) {
-                for (vtkIdType j = 0; selectedCellsArray->GetNumberOfTuples() > 0 && j < cellIdsArray->GetNumberOfTuples(); j++) {
-                    if (selectedCellsArray->GetTuple1(i) == cellIdsArray->GetTuple1(j)) {
-                        selectedCellsArray->RemoveTuple(i--);
-                        cellIdsArray->RemoveTuple(j--);
+            for (int i = 0; i < hydrodynamicConfiguration->getBoundaryConditions().size(); i++) {
+                if (hydrodynamicConfiguration->getBoundaryCondition(i) == boundaryCondition) { // Excludes current boundary condition
+                    continue;
+                }
+                
+                QSet<vtkIdType> objectIds = hydrodynamicConfiguration->getBoundaryCondition(i)->getObjectIds();
+                
+                for (vtkIdType j = 0; j < selectedCellsArray->GetNumberOfTuples(); j++) {
+                    if (objectIds.contains(selectedCellsArray->GetTuple1(j))) {
+                        selectedCellsArray->RemoveTuple(j--);
                     }
                 }
             }
             
-            for (vtkIdType i = 0; i < selectedCellsArray->GetNumberOfTuples(); i++) {
-                cellIdsArray->InsertNextTuple1(selectedCellsArray->GetTuple1(i));
-            }
+            boundaryCondition->setObjectIds(selectedCellsArray);
             
             renderSelection();
         }
@@ -66,33 +71,17 @@ void HydrodynamicMouseInteractor::OnLeftButtonUp() {
 
 void HydrodynamicMouseInteractor::pickCell() {
     if (lastCellId != -1 && meshPolyData != nullptr) {
-        bool inSelectionArray = false;
-        
-        for (vtkIdType i = 0; i < cellIdsArray->GetNumberOfTuples(); i++) {
-            if (cellIdsArray->GetValue(i) == lastCellId) {
-                cellIdsArray->RemoveTuple(i);
-                inSelectionArray = true;
-            }
-        }
-        
-        if (!inSelectionArray) {
-            cellIdsArray->InsertNextValue(lastCellId);
-        }
-        
+        boundaryCondition->addObjectId(lastCellId);
         renderSelection();
     }
 }
 
 void HydrodynamicMouseInteractor::renderSelection() {
-    if (this->selectionActor == nullptr) {
-        this->selectionActor = vtkSmartPointer<vtkActor>::New();
-        this->selectionIdLabelsActor = vtkSmartPointer<vtkActor2D>::New();
-    }
-    
+    vtkSmartPointer<vtkIdTypeArray> vtkCellIds = boundaryCondition->getVtkObjectIds();
     vtkSmartPointer<vtkSelectionNode> selectionNode = vtkSmartPointer<vtkSelectionNode>::New();
     selectionNode->SetFieldType(vtkSelectionNode::CELL);
     selectionNode->SetContentType(vtkSelectionNode::INDICES);
-    selectionNode->SetSelectionList(cellIdsArray);
+    selectionNode->SetSelectionList(vtkCellIds);
     
     vtkSmartPointer<vtkSelection> selection = vtkSmartPointer<vtkSelection>::New();
     selection->AddNode(selectionNode);
@@ -103,10 +92,8 @@ void HydrodynamicMouseInteractor::renderSelection() {
     extractSelection->Update();
     
     vtkSmartPointer<vtkPolyData> selectionPolyData = vtkSmartPointer<vtkPolyData>::New();
-    vtkSmartPointer<vtkPolyDataMapper> mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-    
     selectionPolyData->DeepCopy(extractSelection->GetOutput());
-    selectionPolyData->GetCellData()->SetScalars(cellIdsArray);
+    selectionPolyData->GetCellData()->SetScalars(vtkCellIds);
     
     vtkSmartPointer<vtkCellCenters> cellCentersFilter = vtkSmartPointer<vtkCellCenters>::New();
     cellCentersFilter->SetInputData(selectionPolyData);
@@ -119,49 +106,51 @@ void HydrodynamicMouseInteractor::renderSelection() {
     labelMapper->GetLabelTextProperty()->SetColor(0, 0, 0);
     labelMapper->GetLabelTextProperty()->ShadowOff();
     
+    vtkSmartPointer<vtkActor2D> selectionIdLabelsActor = boundaryCondition->getLabelsActor();
     selectionIdLabelsActor->SetMapper(labelMapper);
     this->GetDefaultRenderer()->AddActor2D(selectionIdLabelsActor);
     
+    vtkSmartPointer<vtkPolyDataMapper> mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
     mapper->SetInputData(selectionPolyData);
     mapper->ScalarVisibilityOff();
+    
+    vtkSmartPointer<vtkActor> selectionActor = boundaryCondition->getSelectionActor();
+    QColor cellColor(boundaryCondition->getCellColor());
     selectionActor->SetMapper(mapper);
-    selectionActor->GetProperty()->SetEdgeColor(1, 1, 0);
-    selectionActor->GetProperty()->EdgeVisibilityOn();
+    selectionActor->GetProperty()->SetColor(cellColor.redF(), cellColor.greenF(), cellColor.blueF());
     selectionActor->GetProperty()->LightingOff();
-    selectionActor->GetProperty()->SetLineStipplePattern(0xF0F0);
     this->GetDefaultRenderer()->AddActor(selectionActor);
     
     this->GetDefaultRenderer()->GetRenderWindow()->Render();
     emit objectSelected();
 }
 
-void HydrodynamicMouseInteractor::activateCellPicker(const CellPickMode &cellPickMode, vtkIdTypeArray *cellIdsArray) {
-    this->cellIdsArray = cellIdsArray;
+void HydrodynamicMouseInteractor::activateCellPicker(const CellPickMode &cellPickMode) {
     this->cellPickMode = cellPickMode;
 }
 
 void HydrodynamicMouseInteractor::deactivateCellPicker() {
-    this->cellIdsArray = nullptr;
     this->cellPickMode = CellPickMode::UNDEFINED;
     this->CurrentMode = 0; // VTKISRBP_ORIENT
 }
 
 void HydrodynamicMouseInteractor::clearSelection() {
-    if (cellIdsArray != nullptr) {
-        this->cellIdsArray->Reset();
+    if (boundaryCondition != nullptr) {
+        boundaryCondition->emptyObjectIds();
+        this->GetDefaultRenderer()->RemoveActor(boundaryCondition->getSelectionActor());
+        this->GetDefaultRenderer()->RemoveActor2D(boundaryCondition->getLabelsActor());
+        this->GetDefaultRenderer()->GetRenderWindow()->Render();
     }
-    
-    this->GetDefaultRenderer()->RemoveActor(selectionActor);
-    this->GetDefaultRenderer()->RemoveActor2D(selectionIdLabelsActor);
-    this->GetDefaultRenderer()->GetRenderWindow()->Render();
-    
-    selectionActor = nullptr;
-    selectionIdLabelsActor = nullptr;
 }
 
-void HydrodynamicMouseInteractor::setMeshPolyData(vtkPolyData *meshPolyData) {
-    this->meshPolyData = meshPolyData;
+void HydrodynamicMouseInteractor::setHydrodynamicConfiguration(HydrodynamicConfiguration *hydrodynamicConfiguration) {
+    this->hydrodynamicConfiguration = hydrodynamicConfiguration;
+    this->meshPolyData = hydrodynamicConfiguration->getMesh()->getPolyData();
     
     this->clearSelection();
     this->deactivateCellPicker();
+}
+
+void HydrodynamicMouseInteractor::setBoundaryCondition(BoundaryCondition *boundaryCondition) {
+    this->boundaryCondition = boundaryCondition;
 }

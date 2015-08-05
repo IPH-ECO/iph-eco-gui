@@ -46,6 +46,7 @@ private slots:
     void on_btnRemove_clicked();
     void on_btnDone_clicked();
     void on_btnSave_clicked();
+    void on_btnShowCellLabels_clicked(bool checked);
     void on_btnBackgroundColor_clicked();
     void on_tblBoundaryConditions_currentItemChanged(QTableWidgetItem *current, QTableWidgetItem *previous);
 public:

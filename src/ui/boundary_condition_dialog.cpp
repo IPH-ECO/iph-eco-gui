@@ -5,6 +5,8 @@
 #include <QIcon>
 #include <QStringList>
 #include <QMessageBox>
+#include <QColorDialog>
+#include <vtkProperty.h>
 
 #include "include/ui/hydrodynamic_vtk_widget.h"
 #include "include/ui/time_series_dialog.h"
@@ -58,6 +60,12 @@ BoundaryConditionDialog::BoundaryConditionDialog(HydrodynamicConfiguration *conf
     } else {
         this->boundaryCondition = new BoundaryCondition();
     }
+    
+    QColor color = QColor(this->boundaryCondition->getCellColor());
+    QPixmap px(10, 10);
+    
+    px.fill(color);
+    ui->btnCellColor->setIcon(px);
 }
 
 BoundaryConditionDialog::~BoundaryConditionDialog() {
@@ -66,6 +74,14 @@ BoundaryConditionDialog::~BoundaryConditionDialog() {
 
 void BoundaryConditionDialog::setHydrodynamicDataDialog(HydrodynamicDataDialog *dialog) {
     this->hydrodynamicDataDialog = dialog;
+    this->hydrodynamicDataDialog->ui->vtkWidget->getMouseInteractor()->setBoundaryCondition(boundaryCondition);
+    
+    if (this->hydrodynamicDataDialog->ui->btnShowCellLabels->isChecked()) {
+        boundaryCondition->getLabelsActor()->VisibilityOn();
+    } else {
+        boundaryCondition->getLabelsActor()->VisibilityOff();
+    }
+    
     connect(hydrodynamicDataDialog->ui->vtkWidget->getMouseInteractor(), SIGNAL(objectSelected()), this, SLOT(showObjectIds()));
 }
 
@@ -86,6 +102,20 @@ void BoundaryConditionDialog::on_rdoWaterFlow_clicked(bool checked) {
 void BoundaryConditionDialog::on_btnTimeSeries_clicked() {
     TimeSeriesDialog *timeSeriesDialog = new TimeSeriesDialog(this, boundaryCondition);
     timeSeriesDialog->exec();
+}
+
+void BoundaryConditionDialog::on_btnCellColor_clicked() {
+    QColor color = QColorDialog::getColor(Qt::white, this, "Select a cell color");
+    
+    if (color.isValid()) {
+        QPixmap px(10, 10);
+        px.fill(color);
+        
+        boundaryCondition->setCellColor(color.name());
+        boundaryCondition->getSelectionActor()->GetProperty()->SetColor(color.redF(), color.greenF(), color.blueF());
+        hydrodynamicDataDialog->ui->vtkWidget->update();
+        ui->btnCellColor->setIcon(px);
+    }
 }
 
 void BoundaryConditionDialog::btnSingleCellPicker_clicked(bool checked) {
@@ -175,15 +205,15 @@ void BoundaryConditionDialog::btnClearSelection_clicked() {
 }
 
 void BoundaryConditionDialog::showObjectIds() {
-    vtkIdTypeArray *selectedCellIds = hydrodynamicDataDialog->ui->vtkWidget->getSelectedCellIds();
+    QSet<vtkIdType> selectedCellsIds = boundaryCondition->getObjectIds();
     
-    if (selectedCellIds->GetNumberOfTuples() == 0) {
+    if (selectedCellsIds.isEmpty()) {
         ui->lblElementIds->setText("-");
     } else {
         QStringList cells;
         
-        for (vtkIdType i = 0; i < selectedCellIds->GetNumberOfTuples(); i++) {
-            cells.append(QString::number(selectedCellIds->GetTuple1(i)));
+        for (vtkIdType v : selectedCellsIds) {
+            cells.append(QString::number(v));
         }
         
         ui->lblElementIds->setText(cells.join(","));
@@ -191,7 +221,7 @@ void BoundaryConditionDialog::showObjectIds() {
 }
 
 bool BoundaryConditionDialog::isValid() {
-    if (hydrodynamicDataDialog->ui->vtkWidget->getSelectedCellIds()->GetNumberOfTuples() == 0) {
+    if (boundaryCondition->getObjectIds().isEmpty()) {
         QMessageBox::warning(this, tr("Boundary Condition"), tr("Please pick at least one cell or edge from the grid."));
         return false;
     }

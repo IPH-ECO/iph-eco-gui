@@ -1,7 +1,7 @@
 #ifndef HYDRODYNAMIC_VTK_WIDGET_H
 #define HYDRODYNAMIC_VTK_WIDGET_H
 
-#include "include/domain/mesh.h"
+#include "include/domain/hydrodynamic_configuration.h"
 #include "include/utility/hydrodynamic_mouse_interactor.h"
 
 #include <QMouseEvent>
@@ -35,7 +35,7 @@ private slots:
     void handleMouseEvent(QMouseEvent *event);
 public:
     explicit HydrodynamicVTKWidget(QWidget *parent);
-	void render(Mesh *mesh);
+	void render(HydrodynamicConfiguration *hydrodynamicConfiguration);
     void togglePicker(bool activate, const CellPickMode &cellPickMode = CellPickMode::UNDEFINED);
     vtkIdTypeArray* getSelectedCellIds() const;
     HydrodynamicMouseInteractor* getMouseInteractor() const;

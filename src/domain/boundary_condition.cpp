@@ -2,12 +2,9 @@
 
 #include <QStringList>
 
-BoundaryCondition::BoundaryCondition() : id(0) {
-    objectIds = vtkIdTypeArray::New();
-}
-
-BoundaryCondition::~BoundaryCondition() {
-	objectIds->Delete();
+BoundaryCondition::BoundaryCondition() : id(0), type(BoundaryConditionType::WATER_LEVEL), function(BoundaryConditionFunction::CONSTANT), cellColor("#FFFFFF") {
+    selectionActor = vtkSmartPointer<vtkActor>::New();
+    labelsActor = vtkSmartPointer<vtkActor2D>::New();
 }
 
 uint BoundaryCondition::getId() const {
@@ -36,24 +33,64 @@ void BoundaryCondition::setType(const BoundaryConditionType &type) {
 	this->type = type;
 }
 
-vtkIdTypeArray* BoundaryCondition::getObjectIds() const {
+QSet<vtkIdType> BoundaryCondition::getObjectIds() const {
 	return objectIds;
 }
 
-void BoundaryCondition::setObjectIds(vtkIdTypeArray *objectIds) {
-    this->objectIds->Delete();
+vtkSmartPointer<vtkIdTypeArray> BoundaryCondition::getVtkObjectIds() const {
+    vtkSmartPointer<vtkIdTypeArray> vtkObjectIds = vtkSmartPointer<vtkIdTypeArray>::New();
+    int i = 0;
+    
+    vtkObjectIds->SetName(type == BoundaryConditionType::WATER_LEVEL ? "cellIds" : "labelIds");
+    vtkObjectIds->SetNumberOfComponents(1);
+    vtkObjectIds->SetNumberOfTuples(objectIds.size());
+    
+    for (vtkIdType objectId : objectIds) {
+        vtkObjectIds->SetTuple1(i, objectId);
+        i++;
+    }
+    
+    return vtkObjectIds;
+}
+
+void BoundaryCondition::setObjectIds(const QSet<vtkIdType> &objectIds) {
 	this->objectIds = objectIds;
+}
+
+void BoundaryCondition::setObjectIds(vtkIdTypeArray* objectIds) {
+    for (int i = 0; i < objectIds->GetNumberOfTuples(); i++) {
+        vtkIdType objectId = objectIds->GetTuple1(i);
+        
+        if (this->objectIds.contains(objectId)) {
+            this->objectIds.remove(objectId);
+        } else {
+            this->objectIds.insert(objectId);
+        }
+    }
 }
 
 void BoundaryCondition::setObjectIds(const QString &objectIdsStr) {
 	QStringList objectIdsStrList = objectIdsStr.split(",");
-	vtkIdType size = objectIdsStrList.size();
 
-    objectIds->SetNumberOfTuples(size);
-
-	for (vtkIdType i = 0; i < size; i++) {
-		objectIds->SetTuple1(i, objectIdsStrList[i].toUInt());
+    for (QString objectId : objectIdsStrList) {
+        this->objectIds.insert(objectId.toLongLong());
 	}
+}
+
+void BoundaryCondition::addObjectId(const vtkIdType &objectId) {
+    if (objectIds.contains(objectId)) {
+        objectIds.remove(objectId);
+    } else {
+        objectIds.insert(objectId);
+    }
+}
+
+void BoundaryCondition::removeObjectId(const vtkIdType &objectId) {
+    objectIds.remove(objectId);
+}
+
+void BoundaryCondition::emptyObjectIds() {
+    objectIds.clear();
 }
 
 BoundaryConditionFunction BoundaryCondition::getFunction() const {
@@ -87,8 +124,8 @@ void BoundaryCondition::setInputModule(const InputModule &inputModule) {
 QString BoundaryCondition::getObjectIdsStr() const {
 	QStringList objectIdsStr;
 
-	for (vtkIdType i = 0; i < objectIds->GetNumberOfTuples(); i++) {
-		objectIdsStr << QString::number(objectIds->GetTuple1(i));
+    for (vtkIdType objectId : this->objectIds) {
+		objectIdsStr << QString::number(objectId);
 	}
 
 	return objectIdsStr.join(",");
@@ -115,4 +152,28 @@ bool BoundaryCondition::addTimeSeries(TimeSeries *timeSeries) {
 	timeSeriesList.append(timeSeries);
 
 	return true;
+}
+
+QString BoundaryCondition::getCellColor() const {
+    return cellColor;
+}
+
+void BoundaryCondition::setCellColor(const QString &cellColor) {
+    this->cellColor = cellColor;
+}
+
+vtkSmartPointer<vtkActor> BoundaryCondition::getSelectionActor() const {
+    return selectionActor;
+}
+
+void BoundaryCondition::setSelectionActor(vtkSmartPointer<vtkActor> selectionActor) {
+    this->selectionActor = selectionActor;
+}
+
+vtkSmartPointer<vtkActor2D> BoundaryCondition::getLabelsActor() const {
+    return labelsActor;
+}
+
+void BoundaryCondition::setLabelsActor(vtkSmartPointer<vtkActor2D> labelsActor) {
+    this->labelsActor = labelsActor;
 }

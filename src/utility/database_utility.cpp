@@ -132,6 +132,7 @@ void DatabaseUtility::createApplicationTables() {
         "function varchar(255) not null, " \
         "constant_value float default null, " \
         "input_module integer not null, " \
+        "cell_color varchar(7) default '#FFFFFF', " \
         "configuration_id integer not null" \
     ")";
     

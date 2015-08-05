@@ -29,17 +29,15 @@ HydrodynamicVTKWidget::HydrodynamicVTKWidget(QWidget *parent) :
     
     this->SetRenderWindow(renderWindow);
     renderWindow->Render();
-    
-    selectedCellIds = vtkSmartPointer<vtkIdTypeArray>::New();
-    selectedCellIds->SetName("cellIds");
-    selectedCellIds->SetNumberOfComponents(1);
 
     HydrodynamicDataDialog *hydrodynamicDataDialog = static_cast<HydrodynamicDataDialog*>(parent);
     QObject::connect(mouseInteractor, SIGNAL(coordinateChanged(double&, double&)), hydrodynamicDataDialog, SLOT(setCoordinate(double&, double&)));
     QObject::connect(this, SIGNAL(mouseEvent(QMouseEvent*)), this, SLOT(handleMouseEvent(QMouseEvent*)));
 }
 
-void HydrodynamicVTKWidget::render(Mesh *mesh) {
+void HydrodynamicVTKWidget::render(HydrodynamicConfiguration *hydrodynamicConfiguration) {
+    Mesh *mesh = hydrodynamicConfiguration->getMesh();
+    
     if (mesh == nullptr || currentMesh == mesh) {
         return;
     }
@@ -50,7 +48,7 @@ void HydrodynamicVTKWidget::render(Mesh *mesh) {
     renderer->RemoveActor(meshActor);
     renderer->RemoveActor(axesActor);
     
-    mouseInteractor->setMeshPolyData(meshPolyData);
+    mouseInteractor->setHydrodynamicConfiguration(hydrodynamicConfiguration);
     
     // Mesh rendering
     vtkSmartPointer<vtkPolyDataMapper> meshMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
@@ -149,15 +147,11 @@ void HydrodynamicVTKWidget::togglePicker(bool activate, const CellPickMode &cell
             if (cellPickMode == CellPickMode::MULTIPLE) {
                 mouseInteractor->StartSelect();
             }
-            mouseInteractor->activateCellPicker(cellPickMode, selectedCellIds);
+            mouseInteractor->activateCellPicker(cellPickMode);
         }
     } else {
         mouseInteractor->deactivateCellPicker();
     }
-}
-
-vtkIdTypeArray* HydrodynamicVTKWidget::getSelectedCellIds() const {
-    return selectedCellIds;
 }
 
 HydrodynamicMouseInteractor* HydrodynamicVTKWidget::getMouseInteractor() const {

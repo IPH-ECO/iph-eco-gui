@@ -21,23 +21,23 @@ public:
 
 	uint getId() const;
 	void setId(uint id);
+    bool isPersisted() const;
 	QString getName() const;
 	void setName(const QString &name);
 	Mesh* getMesh() const;
 	void setMesh(Mesh *mesh);
-	bool addBoundaryCondition(BoundaryCondition *boundaryCondition);
+	
+    bool addBoundaryCondition(BoundaryCondition *boundaryCondition);
 	QList<BoundaryCondition*> getBoundaryConditions() const;
     BoundaryCondition* getBoundaryCondition(int i) const;
 	void setBoundaryConditions(const QList<BoundaryCondition*> &boundaryConditions);
     void removeBoundaryCondition(int i);
+    void clearBoundaryConditions();
 
 	bool addHydrodynamicParameter(HydrodynamicParameter *hydrodynamicParameter);
 	QList<HydrodynamicParameter*> getParameters() const;
 	HydrodynamicParameter* getParameter(const QString &name) const;
     QList<HydrodynamicParameter*> getRootParameters() const;
-	bool isPersisted() const;
-
-	void clearBoundaryConditions();
 };
 
 #endif // HYDRODYNAMIC_CONFIGURATION_H

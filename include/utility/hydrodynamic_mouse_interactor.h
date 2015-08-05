@@ -1,6 +1,7 @@
 #ifndef HYDRODYNAMIC_MOUSE_INTERACTOR_H
 #define HYDRODYNAMIC_MOUSE_INTERACTOR_H
 
+#include "include/domain/hydrodynamic_configuration.h"
 #include "include/application/iph_types.h"
 #include "mesh_mouse_interactor.h"
 
@@ -11,10 +12,9 @@
 class HydrodynamicMouseInteractor : public MeshMouseInteractor {
     Q_OBJECT
 private:
-    vtkSmartPointer<vtkActor2D> selectionIdLabelsActor;
-    vtkSmartPointer<vtkActor> selectionActor;
-    vtkIdTypeArray *cellIdsArray;
     vtkPolyData *meshPolyData;
+    HydrodynamicConfiguration *hydrodynamicConfiguration;
+    BoundaryCondition *boundaryCondition;
     CellPickMode cellPickMode;
     vtkIdType lastCellId;
     
@@ -25,16 +25,14 @@ public:
     
     HydrodynamicMouseInteractor();
     
-    vtkActor* getSelectionActor();
-    vtkActor2D* getSelectionIdLabelsActor();
-    
     virtual void OnLeftButtonDown();
     virtual void OnLeftButtonUp();
     
-    void activateCellPicker(const CellPickMode &cellPickMode, vtkIdTypeArray *cellIdsArray);
+    void activateCellPicker(const CellPickMode &cellPickMode);
     void deactivateCellPicker();
     void clearSelection();
-    void setMeshPolyData(vtkPolyData *meshPolyData);
+    void setHydrodynamicConfiguration(HydrodynamicConfiguration *hydrodynamicConfiguration);
+    void setBoundaryCondition(BoundaryCondition *boundaryCondition);
     void pickCell();
 signals:
     void objectSelected();
