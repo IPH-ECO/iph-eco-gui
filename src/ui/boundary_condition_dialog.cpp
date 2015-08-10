@@ -45,6 +45,7 @@ BoundaryConditionDialog::BoundaryConditionDialog(HydrodynamicConfiguration *conf
     if (boundaryCondition) {
         bool isWaterLevelSelected = boundaryCondition->getType() == BoundaryConditionType::WATER_LEVEL;
         bool isConstantSelected = boundaryCondition->getFunction() == BoundaryConditionFunction::CONSTANT;
+        bool useVerticalIntegratedOutflow = boundaryCondition->useVerticalIntegratedOutflow();
         
         on_rdoWaterLevel_clicked(isWaterLevelSelected);
         on_rdoWaterFlow_clicked(!isWaterLevelSelected);
@@ -56,6 +57,13 @@ BoundaryConditionDialog::BoundaryConditionDialog(HydrodynamicConfiguration *conf
             ui->edtConstant->setText(QString::number(boundaryCondition->getConstantValue()));
         } else {
             ui->btnTimeSeries->setEnabled(boundaryCondition->getFunction() == BoundaryConditionFunction::TIME_SERIES);
+        }
+        if (!isWaterLevelSelected) {
+            if (useVerticalIntegratedOutflow) {
+                ui->chkVIO->setChecked(useVerticalIntegratedOutflow);
+            } else {
+                ui->edtQuota->setText(QString::number(boundaryCondition->getQuota()));
+            }
         }
     } else {
         this->boundaryCondition = new BoundaryCondition();
@@ -224,6 +232,11 @@ bool BoundaryConditionDialog::isValid() {
     
     if (ui->rdoConstant->isChecked() && ui->edtConstant->text().isEmpty()) {
         QMessageBox::warning(this, tr("Boundary Condition"), tr("Please input a valid constant value."));
+        return false;
+    }
+    
+    if (ui->edtQuota->isEnabled() && ui->edtQuota->text().isEmpty()) {
+        QMessageBox::warning(this, tr("Boundary Condition"), tr("Please input a valid quota value."));
         return false;
     }
     

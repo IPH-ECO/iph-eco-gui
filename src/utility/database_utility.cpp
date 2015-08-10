@@ -133,6 +133,8 @@ void DatabaseUtility::createApplicationTables() {
         "constant_value float default null, " \
         "input_module integer not null, " \
         "cell_color varchar(7) default '#FFFFFF', " \
+        "vertical_integrated_outflow boolean default true, " \
+        "quota float default null, " \
         "configuration_id integer not null" \
     ")";
     

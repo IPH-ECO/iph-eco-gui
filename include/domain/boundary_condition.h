@@ -24,6 +24,8 @@ private:
 	InputModule inputModule;
 	QList<TimeSeries*> timeSeriesList;
     QString cellColor;
+    bool verticalIntegratedOutflow;
+    double quota;
     
     // Transient attributes
     vtkSmartPointer<vtkActor> selectionActor;
@@ -59,6 +61,10 @@ public:
 	bool addTimeSeries(TimeSeries *timeSeries);
     QString getCellColor() const;
     void setCellColor(const QString &cellColor);
+    bool useVerticalIntegratedOutflow() const;
+    void setVerticalIntegratedOutflow(bool verticalIntegratedOutflow);
+    double getQuota() const;
+    void setQuota(const double &quota);
     
     vtkSmartPointer<vtkActor> getSelectionActor() const;
     void setSelectionActor(vtkSmartPointer<vtkActor> selectionActor);

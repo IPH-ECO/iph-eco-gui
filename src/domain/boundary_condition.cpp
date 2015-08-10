@@ -162,6 +162,22 @@ void BoundaryCondition::setCellColor(const QString &cellColor) {
     this->cellColor = cellColor;
 }
 
+bool BoundaryCondition::useVerticalIntegratedOutflow() const {
+    return verticalIntegratedOutflow;
+}
+
+void BoundaryCondition::setVerticalIntegratedOutflow(bool verticalIntegratedOutflow) {
+    this->verticalIntegratedOutflow = verticalIntegratedOutflow;
+}
+
+double BoundaryCondition::getQuota() const {
+    return quota;
+}
+
+void BoundaryCondition::setQuota(const double &quota) {
+    this->quota = quota;
+}
+
 vtkSmartPointer<vtkActor> BoundaryCondition::getSelectionActor() const {
     return selectionActor;
 }

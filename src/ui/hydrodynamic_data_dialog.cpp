@@ -203,6 +203,8 @@ void HydrodynamicDataDialog::on_cbxConfiguration_currentIndexChanged(const QStri
             ui->tblBoundaryConditions->setItem(i, 0, new QTableWidgetItem(boundaryConditions[i]->getTypeStr()));
             ui->tblBoundaryConditions->setItem(i, 1, new QTableWidgetItem(boundaryConditions[i]->getFunctionStr()));
         }
+        
+        on_btnShowCellLabels_clicked(ui->btnShowCellLabels->isChecked());
     } else {
         ui->edtConfigurationName->clear();
         currentConfiguration = unsavedConfiguration;

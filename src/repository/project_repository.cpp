@@ -245,6 +245,8 @@ void ProjectRepository::loadBoundaryConditions(HydrodynamicConfiguration *config
         boundaryCondition->setConstantValue(query.value("constant_value").toDouble());
         boundaryCondition->setInputModule((InputModule) query.value("input_module").toInt());
         boundaryCondition->setCellColor(query.value("cell_color").toString());
+        boundaryCondition->setVerticalIntegratedOutflow(query.value("vertical_integrated_outflow").toBool());
+        boundaryCondition->setQuota(query.value("quota").toDouble());
         
         configuration->addBoundaryCondition(boundaryCondition);
         
@@ -690,6 +692,8 @@ void ProjectRepository::saveBoundaryConditions(HydrodynamicConfiguration *config
         query.bindValue(":f", (int) boundaryCondition->getFunction());
         query.bindValue(":c", boundaryCondition->getConstantValue());
         query.bindValue(":cc", boundaryCondition->getCellColor());
+        query.bindValue(":v", boundaryCondition->useVerticalIntegratedOutflow());
+        query.bindValue(":q", boundaryCondition->getQuota());
 
         if (!query.exec()) {
             throw DatabaseException(QString("Unable to save hydrodynamic boundary conditions. Error: %1.").arg(query.lastError().text()));
