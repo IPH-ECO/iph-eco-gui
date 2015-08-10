@@ -336,11 +336,7 @@ void HydrodynamicDataDialog::on_btnSave_clicked() {
 
 void HydrodynamicDataDialog::on_btnShowCellLabels_clicked(bool checked) {
     for (BoundaryCondition *boundaryCondition : currentConfiguration->getBoundaryConditions()) {
-        if (checked) {
-            boundaryCondition->getLabelsActor()->VisibilityOn();
-        } else {
-            boundaryCondition->getLabelsActor()->VisibilityOff();
-        }
+        boundaryCondition->getLabelsActor()->SetVisibility(checked);
     }
     ui->vtkWidget->update();
 }

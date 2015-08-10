@@ -45,6 +45,7 @@ private slots:
     void btnMultipleCellPicker_clicked(bool checked);
     void btnClearSelection_clicked();
     void showObjectIds();
+    void toggleLabelsActor(bool show);
 };
 
 #endif // BOUNDARY_CONDITION_DIALOG_H

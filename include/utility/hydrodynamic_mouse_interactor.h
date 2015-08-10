@@ -14,11 +14,11 @@ class HydrodynamicMouseInteractor : public MeshMouseInteractor {
 private:
     vtkPolyData *meshPolyData;
     HydrodynamicConfiguration *hydrodynamicConfiguration;
-    BoundaryCondition *boundaryCondition;
+    BoundaryCondition *currentBoundaryCondition;
     CellPickMode cellPickMode;
     vtkIdType lastCellId;
     
-    void renderSelection();
+    void renderSelection(BoundaryCondition *boundaryCondition);
 public:
     static HydrodynamicMouseInteractor* New();
     vtkTypeMacro(HydrodynamicMouseInteractor, vtkInteractorStyleRubberBandPick);

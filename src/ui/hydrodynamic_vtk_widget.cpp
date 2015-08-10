@@ -48,8 +48,6 @@ void HydrodynamicVTKWidget::render(HydrodynamicConfiguration *hydrodynamicConfig
     renderer->RemoveActor(meshActor);
     renderer->RemoveActor(axesActor);
     
-    mouseInteractor->setHydrodynamicConfiguration(hydrodynamicConfiguration);
-    
     // Mesh rendering
     vtkSmartPointer<vtkPolyDataMapper> meshMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
     meshMapper->SetInputData(meshPolyData);
@@ -77,15 +75,13 @@ void HydrodynamicVTKWidget::render(HydrodynamicConfiguration *hydrodynamicConfig
     axesActor->SetBounds(currentMesh->getPolyData()->GetBounds());
     axesActor->SetCamera(renderer->GetActiveCamera());
     axesActor->SetFlyModeToStaticEdges();
-    
-    if (this->showAxes) {
-        axesActor->VisibilityOn();
-    } else {
-        axesActor->VisibilityOff();
-    }
+    axesActor->SetVisibility(this->showAxes);
     
     renderer->AddActor(meshActor);
     renderer->AddActor(axesActor);
+    
+    mouseInteractor->setHydrodynamicConfiguration(hydrodynamicConfiguration);
+    
     renderer->ResetCamera();
     this->update();
 }
@@ -94,11 +90,7 @@ void HydrodynamicVTKWidget::toggleAxes(bool show) {
     this->showAxes = show;
     
     if (axesActor != nullptr) {
-        if (show) {
-            axesActor->VisibilityOn();
-        } else {
-            axesActor->VisibilityOff();
-        }
+        axesActor->SetVisibility(show);
         this->update();
     }
 }
@@ -121,11 +113,7 @@ void HydrodynamicVTKWidget::toggleMesh(bool show) {
     this->showMesh = show;
     
     if (axesActor != nullptr) {
-        if (show) {
-            meshActor->VisibilityOn();
-        } else {
-            meshActor->VisibilityOff();
-        }
+        meshActor->SetVisibility(show);
         this->update();
     }
 }

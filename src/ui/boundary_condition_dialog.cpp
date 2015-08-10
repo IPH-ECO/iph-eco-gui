@@ -75,13 +75,9 @@ BoundaryConditionDialog::~BoundaryConditionDialog() {
 void BoundaryConditionDialog::setHydrodynamicDataDialog(HydrodynamicDataDialog *dialog) {
     this->hydrodynamicDataDialog = dialog;
     this->hydrodynamicDataDialog->ui->vtkWidget->getMouseInteractor()->setBoundaryCondition(boundaryCondition);
+    this->boundaryCondition->getLabelsActor()->SetVisibility(hydrodynamicDataDialog->ui->btnShowCellLabels->isChecked());
     
-    if (this->hydrodynamicDataDialog->ui->btnShowCellLabels->isChecked()) {
-        boundaryCondition->getLabelsActor()->VisibilityOn();
-    } else {
-        boundaryCondition->getLabelsActor()->VisibilityOff();
-    }
-    
+    connect(hydrodynamicDataDialog->ui->btnShowCellLabels, SIGNAL(clicked(bool)), this, SLOT(toggleLabelsActor(bool)));
     connect(hydrodynamicDataDialog->ui->vtkWidget->getMouseInteractor(), SIGNAL(objectSelected()), this, SLOT(showObjectIds()));
 }
 
@@ -232,4 +228,8 @@ bool BoundaryConditionDialog::isValid() {
     }
     
     return true;
+}
+
+void BoundaryConditionDialog::toggleLabelsActor(bool show) {
+    boundaryCondition->getLabelsActor()->SetVisibility(show);
 }

@@ -15,10 +15,7 @@
 #include <vtkCellData.h>
 #include <QColor>
 
-HydrodynamicMouseInteractor::HydrodynamicMouseInteractor() :
-    meshPolyData(nullptr), hydrodynamicConfiguration(nullptr), boundaryCondition(nullptr),
-    cellPickMode(CellPickMode::UNDEFINED), lastCellId(-1)
-{}
+HydrodynamicMouseInteractor::HydrodynamicMouseInteractor() : meshPolyData(nullptr), hydrodynamicConfiguration(nullptr), currentBoundaryCondition(nullptr), cellPickMode(CellPickMode::UNDEFINED), lastCellId(-1) {}
 
 void HydrodynamicMouseInteractor::OnLeftButtonDown() {
     int *clickPosition = this->GetInteractor()->GetEventPosition();
@@ -49,7 +46,7 @@ void HydrodynamicMouseInteractor::OnLeftButtonUp() {
             vtkIdTypeArray *selectedCellsArray = vtkIdTypeArray::SafeDownCast(selectionPolyData->GetCellData()->GetScalars("vtkOriginalCellIds"));
             
             for (int i = 0; i < hydrodynamicConfiguration->getBoundaryConditions().size(); i++) {
-                if (hydrodynamicConfiguration->getBoundaryCondition(i) == boundaryCondition) { // Excludes current boundary condition
+                if (hydrodynamicConfiguration->getBoundaryCondition(i) == currentBoundaryCondition) { // Excludes current boundary condition
                     continue;
                 }
                 
@@ -62,21 +59,21 @@ void HydrodynamicMouseInteractor::OnLeftButtonUp() {
                 }
             }
             
-            boundaryCondition->setObjectIds(selectedCellsArray);
+            currentBoundaryCondition->setObjectIds(selectedCellsArray);
             
-            renderSelection();
+            renderSelection(currentBoundaryCondition);
         }
     }
 }
 
 void HydrodynamicMouseInteractor::pickCell() {
     if (lastCellId != -1 && meshPolyData != nullptr) {
-        boundaryCondition->addObjectId(lastCellId);
-        renderSelection();
+        currentBoundaryCondition->addObjectId(lastCellId);
+        renderSelection(currentBoundaryCondition);
     }
 }
 
-void HydrodynamicMouseInteractor::renderSelection() {
+void HydrodynamicMouseInteractor::renderSelection(BoundaryCondition *boundaryCondition) {
     vtkSmartPointer<vtkIdTypeArray> vtkCellIds = boundaryCondition->getVtkObjectIds();
     vtkSmartPointer<vtkSelectionNode> selectionNode = vtkSmartPointer<vtkSelectionNode>::New();
     selectionNode->SetFieldType(vtkSelectionNode::CELL);
@@ -122,7 +119,10 @@ void HydrodynamicMouseInteractor::renderSelection() {
     this->GetDefaultRenderer()->AddActor(selectionActor);
     
     this->GetDefaultRenderer()->GetRenderWindow()->Render();
-    emit objectSelected();
+    
+    if (boundaryCondition == currentBoundaryCondition) {
+        emit objectSelected();
+    }
 }
 
 void HydrodynamicMouseInteractor::activateCellPicker(const CellPickMode &cellPickMode) {
@@ -135,10 +135,10 @@ void HydrodynamicMouseInteractor::deactivateCellPicker() {
 }
 
 void HydrodynamicMouseInteractor::clearSelection() {
-    if (boundaryCondition != nullptr) {
-        boundaryCondition->emptyObjectIds();
-        this->GetDefaultRenderer()->RemoveActor(boundaryCondition->getSelectionActor());
-        this->GetDefaultRenderer()->RemoveActor2D(boundaryCondition->getLabelsActor());
+    if (currentBoundaryCondition != nullptr) {
+        currentBoundaryCondition->emptyObjectIds();
+        this->GetDefaultRenderer()->RemoveActor(currentBoundaryCondition->getSelectionActor());
+        this->GetDefaultRenderer()->RemoveActor2D(currentBoundaryCondition->getLabelsActor());
         this->GetDefaultRenderer()->GetRenderWindow()->Render();
     }
 }
@@ -149,8 +149,12 @@ void HydrodynamicMouseInteractor::setHydrodynamicConfiguration(HydrodynamicConfi
     
     this->clearSelection();
     this->deactivateCellPicker();
+    
+    for (BoundaryCondition *boundaryCondition : hydrodynamicConfiguration->getBoundaryConditions()) {
+        this->renderSelection(boundaryCondition);
+    }
 }
 
 void HydrodynamicMouseInteractor::setBoundaryCondition(BoundaryCondition *boundaryCondition) {
-    this->boundaryCondition = boundaryCondition;
+    currentBoundaryCondition = boundaryCondition;
 }
