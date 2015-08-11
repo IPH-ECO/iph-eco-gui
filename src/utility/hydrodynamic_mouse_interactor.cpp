@@ -127,12 +127,18 @@ void HydrodynamicMouseInteractor::renderBoundaryCondition(BoundaryCondition *bou
     }
 }
 
-void HydrodynamicMouseInteractor::highlightBoundaryCondition(BoundaryCondition *boundaryCondition, bool hightlight) {
+void HydrodynamicMouseInteractor::removeBoundaryCondition(BoundaryCondition *boundaryCondition) {
+    this->GetDefaultRenderer()->RemoveActor(boundaryCondition->getSelectionActor());
+    this->GetDefaultRenderer()->RemoveActor(boundaryCondition->getLabelsActor());
+    this->GetDefaultRenderer()->GetRenderWindow()->Render();
+}
+
+void HydrodynamicMouseInteractor::highlightBoundaryCondition(BoundaryCondition *boundaryCondition, bool highlight) {
     vtkSmartPointer<vtkActor> selectionActor = boundaryCondition->getSelectionActor();
     
     selectionActor->GetProperty()->SetEdgeColor(1, 1, 0);
     selectionActor->GetProperty()->SetLineStipplePattern(0xF0F0);
-    selectionActor->GetProperty()->SetEdgeVisibility(hightlight);
+    selectionActor->GetProperty()->SetEdgeVisibility(highlight);
     this->GetDefaultRenderer()->GetRenderWindow()->Render();
 }
 

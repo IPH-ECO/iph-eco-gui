@@ -425,13 +425,18 @@ void HydrodynamicDataDialog::on_btnEditBoundaryCondition_clicked() {
 
 void HydrodynamicDataDialog::on_btnRemoveBoundaryCondition_clicked() {
     int currentRow = ui->tblBoundaryConditions->currentRow();
+    QString question = tr("Are you sure you want to remove the selected boundary condtion?");
     
-    if (currentRow > -1 && QMessageBox::question(this, tr("Hydrodynamic Data"), tr("Are you sure you want to remove the selected boundary condtion?")) == QMessageBox::Yes) {
+    if (currentRow > -1 && QMessageBox::question(this, tr("Hydrodynamic Data"), question) == QMessageBox::Yes) {
+        BoundaryCondition *boundaryCondition = currentConfiguration->getBoundaryCondition(currentRow);
+        
+        ui->vtkWidget->getMouseInteractor()->removeBoundaryCondition(boundaryCondition);
         currentConfiguration->removeBoundaryCondition(currentRow);
         ui->tblBoundaryConditions->removeRow(currentRow);
         
-        if (ui->tblBoundaryConditions->rowCount() == 0 && currentConfiguration->isPersisted()) {
-            ui->cbxConfiguration->setEnabled(false);
+        if (ui->tblBoundaryConditions->rowCount() == 0) {
+            ui->btnEditBoundaryCondition->setEnabled(false);
+            ui->btnRemoveBoundaryCondition->setEnabled(false);
         }
     }
 }
@@ -497,7 +502,9 @@ void HydrodynamicDataDialog::on_tblBoundaryConditions_currentItemChanged(QTableW
         
         if (previous) {
             boundaryCondition = currentConfiguration->getBoundaryCondition(previous->row());
-            ui->vtkWidget->getMouseInteractor()->highlightBoundaryCondition(boundaryCondition, false);
+            if (boundaryCondition) { // If a item is removed this slot will be called
+                ui->vtkWidget->getMouseInteractor()->highlightBoundaryCondition(boundaryCondition, false);
+            }
         }
         
         ui->btnEditBoundaryCondition->setEnabled(true);

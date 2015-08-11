@@ -512,11 +512,11 @@ void ProjectRepository::saveGridDataConfigurations(Project *project) {
 
 void ProjectRepository::saveGridData(GridDataConfiguration *gridDataConfiguration) {
     QVector<GridData*> gridDataVector = gridDataConfiguration->getGridDataVector();
+    QSqlQuery query(databaseUtility->getDatabase());
     QStringList gridDataIds;
     
     for (int i = 0; i < gridDataVector.size() && !operationCanceled; i++) {
         GridData *gridData = gridDataVector.at(i);
-        QSqlQuery query(databaseUtility->getDatabase());
         
         if (gridData->isPersisted()) {
             query.prepare("update grid_data set " \
@@ -587,14 +587,13 @@ void ProjectRepository::saveGridData(GridDataConfiguration *gridDataConfiguratio
         return;
     }
     
-    QSqlQuery query(databaseUtility->getDatabase());
-    
     query.prepare("delete from grid_data where id not in (" + gridDataIds.join(",") + ") and grid_data_configuration_id = " + QString::number(gridDataConfiguration->getId()));
     query.exec();
 }
 
 void ProjectRepository::saveHydrodynamicConfigurations(Project *project) {
     QSet<HydrodynamicConfiguration*> configurations = project->getHydrodynamicConfigurations();
+    QSqlQuery query(databaseUtility->getDatabase());
     QStringList configurationIds;
     
     if (!configurations.isEmpty()) {
@@ -602,10 +601,7 @@ void ProjectRepository::saveHydrodynamicConfigurations(Project *project) {
         QApplication::processEvents();
     }
     
-    for (QSet<HydrodynamicConfiguration*>::const_iterator it = configurations.begin(); it != configurations.end() && !operationCanceled; it++) {
-        HydrodynamicConfiguration *configuration = *it;
-        QSqlQuery query(databaseUtility->getDatabase());
-        
+    for (HydrodynamicConfiguration *configuration : configurations) {
         if (configuration->isPersisted()) {
             query.prepare("update hydrodynamic_configuration set name = :n, grid_data_configuration_id = :g where id = :i");
             query.bindValue(":i", configuration->getId());
@@ -634,24 +630,25 @@ void ProjectRepository::saveHydrodynamicConfigurations(Project *project) {
     }
     
     // Handle exclusions
-//    QSqlQuery query(databaseUtility->getDatabase());
-//    QString configurationDeleteSql, gridDataDeleteSql;
-//    
-//    if (configurationIds.isEmpty()) {
-//        configurationDeleteSql = "delete from grid_data_configuration";
-//        gridDataDeleteSql = "delete from grid_data";
-//    } else {
-//        QString configurationIdsStr = configurationIds.join(",");
-//        
-//        configurationDeleteSql = "delete from grid_data_configuration where id not in (" + configurationIdsStr + ")";
-//        gridDataDeleteSql = "delete from grid_data where grid_data_configuration_id not in (" + configurationIdsStr + ")";
-//    }
-//    
-//    query.prepare(configurationDeleteSql);
-//    query.exec();
-//    
-//    query.prepare(gridDataDeleteSql);
-//    query.exec();
+    QStringList queries;
+
+    if (configurationIds.isEmpty()) {
+        queries << "delete from hydrodynamic_configuration";
+        queries << "delete from hydrodynamic_parameter";
+        queries << "delete from boundary_condition where input_module = " + QString::number((int) InputModule::HYDRODYNAMIC);
+        // TODO: remove time series
+    } else {
+        QString configurationIdsStr = configurationIds.join(",");
+        
+        queries << "delete from hydrodynamic_configuration where id not in (" + configurationIdsStr + ")";
+        queries << "delete from hydrodynamic_parameter where hydrodynamic_configuration_id not in (" + configurationIdsStr + ")";
+        queries << "delete from boundary_condition where configuration_id not in (" + configurationIdsStr + ") and input_module = " + QString::number((int) InputModule::HYDRODYNAMIC);
+    }
+    
+    for (QString sql : queries) {
+        query.prepare(sql);
+        query.exec();
+    }
 }
 
 void ProjectRepository::saveHydrodynamicParameters(HydrodynamicConfiguration *configuration) {
@@ -690,7 +687,7 @@ void ProjectRepository::saveHydrodynamicParameters(HydrodynamicConfiguration *co
         return;
     }
 
-    query.prepare("delete from hydrodynamic_parameter where id not in (" + parameterIds.join(",") + ") and hydrodynamic_configuration_id = " + configuration->getId());
+    query.prepare("delete from hydrodynamic_parameter where id not in (" + parameterIds.join(",") + ") and hydrodynamic_configuration_id = " + QString::number(configuration->getId()));
     query.exec();
 }
 
@@ -699,9 +696,7 @@ void ProjectRepository::saveBoundaryConditions(HydrodynamicConfiguration *config
     QSqlQuery query(databaseUtility->getDatabase());
     QStringList boundaryConditionIds;
 
-    for (int i = 0; i < boundaryConditions.size() && !operationCanceled; i++) {
-        BoundaryCondition *boundaryCondition = boundaryConditions[i];
-
+    for (BoundaryCondition *boundaryCondition : boundaryConditions) {
         if (boundaryCondition->isPersisted()) {
             query.prepare("update boundary_condition set type = :t, object_ids = :o, function = :f, constant_value = :c, cell_color = :cc, vertical_integrated_outflow = :v, quota = :q where id = :i");
             query.bindValue(":i", boundaryCondition->getId());
@@ -735,8 +730,11 @@ void ProjectRepository::saveBoundaryConditions(HydrodynamicConfiguration *config
     if (operationCanceled) {
         return;
     }
+    
+    QString configurationIdStr = QString::number(configuration->getId());
+    QString inputModuleStr = QString::number((int) InputModule::HYDRODYNAMIC);
 
-    query.prepare("delete from boundary_condition where id not in (" + boundaryConditionIds.join(",") + ") and configuration_id = " + configuration->getId() + " and input_module = " + (int) InputModule::HYDRODYNAMIC);
+    query.prepare("delete from boundary_condition where id not in (" + boundaryConditionIds.join(",") + ") and configuration_id = " + configurationIdStr + " and input_module = " + inputModuleStr);
     query.exec();
 }
 
@@ -774,7 +772,7 @@ void ProjectRepository::saveTimeSeries(BoundaryCondition *boundaryCondition) {
         return;
     }
     
-    query.prepare("delete from time_series where id not in (" + timeSeriesIds.join(",") + ") and boundary_condition_id = " + boundaryCondition->getId());
+    query.prepare("delete from time_series where id not in (" + timeSeriesIds.join(",") + ") and boundary_condition_id = " + QString::number(boundaryCondition->getId()));
     query.exec();
 }
 

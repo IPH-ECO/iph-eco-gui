@@ -24,6 +24,7 @@ public:
     HydrodynamicMouseInteractor();
     
     void renderBoundaryCondition(BoundaryCondition *boundaryCondition);
+    void removeBoundaryCondition(BoundaryCondition *boundaryCondition);
     void highlightBoundaryCondition(BoundaryCondition *boundaryCondition, bool hightlight);
     void activateCellPicker(const CellPickMode &cellPickMode);
     void deactivateCellPicker();
