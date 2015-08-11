@@ -157,12 +157,12 @@
               </sizepolicy>
              </property>
              <property name="text">
-              <string>Mesh</string>
+              <string>Grid Data Configuration</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QComboBox" name="cbxMesh"/>
+            <widget class="QComboBox" name="cbxGridDataConfiguration"/>
            </item>
           </layout>
          </item>
@@ -315,7 +315,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="btnRemove">
+        <widget class="QPushButton" name="btnRemoveConfiguration">
          <property name="text">
           <string>Remove</string>
          </property>
@@ -597,7 +597,7 @@
   <tabstop>tabWidget</tabstop>
   <tabstop>tblBoundaryConditions</tabstop>
   <tabstop>btnDone</tabstop>
-  <tabstop>btnRemove</tabstop>
+  <tabstop>btnRemoveConfiguration</tabstop>
   <tabstop>btnSave</tabstop>
   <tabstop>trwProcesses</tabstop>
   <tabstop>trwParameters</tabstop>

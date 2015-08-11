@@ -2,7 +2,7 @@
 
 #include <QStringList>
 
-BoundaryCondition::BoundaryCondition() : id(0), type(BoundaryConditionType::WATER_LEVEL), function(BoundaryConditionFunction::CONSTANT), cellColor("#FFFFFF") {
+BoundaryCondition::BoundaryCondition() : id(0), type(BoundaryConditionType::WATER_LEVEL), function(BoundaryConditionFunction::CONSTANT), cellColor("#FF0000") {
     selectionActor = vtkSmartPointer<vtkActor>::New();
     labelsActor = vtkSmartPointer<vtkActor2D>::New();
 }
@@ -37,11 +37,12 @@ QSet<vtkIdType> BoundaryCondition::getObjectIds() const {
 	return objectIds;
 }
 
-vtkSmartPointer<vtkIdTypeArray> BoundaryCondition::getVtkObjectIds() const {
+vtkSmartPointer<vtkIdTypeArray> BoundaryCondition::getVTKObjectIds() const {
     vtkSmartPointer<vtkIdTypeArray> vtkObjectIds = vtkSmartPointer<vtkIdTypeArray>::New();
     int i = 0;
+    std::string arrayName = getVTKObjectsArrayName().toStdString();
     
-    vtkObjectIds->SetName(type == BoundaryConditionType::WATER_LEVEL ? "cellIds" : "labelIds");
+    vtkObjectIds->SetName(arrayName.c_str());
     vtkObjectIds->SetNumberOfComponents(1);
     vtkObjectIds->SetNumberOfTuples(objectIds.size());
     
@@ -51,6 +52,10 @@ vtkSmartPointer<vtkIdTypeArray> BoundaryCondition::getVtkObjectIds() const {
     }
     
     return vtkObjectIds;
+}
+
+QString BoundaryCondition::getVTKObjectsArrayName() const {
+    return type == BoundaryConditionType::WATER_LEVEL ? "cellIds" : "labelIds";
 }
 
 void BoundaryCondition::setObjectIds(const QSet<vtkIdType> &objectIds) {
@@ -89,7 +94,7 @@ void BoundaryCondition::removeObjectId(const vtkIdType &objectId) {
     objectIds.remove(objectId);
 }
 
-void BoundaryCondition::emptyObjectIds() {
+void BoundaryCondition::clearObjectIds() {
     objectIds.clear();
 }
 

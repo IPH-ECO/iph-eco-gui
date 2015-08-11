@@ -1,7 +1,7 @@
 #ifndef HYDRODYNAMIC_CONFIGURATION_H
 #define HYDRODYNAMIC_CONFIGURATION_H
 
-#include "include/domain/mesh.h"
+#include "include/domain/grid_data_configuration.h"
 #include "include/domain/boundary_condition.h"
 #include "include/domain/hydrodynamic_process.h"
 
@@ -13,7 +13,7 @@ private:
 	uint id;
 	QString name;
 	QList<HydrodynamicParameter*> parameters;
-    Mesh *mesh;
+    GridDataConfiguration *gridDataConfiguration;
 	QList<BoundaryCondition*> boundaryConditions;
 public:
     HydrodynamicConfiguration();
@@ -24,8 +24,8 @@ public:
     bool isPersisted() const;
 	QString getName() const;
 	void setName(const QString &name);
-	Mesh* getMesh() const;
-	void setMesh(Mesh *mesh);
+	GridDataConfiguration* getGridDataConfiguration() const;
+	void setGridDataConfiguration(GridDataConfiguration *gridDataConfiguration);
 	
     bool addBoundaryCondition(BoundaryCondition *boundaryCondition);
 	QList<BoundaryCondition*> getBoundaryConditions() const;

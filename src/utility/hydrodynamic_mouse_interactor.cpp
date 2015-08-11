@@ -15,7 +15,8 @@
 #include <vtkCellData.h>
 #include <QColor>
 
-HydrodynamicMouseInteractor::HydrodynamicMouseInteractor() : meshPolyData(nullptr), hydrodynamicConfiguration(nullptr), currentBoundaryCondition(nullptr), cellPickMode(CellPickMode::UNDEFINED), lastCellId(-1) {}
+HydrodynamicMouseInteractor::HydrodynamicMouseInteractor() :
+    meshPolyData(nullptr), hydrodynamicConfiguration(nullptr), currentBoundaryCondition(nullptr), cellPickMode(CellPickMode::UNDEFINED), lastCellId(-1) {}
 
 void HydrodynamicMouseInteractor::OnLeftButtonDown() {
     int *clickPosition = this->GetInteractor()->GetEventPosition();
@@ -45,12 +46,12 @@ void HydrodynamicMouseInteractor::OnLeftButtonUp() {
         if (selectionPolyData->GetCellData()->HasArray("vtkOriginalCellIds")) {
             vtkIdTypeArray *selectedCellsArray = vtkIdTypeArray::SafeDownCast(selectionPolyData->GetCellData()->GetScalars("vtkOriginalCellIds"));
             
-            for (int i = 0; i < hydrodynamicConfiguration->getBoundaryConditions().size(); i++) {
-                if (hydrodynamicConfiguration->getBoundaryCondition(i) == currentBoundaryCondition) { // Excludes current boundary condition
+            for (BoundaryCondition *boundaryCondition : hydrodynamicConfiguration->getBoundaryConditions()) {
+                if (boundaryCondition == currentBoundaryCondition) { // Excludes current boundary condition
                     continue;
                 }
                 
-                QSet<vtkIdType> objectIds = hydrodynamicConfiguration->getBoundaryCondition(i)->getObjectIds();
+                QSet<vtkIdType> objectIds = boundaryCondition->getObjectIds();
                 
                 for (vtkIdType j = 0; j < selectedCellsArray->GetNumberOfTuples(); j++) {
                     if (objectIds.contains(selectedCellsArray->GetTuple1(j))) {
@@ -61,7 +62,7 @@ void HydrodynamicMouseInteractor::OnLeftButtonUp() {
             
             currentBoundaryCondition->setObjectIds(selectedCellsArray);
             
-            renderSelection(currentBoundaryCondition);
+            renderBoundaryCondition(currentBoundaryCondition);
         }
     }
 }
@@ -69,12 +70,12 @@ void HydrodynamicMouseInteractor::OnLeftButtonUp() {
 void HydrodynamicMouseInteractor::pickCell() {
     if (lastCellId != -1 && meshPolyData != nullptr) {
         currentBoundaryCondition->addObjectId(lastCellId);
-        renderSelection(currentBoundaryCondition);
+        renderBoundaryCondition(currentBoundaryCondition);
     }
 }
 
-void HydrodynamicMouseInteractor::renderSelection(BoundaryCondition *boundaryCondition) {
-    vtkSmartPointer<vtkIdTypeArray> vtkCellIds = boundaryCondition->getVtkObjectIds();
+void HydrodynamicMouseInteractor::renderBoundaryCondition(BoundaryCondition *boundaryCondition) {
+    vtkSmartPointer<vtkIdTypeArray> vtkCellIds = boundaryCondition->getVTKObjectIds();
     vtkSmartPointer<vtkSelectionNode> selectionNode = vtkSmartPointer<vtkSelectionNode>::New();
     selectionNode->SetFieldType(vtkSelectionNode::CELL);
     selectionNode->SetContentType(vtkSelectionNode::INDICES);
@@ -97,9 +98,10 @@ void HydrodynamicMouseInteractor::renderSelection(BoundaryCondition *boundaryCon
     cellCentersFilter->Update();
     
     vtkSmartPointer<vtkLabeledDataMapper> labelMapper = vtkSmartPointer<vtkLabeledDataMapper>::New();
+    std::string arrayName = boundaryCondition->getVTKObjectsArrayName().toStdString();
     labelMapper->SetInputConnection(cellCentersFilter->GetOutputPort());
     labelMapper->SetLabelModeToLabelFieldData();
-    labelMapper->SetFieldDataName("cellIds");
+    labelMapper->SetFieldDataName(arrayName.c_str());
     labelMapper->GetLabelTextProperty()->SetColor(0, 0, 0);
     labelMapper->GetLabelTextProperty()->ShadowOff();
     
@@ -125,6 +127,15 @@ void HydrodynamicMouseInteractor::renderSelection(BoundaryCondition *boundaryCon
     }
 }
 
+void HydrodynamicMouseInteractor::highlightBoundaryCondition(BoundaryCondition *boundaryCondition, bool hightlight) {
+    vtkSmartPointer<vtkActor> selectionActor = boundaryCondition->getSelectionActor();
+    
+    selectionActor->GetProperty()->SetEdgeColor(1, 1, 0);
+    selectionActor->GetProperty()->SetLineStipplePattern(0xF0F0);
+    selectionActor->GetProperty()->SetEdgeVisibility(hightlight);
+    this->GetDefaultRenderer()->GetRenderWindow()->Render();
+}
+
 void HydrodynamicMouseInteractor::activateCellPicker(const CellPickMode &cellPickMode) {
     this->cellPickMode = cellPickMode;
 }
@@ -136,7 +147,7 @@ void HydrodynamicMouseInteractor::deactivateCellPicker() {
 
 void HydrodynamicMouseInteractor::clearSelection() {
     if (currentBoundaryCondition != nullptr) {
-        currentBoundaryCondition->emptyObjectIds();
+        currentBoundaryCondition->clearObjectIds();
         this->GetDefaultRenderer()->RemoveActor(currentBoundaryCondition->getSelectionActor());
         this->GetDefaultRenderer()->RemoveActor2D(currentBoundaryCondition->getLabelsActor());
         this->GetDefaultRenderer()->GetRenderWindow()->Render();
@@ -145,14 +156,10 @@ void HydrodynamicMouseInteractor::clearSelection() {
 
 void HydrodynamicMouseInteractor::setHydrodynamicConfiguration(HydrodynamicConfiguration *hydrodynamicConfiguration) {
     this->hydrodynamicConfiguration = hydrodynamicConfiguration;
-    this->meshPolyData = hydrodynamicConfiguration->getMesh()->getPolyData();
+    this->meshPolyData = hydrodynamicConfiguration->getGridDataConfiguration()->getMesh()->getPolyData();
     
     this->clearSelection();
     this->deactivateCellPicker();
-    
-    for (BoundaryCondition *boundaryCondition : hydrodynamicConfiguration->getBoundaryConditions()) {
-        this->renderSelection(boundaryCondition);
-    }
 }
 
 void HydrodynamicMouseInteractor::setBoundaryCondition(BoundaryCondition *boundaryCondition) {

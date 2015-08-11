@@ -51,7 +51,8 @@ public:
 
     bool addGridDataConfiguration(GridDataConfiguration *gridDataConfiguration);
     void removeGridDataConfiguration(const QString &configurationName);
-    GridDataConfiguration* getGridDataConfiguration(const QString &configurationName);
+    GridDataConfiguration* getGridDataConfiguration(const QString &configurationName) const;
+    GridDataConfiguration* getGridDataConfiguration(const uint &id) const;
     QSet<GridDataConfiguration*> getGridDataConfigurations() const;
     
     bool addHydrodynamicConfiguration(HydrodynamicConfiguration *hydrodynamicConfiguration);

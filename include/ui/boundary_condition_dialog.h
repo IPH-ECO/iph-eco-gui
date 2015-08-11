@@ -21,16 +21,18 @@ class BoundaryConditionDialog : public QDialog {
 private:
 	Ui::BoundaryConditionDialog *ui;
     HydrodynamicConfiguration *configuration;
-    BoundaryCondition *boundaryCondition;
+    BoundaryCondition *currentBoundaryCondition;
     QToolButton *btnSingleCellPicker;
     QToolButton *btnMultipleCellPicker;
     HydrodynamicDataDialog *hydrodynamicDataDialog;
+    QSet<vtkIdType> originalObjectIds;
     bool isNewBoundaryCondition;
     
     void closeEvent(QCloseEvent *event);
     virtual void accept();
     virtual void reject();
     bool isValid();
+    void undoChanges();
 public:
 	explicit BoundaryConditionDialog(HydrodynamicConfiguration *configuration, BoundaryCondition *boundaryCondition);
     ~BoundaryConditionDialog();

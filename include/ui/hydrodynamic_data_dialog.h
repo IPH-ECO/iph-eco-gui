@@ -28,7 +28,7 @@ private:
     HydrodynamicDataRepository *hydrodynamicDataRepository;
     HydrodynamicConfiguration *unsavedConfiguration;
     HydrodynamicConfiguration *currentConfiguration;
-    Mesh *currentMesh;
+    GridDataConfiguration *currentGridDataConfiguration;
     BoundaryConditionDialog *boundaryConditionDialog;
     
     void addParameterItemWidget(HydrodynamicParameter *parameter);
@@ -38,12 +38,12 @@ private:
     void toggleWidgets(bool enable);
 private slots:
     void on_cbxConfiguration_currentIndexChanged(const QString &configurationName);
-    void on_cbxMesh_currentIndexChanged(const QString &meshName);
+    void on_cbxGridDataConfiguration_currentIndexChanged(const QString &meshName);
     void on_trwProcesses_itemChanged(QTreeWidgetItem *item, int column);
     void on_btnAddBoundaryCondition_clicked();
     void on_btnEditBoundaryCondition_clicked();
     void on_btnRemoveBoundaryCondition_clicked();
-    void on_btnRemove_clicked();
+    void on_btnRemoveConfiguration_clicked();
     void on_btnDone_clicked();
     void on_btnSave_clicked();
     void on_btnShowCellLabels_clicked(bool checked);

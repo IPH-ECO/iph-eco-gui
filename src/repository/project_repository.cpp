@@ -192,11 +192,11 @@ void ProjectRepository::loadHydrodynamicConfigurations(Project *project) {
     
     while (query.next() && !operationCanceled) {
         HydrodynamicConfiguration *configuration = new HydrodynamicConfiguration();
-        Mesh *mesh = project->getMesh(query.value("mesh_id").toUInt());
+        GridDataConfiguration *gridDataConfiguration = project->getGridDataConfiguration(query.value("grid_data_configuration_id").toUInt());
 
         configuration->setId(query.value("id").toUInt());
         configuration->setName(query.value("name").toString());
-        configuration->setMesh(mesh);
+        configuration->setGridDataConfiguration(gridDataConfiguration);
         project->addHydrodynamicConfiguration(configuration);
         
         emit updateProgress(currentProgress++);
@@ -607,14 +607,14 @@ void ProjectRepository::saveHydrodynamicConfigurations(Project *project) {
         QSqlQuery query(databaseUtility->getDatabase());
         
         if (configuration->isPersisted()) {
-            query.prepare("update hydrodynamic_configuration set name = :n, mesh_id = :m where id = :i");
+            query.prepare("update hydrodynamic_configuration set name = :n, grid_data_configuration_id = :g where id = :i");
             query.bindValue(":i", configuration->getId());
         } else {
-            query.prepare("insert into hydrodynamic_configuration (name, mesh_id) values (:n, :m)");
+            query.prepare("insert into hydrodynamic_configuration (name, grid_data_configuration_id) values (:n, :g)");
         }
         
         query.bindValue(":n", configuration->getName());
-        query.bindValue(":m", configuration->getMesh()->getId());
+        query.bindValue(":g", configuration->getGridDataConfiguration()->getId());
         
         if (!query.exec()) {
             throw DatabaseException(QString("Unable to save hydrodynamic data configurations. Error: %1.").arg(query.lastError().text()));
@@ -628,6 +628,30 @@ void ProjectRepository::saveHydrodynamicConfigurations(Project *project) {
         saveHydrodynamicParameters(configuration);
         saveBoundaryConditions(configuration);
     }
+    
+    if (operationCanceled) {
+        return;
+    }
+    
+    // Handle exclusions
+//    QSqlQuery query(databaseUtility->getDatabase());
+//    QString configurationDeleteSql, gridDataDeleteSql;
+//    
+//    if (configurationIds.isEmpty()) {
+//        configurationDeleteSql = "delete from grid_data_configuration";
+//        gridDataDeleteSql = "delete from grid_data";
+//    } else {
+//        QString configurationIdsStr = configurationIds.join(",");
+//        
+//        configurationDeleteSql = "delete from grid_data_configuration where id not in (" + configurationIdsStr + ")";
+//        gridDataDeleteSql = "delete from grid_data where grid_data_configuration_id not in (" + configurationIdsStr + ")";
+//    }
+//    
+//    query.prepare(configurationDeleteSql);
+//    query.exec();
+//    
+//    query.prepare(gridDataDeleteSql);
+//    query.exec();
 }
 
 void ProjectRepository::saveHydrodynamicParameters(HydrodynamicConfiguration *configuration) {
@@ -679,10 +703,10 @@ void ProjectRepository::saveBoundaryConditions(HydrodynamicConfiguration *config
         BoundaryCondition *boundaryCondition = boundaryConditions[i];
 
         if (boundaryCondition->isPersisted()) {
-            query.prepare("update boundary_condition set type = :t, object_ids = :o, function = :f, constant_value = :c, cell_color = :cc where id = :i");
+            query.prepare("update boundary_condition set type = :t, object_ids = :o, function = :f, constant_value = :c, cell_color = :cc, vertical_integrated_outflow = :v, quota = :q where id = :i");
             query.bindValue(":i", boundaryCondition->getId());
         } else {
-            query.prepare("insert into boundary_condition (type, object_ids, function, constant_value, input_module, cell_color, configuration_id) values (:t, :o, :f, :c, :i, :cc, :ci)");
+            query.prepare("insert into boundary_condition (type, object_ids, function, constant_value, input_module, cell_color, vertical_integrated_outflow, quota, configuration_id) values (:t, :o, :f, :c, :i, :cc, :v, :q, :ci)");
             query.bindValue(":i", (int) boundaryCondition->getInputModule());
             query.bindValue(":ci", configuration->getId());
         }

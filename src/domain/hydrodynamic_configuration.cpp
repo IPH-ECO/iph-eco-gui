@@ -14,7 +14,9 @@ uint HydrodynamicConfiguration::getId() const {
 }
 
 void HydrodynamicConfiguration::setId(uint id) {
-	this->id = id;
+    if (!isPersisted()) {
+        this->id = id;
+    }
 }
 
 bool HydrodynamicConfiguration::isPersisted() const {
@@ -29,12 +31,12 @@ void HydrodynamicConfiguration::setName(const QString &name) {
 	this->name = name;
 }
 
-Mesh* HydrodynamicConfiguration::getMesh() const {
-	return mesh;
+GridDataConfiguration* HydrodynamicConfiguration::getGridDataConfiguration() const {
+	return gridDataConfiguration;
 }
 
-void HydrodynamicConfiguration::setMesh(Mesh *mesh) {
-	this->mesh = mesh;
+void HydrodynamicConfiguration::setGridDataConfiguration(GridDataConfiguration *gridDataConfiguration) {
+	this->gridDataConfiguration = gridDataConfiguration;
 }
 
 bool HydrodynamicConfiguration::addBoundaryCondition(BoundaryCondition *boundaryCondition) {

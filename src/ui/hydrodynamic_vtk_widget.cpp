@@ -36,7 +36,7 @@ HydrodynamicVTKWidget::HydrodynamicVTKWidget(QWidget *parent) :
 }
 
 void HydrodynamicVTKWidget::render(HydrodynamicConfiguration *hydrodynamicConfiguration) {
-    Mesh *mesh = hydrodynamicConfiguration->getMesh();
+    Mesh *mesh = hydrodynamicConfiguration->getGridDataConfiguration()->getMesh();
     
     if (mesh == nullptr || currentMesh == mesh) {
         return;

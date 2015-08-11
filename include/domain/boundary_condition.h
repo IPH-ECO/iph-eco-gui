@@ -41,13 +41,14 @@ public:
     QString getTypeStr() const;
 	void setType(const BoundaryConditionType &type);
 	QSet<vtkIdType> getObjectIds() const;
-    vtkSmartPointer<vtkIdTypeArray> getVtkObjectIds() const;
+    vtkSmartPointer<vtkIdTypeArray> getVTKObjectIds() const;
+    QString getVTKObjectsArrayName() const;
     void setObjectIds(const QSet<vtkIdType> &objectIds);
     void setObjectIds(vtkIdTypeArray* objectIds);
 	void setObjectIds(const QString &objectIdsStr);
     void addObjectId(const vtkIdType &objectId);
     void removeObjectId(const vtkIdType &objectId);
-    void emptyObjectIds();
+    void clearObjectIds();
 	BoundaryConditionFunction getFunction() const;
     QString getFunctionStr() const;
 	void setFunction(const BoundaryConditionFunction &function);

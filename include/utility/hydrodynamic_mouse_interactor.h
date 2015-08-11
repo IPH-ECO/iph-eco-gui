@@ -17,23 +17,23 @@ private:
     BoundaryCondition *currentBoundaryCondition;
     CellPickMode cellPickMode;
     vtkIdType lastCellId;
-    
-    void renderSelection(BoundaryCondition *boundaryCondition);
 public:
     static HydrodynamicMouseInteractor* New();
     vtkTypeMacro(HydrodynamicMouseInteractor, vtkInteractorStyleRubberBandPick);
     
     HydrodynamicMouseInteractor();
     
-    virtual void OnLeftButtonDown();
-    virtual void OnLeftButtonUp();
-    
+    void renderBoundaryCondition(BoundaryCondition *boundaryCondition);
+    void highlightBoundaryCondition(BoundaryCondition *boundaryCondition, bool hightlight);
     void activateCellPicker(const CellPickMode &cellPickMode);
     void deactivateCellPicker();
     void clearSelection();
     void setHydrodynamicConfiguration(HydrodynamicConfiguration *hydrodynamicConfiguration);
     void setBoundaryCondition(BoundaryCondition *boundaryCondition);
     void pickCell();
+    
+    virtual void OnLeftButtonDown();
+    virtual void OnLeftButtonUp();
 signals:
     void objectSelected();
 };

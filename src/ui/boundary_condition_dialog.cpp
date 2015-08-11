@@ -14,7 +14,7 @@
 enum class CustomButtonRole { INDIVIDUAL_CELL_PICKER = 1, MULTIPLE_CELL_PICKER, CLEAR_SELECTION };
 
 BoundaryConditionDialog::BoundaryConditionDialog(HydrodynamicConfiguration *configuration, BoundaryCondition *boundaryCondition) :
-    QDialog(nullptr), ui(new Ui::BoundaryConditionDialog), configuration(configuration), boundaryCondition(boundaryCondition), isNewBoundaryCondition(boundaryCondition == nullptr)
+    QDialog(nullptr), ui(new Ui::BoundaryConditionDialog), configuration(configuration), currentBoundaryCondition(boundaryCondition), isNewBoundaryCondition(boundaryCondition == nullptr)
 {
 	ui->setupUi(this);
     this->setWindowModality(Qt::WindowModal);
@@ -42,13 +42,14 @@ BoundaryConditionDialog::BoundaryConditionDialog(HydrodynamicConfiguration *conf
     ui->buttonBox->addButton(btnClearSelection, QDialogButtonBox::ActionRole);
     connect(btnClearSelection, SIGNAL(clicked()), this, SLOT(btnClearSelection_clicked()));
     
-    if (boundaryCondition) {
+    if (currentBoundaryCondition) {
         bool isWaterLevelSelected = boundaryCondition->getType() == BoundaryConditionType::WATER_LEVEL;
         bool isConstantSelected = boundaryCondition->getFunction() == BoundaryConditionFunction::CONSTANT;
         bool useVerticalIntegratedOutflow = boundaryCondition->useVerticalIntegratedOutflow();
         
-        on_rdoWaterLevel_clicked(isWaterLevelSelected);
-        on_rdoWaterFlow_clicked(!isWaterLevelSelected);
+        ui->rdoWaterLevel->setChecked(isWaterLevelSelected);
+        ui->rdoWaterFlow->setChecked(!isWaterLevelSelected);
+        ui->lblElementLabel->setText(isWaterLevelSelected ? "Cells" : "Edges");
         ui->lblElementIds->setText(boundaryCondition->getObjectIdsStr());
         ui->rdoConstant->setChecked(isConstantSelected);
         ui->rdoTimeSeries->setChecked(!isConstantSelected);
@@ -58,22 +59,23 @@ BoundaryConditionDialog::BoundaryConditionDialog(HydrodynamicConfiguration *conf
         } else {
             ui->btnTimeSeries->setEnabled(boundaryCondition->getFunction() == BoundaryConditionFunction::TIME_SERIES);
         }
-        if (!isWaterLevelSelected) {
-            if (useVerticalIntegratedOutflow) {
-                ui->chkVIO->setChecked(useVerticalIntegratedOutflow);
-            } else {
-                ui->edtQuota->setText(QString::number(boundaryCondition->getQuota()));
-            }
+        ui->chkVIO->setEnabled(!isWaterLevelSelected);
+        ui->chkVIO->setChecked(useVerticalIntegratedOutflow);
+        ui->edtQuota->setEnabled(!useVerticalIntegratedOutflow);
+        if (!useVerticalIntegratedOutflow) {
+            ui->edtQuota->setText(QString::number(boundaryCondition->getQuota()));
         }
     } else {
-        this->boundaryCondition = new BoundaryCondition();
+        this->currentBoundaryCondition = new BoundaryCondition();
     }
     
-    QColor color = QColor(this->boundaryCondition->getCellColor());
+    QColor color = QColor(this->currentBoundaryCondition->getCellColor());
     QPixmap px(10, 10);
     
     px.fill(color);
     ui->btnCellColor->setIcon(px);
+    
+    this->originalObjectIds = this->currentBoundaryCondition->getObjectIds();
 }
 
 BoundaryConditionDialog::~BoundaryConditionDialog() {
@@ -82,29 +84,53 @@ BoundaryConditionDialog::~BoundaryConditionDialog() {
 
 void BoundaryConditionDialog::setHydrodynamicDataDialog(HydrodynamicDataDialog *dialog) {
     this->hydrodynamicDataDialog = dialog;
-    this->hydrodynamicDataDialog->ui->vtkWidget->getMouseInteractor()->setBoundaryCondition(boundaryCondition);
-    this->boundaryCondition->getLabelsActor()->SetVisibility(hydrodynamicDataDialog->ui->btnShowCellLabels->isChecked());
+    this->hydrodynamicDataDialog->ui->vtkWidget->getMouseInteractor()->setBoundaryCondition(currentBoundaryCondition);
+    this->currentBoundaryCondition->getLabelsActor()->SetVisibility(hydrodynamicDataDialog->ui->btnShowCellLabels->isChecked());
     
     connect(hydrodynamicDataDialog->ui->btnShowCellLabels, SIGNAL(clicked(bool)), this, SLOT(toggleLabelsActor(bool)));
     connect(hydrodynamicDataDialog->ui->vtkWidget->getMouseInteractor(), SIGNAL(objectSelected()), this, SLOT(showObjectIds()));
 }
 
 void BoundaryConditionDialog::on_rdoWaterLevel_clicked(bool checked) {
-    if (checked) {
-        ui->lblElementLabel->setText("Cells");
-        ui->lblElementIds->setText("-");
+    ui->lblElementLabel->setText("Cells");
+    ui->lblElementIds->setText("-");
+    
+    if (!currentBoundaryCondition->getObjectIds().isEmpty()) {
+        QString question = tr("Changing the condition type will remove the selected objects. Are you sure?");
+        QMessageBox::StandardButton button = QMessageBox::question(this, tr("Boundary Condition"), question);
+        
+        if (button == QMessageBox::No) {
+            ui->lblElementLabel->setText("Edges");
+            ui->lblElementIds->setText(currentBoundaryCondition->getObjectIdsStr());
+            ui->rdoWaterFlow->setChecked(true);
+        } else {
+            currentBoundaryCondition->clearObjectIds();
+            hydrodynamicDataDialog->ui->vtkWidget->getMouseInteractor()->renderBoundaryCondition(currentBoundaryCondition);
+        }
     }
 }
 
 void BoundaryConditionDialog::on_rdoWaterFlow_clicked(bool checked) {
-    if (checked) {
-        ui->lblElementLabel->setText("Edges");
-        ui->lblElementIds->setText("-");
+    ui->lblElementLabel->setText("Edges");
+    ui->lblElementIds->setText("-");
+    
+    if (!currentBoundaryCondition->getObjectIds().isEmpty()) {
+        QString question = tr("Changing the condition type will remove the selected objects. Are you sure?");
+        QMessageBox::StandardButton button = QMessageBox::question(this, tr("Boundary Condition"), question);
+        
+        if (button == QMessageBox::No) {
+            ui->lblElementLabel->setText("Cells");
+            ui->lblElementIds->setText(currentBoundaryCondition->getObjectIdsStr());
+            ui->rdoWaterLevel->setChecked(true);
+        } else {
+            currentBoundaryCondition->clearObjectIds();
+            hydrodynamicDataDialog->ui->vtkWidget->getMouseInteractor()->renderBoundaryCondition(currentBoundaryCondition);
+        }
     }
 }
 
 void BoundaryConditionDialog::on_btnTimeSeries_clicked() {
-    TimeSeriesDialog *timeSeriesDialog = new TimeSeriesDialog(this, boundaryCondition);
+    TimeSeriesDialog *timeSeriesDialog = new TimeSeriesDialog(this, currentBoundaryCondition);
     timeSeriesDialog->exec();
 }
 
@@ -115,8 +141,8 @@ void BoundaryConditionDialog::on_btnCellColor_clicked() {
         QPixmap px(10, 10);
         px.fill(color);
         
-        boundaryCondition->setCellColor(color.name());
-        boundaryCondition->getSelectionActor()->GetProperty()->SetColor(color.redF(), color.greenF(), color.blueF());
+        currentBoundaryCondition->setCellColor(color.name());
+        currentBoundaryCondition->getSelectionActor()->GetProperty()->SetColor(color.redF(), color.greenF(), color.blueF());
         hydrodynamicDataDialog->ui->vtkWidget->update();
         ui->btnCellColor->setIcon(px);
     }
@@ -151,13 +177,15 @@ void BoundaryConditionDialog::accept() {
         return;
     }
     
-    boundaryCondition->setType(ui->rdoWaterLevel->isChecked() ? BoundaryConditionType::WATER_LEVEL : BoundaryConditionType::WATER_FLOW);
-    boundaryCondition->setObjectIds(ui->lblElementIds->text());
-    boundaryCondition->setFunction(ui->rdoConstant->isChecked() ? BoundaryConditionFunction::CONSTANT : BoundaryConditionFunction::TIME_SERIES);
-    boundaryCondition->setConstantValue(ui->edtConstant->text().toDouble());
-    boundaryCondition->setInputModule(InputModule::HYDRODYNAMIC);
+    currentBoundaryCondition->setType(ui->rdoWaterLevel->isChecked() ? BoundaryConditionType::WATER_LEVEL : BoundaryConditionType::WATER_FLOW);
+    currentBoundaryCondition->setObjectIds(ui->lblElementIds->text());
+    currentBoundaryCondition->setFunction(ui->rdoConstant->isChecked() ? BoundaryConditionFunction::CONSTANT : BoundaryConditionFunction::TIME_SERIES);
+    currentBoundaryCondition->setConstantValue(ui->edtConstant->text().toDouble());
+    currentBoundaryCondition->setVerticalIntegratedOutflow(ui->chkVIO->isChecked());
+    currentBoundaryCondition->setQuota(ui->edtQuota->text().toDouble());
+    currentBoundaryCondition->setInputModule(InputModule::HYDRODYNAMIC);
     
-    configuration->addBoundaryCondition(boundaryCondition);
+    configuration->addBoundaryCondition(currentBoundaryCondition);
     
     int row = -1;
     
@@ -168,8 +196,8 @@ void BoundaryConditionDialog::accept() {
         row = hydrodynamicDataDialog->ui->tblBoundaryConditions->currentRow();
     }
     
-    hydrodynamicDataDialog->ui->tblBoundaryConditions->setItem(row, 0, new QTableWidgetItem(boundaryCondition->getTypeStr()));
-    hydrodynamicDataDialog->ui->tblBoundaryConditions->setItem(row, 1, new QTableWidgetItem(boundaryCondition->getFunctionStr()));
+    hydrodynamicDataDialog->ui->tblBoundaryConditions->setItem(row, 0, new QTableWidgetItem(currentBoundaryCondition->getTypeStr()));
+    hydrodynamicDataDialog->ui->tblBoundaryConditions->setItem(row, 1, new QTableWidgetItem(currentBoundaryCondition->getFunctionStr()));
     
     btnSingleCellPicker_clicked(false);
     btnMultipleCellPicker_clicked(false);
@@ -179,22 +207,12 @@ void BoundaryConditionDialog::accept() {
 }
 
 void BoundaryConditionDialog::reject() {
-    if (isNewBoundaryCondition) {
-        delete boundaryCondition;
-    }
-    
-    hydrodynamicDataDialog->ui->vtkWidget->togglePicker(false);
-    hydrodynamicDataDialog->toggleWidgets(true);
+    undoChanges();
     QDialog::reject();
 }
 
 void BoundaryConditionDialog::closeEvent(QCloseEvent *event) {
-    if (isNewBoundaryCondition) {
-        delete boundaryCondition;
-    }
-    
-    hydrodynamicDataDialog->ui->vtkWidget->togglePicker(false);
-    hydrodynamicDataDialog->toggleWidgets(true);
+    undoChanges();
     QDialog::closeEvent(event);
 }
 
@@ -209,7 +227,7 @@ void BoundaryConditionDialog::btnClearSelection_clicked() {
 }
 
 void BoundaryConditionDialog::showObjectIds() {
-    QSet<vtkIdType> selectedCellsIds = boundaryCondition->getObjectIds();
+    QSet<vtkIdType> selectedCellsIds = currentBoundaryCondition->getObjectIds();
     
     if (selectedCellsIds.isEmpty()) {
         ui->lblElementIds->setText("-");
@@ -225,7 +243,7 @@ void BoundaryConditionDialog::showObjectIds() {
 }
 
 bool BoundaryConditionDialog::isValid() {
-    if (boundaryCondition->getObjectIds().isEmpty()) {
+    if (currentBoundaryCondition->getObjectIds().isEmpty()) {
         QMessageBox::warning(this, tr("Boundary Condition"), tr("Please pick at least one cell or edge from the grid."));
         return false;
     }
@@ -244,5 +262,16 @@ bool BoundaryConditionDialog::isValid() {
 }
 
 void BoundaryConditionDialog::toggleLabelsActor(bool show) {
-    boundaryCondition->getLabelsActor()->SetVisibility(show);
+    currentBoundaryCondition->getLabelsActor()->SetVisibility(show);
+}
+
+void BoundaryConditionDialog::undoChanges() {
+    if (isNewBoundaryCondition) {
+        delete currentBoundaryCondition;
+    } else {
+        currentBoundaryCondition->setObjectIds(originalObjectIds);
+    }
+    
+    hydrodynamicDataDialog->ui->vtkWidget->togglePicker(false);
+    hydrodynamicDataDialog->toggleWidgets(true);
 }

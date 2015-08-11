@@ -848,5 +848,101 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>btnNavigateMode</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>btnPickIndividualCells</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>390</x>
+     <y>30</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>600</x>
+     <y>30</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnNavigateMode</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>btnPickCellSet</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>390</x>
+     <y>30</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>642</x>
+     <y>30</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnZoomArea</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>btnPickIndividualCells</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>474</x>
+     <y>30</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>600</x>
+     <y>30</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnZoomArea</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>btnPickCellSet</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>474</x>
+     <y>30</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>642</x>
+     <y>30</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnPickIndividualCells</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>btnZoomArea</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>600</x>
+     <y>30</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>474</x>
+     <y>30</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnPickCellSet</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>btnZoomArea</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>642</x>
+     <y>30</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>474</x>
+     <y>30</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
 </ui>

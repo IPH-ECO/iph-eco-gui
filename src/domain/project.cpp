@@ -161,13 +161,23 @@ void Project::removeGridDataConfiguration(const QString &configurationName) {
     this->setDirty(true);
 }
 
-GridDataConfiguration* Project::getGridDataConfiguration(const QString &configurationName) {
+GridDataConfiguration* Project::getGridDataConfiguration(const QString &configurationName) const {
     for (QSet<GridDataConfiguration*>::const_iterator it = gridDataConfigurations.begin(); it != gridDataConfigurations.end(); it++) {
         if ((*it)->getName() == configurationName) {
             return *it;
         }
     }
 
+    return nullptr;
+}
+
+GridDataConfiguration* Project::getGridDataConfiguration(const uint &id) const {
+    for (QSet<GridDataConfiguration*>::const_iterator it = gridDataConfigurations.begin(); it != gridDataConfigurations.end(); it++) {
+        if ((*it)->getId() == id) {
+            return *it;
+        }
+    }
+    
     return nullptr;
 }
 
