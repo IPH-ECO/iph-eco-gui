@@ -22,7 +22,7 @@ private:
 	Ui::BoundaryConditionDialog *ui;
     HydrodynamicConfiguration *configuration;
     BoundaryCondition *currentBoundaryCondition;
-    QToolButton *btnSingleCellPicker;
+    QToolButton *btnIndividualCellPicker;
     QToolButton *btnMultipleCellPicker;
     HydrodynamicDataDialog *hydrodynamicDataDialog;
     QSet<vtkIdType> originalObjectIds;
@@ -43,7 +43,7 @@ private slots:
     void on_rdoWaterFlow_clicked(bool checked);
     void on_btnTimeSeries_clicked();
     void on_btnCellColor_clicked();
-    void btnSingleCellPicker_clicked(bool checked);
+    void btnIndividualCellPicker_clicked(bool checked);
     void btnMultipleCellPicker_clicked(bool checked);
     void btnClearSelection_clicked();
     void showObjectIds();

@@ -331,6 +331,7 @@ void ProjectRepository::save(bool makeCopy) {
 }
 
 void ProjectRepository::saveMeshes(Project *project) {
+    QSqlQuery query(databaseUtility->getDatabase());
     QSet<Mesh*> meshes = project->getMeshes();
     QStringList meshIds;
     
@@ -340,7 +341,6 @@ void ProjectRepository::saveMeshes(Project *project) {
     }
     
     for (QSet<Mesh*>::const_iterator it = meshes.begin(); it != meshes.end() && !operationCanceled; it++) {
-        QSqlQuery query(databaseUtility->getDatabase());
         Mesh *mesh = *it;
         QString sql;
         
@@ -381,7 +381,6 @@ void ProjectRepository::saveMeshes(Project *project) {
     }
     
     // Handle exclusions
-    QSqlQuery query(databaseUtility->getDatabase());
     QString meshDeleteSql, meshPolygonDeleteSql;
     
     if (meshIds.isEmpty()) {
@@ -403,14 +402,13 @@ void ProjectRepository::saveMeshes(Project *project) {
 
 void ProjectRepository::saveMeshPolygons(Mesh *mesh) {
     QList<MeshPolygon*> meshPolygons = mesh->getIslands() + mesh->getRefinementAreas();
+    QSqlQuery query(databaseUtility->getDatabase());
     QStringList meshPolygonIds;
     
     meshPolygons.prepend(mesh->getBoundaryPolygon());
     
     for (QList<MeshPolygon*>::const_iterator it = meshPolygons.begin(); it != meshPolygons.end() && !operationCanceled; it++) {
         MeshPolygon *meshPolygon = *it;
-        QSqlQuery query(databaseUtility->getDatabase());
-        
         if (meshPolygon->isPersisted()) {
             query.prepare("update mesh_polygon set name = :n, type = :t, poly_data = :p, minimum_angle = :mi, maximum_edge_length = :ma where id = :i");
             query.bindValue(":i", meshPolygon->getId());
@@ -445,14 +443,13 @@ void ProjectRepository::saveMeshPolygons(Mesh *mesh) {
         return;
     }
     
-    QSqlQuery query(databaseUtility->getDatabase());
-    
     query.prepare("delete from mesh_polygon where id not in (" + meshPolygonIds.join(",") + ") and mesh_id = " + QString::number(mesh->getId()));
     query.exec();
 }
 
 void ProjectRepository::saveGridDataConfigurations(Project *project) {
     QSet<GridDataConfiguration*> configurations = project->getGridDataConfigurations();
+    QSqlQuery query(databaseUtility->getDatabase());
     QStringList configurationIds;
     
     if (!configurations.isEmpty()) {
@@ -462,8 +459,6 @@ void ProjectRepository::saveGridDataConfigurations(Project *project) {
     
     for (QSet<GridDataConfiguration*>::const_iterator it = configurations.begin(); it != configurations.end() && !operationCanceled; it++) {
         GridDataConfiguration *configuration = *it;
-        QSqlQuery query(databaseUtility->getDatabase());
-        
         if (configuration->isPersisted()) {
             query.prepare("update grid_data_configuration set name = :n where id = :i");
             query.bindValue(":i", configuration->getId());
@@ -490,7 +485,6 @@ void ProjectRepository::saveGridDataConfigurations(Project *project) {
     }
     
     // Handle exclusions
-    QSqlQuery query(databaseUtility->getDatabase());
     QString configurationDeleteSql, gridDataDeleteSql;
     
     if (configurationIds.isEmpty()) {
@@ -601,7 +595,9 @@ void ProjectRepository::saveHydrodynamicConfigurations(Project *project) {
         QApplication::processEvents();
     }
     
-    for (HydrodynamicConfiguration *configuration : configurations) {
+    for (QSet<HydrodynamicConfiguration*>::const_iterator it = configurations.begin(); it != configurations.end() && !operationCanceled; it++) {
+        HydrodynamicConfiguration *configuration = *it;
+    
         if (configuration->isPersisted()) {
             query.prepare("update hydrodynamic_configuration set name = :n, grid_data_configuration_id = :g where id = :i");
             query.bindValue(":i", configuration->getId());
@@ -696,7 +692,9 @@ void ProjectRepository::saveBoundaryConditions(HydrodynamicConfiguration *config
     QSqlQuery query(databaseUtility->getDatabase());
     QStringList boundaryConditionIds;
 
-    for (BoundaryCondition *boundaryCondition : boundaryConditions) {
+    for (int i = 0; i < boundaryConditions.size() && !operationCanceled; i++) {
+        BoundaryCondition *boundaryCondition = boundaryConditions[i];
+
         if (boundaryCondition->isPersisted()) {
             query.prepare("update boundary_condition set type = :t, object_ids = :o, function = :f, constant_value = :c, cell_color = :cc, vertical_integrated_outflow = :v, quota = :q where id = :i");
             query.bindValue(":i", boundaryCondition->getId());
@@ -784,14 +782,14 @@ int ProjectRepository::getMaximumSaveProgress() {
     
     saveSteps += meshes.size();
     
-    for (QSet<Mesh*>::const_iterator it = meshes.begin(); it != meshes.end(); it++) {
-        saveSteps += 1 + (*it)->getIslands().size() + (*it)->getRefinementAreas().size(); // plus one for boundary polygon
+    for (Mesh *mesh : meshes) {
+        saveSteps += 1 + mesh->getIslands().size() + mesh->getRefinementAreas().size(); // plus one for boundary polygon
     }
     
     saveSteps += configurations.size();
     
-    for (QSet<GridDataConfiguration*>::const_iterator it = configurations.begin(); it != configurations.end(); it++) {
-        saveSteps += (*it)->getGridDataVector().size();
+    for (GridDataConfiguration *configuration : configurations) {
+        saveSteps += configuration->getGridDataVector().size();
     }
     
     return saveSteps;
@@ -802,38 +800,13 @@ int ProjectRepository::getMaximumLoadProgress() {
     
     int loadSteps = 0;
     QSqlQuery query(databaseUtility->getDatabase());
+    QStringList tables = { "mesh", "mesh_polygon", "grid_data_configuration", "grid_data", "hydrodynamic_configuration", "hydrodynamic_parameter", "boundary_condition", "time_series" };
     
-    query.exec("select count(*) from mesh");
-    query.next();
-    loadSteps += query.value(0).toInt();
-    
-    query.exec("select count(*) from mesh_polygon");
-    query.next();
-    loadSteps += query.value(0).toInt();
-    
-    query.exec("select count(*) from grid_data_configuration");
-    query.next();
-    loadSteps += query.value(0).toInt();
-    
-    query.exec("select count(*) from grid_data");
-    query.next();
-    loadSteps += query.value(0).toInt();
-
-    query.exec("select count(*) from hydrodynamic_configuration");
-    query.next();
-    loadSteps += query.value(0).toInt();
-
-    query.exec("select count(*) from hydrodynamic_parameter");
-    query.next();
-    loadSteps += query.value(0).toInt();
-    
-    query.exec("select count(*) from boundary_condition");
-    query.next();
-    loadSteps += query.value(0).toInt();
-    
-    query.exec("select count(*) from time_series");
-    query.next();
-    loadSteps += query.value(0).toInt();
+    for (QString table : tables) {
+        query.exec("select count(*) from " + table);
+        query.next();
+        loadSteps += query.value(0).toInt();
+    }
     
     return loadSteps;
 }

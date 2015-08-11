@@ -122,7 +122,7 @@ void HydrodynamicMouseInteractor::renderBoundaryCondition(BoundaryCondition *bou
     
     this->GetDefaultRenderer()->GetRenderWindow()->Render();
     
-    if (boundaryCondition == currentBoundaryCondition) {
+    if (cellPickMode != CellPickMode::UNDEFINED) {
         emit objectSelected();
     }
 }
