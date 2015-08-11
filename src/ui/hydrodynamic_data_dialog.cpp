@@ -209,6 +209,7 @@ void HydrodynamicDataDialog::on_cbxConfiguration_currentIndexChanged(const QStri
     } else {
         ui->edtConfigurationName->clear();
         currentConfiguration = unsavedConfiguration;
+        ui->vtkWidget->getMouseInteractor()->setHydrodynamicConfiguration(nullptr);
     }
     
     ui->btnDone->setEnabled(isConfigurationNamePresent);

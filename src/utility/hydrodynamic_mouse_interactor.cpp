@@ -161,11 +161,16 @@ void HydrodynamicMouseInteractor::clearSelection() {
 }
 
 void HydrodynamicMouseInteractor::setHydrodynamicConfiguration(HydrodynamicConfiguration *hydrodynamicConfiguration) {
-    this->hydrodynamicConfiguration = hydrodynamicConfiguration;
-    this->meshPolyData = hydrodynamicConfiguration->getGridDataConfiguration()->getMesh()->getPolyData();
-    
-    this->clearSelection();
-    this->deactivateCellPicker();
+    if (hydrodynamicConfiguration == nullptr && this->hydrodynamicConfiguration != nullptr) {
+        for (BoundaryCondition *boundaryCondition : this->hydrodynamicConfiguration->getBoundaryConditions()) {
+            removeBoundaryCondition(boundaryCondition);
+        }
+    } else {
+        this->hydrodynamicConfiguration = hydrodynamicConfiguration;
+        this->meshPolyData = hydrodynamicConfiguration->getGridDataConfiguration()->getMesh()->getPolyData();
+        this->clearSelection();
+        this->deactivateCellPicker();
+    }
 }
 
 void HydrodynamicMouseInteractor::setBoundaryCondition(BoundaryCondition *boundaryCondition) {
