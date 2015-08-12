@@ -158,7 +158,7 @@ void BoundaryConditionDialog::on_btnCellColor_clicked() {
 void BoundaryConditionDialog::btnIndividualObjectPicker_clicked(bool checked) {
     btnMultipleCellPicker->setChecked(false);
     
-    hydrodynamicDataDialog->ui->vtkWidget->togglePicker(checked, CellPickMode::INDIVIDUAL);
+    hydrodynamicDataDialog->ui->vtkWidget->togglePicker(checked, PickerMode::INDIVIDUAL_CELL);
     
     if (checked) {
         hydrodynamicDataDialog->activateWindow();
@@ -170,7 +170,7 @@ void BoundaryConditionDialog::btnIndividualObjectPicker_clicked(bool checked) {
 void BoundaryConditionDialog::btnMultipleCellPicker_clicked(bool checked) {
     btnIndividualObjectPicker->setChecked(false);
     
-    hydrodynamicDataDialog->ui->vtkWidget->togglePicker(checked, CellPickMode::MULTIPLE);
+    hydrodynamicDataDialog->ui->vtkWidget->togglePicker(checked, PickerMode::MULTIPLE_CELL);
     
     if (checked) {
         hydrodynamicDataDialog->activateWindow();

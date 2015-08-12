@@ -364,7 +364,7 @@ void GridDataDialog::on_btnPickIndividualCells_clicked(bool checked) {
     ui->btnPickCellSet->setChecked(false);
     ui->btnPickCellSet->setEnabled(!checked);
     ui->gridDataVTKWidget->toggleCellLabels(CellLabelType::UNDEFINED);
-    ui->gridDataVTKWidget->toggleCellPick(checked, CellPickMode::INDIVIDUAL);
+    ui->gridDataVTKWidget->toggleCellPick(checked, PickerMode::INDIVIDUAL_CELL);
 }
 
 void GridDataDialog::on_btnPickCellSet_clicked(bool checked) {
@@ -375,7 +375,7 @@ void GridDataDialog::on_btnPickCellSet_clicked(bool checked) {
     ui->btnPickIndividualCells->setChecked(false);
     ui->btnPickIndividualCells->setEnabled(!checked);
     ui->gridDataVTKWidget->toggleCellLabels(CellLabelType::UNDEFINED);
-    ui->gridDataVTKWidget->toggleCellPick(checked, CellPickMode::MULTIPLE);
+    ui->gridDataVTKWidget->toggleCellPick(checked, PickerMode::MULTIPLE_CELL);
 }
 
 void GridDataDialog::on_btnShowCellLabels_clicked(bool checked) {

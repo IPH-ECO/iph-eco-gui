@@ -1,6 +1,6 @@
 #ifndef IPH_TYPES_H
 #define IPH_TYPES_H
 
-enum class CellPickMode { INDIVIDUAL = 1, MULTIPLE, UNDEFINED };
+enum class PickerMode { INDIVIDUAL_CELL = 1, MULTIPLE_CELL, INDIVIDUAL_EDGE, NO_PICKER };
 
 #endif // IPH_TYPES_H

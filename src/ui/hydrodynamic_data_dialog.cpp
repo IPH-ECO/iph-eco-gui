@@ -226,7 +226,7 @@ void HydrodynamicDataDialog::on_cbxGridDataConfiguration_currentIndexChanged(con
     if (isGridDataNamePresent) {
         GridDataConfiguration *gridDataConfiguration = currentConfiguration->getGridDataConfiguration();
         
-        if (currentGridDataConfiguration != nullptr && gridDataConfiguration != nullptr && currentConfiguration->getGridDataConfiguration()->getName() != gridDataConfigurationName && currentConfiguration->getBoundaryConditions().size() > 0) {
+        if (currentGridDataConfiguration && gridDataConfiguration && currentConfiguration->getGridDataConfiguration()->getName() != gridDataConfigurationName && !currentConfiguration->getBoundaryConditions().empty()) {
             QString question = tr("Changing the mesh in this configuration will remove all created boundary conditions. Are you sure?");
             QMessageBox::StandardButton button = QMessageBox::question(this, tr("Hydrodynamic Data"), question);
             

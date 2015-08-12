@@ -36,7 +36,7 @@ private slots:
 public:
     explicit HydrodynamicVTKWidget(QWidget *parent);
 	void render(HydrodynamicConfiguration *hydrodynamicConfiguration);
-    void togglePicker(bool activate, const CellPickMode &cellPickMode = CellPickMode::UNDEFINED);
+    void togglePicker(bool activate, const PickerMode &pickerMode = PickerMode::NO_PICKER);
     vtkIdTypeArray* getSelectedCellIds() const;
     HydrodynamicMouseInteractor* getMouseInteractor() const;
 

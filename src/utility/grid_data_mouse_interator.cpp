@@ -15,7 +15,7 @@
 #include <vtkCellData.h>
 
 GridDataMouseInteractor::GridDataMouseInteractor() :
-    selectionIdLabelsActor(nullptr), selectionActor(nullptr), cellIdsArray(nullptr), meshPolyData(nullptr), cellPickMode(CellPickMode::UNDEFINED), lastCellId(-1)
+    selectionIdLabelsActor(nullptr), selectionActor(nullptr), cellIdsArray(nullptr), meshPolyData(nullptr), pickerMode(PickerMode::NO_PICKER), lastCellId(-1)
 {}
 
 void GridDataMouseInteractor::OnLeftButtonDown() {
@@ -33,7 +33,7 @@ void GridDataMouseInteractor::OnLeftButtonDown() {
 void GridDataMouseInteractor::OnLeftButtonUp() {
     vtkInteractorStyleRubberBandPick::OnLeftButtonUp();
     
-    if (cellPickMode == CellPickMode::MULTIPLE && meshPolyData != nullptr) {
+    if (pickerMode == PickerMode::MULTIPLE_CELL && meshPolyData != nullptr) {
         vtkSmartPointer<vtkExtractSelectedFrustum> extractor = vtkSmartPointer<vtkExtractSelectedFrustum>::New();
         extractor->PreserveTopologyOff();
         extractor->SetInputData(meshPolyData);
@@ -128,18 +128,18 @@ vtkActor2D* GridDataMouseInteractor::getSelectionIdLabelsActor() {
     return selectionIdLabelsActor;
 }
 
-void GridDataMouseInteractor::activateCellPicking(const CellPickMode &cellPickMode, vtkIdTypeArray *cellIdsArray) {
+void GridDataMouseInteractor::activateCellPicking(const PickerMode &pickerMode, vtkIdTypeArray *cellIdsArray) {
     selectionActor = vtkSmartPointer<vtkActor>::New();
     selectionIdLabelsActor = vtkSmartPointer<vtkActor2D>::New();
     this->cellIdsArray = cellIdsArray;
-    this->cellPickMode = cellPickMode;
+    this->pickerMode = pickerMode;
     
     this->GetDefaultRenderer()->AddActor(selectionActor);
 }
 
 void GridDataMouseInteractor::deactivateCellPicking() {
     this->cellIdsArray = nullptr;
-    this->cellPickMode = CellPickMode::UNDEFINED;
+    this->pickerMode = PickerMode::NO_PICKER;
     this->CurrentMode = 0; // VTKISRBP_ORIENT
     this->GetDefaultRenderer()->RemoveActor(selectionActor);
     this->GetDefaultRenderer()->RemoveActor2D(selectionIdLabelsActor);

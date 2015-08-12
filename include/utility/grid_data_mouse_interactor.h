@@ -14,7 +14,7 @@ private:
     vtkSmartPointer<vtkActor> selectionActor;
     vtkIdTypeArray *cellIdsArray;
     vtkPolyData *meshPolyData;
-    CellPickMode cellPickMode;
+    PickerMode pickerMode;
     vtkIdType lastCellId;
     
     void renderSelection();
@@ -30,7 +30,7 @@ public:
     virtual void OnLeftButtonDown();
     virtual void OnLeftButtonUp();
     
-    void activateCellPicking(const CellPickMode &cellPickMode, vtkIdTypeArray *cellIdsArray);
+    void activateCellPicking(const PickerMode &pickerMode, vtkIdTypeArray *cellIdsArray);
     void deactivateCellPicking();
     void setMeshPolyData(vtkPolyData *meshPolyData);
     void clearSelection();

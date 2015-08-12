@@ -16,7 +16,7 @@
 #include <QColor>
 
 HydrodynamicMouseInteractor::HydrodynamicMouseInteractor() :
-    meshPolyData(nullptr), hydrodynamicConfiguration(nullptr), currentBoundaryCondition(nullptr), cellPickMode(CellPickMode::UNDEFINED), lastCellId(-1) {}
+    meshPolyData(nullptr), hydrodynamicConfiguration(nullptr), currentBoundaryCondition(nullptr), pickerMode(PickerMode::NO_PICKER), lastCellId(-1) {}
 
 void HydrodynamicMouseInteractor::OnLeftButtonDown() {
     int *clickPosition = this->GetInteractor()->GetEventPosition();
@@ -33,7 +33,7 @@ void HydrodynamicMouseInteractor::OnLeftButtonDown() {
 void HydrodynamicMouseInteractor::OnLeftButtonUp() {
     vtkInteractorStyleRubberBandPick::OnLeftButtonUp();
     
-    if (cellPickMode == CellPickMode::MULTIPLE && meshPolyData != nullptr) {
+    if (pickerMode == PickerMode::MULTIPLE_CELL && meshPolyData != nullptr) {
         vtkSmartPointer<vtkExtractSelectedFrustum> extractor = vtkSmartPointer<vtkExtractSelectedFrustum>::New();
         extractor->PreserveTopologyOff();
         extractor->SetInputData(meshPolyData);
@@ -122,7 +122,7 @@ void HydrodynamicMouseInteractor::renderBoundaryCondition(BoundaryCondition *bou
     
     this->GetDefaultRenderer()->GetRenderWindow()->Render();
     
-    if (cellPickMode != CellPickMode::UNDEFINED) {
+    if (pickerMode != PickerMode::NO_PICKER) {
         emit objectSelected();
     }
 }
@@ -142,12 +142,12 @@ void HydrodynamicMouseInteractor::highlightBoundaryCondition(BoundaryCondition *
     this->GetDefaultRenderer()->GetRenderWindow()->Render();
 }
 
-void HydrodynamicMouseInteractor::activateCellPicker(const CellPickMode &cellPickMode) {
-    this->cellPickMode = cellPickMode;
+void HydrodynamicMouseInteractor::activateCellPicker(const PickerMode &pickerMode) {
+    this->pickerMode = pickerMode;
 }
 
 void HydrodynamicMouseInteractor::deactivateCellPicker() {
-    this->cellPickMode = CellPickMode::UNDEFINED;
+    this->pickerMode = PickerMode::NO_PICKER;
     this->CurrentMode = 0; // VTKISRBP_ORIENT
 }
 

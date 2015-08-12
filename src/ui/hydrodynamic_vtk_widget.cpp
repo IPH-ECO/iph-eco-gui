@@ -127,15 +127,15 @@ void HydrodynamicVTKWidget::changeBackgroundColor(const double &r, const double 
     this->update();
 }
 
-void HydrodynamicVTKWidget::togglePicker(bool activate, const CellPickMode &cellPickMode) {
+void HydrodynamicVTKWidget::togglePicker(bool activate, const PickerMode &pickerMode) {
     isCellPickActivated = activate;
     
     if (activate) {
-        if (cellPickMode != CellPickMode::UNDEFINED) {
-            if (cellPickMode == CellPickMode::MULTIPLE) {
+        if (pickerMode != PickerMode::NO_PICKER) {
+            if (pickerMode == PickerMode::MULTIPLE_CELL) {
                 mouseInteractor->StartSelect();
             }
-            mouseInteractor->activateCellPicker(cellPickMode);
+            mouseInteractor->activateCellPicker(pickerMode);
         }
     } else {
         mouseInteractor->deactivateCellPicker();

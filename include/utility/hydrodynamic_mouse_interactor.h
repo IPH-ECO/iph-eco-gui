@@ -15,7 +15,7 @@ private:
     vtkPolyData *meshPolyData;
     HydrodynamicConfiguration *hydrodynamicConfiguration;
     BoundaryCondition *currentBoundaryCondition;
-    CellPickMode cellPickMode;
+    PickerMode pickerMode;
     vtkIdType lastCellId;
 public:
     static HydrodynamicMouseInteractor* New();
@@ -26,7 +26,7 @@ public:
     void renderBoundaryCondition(BoundaryCondition *boundaryCondition);
     void removeBoundaryCondition(BoundaryCondition *boundaryCondition);
     void highlightBoundaryCondition(BoundaryCondition *boundaryCondition, bool hightlight);
-    void activateCellPicker(const CellPickMode &cellPickMode);
+    void activateCellPicker(const PickerMode &pickerMode);
     void deactivateCellPicker();
     void clearSelection();
     void setHydrodynamicConfiguration(HydrodynamicConfiguration *hydrodynamicConfiguration);

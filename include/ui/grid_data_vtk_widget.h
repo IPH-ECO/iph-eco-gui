@@ -62,7 +62,7 @@ public:
     void render(GridData *gridData);
     void changeBackgroundColor(const double &r, const double &g, const double &b);
     void clear();
-    void toggleCellPick(bool activate, const CellPickMode &cellPickMode = CellPickMode::UNDEFINED);
+    void toggleCellPick(bool activate, const PickerMode &pickerMode = PickerMode::NO_PICKER);
     void toggleCellLabels(const CellLabelType &cellLabelType = CellLabelType::UNDEFINED);
     void lockView(bool lock);
     void exportToImage(const QString &fileName);

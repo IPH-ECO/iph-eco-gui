@@ -360,19 +360,19 @@ void GridDataVTKWidget::toggleZoomArea(bool activate) {
     }
 }
 
-void GridDataVTKWidget::toggleCellPick(bool activate, const CellPickMode &cellPickMode) {
+void GridDataVTKWidget::toggleCellPick(bool activate, const PickerMode &pickerMode) {
     isCellPickActivated = activate;
     mouseInteractor->deactivateCellPicking();
     
-    if (activate && cellPickMode != CellPickMode::UNDEFINED) {
+    if (activate && pickerMode != PickerMode::NO_PICKER) {
         selectedCellIds = vtkSmartPointer<vtkIdTypeArray>::New();
         selectedCellIds->SetName("cellIds");
         selectedCellIds->SetNumberOfComponents(1);
         
-        if (cellPickMode == CellPickMode::MULTIPLE) {
+        if (pickerMode == PickerMode::MULTIPLE_CELL) {
             mouseInteractor->StartSelect();
         }
-        mouseInteractor->activateCellPicking(cellPickMode, selectedCellIds);
+        mouseInteractor->activateCellPicking(pickerMode, selectedCellIds);
     }
 }
 
