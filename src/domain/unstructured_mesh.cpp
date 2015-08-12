@@ -5,6 +5,7 @@
 #include <vtkPolyData.h>
 #include <vtkCellArray.h>
 #include <vtkTriangle.h>
+#include <QMap>
 
 UnstructuredMesh::UnstructuredMesh() {}
 
@@ -60,7 +61,9 @@ void UnstructuredMesh::generate() {
     vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
     vtkSmartPointer<vtkCellArray> triangles = vtkSmartPointer<vtkCellArray>::New();
     polyData = vtkSmartPointer<vtkPolyData>::New();
+    QMap<Point, vtkIdType> pointsMap;
     vtkIdType i = 0;
+    
 
     for (CDT::Finite_faces_iterator fit = cdt.finite_faces_begin(); fit != cdt.finite_faces_end(); ++fit) {
         if (!fit->info().isInDomain()) {
@@ -70,15 +73,24 @@ void UnstructuredMesh::generate() {
         CGAL::Triangle_2<K> cgalTriangle = cdt.triangle(fit);
         Point a(cgalTriangle[0]), b(cgalTriangle[1]), c(cgalTriangle[2]);
 		vtkSmartPointer<vtkTriangle> _vtkTriangle = vtkSmartPointer<vtkTriangle>::New();
+        
+        if (!pointsMap.contains(a)) {
+            pointsMap.insert(a, i++);
+            points->InsertNextPoint(a.x(), a.y(), 0.0);
+        }
+        if (!pointsMap.contains(b)) {
+            pointsMap.insert(b, i++);
+            points->InsertNextPoint(b.x(), b.y(), 0.0);
+        }
+        if (!pointsMap.contains(c)) {
+            pointsMap.insert(c, i++);
+            points->InsertNextPoint(c.x(), c.y(), 0.0);
+        }
 
 		_vtkTriangle->GetPointIds()->SetNumberOfIds(3);
-        _vtkTriangle->GetPointIds()->SetId(0, i++);
-        _vtkTriangle->GetPointIds()->SetId(1, i++);
-        _vtkTriangle->GetPointIds()->SetId(2, i++);
-
-        points->InsertNextPoint(a.x(), a.y(), 0.0);
-        points->InsertNextPoint(b.x(), b.y(), 0.0);
-        points->InsertNextPoint(c.x(), c.y(), 0.0);
+        _vtkTriangle->GetPointIds()->SetId(0, pointsMap.value(a));
+        _vtkTriangle->GetPointIds()->SetId(1, pointsMap.value(b));
+        _vtkTriangle->GetPointIds()->SetId(2, pointsMap.value(c));
 
         triangles->InsertNextCell(_vtkTriangle);
     }

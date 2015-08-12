@@ -1,5 +1,7 @@
 #include "include/domain/structured_mesh.h"
 
+#include "include/utility/cgal_definitions.h"
+
 #include <vtkPolygon.h>
 #include <vtkPoints.h>
 #include <vtkCellArray.h>
@@ -32,8 +34,7 @@ void StructuredMesh::generate() {
     double x = bounds[0];
     double y = bounds[2];
     int count = 0, currentStep = 0;
-    
-    points->SetNumberOfPoints(columns * rows * 4);
+    QMap<Point, vtkIdType> pointsMap;
     
     for (int i = 0; i < rows && !generationCanceled; i++) {
         for (int j = 0; j < columns && !generationCanceled; j++) {
@@ -45,17 +46,24 @@ void StructuredMesh::generate() {
             
             if (includeQuad) {
                 vtkSmartPointer<vtkQuad> quad = vtkSmartPointer<vtkQuad>::New();
-                double quadCoordinates[4][3] = {
-                    { x, y, 0.0 },
-                    { x + this->resolution, y, 0.0 },
-                    { x + this->resolution, y + this->resolution, 0.0 },
-                    { x, y + this->resolution }
+                Point quadCoordinates[4] = {
+                    Point(x, y),
+                    Point(x + this->resolution, y),
+                    Point(x + this->resolution, y + this->resolution),
+                    Point(x, y + this->resolution)
                 };
                 
+                quad->GetPointIds()->SetNumberOfIds(4);
+                
                 for (int k = 0; k < 4; k++) {
-                    quad->GetPointIds()->SetId(k, count);
-                    points->SetPoint(count, quadCoordinates[k]);
-                    count++;
+                    Point point = quadCoordinates[k];
+                    
+                    if (!pointsMap.contains(point)) {
+                        pointsMap.insert(point, count++);
+                        points->InsertNextPoint(point.x(), point.y(), 0.0);
+                    }
+                    
+                    quad->GetPointIds()->SetId(k, pointsMap.value(point));
                 }
                 
                 quads->InsertNextCell(quad);
