@@ -134,10 +134,15 @@ void HydrodynamicVTKWidget::togglePicker(bool activate, const PickerMode &picker
         if (pickerMode != PickerMode::NO_PICKER) {
             if (pickerMode == PickerMode::MULTIPLE_CELL) {
                 mouseInteractor->StartSelect();
+            } else if (pickerMode == PickerMode::INDIVIDUAL_EDGE) {
+                mouseInteractor->StartSelect();
+                meshActor->PickableOff();
             }
+            
             mouseInteractor->activateCellPicker(pickerMode);
         }
     } else {
+        meshActor->PickableOn();
         mouseInteractor->deactivateCellPicker();
     }
 }

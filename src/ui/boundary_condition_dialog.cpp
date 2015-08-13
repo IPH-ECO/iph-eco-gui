@@ -14,7 +14,8 @@
 enum class CustomButtonRole { INDIVIDUAL_CELL_PICKER = 1, MULTIPLE_CELL_PICKER, CLEAR_SELECTION };
 
 BoundaryConditionDialog::BoundaryConditionDialog(HydrodynamicConfiguration *configuration, BoundaryCondition *boundaryCondition) :
-    QDialog(nullptr), ui(new Ui::BoundaryConditionDialog), configuration(configuration), currentBoundaryCondition(boundaryCondition), isNewBoundaryCondition(boundaryCondition == nullptr)
+    QDialog(nullptr), ui(new Ui::BoundaryConditionDialog),
+    configuration(configuration), currentBoundaryCondition(boundaryCondition), isNewBoundaryCondition(boundaryCondition == nullptr)
 {
 	ui->setupUi(this);
     this->setWindowModality(Qt::WindowModal);
@@ -106,6 +107,7 @@ void BoundaryConditionDialog::on_rdoWaterLevel_clicked(bool checked) {
             ui->lblElementLabel->setText("Edges");
             ui->lblElementIds->setText(currentBoundaryCondition->getObjectIdsStr());
             ui->rdoWaterFlow->setChecked(true);
+            btnMultipleCellPicker->setChecked(false);
             btnMultipleCellPicker->setEnabled(false);
         } else {
             currentBoundaryCondition->clearObjectIds();
@@ -157,8 +159,7 @@ void BoundaryConditionDialog::on_btnCellColor_clicked() {
 
 void BoundaryConditionDialog::btnIndividualObjectPicker_clicked(bool checked) {
     btnMultipleCellPicker->setChecked(false);
-    
-    hydrodynamicDataDialog->ui->vtkWidget->togglePicker(checked, PickerMode::INDIVIDUAL_CELL);
+    hydrodynamicDataDialog->ui->vtkWidget->togglePicker(checked, ui->rdoWaterFlow->isChecked() ? PickerMode::INDIVIDUAL_EDGE : PickerMode::INDIVIDUAL_CELL);
     
     if (checked) {
         hydrodynamicDataDialog->activateWindow();
@@ -251,7 +252,7 @@ void BoundaryConditionDialog::showObjectIds() {
 
 bool BoundaryConditionDialog::isValid() {
     if (currentBoundaryCondition->getObjectIds().isEmpty()) {
-        QMessageBox::warning(this, tr("Boundary Condition"), tr("Please pick at least one cell or edge from the grid."));
+        QMessageBox::warning(this, tr("Boundary Condition"), tr("Please pick at least one %1 from the grid.").arg(ui->rdoWaterLevel->isChecked() ? "cell" : "edge"));
         return false;
     }
     

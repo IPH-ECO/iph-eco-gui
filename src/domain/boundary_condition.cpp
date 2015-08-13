@@ -1,9 +1,11 @@
 #include "include/domain/boundary_condition.h"
 
 #include <QStringList>
+#include <vtkProperty.h>
 
 BoundaryCondition::BoundaryCondition() : id(0), type(BoundaryConditionType::WATER_LEVEL), function(BoundaryConditionFunction::CONSTANT), cellColor("#FF0000") {
     selectionActor = vtkSmartPointer<vtkActor>::New();
+    selectionActor->GetProperty()->LightingOff();
     labelsActor = vtkSmartPointer<vtkActor2D>::New();
 }
 

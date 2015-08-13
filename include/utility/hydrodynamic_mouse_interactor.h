@@ -12,7 +12,9 @@
 class HydrodynamicMouseInteractor : public MeshMouseInteractor {
     Q_OBJECT
 private:
-    vtkPolyData *meshPolyData;
+    vtkSmartPointer<vtkPolyData> meshPolyData;
+    vtkSmartPointer<vtkPolyData> boundaryPolyData;
+    vtkSmartPointer<vtkActor> boundaryEdgesActor;
     HydrodynamicConfiguration *hydrodynamicConfiguration;
     BoundaryCondition *currentBoundaryCondition;
     PickerMode pickerMode;
