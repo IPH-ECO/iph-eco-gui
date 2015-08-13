@@ -2,11 +2,11 @@
 
 #include "include/utility/cgal_definitions.h"
 
-#include <vtkPolygon.h>
-#include <vtkPoints.h>
-#include <vtkCellArray.h>
 #include <vtkQuad.h>
+#include <vtkPoints.h>
+#include <vtkPolygon.h>
 #include <QApplication>
+#include <vtkCellArray.h>
 
 StructuredMesh::StructuredMesh() : resolution(100) {}
 
@@ -76,9 +76,11 @@ void StructuredMesh::generate() {
     }
     
     if (!generationCanceled) {
-        polyData = vtkSmartPointer<vtkPolyData>::New();
-        polyData->SetPoints(points);
-        polyData->SetPolys(quads);
+        meshPolyData = vtkSmartPointer<vtkPolyData>::New();
+        meshPolyData->SetPoints(points);
+        meshPolyData->SetPolys(quads);
+        
+        generateBoundaryPolyData();
     }
 }
 

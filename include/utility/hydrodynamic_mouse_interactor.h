@@ -28,12 +28,13 @@ public:
     void renderBoundaryCondition(BoundaryCondition *boundaryCondition);
     void removeBoundaryCondition(BoundaryCondition *boundaryCondition);
     void highlightBoundaryCondition(BoundaryCondition *boundaryCondition, bool hightlight);
-    void activateCellPicker(const PickerMode &pickerMode);
-    void deactivateCellPicker();
+    void activatePicker(const PickerMode &pickerMode);
+    void deactivatePicker();
     void clearSelection();
     void setHydrodynamicConfiguration(HydrodynamicConfiguration *hydrodynamicConfiguration);
     void setBoundaryCondition(BoundaryCondition *boundaryCondition);
     void pickCell();
+    PickerMode getPickerMode() const;
     
     virtual void OnLeftButtonDown();
     virtual void OnLeftButtonUp();

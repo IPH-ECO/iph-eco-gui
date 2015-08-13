@@ -30,7 +30,6 @@ private:
     
     bool showAxes;
     bool showMesh;
-    bool isCellPickActivated;
 private slots:
     void handleMouseEvent(QMouseEvent *event);
 public:

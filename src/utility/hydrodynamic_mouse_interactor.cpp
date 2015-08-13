@@ -17,7 +17,6 @@
 #include <QColor>
 
 HydrodynamicMouseInteractor::HydrodynamicMouseInteractor() :
-    meshPolyData(nullptr), boundaryPolyData(nullptr), boundaryEdgesActor(nullptr),
     hydrodynamicConfiguration(nullptr), currentBoundaryCondition(nullptr), pickerMode(PickerMode::NO_PICKER), lastCellId(-1)
 {}
 
@@ -36,10 +35,10 @@ void HydrodynamicMouseInteractor::OnLeftButtonDown() {
 void HydrodynamicMouseInteractor::OnLeftButtonUp() {
     vtkInteractorStyleRubberBandPick::OnLeftButtonUp();
     
-    if (pickerMode == PickerMode::MULTIPLE_CELL || pickerMode == PickerMode::INDIVIDUAL_EDGE) {
+    if (pickerMode == PickerMode::MULTIPLE_CELL || pickerMode == PickerMode::MULTIPLE_EDGE) {
         vtkSmartPointer<vtkExtractSelectedFrustum> extractor = vtkSmartPointer<vtkExtractSelectedFrustum>::New();
         extractor->PreserveTopologyOff();
-        extractor->SetInputData(pickerMode == PickerMode::INDIVIDUAL_EDGE ? boundaryPolyData : meshPolyData);
+        extractor->SetInputData(pickerMode == PickerMode::MULTIPLE_EDGE ? boundaryPolyData : meshPolyData);
         extractor->SetFrustum(vtkAreaPicker::SafeDownCast(this->GetInteractor()->GetPicker())->GetFrustum());
         extractor->Update();
         
@@ -88,7 +87,7 @@ void HydrodynamicMouseInteractor::renderBoundaryCondition(BoundaryCondition *bou
     selection->AddNode(selectionNode);
     
     vtkSmartPointer<vtkExtractSelectedPolyDataIds> extractSelection = vtkSmartPointer<vtkExtractSelectedPolyDataIds>::New();
-    extractSelection->SetInputData(0, pickerMode == PickerMode::INDIVIDUAL_EDGE ? boundaryPolyData : meshPolyData);
+    extractSelection->SetInputData(0, pickerMode == PickerMode::MULTIPLE_EDGE ? boundaryPolyData : meshPolyData);
     extractSelection->SetInputData(1, selection);
     extractSelection->Update();
     
@@ -120,6 +119,7 @@ void HydrodynamicMouseInteractor::renderBoundaryCondition(BoundaryCondition *bou
     QColor cellColor(boundaryCondition->getCellColor());
     selectionActor->SetMapper(mapper);
     selectionActor->GetProperty()->SetColor(cellColor.redF(), cellColor.greenF(), cellColor.blueF());
+    selectionActor->GetProperty()->SetLineWidth(pickerMode == PickerMode::MULTIPLE_EDGE ? 2 : 1);
     this->GetDefaultRenderer()->AddActor(selectionActor);
     
     this->GetDefaultRenderer()->GetRenderWindow()->Render();
@@ -144,22 +144,10 @@ void HydrodynamicMouseInteractor::highlightBoundaryCondition(BoundaryCondition *
     this->GetDefaultRenderer()->GetRenderWindow()->Render();
 }
 
-void HydrodynamicMouseInteractor::activateCellPicker(const PickerMode &pickerMode) {
+void HydrodynamicMouseInteractor::activatePicker(const PickerMode &pickerMode) {
     this->pickerMode = pickerMode;
     
-    if (pickerMode == PickerMode::INDIVIDUAL_EDGE) {
-        vtkSmartPointer<vtkFeatureEdges> boundaryEdges = vtkSmartPointer<vtkFeatureEdges>::New();
-        boundaryEdges->SetInputData(this->meshPolyData);
-        boundaryEdges->ColoringOff();
-        boundaryEdges->BoundaryEdgesOn();
-        boundaryEdges->FeatureEdgesOff();
-        boundaryEdges->ManifoldEdgesOff();
-        boundaryEdges->NonManifoldEdgesOff();
-        boundaryEdges->Update();
-        
-        this->boundaryPolyData = vtkSmartPointer<vtkPolyData>::New();
-        this->boundaryPolyData->ShallowCopy(boundaryEdges->GetOutput());
-        
+    if (pickerMode == PickerMode::MULTIPLE_EDGE) {
         vtkSmartPointer<vtkPolyDataMapper> boundaryEdgesMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
         boundaryEdgesMapper->SetInputData(boundaryPolyData);
         boundaryEdgesMapper->ScalarVisibilityOff();
@@ -171,8 +159,8 @@ void HydrodynamicMouseInteractor::activateCellPicker(const PickerMode &pickerMod
     }
 }
 
-void HydrodynamicMouseInteractor::deactivateCellPicker() {
-    if (pickerMode == PickerMode::INDIVIDUAL_EDGE) {
+void HydrodynamicMouseInteractor::deactivatePicker() {
+    if (pickerMode == PickerMode::MULTIPLE_EDGE) {
         boundaryPolyData = nullptr;
         this->GetDefaultRenderer()->RemoveActor(boundaryEdgesActor);
     }
@@ -196,12 +184,17 @@ void HydrodynamicMouseInteractor::setHydrodynamicConfiguration(HydrodynamicConfi
         }
     } else {
         this->hydrodynamicConfiguration = hydrodynamicConfiguration;
-        this->meshPolyData = hydrodynamicConfiguration->getGridDataConfiguration()->getMesh()->getPolyData();
+        this->meshPolyData = hydrodynamicConfiguration->getGridDataConfiguration()->getMesh()->getMeshPolyData();
+        this->boundaryPolyData = hydrodynamicConfiguration->getGridDataConfiguration()->getMesh()->getBoundaryPolyData();
         this->clearSelection();
-        this->deactivateCellPicker();
+        this->deactivatePicker();
     }
 }
 
 void HydrodynamicMouseInteractor::setBoundaryCondition(BoundaryCondition *boundaryCondition) {
     currentBoundaryCondition = boundaryCondition;
+}
+
+PickerMode HydrodynamicMouseInteractor::getPickerMode() const {
+    return pickerMode;
 }

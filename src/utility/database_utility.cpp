@@ -57,7 +57,8 @@ void DatabaseUtility::createApplicationTables() {
         "name varchar(255) not null, " \
         "type varchar(255) not null, " \
         "coordinates_distance float default 0, " \
-        "poly_data text not null, " \
+        "mesh_poly_data text not null, " \
+        "boundary_poly_data text not null, " \
         "resolution integer" \
     ")";
 

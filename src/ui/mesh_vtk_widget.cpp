@@ -79,7 +79,7 @@ void MeshVTKWidget::render(Mesh *mesh) {
     renderer->AddActor(this->boundaryEdgesActor);
 
     // Mesh rendering
-    vtkSmartPointer<vtkPolyData> gridPolyData = mesh->getPolyData();
+    vtkSmartPointer<vtkPolyData> gridPolyData = mesh->getMeshPolyData();
     vtkSmartPointer<vtkPolyDataMapper> gridMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
     gridMapper->SetInputData(gridPolyData);
     gridMapper->ScalarVisibilityOff();

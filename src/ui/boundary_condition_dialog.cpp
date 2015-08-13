@@ -11,8 +11,6 @@
 #include "include/ui/hydrodynamic_vtk_widget.h"
 #include "include/ui/time_series_dialog.h"
 
-enum class CustomButtonRole { INDIVIDUAL_CELL_PICKER = 1, MULTIPLE_CELL_PICKER, CLEAR_SELECTION };
-
 BoundaryConditionDialog::BoundaryConditionDialog(HydrodynamicConfiguration *configuration, BoundaryCondition *boundaryCondition) :
     QDialog(nullptr), ui(new Ui::BoundaryConditionDialog),
     configuration(configuration), currentBoundaryCondition(boundaryCondition), isNewBoundaryCondition(boundaryCondition == nullptr)
@@ -23,24 +21,21 @@ BoundaryConditionDialog::BoundaryConditionDialog(HydrodynamicConfiguration *conf
 	btnIndividualObjectPicker = new QToolButton(this);
     btnIndividualObjectPicker->setCheckable(true);
 	btnIndividualObjectPicker->setIcon(QIcon(":/icons/individual-object-picker.png"));
-	btnIndividualObjectPicker->setToolTip("Individual object picker");
-    btnIndividualObjectPicker->setProperty("ActionRole", (int) CustomButtonRole::INDIVIDUAL_CELL_PICKER);
+	btnIndividualObjectPicker->setToolTip("Individual cell picker");
 	ui->buttonBox->addButton(btnIndividualObjectPicker, QDialogButtonBox::ActionRole);
     connect(btnIndividualObjectPicker, SIGNAL(clicked(bool)), this, SLOT(btnIndividualObjectPicker_clicked(bool)));
 
-	btnMultipleCellPicker = new QToolButton(this);
-    btnMultipleCellPicker->setCheckable(true);
-	btnMultipleCellPicker->setIcon(QIcon(":/icons/multiple-cell-picker.png"));
-	btnMultipleCellPicker->setToolTip("Multiple cell picker");
-    btnMultipleCellPicker->setProperty("ActionRole", (int) CustomButtonRole::MULTIPLE_CELL_PICKER);
-	ui->buttonBox->addButton(btnMultipleCellPicker, QDialogButtonBox::ActionRole);
+	btnMultipleObjectPicker = new QToolButton(this);
+    btnMultipleObjectPicker->setCheckable(true);
+	btnMultipleObjectPicker->setIcon(QIcon(":/icons/multiple-object-picker.png"));
+	btnMultipleObjectPicker->setToolTip("Multiple object picker");
+	ui->buttonBox->addButton(btnMultipleObjectPicker, QDialogButtonBox::ActionRole);
     ui->buttonBox->setCenterButtons(true);
-    connect(btnMultipleCellPicker, SIGNAL(clicked(bool)), this, SLOT(btnMultipleCellPicker_clicked(bool)));
+    connect(btnMultipleObjectPicker, SIGNAL(clicked(bool)), this, SLOT(btnMultipleObjectPicker_clicked(bool)));
     
     QToolButton *btnClearSelection = new QToolButton(this);
     btnClearSelection->setIcon(QIcon(":/icons/edit-clear-2.png"));
     btnClearSelection->setToolTip("Clear selection");
-    btnClearSelection->setProperty("ActionRole", (int) CustomButtonRole::CLEAR_SELECTION);
     ui->buttonBox->addButton(btnClearSelection, QDialogButtonBox::ActionRole);
     connect(btnClearSelection, SIGNAL(clicked()), this, SLOT(btnClearSelection_clicked()));
     
@@ -98,7 +93,9 @@ void BoundaryConditionDialog::on_rdoWaterLevel_clicked(bool checked) {
     ui->lblElementIds->setText("-");
     
     if (currentBoundaryCondition->getObjectIds().isEmpty()) {
-        btnMultipleCellPicker->setEnabled(true);
+        btnMultipleObjectPicker->setChecked(false);
+        btnIndividualObjectPicker->setEnabled(true);
+        btnIndividualObjectPicker->setChecked(false);
     } else {
         QString question = tr("Changing the condition type will remove the selected objects. Are you sure?");
         QMessageBox::StandardButton button = QMessageBox::question(this, tr("Boundary Condition"), question);
@@ -107,8 +104,8 @@ void BoundaryConditionDialog::on_rdoWaterLevel_clicked(bool checked) {
             ui->lblElementLabel->setText("Edges");
             ui->lblElementIds->setText(currentBoundaryCondition->getObjectIdsStr());
             ui->rdoWaterFlow->setChecked(true);
-            btnMultipleCellPicker->setChecked(false);
-            btnMultipleCellPicker->setEnabled(false);
+            btnMultipleObjectPicker->setChecked(false);
+            btnMultipleObjectPicker->setEnabled(false);
         } else {
             currentBoundaryCondition->clearObjectIds();
             hydrodynamicDataDialog->ui->vtkWidget->getMouseInteractor()->renderBoundaryCondition(currentBoundaryCondition);
@@ -117,11 +114,16 @@ void BoundaryConditionDialog::on_rdoWaterLevel_clicked(bool checked) {
 }
 
 void BoundaryConditionDialog::on_rdoWaterFlow_clicked(bool checked) {
+    bool isObjectIdsEmpty = currentBoundaryCondition->getObjectIds().isEmpty();
+//    QString elementLabel = isObjectIdsEmpty;
+    
     ui->lblElementLabel->setText("Edges");
     ui->lblElementIds->setText("-");
     
-    if (currentBoundaryCondition->getObjectIds().isEmpty()) {
-        btnMultipleCellPicker->setEnabled(false);
+    if (isObjectIdsEmpty) {
+        btnMultipleObjectPicker->setChecked(false);
+        btnIndividualObjectPicker->setChecked(false);
+        btnIndividualObjectPicker->setEnabled(false);
     } else {
         QString question = tr("Changing the condition type will remove the selected objects. Are you sure?");
         QMessageBox::StandardButton button = QMessageBox::question(this, tr("Boundary Condition"), question);
@@ -130,7 +132,7 @@ void BoundaryConditionDialog::on_rdoWaterFlow_clicked(bool checked) {
             ui->lblElementLabel->setText("Cells");
             ui->lblElementIds->setText(currentBoundaryCondition->getObjectIdsStr());
             ui->rdoWaterLevel->setChecked(true);
-            btnMultipleCellPicker->setEnabled(true);
+            btnIndividualObjectPicker->setEnabled(true);
         } else {
             currentBoundaryCondition->clearObjectIds();
             hydrodynamicDataDialog->ui->vtkWidget->getMouseInteractor()->renderBoundaryCondition(currentBoundaryCondition);
@@ -158,22 +160,21 @@ void BoundaryConditionDialog::on_btnCellColor_clicked() {
 }
 
 void BoundaryConditionDialog::btnIndividualObjectPicker_clicked(bool checked) {
-    btnMultipleCellPicker->setChecked(false);
-    hydrodynamicDataDialog->ui->vtkWidget->togglePicker(checked, ui->rdoWaterFlow->isChecked() ? PickerMode::INDIVIDUAL_EDGE : PickerMode::INDIVIDUAL_CELL);
+    hydrodynamicDataDialog->ui->vtkWidget->togglePicker(checked, PickerMode::INDIVIDUAL_CELL);
     
     if (checked) {
+        btnMultipleObjectPicker->toggled(false);
         hydrodynamicDataDialog->activateWindow();
     } else {
         this->activateWindow();
     }
 }
 
-void BoundaryConditionDialog::btnMultipleCellPicker_clicked(bool checked) {
-    btnIndividualObjectPicker->setChecked(false);
-    
-    hydrodynamicDataDialog->ui->vtkWidget->togglePicker(checked, PickerMode::MULTIPLE_CELL);
+void BoundaryConditionDialog::btnMultipleObjectPicker_clicked(bool checked) {
+    hydrodynamicDataDialog->ui->vtkWidget->togglePicker(checked, ui->rdoWaterFlow->isChecked() ? PickerMode::MULTIPLE_EDGE : PickerMode::MULTIPLE_CELL);
     
     if (checked) {
+        btnIndividualObjectPicker->toggled(false);
         hydrodynamicDataDialog->activateWindow();
     } else {
         this->activateWindow();
@@ -208,7 +209,7 @@ void BoundaryConditionDialog::accept() {
     hydrodynamicDataDialog->ui->tblBoundaryConditions->setItem(row, 1, new QTableWidgetItem(currentBoundaryCondition->getFunctionStr()));
     
     btnIndividualObjectPicker_clicked(false);
-    btnMultipleCellPicker_clicked(false);
+    btnMultipleObjectPicker_clicked(false);
     hydrodynamicDataDialog->toggleWidgets(true);
     
     QDialog::accept();

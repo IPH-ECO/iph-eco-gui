@@ -60,7 +60,7 @@ void UnstructuredMesh::generate() {
 
     vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
     vtkSmartPointer<vtkCellArray> triangles = vtkSmartPointer<vtkCellArray>::New();
-    polyData = vtkSmartPointer<vtkPolyData>::New();
+    meshPolyData = vtkSmartPointer<vtkPolyData>::New();
     QMap<Point, vtkIdType> pointsMap;
     vtkIdType i = 0;
     
@@ -95,8 +95,10 @@ void UnstructuredMesh::generate() {
         triangles->InsertNextCell(_vtkTriangle);
     }
 
-    polyData->SetPoints(points);
-    polyData->SetPolys(triangles);
+    meshPolyData->SetPoints(points);
+    meshPolyData->SetPolys(triangles);
+    
+    generateBoundaryPolyData();
 }
 
 bool UnstructuredMesh::instanceOf(const QString &type) {

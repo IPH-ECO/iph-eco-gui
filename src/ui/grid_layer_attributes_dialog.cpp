@@ -35,7 +35,7 @@ GridLayerAttributesDialog::~GridLayerAttributesDialog() {
 }
 
 void GridLayerAttributesDialog::setupMapTab() {
-    double *range = gridData->getMesh()->getPolyData()->GetCellData()->GetScalars(gridData->getName().toStdString().c_str())->GetRange();
+    double *range = gridData->getMesh()->getMeshPolyData()->GetCellData()->GetScalars(gridData->getName().toStdString().c_str())->GetRange();
     this->defaultMapMinimum = range[0];
     this->defaultMapMaximum = range[1];
     

@@ -43,9 +43,9 @@ void GridData::setName(const QString &name) {
     if (!this->name.isEmpty()) {
         std::string stdOldName = this->name.toStdString();
         
-        if (mesh->getPolyData()->GetCellData()->HasArray(stdOldName.c_str())) {
+        if (mesh->getMeshPolyData()->GetCellData()->HasArray(stdOldName.c_str())) {
             std::string stdNewName = name.toStdString();
-            mesh->getPolyData()->GetCellData()->GetArray(stdOldName.c_str())->SetName(stdNewName.c_str());
+            mesh->getMeshPolyData()->GetCellData()->GetArray(stdOldName.c_str())->SetName(stdNewName.c_str());
         }
     }
     
@@ -314,7 +314,7 @@ void GridData::interpolate() {
 	emit updateProgressText("Interpolating grid data...");
     QApplication::processEvents();
 
-    vtkPolyData *meshPolyData = mesh->getPolyData();
+    vtkPolyData *meshPolyData = mesh->getMeshPolyData();
     vtkSmartPointer<vtkDoubleArray> interpolatedWeightsArray = vtkSmartPointer<vtkDoubleArray>::New();
     std::string gridDataName(this->name.toStdString());
 
@@ -511,5 +511,5 @@ bool GridData::isPersisted() const {
 }
 
 int GridData::getMaximumProgress() const {
-	return mesh->getPolyData()->GetNumberOfCells();
+	return mesh->getMeshPolyData()->GetNumberOfCells();
 }

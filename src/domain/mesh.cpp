@@ -2,17 +2,18 @@
 #include "include/exceptions/mesh_exception.h"
 #include "include/exceptions/mesh_polygon_exception.h"
 
-#include <QStringList>
-#include <QMultiMap>
 #include <QFile>
+#include <QMultiMap>
 #include <QIODevice>
-#include <QXmlStreamReader>
-#include <QJsonDocument>
 #include <QJsonArray>
-#include <GeographicLib/GeoCoords.hpp>
+#include <QStringList>
+#include <vtkCellData.h>
+#include <QJsonDocument>
+#include <QXmlStreamReader>
+#include <vtkFeatureEdges.h>
 #include <vtkXMLPolyDataWriter.h>
 #include <vtkXMLPolyDataReader.h>
-#include <vtkCellData.h>
+#include <GeographicLib/GeoCoords.hpp>
 
 Mesh::Mesh() : id(0), boundaryPolygon(nullptr), coordinatesDistance(0.0), generationCanceled(false) {}
 
@@ -106,26 +107,52 @@ QList<MeshPolygon*> Mesh::getRefinementAreas() {
     return refinementAreas;
 }
 
-vtkPolyData* Mesh::getPolyData() {
-    return polyData;
+vtkSmartPointer<vtkPolyData> Mesh::getMeshPolyData() const {
+    return meshPolyData;
 }
 
-void Mesh::loadMeshPolygonsFromStringPolyData(const QString &polyDataStr) {
+vtkSmartPointer<vtkPolyData> Mesh::getBoundaryPolyData() const {
+    return boundaryPolyData;
+}
+
+void Mesh::loadMeshPolyDataFromString(const QString &polyDataStr) {
     vtkSmartPointer<vtkXMLPolyDataReader> reader = vtkSmartPointer<vtkXMLPolyDataReader>::New();
     
     reader->SetInputString(polyDataStr.toStdString());
     reader->ReadFromInputStringOn();
     reader->Update();
     
-    polyData = vtkSmartPointer<vtkPolyData>::New();
-    polyData->DeepCopy(reader->GetOutput());
+    meshPolyData = vtkSmartPointer<vtkPolyData>::New();
+    meshPolyData->DeepCopy(reader->GetOutput());
 }
 
-QString Mesh::getPolyDataAsString() const {
+void Mesh::loadBoundaryPolyDataFromString(const QString &polyDataStr) {
+    vtkSmartPointer<vtkXMLPolyDataReader> reader = vtkSmartPointer<vtkXMLPolyDataReader>::New();
+    
+    reader->SetInputString(polyDataStr.toStdString());
+    reader->ReadFromInputStringOn();
+    reader->Update();
+    
+    boundaryPolyData = vtkSmartPointer<vtkPolyData>::New();
+    boundaryPolyData->DeepCopy(reader->GetOutput());
+}
+
+QString Mesh::getMeshPolyDataAsString() const {
     vtkSmartPointer<vtkXMLPolyDataWriter> writer = vtkSmartPointer<vtkXMLPolyDataWriter>::New();
     
-    writer->SetFileName("MeshPolyData");
-    writer->SetInputData(this->polyData);
+    writer->SetFileName("meshPolyData");
+    writer->SetInputData(meshPolyData);
+    writer->WriteToOutputStringOn();
+    writer->Write();
+    
+    return QString::fromStdString(writer->GetOutputString());
+}
+
+QString Mesh::getBoundaryPolyDataAsString() const {
+    vtkSmartPointer<vtkXMLPolyDataWriter> writer = vtkSmartPointer<vtkXMLPolyDataWriter>::New();
+    
+    writer->SetFileName("meshPolyData");
+    writer->SetInputData(boundaryPolyData);
     writer->WriteToOutputStringOn();
     writer->Write();
     
@@ -207,10 +234,24 @@ bool Mesh::isPersisted() const {
 
 bool Mesh::hasArray(const QString &arrayName) {
     std::string stdArrayName(arrayName.toStdString());
-    return polyData->GetCellData()->HasArray(stdArrayName.c_str());
+    return meshPolyData->GetCellData()->HasArray(stdArrayName.c_str());
 }
 
 void Mesh::removeArray(const QString &arrayName) {
     std::string stdArrayName(arrayName.toStdString());
-    polyData->GetCellData()->RemoveArray(stdArrayName.c_str());
+    meshPolyData->GetCellData()->RemoveArray(stdArrayName.c_str());
+}
+
+void Mesh::generateBoundaryPolyData() {
+    vtkSmartPointer<vtkFeatureEdges> boundaryEdges = vtkSmartPointer<vtkFeatureEdges>::New();
+    boundaryEdges->SetInputData(meshPolyData);
+//    boundaryEdges->ColoringOff();
+    boundaryEdges->BoundaryEdgesOn();
+    boundaryEdges->FeatureEdgesOff();
+    boundaryEdges->ManifoldEdgesOff();
+    boundaryEdges->NonManifoldEdgesOff();
+    boundaryEdges->Update();
+    
+    boundaryPolyData = vtkSmartPointer<vtkPolyData>::New();
+    boundaryPolyData->ShallowCopy(boundaryEdges->GetOutput());
 }

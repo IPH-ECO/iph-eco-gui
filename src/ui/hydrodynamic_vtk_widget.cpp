@@ -11,9 +11,7 @@
 
 vtkStandardNewMacro(HydrodynamicMouseInteractor);
 
-HydrodynamicVTKWidget::HydrodynamicVTKWidget(QWidget *parent) :
-    QVTKWidget(parent), currentMesh(nullptr), showAxes(true), showMesh(true), isCellPickActivated(false)
-{
+HydrodynamicVTKWidget::HydrodynamicVTKWidget(QWidget *parent) : QVTKWidget(parent), currentMesh(nullptr), showAxes(true), showMesh(true) {
     renderer = vtkSmartPointer<vtkRenderer>::New();
     renderWindow = vtkSmartPointer<vtkRenderWindow>::New();
     renderWindowInteractor = vtkSmartPointer<vtkRenderWindowInteractor>::New();
@@ -43,7 +41,7 @@ void HydrodynamicVTKWidget::render(HydrodynamicConfiguration *hydrodynamicConfig
     }
     
     currentMesh = mesh;
-    vtkPolyData *meshPolyData = currentMesh->getPolyData();
+    vtkPolyData *meshPolyData = currentMesh->getMeshPolyData();
     
     renderer->RemoveActor(meshActor);
     renderer->RemoveActor(axesActor);
@@ -72,7 +70,7 @@ void HydrodynamicVTKWidget::render(HydrodynamicConfiguration *hydrodynamicConfig
     axesActor->GetLabelTextProperty(1)->SetColor(0, 0, 0);
     axesActor->GetTitleTextProperty(1)->SetColor(0, 0, 0);
     axesActor->GetYAxesLinesProperty()->SetColor(0, 0, 0);
-    axesActor->SetBounds(currentMesh->getPolyData()->GetBounds());
+    axesActor->SetBounds(currentMesh->getMeshPolyData()->GetBounds());
     axesActor->SetCamera(renderer->GetActiveCamera());
     axesActor->SetFlyModeToStaticEdges();
     axesActor->SetVisibility(this->showAxes);
@@ -128,22 +126,18 @@ void HydrodynamicVTKWidget::changeBackgroundColor(const double &r, const double 
 }
 
 void HydrodynamicVTKWidget::togglePicker(bool activate, const PickerMode &pickerMode) {
-    isCellPickActivated = activate;
-    
-    if (activate) {
-        if (pickerMode != PickerMode::NO_PICKER) {
-            if (pickerMode == PickerMode::MULTIPLE_CELL) {
-                mouseInteractor->StartSelect();
-            } else if (pickerMode == PickerMode::INDIVIDUAL_EDGE) {
-                mouseInteractor->StartSelect();
-                meshActor->PickableOff();
-            }
-            
-            mouseInteractor->activateCellPicker(pickerMode);
+    if (activate && pickerMode != PickerMode::NO_PICKER) {
+        mouseInteractor->activatePicker(pickerMode);
+        
+        if (pickerMode == PickerMode::MULTIPLE_CELL) {
+            mouseInteractor->StartSelect();
+        } else if (pickerMode == PickerMode::MULTIPLE_EDGE) {
+            mouseInteractor->StartSelect();
+            meshActor->PickableOff();
         }
     } else {
         meshActor->PickableOn();
-        mouseInteractor->deactivateCellPicker();
+        mouseInteractor->deactivatePicker();
     }
 }
 
@@ -152,7 +146,7 @@ HydrodynamicMouseInteractor* HydrodynamicVTKWidget::getMouseInteractor() const {
 }
 
 void HydrodynamicVTKWidget::handleMouseEvent(QMouseEvent *event) {
-    if (event->type() == QEvent::MouseButtonDblClick && event->button() == Qt::LeftButton && isCellPickActivated) {
+    if (event->type() == QEvent::MouseButtonDblClick && event->button() == Qt::LeftButton && mouseInteractor->getPickerMode() != PickerMode::NO_PICKER) {
         mouseInteractor->pickCell();
     }
 }

@@ -17,10 +17,13 @@ protected:
     double coordinatesDistance;
     QList<MeshPolygon*> islands;
     QList<MeshPolygon*> refinementAreas;
-    vtkSmartPointer<vtkPolyData> polyData;
+    vtkSmartPointer<vtkPolyData> meshPolyData;
+    vtkSmartPointer<vtkPolyData> boundaryPolyData;
 
     // Transient attributes
     bool generationCanceled;
+    
+    void generateBoundaryPolyData();
 
 public:
     Mesh();
@@ -35,10 +38,13 @@ public:
     MeshPolygon* getBoundaryPolygon();
     QList<MeshPolygon*> getIslands();
     QList<MeshPolygon*> getRefinementAreas();
-    vtkPolyData* getPolyData();
+    vtkSmartPointer<vtkPolyData> getMeshPolyData() const;
+    vtkSmartPointer<vtkPolyData> getBoundaryPolyData() const;
     QString getMeshPolygonsAsString();
-    QString getPolyDataAsString() const;
-    void loadMeshPolygonsFromStringPolyData(const QString &polyDataStr);
+    QString getMeshPolyDataAsString() const;
+    QString getBoundaryPolyDataAsString() const;
+    void loadMeshPolyDataFromString(const QString &polyDataStr);
+    void loadBoundaryPolyDataFromString(const QString &polyDataStr);
     
     MeshPolygon* addMeshPolygon(const QString &name, const QString &filename, const MeshPolygonType &meshPolygonType);
     void addMeshPolygon(MeshPolygon *meshPolygon);

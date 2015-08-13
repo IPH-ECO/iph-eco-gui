@@ -50,10 +50,10 @@ void CellUpdateDialog::on_buttonBox_clicked(QAbstractButton *button) {
             vtkIdType cellId = ui->tblGridValues->item(i, 0)->text().toInt();
             double weight = ui->tblGridValues->item(i, 1)->text().toDouble();
             
-            mesh->getPolyData()->GetCellData()->GetScalars()->SetTuple1(cellId, weight);
+            mesh->getMeshPolyData()->GetCellData()->GetScalars()->SetTuple1(cellId, weight);
         }
         
-        mesh->getPolyData()->Modified();
+        mesh->getMeshPolyData()->Modified();
         this->accept();
     } else if (standardButton == QDialogButtonBox::Reset) {
         fillGridValuesTable();
@@ -70,7 +70,7 @@ void CellUpdateDialog::fillGridValuesTable() {
     
     for (vtkIdType i = 0; i < cellIds->GetNumberOfTuples(); i++) {
         vtkIdType cellId = cellIds->GetTuple1(i);
-        double cellWeight = mesh->getPolyData()->GetCellData()->GetScalars()->GetTuple1(cellId);
+        double cellWeight = mesh->getMeshPolyData()->GetCellData()->GetScalars()->GetTuple1(cellId);
         int rowCount = ui->tblGridValues->rowCount();
         QTableWidgetItem *cellIdItem = new QTableWidgetItem(QString::number(cellId));
         

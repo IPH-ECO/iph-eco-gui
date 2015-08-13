@@ -53,7 +53,7 @@ void GridDataVTKWidget::render(Mesh *mesh) {
     }
     
     currentMesh = mesh;
-    vtkPolyData *meshPolyData = currentMesh->getPolyData();
+    vtkPolyData *meshPolyData = currentMesh->getMeshPolyData();
     
     renderer->RemoveActor(meshActor);
     renderer->RemoveActor(axesActor);
@@ -94,7 +94,7 @@ void GridDataVTKWidget::render(Mesh *mesh) {
     axesActor->GetLabelTextProperty(1)->SetColor(0, 0, 0);
     axesActor->GetTitleTextProperty(1)->SetColor(0, 0, 0);
     axesActor->GetYAxesLinesProperty()->SetColor(0, 0, 0);
-    axesActor->SetBounds(currentMesh->getPolyData()->GetBounds());
+    axesActor->SetBounds(currentMesh->getMeshPolyData()->GetBounds());
     axesActor->SetCamera(renderer->GetActiveCamera());
     axesActor->SetFlyModeToStaticEdges();
     
@@ -147,7 +147,7 @@ void GridDataVTKWidget::render(GridData *gridData) {
     mapPointsBarActor->SetHeight(0.5);
     mapPointsBarActor->SetPosition(0.05, 0.05);
 
-    vtkPolyData *meshPolyData = mesh->getPolyData();
+    vtkPolyData *meshPolyData = mesh->getMeshPolyData();
 	std::string gridDataName(currentGridData->getName().toStdString());
     vtkColorTransferFunction *mapColorTransferFunction = buildColorTransferFunction(true);
 
@@ -381,7 +381,7 @@ void GridDataVTKWidget::toggleCellLabels(const CellLabelType &cellLabelType) {
     
     if (cellLabelType != CellLabelType::UNDEFINED) {
         vtkSmartPointer<vtkCellCenters> cellCentersFilter = vtkSmartPointer<vtkCellCenters>::New();
-        cellCentersFilter->SetInputData(currentMesh->getPolyData());
+        cellCentersFilter->SetInputData(currentMesh->getMeshPolyData());
         cellCentersFilter->Update();
         
         vtkSmartPointer<vtkLabeledDataMapper> labelMapper = vtkSmartPointer<vtkLabeledDataMapper>::New();

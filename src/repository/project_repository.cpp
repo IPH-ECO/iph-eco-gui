@@ -79,7 +79,8 @@ void ProjectRepository::loadMeshes(Project *project) {
         mesh->setId(query.value("id").toUInt());
         mesh->setName(query.value("name").toString());
         mesh->setCoordinatesDistance(query.value("coordinates_distance").toDouble());
-        mesh->loadMeshPolygonsFromStringPolyData(query.value("poly_data").toString());
+        mesh->loadMeshPolyDataFromString(query.value("mesh_poly_data").toString());
+        mesh->loadBoundaryPolyDataFromString(query.value("boundary_poly_data").toString());
         project->addMesh(mesh);
         
         emit updateProgress(currentProgress++);
@@ -345,10 +346,10 @@ void ProjectRepository::saveMeshes(Project *project) {
         QString sql;
         
         if (mesh->isPersisted()) {
-            query.prepare("update mesh set name = :n, type = :t, poly_data = :p, coordinates_distance = :c, resolution = :r where id = :m");
+            query.prepare("update mesh set name = :n, type = :t, mesh_poly_data = :mp, boundary_poly_data = :bp, coordinates_distance = :c, resolution = :r where id = :m");
             query.bindValue(":m", mesh->getId());
         } else {
-            query.prepare("insert into mesh (name, type, coordinates_distance, poly_data, resolution) values (:n, :t, :c, :p, :r)");
+            query.prepare("insert into mesh (name, type, coordinates_distance, mesh_poly_data, boundary_poly_data, resolution) values (:n, :t, :c, :mp, :bp, :r)");
         }
         
         QString meshType = mesh->instanceOf("StructuredMesh") ? "StructuredMesh" : "UnstructuredMesh";
@@ -356,7 +357,8 @@ void ProjectRepository::saveMeshes(Project *project) {
         query.bindValue(":n", mesh->getName());
         query.bindValue(":t", meshType);
         query.bindValue(":c", mesh->getCoordinatesDistance());
-        query.bindValue(":p", mesh->getPolyDataAsString());
+        query.bindValue(":mp", mesh->getMeshPolyDataAsString());
+        query.bindValue(":bp", mesh->getBoundaryPolyDataAsString());
         
         if (mesh->instanceOf("StructuredMesh")) {
             query.bindValue(":r", static_cast<StructuredMesh*>(mesh)->getResolution());
