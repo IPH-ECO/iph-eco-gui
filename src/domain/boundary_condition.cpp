@@ -41,23 +41,22 @@ QSet<vtkIdType> BoundaryCondition::getObjectIds() const {
 
 vtkSmartPointer<vtkIdTypeArray> BoundaryCondition::getVTKObjectIds() const {
     vtkSmartPointer<vtkIdTypeArray> vtkObjectIds = vtkSmartPointer<vtkIdTypeArray>::New();
-    int i = 0;
     std::string arrayName = getVTKObjectsArrayName().toStdString();
+    int i = 0;
     
     vtkObjectIds->SetName(arrayName.c_str());
     vtkObjectIds->SetNumberOfComponents(1);
     vtkObjectIds->SetNumberOfTuples(objectIds.size());
     
     for (vtkIdType objectId : objectIds) {
-        vtkObjectIds->SetTuple1(i, objectId);
-        i++;
+        vtkObjectIds->SetTuple1(i++, objectId);
     }
     
     return vtkObjectIds;
 }
 
 QString BoundaryCondition::getVTKObjectsArrayName() const {
-    return type == BoundaryConditionType::WATER_LEVEL ? "cellIds" : "labelIds";
+    return type == BoundaryConditionType::WATER_LEVEL ? "cellIds" : "edgeIds";
 }
 
 void BoundaryCondition::setObjectIds(const QSet<vtkIdType> &objectIds) {
@@ -65,7 +64,7 @@ void BoundaryCondition::setObjectIds(const QSet<vtkIdType> &objectIds) {
 }
 
 void BoundaryCondition::setObjectIds(vtkIdTypeArray* objectIds) {
-    for (int i = 0; i < objectIds->GetNumberOfTuples(); i++) {
+    for (vtkIdType i = 0; i < objectIds->GetNumberOfTuples(); i++) {
         vtkIdType objectId = objectIds->GetTuple1(i);
         
         if (this->objectIds.contains(objectId)) {
@@ -143,8 +142,8 @@ QList<TimeSeries*> BoundaryCondition::getTimeSeriesList() const {
 }
 
 void BoundaryCondition::setTimeSeriesList(const QList<TimeSeries*> &timeSeriesList) {
-    for (int i = 0; i < this->timeSeriesList.size(); i++) {
-        delete this->timeSeriesList[i];
+    for (TimeSeries *timeSeries : this->timeSeriesList) {
+        delete timeSeries;
     }
     this->timeSeriesList.clear();
     

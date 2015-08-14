@@ -39,8 +39,7 @@ public:
     
     void setHydrodynamicDataDialog(HydrodynamicDataDialog *dialog);
 private slots:
-    void on_rdoWaterLevel_clicked(bool checked);
-    void on_rdoWaterFlow_clicked(bool checked);
+    void on_cbxType_currentIndexChanged(const QString &type);
     void on_btnTimeSeries_clicked();
     void on_btnCellColor_clicked();
     void btnIndividualObjectPicker_clicked(bool checked);

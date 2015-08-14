@@ -19,6 +19,8 @@ private:
     BoundaryCondition *currentBoundaryCondition;
     PickerMode pickerMode;
     vtkIdType lastCellId;
+    
+    vtkSmartPointer<vtkPolyData> getTargetPolyData(BoundaryCondition *boundaryCondition) const;
 public:
     static HydrodynamicMouseInteractor* New();
     vtkTypeMacro(HydrodynamicMouseInteractor, vtkInteractorStyleRubberBandPick);

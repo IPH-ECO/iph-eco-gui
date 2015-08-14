@@ -41,7 +41,7 @@ void HydrodynamicVTKWidget::render(HydrodynamicConfiguration *hydrodynamicConfig
     }
     
     currentMesh = mesh;
-    vtkPolyData *meshPolyData = currentMesh->getMeshPolyData();
+    vtkSmartPointer<vtkPolyData> meshPolyData = currentMesh->getMeshPolyData();
     
     renderer->RemoveActor(meshActor);
     renderer->RemoveActor(axesActor);
@@ -49,7 +49,7 @@ void HydrodynamicVTKWidget::render(HydrodynamicConfiguration *hydrodynamicConfig
     // Mesh rendering
     vtkSmartPointer<vtkPolyDataMapper> meshMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
     meshMapper->SetInputData(meshPolyData);
-    meshMapper->SetResolveCoincidentTopologyToPolygonOffset();
+    meshMapper->SetResolveCoincidentTopologyToDefault();
     meshMapper->ScalarVisibilityOff();
     
     meshActor = vtkSmartPointer<vtkActor>::New();

@@ -138,16 +138,6 @@
      </property>
     </widget>
    </item>
-   <item row="0" column="2">
-    <widget class="QRadioButton" name="rdoWaterFlow">
-     <property name="text">
-      <string>Water Flow</string>
-     </property>
-     <attribute name="buttonGroup">
-      <string notr="true">buttonGroup</string>
-     </attribute>
-    </widget>
-   </item>
    <item row="3" column="2">
     <widget class="QRadioButton" name="rdoTimeSeries">
      <property name="text">
@@ -172,19 +162,6 @@
        <height>16777215</height>
       </size>
      </property>
-    </widget>
-   </item>
-   <item row="0" column="1">
-    <widget class="QRadioButton" name="rdoWaterLevel">
-     <property name="text">
-      <string>Water Level</string>
-     </property>
-     <property name="checked">
-      <bool>true</bool>
-     </property>
-     <attribute name="buttonGroup">
-      <string notr="true">buttonGroup</string>
-     </attribute>
     </widget>
    </item>
    <item row="3" column="0">
@@ -225,6 +202,23 @@
        <height>10</height>
       </size>
      </property>
+    </widget>
+   </item>
+   <item row="0" column="1" colspan="2">
+    <widget class="QComboBox" name="cbxType">
+     <property name="currentIndex">
+      <number>0</number>
+     </property>
+     <item>
+      <property name="text">
+       <string>Water Level</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Water Flow</string>
+      </property>
+     </item>
     </widget>
    </item>
   </layout>
@@ -330,54 +324,6 @@
    </hints>
   </connection>
   <connection>
-   <sender>rdoWaterLevel</sender>
-   <signal>clicked(bool)</signal>
-   <receiver>chkVIO</receiver>
-   <slot>setDisabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>162</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>221</x>
-     <y>157</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>rdoWaterLevel</sender>
-   <signal>clicked(bool)</signal>
-   <receiver>edtQuota</receiver>
-   <slot>setDisabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>162</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>155</x>
-     <y>184</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>rdoWaterFlow</sender>
-   <signal>clicked(bool)</signal>
-   <receiver>chkVIO</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>270</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>221</x>
-     <y>157</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>chkVIO</sender>
    <signal>clicked(bool)</signal>
    <receiver>edtQuota</receiver>
@@ -395,7 +341,7 @@
   </connection>
  </connections>
  <buttongroups>
-  <buttongroup name="buttonGroup"/>
   <buttongroup name="buttonGroup_2"/>
+  <buttongroup name="buttonGroup"/>
  </buttongroups>
 </ui>

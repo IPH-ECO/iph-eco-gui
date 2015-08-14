@@ -197,12 +197,14 @@ void HydrodynamicDataDialog::on_cbxConfiguration_currentIndexChanged(const QStri
         ui->cbxGridDataConfiguration->setCurrentText(currentConfiguration->getGridDataConfiguration()->getName());
         
         QList<BoundaryCondition*> boundaryConditions = currentConfiguration->getBoundaryConditions();
+        int i = 0;
         
-        for (int i = 0; i < boundaryConditions.size(); i++) {
+        for (BoundaryCondition *boundaryCondition : boundaryConditions) {
             ui->tblBoundaryConditions->insertRow(i);
-            ui->tblBoundaryConditions->setItem(i, 0, new QTableWidgetItem(boundaryConditions[i]->getTypeStr()));
-            ui->tblBoundaryConditions->setItem(i, 1, new QTableWidgetItem(boundaryConditions[i]->getFunctionStr()));
-            ui->vtkWidget->getMouseInteractor()->renderBoundaryCondition(boundaryConditions[i]);
+            ui->tblBoundaryConditions->setItem(i, 0, new QTableWidgetItem(boundaryCondition->getTypeStr()));
+            ui->tblBoundaryConditions->setItem(i, 1, new QTableWidgetItem(boundaryCondition->getFunctionStr()));
+            ui->vtkWidget->getMouseInteractor()->renderBoundaryCondition(boundaryCondition);
+            i++;
         }
         
         on_btnShowCellLabels_clicked(ui->btnShowCellLabels->isChecked());
@@ -475,6 +477,10 @@ void HydrodynamicDataDialog::toggleWidgets(bool enable) {
             widget->setEnabled(enable);
         }
     }
+    
+    ui->btnShowMesh->setChecked(true);
+    ui->vtkWidget->toggleMesh(true);
+    ui->btnShowMesh->setEnabled(enable);
 }
 
 void HydrodynamicDataDialog::on_btnBackgroundColor_clicked() {
@@ -499,6 +505,7 @@ void HydrodynamicDataDialog::setCoordinate(double &x, double &y) {
 void HydrodynamicDataDialog::on_tblBoundaryConditions_currentItemChanged(QTableWidgetItem *current, QTableWidgetItem *previous) {
     if (current != nullptr && (previous == nullptr || current->row() != previous->row())) {
         BoundaryCondition *boundaryCondition = currentConfiguration->getBoundaryCondition(current->row());
+        
         ui->vtkWidget->getMouseInteractor()->highlightBoundaryCondition(boundaryCondition, true);
         
         if (previous) {
