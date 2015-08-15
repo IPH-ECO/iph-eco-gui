@@ -3,10 +3,13 @@
 #include "ui_hydrodynamic_data_dialog.h"
 
 #include <QIcon>
+#include <vtkCell.h>
 #include <QStringList>
 #include <QMessageBox>
 #include <QColorDialog>
 #include <vtkProperty.h>
+#include <vtkPolyData.h>
+#include <vtkCellData.h>
 
 #include "include/ui/hydrodynamic_vtk_widget.h"
 #include "include/ui/time_series_dialog.h"
@@ -271,9 +274,72 @@ bool BoundaryConditionDialog::isValid() {
         return false;
     }
     
-    if (ui->edtQuota->isEnabled() && ui->edtQuota->text().isEmpty()) {
-        QMessageBox::warning(this, tr("Boundary Condition"), tr("Please input a valid quota value."));
-        return false;
+    if (ui->edtQuota->isEnabled()) {
+        if (ui->edtQuota->text().isEmpty()) {
+            QMessageBox::warning(this, tr("Boundary Condition"), tr("Please input a valid quota value."));
+            return false;
+        }
+        
+        GridDataConfiguration *gridDataConfiguration = configuration->getGridDataConfiguration();
+        Mesh *mesh = gridDataConfiguration->getMesh();
+        vtkSmartPointer<vtkPolyData> meshPolyData = mesh->getMeshPolyData();
+        vtkSmartPointer<vtkPolyData> boundaryPolyData = mesh->getBoundaryPolyData();
+        QList<vtkIdType> foundCells;
+        
+        meshPolyData->BuildLinks();
+        
+        for (vtkIdType edgeId : currentBoundaryCondition->getObjectIds()) {
+            vtkSmartPointer<vtkCell> edge = boundaryPolyData->GetCell(edgeId);
+            double edgeA[3], edgeB[3];
+            
+            edge->GetPoints()->GetPoint(0, edgeA);
+            edge->GetPoints()->GetPoint(1, edgeB);
+            
+            vtkIdType meshPointAId = meshPolyData->FindPoint(edgeA);
+            vtkIdType meshPointBId = meshPolyData->FindPoint(edgeB);
+            vtkSmartPointer<vtkIdList> cellsPointA = vtkSmartPointer<vtkIdList>::New();
+            vtkSmartPointer<vtkIdList> cellsPointB = vtkSmartPointer<vtkIdList>::New();
+            
+            meshPolyData->GetPointCells(meshPointAId, cellsPointA);
+            meshPolyData->GetPointCells(meshPointBId, cellsPointB);
+            
+            bool isCellFound = false;
+            
+            for (vtkIdType i = 0; i < cellsPointA->GetNumberOfIds() && !isCellFound; i++) {
+                for (int j = 0; j < cellsPointB->GetNumberOfIds() && !isCellFound; j++) {
+                    if (cellsPointA->GetId(i) == cellsPointB->GetId(j)) {
+                        foundCells.append(cellsPointA->GetId(i));
+                        isCellFound = true;
+                    }
+                }
+            }
+        }
+        
+        GridData *bathymetryGridData = nullptr;
+        
+        for (GridData *gridData : gridDataConfiguration->getGridDataVector()) {
+            if (gridData->getGridDataType() == GridDataType::BATHYMETRY) {
+                bathymetryGridData = gridData;
+                break;
+            }
+        }
+        
+        double quota = ui->edtQuota->text().toDouble();
+        double maxWeight = quota;
+        
+        for (vtkIdType cellId : foundCells) {
+            std::string arrayName = bathymetryGridData->getName().toStdString();
+            double weight = meshPolyData->GetCellData()->GetScalars(arrayName.c_str())->GetTuple1(cellId);
+            
+            if (weight > maxWeight) {
+                maxWeight = weight;
+            }
+        }
+        
+        if (maxWeight > quota) {
+            QMessageBox::warning(this, tr("Boundary Condition"), tr("Quota must be greater than or equal to %1.").arg(maxWeight));
+            return false;
+        }
     }
     
     return true;
