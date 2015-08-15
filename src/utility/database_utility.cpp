@@ -43,7 +43,8 @@ void DatabaseUtility::disconnect() {
 void DatabaseUtility::createApplicationTables() {
     QStringList sql;
 
-    sql << "create table if not exists project (" \
+    sql << "drop table if exists project";
+    sql << "create table project (" \
         "id integer primary key, " \
         "name varchar(255) not null, " \
         "description text, " \
@@ -52,7 +53,8 @@ void DatabaseUtility::createApplicationTables() {
         "sediment boolean default false" \
     ")";
 
-    sql << "create table if not exists mesh (" \
+    sql << "drop table if exists mesh";
+    sql << "create table mesh (" \
         "id integer primary key, " \
         "name varchar(255) not null, " \
         "type varchar(255) not null, " \
@@ -62,7 +64,8 @@ void DatabaseUtility::createApplicationTables() {
         "resolution integer" \
     ")";
 
-    sql << "create table if not exists mesh_polygon (" \
+    sql << "drop table if exists mesh_polygon";
+    sql << "create table mesh_polygon (" \
         "id integer primary key, " \
         "name varchar(255) not null, " \
         "type varchar(255) not null, " \
@@ -72,12 +75,14 @@ void DatabaseUtility::createApplicationTables() {
         "mesh_id integer not null" \
     ")";
     
-    sql << "create table if not exists grid_data_configuration (" \
+    sql << "drop table if exists grid_data_configuration";
+    sql << "create table grid_data_configuration (" \
         "id integer primary key, " \
         "name varchar(255) not null" \
     ")";
     
-    sql << "create table if not exists grid_data (" \
+    sql << "drop table if exists grid_data";
+    sql << "create table grid_data (" \
         "id integer primary key, " \
         "name varchar(255) not null, " \
         "input_type integer not null, " \
@@ -111,13 +116,15 @@ void DatabaseUtility::createApplicationTables() {
         "mesh_id integer not null" \
     ")";
     
-    sql << "create table if not exists hydrodynamic_configuration (" \
+    sql << "drop table if exists hydrodynamic_configuration";
+    sql << "create table hydrodynamic_configuration (" \
         "id integer primary key, " \
         "name varchar(255) not null, " \
         "grid_data_configuration_id integer not null" \
     ")";
     
-    sql << "create table if not exists hydrodynamic_parameter (" \
+    sql << "drop table if exists hydrodynamic_parameter";
+    sql << "create table hydrodynamic_parameter (" \
         "id integer primary key, " \
         "name varchar(255) not null, " \
         "type varchar(255) not null, " \
@@ -126,7 +133,8 @@ void DatabaseUtility::createApplicationTables() {
         "hydrodynamic_configuration_id integer not null" \
     ")";
 
-    sql << "create table if not exists boundary_condition (" \
+    sql << "drop table if exists boundary_condition";
+    sql << "create table boundary_condition (" \
         "id integer primary key, " \
         "type varchar(255) not null, " \
         "object_ids varchar(255) not null, " \
@@ -139,7 +147,8 @@ void DatabaseUtility::createApplicationTables() {
         "configuration_id integer not null" \
     ")";
     
-    sql << "create table if not exists time_series (" \
+    sql << "drop table if exists time_series";
+    sql << "create table time_series (" \
         "id integer primary key, " \
         "timestamp text not null, " \
         "value float default 0, " \
