@@ -19,15 +19,18 @@ private:
 
     QSettings *appSettings;
 	Ui::TimeSeriesDialog *ui;
-    BoundaryCondition *boundaryCondition;
+    BoundaryCondition *currentBoundaryCondition;
+    QList<TimeSeries*> timeSeriesList;
     
     QString getDefaultDirectory();
     bool isValid();
     virtual void accept();
     
 public:
-	explicit TimeSeriesDialog(QWidget *parent, BoundaryCondition *boundaryCondition);
+	explicit TimeSeriesDialog(QWidget *parent, BoundaryCondition *boundaryCondition, const QList<TimeSeries*> &timeSeriesList);
     ~TimeSeriesDialog();
+    
+    QList<TimeSeries*> getTimeSeriesList() const;
     
 private slots:
     void on_btnAddEntry_clicked();

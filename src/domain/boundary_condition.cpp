@@ -141,12 +141,17 @@ QList<TimeSeries*> BoundaryCondition::getTimeSeriesList() const {
 	return timeSeriesList;
 }
 
-void BoundaryCondition::setTimeSeriesList(const QList<TimeSeries*> &timeSeriesList) {
-    for (TimeSeries *timeSeries : this->timeSeriesList) {
-        delete timeSeries;
+TimeSeries* BoundaryCondition::getTimeSeries(uint id) const {
+    for (TimeSeries *timeSeries : timeSeriesList) {
+        if (timeSeries->getId() == id) {
+            return timeSeries;
+        }
     }
-    this->timeSeriesList.clear();
     
+    return nullptr;
+}
+
+void BoundaryCondition::setTimeSeriesList(const QList<TimeSeries*> &timeSeriesList) {
 	this->timeSeriesList = timeSeriesList;
 }
 

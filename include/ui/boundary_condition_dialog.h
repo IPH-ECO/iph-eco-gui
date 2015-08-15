@@ -26,6 +26,8 @@ private:
     QToolButton *btnMultipleObjectPicker;
     HydrodynamicDataDialog *hydrodynamicDataDialog;
     QSet<vtkIdType> originalObjectIds;
+    QList<TimeSeries*> originalTimeSeriesList;
+    QList<TimeSeries*> timeSeriesList;
     bool isNewBoundaryCondition;
     
     void closeEvent(QCloseEvent *event);

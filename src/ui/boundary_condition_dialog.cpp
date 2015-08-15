@@ -75,6 +75,8 @@ BoundaryConditionDialog::BoundaryConditionDialog(HydrodynamicConfiguration *conf
     ui->btnCellColor->setIcon(px);
     
     this->originalObjectIds = this->currentBoundaryCondition->getObjectIds();
+    this->originalTimeSeriesList = this->currentBoundaryCondition->getTimeSeriesList();
+    this->timeSeriesList = originalTimeSeriesList;
 }
 
 BoundaryConditionDialog::~BoundaryConditionDialog() {
@@ -123,8 +125,12 @@ void BoundaryConditionDialog::on_cbxType_currentIndexChanged(const QString &type
 }
 
 void BoundaryConditionDialog::on_btnTimeSeries_clicked() {
-    TimeSeriesDialog *timeSeriesDialog = new TimeSeriesDialog(this, currentBoundaryCondition);
-    timeSeriesDialog->exec();
+    TimeSeriesDialog *timeSeriesDialog = new TimeSeriesDialog(this, currentBoundaryCondition, timeSeriesList);
+    int exitCode = timeSeriesDialog->exec();
+    
+    if (exitCode == QDialog::Accepted) {
+        timeSeriesList = timeSeriesDialog->getTimeSeriesList();
+    }
 }
 
 void BoundaryConditionDialog::on_btnCellColor_clicked() {
@@ -158,7 +164,7 @@ void BoundaryConditionDialog::btnIndividualObjectPicker_clicked(bool checked) {
 }
 
 void BoundaryConditionDialog::btnMultipleObjectPicker_clicked(bool checked) {
-//    hydrodynamicDataDialog->ui->vtkWidget->togglePicker(checked, ui->rdoWaterFlow->isChecked() ? PickerMode::MULTIPLE_EDGE : PickerMode::MULTIPLE_CELL);
+    hydrodynamicDataDialog->ui->vtkWidget->togglePicker(checked, ui->cbxType->currentText() == "Water Flow" ? PickerMode::MULTIPLE_EDGE : PickerMode::MULTIPLE_CELL);
     hydrodynamicDataDialog->ui->btnZoomArea->setChecked(false);
     hydrodynamicDataDialog->ui->btnZoomArea->setDisabled(checked);
     hydrodynamicDataDialog->ui->vtkWidget->toggleZoomArea(false);
@@ -178,13 +184,17 @@ void BoundaryConditionDialog::accept() {
         return;
     }
     
-//    currentBoundaryCondition->setType(ui->rdoWaterLevel->isChecked() ? BoundaryConditionType::WATER_LEVEL : BoundaryConditionType::WATER_FLOW);
+    currentBoundaryCondition->setType(ui->cbxType->currentText() == "Water Level" ? BoundaryConditionType::WATER_LEVEL : BoundaryConditionType::WATER_FLOW);
     currentBoundaryCondition->setObjectIds(ui->lblElementIds->text());
     currentBoundaryCondition->setFunction(ui->rdoConstant->isChecked() ? BoundaryConditionFunction::CONSTANT : BoundaryConditionFunction::TIME_SERIES);
     currentBoundaryCondition->setConstantValue(ui->edtConstant->text().toDouble());
     currentBoundaryCondition->setVerticalIntegratedOutflow(ui->chkVIO->isChecked());
     currentBoundaryCondition->setQuota(ui->edtQuota->text().toDouble());
     currentBoundaryCondition->setInputModule(InputModule::HYDRODYNAMIC);
+    
+    if (ui->rdoTimeSeries->isChecked()) {
+        currentBoundaryCondition->setTimeSeriesList(timeSeriesList);
+    }
     
     configuration->addBoundaryCondition(currentBoundaryCondition);
     
@@ -246,12 +256,18 @@ void BoundaryConditionDialog::showObjectIds() {
 
 bool BoundaryConditionDialog::isValid() {
     if (currentBoundaryCondition->getObjectIds().isEmpty()) {
-//        QMessageBox::warning(this, tr("Boundary Condition"), tr("Please pick at least one %1 from the grid.").arg(ui->rdoWaterLevel->isChecked() ? "cell" : "edge"));
+        QString message = tr("Please pick at least one %1 from the grid.").arg(ui->cbxType->currentText() == "Water Level" ? "cell" : "edge");
+        QMessageBox::warning(this, tr("Boundary Condition"), message);
         return false;
     }
     
     if (ui->rdoConstant->isChecked() && ui->edtConstant->text().isEmpty()) {
         QMessageBox::warning(this, tr("Boundary Condition"), tr("Please input a valid constant value."));
+        return false;
+    }
+    
+    if (ui->rdoTimeSeries->isChecked() && timeSeriesList.isEmpty()) {
+        QMessageBox::warning(this, tr("Boundary Condition"), tr("Please provide a valid time series list."));
         return false;
     }
     
@@ -273,6 +289,7 @@ void BoundaryConditionDialog::undoChanges() {
         delete currentBoundaryCondition;
     } else {
         currentBoundaryCondition->setObjectIds(originalObjectIds);
+        currentBoundaryCondition->setTimeSeriesList(originalTimeSeriesList);
         hydrodynamicDataDialog->ui->vtkWidget->getMouseInteractor()->renderBoundaryCondition(currentBoundaryCondition);
         hydrodynamicDataDialog->ui->vtkWidget->getMouseInteractor()->highlightBoundaryCondition(currentBoundaryCondition, true);
     }

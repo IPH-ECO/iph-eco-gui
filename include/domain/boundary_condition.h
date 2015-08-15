@@ -58,6 +58,7 @@ public:
 	void setInputModule(const InputModule &inputModule);
 	QString getObjectIdsStr() const;
 	QList<TimeSeries*> getTimeSeriesList() const;
+    TimeSeries* getTimeSeries(uint id) const;
 	void setTimeSeriesList(const QList<TimeSeries*> &timeSeriesList);
 	bool addTimeSeries(TimeSeries *timeSeries);
     QString getCellColor() const;

@@ -9,19 +9,22 @@
 #include <QIODevice>
 #include <QFile>
 
-TimeSeriesDialog::TimeSeriesDialog(QWidget *parent, BoundaryCondition *boundaryCondition) :
-    QDialog(parent), HYDRODYNAMIC_DEFAULT_DIR_KEY("default_hydrodynamic_dir"), ui(new Ui::TimeSeriesDialog), boundaryCondition(boundaryCondition)
+TimeSeriesDialog::TimeSeriesDialog(QWidget *parent, BoundaryCondition *boundaryCondition, const QList<TimeSeries*> &timeSeriesList) :
+    QDialog(parent), HYDRODYNAMIC_DEFAULT_DIR_KEY("default_hydrodynamic_dir"), ui(new Ui::TimeSeriesDialog), currentBoundaryCondition(boundaryCondition)
 {
     ui->setupUi(this);
     ui->tblTimeSeries->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     appSettings = new QSettings(QApplication::organizationName(), QApplication::applicationName(), this);
     
-    QList<TimeSeries*> timeSeriesList = boundaryCondition->getTimeSeriesList();
+    this->timeSeriesList = timeSeriesList;
+    int i = 0;
     
-    for (int i = 0; i < timeSeriesList.size(); i++) {
+    for (TimeSeries *timeSeries : timeSeriesList) {
         ui->tblTimeSeries->insertRow(i);
-        ui->tblTimeSeries->setItem(i, 0, new QTableWidgetItem(timeSeriesList[i]->getTimestamp()));
-        ui->tblTimeSeries->setItem(i, 1, new QTableWidgetItem(QString::number(timeSeriesList[i]->getValue())));
+        ui->tblTimeSeries->setItem(i, 0, new QTableWidgetItem(timeSeries->getTimestamp()));
+        ui->tblTimeSeries->setItem(i, 1, new QTableWidgetItem(QString::number(timeSeries->getValue())));
+        ui->tblTimeSeries->item(i, 0)->setData(Qt::UserRole, QVariant((uint) timeSeries->getId()));
+        i++;
     }
 }
 
@@ -128,17 +131,27 @@ void TimeSeriesDialog::accept() {
         return;
     }
     
-    QList<TimeSeries*> timeSeriesList;
+    timeSeriesList.clear();
     
     for (int i = 0; i < ui->tblTimeSeries->rowCount(); i++) {
-        TimeSeries *timeSeries = new TimeSeries();
+        QVariant data = ui->tblTimeSeries->item(i, 0)->data(Qt::UserRole);
+        TimeSeries *timeSeries = nullptr;
+        
+        if (data.isValid()) {
+            timeSeries = currentBoundaryCondition->getTimeSeries(data.toUInt());
+        } else {
+            timeSeries = new TimeSeries();
+        }
+        
         timeSeries->setTimestamp(ui->tblTimeSeries->item(i, 0)->text());
         timeSeries->setValue(ui->tblTimeSeries->item(i, 1)->text().toDouble());
         
         timeSeriesList.append(timeSeries);
     }
     
-    boundaryCondition->setTimeSeriesList(timeSeriesList);
-    
     QDialog::accept();
+}
+
+QList<TimeSeries*> TimeSeriesDialog::getTimeSeriesList() const {
+    return timeSeriesList;
 }
