@@ -75,12 +75,7 @@ void GridDataVTKWidget::render(Mesh *mesh) {
     meshActor->SetMapper(meshMapper);
     meshActor->GetProperty()->LightingOff();
     meshActor->GetProperty()->SetColor(0, 0, 0);
-    
-    if (this->showMesh) {
-        meshActor->VisibilityOn();
-    } else {
-        meshActor->VisibilityOff();
-    }
+    meshActor->SetVisibility(showMesh);
     
     axesActor = vtkSmartPointer<vtkCubeAxesActor>::New();
     axesActor->SetXUnits("m");
@@ -97,12 +92,7 @@ void GridDataVTKWidget::render(Mesh *mesh) {
     axesActor->SetBounds(currentMesh->getMeshPolyData()->GetBounds());
     axesActor->SetCamera(renderer->GetActiveCamera());
     axesActor->SetFlyModeToStaticEdges();
-    
-    if (this->showAxes) {
-        axesActor->VisibilityOn();
-    } else {
-        axesActor->VisibilityOff();
-    }
+    axesActor->SetVisibility(showAxes);
     
     renderer->AddActor(meshActor);
     renderer->AddActor(axesActor);
@@ -136,6 +126,7 @@ void GridDataVTKWidget::render(GridData *gridData) {
     mapPointsActor->SetMapper(inputPointsMapper);
     mapPointsActor->GetProperty()->SetPointSize(gridData->getPointsSize());
     mapPointsActor->GetProperty()->SetOpacity(gridData->getPointsOpacity() / 100.0);
+    mapPointsActor->SetVisibility(showMapPoints);
     
     std::string mapPointsBarActorTitle = currentGridData->getName().toStdString();
     
@@ -146,8 +137,9 @@ void GridDataVTKWidget::render(GridData *gridData) {
     mapPointsBarActor->SetWidth(0.1);
     mapPointsBarActor->SetHeight(0.5);
     mapPointsBarActor->SetPosition(0.05, 0.05);
+    mapPointsBarActor->SetVisibility(currentGridData->getPointsLegend());
 
-    vtkPolyData *meshPolyData = mesh->getMeshPolyData();
+    vtkSmartPointer<vtkPolyData> meshPolyData = mesh->getMeshPolyData();
 	std::string gridDataName(currentGridData->getName().toStdString());
     vtkColorTransferFunction *mapColorTransferFunction = buildColorTransferFunction(true);
 
@@ -162,6 +154,8 @@ void GridDataVTKWidget::render(GridData *gridData) {
     mapActor = vtkSmartPointer<vtkActor>::New();
     mapActor->SetMapper(mapMapper);
     mapActor->GetProperty()->SetOpacity(gridData->getMapOpacity() / 100.0);
+    mapActor->GetProperty()->SetLighting(currentGridData->getMapLighting());
+    mapActor->SetVisibility(showMap);
     
     mapBarActor = vtkSmartPointer<vtkScalarBarActor>::New();
     mapBarActor->SetLookupTable(mapColorTransferFunction);
@@ -170,36 +164,7 @@ void GridDataVTKWidget::render(GridData *gridData) {
     mapBarActor->SetWidth(0.1);
     mapBarActor->SetHeight(0.5);
     mapBarActor->SetPosition(0.85, 0.05);
-    
-    if (gridData->getMapLegend()) {
-        mapBarActor->VisibilityOn();
-    } else {
-        mapBarActor->VisibilityOff();
-    }
-    
-    if (gridData->getPointsLegend()) {
-        mapPointsBarActor->VisibilityOn();
-    } else {
-        mapPointsBarActor->VisibilityOff();
-    }
-    
-    if (currentGridData->getMapLighting()) {
-        mapActor->GetProperty()->LightingOn();
-    } else {
-        mapActor->GetProperty()->LightingOff();
-    }
-    
-    if (showMap) {
-        mapActor->VisibilityOn();
-    } else {
-        mapActor->VisibilityOff();
-    }
-    
-    if (showMapPoints) {
-        mapPointsActor->VisibilityOn();
-    } else {
-        mapPointsActor->VisibilityOff();
-    }
+    mapBarActor->SetVisibility(currentGridData->getMapLegend());
     
     renderer->AddActor(mapActor);
     renderer->AddActor(mapPointsActor);
@@ -270,12 +235,7 @@ void GridDataVTKWidget::toggleMesh(bool show) {
 
 void GridDataVTKWidget::toggleAxes(bool show) {
     this->showAxes = show;
-    
-    if (show) {
-        axesActor->VisibilityOn();
-    } else {
-        axesActor->VisibilityOff();
-    }
+    this->axesActor->SetVisibility(show);
     this->update();
 }
 

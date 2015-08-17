@@ -4,6 +4,7 @@
 #include <vtkPolyData.h>
 #include <vtkProperty.h>
 #include <vtkCellArray.h>
+#include <vtkAreaPicker.h>
 #include <vtkSmartPointer.h>
 #include <vtkExtractEdges.h>
 #include <vtkRenderWindow.h>
@@ -14,23 +15,37 @@
 
 #include "include/ui/structured_mesh_dialog.h"
 #include "include/ui/unstructured_mesh_dialog.h"
-#include "include/utility/mesh_mouse_interactor.h"
 
 vtkStandardNewMacro(MeshMouseInteractor);
 
-MeshVTKWidget::MeshVTKWidget(QWidget *parent) : QVTKWidget(parent), showBoundaryEdges(true), showMesh(true), showUTMCoordinates(false) {}
+MeshVTKWidget::MeshVTKWidget(QWidget *parent) : QVTKWidget(parent), showBoundaryEdges(true), showMesh(true), showAxes(true) {
+    renderer = vtkSmartPointer<vtkRenderer>::New();
+    renderWindow = vtkSmartPointer<vtkRenderWindow>::New();
+    renderWindowInteractor = vtkSmartPointer<vtkRenderWindowInteractor>::New();
+    mouseInteractor = vtkSmartPointer<MeshMouseInteractor>::New();
+    vtkSmartPointer<vtkAreaPicker> areaPicker = vtkSmartPointer<vtkAreaPicker>::New();
+    
+    renderer->SetBackground(1, 1, 1);
+    renderWindow->AddRenderer(renderer);
+    renderWindowInteractor->SetRenderWindow(renderWindow);
+    renderWindowInteractor->SetInteractorStyle(mouseInteractor);
+    renderWindowInteractor->SetPicker(areaPicker);
+    mouseInteractor->SetDefaultRenderer(renderer);
+    
+    this->SetRenderWindow(renderWindow);
+    renderWindow->Render();
+}
 
 MeshVTKWidget::~MeshVTKWidget() {}
 
 void MeshVTKWidget::render(Mesh *mesh) {
     MeshPolygon *boundaryPolygon = mesh->getBoundaryPolygon();
 
-    if (boundaryPolygon->getFilteredPolygon() == nullptr) {
+    if (!boundaryPolygon->getFilteredPolygon()) {
         return;
     }
-
-    renderer = vtkSmartPointer<vtkRenderer>::New();
-    renderer->SetBackground(1, 1, 1);
+    
+    clear();
 
     // Contour rendering
     vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
@@ -40,8 +55,8 @@ void MeshVTKWidget::render(Mesh *mesh) {
 
     meshPolygons.prepend(boundaryPolygon);
 
-    for (QList<MeshPolygon*>::const_iterator it = meshPolygons.begin(); it != meshPolygons.end(); it++) {
-        vtkPolygon *vtkMeshPolygon = (*it)->getFilteredPolygon();
+    for (MeshPolygon* meshPolygon : meshPolygons) {
+        vtkPolygon *vtkMeshPolygon = meshPolygon->getFilteredPolygon();
 
         for (vtkIdType i = 0; i < vtkMeshPolygon->GetPoints()->GetNumberOfPoints(); i++) {
             double point[3];
@@ -55,54 +70,50 @@ void MeshVTKWidget::render(Mesh *mesh) {
         polygons->InsertNextCell(vtkMeshPolygon);
     }
 
-    vtkSmartPointer<vtkPolyData> domainPolyData = vtkSmartPointer<vtkPolyData>::New();
-    domainPolyData->SetPoints(points);
-    domainPolyData->SetPolys(polygons);
+    vtkSmartPointer<vtkPolyData> boundaryPolyData = vtkSmartPointer<vtkPolyData>::New();
+    boundaryPolyData->SetPoints(points);
+    boundaryPolyData->SetPolys(polygons);
 
-    vtkSmartPointer<vtkExtractEdges> domainEdges = vtkSmartPointer<vtkExtractEdges>::New();
-    domainEdges->SetInputData(domainPolyData);
-    domainEdges->Update();
+    vtkSmartPointer<vtkExtractEdges> boundaryEdges = vtkSmartPointer<vtkExtractEdges>::New();
+    boundaryEdges->SetInputData(boundaryPolyData);
+    boundaryEdges->Update();
 
-    vtkSmartPointer<vtkPolyDataMapper> domainMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-    domainMapper->SetInputData(domainEdges->GetOutput());
+    vtkSmartPointer<vtkPolyDataMapper> boundaryEdgesMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+    boundaryEdgesMapper->SetInputData(boundaryEdges->GetOutput());
     
-    this->boundaryEdgesActor = vtkSmartPointer<vtkActor>::New();
-    this->boundaryEdgesActor->SetMapper(domainMapper);
-    this->boundaryEdgesActor->GetProperty()->EdgeVisibilityOn();
-
-    if (showBoundaryEdges) {
-        this->boundaryEdgesActor->VisibilityOn();
-    } else {
-        this->boundaryEdgesActor->VisibilityOff();
-    }
-
-    renderer->AddActor(this->boundaryEdgesActor);
-
+    boundaryEdgesActor = vtkSmartPointer<vtkActor>::New();
+    boundaryEdgesActor->SetMapper(boundaryEdgesMapper);
+    boundaryEdgesActor->GetProperty()->EdgeVisibilityOn();
+    boundaryEdgesActor->SetVisibility(showBoundaryEdges);
+    
     // Mesh rendering
-    vtkSmartPointer<vtkPolyData> gridPolyData = mesh->getMeshPolyData();
-    vtkSmartPointer<vtkPolyDataMapper> gridMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-    gridMapper->SetInputData(gridPolyData);
-    gridMapper->ScalarVisibilityOff();
+    vtkSmartPointer<vtkPolyData> meshPolyData = mesh->getMeshPolyData();
+    vtkSmartPointer<vtkPolyDataMapper> meshMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+    meshMapper->SetInputData(meshPolyData);
+    meshMapper->ScalarVisibilityOff();
     
-    this->gridActor = vtkSmartPointer<vtkActor>::New();
-    this->gridActor->SetMapper(gridMapper);
-    this->gridActor->GetProperty()->EdgeVisibilityOn();
-
-    if (showMesh) {
-        this->gridActor->VisibilityOn();
-    } else {
-        this->gridActor->VisibilityOff();
-    }
-
-    renderer->AddActor(this->gridActor);
-
-    vtkSmartPointer<vtkRenderWindow> renderWindow = vtkSmartPointer<vtkRenderWindow>::New();
-    vtkSmartPointer<vtkWorldPointPicker> worldPointPicker = vtkSmartPointer<vtkWorldPointPicker>::New();
-    vtkSmartPointer<vtkRenderWindowInteractor> renderWindowInteractor = vtkSmartPointer<vtkRenderWindowInteractor>::New();
-    vtkSmartPointer<MeshMouseInteractor> mouseInteractor = vtkSmartPointer<MeshMouseInteractor>::New();
+    meshActor = vtkSmartPointer<vtkActor>::New();
+    meshActor->SetMapper(meshMapper);
+    meshActor->GetProperty()->EdgeVisibilityOn();
+    meshActor->SetVisibility(showMesh);
     
-    mouseInteractor->SetDefaultRenderer(renderer);
-    
+    axesActor = vtkSmartPointer<vtkCubeAxesActor>::New();
+    axesActor->SetXUnits("m");
+    axesActor->SetXLabelFormat("%4.2f");
+    axesActor->SetYUnits("m");
+    axesActor->SetYLabelFormat("%4.2f");
+    axesActor->ZAxisVisibilityOff();
+    axesActor->GetLabelTextProperty(0)->SetColor(0, 0, 0);
+    axesActor->GetTitleTextProperty(0)->SetColor(0, 0, 0);
+    axesActor->GetXAxesLinesProperty()->SetColor(0, 0, 0);
+    axesActor->GetLabelTextProperty(1)->SetColor(0, 0, 0);
+    axesActor->GetTitleTextProperty(1)->SetColor(0, 0, 0);
+    axesActor->GetYAxesLinesProperty()->SetColor(0, 0, 0);
+    axesActor->SetBounds(mesh->getMeshPolyData()->GetBounds());
+    axesActor->SetCamera(renderer->GetActiveCamera());
+    axesActor->SetFlyModeToStaticEdges();
+    axesActor->SetVisibility(showAxes);
+
     if (mesh->instanceOf("StructuredMesh")) {
         StructuredMeshDialog *structuredMeshDialog = (StructuredMeshDialog*) this->parent();
         QObject::connect(mouseInteractor, SIGNAL(coordinateChanged(double&, double&)), structuredMeshDialog, SLOT(setCoordinate(double&, double&)));
@@ -113,39 +124,32 @@ void MeshVTKWidget::render(Mesh *mesh) {
         unstructuredMeshDialog->setArea(mesh->area());
     }
 
-    renderWindowInteractor->SetInteractorStyle(mouseInteractor);
-    renderWindowInteractor->SetPicker(worldPointPicker);
-    renderWindowInteractor->SetRenderWindow(renderWindow);
-    
-    renderWindow->AddRenderer(renderer);
-
-    this->SetRenderWindow(renderWindow);
-    renderWindow->Render();
+    renderer->AddActor(boundaryEdgesActor);
+    renderer->AddActor(meshActor);
+    renderer->ResetCamera();
 }
 
 void MeshVTKWidget::clear() {
-    if (renderer != nullptr) {
-        renderer->RemoveAllViewProps();
-        this->update();
-    }
-}
-
-void MeshVTKWidget::setShowBoundaryEdges(bool show) {
-    this->showBoundaryEdges = show;
-    if (show) {
-        this->boundaryEdgesActor->VisibilityOn();
-    } else {
-        this->boundaryEdgesActor->VisibilityOff();
-    }
+    renderer->RemoveActor(axesActor);
+    renderer->RemoveActor(meshActor);
+    renderer->RemoveActor(boundaryEdgesActor);
     this->update();
 }
 
-void MeshVTKWidget::setShowMesh(bool show) {
+void MeshVTKWidget::toggleBoundaryEdges(bool show) {
+    this->showBoundaryEdges = show;
+    this->boundaryEdgesActor->SetVisibility(show);
+    this->update();
+}
+
+void MeshVTKWidget::toggleMesh(bool show) {
     this->showMesh = show;
-    if (show) {
-        this->gridActor->VisibilityOn();
-    } else {
-        this->gridActor->VisibilityOff();
-    }
+    this->meshActor->SetVisibility(show);
+    this->update();
+}
+
+void MeshVTKWidget::toggleAxes(bool show) {
+    this->showAxes = show;
+    this->axesActor->SetVisibility(show);
     this->update();
 }
