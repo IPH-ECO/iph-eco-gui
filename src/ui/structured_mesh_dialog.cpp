@@ -193,7 +193,6 @@ void StructuredMeshDialog::on_btnRemoveMesh_clicked() {
 
 void StructuredMeshDialog::enableMeshForm(bool enable) {
     ui->chkShowMesh->setEnabled(enable);
-    ui->chkShowUtmCoordinates->setEnabled(enable);
     ui->btnSaveMesh->setEnabled(enable);
     ui->btnCancelMesh->setEnabled(enable);
 }

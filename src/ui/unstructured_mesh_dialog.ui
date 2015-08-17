@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1156</width>
-    <height>594</height>
+    <height>654</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -706,8 +706,8 @@
    <extends>QWidget</extends>
    <header>include/ui/mesh_vtk_widget.h</header>
    <slots>
-    <slot>setShowBoundaryEdges(bool)</slot>
-    <slot>setShowMesh(bool)</slot>
+    <slot>toggleBoundaryEdges(bool)</slot>
+    <slot>toggleMesh(bool)</slot>
    </slots>
   </customwidget>
  </customwidgets>
@@ -738,7 +738,7 @@
    <sender>chkShowBoundaryEdges</sender>
    <signal>clicked(bool)</signal>
    <receiver>meshVTKWidget</receiver>
-   <slot>setShowBoundaryEdges(bool)</slot>
+   <slot>toggleBoundaryEdges(bool)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>230</x>
@@ -754,7 +754,7 @@
    <sender>chkShowMesh</sender>
    <signal>clicked(bool)</signal>
    <receiver>meshVTKWidget</receiver>
-   <slot>setShowMesh(bool)</slot>
+   <slot>toggleMesh(bool)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>76</x>

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1129</width>
-    <height>631</height>
+    <width>1136</width>
+    <height>654</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -331,16 +331,6 @@
            </property>
           </widget>
          </item>
-         <item>
-          <widget class="QCheckBox" name="chkShowUtmCoordinates">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
-           <property name="text">
-            <string>Show UTM Coordinates</string>
-           </property>
-          </widget>
-         </item>
         </layout>
        </widget>
       </item>
@@ -457,8 +447,8 @@
    <extends>QWidget</extends>
    <header>include/ui/mesh_vtk_widget.h</header>
    <slots>
-    <slot>setShowBoundaryEdges(bool)</slot>
-    <slot>setShowMesh(bool)</slot>
+    <slot>toggleBoundaryEdges(bool)</slot>
+    <slot>toggleMesh(bool)</slot>
    </slots>
   </customwidget>
  </customwidgets>
@@ -473,7 +463,6 @@
   <tabstop>btnRemoveIsland</tabstop>
   <tabstop>chkShowBoundaryEdges</tabstop>
   <tabstop>chkShowMesh</tabstop>
-  <tabstop>chkShowUtmCoordinates</tabstop>
   <tabstop>btnGenerateMesh</tabstop>
   <tabstop>btnSaveMesh</tabstop>
   <tabstop>btnCancelMesh</tabstop>
@@ -487,7 +476,7 @@
    <sender>chkShowBoundaryEdges</sender>
    <signal>clicked(bool)</signal>
    <receiver>meshVTKWidget</receiver>
-   <slot>setShowBoundaryEdges(bool)</slot>
+   <slot>toggleBoundaryEdges(bool)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>230</x>
@@ -503,7 +492,7 @@
    <sender>chkShowMesh</sender>
    <signal>clicked(bool)</signal>
    <receiver>meshVTKWidget</receiver>
-   <slot>setShowMesh(bool)</slot>
+   <slot>toggleMesh(bool)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>230</x>
