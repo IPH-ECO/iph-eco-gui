@@ -87,41 +87,44 @@ void MainWindow::on_actionSaveProject_triggered() {
 
 void MainWindow::on_actionSaveAsProject_triggered() {
     Project *project = IPHApplication::getCurrentProject();
-    QString oldFilename = project->getFilename().isEmpty() ? getDefaultDirectory() : project->getFilename();
-    QString filename = QFileDialog::getSaveFileName(this, tr("Save project as..."), oldFilename, tr("IPH-ECO Project File (*.iph)"));
+    
+    if (project->isPersisted()) {
+        QString projectFileName = QFileDialog::getSaveFileName(this, tr("Save project as..."), project->getFilename(), tr("IPH-ECO Project File (*.iph)"));
 
-    if (!filename.isEmpty()) {
-        project->setFilename(filename);
-        
-        ProjectRepository projectRepository(filename);
-        QProgressDialog *progressDialog = new QProgressDialog(this);
-        int maximum = projectRepository.getMaximumSaveProgress();
+        if (!projectFileName.isEmpty()) {
+            ProjectRepository projectRepository(projectFileName);
+            QProgressDialog *progressDialog = new QProgressDialog(this);
+            int maximum = projectRepository.getMaximumSaveProgress();
 
-        progressDialog->setMinimum(0);
-        progressDialog->setMaximum(maximum);
-        progressDialog->setMinimumDuration(500);
-        progressDialog->setWindowModality(Qt::WindowModal);
-        
-        QObject::connect(&projectRepository, SIGNAL(updateProgressText(const QString&)), progressDialog, SLOT(setLabelText(const QString&)));
-        QObject::connect(&projectRepository, SIGNAL(updateProgress(int)), progressDialog, SLOT(setValue(int)));
-        QObject::connect(progressDialog, SIGNAL(canceled()), &projectRepository, SLOT(cancelOperation()));
-        
-        try {
-            projectRepository.save(true);
-        } catch (DatabaseException &ex) {
-            QMessageBox::critical(this, "Save As Project", ex.what());
+            progressDialog->setMinimum(0);
+            progressDialog->setMaximum(maximum);
+            progressDialog->setMinimumDuration(500);
+            progressDialog->setWindowModality(Qt::WindowModal);
+            
+            QObject::connect(&projectRepository, SIGNAL(updateProgressText(const QString&)), progressDialog, SLOT(setLabelText(const QString&)));
+            QObject::connect(&projectRepository, SIGNAL(updateProgress(int)), progressDialog, SLOT(setValue(int)));
+            QObject::connect(progressDialog, SIGNAL(canceled()), &projectRepository, SLOT(cancelOperation()));
+            
+            try {
+                projectRepository.save(true);
+            } catch (DatabaseException &ex) {
+                QFile::remove(projectFileName);
+                QMessageBox::critical(this, "Save As Project", ex.what());
+            }
+            
+            if (progressDialog->wasCanceled()) {
+                QFile::remove(projectFileName);
+            } else {
+                project->setFilename(projectFileName);
+                appSettings->setValue(PROJECT_DEFAULT_DIR_KEY, QFileInfo(projectFileName).absolutePath());
+                updateRecentFilesList(project->getFilename());
+                setWindowTitle("IPH-ECO - " + project->getName());
+            }
+            
+            delete progressDialog;
         }
-        
-        if (progressDialog->wasCanceled()) {
-            QFile::remove(filename);
-        } else {
-            project->setFilename(filename);
-            appSettings->setValue(PROJECT_DEFAULT_DIR_KEY, QFileInfo(filename).absolutePath());
-            updateRecentFilesList(project->getFilename());
-            setWindowTitle("IPH-ECO - " + project->getName());
-        }
-        
-        delete progressDialog;
+    } else {
+        this->on_actionSaveProject_triggered();
     }
 }
 

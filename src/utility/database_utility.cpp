@@ -12,7 +12,7 @@
 
 DatabaseUtility* DatabaseUtility::instance = nullptr;
 
-DatabaseUtility::DatabaseUtility() {}
+DatabaseUtility::DatabaseUtility() : previousDatabase(nullptr) {}
 
 DatabaseUtility* DatabaseUtility::getInstance() {
     if (instance == nullptr) {
@@ -22,22 +22,34 @@ DatabaseUtility* DatabaseUtility::getInstance() {
     return instance;
 }
 
-void DatabaseUtility::connect(const QString &databaseName) {
-    if (!database.isOpen()) {
-        database = QSqlDatabase::addDatabase("QSQLITE", QUuid::createUuid().toString());
-        database.setDatabaseName(databaseName);
+void DatabaseUtility::connect(const QString &databaseName, bool force) {
+    if (!currentDatabase.isOpen() || force) {
+        if (force) {
+            previousDatabase = &currentDatabase;
+        }
+        
+        currentDatabase = QSqlDatabase::addDatabase("QSQLITE", QUuid::createUuid().toString());
+        currentDatabase.setDatabaseName(databaseName);
 
-        if (!database.open()) {
-            throw DatabaseException(QString("The following error ocurred during database connection: %1").arg(database.lastError().text()));
+        if (!currentDatabase.open()) {
+            revertConnection();
+            throw DatabaseException(QString("The following error ocurred during database connection: %1").arg(currentDatabase.lastError().text()));
         }
     }
 }
 
 void DatabaseUtility::disconnect() {
-    if (database.isOpen()) {
-        database.close();
+    if (currentDatabase.isOpen()) {
+        currentDatabase.close();
     }
-    QSqlDatabase::removeDatabase(database.databaseName());
+    QSqlDatabase::removeDatabase(currentDatabase.databaseName());
+}
+
+void DatabaseUtility::revertConnection() {
+    if (previousDatabase) {
+        disconnect();
+        currentDatabase = *previousDatabase;
+    }
 }
 
 void DatabaseUtility::createApplicationTables() {
@@ -155,12 +167,13 @@ void DatabaseUtility::createApplicationTables() {
         "boundary_condition_id integer not null" \
     ")";
     
-    QSqlQuery query(database);
+    QSqlQuery query(currentDatabase);
 
     for (int i = 0; i < sql.count(); i++) {
         query.prepare(sql.at(i));
 
         if (!query.exec()) {
+            revertConnection();
             throw DatabaseException(QString("An error occurred when creating application tables: %1").arg(query.lastError().text()));
         }
     }
@@ -170,7 +183,7 @@ void DatabaseUtility::createApplicationTables() {
 }
 
 bool DatabaseUtility::isDatabaseValid() {
-    QSqlQuery query(database);
+    QSqlQuery query(currentDatabase);
 
     query.prepare("pragma application_id");
     query.exec();
@@ -180,5 +193,5 @@ bool DatabaseUtility::isDatabaseValid() {
 }
 
 QSqlDatabase DatabaseUtility::getDatabase() const {
-    return database;
+    return currentDatabase;
 }

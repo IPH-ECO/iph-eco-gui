@@ -10,14 +10,16 @@
 class DatabaseUtility {
 private:
     static DatabaseUtility *instance;
-    QSqlDatabase database;
+    QSqlDatabase currentDatabase;
+    QSqlDatabase *previousDatabase;
     
     DatabaseUtility();
 public:
     static DatabaseUtility* getInstance();
     
-    void connect(const QString &databaseName);
+    void connect(const QString &databaseName, bool force = false);
     void disconnect();
+    void revertConnection();
     void createApplicationTables();
     bool isDatabaseValid();
     QSqlDatabase getDatabase() const;

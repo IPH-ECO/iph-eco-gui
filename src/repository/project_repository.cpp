@@ -287,7 +287,7 @@ void ProjectRepository::save(bool makeCopy) {
     Project *project = IPHApplication::getCurrentProject();
     QString sql;
     
-    databaseUtility->connect(project->getFilename());
+    databaseUtility->connect(this->databaseName, makeCopy);
     
     QSqlDatabase::database().transaction();
     try {
@@ -318,6 +318,7 @@ void ProjectRepository::save(bool makeCopy) {
         
         if (operationCanceled) {
             QSqlDatabase::database().rollback();
+            databaseUtility->revertConnection();
         } else {
             QSqlDatabase::database().commit();
         }
