@@ -7,6 +7,7 @@
 #include "include/ui/grid_data_dialog.h"
 #include "include/ui/hydrodynamic_data_dialog.h"
 #include "include/services/project_service.h"
+#include "include/services/simulation_service.h"
 #include "include/repository/project_repository.h"
 
 #include <QProgressDialog>
@@ -177,6 +178,13 @@ void MainWindow::on_actionGridData_triggered() {
 void MainWindow::on_actionHydrodynamicData_triggered() {
     HydrodynamicDataDialog *hydrodynamicDataDialog = new HydrodynamicDataDialog(this);
     hydrodynamicDataDialog->exec();
+}
+
+void MainWindow::on_actionCreate_triggered() {
+    SimulationService *simulationService = SimulationService::getInstance();
+    Project *project = IPHApplication::getCurrentProject();
+    
+    simulationService->run(*project->getHydrodynamicConfigurations().constBegin());
 }
 
 void MainWindow::on_actionSobre_triggered() {

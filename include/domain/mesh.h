@@ -2,11 +2,14 @@
 #define MESH_H
 
 #include "mesh_polygon.h"
+
+#include <QSet>
 #include <QHash>
 #include <QList>
 #include <QObject>
 #include <vtkSmartPointer.h>
 #include <vtkPolyData.h>
+#include <vtkIdTypeArray.h>
 
 class Mesh : public QObject {
     Q_OBJECT
@@ -31,6 +34,7 @@ public:
 
     void setId(const uint &id);
     uint getId() const;
+    bool isPersisted() const;
     void setName(const QString &name);
     QString getName() const;
     void setCoordinatesDistance(const double &coordinatesDistance);
@@ -54,12 +58,11 @@ public:
     double area();
     bool hasArray(const QString &arrayName);
     void removeArray(const QString &arrayName);
+    QSet<vtkIdType> getBoundaryCellIds(vtkSmartPointer<vtkIdTypeArray> edgeIds);
 
     virtual bool instanceOf(const QString &type) = 0;
     virtual void generate() = 0;
     virtual void clear();
-    
-    bool isPersisted() const;
 signals:
     void updateProgress(int value);
     

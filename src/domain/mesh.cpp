@@ -242,10 +242,44 @@ void Mesh::removeArray(const QString &arrayName) {
     meshPolyData->GetCellData()->RemoveArray(stdArrayName.c_str());
 }
 
+QSet<vtkIdType> Mesh::getBoundaryCellIds(vtkSmartPointer<vtkIdTypeArray> edgeIds) {
+    QSet<vtkIdType> boundaryCellIds;
+    
+    meshPolyData->BuildLinks();
+    
+    for (int edgeId = 0; edgeId < edgeIds->GetNumberOfTuples(); edgeId++) {
+        vtkSmartPointer<vtkCell> edge = boundaryPolyData->GetCell(edgeId);
+        double edgeA[3], edgeB[3];
+        
+        edge->GetPoints()->GetPoint(0, edgeA);
+        edge->GetPoints()->GetPoint(1, edgeB);
+        
+        vtkIdType meshPointAId = meshPolyData->FindPoint(edgeA);
+        vtkIdType meshPointBId = meshPolyData->FindPoint(edgeB);
+        vtkSmartPointer<vtkIdList> cellsPointA = vtkSmartPointer<vtkIdList>::New();
+        vtkSmartPointer<vtkIdList> cellsPointB = vtkSmartPointer<vtkIdList>::New();
+        
+        meshPolyData->GetPointCells(meshPointAId, cellsPointA);
+        meshPolyData->GetPointCells(meshPointBId, cellsPointB);
+        
+        bool isCellFound = false;
+        
+        for (vtkIdType i = 0; i < cellsPointA->GetNumberOfIds() && !isCellFound; i++) {
+            for (vtkIdType j = 0; j < cellsPointB->GetNumberOfIds() && !isCellFound; j++) {
+                if (cellsPointA->GetId(i) == cellsPointB->GetId(j)) {
+                    boundaryCellIds.insert(i);
+                    isCellFound = true;
+                }
+            }
+        }
+    }
+    
+    return boundaryCellIds;
+}
+
 void Mesh::generateBoundaryPolyData() {
     vtkSmartPointer<vtkFeatureEdges> boundaryEdges = vtkSmartPointer<vtkFeatureEdges>::New();
     boundaryEdges->SetInputData(meshPolyData);
-//    boundaryEdges->ColoringOff();
     boundaryEdges->BoundaryEdgesOn();
     boundaryEdges->FeatureEdgesOff();
     boundaryEdges->ManifoldEdgesOff();

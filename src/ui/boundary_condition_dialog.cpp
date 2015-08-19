@@ -282,39 +282,7 @@ bool BoundaryConditionDialog::isValid() {
         
         GridDataConfiguration *gridDataConfiguration = configuration->getGridDataConfiguration();
         Mesh *mesh = gridDataConfiguration->getMesh();
-        vtkSmartPointer<vtkPolyData> meshPolyData = mesh->getMeshPolyData();
-        vtkSmartPointer<vtkPolyData> boundaryPolyData = mesh->getBoundaryPolyData();
-        QList<vtkIdType> foundCells;
-        
-        meshPolyData->BuildLinks();
-        
-        for (vtkIdType edgeId : currentBoundaryCondition->getObjectIds()) {
-            vtkSmartPointer<vtkCell> edge = boundaryPolyData->GetCell(edgeId);
-            double edgeA[3], edgeB[3];
-            
-            edge->GetPoints()->GetPoint(0, edgeA);
-            edge->GetPoints()->GetPoint(1, edgeB);
-            
-            vtkIdType meshPointAId = meshPolyData->FindPoint(edgeA);
-            vtkIdType meshPointBId = meshPolyData->FindPoint(edgeB);
-            vtkSmartPointer<vtkIdList> cellsPointA = vtkSmartPointer<vtkIdList>::New();
-            vtkSmartPointer<vtkIdList> cellsPointB = vtkSmartPointer<vtkIdList>::New();
-            
-            meshPolyData->GetPointCells(meshPointAId, cellsPointA);
-            meshPolyData->GetPointCells(meshPointBId, cellsPointB);
-            
-            bool isCellFound = false;
-            
-            for (vtkIdType i = 0; i < cellsPointA->GetNumberOfIds() && !isCellFound; i++) {
-                for (int j = 0; j < cellsPointB->GetNumberOfIds() && !isCellFound; j++) {
-                    if (cellsPointA->GetId(i) == cellsPointB->GetId(j)) {
-                        foundCells.append(cellsPointA->GetId(i));
-                        isCellFound = true;
-                    }
-                }
-            }
-        }
-        
+        QSet<vtkIdType> boundaryCells = mesh->getBoundaryCellIds(currentBoundaryCondition->getVTKObjectIds());
         GridData *bathymetryGridData = nullptr;
         
         for (GridData *gridData : gridDataConfiguration->getGridDataVector()) {
@@ -327,9 +295,9 @@ bool BoundaryConditionDialog::isValid() {
         double quota = ui->edtQuota->text().toDouble();
         double maxWeight = quota;
         
-        for (vtkIdType cellId : foundCells) {
+        for (vtkIdType cellId : boundaryCells) {
             std::string arrayName = bathymetryGridData->getName().toStdString();
-            double weight = meshPolyData->GetCellData()->GetScalars(arrayName.c_str())->GetTuple1(cellId);
+            double weight = mesh->getMeshPolyData()->GetCellData()->GetScalars(arrayName.c_str())->GetTuple1(cellId);
             
             if (weight > maxWeight) {
                 maxWeight = weight;

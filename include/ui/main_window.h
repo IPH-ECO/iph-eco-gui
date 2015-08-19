@@ -26,7 +26,7 @@ protected:
     void closeEvent(QCloseEvent *);
 
 private slots:
-    //File
+    // File
     void on_actionOpenProject_triggered();
     void on_actionSaveAsProject_triggered();
     void on_actionSaveProject_triggered();
@@ -35,13 +35,16 @@ private slots:
     void on_actionCloseProject_triggered();
     void on_actionSobre_triggered();
 
-    //Preprocessing
+    // Preprocessing
     void on_actionUnstructuredMeshGeneration_triggered();
     void on_actionStructuredMeshGeneration_triggered();
 
-    //Input
+    // Input
     void on_actionGridData_triggered();
     void on_actionHydrodynamicData_triggered();
+    
+    // Simulations
+    void on_actionCreate_triggered();
 
     void enableMenus(bool enable);
     void openRecent();
