@@ -28,6 +28,8 @@ public:
     void removeGridData(int i);
     GridData* getGridData(const QString &gridDataName);
     GridData* getGridData(int i);
+    GridData* getBathymetryGridData() const;
+    GridData* getRoughnessGridData() const;
     void clearGridDataVector();
     Mesh* getMesh() const;
     

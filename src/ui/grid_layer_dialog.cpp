@@ -95,6 +95,16 @@ bool GridLayerDialog::isValid() {
         return false;
     }
     
+    if (GridData::toGridDataType(ui->cbxGridInformation->currentText()) == GridDataType::BATHYMETRY && gridConfiguration->getBathymetryGridData()) {
+        QMessageBox::warning(this, tr("Grid Data"), tr("Bathymetry layer already created."));
+        return false;
+    }
+    
+    if (GridData::toGridDataType(ui->cbxGridInformation->currentText()) == GridDataType::ROUGHNESS && gridConfiguration->getRoughnessGridData()) {
+        QMessageBox::warning(this, tr("Grid Data"), tr("Roughness layer already created."));
+        return false;
+    }
+    
     if (ui->edtInputFile->text().isEmpty() && (gridData == nullptr || !gridData->isPersisted())) {
         QMessageBox::warning(this, tr("Grid Data"), tr("Please select a input file."));
         return false;
