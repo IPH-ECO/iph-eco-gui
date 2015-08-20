@@ -110,31 +110,11 @@
    <item row="3" column="1" colspan="2">
     <widget class="QComboBox" name="cbxGridInformation">
      <property name="currentText">
-      <string>Bathymetry</string>
+      <string/>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>-1</number>
      </property>
-     <item>
-      <property name="text">
-       <string>Bathymetry</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Wind Reduction Coefficient</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Roughness</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Wetland Area</string>
-      </property>
-     </item>
     </widget>
    </item>
    <item row="0" column="0">

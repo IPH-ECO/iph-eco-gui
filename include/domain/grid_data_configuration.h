@@ -5,6 +5,7 @@
 #include <QVector>
 
 class GridData;
+enum class GridDataType;
 
 class GridDataConfiguration : public QObject {
     Q_OBJECT
@@ -19,6 +20,7 @@ public:
 
     uint getId() const;
     void setId(const uint &id);
+    bool isPersisted() const;
     QString getName() const;
     void setName(const QString &name);
     QVector<GridData*> getGridDataVector();
@@ -28,12 +30,9 @@ public:
     void removeGridData(int i);
     GridData* getGridData(const QString &gridDataName);
     GridData* getGridData(int i);
-    GridData* getBathymetryGridData() const;
-    GridData* getRoughnessGridData() const;
+    QList<GridData*> getGridData(const GridDataType &gridDataType) const;
     void clearGridDataVector();
     Mesh* getMesh() const;
-    
-    bool isPersisted() const;
 };
 
 #endif // GRID_DATA_CONFIGURATION_H

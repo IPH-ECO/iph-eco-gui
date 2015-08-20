@@ -33,16 +33,16 @@ void SimulationService::run(HydrodynamicConfiguration *hydrodynamicConfiguration
         cellCentersFilter->Update();
         
 		SimulationModel::StructuredMesh structuredMesh;
-		structuredMesh.nElem = numberOfCells;
-        structuredMesh.dx = static_cast<StructuredMesh*>(mesh)->getResolution();
-        structuredMesh.CoordX = new double[numberOfCells];
-		structuredMesh.CoordY = new double[numberOfCells];
+		structuredMesh.numberOfElements = numberOfCells;
+        structuredMesh.resolution = static_cast<StructuredMesh*>(mesh)->getResolution();
+        structuredMesh.xCoordinates = new double[numberOfCells];
+		structuredMesh.yCoordinates = new double[numberOfCells];
         
         for (vtkIdType i = 0; i < cellCentersFilter->GetOutput()->GetNumberOfPoints(); i++) {
             double center[3];
             cellCentersFilter->GetOutput()->GetPoint(i, center);
-            structuredMesh.CoordX[i] = center[0];
-            structuredMesh.CoordY[i] = center[1];
+            structuredMesh.xCoordinates[i] = center[0];
+            structuredMesh.yCoordinates[i] = center[1];
         }
         
         BoundaryCondition *waterFlowBoundaryCondition = nullptr;
@@ -60,10 +60,10 @@ void SimulationService::run(HydrodynamicConfiguration *hydrodynamicConfiguration
             boundaryCellIds = mesh->getBoundaryCellIds(waterFlowBoundaryCondition->getVTKObjectIds());
         }
         
-        structuredMesh.VIZN = new vtkIdType[numberOfCells];
-        structuredMesh.VIZO = new vtkIdType[numberOfCells];
-        structuredMesh.VIZS = new vtkIdType[numberOfCells];
-        structuredMesh.VIZL = new vtkIdType[numberOfCells];
+        structuredMesh.northNeighbors = new vtkIdType[numberOfCells];
+        structuredMesh.westNeighbors = new vtkIdType[numberOfCells];
+        structuredMesh.southNeighbors = new vtkIdType[numberOfCells];
+        structuredMesh.eastNeighbors = new vtkIdType[numberOfCells];
         
         for (vtkIdType cellId = 0; cellId < numberOfCells; cellId++) {
             vtkSmartPointer<vtkIdList> cellNeighbors = vtkSmartPointer<vtkIdList>::New();
@@ -88,13 +88,13 @@ void SimulationService::run(HydrodynamicConfiguration *hydrodynamicConfiguration
                     vtkIdType neighborId = cellNeighbors->GetId(i);
                     
                     if (directionIndex == (vtkIdType) EdgeDirection::SOUTH) {
-                        directionArray = structuredMesh.VIZS;
+                        directionArray = structuredMesh.southNeighbors;
                     } else if (directionIndex == (vtkIdType) EdgeDirection::EAST) {
-                        directionArray = structuredMesh.VIZL;
+                        directionArray = structuredMesh.eastNeighbors;
                     } else if (directionIndex == (vtkIdType) EdgeDirection::NORTH) {
-                        directionArray = structuredMesh.VIZN;
+                        directionArray = structuredMesh.northNeighbors;
                     } else {
-                        directionArray = structuredMesh.VIZO;
+                        directionArray = structuredMesh.westNeighbors;
                     }
                     
                     directionArray[cellId] = boundaryCellIds.contains(neighborId) ? -2 : neighborId;
@@ -106,45 +106,72 @@ void SimulationService::run(HydrodynamicConfiguration *hydrodynamicConfiguration
         SimulationModel::UnstructuredMesh unstructuredMesh;
         vtkIdType numberOfPoints = meshPolyData->GetNumberOfPoints();
         
-        unstructuredMesh.nPoint = numberOfPoints;
-        unstructuredMesh.nElem = meshPolyData->GetNumberOfCells();
-        unstructuredMesh.CoordX_point = new double[numberOfPoints];
-        unstructuredMesh.CoordY_point = new double[numberOfPoints];
+        unstructuredMesh.numberOfPoints = numberOfPoints;
+        unstructuredMesh.numberOfElements = meshPolyData->GetNumberOfCells();
+        unstructuredMesh.xCoordinateIds = new double[numberOfPoints];
+        unstructuredMesh.yCoordinateIds = new double[numberOfPoints];
         
         for (vtkIdType i = 0; i < numberOfPoints; i++) {
             double point[3];
             meshPolyData->GetPoints()->GetPoint(i, point);
-            unstructuredMesh.CoordX_point[i] = point[0];
-            unstructuredMesh.CoordY_point[i] = point[1];
+            unstructuredMesh.xCoordinateIds[i] = point[0];
+            unstructuredMesh.yCoordinateIds[i] = point[1];
         }
         
-        unstructuredMesh.Connect = new vtkIdType*[numberOfCells];
+        unstructuredMesh.vertexIds = new vtkIdType*[numberOfCells];
         
         for (vtkIdType i = 0; i < numberOfCells; i++) {
             vtkSmartPointer<vtkIdList> vertices = vtkSmartPointer<vtkIdList>::New();
             meshPolyData->GetCellPoints(i, vertices);
-            unstructuredMesh.Connect[i] = new vtkIdType[vertices->GetNumberOfIds()]; // 3
+            unstructuredMesh.vertexIds[i] = new vtkIdType[vertices->GetNumberOfIds()]; // 3
             
             for (vtkIdType j = 0; j < vertices->GetNumberOfIds(); j++) {
-                unstructuredMesh.Connect[i][j] = vertices->GetId(j);
+                unstructuredMesh.vertexIds[i][j] = vertices->GetId(j);
             }
         }
 	}
     
     SimulationModel::GridData simulationGridData;
-    simulationGridData.nElem = numberOfCells;
-    simulationGridData.zBatim = new double[numberOfCells];
-    simulationGridData.Rug = new double[numberOfCells];
+    simulationGridData.numberOfElements = numberOfCells;
+    simulationGridData.bathymetry = new double[numberOfCells];
+    simulationGridData.roughness = new double[numberOfCells];
+    simulationGridData.hasWindReductionCoefficient = false;
+    simulationGridData.hasWetland = false;
+    simulationGridData.has50GrainSize = false;
+    simulationGridData.hasOrganicMatterFraction = false;
+    simulationGridData.hasQuotaOfImpermeableLayer = false;
     
     for (GridData *gridData : gridDataConfiguration->getGridDataVector()) {
         std::string arrayName = gridData->getName().toStdString();
         vtkSmartPointer<vtkDoubleArray> weights = vtkDoubleArray::SafeDownCast(meshPolyData->GetCellData()->GetArray(arrayName.c_str()));
+        GridDataType gridDataType = gridData->getGridDataType();
         double *weightsArray = nullptr;
+        bool *booleanField = nullptr;
         
-        if (gridData->getGridDataType() == GridDataType::BATHYMETRY) {
-            weightsArray = simulationGridData.zBatim;
-        } else if (gridData->getGridDataType() == GridDataType::ROUGHNESS) {
-            weightsArray = simulationGridData.Rug;
+        if (gridDataType == GridDataType::BATHYMETRY) {
+            weightsArray = simulationGridData.bathymetry;
+        } else if (gridDataType == GridDataType::ROUGHNESS) {
+            weightsArray = simulationGridData.bathymetry;
+        } else if (gridDataType == GridDataType::WIND_REDUCTION) {
+            booleanField = &simulationGridData.hasWindReductionCoefficient;
+            weightsArray = simulationGridData.windReductionCoefficient;
+        } else if (gridDataType == GridDataType::WETLAND_AREA) {
+            booleanField = &simulationGridData.hasWetland;
+            weightsArray = simulationGridData.wetland;
+        } else if (gridDataType == GridDataType::D50_GRAIN_SIZE) {
+            booleanField = &simulationGridData.has50GrainSize;
+            weightsArray = simulationGridData.d50GrainSize;
+        } else if (gridDataType == GridDataType::FRACTION_OF_ORGANIC_MATTER) {
+            booleanField = &simulationGridData.hasOrganicMatterFraction;
+            weightsArray = simulationGridData.organicMatterFraction;
+//        } else if (gridDataType == GridDataType::) {
+//            booleanField = &simulationGridData.hasOrganicMatterFraction;
+//            weightsArray = simulationGridData.organicMatterFraction;
+        }
+        
+        if (!booleanField && gridDataType != GridDataType::BATHYMETRY && gridDataType != GridDataType::ROUGHNESS) {
+            *&weightsArray = new double[numberOfCells];
+            *booleanField = true;
         }
         
         for (vtkIdType i = 0; i < weights->GetNumberOfTuples(); i++) {

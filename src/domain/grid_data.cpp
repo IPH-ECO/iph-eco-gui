@@ -25,6 +25,16 @@ GridData::GridData(Mesh *mesh) :
     interpolationCanceled(false)
 {}
 
+QMap<GridDataType, QString> GridData::gridTypesMap = {
+    std::pair<GridDataType, QString>(GridDataType::BATHYMETRY, "Sediment level (bathymetry)*"),
+    std::pair<GridDataType, QString>(GridDataType::ROUGHNESS, "Roughness*"),
+    std::pair<GridDataType, QString>(GridDataType::WIND_REDUCTION, "Wind reduction coefficient"),
+    std::pair<GridDataType, QString>(GridDataType::WETLAND_AREA, "Wetland areas"),
+    std::pair<GridDataType, QString>(GridDataType::D50_GRAIN_SIZE, "D50 grain size"),
+    std::pair<GridDataType, QString>(GridDataType::FRACTION_OF_ORGANIC_MATTER, "Fraction of organic matter in the sediment"),
+    std::pair<GridDataType, QString>(GridDataType::IMPERVIOUS_BEDROCK_LEVEL, "Impervious bedrock level")
+};
+
 uint GridData::getId() const {
     return id;
 }
@@ -260,15 +270,6 @@ void GridData::buildInputPolyData() {
     emit updateProgressText("Reading input file...");
 	emit updateProgress(0);
 	QApplication::processEvents();
-
-    // TODO: remove if since grid data isn't editable
-    if (this->inputFile.isEmpty()) {
-        if (this->inputPolyData == nullptr) {
-            throw GridDataException("Unexpected behaviour: grid data input points not present.");
-        }
-        
-        return;
-    }
     
     vtkSmartPointer<vtkSimplePointsReader> reader = vtkSmartPointer<vtkSimplePointsReader>::New();
     reader->SetFileName(this->inputFile.toStdString().c_str());
@@ -328,7 +329,7 @@ void GridData::interpolate() {
     inputPoints->GetBounds(inputPointsBounds);
     
     for (vtkIdType i = 0; i < meshPolyData->GetNumberOfCells() && !interpolationCanceled; i++) {
-        double weight = 0.0; // TODO: define out of range value
+        double weight = 0.0;
         
         if (mesh->instanceOf("UnstructuredMesh")) {
             vtkTriangle *triangle = vtkTriangle::SafeDownCast(meshPolyData->GetCell(i));
@@ -456,31 +457,8 @@ QString GridData::gridDataInputTypeToString() const {
     }
 }
 
-QString GridData::gridDataTypeToString() const {
-    switch (gridDataType) {
-        case GridDataType::BATHYMETRY:
-            return "Bathymetry";
-        case GridDataType::WIND_REDUCTION:
-            return "Wind Reduction Coefficient";
-        case GridDataType::ROUGHNESS:
-            return "Roughness";
-        case GridDataType::WETLAND_AREA:
-            return "Wetland Area";
-    }
-}
-
-GridDataType GridData::toGridDataType(const QString &gridDataTypeStr) {
-    if (gridDataTypeStr == "Bathymetry") {
-        return GridDataType::BATHYMETRY;
-    }
-    if (gridDataTypeStr == "Wind Reduction Coefficient") {
-        return GridDataType::WIND_REDUCTION;
-    }
-    if (gridDataTypeStr == "Roughness") {
-        return GridDataType::ROUGHNESS;
-    }
-    
-    return GridDataType::WETLAND_AREA;
+QMap<GridDataType, QString> GridData::getGridTypesMap() {
+    return gridTypesMap;
 }
 
 void GridData::loadInputPolyDataFromStringPolyData(const QString &polyDataStr) {

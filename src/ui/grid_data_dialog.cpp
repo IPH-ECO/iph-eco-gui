@@ -106,7 +106,7 @@ void GridDataDialog::on_cbxConfiguration_currentIndexChanged(const QString &conf
 
             ui->tblGridLayers->insertRow(rowCount);
             ui->tblGridLayers->setItem(rowCount, 0, new QTableWidgetItem(gridData->getName()));
-            ui->tblGridLayers->setItem(rowCount, 1, new QTableWidgetItem(gridData->gridDataTypeToString()));
+            ui->tblGridLayers->setItem(rowCount, 1, new QTableWidgetItem(GridData::getGridTypesMap().value(gridData->getGridDataType())));
             ui->tblGridLayers->setItem(rowCount, 2, new QTableWidgetItem(QString::number(gridData->getInputPolyData()->GetNumberOfPoints())));
         }
 
@@ -209,7 +209,7 @@ void GridDataDialog::showGridLayerDialog(GridData *gridData) {
                 ui->cbxConfiguration->setEnabled(true);
                 ui->tblGridLayers->insertRow(rowCount);
                 ui->tblGridLayers->setItem(rowCount, 0, new QTableWidgetItem(gridData->getName()));
-                ui->tblGridLayers->setItem(rowCount, 1, new QTableWidgetItem(gridData->gridDataTypeToString()));
+                ui->tblGridLayers->setItem(rowCount, 1, new QTableWidgetItem(GridData::getGridTypesMap().value(gridData->getGridDataType())));
                 ui->tblGridLayers->setItem(rowCount, 2, new QTableWidgetItem(QString::number(gridData->getInputPolyData()->GetNumberOfPoints())));
                 ui->tblGridLayers->setCurrentCell(rowCount, 0);
             }
@@ -221,7 +221,7 @@ void GridDataDialog::showGridLayerDialog(GridData *gridData) {
             QTableWidgetItem *griDataTypeItem = ui->tblGridLayers->item(currentRow, 1);
             
             nameItem->setText(gridData->getName());
-            griDataTypeItem->setText(gridData->gridDataTypeToString());
+            griDataTypeItem->setText(GridData::getGridTypesMap().value(gridData->getGridDataType()));
         }
     }
 }
@@ -338,6 +338,16 @@ bool GridDataDialog::isConfigurationValid(const QString &configurationName) {
 
     if (ui->tblGridLayers->rowCount() == 0) {
         QMessageBox::warning(this, tr("Grid Data"), tr("Please input at least one grid information."));
+        return false;
+    }
+    
+    if (currentConfiguration->getGridData(GridDataType::BATHYMETRY).isEmpty()) {
+        QMessageBox::warning(this, tr("Grid Data"), tr("Bathymetry layer is required."));
+        return false;
+    }
+    
+    if (currentConfiguration->getGridData(GridDataType::ROUGHNESS).isEmpty()) {
+        QMessageBox::warning(this, tr("Grid Data"), tr("Roughness layer is required."));
         return false;
     }
 

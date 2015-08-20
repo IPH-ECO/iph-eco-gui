@@ -15,7 +15,7 @@ class GridDataConfiguration;
 
 enum class GridDataInputType { POINT = 1, POLYGON };
 
-enum class GridDataType { BATHYMETRY = 1, WIND_REDUCTION, ROUGHNESS, WETLAND_AREA };
+enum class GridDataType { BATHYMETRY = 1, ROUGHNESS, WIND_REDUCTION, WETLAND_AREA, D50_GRAIN_SIZE, FRACTION_OF_ORGANIC_MATTER, IMPERVIOUS_BEDROCK_LEVEL };
 
 class GridData : public QObject {
     Q_OBJECT
@@ -29,6 +29,8 @@ private:
     double radius;
     GridDataConfiguration *gridDataConfiguration;
     Mesh *mesh;
+    
+    static QMap<GridDataType, QString> gridTypesMap;
     
     // Visualization attributes
     double mapMinimumRange;
@@ -124,7 +126,8 @@ public:
     void setInputFile(const QString &inputFile);
     QString gridDataInputTypeToString() const;
     QString gridDataTypeToString() const;
-    static GridDataType toGridDataType(const QString &gridDataTypeStr);
+    
+    static QMap<GridDataType, QString> getGridTypesMap();
     
     void loadInputPolyDataFromStringPolyData(const QString &polyDataStr);
     QString getInputPolyDataAsString() const;

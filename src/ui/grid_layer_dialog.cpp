@@ -19,7 +19,7 @@ GridLayerDialog::GridLayerDialog(QDialog *parent, GridDataConfiguration *gridCon
         mesh = gridData->getMesh();
         ui->edtName->setText(gridData->getName());
     	ui->edtInputFile->setText(gridData->getInputFile());
-        ui->cbxGridInformation->setCurrentText(gridData->gridDataTypeToString());
+        ui->cbxGridInformation->setCurrentText(GridData::getGridTypesMap().value(gridData->getGridDataType()));
         
         if (gridData->getGridDataInputType() == GridDataInputType::POINT) {
             ui->rdoPoint->setChecked(true);
@@ -36,6 +36,10 @@ GridLayerDialog::GridLayerDialog(QDialog *parent, GridDataConfiguration *gridCon
         ui->btnBrowseInputFile->setEnabled(false);
         ui->edtExponent->setEnabled(false);
         ui->edtRadius->setEnabled(false);
+    }
+    
+    for (QString label : GridData::getGridTypesMap().values()) {
+        ui->cbxGridInformation->addItem(label);
     }
 }
 
@@ -95,12 +99,14 @@ bool GridLayerDialog::isValid() {
         return false;
     }
     
-    if (GridData::toGridDataType(ui->cbxGridInformation->currentText()) == GridDataType::BATHYMETRY && gridConfiguration->getBathymetryGridData()) {
-        QMessageBox::warning(this, tr("Grid Data"), tr("Bathymetry layer already created."));
+    GridDataType gridDataType = GridData::getGridTypesMap().key(ui->cbxGridInformation->currentText());
+    
+    if (gridDataType == GridDataType::BATHYMETRY && !gridConfiguration->getGridData(GridDataType::BATHYMETRY).isEmpty()) {
+        QMessageBox::warning(this, tr("Grid Data"), tr("Sediment level (bathymetry) layer already created."));
         return false;
     }
     
-    if (GridData::toGridDataType(ui->cbxGridInformation->currentText()) == GridDataType::ROUGHNESS && gridConfiguration->getRoughnessGridData()) {
+    if (gridDataType == GridDataType::ROUGHNESS && !gridConfiguration->getGridData(GridDataType::ROUGHNESS).isEmpty()) {
         QMessageBox::warning(this, tr("Grid Data"), tr("Roughness layer already created."));
         return false;
     }
@@ -128,7 +134,7 @@ void GridLayerDialog::accept() {
     }
     
     GridDataInputType gridInputType = ui->rdoPoint->isChecked() ? GridDataInputType::POINT : GridDataInputType::POLYGON;
-    GridDataType gridDataType = GridData::toGridDataType(ui->cbxGridInformation->currentText());
+    GridDataType gridDataType = GridData::getGridTypesMap().key(ui->cbxGridInformation->currentText());
     
     gridData->setName(ui->edtName->text());
     gridData->setGridDataInputType(gridInputType);

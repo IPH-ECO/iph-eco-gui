@@ -74,24 +74,16 @@ GridData* GridDataConfiguration::getGridData(int i) {
     return nullptr;
 }
 
-GridData* GridDataConfiguration::getBathymetryGridData() const {
+QList<GridData*> GridDataConfiguration::getGridData(const GridDataType &gridDataType) const {
+    QList<GridData*> gridDataList;
+    
     for (GridData *gridData : gridDataVector) {
-        if (gridData->getGridDataType() == GridDataType::BATHYMETRY) {
-            return gridData;
+        if (gridData->getGridDataType() == gridDataType) {
+            gridDataList.append(gridData);
         }
     }
     
-    return nullptr;
-}
-
-GridData* GridDataConfiguration::getRoughnessGridData() const {
-    for (GridData *gridData : gridDataVector) {
-        if (gridData->getGridDataType() == GridDataType::ROUGHNESS) {
-            return gridData;
-        }
-    }
-    
-    return nullptr;
+    return gridDataList;
 }
 
 void GridDataConfiguration::clearGridDataVector() {

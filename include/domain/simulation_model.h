@@ -4,33 +4,38 @@
 namespace SimulationModel {
 	extern "C" {
 		struct StructuredMesh {
-			vtkIdType nElem; // number of squares
-			double dx; // mesh resolution
-			double *CoordX; // x coordinates
-			double *CoordY; // y coordinates
-			vtkIdType *VIZN; // north neighbors
-			vtkIdType *VIZO; // west neighbors
-			vtkIdType *VIZS; // south neighbors
-			vtkIdType *VIZL; // east neighbors
+			vtkIdType numberOfElements; // number of squares
+			double resolution; // mesh resolution
+			double *xCoordinates; // x coordinates
+			double *yCoordinates; // y coordinates
+			vtkIdType *northNeighbors; // north neighbors
+			vtkIdType *westNeighbors; // west neighbors
+			vtkIdType *southNeighbors; // south neighbors
+			vtkIdType *eastNeighbors; // east neighbors
 		};
 
 		struct UnstructuredMesh {
-			vtkIdType nPoint; // number of points
-			double *CoordX_point; // x coordinates indexes
-			double *CoordY_point; // y coordinates indexes
-			vtkIdType nElem; // number of triangles
-			vtkIdType **Connect; // vertices indexes for each triangle
+			vtkIdType numberOfPoints; // number of points
+			double *xCoordinateIds; // x coordinates indexes
+			double *yCoordinateIds; // y coordinates indexes
+			vtkIdType numberOfElements; // number of triangles
+			vtkIdType **vertexIds; // vertices indexes for each triangle
 		};
 
 		struct GridData {
-			vtkIdType nElem; // number of cells
-			double *zBatim; // batymetry
-			double *Rug; // roughness
-			double *Cvento; // wind reduction coefficient
-			double *Wetland; // wetland
-			double *D50; // sediment median diameter
-			double *forg; // organic material fraction
-			double *zSub; // impermeable layer quota
+			vtkIdType numberOfElements; // number of cells
+			double *bathymetry; // batymetry
+			double *roughness; // roughness
+            bool hasWindReductionCoefficient;
+			double *windReductionCoefficient; // wind reduction coefficient
+            bool hasWetland;
+			double *wetland; // wetland
+            bool has50GrainSize;
+			double *d50GrainSize; // sediment median diameter
+            bool hasOrganicMatterFraction;
+			double *organicMatterFraction; // organic matter fraction
+            bool hasQuotaOfImpermeableLayer;
+			double *quotaOfImpermeableLayer; // quota of impermeable layer
 		};
 	}
 }
