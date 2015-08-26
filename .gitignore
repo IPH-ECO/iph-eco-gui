@@ -3,3 +3,7 @@ iph-eco.pro.user
 CMakeLists.txt.user
 build/
 installer/packages/com.4techlabs.ipheco/data/
+*.o
+*.mod
+*.a
+*.dll
