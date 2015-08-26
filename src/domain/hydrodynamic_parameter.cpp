@@ -166,6 +166,17 @@ HydrodynamicParameter* HydrodynamicParameter::getChild(int i) const {
     return children[i];
 }
 
+SimulationDataType::HydrodynamicParameter HydrodynamicParameter::toSimulationDataType() const {
+    SimulationDataType::HydrodynamicParameter parameter;
+    std::string nameStr = this->name.toStdString();
+    
+    parameter.length = this->name.size();
+    strncpy(parameter.name, nameStr.c_str(), this->name.size());
+    parameter.value = this->value;
+    
+    return parameter;
+}
+
 HydrodynamicParameterType HydrodynamicParameter::mapTypeFromString(const QString &typeStr) {
     if (typeStr == "initialCondition") {
         return HydrodynamicParameterType::INITIAL_CONDITION;

@@ -1,7 +1,8 @@
 #ifndef BOUNDARY_CONDITION_H
 #define BOUNDARY_CONDITION_H
 
-#include "include/domain/time_series.h"
+#include "simulation_data_type.h"
+#include "time_series.h"
 
 #include <vtkSmartPointer.h>
 #include <vtkIdTypeArray.h>
@@ -72,6 +73,8 @@ public:
     void setSelectionActor(vtkSmartPointer<vtkActor> selectionActor);
     vtkSmartPointer<vtkActor2D> getLabelsActor() const;
     void setLabelsActor(vtkSmartPointer<vtkActor2D> labelsActor);
+    
+    SimulationDataType::BoundaryCondition toSimulationDataType() const;
 };
 
 #endif // BOUNDARY_CONDITION_H

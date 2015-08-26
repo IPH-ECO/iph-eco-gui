@@ -491,3 +491,19 @@ bool GridData::isPersisted() const {
 int GridData::getMaximumProgress() const {
 	return mesh->getMeshPolyData()->GetNumberOfCells();
 }
+
+SimulationDataType::GridData GridData::toSimulationDataType() const {
+    SimulationDataType::GridData gridData;
+    std::string arrayName = this->name.toStdString();
+    vtkIdType numberOfTuples = this->mesh->getMeshPolyData()->GetCellData()->GetArray(arrayName.c_str())->GetNumberOfTuples();
+ 
+    gridData.numberOfElements = numberOfTuples;
+    gridData.weights = new double[numberOfTuples];
+    gridData.type = (int) this->gridDataType;
+    
+    for (vtkIdType i = 0; i < numberOfTuples; i++) {
+        gridData.weights[i] = this->mesh->getMeshPolyData()->GetCellData()->GetArray(arrayName.c_str())->GetTuple1(i);
+    }
+    
+    return gridData;
+}

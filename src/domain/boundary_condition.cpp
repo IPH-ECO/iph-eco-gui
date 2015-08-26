@@ -204,3 +204,30 @@ vtkSmartPointer<vtkActor2D> BoundaryCondition::getLabelsActor() const {
 void BoundaryCondition::setLabelsActor(vtkSmartPointer<vtkActor2D> labelsActor) {
     this->labelsActor = labelsActor;
 }
+
+SimulationDataType::BoundaryCondition BoundaryCondition::toSimulationDataType() const {
+    SimulationDataType::BoundaryCondition boundaryCondition;
+    
+    boundaryCondition.type = (int) this->type;
+    boundaryCondition.numberOfObjects = this->objectIds.size();
+    boundaryCondition.objectIds = new vtkIdType[boundaryCondition.numberOfObjects];
+    
+    int i = 0;
+    for (vtkIdType objectId : objectIds) {
+        boundaryCondition.objectIds[i++] = objectId;
+    }
+    
+    boundaryCondition.function = (int) this->function;
+    boundaryCondition.constantValue = this->constantValue;
+    boundaryCondition.timeSeriesListSize = this->timeSeriesList.size();
+    boundaryCondition.timeSeriesList = new SimulationDataType::TimeSeries[boundaryCondition.timeSeriesListSize];
+    
+    for (int i = 0; i < this->timeSeriesList.size(); i++) {
+        boundaryCondition.timeSeriesList[i] = this->timeSeriesList[i]->toSimulationDataType();
+    }
+    
+    boundaryCondition.verticalIntegratedOutflow = this->verticalIntegratedOutflow;
+    boundaryCondition.quota = this->quota;
+    
+    return boundaryCondition;
+}

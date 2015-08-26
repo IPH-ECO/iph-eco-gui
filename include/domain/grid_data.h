@@ -14,7 +14,6 @@
 class GridDataConfiguration;
 
 enum class GridDataInputType { POINT = 1, POLYGON };
-
 enum class GridDataType { BATHYMETRY = 1, ROUGHNESS, WIND_REDUCTION, WETLAND_AREA, D50_GRAIN_SIZE, FRACTION_OF_ORGANIC_MATTER, IMPERVIOUS_BEDROCK_LEVEL };
 
 class GridData : public QObject {
@@ -137,6 +136,8 @@ public:
     bool isPersisted() const;
 	int getMaximumProgress() const;
     
+    SimulationDataType::GridData toSimulationDataType() const;
+
 signals:
 	void updateProgressText(const QString &text);
     void updateProgress(int value);

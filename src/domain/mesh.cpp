@@ -242,7 +242,7 @@ void Mesh::removeArray(const QString &arrayName) {
     meshPolyData->GetCellData()->RemoveArray(stdArrayName.c_str());
 }
 
-QSet<vtkIdType> Mesh::getBoundaryCellIds(vtkSmartPointer<vtkIdTypeArray> edgeIds) {
+QSet<vtkIdType> Mesh::getBoundaryCellIds(vtkSmartPointer<vtkIdTypeArray> edgeIds) const {
     QSet<vtkIdType> boundaryCellIds;
     
     meshPolyData->BuildLinks();

@@ -1,5 +1,8 @@
 #include "include/domain/grid_data_configuration.h"
 
+#include <vtkDoubleArray.h>
+#include <vtkCellData.h>
+
 GridDataConfiguration::GridDataConfiguration() : id(0) {}
 
 GridDataConfiguration::~GridDataConfiguration() {
@@ -103,4 +106,18 @@ Mesh* GridDataConfiguration::getMesh() const {
 
 bool GridDataConfiguration::isPersisted() const {
     return id != 0;
+}
+
+SimulationDataType::GridDataConfiguration GridDataConfiguration::toSimulationDataType() const {
+    SimulationDataType::GridDataConfiguration gridDataConfiguration;
+    int i = 0;
+    
+    gridDataConfiguration.numberOfLayers = gridDataVector.size();
+    gridDataConfiguration.layers = new SimulationDataType::GridData[gridDataConfiguration.numberOfLayers];
+    
+    for (GridData *gridData : gridDataVector) {
+        gridDataConfiguration.layers[i] = gridData->toSimulationDataType();
+    }
+    
+    return gridDataConfiguration;
 }

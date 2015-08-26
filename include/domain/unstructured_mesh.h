@@ -1,6 +1,7 @@
 #ifndef UNSTRUCTURED_MESH_H
 #define UNSTRUCTURED_MESH_H
 
+#include "simulation_data_type.h"
 #include "mesh.h"
 #include "include/exceptions/mesh_exception.h"
 #include "include/utility/cgal_definitions.h"
@@ -17,6 +18,8 @@ public:
 
     virtual bool instanceOf(const QString &type);
     virtual void generate();
+    
+    SimulationDataType::UnstructuredMesh toSimulationDataType() const;
 };
 
 #endif // UNSTRUCTURED_MESH_H

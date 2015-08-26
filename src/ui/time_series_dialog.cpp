@@ -21,7 +21,7 @@ TimeSeriesDialog::TimeSeriesDialog(QWidget *parent, BoundaryCondition *boundaryC
     
     for (TimeSeries *timeSeries : timeSeriesList) {
         ui->tblTimeSeries->insertRow(i);
-        ui->tblTimeSeries->setItem(i, 0, new QTableWidgetItem(timeSeries->getTimestamp()));
+        ui->tblTimeSeries->setItem(i, 0, new QTableWidgetItem(timeSeries->getTimeStamp()));
         ui->tblTimeSeries->setItem(i, 1, new QTableWidgetItem(QString::number(timeSeries->getValue())));
         ui->tblTimeSeries->item(i, 0)->setData(Qt::UserRole, QVariant((uint) timeSeries->getId()));
         i++;
@@ -64,7 +64,7 @@ void TimeSeriesDialog::on_btnImportCSV_clicked() {
                     return;
                 } else {
                     TimeSeries tempTimeSeries;
-                    tempTimeSeries.setTimestamp(tokens[0]);
+                    tempTimeSeries.setTimeStamp(tokens[0]);
                     tempTimeSeries.setValue(tokens[1].toDouble());
                     
                     tempTimeSeriesList.append(tempTimeSeries);
@@ -79,7 +79,7 @@ void TimeSeriesDialog::on_btnImportCSV_clicked() {
                 
                 for (int i = 0; i < tempTimeSeriesList.size(); i++) {
                     ui->tblTimeSeries->insertRow(i);
-                    ui->tblTimeSeries->setItem(i, 0, new QTableWidgetItem(tempTimeSeriesList[i].getTimestamp()));
+                    ui->tblTimeSeries->setItem(i, 0, new QTableWidgetItem(tempTimeSeriesList[i].getTimeStamp()));
                     ui->tblTimeSeries->setItem(i, 1, new QTableWidgetItem(QString::number(tempTimeSeriesList[i].getValue())));
                 }
             }
@@ -143,7 +143,7 @@ void TimeSeriesDialog::accept() {
             timeSeries = new TimeSeries();
         }
         
-        timeSeries->setTimestamp(ui->tblTimeSeries->item(i, 0)->text());
+        timeSeries->setTimeStamp(ui->tblTimeSeries->item(i, 0)->text());
         timeSeries->setValue(ui->tblTimeSeries->item(i, 1)->text().toDouble());
         
         timeSeriesList.append(timeSeries);

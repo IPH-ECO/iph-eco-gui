@@ -1,7 +1,9 @@
 #ifndef GRID_DATA_CONFIGURATION_H
 #define GRID_DATA_CONFIGURATION_H
 
+#include "simulation_data_type.h"
 #include "grid_data.h"
+
 #include <QVector>
 
 class GridData;
@@ -33,6 +35,8 @@ public:
     QList<GridData*> getGridData(const GridDataType &gridDataType) const;
     void clearGridDataVector();
     Mesh* getMesh() const;
+    
+    SimulationDataType::GridDataConfiguration toSimulationDataType() const;
 };
 
 #endif // GRID_DATA_CONFIGURATION_H

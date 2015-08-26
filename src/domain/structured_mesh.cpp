@@ -1,12 +1,17 @@
 #include "include/domain/structured_mesh.h"
 
 #include "include/utility/cgal_definitions.h"
+#include "include/domain/boundary_condition.h"
 
 #include <vtkQuad.h>
+#include <vtkIdList.h>
 #include <vtkPoints.h>
 #include <vtkPolygon.h>
 #include <QApplication>
+#include <vtkCellData.h>
 #include <vtkCellArray.h>
+#include <vtkDoubleArray.h>
+#include <vtkCellCenters.h>
 
 StructuredMesh::StructuredMesh() : resolution(100) {}
 
@@ -107,4 +112,87 @@ bool StructuredMesh::pointInMesh(double *point) {
     }
 
     return false;
+}
+
+SimulationDataType::StructuredMesh StructuredMesh::toSimulationDataType(HydrodynamicConfiguration *hydrodynamicConfiguration) const {
+    SimulationDataType::StructuredMesh structuredMesh;
+    enum class EdgeDirection { SOUTH = 0, EAST, NORTH, WEST };
+    vtkIdType numberOfCells = this->meshPolyData->GetNumberOfCells();
+    
+    vtkSmartPointer<vtkCellCenters> cellCentersFilter = vtkSmartPointer<vtkCellCenters>::New();
+    cellCentersFilter->SetInputData(this->meshPolyData);
+    cellCentersFilter->Update();
+    
+    structuredMesh.numberOfElements = numberOfCells;
+    structuredMesh.resolution = this->resolution;
+    structuredMesh.xCoordinates = new double[numberOfCells];
+    structuredMesh.yCoordinates = new double[numberOfCells];
+    
+    for (vtkIdType i = 0; i < cellCentersFilter->GetOutput()->GetNumberOfPoints(); i++) {
+        double center[3];
+        cellCentersFilter->GetOutput()->GetPoint(i, center);
+        structuredMesh.xCoordinates[i] = center[0];
+        structuredMesh.yCoordinates[i] = center[1];
+    }
+    
+    BoundaryCondition *waterFlowBoundaryCondition = nullptr;
+    
+    // TODO: search all water flow conditions
+    for (BoundaryCondition *boundaryCondition : hydrodynamicConfiguration->getBoundaryConditions()) {
+        if (boundaryCondition->getType() == BoundaryConditionType::WATER_FLOW) {
+            waterFlowBoundaryCondition = boundaryCondition;
+            break;
+        }
+    }
+    
+    QSet<vtkIdType> boundaryCellIds;
+    
+    if (waterFlowBoundaryCondition) {
+        boundaryCellIds = this->getBoundaryCellIds(waterFlowBoundaryCondition->getVTKObjectIds());
+    }
+    
+    structuredMesh.northNeighbors = new vtkIdType[numberOfCells];
+    structuredMesh.westNeighbors = new vtkIdType[numberOfCells];
+    structuredMesh.southNeighbors = new vtkIdType[numberOfCells];
+    structuredMesh.eastNeighbors = new vtkIdType[numberOfCells];
+    
+    for (vtkIdType cellId = 0; cellId < numberOfCells; cellId++) {
+        vtkSmartPointer<vtkIdList> cellNeighbors = vtkSmartPointer<vtkIdList>::New();
+        vtkSmartPointer<vtkIdList> cellPointIds = vtkSmartPointer<vtkIdList>::New();
+        vtkIdType directionIndex = 0;
+        
+        this->meshPolyData->GetCellPoints(cellId, cellPointIds);
+        
+        for (vtkIdType cellPointId = 0; cellPointId < cellPointIds->GetNumberOfIds(); cellPointId++) {
+            vtkSmartPointer<vtkIdList> edge = vtkSmartPointer<vtkIdList>::New();
+            
+            edge->InsertNextId(cellPointIds->GetId(cellPointId));
+            edge->InsertNextId(cellPointIds->GetId(cellPointId + 1 == cellPointIds->GetNumberOfIds() ? 0 : cellPointId + 1));
+            this->meshPolyData->GetCellNeighbors(cellId, edge, cellNeighbors);
+            
+            if (cellNeighbors->GetNumberOfIds() == 0) {
+                cellNeighbors->InsertNextId(-1);
+            }
+            
+            for (vtkIdType i = 0; i < cellNeighbors->GetNumberOfIds(); i++) {
+                vtkIdType *directionArray = nullptr;
+                vtkIdType neighborId = cellNeighbors->GetId(i);
+                
+                if (directionIndex == (vtkIdType) EdgeDirection::SOUTH) {
+                    directionArray = structuredMesh.southNeighbors;
+                } else if (directionIndex == (vtkIdType) EdgeDirection::EAST) {
+                    directionArray = structuredMesh.eastNeighbors;
+                } else if (directionIndex == (vtkIdType) EdgeDirection::NORTH) {
+                    directionArray = structuredMesh.northNeighbors;
+                } else {
+                    directionArray = structuredMesh.westNeighbors;
+                }
+                
+                directionArray[cellId] = boundaryCellIds.contains(neighborId) ? -2 : neighborId;
+                directionIndex++;
+            }
+        }
+    }
+    
+    return structuredMesh;
 }

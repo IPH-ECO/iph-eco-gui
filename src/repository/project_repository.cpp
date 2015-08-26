@@ -268,7 +268,7 @@ void ProjectRepository::loadTimeSeries(BoundaryCondition *boundaryCondition) {
     while (query.next() && !operationCanceled) {
         TimeSeries *timeSeries = new TimeSeries();
         timeSeries->setId(query.value("id").toUInt());
-        timeSeries->setTimestamp(query.value("timestamp").toString());
+        timeSeries->setTimeStamp(query.value("time_stamp").toString());
         timeSeries->setValue(query.value("value").toDouble());
         
         boundaryCondition->addTimeSeries(timeSeries);
@@ -748,18 +748,18 @@ void ProjectRepository::saveTimeSeries(BoundaryCondition *boundaryCondition) {
         TimeSeries *timeSeries = timeSeriesList[i];
         
         if (timeSeries->isPersisted()) {
-            query.prepare("update time_series set timestamp = :t, value = :v where id = :i");
+            query.prepare("update time_series set time_stamp = :t, value = :v where id = :i");
             query.bindValue(":i", timeSeries->getId());
         } else {
-            query.prepare("insert into time_series (timestamp, value, boundary_condition_id) values (:t, :v, :b)");
+            query.prepare("insert into time_series (time_stamp, value, boundary_condition_id) values (:t, :v, :b)");
             query.bindValue(":b", boundaryCondition->getId());
         }
         
-        query.bindValue(":t", timeSeries->getTimestamp());
+        query.bindValue(":t", timeSeries->getTimeStamp());
         query.bindValue(":v", timeSeries->getValue());
         
         if (!query.exec()) {
-            throw DatabaseException(QString("Unable to save timestamps. Error: %1.").arg(query.lastError().text()));
+            throw DatabaseException(QString("Unable to save time stamps. Error: %1.").arg(query.lastError().text()));
         }
         
         emit updateProgress(currentProgress++);

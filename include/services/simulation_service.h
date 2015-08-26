@@ -1,7 +1,6 @@
 #ifndef SIMULATION_SERVICE_H
 #define SIMULATION_SERVICE_H
 
-#include "include/application/iph_types.h"
 #include "include/domain/hydrodynamic_configuration.h"
 
 class SimulationService {

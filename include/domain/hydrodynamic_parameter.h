@@ -1,6 +1,8 @@
 #ifndef HYDRODYNAMIC_PARAMETER_H
 #define HYDRODYNAMIC_PARAMETER_H
 
+#include "simulation_data_type.h"
+
 #include <QTreeWidgetItem>
 #include <QString>
 #include <QList>
@@ -63,6 +65,7 @@ public:
     void toggleSubTreeVisibility(bool hide);
     QList<HydrodynamicParameter*> getChildren() const;
     HydrodynamicParameter* getChild(int i) const;
+    SimulationDataType::HydrodynamicParameter toSimulationDataType() const;
     
     static HydrodynamicParameterType mapTypeFromString(const QString &typeStr);
     static QString mapStringFromType(const HydrodynamicParameterType &type);

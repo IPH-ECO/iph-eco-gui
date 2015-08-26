@@ -113,3 +113,32 @@ void HydrodynamicConfiguration::clearBoundaryConditions() {
     }
     boundaryConditions.clear();
 }
+
+SimulationDataType::HydrodynamicConfiguration HydrodynamicConfiguration::toSimulationDataType() const {
+    SimulationDataType::HydrodynamicConfiguration configuration;
+    int i = 0;
+    
+    configuration.parameters = new SimulationDataType::HydrodynamicParameter[this->parameters.size()];
+    configuration.numberOfParameters = this->parameters.size();
+    
+    for (HydrodynamicParameter *parameter : this->parameters) {
+        std::string name = parameter->getName().toStdString();
+        
+        configuration.parameters[i].length = name.size();
+        strncpy(configuration.parameters[i].name, name.c_str(), name.size());
+        configuration.parameters[i].value = parameter->getValue();
+        i++;
+    }
+    
+    configuration.boundaryConditions = new SimulationDataType::BoundaryCondition[this->boundaryConditions.size()];
+    configuration.numberOfBoundaryConditions = this->boundaryConditions.size();
+    i = 0;
+    
+    for (BoundaryCondition *boundaryCondition : this->boundaryConditions) {
+        configuration.boundaryConditions[i++] = boundaryCondition->toSimulationDataType();
+    }
+    
+    configuration.gridDataConfiguration = this->gridDataConfiguration->toSimulationDataType();
+    
+    return configuration;
+}

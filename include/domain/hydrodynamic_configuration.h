@@ -1,9 +1,10 @@
 #ifndef HYDRODYNAMIC_CONFIGURATION_H
 #define HYDRODYNAMIC_CONFIGURATION_H
 
-#include "include/domain/grid_data_configuration.h"
-#include "include/domain/boundary_condition.h"
-#include "include/domain/hydrodynamic_process.h"
+#include "simulation_data_type.h"
+#include "grid_data_configuration.h"
+#include "boundary_condition.h"
+#include "hydrodynamic_process.h"
 
 #include <QString>
 #include <QList>
@@ -38,6 +39,7 @@ public:
 	QList<HydrodynamicParameter*> getParameters() const;
 	HydrodynamicParameter* getParameter(const QString &name) const;
     QList<HydrodynamicParameter*> getRootParameters() const;
+    SimulationDataType::HydrodynamicConfiguration toSimulationDataType() const;
 };
 
 #endif // HYDRODYNAMIC_CONFIGURATION_H
