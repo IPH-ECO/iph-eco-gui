@@ -171,6 +171,7 @@ SimulationDataType::HydrodynamicParameter HydrodynamicParameter::toSimulationDat
     std::string nameStr = this->name.toStdString();
     
     parameter.length = this->name.size();
+    parameter.name = new char[parameter.length];
     strncpy(parameter.name, nameStr.c_str(), this->name.size());
     parameter.value = this->value;
     

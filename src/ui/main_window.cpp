@@ -184,7 +184,10 @@ void MainWindow::on_actionCreate_triggered() {
     SimulationService *simulationService = SimulationService::getInstance();
     Project *project = IPHApplication::getCurrentProject();
     
-    simulationService->run(*project->getHydrodynamicConfigurations().constBegin());
+    for (HydrodynamicConfiguration *configuration : project->getHydrodynamicConfigurations()) {
+        simulationService->run(configuration);
+        break;
+    }
 }
 
 void MainWindow::on_actionSobre_triggered() {

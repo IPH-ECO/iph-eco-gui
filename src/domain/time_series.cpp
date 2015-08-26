@@ -41,6 +41,7 @@ SimulationDataType::TimeSeries TimeSeries::toSimulationDataType() const {
     std::string timeStampStr = timeStamp.toStdString();
     
     timeSeries.timeStampSize = timeStamp.size();
+    timeSeries.timeStamp = new char[timeSeries.timeStampSize];
     strncpy(timeSeries.timeStamp, timeStampStr.c_str(), timeSeries.timeStampSize);
     
     return timeSeries;

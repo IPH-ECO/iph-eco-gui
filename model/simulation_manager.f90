@@ -3,6 +3,9 @@ subroutine startSimulation(configuration) bind(C, name="startSimulation")
 	use domain_types
 	
 	type(HydrodynamicConfiguration) :: configuration
-	
-	print *, configuration%numberOfParameters
+	type(BoundaryCondition), pointer :: boundaryConditions(:)
+
+	call c_f_pointer(configuration%boundaryConditions, boundaryConditions, [configuration%numberOfBoundaryConditions])
+
+	print *, boundaryConditions(1)%constantValue
 end subroutine
