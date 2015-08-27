@@ -41,10 +41,10 @@ module domain_types
     end type
 
     type, bind(C) :: BoundaryCondition
-        integer(c_int) :: type
+        integer(c_int) :: conditionType
         integer(c_int) :: numberOfObjects
-        integer(c_long_long) :: objectIds
-        integer(c_int) :: function
+        type(c_ptr) :: objectIds
+        integer(c_int) :: conditionFunction
         real(c_double) :: constantValue
         integer(c_int) :: timeSeriesListSize
         type(c_ptr) :: timeSeriesList

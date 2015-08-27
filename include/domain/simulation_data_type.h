@@ -7,7 +7,7 @@ namespace SimulationDataType {
     extern "C" {
         struct StructuredMesh {
             vtkIdType numberOfElements;
-            uint resolution;
+			unsigned int resolution;
             double *xCoordinates;
             double *yCoordinates;
             vtkIdType *northNeighbors;
@@ -51,10 +51,10 @@ namespace SimulationDataType {
         };
         
         struct BoundaryCondition {
-            int type;
+            int conditionType;
             int numberOfObjects;
             vtkIdType *objectIds;
-            int function;
+            int conditionFunction;
             double constantValue;
             int timeSeriesListSize;
             SimulationDataType::TimeSeries *timeSeriesList;

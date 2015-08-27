@@ -208,7 +208,7 @@ void BoundaryCondition::setLabelsActor(vtkSmartPointer<vtkActor2D> labelsActor) 
 SimulationDataType::BoundaryCondition BoundaryCondition::toSimulationDataType() const {
     SimulationDataType::BoundaryCondition boundaryCondition;
     
-    boundaryCondition.type = (int) this->type;
+    boundaryCondition.conditionType = (int) this->type;
     boundaryCondition.numberOfObjects = this->objectIds.size();
     boundaryCondition.objectIds = new vtkIdType[boundaryCondition.numberOfObjects];
     
@@ -217,7 +217,7 @@ SimulationDataType::BoundaryCondition BoundaryCondition::toSimulationDataType() 
         boundaryCondition.objectIds[i++] = objectId;
     }
     
-    boundaryCondition.function = (int) this->function;
+    boundaryCondition.conditionFunction = (int) this->function;
     boundaryCondition.constantValue = this->constantValue;
     boundaryCondition.timeSeriesListSize = this->timeSeriesList.size();
     boundaryCondition.timeSeriesList = new SimulationDataType::TimeSeries[boundaryCondition.timeSeriesListSize];
