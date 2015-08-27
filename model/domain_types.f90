@@ -65,4 +65,18 @@ module domain_types
         type(c_ptr) :: boundaryConditions
         type(GridDataConfiguration) :: gridDataConfiguration
     end type
+
+    type, bind(C) :: Simulation
+        integer(c_int) :: labelLength
+        type(c_ptr) :: label
+        integer(c_int) :: simulationType
+        integer(c_int) :: initialTime
+        real(c_double) :: period
+        integer(c_int) :: stepTime
+        integer(c_int) :: layersLength
+        type(c_ptr) :: layers
+        type(HydrodynamicConfiguration) :: hydrodynamicConfiguration
+        integer(c_int) :: observationsLength
+        type(c_ptr) :: observations
+    end type
 end module

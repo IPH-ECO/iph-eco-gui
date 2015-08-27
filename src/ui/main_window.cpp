@@ -6,6 +6,7 @@
 #include "include/ui/structured_mesh_dialog.h"
 #include "include/ui/grid_data_dialog.h"
 #include "include/ui/hydrodynamic_data_dialog.h"
+#include "include/ui/create_simulation_dialog.h"
 #include "include/services/project_service.h"
 #include "include/services/simulation_service.h"
 #include "include/repository/project_repository.h"
@@ -181,13 +182,15 @@ void MainWindow::on_actionHydrodynamicData_triggered() {
 }
 
 void MainWindow::on_actionCreate_triggered() {
-    SimulationService *simulationService = SimulationService::getInstance();
-    Project *project = IPHApplication::getCurrentProject();
+    CreateSimulationDialog *createSimulationDialog = new CreateSimulationDialog(this);
+    createSimulationDialog->exec();
+    // SimulationService *simulationService = SimulationService::getInstance();
+    // Project *project = IPHApplication::getCurrentProject();
     
-    for (HydrodynamicConfiguration *configuration : project->getHydrodynamicConfigurations()) {
-        simulationService->run(configuration);
-        break;
-    }
+    // for (HydrodynamicConfiguration *configuration : project->getHydrodynamicConfigurations()) {
+    //     simulationService->run(configuration);
+    //     break;
+    // }
 }
 
 void MainWindow::on_actionSobre_triggered() {

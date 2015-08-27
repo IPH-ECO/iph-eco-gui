@@ -1,13 +1,7 @@
 #include "include/services/simulation_service.h"
 
-#include <vtkQuad.h>
-#include <vtkIdList.h>
-#include <vtkCellData.h>
-#include <vtkDoubleArray.h>
-#include <vtkCellCenters.h>
-
 extern "C" {
-    void startSimulation(SimulationDataType::HydrodynamicConfiguration *configuration);
+    void startSimulation(SimulationDataType::Simulation *simulation);
 }
 
 SimulationService* SimulationService::instance = nullptr;
@@ -22,8 +16,8 @@ SimulationService* SimulationService::getInstance() {
 	return instance;
 }
 
-void SimulationService::run(HydrodynamicConfiguration *hydrodynamicConfiguration) {
-    SimulationDataType::HydrodynamicConfiguration sHydroConfiguration = hydrodynamicConfiguration->toSimulationDataType();
+void SimulationService::run(Simulation *simulation) {
+    SimulationDataType::Simulation sSimulation = simulation->toSimulationDataType();
     
-    startSimulation(&sHydroConfiguration);
+    startSimulation(&sSimulation);
 }

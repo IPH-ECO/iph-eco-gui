@@ -1,7 +1,7 @@
 #ifndef SIMULATION_SERVICE_H
 #define SIMULATION_SERVICE_H
 
-#include "include/domain/hydrodynamic_configuration.h"
+#include "include/domain/simulation.h"
 
 class SimulationService {
 private:
@@ -11,7 +11,7 @@ private:
 public:
 	static SimulationService* getInstance();
 
-	void run(HydrodynamicConfiguration *hydrodynamicConfiguration);
+	void run(Simulation *simulation);
 };
 
 #endif // SIMULATION_SERVICE_H

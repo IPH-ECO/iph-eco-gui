@@ -69,6 +69,20 @@ namespace SimulationDataType {
             SimulationDataType::BoundaryCondition *boundaryConditions;
             SimulationDataType::GridDataConfiguration gridDataConfiguration;
         };
+
+        struct Simulation {
+            int labelLength;
+            char *label;
+            int simulationType;
+            int initialTime;
+            double period;
+            int stepTime;
+            int layersLength;
+            double *layers;
+            HydrodynamicConfiguration hydrodynamicConfiguration;
+            int observationsLength;
+            char *observations;
+        };
     }
 }
 

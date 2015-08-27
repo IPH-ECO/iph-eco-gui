@@ -167,6 +167,19 @@ void DatabaseUtility::createApplicationTables() {
         "boundary_condition_id integer not null" \
     ")";
     
+    sql << "drop table if exists simulation";
+    sql << "create table simulation (" \
+        "id integer primary key, " \
+        "label varchar(255) not null, " \
+        "simulation_type integer not null, " \
+        "initial_time integer not null, " \
+        "simulation_period float not null, " \
+        "step_time integer not null, " \
+        "layers varchar(255), " \
+        "observations text, " \
+        "hydrodynamic_configuration_id integer" \
+    ")";
+    
     QSqlQuery query(currentDatabase);
 
     for (int i = 0; i < sql.count(); i++) {
