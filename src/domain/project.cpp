@@ -208,9 +208,9 @@ void Project::removeHydrodynamicConfiguration(const QString &configurationName) 
 }
 
 HydrodynamicConfiguration* Project::getHydrodynamicConfiguration(const QString &configurationName) {
-    for (QSet<HydrodynamicConfiguration*>::const_iterator it = hydrodynamicConfigurations.begin(); it != hydrodynamicConfigurations.end(); it++) {
-        if ((*it)->getName() == configurationName) {
-            return *it;
+    for (HydrodynamicConfiguration *hydrodynamicConfiguration : hydrodynamicConfigurations) {
+        if (hydrodynamicConfiguration->getName() == configurationName) {
+            return hydrodynamicConfiguration;
         }
     }
     
@@ -219,6 +219,39 @@ HydrodynamicConfiguration* Project::getHydrodynamicConfiguration(const QString &
 
 QSet<HydrodynamicConfiguration*> Project::getHydrodynamicConfigurations() const {
     return hydrodynamicConfigurations;
+}
+
+bool Project::addSimulation(Simulation *simulation) {
+    if (simulations.contains(simulation)) {
+        return false;
+    }
+    
+    simulations.insert(simulation);
+    
+    return true;
+}
+
+void Project::removeSimulation(const QString &simulationLabel) {
+    Simulation *simulation = getSimulation(simulationLabel);
+    
+    if (simulation != nullptr) {
+        simulations.remove(simulation);
+        delete simulation;
+    }
+}
+
+Simulation* Project::getSimulation(const QString &label) const {
+    for (Simulation *simulation : simulations) {
+        if (simulation->getLabel() == label) {
+            return simulation;
+        }
+    }
+    
+    return nullptr;
+}
+
+QSet<Simulation*> Project::getSimulations() const {
+    return simulations;
 }
 
 bool Project::isPersisted() const {

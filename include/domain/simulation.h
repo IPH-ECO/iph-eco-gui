@@ -15,7 +15,7 @@ private:
 	uint id;
 	QString label;
 	SimulationType simulationType;
-	int initialTime;
+	uint initialTime;
 	double period;
 	int stepTime;
 	QList<double> layers;
@@ -37,8 +37,8 @@ public:
 	void setLabel(const QString &label);
 	SimulationType getSimulationType() const;
 	void setSimulationType(const SimulationType &simulationType);
-	int getInitialTime() const;
-	void setInitialTime(int initialTime);
+	uint getInitialTime() const;
+	void setInitialTime(uint initialTime);
 	double getPeriod() const;
 	void setPeriod(double period);
 	int getStepTime() const;

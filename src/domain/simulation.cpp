@@ -38,11 +38,11 @@ void Simulation::setSimulationType(const SimulationType &simulationType) {
 	this->simulationType = simulationType;
 }
 
-int Simulation::getInitialTime() const {
+uint Simulation::getInitialTime() const {
 	return initialTime;
 }
 
-void Simulation::setInitialTime(int initialTime) {
+void Simulation::setInitialTime(uint initialTime) {
 	this->initialTime = initialTime;
 }
 

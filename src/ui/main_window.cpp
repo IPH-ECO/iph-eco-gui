@@ -8,8 +8,8 @@
 #include "include/ui/hydrodynamic_data_dialog.h"
 #include "include/ui/create_simulation_dialog.h"
 #include "include/services/project_service.h"
-#include "include/services/simulation_service.h"
 #include "include/repository/project_repository.h"
+#include "include/domain/simulation.h"
 
 #include <QProgressDialog>
 
@@ -184,13 +184,6 @@ void MainWindow::on_actionHydrodynamicData_triggered() {
 void MainWindow::on_actionCreate_triggered() {
     CreateSimulationDialog *createSimulationDialog = new CreateSimulationDialog(this);
     createSimulationDialog->exec();
-    // SimulationService *simulationService = SimulationService::getInstance();
-    // Project *project = IPHApplication::getCurrentProject();
-    
-    // for (HydrodynamicConfiguration *configuration : project->getHydrodynamicConfigurations()) {
-    //     simulationService->run(configuration);
-    //     break;
-    // }
 }
 
 void MainWindow::on_actionSobre_triggered() {

@@ -74,7 +74,7 @@ namespace SimulationDataType {
             int labelLength;
             char *label;
             int simulationType;
-            int initialTime;
+            unsigned int initialTime;
             double period;
             int stepTime;
             int layersLength;

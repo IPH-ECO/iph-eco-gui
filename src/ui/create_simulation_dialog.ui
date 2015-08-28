@@ -95,9 +95,6 @@
          </property>
         </widget>
        </item>
-       <item row="9" column="1" colspan="3">
-        <widget class="QTextEdit" name="txtObservations"/>
-       </item>
        <item row="5" column="0">
         <widget class="QLabel" name="label_5">
          <property name="text">
@@ -269,6 +266,9 @@
           <string>MM/dd/yyyy HH:mm</string>
          </property>
         </widget>
+       </item>
+       <item row="9" column="1" colspan="3">
+        <widget class="QPlainTextEdit" name="txtObservations"/>
        </item>
       </layout>
      </widget>

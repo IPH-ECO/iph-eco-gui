@@ -14,14 +14,18 @@ class CreateSimulationDialog : public QDialog {
 	Q_OBJECT
 private:
 	Ui::CreateSimulationDialog *ui;
-    Simulation *unsavedSimulation;
-	Simulation *currentSimulation;
 
 	bool isValid();
+
+    virtual void accept();
 
 public:
 	explicit CreateSimulationDialog(QWidget *parent = 0);
     ~CreateSimulationDialog();
+
+private slots:
+    void on_btnAddLayer_clicked();
+    void on_btnRemoveLayer_clicked();
 };
 
 #endif // CREATE_SIMULATION_DIALOG_H
