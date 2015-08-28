@@ -79,7 +79,7 @@ namespace SimulationDataType {
             int stepTime;
             int layersLength;
             double *layers;
-            HydrodynamicConfiguration hydrodynamicConfiguration;
+            HydrodynamicConfiguration *hydrodynamicConfiguration;
             int observationsLength;
             char *observations;
         };

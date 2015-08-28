@@ -39,7 +39,7 @@ public:
 	QList<HydrodynamicParameter*> getParameters() const;
 	HydrodynamicParameter* getParameter(const QString &name) const;
     QList<HydrodynamicParameter*> getRootParameters() const;
-    SimulationDataType::HydrodynamicConfiguration toSimulationDataType() const;
+    SimulationDataType::HydrodynamicConfiguration* toSimulationDataType() const;
 };
 
 #endif // HYDRODYNAMIC_CONFIGURATION_H

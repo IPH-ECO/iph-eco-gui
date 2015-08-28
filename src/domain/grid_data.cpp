@@ -492,17 +492,34 @@ int GridData::getMaximumProgress() const {
 	return mesh->getMeshPolyData()->GetNumberOfCells();
 }
 
+double GridData::getMinimumWeight() const {
+    std::string arrayName = this->name.toStdString();
+    vtkSmartPointer<vtkDoubleArray> weights = vtkDoubleArray::SafeDownCast(this->mesh->getMeshPolyData()->GetCellData()->GetArray(arrayName.c_str()));
+    double minimum = weights->GetTuple1(0);
+    
+    for (int i = 1; i < weights->GetNumberOfTuples(); i++) {
+        double weight = weights->GetTuple1(i);
+        
+        if (weight < minimum) {
+            minimum = weight;
+        }
+    }
+    
+    return minimum;
+}
+
 SimulationDataType::GridData GridData::toSimulationDataType() const {
     SimulationDataType::GridData gridData;
     std::string arrayName = this->name.toStdString();
-    vtkIdType numberOfTuples = this->mesh->getMeshPolyData()->GetCellData()->GetArray(arrayName.c_str())->GetNumberOfTuples();
+    vtkSmartPointer<vtkDoubleArray> weights = vtkDoubleArray::SafeDownCast(this->mesh->getMeshPolyData()->GetCellData()->GetArray(arrayName.c_str()));
+    vtkIdType numberOfTuples = weights->GetNumberOfTuples();
  
     gridData.numberOfElements = numberOfTuples;
     gridData.weights = new double[numberOfTuples];
     gridData.type = (int) this->gridDataType;
     
     for (vtkIdType i = 0; i < numberOfTuples; i++) {
-        gridData.weights[i] = this->mesh->getMeshPolyData()->GetCellData()->GetArray(arrayName.c_str())->GetTuple1(i);
+        gridData.weights[i] = weights->GetTuple1(i);
     }
     
     return gridData;

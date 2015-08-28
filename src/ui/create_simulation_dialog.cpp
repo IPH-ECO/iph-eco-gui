@@ -65,6 +65,20 @@ bool CreateSimulationDialog::isValid() {
 //		return false;
 //	}
 
+    if (ui->tblLayers->rowCount() > 0) {
+        double minLimit = ui->edtMinLimit->text().toDouble();
+        double maxLimit = ui->edtMaxLimit->text().toDouble();
+        
+        for (int i = 0; i < ui->tblLayers->rowCount(); i++) {
+            double depth = ui->tblLayers->item(i, 0)->text().toDouble();
+            
+            if (depth < minLimit || depth > maxLimit) {
+                QMessageBox::warning(this, tr("Create Simulation"), QString("Depth %1 is out of range (line %2).").arg(depth).arg(i + 1));
+                return false;
+            }
+        }
+    }
+
 	return true;
 }
 
@@ -115,4 +129,13 @@ void CreateSimulationDialog::on_btnRemoveLayer_clicked() {
     if (row != -1 && QMessageBox::question(this, tr("Create Simulation"), tr("Are you sure?")) == QMessageBox::Yes) {
         ui->tblLayers->removeRow(row);
     }
+}
+
+void CreateSimulationDialog::on_cbxHydrodynamic_currentTextChanged(const QString &configurationName) {
+    Project *project = IPHApplication::getCurrentProject();
+    HydrodynamicConfiguration *hydrodynamicConfiguration = project->getHydrodynamicConfiguration(configurationName);
+    GridDataConfiguration *gridDataConfiguration = hydrodynamicConfiguration->getGridDataConfiguration();
+    GridData *gridData = gridDataConfiguration->getGridData(GridDataType::BATHYMETRY).first();
+    
+    ui->edtMinLimit->setText(QString::number(gridData->getMinimumWeight()));
 }

@@ -75,7 +75,7 @@ module domain_types
         integer(c_int) :: stepTime
         integer(c_int) :: layersLength
         type(c_ptr) :: layers
-        type(HydrodynamicConfiguration) :: hydrodynamicConfiguration
+        type(c_ptr) :: hydrodynamicConfiguration
         integer(c_int) :: observationsLength
         type(c_ptr) :: observations
     end type

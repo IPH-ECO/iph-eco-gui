@@ -135,6 +135,7 @@ public:
     void interpolate();
     bool isPersisted() const;
 	int getMaximumProgress() const;
+    double getMinimumWeight() const;
     
     SimulationDataType::GridData toSimulationDataType() const;
 
