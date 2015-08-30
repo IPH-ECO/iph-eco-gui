@@ -71,6 +71,7 @@ namespace SimulationDataType {
         };
 
         struct Simulation {
+            int modules;
             int labelLength;
             char *label;
             int simulationType;

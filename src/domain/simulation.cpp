@@ -1,4 +1,5 @@
 #include "include/domain/simulation.h"
+#include "include/application/iph_application.h"
 
 Simulation::Simulation() : id(0), hydrodynamicConfiguration(nullptr) {}
 
@@ -110,10 +111,16 @@ void Simulation::setStartOnCreate(bool startOnCreate) {
 
 SimulationDataType::Simulation Simulation::toSimulationDataType() const {
 	SimulationDataType::Simulation simulation;
+    Project *project = IPHApplication::getCurrentProject();
 	std::string labelStr = this->label.toStdString();
 	int i = 0;
+    
+    simulation.modules = 0;
+    simulation.modules |= project->getHydrodynamic() ? 0x01 : 0;
+    simulation.modules |= project->getWaterQuality() ? 0x02 : 0;
+    simulation.modules |= project->getSediment() ? 0x04 : 0;
 
-	simulation.labelLength = this->label.size();
+    simulation.labelLength = this->label.size();
 	simulation.label = new char[simulation.labelLength];
 	strncpy(simulation.label, labelStr.c_str(), simulation.labelLength);
 	simulation.simulationType = (int) this->simulationType;
