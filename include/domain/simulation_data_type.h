@@ -1,31 +1,29 @@
 #ifndef SIMULATION_DATA_TYPE_H
 #define SIMULATION_DATA_TYPE_H
 
-#include <vtkIdList.h>
-
 namespace SimulationDataType {
     extern "C" {
         struct StructuredMesh {
-            vtkIdType numberOfElements;
+            long long int numberOfElements;
 			unsigned int resolution;
             double *xCoordinates;
             double *yCoordinates;
-            vtkIdType *northNeighbors;
-            vtkIdType *westNeighbors;
-            vtkIdType *southNeighbors;
-            vtkIdType *eastNeighbors;
+			long long int *northNeighbors;
+			long long int *westNeighbors;
+			long long int *southNeighbors;
+			long long int *eastNeighbors;
         };
         
         struct UnstructuredMesh {
-            vtkIdType numberOfPoints;
+			long long int numberOfPoints;
             double *xCoordinates;
             double *yCoordinates;
-            vtkIdType numberOfElements;
-            vtkIdType *verticeIds;
+			long long int numberOfElements;
+			long long int *verticeIds;
         };
         
         struct GridData {
-            vtkIdType numberOfElements;
+			long long int numberOfElements;
             double *weights;
             int type;
         };
@@ -52,7 +50,7 @@ namespace SimulationDataType {
         struct BoundaryCondition {
             int conditionType;
             int numberOfObjects;
-            vtkIdType *objectIds;
+			long long int *objectIds;
             int conditionFunction;
             double constantValue;
             int timeSeriesListSize;
