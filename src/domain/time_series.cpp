@@ -16,16 +16,16 @@ bool TimeSeries::isPersisted() const {
 	return id != 0;
 }
 
-QString TimeSeries::getTimeStamp() const {
+int TimeSeries::getTimeStamp() const {
 	return timeStamp;
 }
 
-void TimeSeries::setTimeStamp(const QString &timeStamp) {
+void TimeSeries::setTimeStamp(int timeStamp) {
 	this->timeStamp = timeStamp;
 }
 
 QDateTime TimeSeries::toDateTime() const {
-	return QDateTime::fromString(timeStamp, Qt::ISODate);
+	return QDateTime::fromTime_t(timeStamp);
 }
 
 double TimeSeries::getValue() const {
@@ -38,11 +38,9 @@ void TimeSeries::setValue(double value) {
 
 SimulationDataType::TimeSeries TimeSeries::toSimulationDataType() const {
     SimulationDataType::TimeSeries timeSeries;
-    std::string timeStampStr = timeStamp.toStdString();
     
-    timeSeries.timeStampSize = timeStamp.size();
-    timeSeries.timeStamp = new char[timeSeries.timeStampSize];
-    strncpy(timeSeries.timeStamp, timeStampStr.c_str(), timeSeries.timeStampSize);
+    timeSeries.timeStamp = this->timeStamp;
+    timeSeries.value = this->value;
     
     return timeSeries;
 }

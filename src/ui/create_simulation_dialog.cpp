@@ -11,7 +11,7 @@ CreateSimulationDialog::CreateSimulationDialog(QWidget *parent) :
 	QDialog(parent), ui(new Ui::CreateSimulationDialog)
 {
 	ui->setupUi(this);
-	ui->edtInitialTime->setDateTime(QDateTime::currentDateTime());
+    ui->edtInitialTime->setDateTime(QDateTime(QDate(QDate::currentDate().year(), 1, 1)));
     
     Project *project = IPHApplication::getCurrentProject();
     

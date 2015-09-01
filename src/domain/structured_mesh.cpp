@@ -114,8 +114,8 @@ bool StructuredMesh::pointInMesh(double *point) {
     return false;
 }
 
-SimulationDataType::StructuredMesh StructuredMesh::toSimulationDataType(HydrodynamicConfiguration *hydrodynamicConfiguration) const {
-    SimulationDataType::StructuredMesh structuredMesh;
+SimulationDataType::StructuredMesh* StructuredMesh::toSimulationDataType(const HydrodynamicConfiguration *hydrodynamicConfiguration) const {
+    SimulationDataType::StructuredMesh *structuredMesh = new SimulationDataType::StructuredMesh();
     enum class EdgeDirection { SOUTH = 0, EAST, NORTH, WEST };
     vtkIdType numberOfCells = this->meshPolyData->GetNumberOfCells();
     
@@ -123,16 +123,16 @@ SimulationDataType::StructuredMesh StructuredMesh::toSimulationDataType(Hydrodyn
     cellCentersFilter->SetInputData(this->meshPolyData);
     cellCentersFilter->Update();
     
-    structuredMesh.numberOfElements = numberOfCells;
-    structuredMesh.resolution = this->resolution;
-    structuredMesh.xCoordinates = new double[numberOfCells];
-    structuredMesh.yCoordinates = new double[numberOfCells];
+    structuredMesh->numberOfElements = numberOfCells;
+    structuredMesh->resolution = this->resolution;
+    structuredMesh->xCoordinates = new double[numberOfCells];
+    structuredMesh->yCoordinates = new double[numberOfCells];
     
     for (vtkIdType i = 0; i < cellCentersFilter->GetOutput()->GetNumberOfPoints(); i++) {
         double center[3];
         cellCentersFilter->GetOutput()->GetPoint(i, center);
-        structuredMesh.xCoordinates[i] = center[0];
-        structuredMesh.yCoordinates[i] = center[1];
+        structuredMesh->xCoordinates[i] = center[0];
+        structuredMesh->yCoordinates[i] = center[1];
     }
     
     BoundaryCondition *waterFlowBoundaryCondition = nullptr;
@@ -151,10 +151,10 @@ SimulationDataType::StructuredMesh StructuredMesh::toSimulationDataType(Hydrodyn
         boundaryCellIds = this->getBoundaryCellIds(waterFlowBoundaryCondition->getVTKObjectIds());
     }
     
-    structuredMesh.northNeighbors = new vtkIdType[numberOfCells];
-    structuredMesh.westNeighbors = new vtkIdType[numberOfCells];
-    structuredMesh.southNeighbors = new vtkIdType[numberOfCells];
-    structuredMesh.eastNeighbors = new vtkIdType[numberOfCells];
+    structuredMesh->northNeighbors = new vtkIdType[numberOfCells];
+    structuredMesh->westNeighbors = new vtkIdType[numberOfCells];
+    structuredMesh->southNeighbors = new vtkIdType[numberOfCells];
+    structuredMesh->eastNeighbors = new vtkIdType[numberOfCells];
     
     for (vtkIdType cellId = 0; cellId < numberOfCells; cellId++) {
         vtkSmartPointer<vtkIdList> cellNeighbors = vtkSmartPointer<vtkIdList>::New();
@@ -179,13 +179,13 @@ SimulationDataType::StructuredMesh StructuredMesh::toSimulationDataType(Hydrodyn
                 vtkIdType neighborId = cellNeighbors->GetId(i);
                 
                 if (directionIndex == (vtkIdType) EdgeDirection::SOUTH) {
-                    directionArray = structuredMesh.southNeighbors;
+                    directionArray = structuredMesh->southNeighbors;
                 } else if (directionIndex == (vtkIdType) EdgeDirection::EAST) {
-                    directionArray = structuredMesh.eastNeighbors;
+                    directionArray = structuredMesh->eastNeighbors;
                 } else if (directionIndex == (vtkIdType) EdgeDirection::NORTH) {
-                    directionArray = structuredMesh.northNeighbors;
+                    directionArray = structuredMesh->northNeighbors;
                 } else {
-                    directionArray = structuredMesh.westNeighbors;
+                    directionArray = structuredMesh->westNeighbors;
                 }
                 
                 directionArray[cellId] = boundaryCellIds.contains(neighborId) ? -2 : neighborId;

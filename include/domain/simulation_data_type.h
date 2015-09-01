@@ -34,8 +34,8 @@ namespace SimulationDataType {
             int numberOfLayers;
             SimulationDataType::GridData *layers;
             bool isStructured;
-            SimulationDataType::StructuredMesh structuredMesh;
-            SimulationDataType::UnstructuredMesh unstructuredMesh;
+            SimulationDataType::StructuredMesh *structuredMesh;
+            SimulationDataType::UnstructuredMesh *unstructuredMesh;
         };
         
         struct HydrodynamicParameter {
@@ -45,8 +45,7 @@ namespace SimulationDataType {
         };
         
         struct TimeSeries {
-            int timeStampSize;
-            char *timeStamp;
+            int timeStamp;
             double value;
         };
         
@@ -67,7 +66,7 @@ namespace SimulationDataType {
             SimulationDataType::HydrodynamicParameter *parameters;
             int numberOfBoundaryConditions;
             SimulationDataType::BoundaryCondition *boundaryConditions;
-            SimulationDataType::GridDataConfiguration gridDataConfiguration;
+            SimulationDataType::GridDataConfiguration *gridDataConfiguration;
         };
 
         struct Simulation {

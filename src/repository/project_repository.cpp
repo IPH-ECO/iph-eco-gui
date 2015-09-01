@@ -268,7 +268,7 @@ void ProjectRepository::loadTimeSeries(BoundaryCondition *boundaryCondition) {
     while (query.next() && !operationCanceled) {
         TimeSeries *timeSeries = new TimeSeries();
         timeSeries->setId(query.value("id").toUInt());
-        timeSeries->setTimeStamp(query.value("time_stamp").toString());
+        timeSeries->setTimeStamp(query.value("time_stamp").toInt());
         timeSeries->setValue(query.value("value").toDouble());
         
         boundaryCondition->addTimeSeries(timeSeries);
@@ -681,13 +681,6 @@ void ProjectRepository::saveHydrodynamicParameters(HydrodynamicConfiguration *co
         parameter->setId(query.lastInsertId().toUInt());
         parameterIds.append(QString::number(parameter->getId()));
     }
-
-    if (operationCanceled) {
-        return;
-    }
-
-    query.prepare("delete from hydrodynamic_parameter where id not in (" + parameterIds.join(",") + ") and hydrodynamic_configuration_id = " + QString::number(configuration->getId()));
-    query.exec();
 }
 
 void ProjectRepository::saveBoundaryConditions(HydrodynamicConfiguration *configuration) {

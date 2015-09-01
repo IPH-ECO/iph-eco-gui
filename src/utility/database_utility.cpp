@@ -162,7 +162,7 @@ void DatabaseUtility::createApplicationTables() {
     sql << "drop table if exists time_series";
     sql << "create table time_series (" \
         "id integer primary key, " \
-        "time_stamp text not null, " \
+        "time_stamp integer not null, " \
         "value float default 0, " \
         "boundary_condition_id integer not null" \
     ")";

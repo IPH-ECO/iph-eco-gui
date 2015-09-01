@@ -30,8 +30,8 @@ module domain_types
         integer(c_int) :: numberOfLayers
         type(c_ptr) :: layers
         logical(c_bool) :: isStructured
-        type(StructuredMesh) :: structuredMesh
-        type(UnstructuredMesh) :: unstructuredMesh
+        type(c_ptr) :: structuredMesh
+        type(c_ptr) :: unstructuredMesh
     end type
 
     type, bind(C) :: HydrodynamicParameter
@@ -63,7 +63,7 @@ module domain_types
         type(c_ptr) :: parameters
         integer(c_int) :: numberOfBoundaryConditions
         type(c_ptr) :: boundaryConditions
-        type(GridDataConfiguration) :: gridDataConfiguration
+        type(c_ptr) :: gridDataConfiguration
     end type
 
     ! Hydrodynamic, Water Quality, Sediment = Modules combination code

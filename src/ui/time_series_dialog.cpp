@@ -64,7 +64,7 @@ void TimeSeriesDialog::on_btnImportCSV_clicked() {
                     return;
                 } else {
                     TimeSeries tempTimeSeries;
-                    tempTimeSeries.setTimeStamp(tokens[0]);
+                    tempTimeSeries.setTimeStamp(QDateTime::fromString(tokens[0], "yyyy-MM-dd HH:mm:ss").toTime_t());
                     tempTimeSeries.setValue(tokens[1].toDouble());
                     
                     tempTimeSeriesList.append(tempTimeSeries);
@@ -79,7 +79,7 @@ void TimeSeriesDialog::on_btnImportCSV_clicked() {
                 
                 for (int i = 0; i < tempTimeSeriesList.size(); i++) {
                     ui->tblTimeSeries->insertRow(i);
-                    ui->tblTimeSeries->setItem(i, 0, new QTableWidgetItem(tempTimeSeriesList[i].getTimeStamp()));
+                    ui->tblTimeSeries->setItem(i, 0, new QTableWidgetItem(QDateTime::fromTime_t(tempTimeSeriesList[i].getTimeStamp()).toString("yyyy-MM-dd hh:mm:ss")));
                     ui->tblTimeSeries->setItem(i, 1, new QTableWidgetItem(QString::number(tempTimeSeriesList[i].getValue())));
                 }
             }
@@ -143,7 +143,7 @@ void TimeSeriesDialog::accept() {
             timeSeries = new TimeSeries();
         }
         
-        timeSeries->setTimeStamp(ui->tblTimeSeries->item(i, 0)->text());
+        timeSeries->setTimeStamp(QDateTime::fromString(ui->tblTimeSeries->item(i, 0)->text(), "yyyy-MM-dd HH:mm:ss").toTime_t());
         timeSeries->setValue(ui->tblTimeSeries->item(i, 1)->text().toDouble());
         
         timeSeriesList.append(timeSeries);

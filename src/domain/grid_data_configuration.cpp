@@ -1,5 +1,8 @@
 #include "include/domain/grid_data_configuration.h"
 
+#include "include/domain/structured_mesh.h"
+#include "include/domain/unstructured_mesh.h"
+
 #include <vtkDoubleArray.h>
 #include <vtkCellData.h>
 
@@ -108,15 +111,23 @@ bool GridDataConfiguration::isPersisted() const {
     return id != 0;
 }
 
-SimulationDataType::GridDataConfiguration GridDataConfiguration::toSimulationDataType() const {
-    SimulationDataType::GridDataConfiguration gridDataConfiguration;
+SimulationDataType::GridDataConfiguration* GridDataConfiguration::toSimulationDataType(const HydrodynamicConfiguration *hydrodynamicConfiguration) const {
+    SimulationDataType::GridDataConfiguration *gridDataConfiguration = new SimulationDataType::GridDataConfiguration();
     int i = 0;
     
-    gridDataConfiguration.numberOfLayers = gridDataVector.size();
-    gridDataConfiguration.layers = new SimulationDataType::GridData[gridDataConfiguration.numberOfLayers];
+    gridDataConfiguration->numberOfLayers = gridDataVector.size();
+    gridDataConfiguration->layers = new SimulationDataType::GridData[gridDataConfiguration->numberOfLayers];
     
     for (GridData *gridData : gridDataVector) {
-        gridDataConfiguration.layers[i] = gridData->toSimulationDataType();
+        gridDataConfiguration->layers[i] = gridData->toSimulationDataType();
+    }
+    
+    gridDataConfiguration->isStructured = this->getMesh()->instanceOf("StructuredMesh");
+    
+    if (gridDataConfiguration->isStructured) {
+        gridDataConfiguration->structuredMesh = static_cast<StructuredMesh*>(this->getMesh())->toSimulationDataType(hydrodynamicConfiguration);
+    } else {
+        gridDataConfiguration->unstructuredMesh = static_cast<UnstructuredMesh*>(this->getMesh())->toSimulationDataType();
     }
     
     return gridDataConfiguration;

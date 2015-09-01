@@ -139,7 +139,7 @@ SimulationDataType::HydrodynamicConfiguration* HydrodynamicConfiguration::toSimu
         configuration->boundaryConditions[i++] = boundaryCondition->toSimulationDataType();
     }
     
-    configuration->gridDataConfiguration = this->gridDataConfiguration->toSimulationDataType();
+    configuration->gridDataConfiguration = this->gridDataConfiguration->toSimulationDataType(this);
     
     return configuration;
 }
