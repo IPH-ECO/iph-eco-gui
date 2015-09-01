@@ -151,10 +151,10 @@ SimulationDataType::StructuredMesh* StructuredMesh::toSimulationDataType(const H
         boundaryCellIds = this->getBoundaryCellIds(waterFlowBoundaryCondition->getVTKObjectIds());
     }
     
-    structuredMesh->northNeighbors = new vtkIdType[numberOfCells];
-    structuredMesh->westNeighbors = new vtkIdType[numberOfCells];
-    structuredMesh->southNeighbors = new vtkIdType[numberOfCells];
-    structuredMesh->eastNeighbors = new vtkIdType[numberOfCells];
+	structuredMesh->northNeighbors = new long long int[numberOfCells];
+	structuredMesh->westNeighbors = new long long int[numberOfCells];
+	structuredMesh->southNeighbors = new long long int[numberOfCells];
+	structuredMesh->eastNeighbors = new long long int[numberOfCells];
     
     for (vtkIdType cellId = 0; cellId < numberOfCells; cellId++) {
         vtkSmartPointer<vtkIdList> cellNeighbors = vtkSmartPointer<vtkIdList>::New();
@@ -175,7 +175,7 @@ SimulationDataType::StructuredMesh* StructuredMesh::toSimulationDataType(const H
             }
             
             for (vtkIdType i = 0; i < cellNeighbors->GetNumberOfIds(); i++) {
-                vtkIdType *directionArray = nullptr;
+                long long int *directionArray = nullptr;
                 vtkIdType neighborId = cellNeighbors->GetId(i);
                 
                 if (directionIndex == (vtkIdType) EdgeDirection::SOUTH) {

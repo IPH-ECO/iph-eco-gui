@@ -210,7 +210,7 @@ SimulationDataType::BoundaryCondition BoundaryCondition::toSimulationDataType() 
     
     boundaryCondition.conditionType = (int) this->type;
     boundaryCondition.numberOfObjects = this->objectIds.size();
-    boundaryCondition.objectIds = new vtkIdType[boundaryCondition.numberOfObjects];
+	boundaryCondition.objectIds = new long long int[boundaryCondition.numberOfObjects];
     
     int i = 0;
     for (vtkIdType objectId : objectIds) {

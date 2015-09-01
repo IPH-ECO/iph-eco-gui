@@ -3,13 +3,15 @@ subroutine startSimulation(sim) bind(C, name="startSimulation")
 	use domain_types
 	
     type(Simulation) :: sim
-    character, pointer :: simulationLabel(:)
-    type(HydrodynamicConfiguration), pointer :: configuration
-	!type(BoundaryCondition), pointer :: boundaryConditions(:)
-
-	call c_f_pointer(sim%label, simulationLabel, [sim%labelLength])
-	call c_f_pointer(sim%hydrodynamicConfiguration, configuration)
+    type(HydrodynamicConfiguration), pointer :: hydroConfiguration
+    type(GridDataConfiguration), pointer :: gridConfiguration
+    type(StructuredMesh), pointer :: sm1
+	
+	call c_f_pointer(sim%hydrodynamicConfiguration, hydroConfiguration)
+	call c_f_pointer(hydroConfiguration%gridDataConfiguration, gridConfiguration)
+	call c_f_pointer(gridConfiguration%structuredMesh, sm1)
     
-    print *, simulationLabel
-    print *, configuration%numberOfParameters
+    print *, sm1%verticeIdsLength
+    print *, gridConfiguration%numberOfLayers
+    print *, hydroConfiguration%numberOfParameters
 end subroutine

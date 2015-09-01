@@ -175,7 +175,7 @@ SimulationDataType::UnstructuredMesh* UnstructuredMesh::toSimulationDataType() c
     }
     
     unstructuredMesh->verticeIdsLength = this->meshPolyData->GetNumberOfCells() * 3;
-    unstructuredMesh->verticeIds = new vtkIdType[unstructuredMesh->verticeIdsLength];
+    unstructuredMesh->verticeIds = new long long int[unstructuredMesh->verticeIdsLength];
     vtkIdType count = 0;
     
     for (vtkIdType i = 0; i < this->meshPolyData->GetNumberOfCells(); i++) {
