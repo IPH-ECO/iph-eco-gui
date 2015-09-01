@@ -194,5 +194,18 @@ SimulationDataType::StructuredMesh* StructuredMesh::toSimulationDataType(const H
         }
     }
     
+    structuredMesh->verticeIdsLength = this->meshPolyData->GetNumberOfCells() * 4;
+    structuredMesh->verticeIds = new long long int[structuredMesh->verticeIdsLength];
+    vtkIdType count = 0;
+    
+    for (vtkIdType i = 0; i < this->meshPolyData->GetNumberOfCells(); i++) {
+        vtkSmartPointer<vtkIdList> vertices = vtkSmartPointer<vtkIdList>::New();
+
+        this->meshPolyData->GetCellPoints(i, vertices);
+        for (vtkIdType j = 0; j < vertices->GetNumberOfIds(); j++) {
+            structuredMesh->verticeIds[count++] = vertices->GetId(j);
+        }
+    }
+    
     return structuredMesh;
 }

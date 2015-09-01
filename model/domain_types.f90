@@ -10,13 +10,15 @@ module domain_types
         type(c_ptr) :: westNeighbors
         type(c_ptr) :: southNeighbors
         type(c_ptr) :: eastNeighbors
+        integer(c_long_long) :: verticeIdsLength
+        type(c_ptr) :: verticeIds
     end type
 
     type, bind(C) :: UnstructuredMesh
         integer(c_long_long) :: numberOfPoints
         type(c_ptr) :: xCoordinates
         type(c_ptr) :: yCoordinates
-        integer(c_long_long) :: numberOfElements
+        integer(c_long_long) :: verticeIdsLength
         type(c_ptr) :: verticeIds
     end type
 

@@ -12,13 +12,15 @@ namespace SimulationDataType {
 			long long int *westNeighbors;
 			long long int *southNeighbors;
 			long long int *eastNeighbors;
+            long long int verticeIdsLength;
+            long long int *verticeIds;
         };
         
         struct UnstructuredMesh {
 			long long int numberOfPoints;
             double *xCoordinates;
             double *yCoordinates;
-			long long int numberOfElements;
+			long long int verticeIdsLength;
 			long long int *verticeIds;
         };
         

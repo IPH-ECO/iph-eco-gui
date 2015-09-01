@@ -174,14 +174,14 @@ SimulationDataType::UnstructuredMesh* UnstructuredMesh::toSimulationDataType() c
         unstructuredMesh->yCoordinates[i] = point[1];
     }
     
-    vtkIdType numberOfCells = this->meshPolyData->GetNumberOfCells() * 3;
-    unstructuredMesh->numberOfElements = numberOfCells;
-    unstructuredMesh->verticeIds = new vtkIdType[unstructuredMesh->numberOfElements];
+    unstructuredMesh->verticeIdsLength = this->meshPolyData->GetNumberOfCells() * 3;
+    unstructuredMesh->verticeIds = new vtkIdType[unstructuredMesh->verticeIdsLength];
     vtkIdType count = 0;
     
-    for (vtkIdType i = 0; i < numberOfCells; i++) {
+    for (vtkIdType i = 0; i < this->meshPolyData->GetNumberOfCells(); i++) {
         vtkSmartPointer<vtkIdList> vertices = vtkSmartPointer<vtkIdList>::New();
-        meshPolyData->GetCellPoints(i, vertices);
+        
+        this->meshPolyData->GetCellPoints(i, vertices);
         for (vtkIdType j = 0; j < vertices->GetNumberOfIds(); j++) {
             unstructuredMesh->verticeIds[count++] = vertices->GetId(j);
         }
