@@ -119,7 +119,7 @@ SimulationDataType::GridDataConfiguration* GridDataConfiguration::toSimulationDa
     gridDataConfiguration->layers = new SimulationDataType::GridData[gridDataConfiguration->numberOfLayers];
     
     for (GridData *gridData : gridDataVector) {
-        gridDataConfiguration->layers[i] = gridData->toSimulationDataType();
+        gridDataConfiguration->layers[i++] = gridData->toSimulationDataType();
     }
     
     gridDataConfiguration->isStructured = this->getMesh()->instanceOf("StructuredMesh");
