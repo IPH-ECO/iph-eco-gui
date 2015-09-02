@@ -181,11 +181,13 @@ void HydrodynamicMouseInteractor::clearSelection() {
 }
 
 void HydrodynamicMouseInteractor::setHydrodynamicConfiguration(HydrodynamicConfiguration *hydrodynamicConfiguration) {
-    if (hydrodynamicConfiguration == nullptr && this->hydrodynamicConfiguration != nullptr) {
-        for (BoundaryCondition *boundaryCondition : this->hydrodynamicConfiguration->getBoundaryConditions()) {
-            removeBoundaryCondition(boundaryCondition);
+    if (hydrodynamicConfiguration == nullptr) {
+        if (this->hydrodynamicConfiguration != nullptr) {
+            for (BoundaryCondition *boundaryCondition : this->hydrodynamicConfiguration->getBoundaryConditions()) {
+                removeBoundaryCondition(boundaryCondition);
+            }
+            this->GetDefaultRenderer()->RemoveActor(this->boundaryEdgesActor);
         }
-        this->GetDefaultRenderer()->RemoveActor(this->boundaryEdgesActor);
     } else {
         this->hydrodynamicConfiguration = hydrodynamicConfiguration;
         this->meshPolyData = hydrodynamicConfiguration->getGridDataConfiguration()->getMesh()->getMeshPolyData();
