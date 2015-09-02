@@ -92,10 +92,13 @@ void CreateSimulationDialog::accept() {
     bool startOnCreate = ui->chkStart->isChecked();
     Project *project = IPHApplication::getCurrentProject();
     HydrodynamicConfiguration *hydrodynamicConfiguration = project->getHydrodynamicConfiguration(ui->cbxHydrodynamic->currentText());
+    QDateTime time = ui->edtInitialTime->dateTime();
+    
+    time.setTimeSpec(Qt::UTC);
     
     simulation->setLabel(ui->edtLabel->text());
     simulation->setSimulationType(Simulation::getSimulationTypesMap().key(ui->cbxType->currentText()));
-    simulation->setInitialTime(ui->edtInitialTime->dateTime().toTime_t());
+    simulation->setInitialTime(time.toTime_t());
     simulation->setPeriod(ui->edtPeriod->text().toDouble());
     simulation->setStepTime(ui->edtStepTime->text().toInt());
     

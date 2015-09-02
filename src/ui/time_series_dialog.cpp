@@ -20,8 +20,11 @@ TimeSeriesDialog::TimeSeriesDialog(QWidget *parent, BoundaryCondition *boundaryC
     int i = 0;
     
     for (TimeSeries *timeSeries : timeSeriesList) {
+        QDateTime time = QDateTime::fromTime_t(timeSeries->getTimeStamp());
+        time.setTimeSpec(Qt::UTC);
+        
         ui->tblTimeSeries->insertRow(i);
-        ui->tblTimeSeries->setItem(i, 0, new QTableWidgetItem(timeSeries->getTimeStamp()));
+        ui->tblTimeSeries->setItem(i, 0, new QTableWidgetItem(time.toString("yyyy-MM-dd HH:mm:ss")));
         ui->tblTimeSeries->setItem(i, 1, new QTableWidgetItem(QString::number(timeSeries->getValue())));
         ui->tblTimeSeries->item(i, 0)->setData(Qt::UserRole, QVariant((uint) timeSeries->getId()));
         i++;
@@ -143,7 +146,10 @@ void TimeSeriesDialog::accept() {
             timeSeries = new TimeSeries();
         }
         
-        timeSeries->setTimeStamp(QDateTime::fromString(ui->tblTimeSeries->item(i, 0)->text(), "yyyy-MM-dd HH:mm:ss").toTime_t());
+        QDateTime time = QDateTime::fromString(ui->tblTimeSeries->item(i, 0)->text(), "yyyy-MM-dd HH:mm:ss");
+        time.setTimeSpec(Qt::UTC);
+        
+        timeSeries->setTimeStamp(time.toTime_t());
         timeSeries->setValue(ui->tblTimeSeries->item(i, 1)->text().toDouble());
         
         timeSeriesList.append(timeSeries);
