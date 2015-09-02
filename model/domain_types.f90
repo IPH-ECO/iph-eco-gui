@@ -68,16 +68,10 @@ module domain_types
         type(c_ptr) :: gridDataConfiguration
     end type
 
-    ! Hydrodynamic, Water Quality, Sediment = Modules combination code
-    ! true, false, false = 1
-    ! false, true, false = 2
-    ! true, true, false = 3
-    ! false, false, true = 4
-    ! true, false, true = 5
-    ! false, true, true = 6
-    ! true, true, true = 7
     type, bind(C) :: Simulation
-        integer(c_int) :: modules
+        logical(c_bool) :: hydrodynamic
+        logical(c_bool) :: waterQuality
+        logical(c_bool) :: sediment
         integer(c_int) :: labelLength
         type(c_ptr) :: label
         integer(c_int) :: simulationType
@@ -87,6 +81,8 @@ module domain_types
         integer(c_int) :: layersLength
         type(c_ptr) :: layers
         type(c_ptr) :: hydrodynamicConfiguration
+        real(c_double) :: minimumVerticalLimit
+        real(c_double) :: maximumVerticalLimit
         integer(c_int) :: observationsLength
         type(c_ptr) :: observations
     end type

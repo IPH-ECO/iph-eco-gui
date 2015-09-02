@@ -70,7 +70,9 @@ namespace SimulationDataType {
         };
 
         struct Simulation {
-            int modules;
+            bool hydrodynamic;
+            bool waterQuality;
+            bool sediment;
             int labelLength;
             char *label;
             int simulationType;
@@ -80,6 +82,8 @@ namespace SimulationDataType {
             int layersLength;
             double *layers;
             HydrodynamicConfiguration *hydrodynamicConfiguration;
+            double minimumVerticalLimit;
+            double maximumVerticalLimit;
             int observationsLength;
             char *observations;
         };

@@ -93,6 +93,22 @@ void Simulation::setHydrodynamicConfiguration(HydrodynamicConfiguration *configu
 	this->hydrodynamicConfiguration = configuration;
 }
 
+double Simulation::getMinimumVerticalLimit() const {
+    return minimumVerticalLimit;
+}
+
+void Simulation::setMinimumVerticalLimit(double minimumVerticalLimit) {
+    this->minimumVerticalLimit = minimumVerticalLimit;
+}
+
+double Simulation::getMaximumVerticalLimit() const {
+    return maximumVerticalLimit;
+}
+
+void Simulation::setMaximumVerticalLimit(double maximumVerticalLimit) {
+    this->maximumVerticalLimit = maximumVerticalLimit;
+}
+
 QString Simulation::getObservations() const {
 	return observations;
 }
@@ -115,10 +131,9 @@ SimulationDataType::Simulation Simulation::toSimulationDataType() const {
 	std::string labelStr = this->label.toStdString();
 	int i = 0;
     
-    simulation.modules = 0;
-    simulation.modules |= project->getHydrodynamic() ? 0x01 : 0;
-    simulation.modules |= project->getWaterQuality() ? 0x02 : 0;
-    simulation.modules |= project->getSediment() ? 0x04 : 0;
+    simulation.hydrodynamic = project->getHydrodynamic();
+    simulation.waterQuality = project->getWaterQuality();
+    simulation.sediment = project->getSediment();
 
     simulation.labelLength = this->label.size();
 	simulation.label = new char[simulation.labelLength];
@@ -135,6 +150,8 @@ SimulationDataType::Simulation Simulation::toSimulationDataType() const {
 	}
 
 	simulation.hydrodynamicConfiguration = this->hydrodynamicConfiguration->toSimulationDataType();
+    simulation.minimumVerticalLimit = this->minimumVerticalLimit;
+    simulation.maximumVerticalLimit = this->maximumVerticalLimit;
 
 	return simulation;
 }

@@ -22,6 +22,8 @@ private:
 	HydrodynamicConfiguration *hydrodynamicConfiguration;
 	// WaterQualityConfiguration *waterQualityConfiguration;
 	// MeteorologicalConfiguration *meteorologicalConfiguration;
+    double minimumVerticalLimit;
+    double maximumVerticalLimit;
 	QString observations;
 
 	// Transient attributes
@@ -49,6 +51,10 @@ public:
 	void removeLayer(int index);
 	HydrodynamicConfiguration* getHydrodynamicConfiguration() const;
 	void setHydrodynamicConfiguration(HydrodynamicConfiguration *configuration);
+    double getMinimumVerticalLimit() const;
+    void setMinimumVerticalLimit(double minimumVerticalLimit);
+    double getMaximumVerticalLimit() const;
+    void setMaximumVerticalLimit(double maximumVerticalLimit);
 	QString getObservations() const;
 	void setObservation(const QString &observations);
 	bool getStartOnCreate() const;

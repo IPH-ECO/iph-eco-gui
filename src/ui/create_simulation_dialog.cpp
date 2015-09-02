@@ -101,6 +101,8 @@ void CreateSimulationDialog::accept() {
     simulation->setInitialTime(time.toTime_t());
     simulation->setPeriod(ui->edtPeriod->text().toDouble());
     simulation->setStepTime(ui->edtStepTime->text().toInt());
+    simulation->setMinimumVerticalLimit(ui->edtMinLimit->text().toDouble());
+    simulation->setMaximumVerticalLimit(ui->edtMaxLimit->text().toDouble());
     
     for (int i = 0; i < ui->tblLayers->rowCount(); i++) {
         layers.append(ui->tblLayers->item(i, 0)->text().toDouble());
