@@ -116,14 +116,23 @@ void TimeSeriesDialog::on_btnClear_clicked() {
 }
 
 bool TimeSeriesDialog::isValid() {
+    QDateTime lastTime;
+    
     for (int i = 0; i < ui->tblTimeSeries->rowCount(); i++) {
         QString timestamp = ui->tblTimeSeries->item(i, 0)->text();
         QDateTime dateTime = QDateTime::fromString(timestamp, Qt::ISODate);
         
         if (!dateTime.isValid()) {
-            QMessageBox::warning(this, tr("Time Series"), tr("Invalid timestamp format at row ") + QString::number(i + 1));
+            QMessageBox::warning(this, tr("Time Series"), QString("Invalid timestamp format at row %1.").arg(i + 1));
             return false;
         }
+        
+        if (lastTime.isValid() && dateTime < lastTime) {
+            QMessageBox::warning(this, tr("Time Series"), QString("The time stamps must be on ascendant order. See row %1.").arg(i + 1));
+            return false;
+        }
+        
+        lastTime = dateTime;
     }
     
     return true;
