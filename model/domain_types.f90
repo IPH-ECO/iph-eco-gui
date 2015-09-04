@@ -42,10 +42,15 @@ module domain_types
         real(c_double) :: value
     end type
 
+    type, bind(C) :: BoundaryConditionCell
+        integer(c_long_long) :: cellId;
+        integer(c_long_long) :: verticeIds(2);
+    end type
+
     type, bind(C) :: BoundaryCondition
         integer(c_int) :: conditionType
-        integer(c_int) :: numberOfObjects
-        type(c_ptr) :: objectIds
+        integer(c_int) :: cellsLength
+        type(c_ptr) :: cells
         integer(c_int) :: conditionFunction
         real(c_double) :: constantValue
         integer(c_int) :: timeSeriesListSize

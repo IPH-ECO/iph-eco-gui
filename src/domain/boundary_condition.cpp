@@ -205,16 +205,57 @@ void BoundaryCondition::setLabelsActor(vtkSmartPointer<vtkActor2D> labelsActor) 
     this->labelsActor = labelsActor;
 }
 
-SimulationDataType::BoundaryCondition BoundaryCondition::toSimulationDataType() const {
+SimulationDataType::BoundaryCondition BoundaryCondition::toSimulationDataType(Mesh *mesh) const {
     SimulationDataType::BoundaryCondition boundaryCondition;
+    vtkSmartPointer<vtkPolyData> meshPolyData = mesh->getMeshPolyData();
+    int i = 0;
     
     boundaryCondition.conditionType = (int) this->type;
-    boundaryCondition.numberOfObjects = this->objectIds.size();
-	boundaryCondition.objectIds = new long long int[boundaryCondition.numberOfObjects];
+    boundaryCondition.cellsLength = this->objectIds.size();
+	boundaryCondition.cells = new SimulationDataType::BoundaryConditionCell[boundaryCondition.cellsLength];
     
-    int i = 0;
-    for (vtkIdType objectId : objectIds) {
-        boundaryCondition.objectIds[i++] = objectId;
+    if (this->type == BoundaryConditionType::WATER_LEVEL) {
+        for (vtkIdType objectId : objectIds) {
+            boundaryCondition.cells[i] = SimulationDataType::BoundaryConditionCell();
+            boundaryCondition.cells[i].cellId = objectId;
+            boundaryCondition.cellsLength = 0;
+            i++;
+        }
+    } else {
+        vtkSmartPointer<vtkPolyData> boundaryPolyData = mesh->getBoundaryPolyData();
+        
+        for (vtkIdType objectId : objectIds) {
+            vtkSmartPointer<vtkCell> edge = boundaryPolyData->GetCell(objectId);
+            double edgeA[3], edgeB[3];
+            
+            edge->GetPoints()->GetPoint(0, edgeA);
+            edge->GetPoints()->GetPoint(1, edgeB);
+            
+            vtkIdType meshPointAId = meshPolyData->FindPoint(edgeA);
+            vtkIdType meshPointBId = meshPolyData->FindPoint(edgeB);
+            vtkSmartPointer<vtkIdList> cellsPointA = vtkSmartPointer<vtkIdList>::New();
+            vtkSmartPointer<vtkIdList> cellsPointB = vtkSmartPointer<vtkIdList>::New();
+            
+            meshPolyData->GetPointCells(meshPointAId, cellsPointA);
+            meshPolyData->GetPointCells(meshPointBId, cellsPointB);
+            
+            vtkIdType foundCellId = -1;
+            
+            for (vtkIdType i = 0; i < cellsPointA->GetNumberOfIds() && foundCellId == -1; i++) {
+                for (vtkIdType j = 0; j < cellsPointB->GetNumberOfIds() && foundCellId == -1; j++) {
+                    if (cellsPointA->GetId(i) == cellsPointB->GetId(j)) {
+                        foundCellId = i;
+                    }
+                }
+            }
+            
+            boundaryCondition.cells[i] = SimulationDataType::BoundaryConditionCell();
+            boundaryCondition.cells[i].cellId = cellsPointA->GetId(foundCellId);
+            boundaryCondition.cells[i].verticeIds[0] = meshPolyData->FindPoint(edgeA);
+            boundaryCondition.cells[i].verticeIds[1] = meshPolyData->FindPoint(edgeB);
+
+            i++;
+        }
     }
     
     boundaryCondition.conditionFunction = (int) this->function;
@@ -222,7 +263,7 @@ SimulationDataType::BoundaryCondition BoundaryCondition::toSimulationDataType() 
     boundaryCondition.timeSeriesListSize = this->timeSeriesList.size();
     boundaryCondition.timeSeriesList = new SimulationDataType::TimeSeries[boundaryCondition.timeSeriesListSize];
     
-    for (int i = 0; i < this->timeSeriesList.size(); i++) {
+    for (i = 0; i < this->timeSeriesList.size(); i++) {
         boundaryCondition.timeSeriesList[i] = this->timeSeriesList[i]->toSimulationDataType();
     }
     

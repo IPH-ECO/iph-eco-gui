@@ -184,7 +184,7 @@ SimulationDataType::StructuredMesh* StructuredMesh::toSimulationDataType(const H
                     directionArray = structuredMesh->eastNeighbors;
                 } else if (directionIndex == (vtkIdType) EdgeDirection::NORTH) {
                     directionArray = structuredMesh->northNeighbors;
-                } else {
+                } else if (directionIndex == (vtkIdType) EdgeDirection::WEST) {
                     directionArray = structuredMesh->westNeighbors;
                 }
                 

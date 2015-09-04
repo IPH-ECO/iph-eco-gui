@@ -49,10 +49,15 @@ namespace SimulationDataType {
             double value;
         };
         
+        struct BoundaryConditionCell {
+            long long int cellId;
+            long long int verticeIds[2];
+        };
+        
         struct BoundaryCondition {
             int conditionType;
-            int numberOfObjects;
-			long long int *objectIds;
+            int cellsLength;
+            SimulationDataType::BoundaryConditionCell *cells;
             int conditionFunction;
             double constantValue;
             int timeSeriesListSize;
@@ -60,7 +65,7 @@ namespace SimulationDataType {
             bool verticalIntegratedOutflow;
             double quota;
         };
-        
+
         struct HydrodynamicConfiguration {
             int numberOfParameters;
             SimulationDataType::HydrodynamicParameter *parameters;
