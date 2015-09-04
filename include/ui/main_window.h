@@ -4,8 +4,9 @@
 #include <QCloseEvent>
 #include <QFileDialog>
 #include <QMainWindow>
-#include <QMdiArea>
 #include <QSettings>
+#include <QMdiArea>
+#include <QToolBar>
 
 #include "new_project_dialog.h"
 #include "project_properties_dialog.h"
@@ -21,6 +22,8 @@ class MainWindow : public QMainWindow {
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
+    
+    QToolBar* getToolBar() const;
 
 protected:
     void closeEvent(QCloseEvent *);
@@ -50,13 +53,13 @@ private slots:
     void openRecent();
 
 private:
-    const int MAX_RECENT_FILES;
-    const QString RECENT_FILES_KEY;
-    const QString PROJECT_DEFAULT_DIR_KEY;
-
     Ui::MainWindow *ui;
     QSettings *appSettings;
     QMdiArea *mdiArea;
+    
+    const int MAX_RECENT_FILES;
+    const QString RECENT_FILES_KEY;
+    const QString PROJECT_DEFAULT_DIR_KEY;
 
     QString getDefaultDirectory();
     void readSettings();

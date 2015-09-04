@@ -170,9 +170,7 @@ void Mesh::removeMeshPolygon(const QString &name, const MeshPolygonType &meshPol
     
     QList<MeshPolygon*> meshPolygons = islands + refinementAreas;
     
-    for (QList<MeshPolygon*>::const_iterator it = meshPolygons.begin(); it != meshPolygons.end(); it++) {
-        MeshPolygon *meshPolygon = *it;
-
+    for (MeshPolygon *meshPolygon : meshPolygons) {
         if (meshPolygon->getName() == name && meshPolygon->getMeshPolygonType() == meshPolygonType) {
             if (meshPolygonType == MeshPolygonType::ISLAND) {
                 islands.removeOne(meshPolygon);
@@ -192,8 +190,7 @@ MeshPolygon* Mesh::getMeshPolygon(const QString &name, const MeshPolygonType &me
         meshPolygons.prepend(boundaryPolygon);
     }
     
-    for (QList<MeshPolygon*>::const_iterator it = meshPolygons.begin(); it != meshPolygons.end(); it++) {
-        MeshPolygon *meshPolygon = *it;
+    for (MeshPolygon *meshPolygon : meshPolygons) {
         if (meshPolygon->getName() == name && meshPolygon->getMeshPolygonType() == meshPolygonType) {
             return meshPolygon;
         }
@@ -207,13 +204,13 @@ void Mesh::clear() {
     delete boundaryPolygon;
     boundaryPolygon = nullptr;
 
-    for (QList<MeshPolygon*>::iterator it = islands.begin(); it != islands.end(); it++) {
-        delete *it;
+    for (MeshPolygon *island : islands) {
+        delete island;
     }
     islands.clear();
 
-    for (QList<MeshPolygon*>::iterator it = refinementAreas.begin(); it != refinementAreas.end(); it++) {
-        delete *it;
+    for (MeshPolygon *refinementArea : refinementAreas) {
+        delete refinementArea;
     }
     refinementAreas.clear();
 }

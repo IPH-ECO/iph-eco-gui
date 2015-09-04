@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1136</width>
-    <height>654</height>
+    <width>1240</width>
+    <height>688</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,7 +17,7 @@
    <item row="0" column="1">
     <layout class="QVBoxLayout" name="rightWidget">
      <item>
-      <widget class="MeshVTKWidget" name="meshVTKWidget" native="true">
+      <widget class="MeshVTKWidget" name="vtkWidget" native="true">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
          <horstretch>0</horstretch>
@@ -62,7 +62,7 @@
      </property>
      <property name="minimumSize">
       <size>
-       <width>300</width>
+       <width>400</width>
        <height>0</height>
       </size>
      </property>
@@ -91,6 +91,12 @@
          </sizepolicy>
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
          <item>
           <widget class="QLabel" name="lblMesh">
            <property name="sizePolicy">
@@ -117,6 +123,48 @@
            </property>
            <property name="currentIndex">
             <number>-1</number>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QToolButton" name="btnNewMesh">
+           <property name="toolTip">
+            <string>Add new mesh</string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="../../icons.qrc">
+             <normaloff>:/icons/archive-insert.png</normaloff>:/icons/archive-insert.png</iconset>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QToolButton" name="btnApplyMesh">
+           <property name="toolTip">
+            <string>Apply changes</string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="../../icons.qrc">
+             <normaloff>:/icons/archive-apply.png</normaloff>:/icons/archive-apply.png</iconset>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QToolButton" name="btnRemoveMesh">
+           <property name="toolTip">
+            <string>Remove selected mesh</string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="../../icons.qrc">
+             <normaloff>:/icons/archive-remove.png</normaloff>:/icons/archive-remove.png</iconset>
            </property>
           </widget>
          </item>
@@ -219,7 +267,7 @@
         <property name="maximumSize">
          <size>
           <width>16777215</width>
-          <height>150</height>
+          <height>200</height>
          </size>
         </property>
         <property name="title">
@@ -297,44 +345,6 @@
        </widget>
       </item>
       <item>
-       <widget class="QGroupBox" name="groupBox_3">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="title">
-         <string>Options</string>
-        </property>
-        <layout class="QVBoxLayout" name="verticalLayout_3">
-         <item>
-          <widget class="QCheckBox" name="chkShowBoundaryEdges">
-           <property name="text">
-            <string>Show Boundary Edges</string>
-           </property>
-           <property name="checked">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QCheckBox" name="chkShowMesh">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
-           <property name="text">
-            <string>Show Mesh</string>
-           </property>
-           <property name="checked">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-      </item>
-      <item>
        <widget class="QPushButton" name="btnGenerateMesh">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -361,80 +371,32 @@
        </spacer>
       </item>
       <item>
-       <widget class="QWidget" name="widget_2" native="true">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <layout class="QHBoxLayout" name="horizontalLayout_3">
-         <property name="leftMargin">
-          <number>0</number>
-         </property>
-         <item>
-          <widget class="QPushButton" name="btnSaveMesh">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="text">
-            <string>Save</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="btnCancelMesh">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="text">
-            <string>Cancel</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="btnRemoveMesh">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="text">
-            <string>Remove</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <spacer name="horizontalSpacer">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>40</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-        </layout>
-       </widget>
+       <layout class="QHBoxLayout" name="horizontalLayout_3">
+        <item>
+         <widget class="QPushButton" name="btnClose">
+          <property name="text">
+           <string>Close</string>
+          </property>
+          <property name="icon">
+           <iconset resource="../../icons.qrc">
+            <normaloff>:/icons/dialog-close.png</normaloff>:/icons/dialog-close.png</iconset>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
       </item>
      </layout>
     </widget>
@@ -461,48 +423,10 @@
   <tabstop>lstIslands</tabstop>
   <tabstop>btnAddIsland</tabstop>
   <tabstop>btnRemoveIsland</tabstop>
-  <tabstop>chkShowBoundaryEdges</tabstop>
-  <tabstop>chkShowMesh</tabstop>
   <tabstop>btnGenerateMesh</tabstop>
-  <tabstop>btnSaveMesh</tabstop>
-  <tabstop>btnCancelMesh</tabstop>
-  <tabstop>btnRemoveMesh</tabstop>
  </tabstops>
  <resources>
   <include location="../../icons.qrc"/>
  </resources>
- <connections>
-  <connection>
-   <sender>chkShowBoundaryEdges</sender>
-   <signal>clicked(bool)</signal>
-   <receiver>meshVTKWidget</receiver>
-   <slot>toggleBoundaryEdges(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>230</x>
-     <y>443</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>919</x>
-     <y>380</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>chkShowMesh</sender>
-   <signal>clicked(bool)</signal>
-   <receiver>meshVTKWidget</receiver>
-   <slot>toggleMesh(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>230</x>
-     <y>464</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>919</x>
-     <y>380</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>

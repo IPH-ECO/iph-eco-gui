@@ -1,9 +1,14 @@
 <RCC>
   <qresource prefix="/">
+    <file>icons/dialog-close.png</file>
+    <file>icons/archive-apply.png</file>
     <file>icons/edit-clear-2.png</file>
     <file>icons/multiple-object-picker.png</file>
     <file>icons/individual-object-picker.png</file>
     <file>icons/edit-clear-list.png</file>
+    <file>icons/archive-insert.png</file>
+    <file>icons/archive-remove.png</file>
+    <file>icons/dialog-ok-apply.png</file>
     <file>icons/application-x-applix-spreadsheet.png</file>
     <file>icons/format-list-unordered.png</file>
     <file>icons/image-x-generic.png</file>
@@ -28,6 +33,7 @@
     <file>icons/list-delete.png</file>
     <file>icons/list-add.png</file>
     <file>icons/unstructured-mesh.png</file>
+    <file>icons/boundary-domain.png</file>
     <file>data/hydrodynamic_data.json</file>
   </qresource>
 </RCC>
