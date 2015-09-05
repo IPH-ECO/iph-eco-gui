@@ -12,12 +12,24 @@
             "rangeMinimum": 0
         },
         {
+            "defaultValue": 0,
+            "editable": true,
+            "hideSiblings": true,
+            "selected": true,
+            "enabled": false,
+            "label": "Latitude",
+            "name": "latitude",
+            "parentName": "constants",
+            "rangeMaximum": 0,
+            "rangeMinimum": 0
+        },
+        {
             "defaultValue": 9.8100000000000005,
             "editable": true,
             "hideSiblings": true,
             "selected": true,
-            "label": "Gravity acceleration (m/s\u00b2)",
-            "name": "gravityAcceleration",
+            "label": "Altitude",
+            "name": "altitude",
             "parentName": "constants",
             "rangeMaximum": 9.8300000000000001,
             "rangeMinimum": 9.7799999999999994
@@ -664,18 +676,9 @@
             "rangeMinimum": 0
         },
         {
-            "defaultValue": 0,
-            "editable": true,
-            "hideSiblings": true,
-            "label": "Coriolis coefficient",
-            "name": "coriolisCoefficient",
-            "parentName": "iCoriolis",
-            "rangeMaximum": 0,
-            "rangeMinimum": 0
-        },
-        {
             "defaultValue": 7.2921000000000002e-05,
             "editable": true,
+            "enabled": false,
             "hideSiblings": true,
             "label": "Earth's rotation speed (rad/s)",
             "name": "earthsRotationSpeed",

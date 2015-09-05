@@ -22,6 +22,10 @@ void GridDataConfiguration::setId(const uint &id) {
     }
 }
 
+bool GridDataConfiguration::isPersisted() const {
+    return id != 0;
+}
+
 QString GridDataConfiguration::getName() const {
     return name;
 }
@@ -104,11 +108,26 @@ Mesh* GridDataConfiguration::getMesh() const {
         return nullptr;
     }
     
-    return gridDataVector.at(0)->getMesh();
+    return gridDataVector.first()->getMesh();
 }
 
-bool GridDataConfiguration::isPersisted() const {
-    return id != 0;
+double GridDataConfiguration::getLatitudeAverage() const {
+    Mesh *mesh = this->getMesh();
+    
+    if (mesh) {
+        vtkSmartPointer<vtkPolyData> meshPolyData = this->getMesh()->getMeshPolyData();
+        double latitudeSum = 0;
+        
+        for (vtkIdType i = 0; i < meshPolyData->GetNumberOfPoints(); i++) {
+            double point[3];
+            meshPolyData->GetPoints()->GetPoint(i, point);
+            latitudeSum += point[1];
+        }
+        
+        return latitudeSum / meshPolyData->GetNumberOfPoints();
+    }
+    
+    return 0;
 }
 
 SimulationDataType::GridDataConfiguration* GridDataConfiguration::toSimulationDataType(const HydrodynamicConfiguration *hydrodynamicConfiguration) const {

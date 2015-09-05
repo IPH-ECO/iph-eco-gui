@@ -15,6 +15,7 @@ private:
     QString name;
     double value;
     bool selected;
+    bool enabled;
     HydrodynamicParameterType type;
     
     // Trasient attributes
@@ -42,6 +43,8 @@ public:
     void setValue(double value);
     bool isSelected() const;
     void setSelected(bool selected);
+    void setEnabled(bool enabled);
+    bool isEnabled() const;
     HydrodynamicParameterType getType() const;
     void setType(const HydrodynamicParameterType &type);
     HydrodynamicParameter* getParent() const;

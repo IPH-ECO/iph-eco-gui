@@ -46,6 +46,14 @@ void HydrodynamicParameter::setSelected(bool selected) {
     this->selected = selected;
 }
 
+void HydrodynamicParameter::setEnabled(bool enabled) {
+    this->enabled = enabled;
+}
+
+bool HydrodynamicParameter::isEnabled() const {
+    return enabled;
+}
+
 HydrodynamicParameterType HydrodynamicParameter::getType() const {
     return type;
 }

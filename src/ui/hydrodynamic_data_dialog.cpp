@@ -83,6 +83,7 @@ void HydrodynamicDataDialog::addParameterItemWidget(HydrodynamicParameter *param
         lineEdit->setAlignment(Qt::AlignRight);
         lineEdit->setObjectName(parameter->getName());
         lineEdit->setText(QString::number(parameter->getValue()));
+        lineEdit->setEnabled(parameter->isEnabled());
         ui->trwParameters->setItemWidget(item, 1, lineEdit);
     }
     
@@ -244,6 +245,9 @@ void HydrodynamicDataDialog::on_cbxGridDataConfiguration_currentIndexChanged(con
         
         currentGridDataConfiguration = IPHApplication::getCurrentProject()->getGridDataConfiguration(gridDataConfigurationName);
         currentConfiguration->setGridDataConfiguration(currentGridDataConfiguration);
+        
+        QLineEdit *latitude = this->findChild<QLineEdit*>("latitude");
+        latitude->setText(QString::number(currentGridDataConfiguration->getLatitudeAverage()));
         
         ui->vtkWidget->render(currentConfiguration);
     } else {

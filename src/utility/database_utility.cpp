@@ -142,6 +142,7 @@ void DatabaseUtility::createApplicationTables() {
         "type varchar(255) not null, " \
         "value float default null, " \
         "selected bool default false, " \
+        "enabled bool default true, " \
         "hydrodynamic_configuration_id integer not null" \
     ")";
 

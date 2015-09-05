@@ -37,6 +37,7 @@ public:
     QList<GridData*> getGridData(const GridDataType &gridDataType) const;
     void clearGridDataVector();
     Mesh* getMesh() const;
+    double getLatitudeAverage() const;
     
     SimulationDataType::GridDataConfiguration* toSimulationDataType(const HydrodynamicConfiguration *hydrodynamicConfiguration) const;
 };
