@@ -19,7 +19,7 @@ public:
     virtual bool instanceOf(const QString &type);
     virtual void generate();
     
-    SimulationDataType::UnstructuredMesh toSimulationDataType() const;
+    SimulationDataType::UnstructuredMesh* toSimulationDataType() const;
 };
 
 #endif // UNSTRUCTURED_MESH_H

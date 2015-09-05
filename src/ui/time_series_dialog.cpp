@@ -20,8 +20,11 @@ TimeSeriesDialog::TimeSeriesDialog(QWidget *parent, BoundaryCondition *boundaryC
     int i = 0;
     
     for (TimeSeries *timeSeries : timeSeriesList) {
+        QDateTime time = QDateTime::fromTime_t(timeSeries->getTimeStamp());
+        time.setTimeSpec(Qt::UTC);
+        
         ui->tblTimeSeries->insertRow(i);
-        ui->tblTimeSeries->setItem(i, 0, new QTableWidgetItem(timeSeries->getTimeStamp()));
+        ui->tblTimeSeries->setItem(i, 0, new QTableWidgetItem(time.toString("yyyy-MM-dd HH:mm:ss")));
         ui->tblTimeSeries->setItem(i, 1, new QTableWidgetItem(QString::number(timeSeries->getValue())));
         ui->tblTimeSeries->item(i, 0)->setData(Qt::UserRole, QVariant((uint) timeSeries->getId()));
         i++;
@@ -64,7 +67,7 @@ void TimeSeriesDialog::on_btnImportCSV_clicked() {
                     return;
                 } else {
                     TimeSeries tempTimeSeries;
-                    tempTimeSeries.setTimeStamp(tokens[0]);
+                    tempTimeSeries.setTimeStamp(QDateTime::fromString(tokens[0], "yyyy-MM-dd HH:mm:ss").toTime_t());
                     tempTimeSeries.setValue(tokens[1].toDouble());
                     
                     tempTimeSeriesList.append(tempTimeSeries);
@@ -79,7 +82,7 @@ void TimeSeriesDialog::on_btnImportCSV_clicked() {
                 
                 for (int i = 0; i < tempTimeSeriesList.size(); i++) {
                     ui->tblTimeSeries->insertRow(i);
-                    ui->tblTimeSeries->setItem(i, 0, new QTableWidgetItem(tempTimeSeriesList[i].getTimeStamp()));
+                    ui->tblTimeSeries->setItem(i, 0, new QTableWidgetItem(QDateTime::fromTime_t(tempTimeSeriesList[i].getTimeStamp()).toString("yyyy-MM-dd HH:mm:ss")));
                     ui->tblTimeSeries->setItem(i, 1, new QTableWidgetItem(QString::number(tempTimeSeriesList[i].getValue())));
                 }
             }
@@ -113,14 +116,23 @@ void TimeSeriesDialog::on_btnClear_clicked() {
 }
 
 bool TimeSeriesDialog::isValid() {
+    QDateTime lastTime;
+    
     for (int i = 0; i < ui->tblTimeSeries->rowCount(); i++) {
         QString timestamp = ui->tblTimeSeries->item(i, 0)->text();
         QDateTime dateTime = QDateTime::fromString(timestamp, Qt::ISODate);
         
         if (!dateTime.isValid()) {
-            QMessageBox::warning(this, tr("Time Series"), tr("Invalid timestamp format at row ") + QString::number(i + 1));
+            QMessageBox::warning(this, tr("Time Series"), QString("Invalid timestamp format at row %1.").arg(i + 1));
             return false;
         }
+        
+        if (lastTime.isValid() && dateTime < lastTime) {
+            QMessageBox::warning(this, tr("Time Series"), QString("The time stamps must be on ascendant order. See row %1.").arg(i + 1));
+            return false;
+        }
+        
+        lastTime = dateTime;
     }
     
     return true;
@@ -143,7 +155,10 @@ void TimeSeriesDialog::accept() {
             timeSeries = new TimeSeries();
         }
         
-        timeSeries->setTimeStamp(ui->tblTimeSeries->item(i, 0)->text());
+        QDateTime time = QDateTime::fromString(ui->tblTimeSeries->item(i, 0)->text(), "yyyy-MM-dd HH:mm:ss");
+        time.setTimeSpec(Qt::UTC);
+        
+        timeSeries->setTimeStamp(time.toTime_t());
         timeSeries->setValue(ui->tblTimeSeries->item(i, 1)->text().toDouble());
         
         timeSeriesList.append(timeSeries);

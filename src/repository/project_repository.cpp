@@ -221,6 +221,7 @@ void ProjectRepository::loadHydrodynamicParameter(HydrodynamicConfiguration *con
         parameter->setType(HydrodynamicParameter::mapTypeFromString(query.value("type").toString()));
         parameter->setValue(query.value("value").toDouble());
         parameter->setSelected(query.value("selected").toBool());
+        parameter->setEnabled(query.value("enabled").toBool());
 
         configuration->addHydrodynamicParameter(parameter);
 
@@ -268,7 +269,7 @@ void ProjectRepository::loadTimeSeries(BoundaryCondition *boundaryCondition) {
     while (query.next() && !operationCanceled) {
         TimeSeries *timeSeries = new TimeSeries();
         timeSeries->setId(query.value("id").toUInt());
-        timeSeries->setTimeStamp(query.value("time_stamp").toString());
+        timeSeries->setTimeStamp(query.value("time_stamp").toInt());
         timeSeries->setValue(query.value("value").toDouble());
         
         boundaryCondition->addTimeSeries(timeSeries);
@@ -662,9 +663,10 @@ void ProjectRepository::saveHydrodynamicParameters(HydrodynamicConfiguration *co
             query.prepare("update hydrodynamic_parameter set value = :v, selected = :s where id = :i");
             query.bindValue(":i", parameter->getId());
         } else {
-            query.prepare("insert into hydrodynamic_parameter (name, type, value, selected, hydrodynamic_configuration_id) values (:n, :t, :v, :s, :h)");
+            query.prepare("insert into hydrodynamic_parameter (name, type, value, selected, enabled, hydrodynamic_configuration_id) values (:n, :t, :v, :s, :e, :h)");
             query.bindValue(":n", parameter->getName());
             query.bindValue(":t", HydrodynamicParameter::mapStringFromType(parameter->getType()));
+            query.bindValue(":e", parameter->isEnabled());
             query.bindValue(":h", configuration->getId());
         }
 
@@ -681,13 +683,6 @@ void ProjectRepository::saveHydrodynamicParameters(HydrodynamicConfiguration *co
         parameter->setId(query.lastInsertId().toUInt());
         parameterIds.append(QString::number(parameter->getId()));
     }
-
-    if (operationCanceled) {
-        return;
-    }
-
-    query.prepare("delete from hydrodynamic_parameter where id not in (" + parameterIds.join(",") + ") and hydrodynamic_configuration_id = " + QString::number(configuration->getId()));
-    query.exec();
 }
 
 void ProjectRepository::saveBoundaryConditions(HydrodynamicConfiguration *configuration) {

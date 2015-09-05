@@ -10,13 +10,15 @@ module domain_types
         type(c_ptr) :: westNeighbors
         type(c_ptr) :: southNeighbors
         type(c_ptr) :: eastNeighbors
+        integer(c_long_long) :: verticeIdsLength
+        type(c_ptr) :: verticeIds
     end type
 
     type, bind(C) :: UnstructuredMesh
         integer(c_long_long) :: numberOfPoints
         type(c_ptr) :: xCoordinates
         type(c_ptr) :: yCoordinates
-        integer(c_long_long) :: numberOfElements
+        integer(c_long_long) :: verticeIdsLength
         type(c_ptr) :: verticeIds
     end type
 
@@ -30,8 +32,8 @@ module domain_types
         integer(c_int) :: numberOfLayers
         type(c_ptr) :: layers
         logical(c_bool) :: isStructured
-        type(StructuredMesh) :: structuredMesh
-        type(UnstructuredMesh) :: unstructuredMesh
+        type(c_ptr) :: structuredMesh
+        type(c_ptr) :: unstructuredMesh
     end type
 
     type, bind(C) :: HydrodynamicParameter
@@ -40,10 +42,15 @@ module domain_types
         real(c_double) :: value
     end type
 
+    type, bind(C) :: BoundaryConditionCell
+        integer(c_long_long) :: cellId;
+        integer(c_long_long) :: verticeIds(2);
+    end type
+
     type, bind(C) :: BoundaryCondition
         integer(c_int) :: conditionType
-        integer(c_int) :: numberOfObjects
-        type(c_ptr) :: objectIds
+        integer(c_int) :: cellsLength
+        type(c_ptr) :: cells
         integer(c_int) :: conditionFunction
         real(c_double) :: constantValue
         integer(c_int) :: timeSeriesListSize
@@ -63,19 +70,13 @@ module domain_types
         type(c_ptr) :: parameters
         integer(c_int) :: numberOfBoundaryConditions
         type(c_ptr) :: boundaryConditions
-        type(GridDataConfiguration) :: gridDataConfiguration
+        type(c_ptr) :: gridDataConfiguration
     end type
 
-    ! Hydrodynamic, Water Quality, Sediment = Modules combination code
-    ! true, false, false = 1
-    ! false, true, false = 2
-    ! true, true, false = 3
-    ! false, false, true = 4
-    ! true, false, true = 5
-    ! false, true, true = 6
-    ! true, true, true = 7
     type, bind(C) :: Simulation
-        integer(c_int) :: modules
+        logical(c_bool) :: hydrodynamic
+        logical(c_bool) :: waterQuality
+        logical(c_bool) :: sediment
         integer(c_int) :: labelLength
         type(c_ptr) :: label
         integer(c_int) :: simulationType
@@ -85,6 +86,8 @@ module domain_types
         integer(c_int) :: layersLength
         type(c_ptr) :: layers
         type(c_ptr) :: hydrodynamicConfiguration
+        real(c_double) :: minimumVerticalLimit
+        real(c_double) :: maximumVerticalLimit
         integer(c_int) :: observationsLength
         type(c_ptr) :: observations
     end type

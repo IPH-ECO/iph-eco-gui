@@ -8,15 +8,15 @@
 class TimeSeries {
 private:
 	uint id;
-	QString timeStamp;
+	int timeStamp;
 	double value;
 public:
 	TimeSeries();
 	uint getId() const;
 	void setId(uint id);
 	bool isPersisted() const;
-	QString getTimeStamp() const;
-	void setTimeStamp(const QString &timeStamp);
+	int getTimeStamp() const;
+	void setTimeStamp(int timeStamp);
 	QDateTime toDateTime() const;
 	double getValue() const;
 	void setValue(double value);

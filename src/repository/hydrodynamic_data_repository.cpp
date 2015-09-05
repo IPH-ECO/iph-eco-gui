@@ -74,6 +74,7 @@ void HydrodynamicDataRepository::buildParameters(HydrodynamicConfiguration *conf
         parameter->setName(parameterName);
         parameter->setLabel(jsonParameter["label"].toString());
         parameter->setEditable(jsonParameter["editable"].toBool());
+        parameter->setEnabled(jsonParameter["enabled"].toBool(true));
         parameter->setSiblingsHidden(jsonParameter["hideSiblings"].toBool());
         parameter->setParentValue(jsonParameter["parentValue"].toInt(-1));
         parameter->setOrder(jsonParameter["order"].toInt(-1));

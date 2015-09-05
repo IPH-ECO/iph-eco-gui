@@ -9,6 +9,8 @@
 #include <QString>
 #include <QList>
 
+class GridDataConfiguration;
+
 class HydrodynamicConfiguration {
 private:
 	uint id;

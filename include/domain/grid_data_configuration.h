@@ -2,11 +2,13 @@
 #define GRID_DATA_CONFIGURATION_H
 
 #include "simulation_data_type.h"
+#include "hydrodynamic_configuration.h"
 #include "grid_data.h"
 
 #include <QVector>
 
 class GridData;
+class HydrodynamicConfiguration;
 enum class GridDataType;
 
 class GridDataConfiguration : public QObject {
@@ -35,8 +37,9 @@ public:
     QList<GridData*> getGridData(const GridDataType &gridDataType) const;
     void clearGridDataVector();
     Mesh* getMesh() const;
+    double getLatitudeAverage() const;
     
-    SimulationDataType::GridDataConfiguration toSimulationDataType() const;
+    SimulationDataType::GridDataConfiguration* toSimulationDataType(const HydrodynamicConfiguration *hydrodynamicConfiguration) const;
 };
 
 #endif // GRID_DATA_CONFIGURATION_H

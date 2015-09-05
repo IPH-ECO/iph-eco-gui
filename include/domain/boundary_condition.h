@@ -3,6 +3,7 @@
 
 #include "simulation_data_type.h"
 #include "time_series.h"
+#include "mesh.h"
 
 #include <vtkSmartPointer.h>
 #include <vtkIdTypeArray.h>
@@ -74,7 +75,7 @@ public:
     vtkSmartPointer<vtkActor2D> getLabelsActor() const;
     void setLabelsActor(vtkSmartPointer<vtkActor2D> labelsActor);
     
-    SimulationDataType::BoundaryCondition toSimulationDataType() const;
+    SimulationDataType::BoundaryCondition toSimulationDataType(Mesh *mesh) const;
 };
 
 #endif // BOUNDARY_CONDITION_H

@@ -142,6 +142,7 @@ void DatabaseUtility::createApplicationTables() {
         "type varchar(255) not null, " \
         "value float default null, " \
         "selected bool default false, " \
+        "enabled bool default true, " \
         "hydrodynamic_configuration_id integer not null" \
     ")";
 
@@ -162,7 +163,7 @@ void DatabaseUtility::createApplicationTables() {
     sql << "drop table if exists time_series";
     sql << "create table time_series (" \
         "id integer primary key, " \
-        "time_stamp text not null, " \
+        "time_stamp integer not null, " \
         "value float default 0, " \
         "boundary_condition_id integer not null" \
     ")";

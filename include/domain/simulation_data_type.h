@@ -1,31 +1,31 @@
 #ifndef SIMULATION_DATA_TYPE_H
 #define SIMULATION_DATA_TYPE_H
 
-#include <vtkIdList.h>
-
 namespace SimulationDataType {
     extern "C" {
         struct StructuredMesh {
-            vtkIdType numberOfElements;
+            long long int numberOfElements;
 			unsigned int resolution;
             double *xCoordinates;
             double *yCoordinates;
-            vtkIdType *northNeighbors;
-            vtkIdType *westNeighbors;
-            vtkIdType *southNeighbors;
-            vtkIdType *eastNeighbors;
+			long long int *northNeighbors;
+			long long int *westNeighbors;
+			long long int *southNeighbors;
+			long long int *eastNeighbors;
+            long long int verticeIdsLength;
+            long long int *verticeIds;
         };
         
         struct UnstructuredMesh {
-            vtkIdType numberOfPoints;
+			long long int numberOfPoints;
             double *xCoordinates;
             double *yCoordinates;
-            vtkIdType numberOfElements;
-            vtkIdType *verticeIds;
+			long long int verticeIdsLength;
+			long long int *verticeIds;
         };
         
         struct GridData {
-            vtkIdType numberOfElements;
+			long long int numberOfElements;
             double *weights;
             int type;
         };
@@ -34,8 +34,8 @@ namespace SimulationDataType {
             int numberOfLayers;
             SimulationDataType::GridData *layers;
             bool isStructured;
-            SimulationDataType::StructuredMesh structuredMesh;
-            SimulationDataType::UnstructuredMesh unstructuredMesh;
+            SimulationDataType::StructuredMesh *structuredMesh;
+            SimulationDataType::UnstructuredMesh *unstructuredMesh;
         };
         
         struct HydrodynamicParameter {
@@ -45,15 +45,19 @@ namespace SimulationDataType {
         };
         
         struct TimeSeries {
-            int timeStampSize;
-            char *timeStamp;
+            int timeStamp;
             double value;
+        };
+        
+        struct BoundaryConditionCell {
+            long long int cellId;
+            long long int verticeIds[2];
         };
         
         struct BoundaryCondition {
             int conditionType;
-            int numberOfObjects;
-            vtkIdType *objectIds;
+            int cellsLength;
+            SimulationDataType::BoundaryConditionCell *cells;
             int conditionFunction;
             double constantValue;
             int timeSeriesListSize;
@@ -61,17 +65,19 @@ namespace SimulationDataType {
             bool verticalIntegratedOutflow;
             double quota;
         };
-        
+
         struct HydrodynamicConfiguration {
             int numberOfParameters;
             SimulationDataType::HydrodynamicParameter *parameters;
             int numberOfBoundaryConditions;
             SimulationDataType::BoundaryCondition *boundaryConditions;
-            SimulationDataType::GridDataConfiguration gridDataConfiguration;
+            SimulationDataType::GridDataConfiguration *gridDataConfiguration;
         };
 
         struct Simulation {
-            int modules;
+            bool hydrodynamic;
+            bool waterQuality;
+            bool sediment;
             int labelLength;
             char *label;
             int simulationType;
@@ -81,6 +87,8 @@ namespace SimulationDataType {
             int layersLength;
             double *layers;
             HydrodynamicConfiguration *hydrodynamicConfiguration;
+            double minimumVerticalLimit;
+            double maximumVerticalLimit;
             int observationsLength;
             char *observations;
         };

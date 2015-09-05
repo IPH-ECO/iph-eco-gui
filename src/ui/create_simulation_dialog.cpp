@@ -11,7 +11,7 @@ CreateSimulationDialog::CreateSimulationDialog(QWidget *parent) :
 	QDialog(parent), ui(new Ui::CreateSimulationDialog)
 {
 	ui->setupUi(this);
-	ui->edtInitialTime->setDateTime(QDateTime::currentDateTime());
+    ui->edtInitialTime->setDateTime(QDateTime(QDate(QDate::currentDate().year(), 1, 1)));
     
     Project *project = IPHApplication::getCurrentProject();
     
@@ -34,6 +34,34 @@ bool CreateSimulationDialog::isValid() {
 		QMessageBox::warning(this, tr("Create Simulation"), tr("Initial time can't be blank."));
 		return false;
 	}
+    
+    Project *project = IPHApplication::getCurrentProject();
+    HydrodynamicConfiguration *hydrodynamicConfiguration = project->getHydrodynamicConfiguration(ui->cbxHydrodynamic->currentText());
+    QDateTime time = ui->edtInitialTime->dateTime();
+    uint initialTimeStamp = time.toTime_t();
+    uint minimumTimeStamp = 0;
+    
+    time.setTimeSpec(Qt::UTC);
+    
+    for (BoundaryCondition *boundaryCondition : hydrodynamicConfiguration->getBoundaryConditions()) {
+        if (boundaryCondition->getFunction() == BoundaryConditionFunction::TIME_SERIES) {
+            TimeSeries *firstEntry = boundaryCondition->getTimeSeriesList().first();
+            
+            if (minimumTimeStamp == 0) {
+                minimumTimeStamp = firstEntry->getTimeStamp();
+            }
+            
+            if (minimumTimeStamp > firstEntry->getTimeStamp()) {
+                minimumTimeStamp = firstEntry->getTimeStamp();
+            }
+        }
+    }
+    
+    if (minimumTimeStamp != 0 && initialTimeStamp >= minimumTimeStamp) {
+        time = QDateTime::fromTime_t(minimumTimeStamp);
+        QMessageBox::warning(this, tr("Create Simulation"), QString("Initial time must be the same or prior than %1.").arg(time.toString("yyyy/MM/dd HH:mm:ss")));
+        return false;
+    }
 
 	if (ui->edtPeriod->text().isEmpty()) {
 		QMessageBox::warning(this, tr("Create Simulation"), tr("Period can't be blank."));
@@ -92,12 +120,17 @@ void CreateSimulationDialog::accept() {
     bool startOnCreate = ui->chkStart->isChecked();
     Project *project = IPHApplication::getCurrentProject();
     HydrodynamicConfiguration *hydrodynamicConfiguration = project->getHydrodynamicConfiguration(ui->cbxHydrodynamic->currentText());
+    QDateTime time = ui->edtInitialTime->dateTime();
+    
+    time.setTimeSpec(Qt::UTC);
     
     simulation->setLabel(ui->edtLabel->text());
     simulation->setSimulationType(Simulation::getSimulationTypesMap().key(ui->cbxType->currentText()));
-    simulation->setInitialTime(ui->edtInitialTime->dateTime().toTime_t());
+    simulation->setInitialTime(time.toTime_t());
     simulation->setPeriod(ui->edtPeriod->text().toDouble());
     simulation->setStepTime(ui->edtStepTime->text().toInt());
+    simulation->setMinimumVerticalLimit(ui->edtMinLimit->text().toDouble());
+    simulation->setMaximumVerticalLimit(ui->edtMaxLimit->text().toDouble());
     
     for (int i = 0; i < ui->tblLayers->rowCount(); i++) {
         layers.append(ui->tblLayers->item(i, 0)->text().toDouble());

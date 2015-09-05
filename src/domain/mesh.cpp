@@ -244,7 +244,7 @@ QSet<vtkIdType> Mesh::getBoundaryCellIds(vtkSmartPointer<vtkIdTypeArray> edgeIds
     
     meshPolyData->BuildLinks();
     
-    for (int edgeId = 0; edgeId < edgeIds->GetNumberOfTuples(); edgeId++) {
+    for (vtkIdType edgeId = 0; edgeId < edgeIds->GetNumberOfTuples(); edgeId++) {
         vtkSmartPointer<vtkCell> edge = boundaryPolyData->GetCell(edgeId);
         double edgeA[3], edgeB[3];
         

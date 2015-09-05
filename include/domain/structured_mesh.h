@@ -21,7 +21,7 @@ public:
     virtual bool instanceOf(const QString &type);
     virtual void generate();
     
-    SimulationDataType::StructuredMesh toSimulationDataType(HydrodynamicConfiguration *hydrodynamicConfiguration) const;
+    SimulationDataType::StructuredMesh* toSimulationDataType(const HydrodynamicConfiguration *hydrodynamicConfiguration) const;
 };
 
 #endif // STRUCTURED_MESH_H

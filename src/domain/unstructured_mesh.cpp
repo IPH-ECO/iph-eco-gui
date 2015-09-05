@@ -159,31 +159,31 @@ void UnstructuredMesh::mark_domains(CDT &cdt) {
     }
 }
 
-SimulationDataType::UnstructuredMesh UnstructuredMesh::toSimulationDataType() const {
-    SimulationDataType::UnstructuredMesh unstructuredMesh;
+SimulationDataType::UnstructuredMesh* UnstructuredMesh::toSimulationDataType() const {
+    SimulationDataType::UnstructuredMesh *unstructuredMesh = new SimulationDataType::UnstructuredMesh();
     vtkIdType numberOfPoints = meshPolyData->GetNumberOfPoints();
     
-    unstructuredMesh.numberOfPoints = numberOfPoints;
-    unstructuredMesh.xCoordinates = new double[numberOfPoints];
-    unstructuredMesh.yCoordinates = new double[numberOfPoints];
+    unstructuredMesh->numberOfPoints = numberOfPoints;
+    unstructuredMesh->xCoordinates = new double[numberOfPoints];
+    unstructuredMesh->yCoordinates = new double[numberOfPoints];
     
     for (vtkIdType i = 0; i < numberOfPoints; i++) {
         double point[3];
         meshPolyData->GetPoints()->GetPoint(i, point);
-        unstructuredMesh.xCoordinates[i] = point[0];
-        unstructuredMesh.yCoordinates[i] = point[1];
+        unstructuredMesh->xCoordinates[i] = point[0];
+        unstructuredMesh->yCoordinates[i] = point[1];
     }
     
-    vtkIdType numberOfCells = this->meshPolyData->GetNumberOfCells() * 3;
-    unstructuredMesh.numberOfElements = numberOfCells;
-    unstructuredMesh.verticeIds = new vtkIdType[unstructuredMesh.numberOfElements];
+    unstructuredMesh->verticeIdsLength = this->meshPolyData->GetNumberOfCells() * 3;
+    unstructuredMesh->verticeIds = new long long int[unstructuredMesh->verticeIdsLength];
     vtkIdType count = 0;
     
-    for (vtkIdType i = 0; i < numberOfCells; i++) {
+    for (vtkIdType i = 0; i < this->meshPolyData->GetNumberOfCells(); i++) {
         vtkSmartPointer<vtkIdList> vertices = vtkSmartPointer<vtkIdList>::New();
-        meshPolyData->GetCellPoints(i, vertices);
+        
+        this->meshPolyData->GetCellPoints(i, vertices);
         for (vtkIdType j = 0; j < vertices->GetNumberOfIds(); j++) {
-            unstructuredMesh.verticeIds[count++] = vertices->GetId(j);
+            unstructuredMesh->verticeIds[count++] = vertices->GetId(j);
         }
     }
     
