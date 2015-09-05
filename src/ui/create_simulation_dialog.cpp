@@ -51,7 +51,7 @@ bool CreateSimulationDialog::isValid() {
                 minimumTimeStamp = firstEntry->getTimeStamp();
             }
             
-            if (minimumTimeStamp > firstEntry->getTimeStamp()) {
+            if (minimumTimeStamp > (uint) firstEntry->getTimeStamp()) {
                 minimumTimeStamp = firstEntry->getTimeStamp();
             }
         }

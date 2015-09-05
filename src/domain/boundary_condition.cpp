@@ -208,7 +208,7 @@ void BoundaryCondition::setLabelsActor(vtkSmartPointer<vtkActor2D> labelsActor) 
 SimulationDataType::BoundaryCondition BoundaryCondition::toSimulationDataType(Mesh *mesh) const {
     SimulationDataType::BoundaryCondition boundaryCondition;
     vtkSmartPointer<vtkPolyData> meshPolyData = mesh->getMeshPolyData();
-    int i = 0;
+    int cellCount = 0;
     
     boundaryCondition.conditionType = (int) this->type;
     boundaryCondition.cellsLength = this->objectIds.size();
@@ -216,10 +216,9 @@ SimulationDataType::BoundaryCondition BoundaryCondition::toSimulationDataType(Me
     
     if (this->type == BoundaryConditionType::WATER_LEVEL) {
         for (vtkIdType objectId : objectIds) {
-            boundaryCondition.cells[i] = SimulationDataType::BoundaryConditionCell();
-            boundaryCondition.cells[i].cellId = objectId;
-            boundaryCondition.cellsLength = 0;
-            i++;
+			boundaryCondition.cells[cellCount] = SimulationDataType::BoundaryConditionCell();
+			boundaryCondition.cells[cellCount].cellId = objectId;
+			cellCount++;
         }
     } else {
         vtkSmartPointer<vtkPolyData> boundaryPolyData = mesh->getBoundaryPolyData();
@@ -249,12 +248,12 @@ SimulationDataType::BoundaryCondition BoundaryCondition::toSimulationDataType(Me
                 }
             }
             
-            boundaryCondition.cells[i] = SimulationDataType::BoundaryConditionCell();
-            boundaryCondition.cells[i].cellId = cellsPointA->GetId(foundCellId);
-            boundaryCondition.cells[i].verticeIds[0] = meshPolyData->FindPoint(edgeA);
-            boundaryCondition.cells[i].verticeIds[1] = meshPolyData->FindPoint(edgeB);
+			boundaryCondition.cells[cellCount] = SimulationDataType::BoundaryConditionCell();
+			boundaryCondition.cells[cellCount].cellId = cellsPointA->GetId(foundCellId);
+			boundaryCondition.cells[cellCount].verticeIds[0] = meshPolyData->FindPoint(edgeA);
+			boundaryCondition.cells[cellCount].verticeIds[1] = meshPolyData->FindPoint(edgeB);
 
-            i++;
+			cellCount++;
         }
     }
     
@@ -263,7 +262,7 @@ SimulationDataType::BoundaryCondition BoundaryCondition::toSimulationDataType(Me
     boundaryCondition.timeSeriesListSize = this->timeSeriesList.size();
     boundaryCondition.timeSeriesList = new SimulationDataType::TimeSeries[boundaryCondition.timeSeriesListSize];
     
-    for (i = 0; i < this->timeSeriesList.size(); i++) {
+    for (vtkIdType i = 0; i < this->timeSeriesList.size(); i++) {
         boundaryCondition.timeSeriesList[i] = this->timeSeriesList[i]->toSimulationDataType();
     }
     
