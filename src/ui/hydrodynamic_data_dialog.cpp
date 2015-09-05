@@ -287,6 +287,11 @@ void HydrodynamicDataDialog::on_btnSave_clicked() {
         return;
     }
     
+    if (ui->cbxGridDataConfiguration->currentIndex() == -1) {
+        QMessageBox::warning(this, tr("Hydrodynamic Data"), tr("Grid data configuration can't be empty."));
+        return;
+    }
+    
     QList<HydrodynamicParameter*> parameters = currentConfiguration->getParameters();
     
     for (int i = 0; i < parameters.size(); i++) {
