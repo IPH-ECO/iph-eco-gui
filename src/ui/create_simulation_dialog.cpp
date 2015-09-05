@@ -34,6 +34,34 @@ bool CreateSimulationDialog::isValid() {
 		QMessageBox::warning(this, tr("Create Simulation"), tr("Initial time can't be blank."));
 		return false;
 	}
+    
+    Project *project = IPHApplication::getCurrentProject();
+    HydrodynamicConfiguration *hydrodynamicConfiguration = project->getHydrodynamicConfiguration(ui->cbxHydrodynamic->currentText());
+    QDateTime time = ui->edtInitialTime->dateTime();
+    uint initialTimeStamp = time.toTime_t();
+    uint minimumTimeStamp = 0;
+    
+    time.setTimeSpec(Qt::UTC);
+    
+    for (BoundaryCondition *boundaryCondition : hydrodynamicConfiguration->getBoundaryConditions()) {
+        if (boundaryCondition->getFunction() == BoundaryConditionFunction::TIME_SERIES) {
+            TimeSeries *firstEntry = boundaryCondition->getTimeSeriesList().first();
+            
+            if (minimumTimeStamp == 0) {
+                minimumTimeStamp = firstEntry->getTimeStamp();
+            }
+            
+            if (minimumTimeStamp > firstEntry->getTimeStamp()) {
+                minimumTimeStamp = firstEntry->getTimeStamp();
+            }
+        }
+    }
+    
+    if (minimumTimeStamp != 0 && initialTimeStamp >= minimumTimeStamp) {
+        time = QDateTime::fromTime_t(minimumTimeStamp);
+        QMessageBox::warning(this, tr("Create Simulation"), QString("Initial time must be the same or prior than %1.").arg(time.toString("yyyy/MM/dd HH:mm:ss")));
+        return false;
+    }
 
 	if (ui->edtPeriod->text().isEmpty()) {
 		QMessageBox::warning(this, tr("Create Simulation"), tr("Period can't be blank."));
