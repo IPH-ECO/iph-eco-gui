@@ -248,26 +248,26 @@ QSet<vtkIdType> Mesh::getBoundaryCellIds(vtkSmartPointer<vtkIdTypeArray> edgeIds
     meshPolyData->BuildLinks();
     
     for (vtkIdType edgeId = 0; edgeId < edgeIds->GetNumberOfTuples(); edgeId++) {
-        vtkSmartPointer<vtkCell> edge = boundaryPolyData->GetCell(edgeId);
-        double edgeA[3], edgeB[3];
+        vtkSmartPointer<vtkCell> edge = boundaryPolyData->GetCell(edgeIds->GetTuple1(edgeId));
+        double vertexA[3], vertexB[3];
         
-        edge->GetPoints()->GetPoint(0, edgeA);
-        edge->GetPoints()->GetPoint(1, edgeB);
+        edge->GetPoints()->GetPoint(0, vertexA);
+        edge->GetPoints()->GetPoint(1, vertexB);
         
-        vtkIdType meshPointAId = meshPolyData->FindPoint(edgeA);
-        vtkIdType meshPointBId = meshPolyData->FindPoint(edgeB);
-        vtkSmartPointer<vtkIdList> cellsPointA = vtkSmartPointer<vtkIdList>::New();
-        vtkSmartPointer<vtkIdList> cellsPointB = vtkSmartPointer<vtkIdList>::New();
+        vtkIdType meshPointAId = meshPolyData->FindPoint(vertexA);
+        vtkIdType meshPointBId = meshPolyData->FindPoint(vertexB);
+        vtkSmartPointer<vtkIdList> cellsVertexA = vtkSmartPointer<vtkIdList>::New();
+        vtkSmartPointer<vtkIdList> cellsVertexB = vtkSmartPointer<vtkIdList>::New();
         
-        meshPolyData->GetPointCells(meshPointAId, cellsPointA);
-        meshPolyData->GetPointCells(meshPointBId, cellsPointB);
+        meshPolyData->GetPointCells(meshPointAId, cellsVertexA);
+        meshPolyData->GetPointCells(meshPointBId, cellsVertexB);
         
         bool isCellFound = false;
         
-        for (vtkIdType i = 0; i < cellsPointA->GetNumberOfIds() && !isCellFound; i++) {
-            for (vtkIdType j = 0; j < cellsPointB->GetNumberOfIds() && !isCellFound; j++) {
-                if (cellsPointA->GetId(i) == cellsPointB->GetId(j)) {
-                    boundaryCellIds.insert(i);
+        for (vtkIdType i = 0; i < cellsVertexA->GetNumberOfIds() && !isCellFound; i++) {
+            for (vtkIdType j = 0; j < cellsVertexB->GetNumberOfIds() && !isCellFound; j++) {
+                if (cellsVertexA->GetId(i) == cellsVertexB->GetId(j)) {
+                    boundaryCellIds.insert(cellsVertexA->GetId(i));
                     isCellFound = true;
                 }
             }

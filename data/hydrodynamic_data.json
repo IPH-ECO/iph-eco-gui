@@ -24,15 +24,15 @@
             "rangeMinimum": 0
         },
         {
-            "defaultValue": 9.8100000000000005,
+            "defaultValue": 0,
             "editable": true,
             "hideSiblings": true,
             "selected": true,
             "label": "Altitude",
             "name": "altitude",
             "parentName": "constants",
-            "rangeMaximum": 9.8300000000000001,
-            "rangeMinimum": 9.7799999999999994
+            "rangeMaximum": 0,
+            "rangeMinimum": 0
         },
         {
             "defaultValue": 1000,
