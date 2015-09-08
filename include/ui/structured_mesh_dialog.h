@@ -39,6 +39,9 @@ private slots:
     void on_islandItemEdited(const QModelIndex &topLeft, const QModelIndex &bottomRight);
     void on_btnClose_clicked();
     void onToggleLabelsClicked(bool show);
+    void onChangeBackgroundClicked();
+    void onExportMapClicked();
+    void onMeshPropertiesClicked();
 
 private:
     const QString BOUNDARY_DEFAULT_DIR_KEY;
@@ -51,6 +54,7 @@ private:
     QList<QAction*> toolBarActions;
     QAction *toggleVerticeLabelsAction;
     QAction *toggleCellLabelsAction;
+    QAction *changeBackgroundAction;
 
     QString getDefaultDirectory();
     

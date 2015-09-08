@@ -6,6 +6,7 @@
 #include <vtkPolyData.h>
 #include <vtkProperty.h>
 #include <vtkCellArray.h>
+#include <vtkPNGWriter.h>
 #include <vtkProperty2D.h>
 #include <vtkAreaPicker.h>
 #include <vtkCellCenters.h>
@@ -14,6 +15,7 @@
 #include <vtkRenderWindow.h>
 #include <vtkWorldPointPicker.h>
 #include <vtkLabeledDataMapper.h>
+#include <vtkWindowToImageFilter.h>
 #include <vtkRenderWindowInteractor.h>
 #include <vtkInteractorStyleRubberBandZoom.h>
 #include <QList>
@@ -80,7 +82,7 @@ void MeshVTKWidget::render(Mesh *mesh) {
 
         polygons->InsertNextCell(vtkMeshPolygon);
     }
-
+    
     vtkSmartPointer<vtkPolyData> boundaryPolyData = vtkSmartPointer<vtkPolyData>::New();
     boundaryPolyData->SetPoints(points);
     boundaryPolyData->SetPolys(polygons);
@@ -98,8 +100,12 @@ void MeshVTKWidget::render(Mesh *mesh) {
     boundaryEdgesActor->SetVisibility(showBoundaryEdges);
     
     // Mesh rendering
+    vtkSmartPointer<vtkExtractEdges> meshEdges = vtkSmartPointer<vtkExtractEdges>::New();
+    meshEdges->SetInputData(mesh->getMeshPolyData());
+    meshEdges->Update();
+    
     vtkSmartPointer<vtkPolyDataMapper> meshMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-    meshMapper->SetInputData(mesh->getMeshPolyData());
+    meshMapper->SetInputConnection(meshEdges->GetOutputPort());
     meshMapper->ScalarVisibilityOff();
     
     meshActor = vtkSmartPointer<vtkActor>::New();
@@ -241,4 +247,24 @@ void MeshVTKWidget::toggleLabels(const LabelType &labelType) {
     }
     
     renderWindow->Render();
+}
+
+void MeshVTKWidget::changeBackgroundColor(const double &r, const double &g, const double &b) {
+    renderer->SetBackground(r, g, b);
+    this->update();
+}
+
+void MeshVTKWidget::exportToImage(const QString &fileName) {
+    vtkSmartPointer<vtkWindowToImageFilter> windowToImageFilter = vtkSmartPointer<vtkWindowToImageFilter>::New();
+    windowToImageFilter->SetInput(renderWindow);
+    windowToImageFilter->SetMagnification(1); //set the resolution of the output image (3 times the current resolution of vtk render window)
+    windowToImageFilter->SetInputBufferTypeToRGBA(); //also record the alpha (transparency) channel
+    windowToImageFilter->ReadFrontBufferOff(); // read from the back buffer
+    windowToImageFilter->Update();
+    
+    std::string stdFileName = fileName.toStdString();
+    vtkSmartPointer<vtkPNGWriter> writer = vtkSmartPointer<vtkPNGWriter>::New();
+    writer->SetFileName(stdFileName.c_str());
+    writer->SetInputConnection(windowToImageFilter->GetOutputPort());
+    writer->Write();
 }

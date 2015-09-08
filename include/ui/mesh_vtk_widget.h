@@ -45,6 +45,8 @@ public slots:
     void resetZoom();
     void toggleZoomArea(bool activate);
     void toggleLabels(const LabelType &labelType);
+    void changeBackgroundColor(const double &r, const double &g, const double &b);
+    void exportToImage(const QString &fileName);
 };
 
 #endif // MESH_VTK_WIDGET_H
