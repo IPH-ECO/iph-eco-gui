@@ -373,7 +373,7 @@ void GridDataDialog::on_btnPickIndividualCells_clicked(bool checked) {
     ui->btnShowCellWeights->setEnabled(!checked);
     ui->btnPickCellSet->setChecked(false);
     ui->btnPickCellSet->setEnabled(!checked);
-    ui->gridDataVTKWidget->toggleCellLabels(CellLabelType::UNDEFINED);
+    ui->gridDataVTKWidget->toggleCellLabels(LabelType::UNDEFINED);
     ui->gridDataVTKWidget->toggleCellPick(checked, PickerMode::INDIVIDUAL_CELL);
 }
 
@@ -384,7 +384,7 @@ void GridDataDialog::on_btnPickCellSet_clicked(bool checked) {
     ui->btnShowCellWeights->setEnabled(!checked);
     ui->btnPickIndividualCells->setChecked(false);
     ui->btnPickIndividualCells->setEnabled(!checked);
-    ui->gridDataVTKWidget->toggleCellLabels(CellLabelType::UNDEFINED);
+    ui->gridDataVTKWidget->toggleCellLabels(LabelType::UNDEFINED);
     ui->gridDataVTKWidget->toggleCellPick(checked, PickerMode::MULTIPLE_CELL);
 }
 
@@ -392,14 +392,14 @@ void GridDataDialog::on_btnShowCellLabels_clicked(bool checked) {
     ui->btnShowCellWeights->setChecked(false);
     ui->btnShowCellWeights->setEnabled(!checked);
     ui->gridDataVTKWidget->toggleCellPick(false);
-    ui->gridDataVTKWidget->toggleCellLabels(checked ? CellLabelType::ID : CellLabelType::UNDEFINED);
+    ui->gridDataVTKWidget->toggleCellLabels(checked ? LabelType::CELL_ID : LabelType::UNDEFINED);
 }
 
 void GridDataDialog::on_btnShowCellWeights_clicked(bool checked) {
     ui->btnShowCellLabels->setChecked(false);
     ui->btnShowCellLabels->setEnabled(!checked);
     ui->gridDataVTKWidget->toggleCellPick(false);
-    ui->gridDataVTKWidget->toggleCellLabels(checked ? CellLabelType::WEIGHT : CellLabelType::UNDEFINED);
+    ui->gridDataVTKWidget->toggleCellLabels(checked ? LabelType::CELL_WEIGHT : LabelType::UNDEFINED);
 }
 
 void GridDataDialog::on_btnLockView_clicked(bool checked) {

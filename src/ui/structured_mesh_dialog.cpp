@@ -239,7 +239,7 @@ void StructuredMeshDialog::on_btnClose_clicked() {
     MainWindow *mainWindow = static_cast<MainWindow*>(this->topLevelWidget());
     
     for (QAction *action : toolBarActions) {
-        mainWindow->removeAction(action);
+        mainWindow->getToolBar()->removeAction(action);
     }
     
     QMdiSubWindow *parentWindow = static_cast<QMdiSubWindow*>(parent());
@@ -248,24 +248,71 @@ void StructuredMeshDialog::on_btnClose_clicked() {
 
 void StructuredMeshDialog::showEvent(QShowEvent *event) {
     if (!event->spontaneous() && this->windowState() & Qt::WindowMaximized) {
-        
-        QMap<QString, QString> icons = {
-            { ":/icons/unstructured-mesh.png", "Show/Hide mesh" },
-            { ":/icons/boundary-domain.png", "Show/Hide boundary" }
-        };
         MainWindow *mainWindow = static_cast<MainWindow*>(this->topLevelWidget());
-        QToolBar *toolBar = mainWindow->getToolBar();
-        QAction *separator = toolBar->addSeparator();
+        
+        QAction *separator = mainWindow->getToolBar()->addSeparator();
+        QAction *zoomOriginalAction = new QAction(QIcon(":/icons/zoom-original.png"), "Reset zoom", mainWindow);
+
+        QAction *zoomAreaAction = new QAction(QIcon(":/icons/zoom-select.png"), "Zoom area", mainWindow);
+        zoomAreaAction->setCheckable(true);
+        
+        QAction *toggleMeshAction = new QAction(QIcon(":/icons/unstructured-mesh.png"), "Show/Hide mesh", mainWindow);
+        toggleMeshAction->setCheckable(true);
+        toggleMeshAction->setChecked(true);
+        
+        QAction *toggleBoundaryEdgesAction = new QAction(QIcon(":/icons/boundary-domain.png"), "Show/Hide boundary edges", mainWindow);
+        toggleBoundaryEdgesAction->setCheckable(true);
+        toggleBoundaryEdgesAction->setChecked(true);
+        
+        QAction *toggleAxesAction = new QAction(QIcon(":/icons/show-axis.png"), "Show/Hide axes", mainWindow);
+        toggleAxesAction->setCheckable(true);
+        toggleAxesAction->setChecked(true);
+        
+        toggleCellLabelsAction = new QAction(QIcon(":/icons/show-cell-labels-mesh.png"), "Show/Hide cell ids", mainWindow);
+        toggleCellLabelsAction->setCheckable(true);
+        
+        toggleVerticeLabelsAction = new QAction(QIcon(":/icons/show-vertice-labels.png"), "Show/Hide cell ids", mainWindow);
+        toggleVerticeLabelsAction->setCheckable(true);
         
         toolBarActions.append(separator);
+        toolBarActions.append(zoomOriginalAction);
+        toolBarActions.append(zoomAreaAction);
+        toolBarActions.append(toggleAxesAction);
+        toolBarActions.append(toggleMeshAction);
+        toolBarActions.append(toggleBoundaryEdgesAction);
+        toolBarActions.append(toggleCellLabelsAction);
+        toolBarActions.append(toggleVerticeLabelsAction);
         
-        for(auto e : icons.toStdMap()) {
-            QAction *action = new QAction(QIcon(e.first), e.second, mainWindow);
-            action->setCheckable(true);
-            toolBar->addAction(action);
-            toolBarActions.append(action);
-        }
+        QObject::connect(zoomAreaAction, SIGNAL(triggered(bool)), ui->vtkWidget, SLOT(toggleZoomArea(bool)));
+        QObject::connect(zoomOriginalAction, SIGNAL(triggered()), ui->vtkWidget, SLOT(resetZoom()));
+        QObject::connect(toggleAxesAction, SIGNAL(triggered(bool)), ui->vtkWidget, SLOT(toggleAxes(bool)));
+        QObject::connect(toggleMeshAction, SIGNAL(triggered(bool)), ui->vtkWidget, SLOT(toggleMesh(bool)));
+        QObject::connect(toggleBoundaryEdgesAction, SIGNAL(triggered(bool)), ui->vtkWidget, SLOT(toggleBoundaryEdges(bool)));
+        QObject::connect(toggleCellLabelsAction, SIGNAL(triggered(bool)), this, SLOT(onToggleLabelsClicked(bool)));
+        QObject::connect(toggleVerticeLabelsAction, SIGNAL(triggered(bool)), this, SLOT(onToggleLabelsClicked(bool)));
+        
+        mainWindow->getToolBar()->addAction(zoomOriginalAction);
+        mainWindow->getToolBar()->addAction(zoomAreaAction);
+        mainWindow->getToolBar()->addAction(toggleMeshAction);
+        mainWindow->getToolBar()->addAction(toggleBoundaryEdgesAction);
+        mainWindow->getToolBar()->addAction(toggleAxesAction);
+        mainWindow->getToolBar()->addAction(toggleCellLabelsAction);
+        mainWindow->getToolBar()->addAction(toggleVerticeLabelsAction);
     }
     
     QDialog::showEvent(event);
+}
+
+void StructuredMeshDialog::onToggleLabelsClicked(bool show) {
+    QAction *sender = static_cast<QAction*>(QObject::sender());
+    bool toggleVerticeLabels = sender == toggleVerticeLabelsAction;
+    LabelType labelType = toggleVerticeLabels ? LabelType::VERTICE_ID : LabelType::CELL_ID;
+    
+    if (toggleVerticeLabels && show && toggleCellLabelsAction->isChecked()) {
+        toggleCellLabelsAction->setChecked(false);
+    } else if (!toggleVerticeLabels && show && toggleVerticeLabelsAction->isChecked()) {
+        toggleVerticeLabelsAction->setChecked(false);
+    }
+    
+    ui->vtkWidget->toggleLabels(show ? labelType : LabelType::UNDEFINED);
 }

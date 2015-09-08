@@ -38,6 +38,7 @@ private slots:
     void on_lstIslands_currentTextChanged(const QString &currentText);
     void on_islandItemEdited(const QModelIndex &topLeft, const QModelIndex &bottomRight);
     void on_btnClose_clicked();
+    void onToggleLabelsClicked(bool show);
 
 private:
     const QString BOUNDARY_DEFAULT_DIR_KEY;
@@ -48,6 +49,8 @@ private:
     QSettings *appSettings;
     QString currentMeshPolygonName;
     QList<QAction*> toolBarActions;
+    QAction *toggleVerticeLabelsAction;
+    QAction *toggleCellLabelsAction;
 
     QString getDefaultDirectory();
     

@@ -336,10 +336,10 @@ void GridDataVTKWidget::toggleCellPick(bool activate, const PickerMode &pickerMo
     }
 }
 
-void GridDataVTKWidget::toggleCellLabels(const CellLabelType &cellLabelType) {
+void GridDataVTKWidget::toggleCellLabels(const LabelType &labelType) {
     renderer->RemoveActor2D(cellLabelsActor);
     
-    if (cellLabelType != CellLabelType::UNDEFINED) {
+    if (labelType != LabelType::UNDEFINED) {
         vtkSmartPointer<vtkCellCenters> cellCentersFilter = vtkSmartPointer<vtkCellCenters>::New();
         cellCentersFilter->SetInputData(currentMesh->getMeshPolyData());
         cellCentersFilter->Update();
@@ -347,7 +347,7 @@ void GridDataVTKWidget::toggleCellLabels(const CellLabelType &cellLabelType) {
         vtkSmartPointer<vtkLabeledDataMapper> labelMapper = vtkSmartPointer<vtkLabeledDataMapper>::New();
         labelMapper->SetInputConnection(cellCentersFilter->GetOutputPort());
         
-        if (cellLabelType == CellLabelType::ID) {
+        if (labelType == LabelType::CELL_ID) {
             labelMapper->SetLabelModeToLabelIds();
         } else {
             labelMapper->SetLabelModeToLabelScalars();

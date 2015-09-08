@@ -11,6 +11,8 @@
 #include <vtkPolyData.h>
 #include <vtkIdTypeArray.h>
 
+enum class LabelType { CELL_ID = 1, CELL_WEIGHT, VERTICE_ID, UNDEFINED };
+
 class Mesh : public QObject {
     Q_OBJECT
 protected:

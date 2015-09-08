@@ -16,6 +16,8 @@
     <file>icons/zoom-original.png</file>
     <file>icons/show-cell-weights.png</file>
     <file>icons/show-cell-labels.png</file>
+    <file>icons/show-cell-labels-mesh.png</file>
+    <file>icons/show-vertice-labels.png</file>
     <file>icons/show-axis.png</file>
     <file>icons/lock-view.png</file>
     <file>icons/pick-individual-cell.png</file>
