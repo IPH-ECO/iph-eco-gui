@@ -3,12 +3,11 @@
 
 #include "include/domain/structured_mesh.h"
 
+#include <QList>
 #include <QDialog>
 #include <QWidget>
-#include <QFileDialog>
-#include <QInputDialog>
-#include <QMessageBox>
 #include <QSettings>
+#include <QShowEvent>
 #include <QModelIndex>
 
 namespace Ui {
@@ -28,16 +27,21 @@ public slots:
     void setCoordinate(double &x, double &y);
 
 private slots:
+    void on_cbxMeshName_currentTextChanged(const QString &meshName);
+    void on_btnNewMesh_clicked();
+    void on_btnApplyMesh_clicked();
     void on_btnBoundaryFileBrowser_clicked();
     void on_btnAddIsland_clicked();
     void on_btnRemoveIsland_clicked();
     void on_btnGenerateMesh_clicked();
-    void on_btnSaveMesh_clicked();
-    void on_btnCancelMesh_clicked();
     void on_btnRemoveMesh_clicked();
-    void on_cbxMeshName_currentIndexChanged(int index);
     void on_lstIslands_currentTextChanged(const QString &currentText);
     void on_islandItemEdited(const QModelIndex &topLeft, const QModelIndex &bottomRight);
+    void on_btnClose_clicked();
+    void onToggleLabelsClicked(bool show);
+    void onChangeBackgroundClicked();
+    void onExportMapClicked();
+    void onMeshPropertiesClicked();
 
 private:
     const QString BOUNDARY_DEFAULT_DIR_KEY;
@@ -47,10 +51,14 @@ private:
     StructuredMesh *currentMesh;
     QSettings *appSettings;
     QString currentMeshPolygonName;
+    QList<QAction*> toolBarActions;
+    QAction *toggleVerticeLabelsAction;
+    QAction *toggleCellLabelsAction;
+    QAction *changeBackgroundAction;
 
     QString getDefaultDirectory();
-    void enableMeshForm(bool enable);
-    void resetMeshForm();
+    
+    virtual void showEvent(QShowEvent *event);
 };
 
 #endif // STRUCTURED_MESH_DIALOG_H

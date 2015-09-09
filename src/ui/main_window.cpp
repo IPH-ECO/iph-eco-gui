@@ -12,27 +12,23 @@
 #include "include/domain/simulation.h"
 
 #include <QProgressDialog>
+#include <QMdiSubWindow>
+#include <QMessageBox>
+#include <QIcon>
 
-MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent),
-    MAX_RECENT_FILES(4),
-    RECENT_FILES_KEY("recent_files"),
-    PROJECT_DEFAULT_DIR_KEY("default_dir"),
-    ui(new Ui::MainWindow),
-    mdiArea(new QMdiArea())
+MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow), mdiArea(new QMdiArea()),
+    MAX_RECENT_FILES(4), RECENT_FILES_KEY("recent_files"), PROJECT_DEFAULT_DIR_KEY("default_dir")
 {
     appSettings = new QSettings(QApplication::organizationName(), QApplication::applicationName(), this);
-
     readSettings();
 
     ui->setupUi(this);
-
     updateRecentFilesActionList();
-
     setCentralWidget(mdiArea);
 }
 
 MainWindow::~MainWindow() {
+    delete appSettings;
     delete ui;
 }
 
@@ -167,8 +163,15 @@ void MainWindow::on_actionUnstructuredMeshGeneration_triggered() {
 }
 
 void MainWindow::on_actionStructuredMeshGeneration_triggered() {
-    StructuredMeshDialog *structuredMeshDialog = new StructuredMeshDialog(this);
-    structuredMeshDialog->exec();
+    StructuredMeshDialog *structuredMeshDialog = new StructuredMeshDialog();
+    QMdiSubWindow *subWindow = new QMdiSubWindow(mdiArea);
+    
+    subWindow->setWidget(structuredMeshDialog);
+    subWindow->setWindowFlags(subWindow->windowFlags() | Qt::FramelessWindowHint);
+    subWindow->setWindowState(subWindow->windowState() | Qt::WindowMaximized);
+    structuredMeshDialog->show();
+    
+    this->update();
 }
 
 void MainWindow::on_actionGridData_triggered() {
@@ -191,7 +194,7 @@ void MainWindow::on_actionSobre_triggered() {
 }
 
 void MainWindow::openRecent() {
-    QAction *action = qobject_cast<QAction *>(sender());
+    QAction *action = qobject_cast<QAction*>(sender());
     if (action) {
         openProject(action->data().toString());
     }
@@ -336,4 +339,8 @@ void MainWindow::updateRecentFilesActionList() {
 
         ui->menuOpenRecent->addAction(action);
     }
+}
+
+QToolBar* MainWindow::getToolBar() const {
+    return ui->toolBar;
 }

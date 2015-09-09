@@ -18,8 +18,6 @@
 class GridDataContextMenu;
 class CellUpdateDialog;
 
-enum class CellLabelType { ID = 1, WEIGHT, UNDEFINED };
-
 class GridDataVTKWidget : public QVTKWidget {
 	Q_OBJECT
     
@@ -63,7 +61,7 @@ public:
     void changeBackgroundColor(const double &r, const double &g, const double &b);
     void clear();
     void toggleCellPick(bool activate, const PickerMode &pickerMode = PickerMode::NO_PICKER);
-    void toggleCellLabels(const CellLabelType &cellLabelType = CellLabelType::UNDEFINED);
+    void toggleCellLabels(const LabelType &labelType = LabelType::UNDEFINED);
     void lockView(bool lock);
     void exportToImage(const QString &fileName);
 public slots:

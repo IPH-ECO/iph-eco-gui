@@ -1,16 +1,23 @@
 #include "include/ui/mesh_vtk_widget.h"
 
+#include <vtkVertex.h>
+#include <vtkPoints.h>
 #include <vtkPolygon.h>
 #include <vtkPolyData.h>
 #include <vtkProperty.h>
 #include <vtkCellArray.h>
+#include <vtkPNGWriter.h>
+#include <vtkProperty2D.h>
 #include <vtkAreaPicker.h>
+#include <vtkCellCenters.h>
 #include <vtkSmartPointer.h>
 #include <vtkExtractEdges.h>
 #include <vtkRenderWindow.h>
-#include <vtkPolyDataMapper.h>
 #include <vtkWorldPointPicker.h>
+#include <vtkLabeledDataMapper.h>
+#include <vtkWindowToImageFilter.h>
 #include <vtkRenderWindowInteractor.h>
+#include <vtkInteractorStyleRubberBandZoom.h>
 #include <QList>
 
 #include "include/ui/structured_mesh_dialog.h"
@@ -39,6 +46,12 @@ MeshVTKWidget::MeshVTKWidget(QWidget *parent) : QVTKWidget(parent), showBoundary
 MeshVTKWidget::~MeshVTKWidget() {}
 
 void MeshVTKWidget::render(Mesh *mesh) {
+    if (mesh == nullptr || currentMesh == mesh) {
+        return;
+    }
+    
+    currentMesh = mesh;
+    
     MeshPolygon *boundaryPolygon = mesh->getBoundaryPolygon();
 
     if (!boundaryPolygon->getFilteredPolygon()) {
@@ -69,7 +82,7 @@ void MeshVTKWidget::render(Mesh *mesh) {
 
         polygons->InsertNextCell(vtkMeshPolygon);
     }
-
+    
     vtkSmartPointer<vtkPolyData> boundaryPolyData = vtkSmartPointer<vtkPolyData>::New();
     boundaryPolyData->SetPoints(points);
     boundaryPolyData->SetPolys(polygons);
@@ -87,9 +100,12 @@ void MeshVTKWidget::render(Mesh *mesh) {
     boundaryEdgesActor->SetVisibility(showBoundaryEdges);
     
     // Mesh rendering
-    vtkSmartPointer<vtkPolyData> meshPolyData = mesh->getMeshPolyData();
+    vtkSmartPointer<vtkExtractEdges> meshEdges = vtkSmartPointer<vtkExtractEdges>::New();
+    meshEdges->SetInputData(mesh->getMeshPolyData());
+    meshEdges->Update();
+    
     vtkSmartPointer<vtkPolyDataMapper> meshMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-    meshMapper->SetInputData(meshPolyData);
+    meshMapper->SetInputConnection(meshEdges->GetOutputPort());
     meshMapper->ScalarVisibilityOff();
     
     meshActor = vtkSmartPointer<vtkActor>::New();
@@ -126,6 +142,7 @@ void MeshVTKWidget::render(Mesh *mesh) {
 
     renderer->AddActor(boundaryEdgesActor);
     renderer->AddActor(meshActor);
+    renderer->AddActor(axesActor);
     renderer->ResetCamera();
 }
 
@@ -138,18 +155,116 @@ void MeshVTKWidget::clear() {
 
 void MeshVTKWidget::toggleBoundaryEdges(bool show) {
     this->showBoundaryEdges = show;
-    this->boundaryEdgesActor->SetVisibility(show);
-    this->update();
+    if (this->boundaryEdgesActor) {
+        this->boundaryEdgesActor->SetVisibility(show);
+        this->update();
+    }
 }
 
 void MeshVTKWidget::toggleMesh(bool show) {
     this->showMesh = show;
-    this->meshActor->SetVisibility(show);
-    this->update();
+    if (this->meshActor) {
+        this->meshActor->SetVisibility(show);
+        this->update();
+    }
 }
 
 void MeshVTKWidget::toggleAxes(bool show) {
     this->showAxes = show;
     this->axesActor->SetVisibility(show);
     this->update();
+}
+
+void MeshVTKWidget::resetZoom() {
+    renderer->ResetCamera();
+    this->update();
+}
+
+void MeshVTKWidget::toggleZoomArea(bool activate) {
+    if (activate) {
+        vtkSmartPointer<vtkInteractorStyleRubberBandZoom> zoomAreaInteractor = vtkSmartPointer<vtkInteractorStyleRubberBandZoom>::New();
+        renderWindowInteractor->SetInteractorStyle(zoomAreaInteractor);
+    } else {
+        renderWindowInteractor->SetInteractorStyle(mouseInteractor);
+    }
+}
+
+void MeshVTKWidget::toggleLabels(const LabelType &labelType) {
+    renderer->RemoveActor2D(labelsActor);
+    renderer->RemoveActor(verticesActor);
+    
+    if (labelType != LabelType::UNDEFINED) {
+        vtkSmartPointer<vtkLabeledDataMapper> labelMapper = vtkSmartPointer<vtkLabeledDataMapper>::New();
+        labelsActor = vtkSmartPointer<vtkActor2D>::New();
+        
+        if (labelType == LabelType::CELL_ID) {
+            vtkSmartPointer<vtkCellCenters> cellCentersFilter = vtkSmartPointer<vtkCellCenters>::New();
+            cellCentersFilter->SetInputData(currentMesh->getMeshPolyData());
+            cellCentersFilter->Update();
+            
+            labelMapper->SetInputConnection(cellCentersFilter->GetOutputPort());
+        } else if (labelType == LabelType::VERTICE_ID) {
+            vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
+            vtkSmartPointer<vtkPolyData> meshPolyData = currentMesh->getMeshPolyData();
+            vtkSmartPointer<vtkCellArray> vertices = vtkSmartPointer<vtkCellArray>::New();
+            
+            points->SetNumberOfPoints(meshPolyData->GetNumberOfPoints());
+            
+            for (vtkIdType i = 0; i < points->GetNumberOfPoints(); i++) {
+                vtkSmartPointer<vtkVertex> vertex = vtkSmartPointer<vtkVertex>::New();
+                double point[3];
+                
+                meshPolyData->GetPoints()->GetPoint(i, point);
+                points->SetPoint(i, point);
+                vertex->GetPointIds()->SetId(0, i);
+                vertices->InsertNextCell(vertex);
+            }
+            
+            vtkSmartPointer<vtkPolyData> verticesPolyData = vtkSmartPointer<vtkPolyData>::New();
+            verticesPolyData->SetPoints(points);
+            verticesPolyData->SetVerts(vertices);
+            
+            vtkSmartPointer<vtkPolyDataMapper> verticesMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+            verticesMapper->SetInputData(verticesPolyData);
+            
+            verticesActor = vtkSmartPointer<vtkActor>::New();
+            verticesActor->SetMapper(verticesMapper);
+            verticesActor->GetProperty()->SetPointSize(2);
+            verticesActor->GetProperty()->SetColor(1, 0, 0);
+            
+            renderer->AddActor(verticesActor);
+            labelMapper->SetInputData(currentMesh->getMeshPolyData());
+        }
+        
+        labelMapper->SetLabelModeToLabelIds();
+        labelMapper->GetLabelTextProperty()->SetColor(0, 0, 0);
+        labelMapper->GetLabelTextProperty()->BoldOff();
+        labelMapper->GetLabelTextProperty()->ShadowOff();
+            
+        labelsActor->SetMapper(labelMapper);
+        
+        renderer->AddActor2D(labelsActor);
+    }
+    
+    renderWindow->Render();
+}
+
+void MeshVTKWidget::changeBackgroundColor(const double &r, const double &g, const double &b) {
+    renderer->SetBackground(r, g, b);
+    this->update();
+}
+
+void MeshVTKWidget::exportToImage(const QString &fileName) {
+    vtkSmartPointer<vtkWindowToImageFilter> windowToImageFilter = vtkSmartPointer<vtkWindowToImageFilter>::New();
+    windowToImageFilter->SetInput(renderWindow);
+    windowToImageFilter->SetMagnification(1); //set the resolution of the output image (3 times the current resolution of vtk render window)
+    windowToImageFilter->SetInputBufferTypeToRGBA(); //also record the alpha (transparency) channel
+    windowToImageFilter->ReadFrontBufferOff(); // read from the back buffer
+    windowToImageFilter->Update();
+    
+    std::string stdFileName = fileName.toStdString();
+    vtkSmartPointer<vtkPNGWriter> writer = vtkSmartPointer<vtkPNGWriter>::New();
+    writer->SetFileName(stdFileName.c_str());
+    writer->SetInputConnection(windowToImageFilter->GetOutputPort());
+    writer->Write();
 }
