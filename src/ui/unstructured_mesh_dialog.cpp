@@ -67,7 +67,8 @@ void UnstructuredMeshDialog::setArea(const double &area) {
 }
 
 void UnstructuredMeshDialog::on_btnBoundaryFileBrowser_clicked() {
-    QString boundaryFilePath = QFileDialog::getOpenFileName(this, tr("Select a boundary file"), getDefaultDirectory(), "Keyhole Markup Language file (*.kml)");
+    QString extensions = "Keyhole Markup Language file (*.kml), Text file (*.txt *xyz)";
+    QString boundaryFilePath = QFileDialog::getOpenFileName(this, tr("Select a boundary file"), getDefaultDirectory(), extensions);
 
     if (boundaryFilePath.isEmpty()) {
         return;
@@ -130,7 +131,8 @@ void UnstructuredMeshDialog::on_lstRefinementAreas_itemSelectionChanged() {
 }
 
 void UnstructuredMeshDialog::on_btnAddCoordinatesFile_clicked() {
-    QString refinementFileStr = QFileDialog::getOpenFileName(this, tr("Select a boundary file"), getDefaultDirectory(), "Keyhole Markup Language file (*.kml)");
+    QString extensions = "Keyhole Markup Language file (*.kml), Text file (*.txt *xyz)";
+    QString refinementFileStr = QFileDialog::getOpenFileName(this, tr("Select a boundary file"), getDefaultDirectory(), extensions);
 
     if (refinementFileStr.isEmpty()) {
         return;

@@ -22,6 +22,9 @@ private:
     
     // Transient
     QString filename;
+    
+    void readFromKMLFile();
+    void readFromTextFile();
 
 public:
     static const QString BOUNDARY_POLYGON_NAME;

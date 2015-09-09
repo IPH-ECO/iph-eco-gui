@@ -60,7 +60,8 @@ void StructuredMeshDialog::setArea(const double &area) {
 }
 
 void StructuredMeshDialog::on_btnBoundaryFileBrowser_clicked() {
-    QString boundaryFilePath = QFileDialog::getOpenFileName(this, tr("Select a boundary file"), getDefaultDirectory(), "Keyhole Markup Language file (*.kml)");
+    QString extensions = "Keyhole Markup Language file (*.kml), Text file (*.txt *xyz)";
+    QString boundaryFilePath = QFileDialog::getOpenFileName(this, tr("Select a boundary file"), getDefaultDirectory(), extensions);
 
     if (boundaryFilePath.isEmpty()) {
         return;
