@@ -191,6 +191,8 @@ void HydrodynamicDataDialog::expandTrees() {
 void HydrodynamicDataDialog::on_cbxConfiguration_currentIndexChanged(const QString &configurationName) {
     bool isConfigurationNamePresent = !configurationName.isEmpty();
 
+    clearLayout(ui->initialConditionsTab->layout());
+    
     if (isConfigurationNamePresent) {
         Project *project = IPHApplication::getCurrentProject();
         currentConfiguration = project->getHydrodynamicConfiguration(configurationName);
@@ -247,7 +249,7 @@ void HydrodynamicDataDialog::on_cbxGridDataConfiguration_currentIndexChanged(con
         currentConfiguration->setGridDataConfiguration(currentGridDataConfiguration);
         
         QLineEdit *latitude = this->findChild<QLineEdit*>("latitude");
-        latitude->setText(QString::number(currentGridDataConfiguration->getLatitudeAverage()));
+        latitude->setText(QString::number(currentGridDataConfiguration->getMesh()->getLatitudeAverage()));
         
         ui->vtkWidget->render(currentConfiguration);
     } else {
@@ -526,5 +528,20 @@ void HydrodynamicDataDialog::on_tblBoundaryConditions_currentItemChanged(QTableW
         
         ui->btnEditBoundaryCondition->setEnabled(true);
         ui->btnRemoveBoundaryCondition->setEnabled(true);
+    }
+}
+
+void HydrodynamicDataDialog::clearLayout(QLayout *layout) {
+    QLayoutItem *item;
+    
+    while((item = layout->takeAt(0))) {
+        if (item->layout()) {
+            clearLayout(item->layout());
+            delete item->layout();
+        }
+        if (item->widget()) {
+            delete item->widget();
+        }
+        delete item;
     }
 }

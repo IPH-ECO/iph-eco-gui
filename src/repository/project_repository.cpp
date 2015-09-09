@@ -104,6 +104,7 @@ void ProjectRepository::loadMeshPolygons(Mesh *mesh) {
         meshPolygon->loadPolygonsFromStringPolyData(query.value("poly_data").toString());
         meshPolygon->setMinimumAngle(query.value("minimum_angle").toDouble());
         meshPolygon->setMaximumEdgeLength(query.value("maximum_edge_length").toDouble());
+        meshPolygon->setLatitudeAverage(query.value("latitude_average").toDouble());
         
         mesh->addMeshPolygon(meshPolygon);
         
@@ -414,10 +415,10 @@ void ProjectRepository::saveMeshPolygons(Mesh *mesh) {
     for (QList<MeshPolygon*>::const_iterator it = meshPolygons.begin(); it != meshPolygons.end() && !operationCanceled; it++) {
         MeshPolygon *meshPolygon = *it;
         if (meshPolygon->isPersisted()) {
-            query.prepare("update mesh_polygon set name = :n, type = :t, poly_data = :p, minimum_angle = :mi, maximum_edge_length = :ma where id = :i");
+            query.prepare("update mesh_polygon set name = :n, type = :t, poly_data = :p, minimum_angle = :mi, maximum_edge_length = :ma, latitude_average = :l where id = :i");
             query.bindValue(":i", meshPolygon->getId());
         } else {
-            query.prepare("insert into mesh_polygon (name, type, poly_data, minimum_angle, maximum_edge_length, mesh_id) values (:n, :t, :p, :mi, :ma, :me)");
+            query.prepare("insert into mesh_polygon (name, type, poly_data, minimum_angle, maximum_edge_length, latitude_average, mesh_id) values (:n, :t, :p, :mi, :ma, :l, :me)");
             query.bindValue(":me", mesh->getId());
         }
         
@@ -431,6 +432,7 @@ void ProjectRepository::saveMeshPolygons(Mesh *mesh) {
             query.bindValue(":mi", "NULL");
             query.bindValue(":ma", "NULL");
         }
+        query.bindValue(":l", meshPolygon->getLatitudeAverage());
         
         if (!query.exec()) {
             throw DatabaseException(QString("Unable to save project meshes. Error: %1.").arg(query.lastError().text()));

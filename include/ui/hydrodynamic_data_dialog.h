@@ -36,6 +36,7 @@ private:
     void expandTrees();
     void closeEvent(QCloseEvent *event);
     void toggleWidgets(bool enable);
+    void clearLayout(QLayout *layout);
 private slots:
     void on_cbxConfiguration_currentIndexChanged(const QString &configurationName);
     void on_cbxGridDataConfiguration_currentIndexChanged(const QString &meshName);

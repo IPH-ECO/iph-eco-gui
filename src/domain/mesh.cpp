@@ -59,8 +59,7 @@ MeshPolygon* Mesh::addMeshPolygon(const QString &name, const QString &filename, 
         meshPolygon->filter(coordinatesDistance);
         
         if (meshPolygonType == MeshPolygonType::BOUNDARY) {
-            for (QList<MeshPolygon*>::const_iterator it = islands.begin(); it != islands.end(); it++) {
-                MeshPolygon *islandsPolygon = *it;
+            for (MeshPolygon *islandsPolygon : islands) {
                 islandsPolygon->build();
                 islandsPolygon->filter(coordinatesDistance);
             }
@@ -159,6 +158,21 @@ QString Mesh::getBoundaryPolyDataAsString() const {
     return QString::fromStdString(writer->GetOutputString());
 }
 
+double Mesh::getLatitudeAverage() const {
+    QList<MeshPolygon*> meshPolygons = islands + refinementAreas;
+    double latitudeAverage = 0;
+    
+    if (boundaryPolygon != nullptr) {
+        meshPolygons.prepend(boundaryPolygon);
+    }
+    
+    for (MeshPolygon *meshPolygon : meshPolygons) {
+        latitudeAverage += meshPolygon->getLatitudeAverage();
+    }
+    
+    return latitudeAverage / (double) meshPolygons.size();
+}
+
 void Mesh::cancelGeneration(bool value) {
     this->generationCanceled = value;
 }
@@ -192,8 +206,7 @@ MeshPolygon* Mesh::getMeshPolygon(const QString &name, const MeshPolygonType &me
         meshPolygons.prepend(boundaryPolygon);
     }
     
-    for (QList<MeshPolygon*>::const_iterator it = meshPolygons.begin(); it != meshPolygons.end(); it++) {
-        MeshPolygon *meshPolygon = *it;
+    for (MeshPolygon *meshPolygon : meshPolygons) {
         if (meshPolygon->getName() == name && meshPolygon->getMeshPolygonType() == meshPolygonType) {
             return meshPolygon;
         }

@@ -49,6 +49,7 @@ public:
     QString getBoundaryPolyDataAsString() const;
     void loadMeshPolyDataFromString(const QString &polyDataStr);
     void loadBoundaryPolyDataFromString(const QString &polyDataStr);
+    double getLatitudeAverage() const;
     
     MeshPolygon* addMeshPolygon(const QString &name, const QString &filename, const MeshPolygonType &meshPolygonType);
     void addMeshPolygon(MeshPolygon *meshPolygon);

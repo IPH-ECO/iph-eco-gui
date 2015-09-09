@@ -25,10 +25,10 @@ const double MeshPolygon::DEFAULT_MINIMUM_ANGLE = 20.7;
 
 const double MeshPolygon::DEFAULT_MAXIMUM_EDGE_LENGTH = 0.5;
 
-MeshPolygon::MeshPolygon() : id(0) {}
+MeshPolygon::MeshPolygon() : id(0), latitudeAverage(0.0) {}
 
 MeshPolygon::MeshPolygon(const QString &name, const QString &filename, const MeshPolygonType &meshPolygonType) :
-    id(0), name(name), meshPolygonType(meshPolygonType), filename(filename) {}
+    id(0), name(name), meshPolygonType(meshPolygonType), latitudeAverage(0.0), filename(filename) {}
 
 void MeshPolygon::build() {
     if (this->filename.isEmpty()) {
@@ -71,12 +71,17 @@ void MeshPolygon::build() {
 
             for (int i = 0; i < coordinatesCount; i++) {
                 QStringList coordinateStr = coordinates.at(i).split(",");
-                GeographicLib::GeoCoords utmCoordinate(coordinateStr.at(1).toDouble(), coordinateStr.at(0).toDouble());
+                double longitude = coordinateStr.at(0).toDouble();
+                GeographicLib::GeoCoords utmCoordinate(coordinateStr.at(1).toDouble(), longitude);
                 double point[3] = { utmCoordinate.Easting(), utmCoordinate.Northing(), 0.0 };
 
                 originalPolygon->GetPoints()->SetPoint(i, point);
                 originalPolygon->GetPointIds()->SetId(i, i);
+                
+                latitudeAverage += longitude;
             }
+            
+            latitudeAverage /= (double) coordinatesCount;
 
             break;
         }
@@ -154,6 +159,10 @@ void MeshPolygon::setId(const uint &id) {
 
 uint MeshPolygon::getId() const {
     return id;
+}
+
+bool MeshPolygon::isPersisted() const {
+    return this->id != 0;
 }
 
 void MeshPolygon::setName(const QString &name) {
@@ -274,6 +283,10 @@ void MeshPolygon::setInitialCriteria() {
     this->minimumAngle = DEFAULT_MINIMUM_ANGLE;
 }
 
-bool MeshPolygon::isPersisted() const {
-    return this->id != 0;
+double MeshPolygon::getLatitudeAverage() const {
+    return latitudeAverage;
+}
+
+void MeshPolygon::setLatitudeAverage(double latitudeAverage) {
+    this->latitudeAverage = latitudeAverage;
 }

@@ -84,6 +84,7 @@ void DatabaseUtility::createApplicationTables() {
         "poly_data text not null, " \
         "minimum_angle float, " \
         "maximum_edge_length float, " \
+        "latitude_average float default 0, " \
         "mesh_id integer not null" \
     ")";
     

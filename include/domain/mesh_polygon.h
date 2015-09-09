@@ -14,6 +14,7 @@ private:
     MeshPolygonType meshPolygonType;
     vtkSmartPointer<vtkPolygon> originalPolygon;
     vtkSmartPointer<vtkPolygon> filteredPolygon;
+    double latitudeAverage;
 
     // Used by unstructured mesh
     double minimumAngle;
@@ -42,6 +43,8 @@ public:
     vtkPolygon* getFilteredPolygon() const;
     QString getPolyDataAsString();
     void loadPolygonsFromStringPolyData(const QString &polyDataStr);
+    double getLatitudeAverage() const;
+    void setLatitudeAverage(double latitudeAverage);
     
     void setMinimumAngle(const double &minimumAngle);
     double getMinimumAngle() const;

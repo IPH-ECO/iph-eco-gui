@@ -111,25 +111,6 @@ Mesh* GridDataConfiguration::getMesh() const {
     return gridDataVector.first()->getMesh();
 }
 
-double GridDataConfiguration::getLatitudeAverage() const {
-    Mesh *mesh = this->getMesh();
-    
-    if (mesh) {
-        vtkSmartPointer<vtkPolyData> meshPolyData = this->getMesh()->getMeshPolyData();
-        double latitudeSum = 0;
-        
-        for (vtkIdType i = 0; i < meshPolyData->GetNumberOfPoints(); i++) {
-            double point[3];
-            meshPolyData->GetPoints()->GetPoint(i, point);
-            latitudeSum += point[1];
-        }
-        
-        return latitudeSum / meshPolyData->GetNumberOfPoints();
-    }
-    
-    return 0;
-}
-
 SimulationDataType::GridDataConfiguration* GridDataConfiguration::toSimulationDataType(const HydrodynamicConfiguration *hydrodynamicConfiguration) const {
     SimulationDataType::GridDataConfiguration *gridDataConfiguration = new SimulationDataType::GridDataConfiguration();
     int i = 0;
