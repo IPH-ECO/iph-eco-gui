@@ -13,7 +13,6 @@
 #include <vtkFeatureEdges.h>
 #include <vtkXMLPolyDataWriter.h>
 #include <vtkXMLPolyDataReader.h>
-#include <GeographicLib/GeoCoords.hpp>
 
 Mesh::Mesh() : id(0), boundaryPolygon(nullptr), coordinatesDistance(0.0), generationCanceled(false) {}
 

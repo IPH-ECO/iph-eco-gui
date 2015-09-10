@@ -296,9 +296,13 @@ void GridData::buildInputPolyData() {
 
         inputPoints->GetPoint(i, point);
 
-        GeographicLib::GeoCoords utmCoordinate(point[1], point[0]);
-        inputPoints->SetPoint(i, utmCoordinate.Easting(), utmCoordinate.Northing(), 0.0);
-        weights->SetTuple1(i, point[2]);
+        try {
+            GeographicLib::GeoCoords utmCoordinate(point[1], point[0]);
+            inputPoints->SetPoint(i, utmCoordinate.Easting(), utmCoordinate.Northing(), 0.0);
+            weights->SetTuple1(i, point[2]);
+        } catch (const GeographicLib::GeographicErr &e) {
+            throw GridDataException(QString("Latitude/longitude out of range at line %1.").arg(i + 1));
+        }
     }
     
     double *range = weights->GetRange();

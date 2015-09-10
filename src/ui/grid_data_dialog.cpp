@@ -192,8 +192,8 @@ void GridDataDialog::showGridLayerDialog(GridData *gridData) {
             try {
                 gridData->interpolate();
             } catch (const GridDataException &e) {
-                QMessageBox::critical(this, tr("Grid Data"), e.what());
                 progressDialog->cancel();
+                QMessageBox::critical(this, tr("Grid Data"), e.what());
                 delete progressDialog;
                 delete gridData;
                 return;

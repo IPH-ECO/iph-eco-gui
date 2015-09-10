@@ -85,13 +85,18 @@ void MeshPolygon::readFromKMLFile() {
             for (int i = 0; i < coordinatesCount; i++) {
                 QStringList coordinateStr = coordinates.at(i).split(",");
                 double latitude = coordinateStr.at(1).toDouble();
-                GeographicLib::GeoCoords utmCoordinate(latitude, coordinateStr.at(0).toDouble());
-                double point[3] = { utmCoordinate.Easting(), utmCoordinate.Northing(), 0.0 };
                 
-                originalPolygon->GetPoints()->SetPoint(i, point);
-                originalPolygon->GetPointIds()->SetId(i, i);
-                
-                latitudeAverage += latitude;
+                try {
+                    GeographicLib::GeoCoords utmCoordinate(latitude, coordinateStr.at(0).toDouble());
+                    double point[3] = { utmCoordinate.Easting(), utmCoordinate.Northing(), 0.0 };
+                    
+                    originalPolygon->GetPoints()->SetPoint(i, point);
+                    originalPolygon->GetPointIds()->SetId(i, i);
+                    
+                    latitudeAverage += latitude;
+                } catch (const GeographicLib::GeographicErr &e) {
+                    throw MeshPolygonException(QString("Latitude/longitude out of range at line %1").arg(i + 1));
+                }
             }
             
             latitudeAverage /= (double) coordinatesCount;
@@ -120,12 +125,19 @@ void MeshPolygon::readFromTextFile() {
     originalPolygon->GetPointIds()->SetNumberOfIds(numberOfPoints);
     
     for (vtkIdType i = 0; i < numberOfPoints; i++) {
-        double coordinate[3];
+        double latitudeLongitudeCoordinate[3];
+        polyData->GetPoints()->GetPoint(i, latitudeLongitudeCoordinate);
         
-        polyData->GetPoints()->GetPoint(i, coordinate);
-        originalPolygon->GetPoints()->SetPoint(i, coordinate);
-        originalPolygon->GetPointIds()->SetId(i, i);
-        latitudeAverage += coordinate[0];
+        try {
+            GeographicLib::GeoCoords utmConverter(latitudeLongitudeCoordinate[0], latitudeLongitudeCoordinate[1]);
+            double utmCoordinate[3] = { utmConverter.Easting(), utmConverter.Northing(), 0.0 };
+            
+            originalPolygon->GetPoints()->SetPoint(i, utmCoordinate);
+            originalPolygon->GetPointIds()->SetId(i, i);
+            latitudeAverage += utmCoordinate[0];
+        } catch (const GeographicLib::GeographicErr &e) {
+            throw MeshPolygonException(QString("Latitude/longitude out of range at line %1.").arg(i + 1));
+        }
     }
     
     latitudeAverage /= (double) numberOfPoints;
