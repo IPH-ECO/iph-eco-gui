@@ -46,7 +46,7 @@ double Mesh::getCoordinatesDistance() const {
     return this->coordinatesDistance;
 }
 
-MeshPolygon* Mesh::addMeshPolygon(const QString &name, const QString &filename, const MeshPolygonType &meshPolygonType) {
+MeshPolygon* Mesh::addMeshPolygon(const QString &name, const QString &filename, const MeshPolygonType &meshPolygonType, const CoordinateSystem &coordinateSystem) {
     MeshPolygon *meshPolygon = getMeshPolygon(name, meshPolygonType);
     
     if (meshPolygon == nullptr || !meshPolygon->isPersisted()) {
@@ -54,12 +54,12 @@ MeshPolygon* Mesh::addMeshPolygon(const QString &name, const QString &filename, 
     }
 
     try {
-        meshPolygon->build();
+        meshPolygon->build(coordinateSystem);
         meshPolygon->filter(coordinatesDistance);
         
         if (meshPolygonType == MeshPolygonType::BOUNDARY) {
             for (MeshPolygon *islandsPolygon : islands) {
-                islandsPolygon->build();
+                islandsPolygon->build(coordinateSystem);
                 islandsPolygon->filter(coordinatesDistance);
             }
         }

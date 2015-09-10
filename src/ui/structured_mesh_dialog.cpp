@@ -4,6 +4,7 @@
 #include "include/application/iph_application.h"
 #include "include/exceptions/mesh_polygon_exception.h"
 #include "include/ui/island_form.h"
+#include "include/ui/coordinate_file_dialog.h"
 
 #include <QFileDialog>
 #include <QMessageBox>
@@ -147,15 +148,17 @@ void StructuredMeshDialog::on_btnRemoveMesh_clicked() {
 }
 
 void StructuredMeshDialog::on_btnBoundaryFileBrowser_clicked() {
-    QString extensions = "Keyhole Markup Language file (*.kml), Text file (*.txt *xyz)";
-    QString boundaryFilePath = QFileDialog::getOpenFileName(this, tr("Select a boundary file"), getDefaultDirectory(), extensions);
-
-    if (boundaryFilePath.isEmpty()) {
-        return;
+    QString extensions = "Keyhole Markup Language file (*.kml);;Text file (*.txt *xyz)";
+    CoordinateFileDialog *dialog = new CoordinateFileDialog(this, tr("Select a boundary file"), getDefaultDirectory(), extensions);
+    int exitCode = dialog->exec();
+    
+    if (exitCode == QDialog::Accepted) {
+        QString boundaryFilePath = dialog->selectedFiles().first();
+        
+        this->coordinateSystem = dialog->isLatitudeLongitudeChecked() ? CoordinateSystem::LATITUDE_LONGITUDE : CoordinateSystem::UTM;
+        ui->edtBoundaryFileLine->setText(boundaryFilePath);
+        appSettings->setValue(BOUNDARY_DEFAULT_DIR_KEY, QFileInfo(boundaryFilePath).absolutePath());
     }
-
-    ui->edtBoundaryFileLine->setText(boundaryFilePath);
-    appSettings->setValue(BOUNDARY_DEFAULT_DIR_KEY, QFileInfo(boundaryFilePath).absolutePath());
 }
 
 void StructuredMeshDialog::on_btnAddIsland_clicked() {
@@ -198,8 +201,8 @@ void StructuredMeshDialog::on_btnGenerateMesh_clicked() {
     }
     
     try {
-        currentMesh->addMeshPolygon(MeshPolygon::BOUNDARY_POLYGON_NAME, boundaryFileStr, MeshPolygonType::BOUNDARY);
-    } catch (const MeshPolygonException& e) {
+        currentMesh->addMeshPolygon(MeshPolygon::BOUNDARY_POLYGON_NAME, boundaryFileStr, MeshPolygonType::BOUNDARY, this->coordinateSystem);
+    } catch (const MeshPolygonException &e) {
         QMessageBox::critical(this, tr("Structured Mesh Generation"), e.what());
         return;
     }

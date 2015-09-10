@@ -46,7 +46,7 @@ MeshVTKWidget::MeshVTKWidget(QWidget *parent) : QVTKWidget(parent), showBoundary
 MeshVTKWidget::~MeshVTKWidget() {}
 
 void MeshVTKWidget::render(Mesh *mesh) {
-    if (mesh == nullptr || currentMesh == mesh) {
+    if (!mesh) {
         return;
     }
     

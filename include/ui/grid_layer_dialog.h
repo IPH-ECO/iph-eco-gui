@@ -33,6 +33,7 @@ private:
     GridDataConfiguration *gridConfiguration;
     GridData *gridData;
     Mesh *mesh;
+    CoordinateSystem coordinateSystem;
 
     QString getDefaultDirectory();
     void toggleGridDataConfigurationForm(bool enable);

@@ -55,6 +55,7 @@ private:
     QAction *toggleVerticeLabelsAction;
     QAction *toggleCellLabelsAction;
     QAction *changeBackgroundAction;
+    CoordinateSystem coordinateSystem;
 
     QString getDefaultDirectory();
     

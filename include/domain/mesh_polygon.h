@@ -6,6 +6,7 @@
 #include <vtkPolygon.h>
 
 enum class MeshPolygonType { BOUNDARY = 1, ISLAND, REFINEMENT_AREA };
+enum class CoordinateSystem { LATITUDE_LONGITUDE, UTM };
 
 class MeshPolygon {
 private:
@@ -23,8 +24,8 @@ private:
     // Transient
     QString filename;
     
-    void readFromKMLFile();
-    void readFromTextFile();
+    void readFromKMLFile(const CoordinateSystem &coordinateSystem);
+    void readFromTextFile(const CoordinateSystem &coordinateSystem);
 
 public:
     static const QString BOUNDARY_POLYGON_NAME;
@@ -56,7 +57,7 @@ public:
     double getMaximumEdgeLength() const;
     void setInitialCriteria();
     
-    void build();
+    void build(const CoordinateSystem &coordinateSystem);
     void filter(const double &distanceFilter);
     bool pointInPolygon(double *point);
     double area();

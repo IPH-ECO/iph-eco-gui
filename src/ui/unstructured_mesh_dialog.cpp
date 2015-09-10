@@ -3,6 +3,7 @@
 #include "include/ui/island_form.h"
 #include "include/application/iph_application.h"
 #include "include/exceptions/mesh_polygon_exception.h"
+#include "include/ui/coordinate_file_dialog.h"
 
 #include <QFileDialog>
 #include <QInputDialog>
@@ -67,15 +68,17 @@ void UnstructuredMeshDialog::setArea(const double &area) {
 }
 
 void UnstructuredMeshDialog::on_btnBoundaryFileBrowser_clicked() {
-    QString extensions = "Keyhole Markup Language file (*.kml), Text file (*.txt *xyz)";
-    QString boundaryFilePath = QFileDialog::getOpenFileName(this, tr("Select a boundary file"), getDefaultDirectory(), extensions);
-
-    if (boundaryFilePath.isEmpty()) {
-        return;
+    QString extensions = "Keyhole Markup Language file (*.kml);;Text file (*.txt *xyz)";
+    CoordinateFileDialog *dialog = new CoordinateFileDialog(this, tr("Select a boundary file"), getDefaultDirectory(), extensions);
+    int exitCode = dialog->exec();
+    
+    if (exitCode == QDialog::Accepted) {
+        QString boundaryFilePath = dialog->selectedFiles().first();
+        
+        this->meshCoordinateSystem = dialog->isLatitudeLongitudeChecked() ? CoordinateSystem::LATITUDE_LONGITUDE : CoordinateSystem::UTM;
+        ui->edtBoundaryFileLine->setText(boundaryFilePath);
+        appSettings->setValue(BOUNDARY_DEFAULT_DIR_KEY, QFileInfo(boundaryFilePath).absolutePath());
     }
-
-    ui->edtBoundaryFileLine->setText(boundaryFilePath);
-    appSettings->setValue(BOUNDARY_DEFAULT_DIR_KEY, QFileInfo(boundaryFilePath).absolutePath());
 }
 
 void UnstructuredMeshDialog::on_lstIslands_currentTextChanged(const QString &currentText) {
@@ -131,29 +134,31 @@ void UnstructuredMeshDialog::on_lstRefinementAreas_itemSelectionChanged() {
 }
 
 void UnstructuredMeshDialog::on_btnAddCoordinatesFile_clicked() {
-    QString extensions = "Keyhole Markup Language file (*.kml), Text file (*.txt *xyz)";
-    QString refinementFileStr = QFileDialog::getOpenFileName(this, tr("Select a boundary file"), getDefaultDirectory(), extensions);
-
-    if (refinementFileStr.isEmpty()) {
-        return;
+    QString extensions = "Keyhole Markup Language file (*.kml);;Text file (*.txt *xyz)";
+    CoordinateFileDialog *dialog = new CoordinateFileDialog(this, tr("Select a boundary file"), getDefaultDirectory(), extensions);
+    int exitCode = dialog->exec();
+    
+    if (exitCode == QDialog::Accepted) {
+        QString refinementFileStr = dialog->selectedFiles().first();
+        CoordinateSystem coordinateSystem = dialog->isLatitudeLongitudeChecked() ? CoordinateSystem::LATITUDE_LONGITUDE : CoordinateSystem::UTM;
+        
+        if (!ui->lstRefinementAreas->findItems(refinementFileStr, Qt::MatchExactly).empty()) {
+            QMessageBox::information(this, tr("Unstructured Mesh Generation"), tr("Coordinates file already added."));
+            return;
+        }
+        
+        try {
+            // TODO: Use mesh polygon name
+            currentMesh->addMeshPolygon("", refinementFileStr, MeshPolygonType::REFINEMENT_AREA, coordinateSystem);
+            
+            ui->lstRefinementAreas->addItem(refinementFileStr);
+            ui->lstRefinementAreas->setCurrentRow(ui->lstRefinementAreas->count() - 1);
+        } catch (const MeshPolygonException &ex) {
+            QMessageBox::critical(this, tr("Unstructured Mesh Generation"), ex.what());
+        }
+        
+        appSettings->setValue(BOUNDARY_DEFAULT_DIR_KEY, QFileInfo(refinementFileStr).absolutePath());
     }
-
-    if (!ui->lstRefinementAreas->findItems(refinementFileStr, Qt::MatchExactly).empty()) {
-        QMessageBox::information(this, tr("Unstructured Mesh Generation"), tr("Coordinates file already added."));
-        return;
-    }
-
-    try {
-        // TODO: Use mesh polygon name
-        currentMesh->addMeshPolygon("", refinementFileStr, MeshPolygonType::REFINEMENT_AREA);
-
-        ui->lstRefinementAreas->addItem(refinementFileStr);
-        ui->lstRefinementAreas->setCurrentRow(ui->lstRefinementAreas->count() - 1);
-    } catch (const MeshPolygonException &ex) {
-        QMessageBox::critical(this, tr("Unstructured Mesh Generation"), ex.what());
-    }
-
-    appSettings->setValue(BOUNDARY_DEFAULT_DIR_KEY, QFileInfo(refinementFileStr).absolutePath());
 }
 
 void UnstructuredMeshDialog::on_btnRemoveCoordinatesFile_clicked() {
@@ -212,7 +217,7 @@ void UnstructuredMeshDialog::on_btnGenerateMesh1_clicked() {
     
     CGAL::Failure_behaviour old_behaviour = CGAL::set_error_behaviour(CGAL::THROW_EXCEPTION);
     try {
-        boundaryPolygon = currentMesh->addMeshPolygon(MeshPolygon::BOUNDARY_POLYGON_NAME, boundaryFileStr, MeshPolygonType::BOUNDARY);
+        boundaryPolygon = currentMesh->addMeshPolygon(MeshPolygon::BOUNDARY_POLYGON_NAME, boundaryFileStr, MeshPolygonType::BOUNDARY, this->meshCoordinateSystem);
         currentMesh->generate();
     } catch(const MeshPolygonException &e) {
         QMessageBox::critical(this, tr("Unstructured Mesh Generation"), e.what());
@@ -245,7 +250,7 @@ void UnstructuredMeshDialog::on_btnGenerateMesh2_clicked() {
 
     CGAL::Failure_behaviour old_behaviour = CGAL::set_error_behaviour(CGAL::THROW_EXCEPTION);
     try {
-        MeshPolygon *boundaryPolygon = currentMesh->addMeshPolygon(MeshPolygon::BOUNDARY_POLYGON_NAME, boundaryFileStr, MeshPolygonType::BOUNDARY);
+        MeshPolygon *boundaryPolygon = currentMesh->addMeshPolygon(MeshPolygon::BOUNDARY_POLYGON_NAME, boundaryFileStr, MeshPolygonType::BOUNDARY, meshCoordinateSystem);
         
         boundaryPolygon->setMinimumAngle(ui->sbxMinimumAngle->value());
         boundaryPolygon->setMaximumEdgeLength(ui->sbxMaximumEdgeLength->value());

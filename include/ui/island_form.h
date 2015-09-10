@@ -30,6 +30,7 @@ private:
     QSettings *appSettings;
     Mesh *mesh;
     MeshPolygon *meshPolygon;
+    CoordinateSystem coordinateSystem;
     
     QString getDefaultDirectory();
     bool isValid();

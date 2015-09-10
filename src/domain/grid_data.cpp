@@ -114,6 +114,14 @@ void GridData::setMesh(Mesh *mesh) {
     this->mesh = mesh;
 }
 
+CoordinateSystem GridData::getCoordinateSystem() const {
+    return coordinateSystem;
+}
+
+void GridData::setCoordinateSystem(const CoordinateSystem &coordinateSystem) {
+    this->coordinateSystem = coordinateSystem;
+}
+
 double GridData::getMapMininumRange() const {
     return mapMinimumRange;
 }
@@ -296,13 +304,16 @@ void GridData::buildInputPolyData() {
 
         inputPoints->GetPoint(i, point);
 
-        try {
-            GeographicLib::GeoCoords utmCoordinate(point[1], point[0]);
-            inputPoints->SetPoint(i, utmCoordinate.Easting(), utmCoordinate.Northing(), 0.0);
-            weights->SetTuple1(i, point[2]);
-        } catch (const GeographicLib::GeographicErr &e) {
-            throw GridDataException(QString("Latitude/longitude out of range at line %1.").arg(i + 1));
+        if (coordinateSystem == CoordinateSystem::LATITUDE_LONGITUDE) {
+            try {
+                GeographicLib::GeoCoords utmCoordinate(point[1], point[0]);
+                inputPoints->SetPoint(i, utmCoordinate.Easting(), utmCoordinate.Northing(), 0.0);
+            } catch (const GeographicLib::GeographicErr &e) {
+                throw GridDataException(QString("Latitude/longitude out of range at line %1.").arg(i + 1));
+            }
         }
+        
+        weights->SetTuple1(i, point[2]);
     }
     
     double *range = weights->GetRange();

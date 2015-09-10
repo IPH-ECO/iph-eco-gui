@@ -56,6 +56,7 @@ private:
     // Transient attributes
     QString inputFile;
     bool interpolationCanceled;
+    CoordinateSystem coordinateSystem;
     
     double inverseOfDistance(vtkIdTypeArray *inscribedPointsIndexes, double *cellCenter);
     double calculateNearestWeight(double *cellCenter);
@@ -81,6 +82,8 @@ public:
     void setGridDataConfiguration(GridDataConfiguration *gridDataConfiguration);
     Mesh* getMesh() const;
     void setMesh(Mesh *mesh);
+    CoordinateSystem getCoordinateSystem() const;
+    void setCoordinateSystem(const CoordinateSystem &coordinateSystem);
     
     double getMapMininumRange() const;
     void setMapMinimumRange(const double &mapMinimumRange);

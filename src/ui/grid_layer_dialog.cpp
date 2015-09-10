@@ -1,5 +1,6 @@
 #include "include/ui/grid_layer_dialog.h"
 #include "ui_grid_layer_dialog.h"
+#include "include/ui/coordinate_file_dialog.h"
 
 #include <QFileDialog>
 #include <QMessageBox>
@@ -62,14 +63,16 @@ void GridLayerDialog::on_rdoPolygon_toggled(bool checked) {
 }
 
 void GridLayerDialog::on_btnBrowseInputFile_clicked() {
-    QString gridDataFile = QFileDialog::getOpenFileName(this, tr("Select a grid data file"), getDefaultDirectory(), tr("XYZ files (*.xyz *.txt)"));
-
-    if (gridDataFile.isEmpty()) {
-        return;
-    }
+    CoordinateFileDialog *dialog = new CoordinateFileDialog(this, tr("Select a boundary file"), getDefaultDirectory(), tr("Text files (*.xyz *.txt)"));
+    int exitCode = dialog->exec();
     
-    ui->edtInputFile->setText(gridDataFile);
-    appSettings->setValue(GRID_DATA_DEFAULT_DIR_KEY, QFileInfo(gridDataFile).absolutePath());
+    if (exitCode == QDialog::Accepted) {
+        QString gridDataFile = dialog->selectedFiles().first();
+        
+        this->coordinateSystem = dialog->isLatitudeLongitudeChecked() ? CoordinateSystem::LATITUDE_LONGITUDE : CoordinateSystem::UTM;
+        ui->edtInputFile->setText(gridDataFile);
+        appSettings->setValue(GRID_DATA_DEFAULT_DIR_KEY, QFileInfo(gridDataFile).absolutePath());
+    }
 }
 
 GridData* GridLayerDialog::getGridData() {
@@ -140,6 +143,7 @@ void GridLayerDialog::accept() {
     gridData->setGridDataInputType(gridInputType);
     gridData->setInputFile(ui->edtInputFile->text());
     gridData->setGridDataType(gridDataType);
+    gridData->setCoordinateSystem(coordinateSystem);
 
     if (gridInputType == GridDataInputType::POINT) {
         gridData->setExponent(ui->edtExponent->text().toDouble());

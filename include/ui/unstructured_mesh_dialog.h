@@ -55,6 +55,7 @@ private:
     QSettings *appSettings;
     QString currentIslandName;
     QString currentRefinementAreaName;
+    CoordinateSystem meshCoordinateSystem;
 
     QString getDefaultDirectory();
     void resetMeshForm();

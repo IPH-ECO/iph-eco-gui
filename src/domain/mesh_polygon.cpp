@@ -32,7 +32,7 @@ MeshPolygon::MeshPolygon() : id(0), latitudeAverage(0.0) {}
 MeshPolygon::MeshPolygon(const QString &name, const QString &filename, const MeshPolygonType &meshPolygonType) :
     id(0), name(name), meshPolygonType(meshPolygonType), latitudeAverage(0.0), filename(filename) {}
 
-void MeshPolygon::build() {
+void MeshPolygon::build(const CoordinateSystem &coordinateSystem) {
     if (this->filename.isEmpty()) {
         if (originalPolygon == nullptr) {
             throw MeshPolygonException("Unexpected behaviour: original mesh polygon not present.");
@@ -46,13 +46,13 @@ void MeshPolygon::build() {
     QString extension = fileInfo.suffix().toLower();
     
     if (extension == "kml") {
-        readFromKMLFile();
+        readFromKMLFile(coordinateSystem);
     } else if (extension == "txt" || extension == "xyz") {
-        readFromTextFile();
+        readFromTextFile(coordinateSystem);
     }
 }
 
-void MeshPolygon::readFromKMLFile() {
+void MeshPolygon::readFromKMLFile(const CoordinateSystem &coordinateSystem) {
     QFile kmlFile(this->filename);
     
     if (!kmlFile.open(QIODevice::ReadOnly | QIODevice::Text) || kmlFile.size() == 0) {
@@ -62,6 +62,7 @@ void MeshPolygon::readFromKMLFile() {
     QXmlStreamReader kmlReader(&kmlFile);
     
     originalPolygon = vtkSmartPointer<vtkPolygon>::New();
+    this->latitudeAverage = 0.0;
     
     while (!kmlReader.atEnd()) {
         kmlReader.readNext();
@@ -85,18 +86,26 @@ void MeshPolygon::readFromKMLFile() {
             for (int i = 0; i < coordinatesCount; i++) {
                 QStringList coordinateStr = coordinates.at(i).split(",");
                 double latitude = coordinateStr.at(1).toDouble();
+                double point[3] = { 0.0 };
                 
-                try {
-                    GeographicLib::GeoCoords utmCoordinate(latitude, coordinateStr.at(0).toDouble());
-                    double point[3] = { utmCoordinate.Easting(), utmCoordinate.Northing(), 0.0 };
-                    
-                    originalPolygon->GetPoints()->SetPoint(i, point);
-                    originalPolygon->GetPointIds()->SetId(i, i);
-                    
-                    latitudeAverage += latitude;
-                } catch (const GeographicLib::GeographicErr &e) {
-                    throw MeshPolygonException(QString("Latitude/longitude out of range at line %1").arg(i + 1));
+                if (coordinateSystem == CoordinateSystem::LATITUDE_LONGITUDE) {
+                    try {
+                        GeographicLib::GeoCoords utmCoordinate(latitude, coordinateStr.at(0).toDouble());
+                        point[0] = utmCoordinate.Easting();
+                        point[1] = utmCoordinate.Northing();
+                    } catch (const GeographicLib::GeographicErr &e) {
+                        throw MeshPolygonException(QString("Latitude/longitude out of range at line %1").arg(i + 1));
+                    }
+                } else if (coordinateSystem == CoordinateSystem::UTM) { // No conversion needed
+                    point[0] = coordinateStr.at(0).toDouble();
+                    point[1] = latitude;
+                } else {
+                    throw MeshPolygonException("Undefined coordinate system.");
                 }
+                
+                originalPolygon->GetPoints()->SetPoint(i, point);
+                originalPolygon->GetPointIds()->SetId(i, i);
+                latitudeAverage += latitude;
             }
             
             latitudeAverage /= (double) coordinatesCount;
@@ -108,7 +117,7 @@ void MeshPolygon::readFromKMLFile() {
     kmlFile.close();
 }
 
-void MeshPolygon::readFromTextFile() {
+void MeshPolygon::readFromTextFile(const CoordinateSystem &coordinateSystem) {
     vtkSmartPointer<vtkSimplePointsReader> reader = vtkSmartPointer<vtkSimplePointsReader>::New();
     reader->SetFileName(this->filename.toStdString().c_str());
     reader->Update();
@@ -124,27 +133,37 @@ void MeshPolygon::readFromTextFile() {
     originalPolygon->GetPoints()->SetNumberOfPoints(numberOfPoints);
     originalPolygon->GetPointIds()->SetNumberOfIds(numberOfPoints);
     
+    this->latitudeAverage = 0.0;
+    
     for (vtkIdType i = 0; i < numberOfPoints; i++) {
-        double latitudeLongitudeCoordinate[3];
-        polyData->GetPoints()->GetPoint(i, latitudeLongitudeCoordinate);
+        double point[3];
         
-        try {
-            GeographicLib::GeoCoords utmConverter(latitudeLongitudeCoordinate[0], latitudeLongitudeCoordinate[1]);
-            double utmCoordinate[3] = { utmConverter.Easting(), utmConverter.Northing(), 0.0 };
-            
-            originalPolygon->GetPoints()->SetPoint(i, utmCoordinate);
-            originalPolygon->GetPointIds()->SetId(i, i);
-            latitudeAverage += utmCoordinate[0];
-        } catch (const GeographicLib::GeographicErr &e) {
-            throw MeshPolygonException(QString("Latitude/longitude out of range at line %1.").arg(i + 1));
+        polyData->GetPoints()->GetPoint(i, point);
+        latitudeAverage += point[1];
+        
+        if (coordinateSystem == CoordinateSystem::LATITUDE_LONGITUDE) {
+            try {
+                GeographicLib::GeoCoords utmConverter(point[0], point[1]);
+                
+                point[0] = utmConverter.Easting();
+                point[1] = utmConverter.Northing();
+            } catch (const GeographicLib::GeographicErr &e) {
+                throw MeshPolygonException(QString("Latitude/longitude out of range at line %1.").arg(i + 1));
+            }
+        } else if (coordinateSystem == CoordinateSystem::UTM) { // No conversion needed
+        } else {
+            throw MeshPolygonException("Undefined coordinate system.");
         }
+        
+        originalPolygon->GetPoints()->SetPoint(i, point);
+        originalPolygon->GetPointIds()->SetId(i, i);
     }
     
     latitudeAverage /= (double) numberOfPoints;
 }
 
 void MeshPolygon::filter(const double &distanceFilter) {
-    if (originalPolygon == NULL || originalPolygon->GetPoints()->GetNumberOfPoints() == 0) {
+    if (!originalPolygon || originalPolygon->GetPoints()->GetNumberOfPoints() == 0) {
         throw MeshPolygonException("Unable to filter polygon. Original mesh polygon not present.");
     }
     
