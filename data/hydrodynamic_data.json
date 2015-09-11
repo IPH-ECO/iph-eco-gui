@@ -271,7 +271,7 @@
             "rangeMinimum": 0
         },
         {
-            "defaultValue": 0,
+            "defaultValue": 1,
             "editable": true,
             "selected": true,
             "hideSiblings": true,
@@ -279,30 +279,30 @@
             "label": "Chezy constant",
             "name": "roughnessChezyConstant",
             "parentName": "bottomRoughness",
-            "rangeMaximum": 0,
-            "rangeMinimum": 0
+            "rangeMaximum": 10e20,
+            "rangeMinimum": 10e-20
         },
         {
-            "defaultValue": 0,
+            "defaultValue": 1,
             "editable": true,
             "hideSiblings": true,
             "parentValue": 1,
             "label": "Manning constant",
             "name": "roughnessManningConstant",
             "parentName": "bottomRoughness",
-            "rangeMaximum": 0,
-            "rangeMinimum": 0
+            "rangeMaximum": 10e20,
+            "rangeMinimum": 10e-20
         },
         {
-            "defaultValue": 0,
+            "defaultValue": 1,
             "editable": true,
             "hideSiblings": true,
             "parentValue": 2,
             "label": "White-Colebrook constant",
             "name": "roughnessWhiteColebrookConstant",
             "parentName": "bottomRoughness",
-            "rangeMaximum": 0,
-            "rangeMinimum": 0
+            "rangeMaximum": 10e20,
+            "rangeMinimum": 10e-20
         },
         {
             "defaultValue": 0,

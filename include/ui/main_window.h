@@ -45,6 +45,7 @@ private slots:
     // Input
     void on_actionGridData_triggered();
     void on_actionHydrodynamicData_triggered();
+    void on_actionMeteorologyData_triggered();
     
     // Simulations
     void on_actionCreate_triggered();

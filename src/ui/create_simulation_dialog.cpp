@@ -57,9 +57,9 @@ bool CreateSimulationDialog::isValid() {
         }
     }
     
-    if (minimumTimeStamp != 0 && initialTimeStamp >= minimumTimeStamp) {
-        time = QDateTime::fromTime_t(minimumTimeStamp);
-        QMessageBox::warning(this, tr("Create Simulation"), QString("Initial time must be the same or prior than %1.").arg(time.toString("yyyy/MM/dd HH:mm:ss")));
+    if (minimumTimeStamp != 0 && initialTimeStamp < minimumTimeStamp) {
+        time = QDateTime::fromTime_t(minimumTimeStamp, Qt::UTC);
+        QMessageBox::warning(this, tr("Create Simulation"), QString("Initial time must be the same or greater than %1.").arg(time.toString("yyyy-MM-dd HH:mm:ss")));
         return false;
     }
 

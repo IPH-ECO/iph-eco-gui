@@ -76,7 +76,7 @@
     <addaction name="actionHydrodynamicData"/>
     <addaction name="actionEnvironmental_Variables"/>
     <addaction name="actionSediment_Data"/>
-    <addaction name="actionMeteorology_Data"/>
+    <addaction name="actionMeteorologyData"/>
    </widget>
    <widget class="QMenu" name="menuSimulations">
     <property name="enabled">
@@ -259,7 +259,7 @@
     <string>Sediment Data</string>
    </property>
   </action>
-  <action name="actionMeteorology_Data">
+  <action name="actionMeteorologyData">
    <property name="text">
     <string>Meteorology Data</string>
    </property>

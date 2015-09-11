@@ -25,7 +25,7 @@ void TimeSeries::setTimeStamp(int timeStamp) {
 }
 
 QDateTime TimeSeries::toDateTime() const {
-	return QDateTime::fromTime_t(timeStamp);
+    return QDateTime::fromTime_t(timeStamp, Qt::UTC);
 }
 
 double TimeSeries::getValue() const {

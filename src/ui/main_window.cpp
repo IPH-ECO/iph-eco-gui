@@ -10,6 +10,7 @@
 #include "include/services/project_service.h"
 #include "include/repository/project_repository.h"
 #include "include/domain/simulation.h"
+#include "include/ui/meteorological_data_dialog.h"
 
 #include <QProgressDialog>
 #include <QMdiSubWindow>
@@ -182,6 +183,18 @@ void MainWindow::on_actionGridData_triggered() {
 void MainWindow::on_actionHydrodynamicData_triggered() {
     HydrodynamicDataDialog *hydrodynamicDataDialog = new HydrodynamicDataDialog(this);
     hydrodynamicDataDialog->exec();
+}
+
+void MainWindow::on_actionMeteorologyData_triggered() {
+    MeteorologicalDataDialog *meteorologicalDataDialog = new MeteorologicalDataDialog(this);
+    QMdiSubWindow *subWindow = new QMdiSubWindow(mdiArea);
+    
+    subWindow->setWidget(meteorologicalDataDialog);
+    subWindow->setWindowFlags(subWindow->windowFlags() | Qt::FramelessWindowHint);
+    subWindow->setWindowState(subWindow->windowState() | Qt::WindowMaximized);
+    meteorologicalDataDialog->show();
+    
+    this->update();
 }
 
 void MainWindow::on_actionCreate_triggered() {

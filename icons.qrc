@@ -1,5 +1,7 @@
 <RCC>
   <qresource prefix="/">
+    <file>icons/remove-station.png</file>
+    <file>icons/new-station.png</file>
     <file>icons/dialog-close.png</file>
     <file>icons/archive-apply.png</file>
     <file>icons/edit-clear-2.png</file>

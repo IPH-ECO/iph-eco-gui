@@ -62,13 +62,6 @@
          </item>
         </widget>
        </item>
-       <item row="2" column="1">
-        <widget class="QDateTimeEdit" name="edtInitialTime">
-         <property name="displayFormat">
-          <string>MM/dd/yyyy HH:mm</string>
-         </property>
-        </widget>
-       </item>
        <item row="11" column="1" colspan="3">
         <widget class="QPlainTextEdit" name="txtObservations"/>
        </item>
@@ -297,6 +290,13 @@
           <widget class="QLineEdit" name="edtMaxLimit"/>
          </item>
         </layout>
+       </item>
+       <item row="2" column="1" colspan="2">
+        <widget class="QDateTimeEdit" name="edtInitialTime">
+         <property name="displayFormat">
+          <string>yyyy-MM-dd HH:mm:ss</string>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>

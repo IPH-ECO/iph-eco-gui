@@ -20,8 +20,7 @@ TimeSeriesDialog::TimeSeriesDialog(QWidget *parent, BoundaryCondition *boundaryC
     int i = 0;
     
     for (TimeSeries *timeSeries : timeSeriesList) {
-        QDateTime time = QDateTime::fromTime_t(timeSeries->getTimeStamp());
-        time.setTimeSpec(Qt::UTC);
+        QDateTime time = QDateTime::fromTime_t(timeSeries->getTimeStamp(), Qt::UTC);
         
         ui->tblTimeSeries->insertRow(i);
         ui->tblTimeSeries->setItem(i, 0, new QTableWidgetItem(time.toString("yyyy-MM-dd HH:mm:ss")));
@@ -82,7 +81,7 @@ void TimeSeriesDialog::on_btnImportCSV_clicked() {
                 
                 for (int i = 0; i < tempTimeSeriesList.size(); i++) {
                     ui->tblTimeSeries->insertRow(i);
-                    ui->tblTimeSeries->setItem(i, 0, new QTableWidgetItem(QDateTime::fromTime_t(tempTimeSeriesList[i].getTimeStamp()).toString("yyyy-MM-dd HH:mm:ss")));
+                    ui->tblTimeSeries->setItem(i, 0, new QTableWidgetItem(QDateTime::fromTime_t(tempTimeSeriesList[i].getTimeStamp(), Qt::UTC).toString("yyyy-MM-dd HH:mm:ss")));
                     ui->tblTimeSeries->setItem(i, 1, new QTableWidgetItem(QString::number(tempTimeSeriesList[i].getValue())));
                 }
             }
