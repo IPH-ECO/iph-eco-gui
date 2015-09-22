@@ -6,6 +6,7 @@
 #include "mesh.h"
 #include "grid_data_configuration.h"
 #include "hydrodynamic_configuration.h"
+#include "meteorological_configuration.h"
 #include "simulation.h"
 
 class Project {
@@ -20,6 +21,7 @@ private:
     QSet<Mesh*> meshes;
     QSet<GridDataConfiguration*> gridDataConfigurations;
     QSet<HydrodynamicConfiguration*> hydrodynamicConfigurations;
+    QSet<MeteorologicalConfiguration*> meteorologicalConfigurations;
     QSet<Simulation*> simulations;
 
     //Transient attributes
@@ -61,6 +63,11 @@ public:
     void removeHydrodynamicConfiguration(const QString &configurationName);
     HydrodynamicConfiguration* getHydrodynamicConfiguration(const QString &configurationName);
     QSet<HydrodynamicConfiguration*> getHydrodynamicConfigurations() const;
+    
+    bool addMeteorologicalConfiguration(MeteorologicalConfiguration *meteorologicalConfiguration);
+    void removeMeteorologicalConfiguration(const QString *configurationName);
+    MeteorologicalConfiguration* getMeteorologicalConfiguration(const QString &configurationName) const;
+    QSet<MeteorologicalConfiguration*> getMeteorologicalConfigurations() const;
     
     bool addSimulation(Simulation *simulation);
     void removeSimulation(const QString &simulationLabel);

@@ -17,8 +17,6 @@ class UnstructuredMeshDialog : public QDialog {
 public:
     explicit UnstructuredMeshDialog(QWidget *parent = 0);
     ~UnstructuredMeshDialog();
-    
-    void setArea(const double &area);
 
 public slots:
     void setCoordinate(double &x, double &y);

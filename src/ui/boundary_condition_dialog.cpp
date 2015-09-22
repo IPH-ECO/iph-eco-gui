@@ -128,7 +128,8 @@ void BoundaryConditionDialog::on_cbxType_currentIndexChanged(const QString &type
 }
 
 void BoundaryConditionDialog::on_btnTimeSeries_clicked() {
-    TimeSeriesDialog *timeSeriesDialog = new TimeSeriesDialog(this, currentBoundaryCondition, timeSeriesList);
+    TimeSeriesDialog *timeSeriesDialog = new TimeSeriesDialog(this, timeSeriesList, TimeSeriesType::DEFAULT);
+    timeSeriesDialog->setBoundaryCondition(currentBoundaryCondition);
     int exitCode = timeSeriesDialog->exec();
     
     if (exitCode == QDialog::Accepted) {

@@ -54,19 +54,6 @@ void UnstructuredMeshDialog::setCoordinate(double &x, double &y) {
     ui->lblUTMCoordinate->setText(QString("Easting: %1, Northing: %2").arg(xStr).arg(yStr));
 }
 
-void UnstructuredMeshDialog::setArea(const double &area) {
-	QString areaStr("Area: ");
-
-	if (area == 0.0) {
-		areaStr += "-";
-	}
-	else {
-		areaStr += QString::number(area, 'f', 2) + " m\u00B2";
-	}
-
-	ui->lblDomainArea->setText(areaStr);
-}
-
 void UnstructuredMeshDialog::on_btnBoundaryFileBrowser_clicked() {
     QString extensions = "Keyhole Markup Language file (*.kml);;Text file (*.txt *xyz)";
     CoordinateFileDialog *dialog = new CoordinateFileDialog(this, tr("Select a boundary file"), getDefaultDirectory(), extensions);
@@ -369,7 +356,6 @@ void UnstructuredMeshDialog::resetMeshForm() {
     ui->lstRefinementAreas->clear();
     ui->sbxMinimumAngle->setValue(MeshPolygon::DEFAULT_MINIMUM_ANGLE);
     ui->sbxMaximumEdgeLength->setValue(MeshPolygon::DEFAULT_MAXIMUM_EDGE_LENGTH);
-    ui->lblDomainArea->setText("Area: -");
     ui->lblUTMCoordinate->setText("UTM: -");
     ui->btnRemoveMesh->setEnabled(false);
 

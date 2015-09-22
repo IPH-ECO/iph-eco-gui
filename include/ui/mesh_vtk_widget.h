@@ -15,7 +15,7 @@
 
 class MeshVTKWidget : public QVTKWidget {
 	Q_OBJECT
-private:
+protected:
     vtkSmartPointer<vtkRenderer> renderer;
     vtkSmartPointer<vtkRenderWindow> renderWindow;
     vtkSmartPointer<vtkRenderWindowInteractor> renderWindowInteractor;

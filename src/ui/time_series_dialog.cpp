@@ -9,12 +9,23 @@
 #include <QIODevice>
 #include <QFile>
 
-TimeSeriesDialog::TimeSeriesDialog(QWidget *parent, BoundaryCondition *boundaryCondition, const QList<TimeSeries*> &timeSeriesList) :
-    QDialog(parent), HYDRODYNAMIC_DEFAULT_DIR_KEY("default_hydrodynamic_dir"), ui(new Ui::TimeSeriesDialog), currentBoundaryCondition(boundaryCondition)
+TimeSeriesDialog::TimeSeriesDialog(QWidget *parent, const QList<TimeSeries*> &timeSeriesList, const TimeSeriesType &timeSeriesType) :
+    QDialog(parent), HYDRODYNAMIC_DEFAULT_DIR_KEY("default_hydrodynamic_dir"), dateTimeFormat("yyyy-MM-dd HH:mm:ss"),
+    ui(new Ui::TimeSeriesDialog), timeSeriesType(timeSeriesType)
 {
     ui->setupUi(this);
     ui->tblTimeSeries->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     appSettings = new QSettings(QApplication::organizationName(), QApplication::applicationName(), this);
+    
+    if (timeSeriesType == TimeSeriesType::XY_COMPONENTS) {
+        ui->tblTimeSeries->insertColumn(2);
+        ui->tblTimeSeries->setHorizontalHeaderItem(1, new QTableWidgetItem("X Component"));
+        ui->tblTimeSeries->setHorizontalHeaderItem(2, new QTableWidgetItem("Y Component"));
+    } else if (timeSeriesType == TimeSeriesType::INTENSITY_DIRECTION) {
+        ui->tblTimeSeries->insertColumn(2);
+        ui->tblTimeSeries->setHorizontalHeaderItem(1, new QTableWidgetItem("Intensity"));
+        ui->tblTimeSeries->setHorizontalHeaderItem(2, new QTableWidgetItem("Direction"));
+    }
     
     this->timeSeriesList = timeSeriesList;
     int i = 0;
@@ -23,8 +34,11 @@ TimeSeriesDialog::TimeSeriesDialog(QWidget *parent, BoundaryCondition *boundaryC
         QDateTime time = QDateTime::fromTime_t(timeSeries->getTimeStamp(), Qt::UTC);
         
         ui->tblTimeSeries->insertRow(i);
-        ui->tblTimeSeries->setItem(i, 0, new QTableWidgetItem(time.toString("yyyy-MM-dd HH:mm:ss")));
-        ui->tblTimeSeries->setItem(i, 1, new QTableWidgetItem(QString::number(timeSeries->getValue())));
+        ui->tblTimeSeries->setItem(i, 0, new QTableWidgetItem(time.toString(dateTimeFormat)));
+        ui->tblTimeSeries->setItem(i, 1, new QTableWidgetItem(QString::number(timeSeries->getValue1())));
+        if (timeSeriesType != TimeSeriesType::DEFAULT) {
+            ui->tblTimeSeries->setItem(i, 2, new QTableWidgetItem(QString::number(timeSeries->getValue2())));
+        }
         ui->tblTimeSeries->item(i, 0)->setData(Qt::UserRole, QVariant((uint) timeSeries->getId()));
         i++;
     }
@@ -55,19 +69,26 @@ void TimeSeriesDialog::on_btnImportCSV_clicked() {
         if (csvFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
             QList<TimeSeries> tempTimeSeriesList;
             int i = 1;
+            int columnCount = timeSeriesType == TimeSeriesType::DEFAULT ? 2 : 3;
             
             while (!csvFile.atEnd()) {
                 QString line = csvFile.readLine();
-                QStringList tokens = line.split(";");
+                QStringList tokens = line.split(",");
                 
-                if (tokens.size() < 2) {
-                    QMessageBox::critical(this, tr("Time Series"), QString("Parsing error at line %1.").arg(i));
+                if (tokens.size() < columnCount) {
+                    QMessageBox::critical(this, tr("Time Series"), QString("Invalid column count at line %1.").arg(i));
                     csvFile.close();
                     return;
                 } else {
                     TimeSeries tempTimeSeries;
-                    tempTimeSeries.setTimeStamp(QDateTime::fromString(tokens[0], "yyyy-MM-dd HH:mm:ss").toTime_t());
-                    tempTimeSeries.setValue(tokens[1].toDouble());
+                    QDateTime timeStamp = QDateTime::fromString(tokens[0], dateTimeFormat);
+                    
+                    timeStamp.setTimeSpec(Qt::UTC);
+                    tempTimeSeries.setTimeStamp(timeStamp.toTime_t());
+                    tempTimeSeries.setValue1(tokens[1].toDouble());
+                    if (timeSeriesType != TimeSeriesType::DEFAULT) {
+                        tempTimeSeries.setValue2(tokens[2].toDouble());
+                    }
                     
                     tempTimeSeriesList.append(tempTimeSeries);
                 }
@@ -80,9 +101,13 @@ void TimeSeriesDialog::on_btnImportCSV_clicked() {
                 ui->tblTimeSeries->setRowCount(0);
                 
                 for (int i = 0; i < tempTimeSeriesList.size(); i++) {
+                    QString timeStamp = QDateTime::fromTime_t(tempTimeSeriesList[i].getTimeStamp(), Qt::UTC).toString(dateTimeFormat);
                     ui->tblTimeSeries->insertRow(i);
-                    ui->tblTimeSeries->setItem(i, 0, new QTableWidgetItem(QDateTime::fromTime_t(tempTimeSeriesList[i].getTimeStamp(), Qt::UTC).toString("yyyy-MM-dd HH:mm:ss")));
-                    ui->tblTimeSeries->setItem(i, 1, new QTableWidgetItem(QString::number(tempTimeSeriesList[i].getValue())));
+                    ui->tblTimeSeries->setItem(i, 0, new QTableWidgetItem(timeStamp));
+                    ui->tblTimeSeries->setItem(i, 1, new QTableWidgetItem(QString::number(tempTimeSeriesList[i].getValue1())));
+                    if (timeSeriesType != TimeSeriesType::DEFAULT) {
+                        ui->tblTimeSeries->setItem(i, 2, new QTableWidgetItem(QString::number(tempTimeSeriesList[i].getValue2())));
+                    }
                 }
             }
             
@@ -154,11 +179,15 @@ void TimeSeriesDialog::accept() {
             timeSeries = new TimeSeries();
         }
         
-        QDateTime time = QDateTime::fromString(ui->tblTimeSeries->item(i, 0)->text(), "yyyy-MM-dd HH:mm:ss");
+        QDateTime time = QDateTime::fromString(ui->tblTimeSeries->item(i, 0)->text(), dateTimeFormat);
         time.setTimeSpec(Qt::UTC);
         
         timeSeries->setTimeStamp(time.toTime_t());
-        timeSeries->setValue(ui->tblTimeSeries->item(i, 1)->text().toDouble());
+        timeSeries->setValue1(ui->tblTimeSeries->item(i, 1)->text().toDouble());
+        if (timeSeriesType != TimeSeriesType::DEFAULT) {
+            timeSeries->setValue2(ui->tblTimeSeries->item(i, 2)->text().toDouble());
+        }
+        timeSeries->setObjectType("BoundaryCondition");
         
         timeSeriesList.append(timeSeries);
     }
@@ -168,4 +197,8 @@ void TimeSeriesDialog::accept() {
 
 QList<TimeSeries*> TimeSeriesDialog::getTimeSeriesList() const {
     return timeSeriesList;
+}
+
+void TimeSeriesDialog::setBoundaryCondition(BoundaryCondition *boundaryCondition) {
+    currentBoundaryCondition = boundaryCondition;
 }

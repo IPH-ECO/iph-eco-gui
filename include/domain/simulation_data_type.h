@@ -46,7 +46,8 @@ namespace SimulationDataType {
         
         struct TimeSeries {
             int timeStamp;
-            double value;
+            double value1;
+            double value2;
         };
         
         struct BoundaryConditionCell {

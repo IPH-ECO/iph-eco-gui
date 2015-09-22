@@ -32,6 +32,12 @@ private:
     void saveHydrodynamicParameters(HydrodynamicConfiguration *configuration);
     void saveBoundaryConditions(HydrodynamicConfiguration *configuration);
     void saveTimeSeries(BoundaryCondition *boundaryCondition);
+    
+    void saveMeteorologicalConfigurations(Project *project);
+    void saveMeteorologicalStations(MeteorologicalConfiguration *configuration);
+    void saveMeteorologicalParameters(MeteorologicalStation *station);
+    void loadMeteorologicalConfigurations(Project *project);
+    void loadMeteorologicalParameters(MeteorologicalConfiguration *configuration);
 
 public:
     ProjectRepository(const QString &databaseName);

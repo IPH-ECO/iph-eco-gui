@@ -5,11 +5,16 @@
 
 #include <QDateTime>
 
+enum class TimeSeriesType { DEFAULT = 1, XY_COMPONENTS, INTENSITY_DIRECTION };
+
 class TimeSeries {
 private:
 	uint id;
 	int timeStamp;
-	double value;
+	double value1;
+    double value2;
+    uint objectId;
+    QString objectType;
 public:
 	TimeSeries();
 	uint getId() const;
@@ -18,9 +23,16 @@ public:
 	int getTimeStamp() const;
 	void setTimeStamp(int timeStamp);
 	QDateTime toDateTime() const;
-	double getValue() const;
-	void setValue(double value);
+	double getValue1() const;
+	void setValue1(double value1);
+    double getValue2() const;
+    void setValue2(double value2);
+    uint getObjectId() const;
+    void setObjectId(uint objectId);
+    QString getObjectType() const;
+    void setObjectType(const QString &objectType);
     SimulationDataType::TimeSeries toSimulationDataType() const;
+    static TimeSeriesType mapStringToEnumType(const QString &typeStr);
 };
 
 #endif // TIME_SERIES_H

@@ -133,13 +133,10 @@ void MeshVTKWidget::render(Mesh *mesh) {
     if (mesh->instanceOf("StructuredMesh")) {
         StructuredMeshDialog *structuredMeshDialog = (StructuredMeshDialog*) this->parent();
         QObject::connect(mouseInteractor, SIGNAL(coordinateChanged(double&, double&)), structuredMeshDialog, SLOT(setCoordinate(double&, double&)));
-        structuredMeshDialog->setArea(mesh->area());
     } else {
         UnstructuredMeshDialog *unstructuredMeshDialog = (UnstructuredMeshDialog*) this->parent();
         QObject::connect(mouseInteractor, SIGNAL(coordinateChanged(double&, double&)), unstructuredMeshDialog, SLOT(setCoordinate(double&, double&)));
-        unstructuredMeshDialog->setArea(mesh->area());
     }
-
     renderer->AddActor(boundaryEdgesActor);
     renderer->AddActor(meshActor);
     renderer->AddActor(axesActor);

@@ -221,6 +221,37 @@ QSet<HydrodynamicConfiguration*> Project::getHydrodynamicConfigurations() const 
     return hydrodynamicConfigurations;
 }
 
+bool Project::addMeteorologicalConfiguration(MeteorologicalConfiguration *meteorologicalConfiguration) {
+    if (this->meteorologicalConfigurations.contains(meteorologicalConfiguration)) {
+        return false;
+    }
+    
+    this->meteorologicalConfigurations.insert(meteorologicalConfiguration);
+    
+    return true;
+}
+void Project::removeMeteorologicalConfiguration(const QString *configurationName) {
+    for (MeteorologicalConfiguration *configuration : this->meteorologicalConfigurations) {
+        if (configuration->getName() == configurationName) {
+            this->meteorologicalConfigurations.remove(configuration);
+        }
+    }
+}
+
+MeteorologicalConfiguration* Project::getMeteorologicalConfiguration(const QString &configurationName) const {
+    for (MeteorologicalConfiguration *configuration : this->meteorologicalConfigurations) {
+        if (configuration->getName() == configurationName) {
+            return configuration;
+        }
+    }
+
+    return nullptr;
+}
+
+QSet<MeteorologicalConfiguration*> Project::getMeteorologicalConfigurations() const {
+    return this->meteorologicalConfigurations;
+}
+
 bool Project::addSimulation(Simulation *simulation) {
     if (simulations.contains(simulation)) {
         return false;

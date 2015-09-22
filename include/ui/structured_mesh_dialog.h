@@ -21,8 +21,6 @@ public:
     explicit StructuredMeshDialog(QWidget *parent = 0);
     ~StructuredMeshDialog();
 
-    void setArea(const double &area);
-
 public slots:
     void setCoordinate(double &x, double &y);
 

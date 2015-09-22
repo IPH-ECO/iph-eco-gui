@@ -165,8 +165,39 @@ void DatabaseUtility::createApplicationTables() {
     sql << "create table time_series (" \
         "id integer primary key, " \
         "time_stamp integer not null, " \
-        "value float default 0, " \
-        "boundary_condition_id integer not null" \
+        "value1 float default 0, " \
+        "value2 float default 0, " \
+        "object_id integer not null, " \
+        "object_type text not null" \
+    ")";
+    
+    sql << "drop table if exists meteorological_configuration";
+    sql << "create table meteorological_configuration (" \
+        "id integer primary key, " \
+        "name text not null, " \
+        "mesh_id integer not null" \
+    ")";
+    
+    sql << "drop table if exists meteorological_station";
+    sql << "create table meterological_station (" \
+        "id integer primary key, " \
+        "name text not null, " \
+        "use_latitude_longitude default false, " \
+        "utm_x float not null, " \
+        "utm_y float not null, " \
+        "latitude float, " \
+        "longitude float, " \
+        "meteorological_configuration_id integer not null" \
+    ")";
+    
+    sql << "drop table if exists meteorological_parameter";
+    sql << "create table meteorological_parameter (" \
+        "id integer primary key, " \
+        "name text not null, " \
+        "unit text, " \
+        "function integer not null, " \
+        "constant_value float, " \
+        "meteorological_station_id integer not null" \
     ")";
     
     sql << "drop table if exists simulation";

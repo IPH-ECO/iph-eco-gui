@@ -16,21 +16,24 @@ class TimeSeriesDialog : public QDialog {
     Q_OBJECT
 private:
     const QString HYDRODYNAMIC_DEFAULT_DIR_KEY;
+    const QString dateTimeFormat;
 
     QSettings *appSettings;
 	Ui::TimeSeriesDialog *ui;
     BoundaryCondition *currentBoundaryCondition;
     QList<TimeSeries*> timeSeriesList;
+    TimeSeriesType timeSeriesType;
     
     QString getDefaultDirectory();
     bool isValid();
     virtual void accept();
     
 public:
-	explicit TimeSeriesDialog(QWidget *parent, BoundaryCondition *boundaryCondition, const QList<TimeSeries*> &timeSeriesList);
+	explicit TimeSeriesDialog(QWidget *parent, const QList<TimeSeries*> &timeSeriesList, const TimeSeriesType &timeSeriesType);
     ~TimeSeriesDialog();
     
     QList<TimeSeries*> getTimeSeriesList() const;
+    void setBoundaryCondition(BoundaryCondition *boundaryCondition);
     
 private slots:
     void on_btnAddEntry_clicked();

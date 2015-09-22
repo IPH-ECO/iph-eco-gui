@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>826</width>
-    <height>578</height>
+    <width>1440</width>
+    <height>851</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -30,13 +30,6 @@
        </item>
        <item row="2" column="1">
         <widget class="QLineEdit" name="edtConfigurationName"/>
-       </item>
-       <item row="0" column="0">
-        <widget class="QLabel" name="label">
-         <property name="text">
-          <string>Configuration</string>
-         </property>
-        </widget>
        </item>
        <item row="2" column="0">
         <widget class="QLabel" name="label_2">
@@ -61,13 +54,78 @@
          </property>
         </spacer>
        </item>
-       <item row="0" column="1">
-        <widget class="QComboBox" name="cbxConfiguration"/>
+       <item row="0" column="0" colspan="2">
+        <layout class="QHBoxLayout" name="horizontalLayout_4">
+         <item>
+          <widget class="QLabel" name="label">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>Configuration</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="cbxConfiguration"/>
+         </item>
+         <item>
+          <widget class="QToolButton" name="btnNewConfiguration">
+           <property name="toolTip">
+            <string>Add new mesh</string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="../../icons.qrc">
+             <normaloff>:/icons/archive-insert.png</normaloff>:/icons/archive-insert.png</iconset>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QToolButton" name="btnApplyConfiguration">
+           <property name="toolTip">
+            <string>Apply changes</string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="../../icons.qrc">
+             <normaloff>:/icons/archive-apply.png</normaloff>:/icons/archive-apply.png</iconset>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QToolButton" name="btnRemoveConfiguration">
+           <property name="toolTip">
+            <string>Remove selected mesh</string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="../../icons.qrc">
+             <normaloff>:/icons/archive-remove.png</normaloff>:/icons/archive-remove.png</iconset>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
       </layout>
      </item>
      <item>
       <widget class="QTreeWidget" name="trStations">
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>100</height>
+        </size>
+       </property>
        <column>
         <property name="text">
          <string>Stations</string>
@@ -143,6 +201,314 @@
       </spacer>
      </item>
      <item>
+      <widget class="QGroupBox" name="parameterGroupBox">
+       <property name="title">
+        <string>Parameter</string>
+       </property>
+       <layout class="QGridLayout" name="gridLayout_4">
+        <item row="4" column="0">
+         <widget class="QLabel" name="lblYComponent">
+          <property name="text">
+           <string>Y Component</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="0">
+         <widget class="QLabel" name="lblXComponent">
+          <property name="text">
+           <string>X Component</string>
+          </property>
+         </widget>
+        </item>
+        <item row="6" column="0">
+         <widget class="QLabel" name="lblDirection">
+          <property name="text">
+           <string>Direction (degree)</string>
+          </property>
+         </widget>
+        </item>
+        <item row="6" column="1">
+         <widget class="QLineEdit" name="edtDirection"/>
+        </item>
+        <item row="5" column="0">
+         <widget class="QLabel" name="lblIntensity">
+          <property name="text">
+           <string>Intensity (m/s)</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="0">
+         <widget class="QLabel" name="label_7">
+          <property name="text">
+           <string>Function</string>
+          </property>
+         </widget>
+        </item>
+        <item row="7" column="1">
+         <widget class="QPushButton" name="btnShowTimeSeries">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="text">
+           <string>...</string>
+          </property>
+         </widget>
+        </item>
+        <item row="7" column="0">
+         <widget class="QLabel" name="lblEntries">
+          <property name="text">
+           <string>Entries</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QLineEdit" name="edtConstant"/>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="lblValue">
+          <property name="text">
+           <string>Value</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QComboBox" name="cbxFunction">
+          <item>
+           <property name="text">
+            <string>Constant</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Time Series</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Modeling</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+        <item row="0" column="2">
+         <spacer name="horizontalSpacer_5">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="3" column="1">
+         <widget class="QLineEdit" name="edtXComponent"/>
+        </item>
+        <item row="5" column="1">
+         <widget class="QLineEdit" name="edtIntensity"/>
+        </item>
+        <item row="4" column="1">
+         <widget class="QLineEdit" name="edtYComponent"/>
+        </item>
+        <item row="2" column="1">
+         <widget class="QComboBox" name="cbxType">
+          <item>
+           <property name="text">
+            <string>XY Components</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Intensity and Direction</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="QLabel" name="lblType">
+          <property name="text">
+           <string>Type</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item>
+      <widget class="QGroupBox" name="stationGroupBox">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="title">
+        <string>Station</string>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_2">
+        <item>
+         <layout class="QGridLayout" name="gridLayout_3">
+          <item row="1" column="1">
+           <widget class="QLineEdit" name="edtX">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>70</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="2">
+           <widget class="QLabel" name="lblY">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>UTM-Y</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="3">
+           <widget class="QLineEdit" name="edtY">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>70</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="lblX">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>UTM-X</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_6">
+            <property name="text">
+             <string>Name</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1" colspan="3">
+           <widget class="QLineEdit" name="edtStationName">
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="4">
+           <spacer name="horizontalSpacer_4">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="QRadioButton" name="rdoUtm">
+          <property name="text">
+           <string>Projected Coordinate System</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QRadioButton" name="rdoLatLong">
+          <property name="text">
+           <string>Geographic Coordinate System</string>
+          </property>
+          <property name="checked">
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_5">
+       <item>
+        <spacer name="horizontalSpacer_3">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QPushButton" name="btnApplyParameter">
+         <property name="text">
+          <string>Apply</string>
+         </property>
+         <property name="icon">
+          <iconset resource="../../icons.qrc">
+           <normaloff>:/icons/dialog-ok-apply.png</normaloff>:/icons/dialog-ok-apply.png</iconset>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="btnApplyStation">
+         <property name="text">
+          <string>Apply</string>
+         </property>
+         <property name="icon">
+          <iconset resource="../../icons.qrc">
+           <normaloff>:/icons/dialog-ok-apply.png</normaloff>:/icons/dialog-ok-apply.png</iconset>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
       <layout class="QHBoxLayout" name="horizontalLayout_2">
        <item>
         <widget class="QPushButton" name="btnClose">
@@ -173,9 +539,9 @@
     </layout>
    </item>
    <item>
-    <layout class="QGridLayout" name="gridLayout_2" rowstretch="1,0">
+    <layout class="QGridLayout" name="gridLayout_2">
      <item row="1" column="0" colspan="3">
-      <widget class="QVTKWidget" name="vtkWidget">
+      <widget class="MeteorologicalVTKWidget" name="vtkWidget">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
          <horstretch>0</horstretch>
@@ -184,93 +550,29 @@
        </property>
       </widget>
      </item>
-     <item row="0" column="0" colspan="3">
-      <widget class="QGroupBox" name="groupBox">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="title">
-        <string>Station Coordinate</string>
-       </property>
-       <layout class="QGridLayout" name="gridLayout_3">
-        <item row="0" column="4">
-         <spacer name="horizontalSpacer_3">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item row="0" column="3">
-         <widget class="QLineEdit" name="edtUtmY"/>
-        </item>
-        <item row="0" column="2">
-         <widget class="QLabel" name="label_5">
-          <property name="text">
-           <string>UTM-Y</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="0">
-         <widget class="QLabel" name="label_3">
-          <property name="text">
-           <string>UTM-X</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1">
-         <widget class="QLineEdit" name="edtUtmX"/>
-        </item>
-        <item row="3" column="0">
-         <widget class="QPushButton" name="btnCoordinateOk">
-          <property name="text">
-           <string>OK</string>
-          </property>
-          <property name="icon">
-           <iconset resource="../../icons.qrc">
-            <normaloff>:/icons/dialog-ok-apply.png</normaloff>:/icons/dialog-ok-apply.png</iconset>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0" colspan="3">
-         <widget class="QRadioButton" name="rdoLatLong">
-          <property name="text">
-           <string>Geographic Coordinate System</string>
-          </property>
-          <property name="checked">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="0" colspan="3">
-         <widget class="QRadioButton" name="rdoUtm">
-          <property name="text">
-           <string>Projected Coordinate System</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-     </item>
     </layout>
    </item>
   </layout>
  </widget>
  <customwidgets>
   <customwidget>
-   <class>QVTKWidget</class>
-   <extends>QWidget</extends>
-   <header>QVTKWidget.h</header>
+   <class>MeteorologicalVTKWidget</class>
+   <extends>QVTKWidget</extends>
+   <header>include/ui/meteorological_vtk_widget.h</header>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>edtConfigurationName</tabstop>
+  <tabstop>cbxGridData</tabstop>
+  <tabstop>trStations</tabstop>
+  <tabstop>btnAddStation</tabstop>
+  <tabstop>btnRemoveStation</tabstop>
+  <tabstop>edtX</tabstop>
+  <tabstop>edtY</tabstop>
+  <tabstop>rdoLatLong</tabstop>
+  <tabstop>btnApplyStation</tabstop>
+  <tabstop>btnClose</tabstop>
+ </tabstops>
  <resources>
   <include location="../../icons.qrc"/>
  </resources>

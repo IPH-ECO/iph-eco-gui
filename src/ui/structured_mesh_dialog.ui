@@ -17,7 +17,7 @@
    <item row="0" column="1">
     <layout class="QVBoxLayout" name="rightWidget">
      <item>
-      <widget class="MeshVTKWidget" name="vtkWidget" native="true">
+      <widget class="MeshVTKWidget" name="vtkWidget">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
          <horstretch>0</horstretch>
@@ -34,13 +34,6 @@
      </item>
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout">
-       <item>
-        <widget class="QLabel" name="lblDomainArea">
-         <property name="text">
-          <string>Area: -</string>
-         </property>
-        </widget>
-       </item>
        <item>
         <widget class="QLabel" name="lblUTMCoordinate">
          <property name="text">
@@ -405,8 +398,13 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>MeshVTKWidget</class>
+   <class>QVTKWidget</class>
    <extends>QWidget</extends>
+   <header>QVTKWidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>MeshVTKWidget</class>
+   <extends>QVTKWidget</extends>
    <header>include/ui/mesh_vtk_widget.h</header>
    <slots>
     <slot>toggleBoundaryEdges(bool)</slot>
