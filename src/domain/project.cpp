@@ -230,7 +230,7 @@ bool Project::addMeteorologicalConfiguration(MeteorologicalConfiguration *meteor
     
     return true;
 }
-void Project::removeMeteorologicalConfiguration(const QString *configurationName) {
+void Project::removeMeteorologicalConfiguration(const QString &configurationName) {
     for (MeteorologicalConfiguration *configuration : this->meteorologicalConfigurations) {
         if (configuration->getName() == configurationName) {
             this->meteorologicalConfigurations.remove(configuration);

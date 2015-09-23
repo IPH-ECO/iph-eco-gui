@@ -71,12 +71,13 @@ SimulationDataType::TimeSeries TimeSeries::toSimulationDataType() const {
 }
 
 TimeSeriesType TimeSeries::mapStringToEnumType(const QString &typeStr) {
-    if (typeStr == "Constant") {
-        return TimeSeriesType::DEFAULT;
-    }
     if (typeStr == "XY Components") {
         return TimeSeriesType::XY_COMPONENTS;
     }
     
-    return TimeSeriesType::INTENSITY_DIRECTION;
+    if (typeStr == "Intensity and Direction") {
+        return TimeSeriesType::INTENSITY_DIRECTION;
+    }
+    
+    return TimeSeriesType::DEFAULT;
 }

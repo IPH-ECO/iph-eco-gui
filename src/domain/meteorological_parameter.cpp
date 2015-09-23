@@ -75,6 +75,16 @@ QList<TimeSeries*> MeteorologicalParameter::getTimeSeriesList() const {
     return timeSeriesList;
 }
 
+TimeSeries* MeteorologicalParameter::getTimeSeries(uint id) const {
+    for (TimeSeries *timeSeries : timeSeriesList) {
+        if (timeSeries->getId() == id) {
+            return timeSeries;
+        }
+    }
+    
+    return nullptr;
+}
+
 void MeteorologicalParameter::setTimeSeriesList(const QList<TimeSeries*> timeSeriesList) {
     this->timeSeriesList = timeSeriesList;
 }

@@ -39,6 +39,7 @@ public:
     double getConstantValue() const;
     void setConstantValue(double constantValue);
     QList<TimeSeries*> getTimeSeriesList() const;
+    TimeSeries* getTimeSeries(uint id) const;
     void setTimeSeriesList(const QList<TimeSeries*> timeSeriesList);
     double getXComponent() const;
     void setXComponent(double xComponent);

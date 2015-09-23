@@ -13,7 +13,8 @@
 #include <GeographicLib/GeoCoords.hpp>
 
 MeteorologicalDataDialog::MeteorologicalDataDialog(QWidget *parent) :
-    QDialog(parent), ui(new Ui::MeteorologicalDataDialog), unsavedConfiguration(new MeteorologicalConfiguration), currentConfiguration(unsavedConfiguration), currentStation(nullptr)
+    QDialog(parent), ui(new Ui::MeteorologicalDataDialog),
+    unsavedConfiguration(new MeteorologicalConfiguration), currentConfiguration(unsavedConfiguration), currentStation(nullptr)
 {
 	ui->setupUi(this);
     
@@ -35,6 +36,8 @@ MeteorologicalDataDialog::MeteorologicalDataDialog(QWidget *parent) :
     ui->cbxGridData->setCurrentIndex(-1);
     ui->cbxGridData->blockSignals(false);
     
+    ui->btnAddStation->setEnabled(false);
+    ui->btnRemoveStation->setEnabled(false);
     ui->stationGroupBox->hide();
     ui->parameterGroupBox->hide();
     ui->btnApplyStation->hide();
@@ -53,7 +56,13 @@ void MeteorologicalDataDialog::toggleModelingOption(bool disable) {
 void MeteorologicalDataDialog::on_cbxGridData_currentIndexChanged(const QString &name) {
     bool isNameEmpty = name.isEmpty();
     
-    if (!isNameEmpty) {
+    if (isNameEmpty) {
+        ui->stationGroupBox->hide();
+        ui->parameterGroupBox->hide();
+        ui->btnApplyStation->hide();
+        ui->btnApplyParameter->hide();
+        ui->btnRemoveStation->setDisabled(true);
+    } else {
         Project *project = IPHApplication::getCurrentProject();
         Mesh *mesh = project->getGridDataConfiguration(name)->getMesh();
         
@@ -61,65 +70,73 @@ void MeteorologicalDataDialog::on_cbxGridData_currentIndexChanged(const QString 
     }
     
     ui->btnAddStation->setDisabled(isNameEmpty);
-    ui->btnRemoveStation->setDisabled(isNameEmpty);
 }
 
 void MeteorologicalDataDialog::on_trStations_itemSelectionChanged() {
     QTreeWidgetItem *selectedItem = ui->trStations->currentItem();
-    bool isParameterItem = selectedItem->parent();
     
-    if (isParameterItem) {
-        MeteorologicalParameter *parameter = qvariant_cast<MeteorologicalParameter*>(selectedItem->data(0, Qt::UserRole));
-        MeteorologicalParameterFunction function = parameter->getFunction();
-        bool isConstant = function == MeteorologicalParameterFunction::CONSTANT;
-        bool isWindParameter = parameter->getName() == "Wind";
-        
-        toggleModelingOption(parameter->getName() != "Evaporation");
-        
-        ui->stationGroupBox->hide();
-        ui->cbxFunction->setCurrentText(parameter->getFunctionStr());
-        ui->edtConstant->setText(QString::number(parameter->getConstantValue()));
-        ui->edtConstant->setVisible(isConstant && !isWindParameter);
-        ui->lblValue->setVisible(isConstant && !isWindParameter);
-        ui->lblEntries->setVisible(!isConstant);
-        ui->btnShowTimeSeries->setVisible(!isConstant);
-        ui->lblType->setVisible(isWindParameter);
-        ui->cbxType->setVisible(isWindParameter);
-        ui->lblXComponent->setVisible(isWindParameter && ui->cbxType->currentText() == "XY Components");
-        ui->edtXComponent->setVisible(isWindParameter && ui->cbxType->currentText() == "XY Components");
-        ui->lblYComponent->setVisible(isWindParameter && ui->cbxType->currentText() == "XY Components");
-        ui->edtYComponent->setVisible(isWindParameter && ui->cbxType->currentText() == "XY Components");
-        ui->lblIntensity->setVisible(isWindParameter && ui->cbxType->currentText() == "Intensity and Direction");
-        ui->edtIntensity->setVisible(isWindParameter && ui->cbxType->currentText() == "Intensity and Direction");
-        ui->lblDirection->setVisible(isWindParameter && ui->cbxType->currentText() == "Intensity and Direction");
-        ui->edtDirection->setVisible(isWindParameter && ui->cbxType->currentText() == "Intensity and Direction");
-        ui->parameterGroupBox->setTitle(QString("%1 (%2)").arg(parameter->getName()).arg(parameter->getUnit()));
-        ui->parameterGroupBox->show();
-        ui->btnApplyParameter->show();
-        ui->btnApplyStation->hide();
-        currentStation = nullptr;
-    } else {
-        currentStation = qvariant_cast<MeteorologicalStation*>(selectedItem->data(0, Qt::UserRole));
-        
-        ui->parameterGroupBox->hide();
-        ui->edtStationName->setText(currentStation->getName());
-        if (currentStation->getUseLatitudeLongitude()) {
-            ui->edtX->setText(QString::number(currentStation->getLatitude()));
-            ui->edtY->setText(QString::number(currentStation->getLongitude()));
-            ui->rdoLatLong->setChecked(true);
+    if (selectedItem) {
+        bool isParameterItem = selectedItem->parent();
+    
+        if (isParameterItem) {
+            MeteorologicalParameter *parameter = qvariant_cast<MeteorologicalParameter*>(selectedItem->data(0, Qt::UserRole));
+            MeteorologicalParameterFunction function = parameter->getFunction();
+            bool isConstant = function == MeteorologicalParameterFunction::CONSTANT;
+            bool isWindParameter = parameter->getName() == "Wind";
+            bool isEvaporation = parameter->getName() == "Evaporation";
+            
+            toggleModelingOption(!isEvaporation);
+            
+            ui->stationGroupBox->hide();
+            ui->cbxFunction->setCurrentText(parameter->getFunctionStr());
+            ui->edtConstant->setText(QString::number(parameter->getConstantValue()));
+            ui->edtConstant->setVisible(isConstant && !isWindParameter);
+            ui->lblValue->setVisible(isConstant && !isWindParameter);
+            ui->lblEntries->setVisible(!isConstant && !isEvaporation);
+            ui->btnShowTimeSeries->setVisible(!isConstant && !isEvaporation);
+            ui->lblType->setVisible(isWindParameter);
+            ui->cbxType->setVisible(isWindParameter);
+            ui->lblXComponent->setVisible(isWindParameter && isConstant && ui->cbxType->currentText() == "XY Components");
+            ui->edtXComponent->setVisible(isWindParameter && isConstant && ui->cbxType->currentText() == "XY Components");
+            ui->lblYComponent->setVisible(isWindParameter && isConstant && ui->cbxType->currentText() == "XY Components");
+            ui->edtYComponent->setVisible(isWindParameter && isConstant && ui->cbxType->currentText() == "XY Components");
+            ui->lblIntensity->setVisible(isWindParameter && isConstant && ui->cbxType->currentText() == "Intensity and Direction");
+            ui->edtIntensity->setVisible(isWindParameter && isConstant && ui->cbxType->currentText() == "Intensity and Direction");
+            ui->lblDirection->setVisible(isWindParameter && isConstant && ui->cbxType->currentText() == "Intensity and Direction");
+            ui->edtDirection->setVisible(isWindParameter && isConstant && ui->cbxType->currentText() == "Intensity and Direction");
+            ui->parameterGroupBox->setTitle(QString("%1 (%2)").arg(parameter->getName()).arg(parameter->getUnit()));
+            ui->parameterGroupBox->show();
+            ui->btnApplyParameter->show();
+            ui->btnApplyStation->hide();
+            currentStation = nullptr;
         } else {
-            ui->edtX->setText(QString::number(currentStation->getUtmX()));
-            ui->edtY->setText(QString::number(currentStation->getUtmY()));
-            ui->rdoUtm->setChecked(true);
+            currentStation = qvariant_cast<MeteorologicalStation*>(selectedItem->data(0, Qt::UserRole));
+            
+            ui->parameterGroupBox->hide();
+            ui->edtStationName->setText(currentStation->getName());
+            if (currentStation->getUseLatitudeLongitude()) {
+                ui->edtX->setText(QString::number(currentStation->getLatitude()));
+                ui->edtY->setText(QString::number(currentStation->getLongitude()));
+                ui->rdoLatLong->setChecked(true);
+            } else {
+                ui->edtX->setText(QString::number(currentStation->getUtmX()));
+                ui->edtY->setText(QString::number(currentStation->getUtmY()));
+                ui->rdoUtm->setChecked(true);
+            }
+            
+            ui->stationGroupBox->show();
+            ui->btnApplyParameter->hide();
+            ui->btnApplyStation->show();
+            ui->vtkWidget->highlightStation(currentStation);
         }
         
-        ui->stationGroupBox->show();
-        ui->btnApplyParameter->hide();
-        ui->btnApplyStation->show();
-        ui->vtkWidget->highlightStation(currentStation);
+        ui->btnRemoveStation->setDisabled(isParameterItem);
+    } else {
+        on_btnAddStation_clicked();
+        ui->btnRemoveStation->setDisabled(true);
+        ui->stationGroupBox->hide();
+        ui->parameterGroupBox->hide();
     }
-    
-    ui->btnRemoveStation->setDisabled(isParameterItem);
 }
 
 void MeteorologicalDataDialog::on_btnAddStation_clicked() {
@@ -134,6 +151,7 @@ void MeteorologicalDataDialog::on_btnAddStation_clicked() {
     ui->btnApplyParameter->hide();
     ui->btnApplyStation->show();
     ui->stationGroupBox->show();
+    ui->edtStationName->setFocus();
 }
 
 void MeteorologicalDataDialog::on_btnRemoveStation_clicked() {
@@ -145,9 +163,7 @@ void MeteorologicalDataDialog::on_btnRemoveStation_clicked() {
         
         if (QMessageBox::question(this, tr("Meteorological Data"), question) == QMessageBox::Yes) {
             ui->vtkWidget->removeStation(station);
-            ui->trStations->blockSignals(true);
             ui->trStations->takeTopLevelItem(ui->trStations->currentIndex().row());
-            ui->trStations->blockSignals(false);
             currentConfiguration->removeStation(station);
             
             if (!ui->trStations->currentItem()) {
@@ -251,32 +267,55 @@ void MeteorologicalDataDialog::on_btnApplyParameter_clicked() {
     
     if (item) {
         MeteorologicalParameter *parameter = qvariant_cast<MeteorologicalParameter*>(item->data(0, Qt::UserRole));
-        bool isWindParameter = parameter->getName() == "Wind";
         
-        parameter->setFunction(ui->cbxFunction->currentText());
-        
-        if (isWindParameter) {
-            if (ui->cbxType->currentText() == "XY Components") {
-                parameter->setXComponent(ui->edtXComponent->text().toDouble());
-                parameter->setYComponent(ui->edtYComponent->text().toDouble());
+        if (ui->cbxFunction->currentText() == "Constant") {
+            bool isWindParameter = parameter->getName() == "Wind";
+            
+            if (isWindParameter) {
+                if (ui->cbxType->currentText() == "XY Components") {
+                    if (ui->edtXComponent->text().isEmpty() || ui->edtYComponent->text().isEmpty()) {
+                        QMessageBox::warning(this, tr("Meteorological Data"), tr("Invalid parameter values."));
+                        return;
+                    }
+                    parameter->setXComponent(ui->edtXComponent->text().toDouble());
+                    parameter->setYComponent(ui->edtYComponent->text().toDouble());
+                } else {
+                    if (ui->edtIntensity->text().isEmpty() || ui->edtDirection->text().isEmpty()) {
+                        QMessageBox::warning(this, tr("Meteorological Data"), tr("Invalid parameter values."));
+                        return;
+                    }
+                    parameter->setIntensity(ui->edtIntensity->text().toDouble());
+                    parameter->setDirection(ui->edtDirection->text().toDouble());
+                }
             } else {
-                parameter->setIntensity(ui->edtIntensity->text().toDouble());
-                parameter->setDirection(ui->edtDirection->text().toDouble());
+                parameter->setConstantValue(ui->edtConstant->text().toDouble());
             }
         }
+        
+        parameter->setFunction(ui->cbxFunction->currentText());
     }
 }
 
 void MeteorologicalDataDialog::on_cbxFunction_currentIndexChanged(const QString &function) {
     bool isConstant = function == "Constant";
     bool isTimeSeries = function == "Time Series";
+    bool isWind = ui->trStations->currentItem()->text(0) == "Wind";
+    bool isXYComponent = ui->cbxType->currentText() == "XY Components";
     
-    ui->lblValue->setVisible(isConstant);
-    ui->edtConstant->setVisible(isConstant);
-    ui->lblIntensity->setVisible(isConstant);
-    ui->edtIntensity->setVisible(isConstant);
-    ui->lblDirection->setVisible(isConstant);
-    ui->edtDirection->setVisible(isConstant);
+    ui->lblValue->setVisible(isConstant && !isWind);
+    ui->edtConstant->setVisible(isConstant && !isWind);
+    ui->lblIntensity->setVisible(isConstant && isWind);
+    ui->edtIntensity->setVisible(isConstant && isWind);
+    ui->lblDirection->setVisible(isConstant && isWind);
+    ui->edtDirection->setVisible(isConstant && isWind);
+    ui->lblXComponent->setVisible(isConstant && isXYComponent);
+    ui->edtXComponent->setVisible(isConstant && isXYComponent);
+    ui->lblYComponent->setVisible(isConstant && isXYComponent);
+    ui->edtYComponent->setVisible(isConstant && isXYComponent);
+    ui->lblIntensity->setVisible(isConstant && !isXYComponent);
+    ui->edtIntensity->setVisible(isConstant && !isXYComponent);
+    ui->lblDirection->setVisible(isConstant && !isXYComponent);
+    ui->edtDirection->setVisible(isConstant && !isXYComponent);
     ui->lblEntries->setVisible(isTimeSeries);
     ui->btnShowTimeSeries->setVisible(isTimeSeries);
 }
@@ -288,23 +327,93 @@ void MeteorologicalDataDialog::on_btnClose_clicked() {
 
 void MeteorologicalDataDialog::on_cbxType_currentIndexChanged(const QString &type) {
     bool isXyComponents = type == "XY Components";
+    bool isTimeSeries = ui->cbxFunction->currentText() == "Time Series";
     
-    ui->lblXComponent->setVisible(isXyComponents);
-    ui->edtXComponent->setVisible(isXyComponents);
-    ui->lblYComponent->setVisible(isXyComponents);
-    ui->edtYComponent->setVisible(isXyComponents);
-    ui->lblIntensity->setVisible(!isXyComponents);
-    ui->edtIntensity->setVisible(!isXyComponents);
-    ui->lblDirection->setVisible(!isXyComponents);
-    ui->edtDirection->setVisible(!isXyComponents);
+    ui->lblXComponent->setVisible(isXyComponents && !isTimeSeries);
+    ui->edtXComponent->setVisible(isXyComponents && !isTimeSeries);
+    ui->lblYComponent->setVisible(isXyComponents && !isTimeSeries);
+    ui->edtYComponent->setVisible(isXyComponents && !isTimeSeries);
+    ui->lblIntensity->setVisible(!isXyComponents && !isTimeSeries);
+    ui->edtIntensity->setVisible(!isXyComponents && !isTimeSeries);
+    ui->lblDirection->setVisible(!isXyComponents && !isTimeSeries);
+    ui->edtDirection->setVisible(!isXyComponents && !isTimeSeries);
 }
 
 void MeteorologicalDataDialog::on_btnShowTimeSeries_clicked() {
-    TimeSeriesType timeSeriesType = TimeSeries::mapStringToEnumType(ui->cbxType->currentText());
-    TimeSeriesDialog *timeSeriesDialog = new TimeSeriesDialog(this, timeSeriesList, timeSeriesType);
+    bool isWind = ui->trStations->currentItem()->text(0) == "Wind";
+    MeteorologicalParameter *parameter = qvariant_cast<MeteorologicalParameter*>(ui->trStations->currentItem()->data(0, Qt::UserRole));
+    TimeSeriesType timeSeriesType = isWind ? TimeSeries::mapStringToEnumType(ui->cbxType->currentText()) : TimeSeriesType::DEFAULT;
+    TimeSeriesDialog *timeSeriesDialog = new TimeSeriesDialog(this, timeSeriesType);
+
+    timeSeriesDialog->loadTimeSeriesList(parameter->getTimeSeriesList());
+    timeSeriesDialog->setMeteorologicalParameter(parameter);
     int exitCode = timeSeriesDialog->exec();
 
     if (exitCode == QDialog::Accepted) {
-        timeSeriesList = timeSeriesDialog->getTimeSeriesList();
+        parameter->setTimeSeriesList(timeSeriesDialog->getTimeSeriesList());
+    }
+}
+
+void MeteorologicalDataDialog::on_btnNewConfiguration_clicked() {
+    currentConfiguration = unsavedConfiguration;
+    ui->edtConfigurationName->setText("");
+    ui->trStations->clear();
+    ui->cbxGridData->setCurrentIndex(-1);
+    ui->vtkWidget->clear();
+}
+
+void MeteorologicalDataDialog::on_btnApplyConfiguration_clicked() {
+    QString oldConfigurationName = ui->cbxConfiguration->currentText();
+    QString newConfigurationName = ui->edtConfigurationName->text();
+    
+    if (newConfigurationName.isEmpty()) {
+        QMessageBox::warning(this, tr("Meteorological Data"), tr("Configuration name can't be empty."));
+        return;
+    }
+    
+    if (ui->cbxGridData->currentIndex() == -1) {
+        QMessageBox::warning(this, tr("Meteorological Data"), tr("This configuration must be associated to a Grid Data."));
+        return;
+    }
+    
+    if (ui->trStations->topLevelItemCount() == 0) {
+        QMessageBox::warning(this, tr("Meteorological Data"), tr("This configuration must have at least one station."));
+        return;
+    }
+    
+    if (oldConfigurationName.isEmpty()) { // new mesh
+        Project *project = IPHApplication::getCurrentProject();
+        
+        if (project->getMeteorologicalConfiguration(newConfigurationName)) {
+            QMessageBox::critical(this, tr("Meteorological Data"), tr("Configuration name already used."));
+            return;
+        }
+        
+        currentConfiguration->setName(newConfigurationName);
+        project->addMeteorologicalConfiguration(currentConfiguration);
+        unsavedConfiguration = new MeteorologicalConfiguration();
+        
+        ui->cbxConfiguration->addItem(newConfigurationName);
+        ui->cbxConfiguration->setCurrentText(newConfigurationName);
+    } else {
+        currentConfiguration->setName(newConfigurationName);
+        ui->cbxConfiguration->setItemText(ui->cbxConfiguration->currentIndex(), newConfigurationName);
+    }
+}
+
+void MeteorologicalDataDialog::on_btnRemoveConfiguration_clicked() {
+    QString configurationName = ui->cbxConfiguration->currentText();
+    
+    if (configurationName.isEmpty()) {
+        return;
+    }
+    
+    QString questionStr = QString("Are you sure you want to remove '%1'?").arg(configurationName);
+    QMessageBox::StandardButton questionBtn = QMessageBox::question(this, tr("Remove mesh"), questionStr);
+    
+    if (questionBtn == QMessageBox::Yes) {
+        IPHApplication::getCurrentProject()->removeMeteorologicalConfiguration(configurationName);
+        ui->cbxConfiguration->removeItem(ui->cbxConfiguration->currentIndex());
+        this->on_btnNewConfiguration_clicked();
     }
 }

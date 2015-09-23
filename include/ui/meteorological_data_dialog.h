@@ -30,6 +30,9 @@ private slots:
     void on_trStations_itemSelectionChanged();
     void on_cbxType_currentIndexChanged(const QString &type);
     void on_btnShowTimeSeries_clicked();
+    void on_btnNewConfiguration_clicked();
+    void on_btnApplyConfiguration_clicked();
+    void on_btnRemoveConfiguration_clicked();
 private:
 	Ui::MeteorologicalDataDialog *ui;
     MeteorologicalConfiguration *unsavedConfiguration;

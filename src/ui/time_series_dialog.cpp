@@ -9,9 +9,9 @@
 #include <QIODevice>
 #include <QFile>
 
-TimeSeriesDialog::TimeSeriesDialog(QWidget *parent, const QList<TimeSeries*> &timeSeriesList, const TimeSeriesType &timeSeriesType) :
-    QDialog(parent), HYDRODYNAMIC_DEFAULT_DIR_KEY("default_hydrodynamic_dir"), dateTimeFormat("yyyy-MM-dd HH:mm:ss"),
-    ui(new Ui::TimeSeriesDialog), timeSeriesType(timeSeriesType)
+TimeSeriesDialog::TimeSeriesDialog(QWidget *parent, const TimeSeriesType &timeSeriesType) :
+    QDialog(parent), HYDRODYNAMIC_DEFAULT_DIR_KEY("default_hydrodynamic_dir"), dateTimeFormat("yyyy-MM-dd HH:mm:ss"), ui(new Ui::TimeSeriesDialog),
+    currentBoundaryCondition(nullptr), currentMeteorologicalParameter(nullptr), timeSeriesType(timeSeriesType)
 {
     ui->setupUi(this);
     ui->tblTimeSeries->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
@@ -26,7 +26,9 @@ TimeSeriesDialog::TimeSeriesDialog(QWidget *parent, const QList<TimeSeries*> &ti
         ui->tblTimeSeries->setHorizontalHeaderItem(1, new QTableWidgetItem("Intensity"));
         ui->tblTimeSeries->setHorizontalHeaderItem(2, new QTableWidgetItem("Direction"));
     }
-    
+}
+
+void TimeSeriesDialog::loadTimeSeriesList(const QList<TimeSeries*> &timeSeriesList) {
     this->timeSeriesList = timeSeriesList;
     int i = 0;
     
@@ -39,7 +41,11 @@ TimeSeriesDialog::TimeSeriesDialog(QWidget *parent, const QList<TimeSeries*> &ti
         if (timeSeriesType != TimeSeriesType::DEFAULT) {
             ui->tblTimeSeries->setItem(i, 2, new QTableWidgetItem(QString::number(timeSeries->getValue2())));
         }
-        ui->tblTimeSeries->item(i, 0)->setData(Qt::UserRole, QVariant((uint) timeSeries->getId()));
+        
+        if (timeSeries->isPersisted()) {
+            ui->tblTimeSeries->item(i, 0)->setData(Qt::UserRole, QVariant((uint) timeSeries->getId()));
+        }
+        
         i++;
     }
 }
@@ -67,9 +73,9 @@ void TimeSeriesDialog::on_btnImportCSV_clicked() {
         QStringList tokens;
         
         if (csvFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
+            int columnCount = timeSeriesType == TimeSeriesType::DEFAULT ? 2 : 3;
             QList<TimeSeries> tempTimeSeriesList;
             int i = 1;
-            int columnCount = timeSeriesType == TimeSeriesType::DEFAULT ? 2 : 3;
             
             while (!csvFile.atEnd()) {
                 QString line = csvFile.readLine();
@@ -174,7 +180,11 @@ void TimeSeriesDialog::accept() {
         TimeSeries *timeSeries = nullptr;
         
         if (data.isValid()) {
-            timeSeries = currentBoundaryCondition->getTimeSeries(data.toUInt());
+            if (currentBoundaryCondition) {
+                timeSeries = currentBoundaryCondition->getTimeSeries(data.toUInt());
+            } else {
+                timeSeries = currentMeteorologicalParameter->getTimeSeries(data.toUInt());
+            }
         } else {
             timeSeries = new TimeSeries();
         }
@@ -187,7 +197,7 @@ void TimeSeriesDialog::accept() {
         if (timeSeriesType != TimeSeriesType::DEFAULT) {
             timeSeries->setValue2(ui->tblTimeSeries->item(i, 2)->text().toDouble());
         }
-        timeSeries->setObjectType("BoundaryCondition");
+        timeSeries->setObjectType(currentBoundaryCondition ? "BoundaryCondition" : "MeteorologicalParameter");
         
         timeSeriesList.append(timeSeries);
     }
@@ -201,4 +211,8 @@ QList<TimeSeries*> TimeSeriesDialog::getTimeSeriesList() const {
 
 void TimeSeriesDialog::setBoundaryCondition(BoundaryCondition *boundaryCondition) {
     currentBoundaryCondition = boundaryCondition;
+}
+
+void TimeSeriesDialog::setMeteorologicalParameter(MeteorologicalParameter *meteorologicalParameter) {
+    currentMeteorologicalParameter = meteorologicalParameter;
 }

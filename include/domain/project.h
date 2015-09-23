@@ -65,7 +65,7 @@ public:
     QSet<HydrodynamicConfiguration*> getHydrodynamicConfigurations() const;
     
     bool addMeteorologicalConfiguration(MeteorologicalConfiguration *meteorologicalConfiguration);
-    void removeMeteorologicalConfiguration(const QString *configurationName);
+    void removeMeteorologicalConfiguration(const QString &configurationName);
     MeteorologicalConfiguration* getMeteorologicalConfiguration(const QString &configurationName) const;
     QSet<MeteorologicalConfiguration*> getMeteorologicalConfigurations() const;
     

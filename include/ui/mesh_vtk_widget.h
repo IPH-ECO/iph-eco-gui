@@ -36,7 +36,7 @@ public:
     MeshVTKWidget(QWidget *parent);
     ~MeshVTKWidget();
     void render(Mesh *mesh);
-    void clear();
+    virtual void clear();
 
 public slots:
     void toggleBoundaryEdges(bool show);

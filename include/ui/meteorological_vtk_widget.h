@@ -13,6 +13,7 @@ public:
     void removeStation(MeteorologicalStation *station);
     void highlightStation(MeteorologicalStation *station);
 	void showStations();
+    virtual void clear();
 };
 
 #endif // METEOROLOGICAL_VTK_WIDGET_H

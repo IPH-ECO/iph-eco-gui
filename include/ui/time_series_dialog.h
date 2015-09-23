@@ -2,6 +2,7 @@
 #define TIME_SERIES_DIALOG_H
 
 #include "include/domain/boundary_condition.h"
+#include "include/domain/meteorological_parameter.h"
 
 #include <QSettings>
 #include <QDialog>
@@ -21,6 +22,7 @@ private:
     QSettings *appSettings;
 	Ui::TimeSeriesDialog *ui;
     BoundaryCondition *currentBoundaryCondition;
+    MeteorologicalParameter *currentMeteorologicalParameter;
     QList<TimeSeries*> timeSeriesList;
     TimeSeriesType timeSeriesType;
     
@@ -29,11 +31,13 @@ private:
     virtual void accept();
     
 public:
-	explicit TimeSeriesDialog(QWidget *parent, const QList<TimeSeries*> &timeSeriesList, const TimeSeriesType &timeSeriesType);
+	explicit TimeSeriesDialog(QWidget *parent, const TimeSeriesType &timeSeriesType);
     ~TimeSeriesDialog();
     
     QList<TimeSeries*> getTimeSeriesList() const;
     void setBoundaryCondition(BoundaryCondition *boundaryCondition);
+    void setMeteorologicalParameter(MeteorologicalParameter *meteorologicalParameter);
+    void loadTimeSeriesList(const QList<TimeSeries*> &timeSeriesList);
     
 private slots:
     void on_btnAddEntry_clicked();
