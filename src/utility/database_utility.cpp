@@ -175,18 +175,18 @@ void DatabaseUtility::createApplicationTables() {
     sql << "create table meteorological_configuration (" \
         "id integer primary key, " \
         "name text not null, " \
-        "mesh_id integer not null" \
+        "grid_data_configuration_id integer not null" \
     ")";
     
     sql << "drop table if exists meteorological_station";
-    sql << "create table meterological_station (" \
+    sql << "create table meteorological_station (" \
         "id integer primary key, " \
         "name text not null, " \
-        "use_latitude_longitude default false, " \
+        "use_latitude_longitude bool default false, " \
         "utm_x float not null, " \
         "utm_y float not null, " \
-        "latitude float, " \
-        "longitude float, " \
+        "latitude float default 0, " \
+        "longitude float default 0, " \
         "meteorological_configuration_id integer not null" \
     ")";
     
@@ -197,6 +197,10 @@ void DatabaseUtility::createApplicationTables() {
         "unit text, " \
         "function integer not null, " \
         "constant_value float, " \
+        "x_component float default 0, " \
+        "y_component float default 0, " \
+        "intensity float default 0, " \
+        "direction float default 0, " \
         "meteorological_station_id integer not null" \
     ")";
     

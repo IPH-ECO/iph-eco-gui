@@ -1,14 +1,14 @@
 #ifndef METEOROLOGICAL_CONFIGURATION_H
 #define METEOROLOGICAL_CONFIGURATION_H
 
-#include "mesh.h"
+#include "grid_data_configuration.h"
 #include "meteorological_station.h"
 
 class MeteorologicalConfiguration {
 private:
     uint id;
     QString name; // configuration name
-    Mesh *mesh;
+    GridDataConfiguration *gridDataConfiguration;
     QList<MeteorologicalStation*> stations;
 public:
     MeteorologicalConfiguration();
@@ -17,8 +17,8 @@ public:
     bool isPersisted() const;
     QString getName() const;
     void setName(const QString &name);
-    Mesh* getMesh() const;
-    void setMesh(Mesh *mesh);
+    GridDataConfiguration* getGridDataConfiguration() const;
+    void setGridDataConfiguration(GridDataConfiguration *gridDataConfiguration);
     QList<MeteorologicalStation*> getStations() const;
     void setStations(const QList<MeteorologicalStation*> &stations);
     bool addStation(MeteorologicalStation *station);

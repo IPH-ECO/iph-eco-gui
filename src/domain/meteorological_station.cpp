@@ -2,7 +2,7 @@
 
 MeteorologicalStation::MeteorologicalStation() : id(0) {}
 
-MeteorologicalStation::MeteorologicalStation(const QString &name) : id(0), name(name), useLatitudeLongitude(false) {}
+MeteorologicalStation::MeteorologicalStation(const QString &name) : id(0), name(name), useLatitudeLongitude(false), latitude(0), longitude(0) {}
 
 uint MeteorologicalStation::getId() const {
     return id;
@@ -68,8 +68,13 @@ void MeteorologicalStation::setLongitude(double longitude) {
 QList<MeteorologicalParameter*> MeteorologicalStation::getParameters() const {
     return parameters;
 }
+
 void MeteorologicalStation::setParameters(const QList<MeteorologicalParameter*> &parameters) {
     this->parameters = parameters;
+}
+
+void MeteorologicalStation::addMeteorologicalParameter(MeteorologicalParameter *parameter) {
+    parameters.append(parameter);
 }
 
 vtkSmartPointer<vtkActor> MeteorologicalStation::getIconActor() const {
@@ -78,4 +83,12 @@ vtkSmartPointer<vtkActor> MeteorologicalStation::getIconActor() const {
 
 void MeteorologicalStation::setIconActor(vtkSmartPointer<vtkActor> iconActor) {
     this->iconActor = iconActor;
+}
+
+vtkSmartPointer<vtkCaptionActor2D> MeteorologicalStation::getCaptionActor() const {
+    return captionActor;
+}
+
+void MeteorologicalStation::setCaptionActor(vtkSmartPointer<vtkCaptionActor2D> captionActor) {
+    this->captionActor = captionActor;
 }

@@ -6,6 +6,7 @@
 #include <QMetaType>
 #include <vtkActor.h>
 #include <vtkSmartPointer.h>
+#include <vtkCaptionActor2D.h>
 
 class MeteorologicalStation {
 private:
@@ -20,6 +21,7 @@ private:
     
     // Transient attributes
     vtkSmartPointer<vtkActor> iconActor;
+    vtkSmartPointer<vtkCaptionActor2D> captionActor;
 public:
     MeteorologicalStation();
     MeteorologicalStation(const QString &name);
@@ -40,8 +42,11 @@ public:
     void setLongitude(double longitude);
     QList<MeteorologicalParameter*> getParameters() const;
     void setParameters(const QList<MeteorologicalParameter*> &parameters);
+    void addMeteorologicalParameter(MeteorologicalParameter *parameter);
     vtkSmartPointer<vtkActor> getIconActor() const;
     void setIconActor(vtkSmartPointer<vtkActor> iconActor);
+    vtkSmartPointer<vtkCaptionActor2D> getCaptionActor() const;
+    void setCaptionActor(vtkSmartPointer<vtkCaptionActor2D> captionActor);
 };
 
 Q_DECLARE_METATYPE(MeteorologicalStation*)

@@ -556,6 +556,11 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>QVTKWidget</class>
+   <extends>QWidget</extends>
+   <header>QVTKWidget.h</header>
+  </customwidget>
+  <customwidget>
    <class>MeteorologicalVTKWidget</class>
    <extends>QVTKWidget</extends>
    <header>include/ui/meteorological_vtk_widget.h</header>

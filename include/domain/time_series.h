@@ -15,6 +15,7 @@ private:
     double value2;
     uint objectId;
     QString objectType;
+    TimeSeriesType timeSeriesType;
 public:
 	TimeSeries();
 	uint getId() const;
@@ -31,6 +32,8 @@ public:
     void setObjectId(uint objectId);
     QString getObjectType() const;
     void setObjectType(const QString &objectType);
+    TimeSeriesType getTimeSeriesType() const;
+    void setTimeSeriesType(const TimeSeriesType &timeSeriesType);
     SimulationDataType::TimeSeries toSimulationDataType() const;
     static TimeSeriesType mapStringToEnumType(const QString &typeStr);
 };

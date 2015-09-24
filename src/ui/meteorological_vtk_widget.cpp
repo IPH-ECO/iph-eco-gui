@@ -4,7 +4,9 @@
 #include <vtkRenderer.h>
 #include <vtkPNGReader.h>
 #include <vtkImageData.h>
+#include <vtkTextProperty.h>
 #include <vtkDataSetMapper.h>
+#include <vtkCaptionActor2D.h>
 #include <vtkActorCollection.h>
 #include <vtkImageChangeInformation.h>
 
@@ -13,6 +15,7 @@ MeteorologicalVTKWidget::MeteorologicalVTKWidget(QWidget *parent) : MeshVTKWidge
 void MeteorologicalVTKWidget::addStation(MeteorologicalStation *station) {
     if (station->getIconActor()) {
         renderer->RemoveActor(station->getIconActor());
+        renderer->RemoveActor(station->getCaptionActor());
     }
     
     vtkSmartPointer<vtkPNGReader> iconReader = vtkSmartPointer<vtkPNGReader>::New();
@@ -34,12 +37,20 @@ void MeteorologicalVTKWidget::addStation(MeteorologicalStation *station) {
     iconActor->SetMapper(iconMapper);
     station->setIconActor(iconActor);
     
+    vtkSmartPointer<vtkCaptionActor2D> captionActor = vtkSmartPointer<vtkCaptionActor2D>::New();
+    captionActor->SetAttachmentPoint(station->getUtmX(), station->getUtmY(), 0);
+    captionActor->SetCaption(station->getName().toStdString().c_str());
+    captionActor->BorderOff();
+    station->setCaptionActor(captionActor);
+    
+    renderer->AddActor(captionActor);
     renderer->AddActor(iconActor);
     this->update();
 }
 
 void MeteorologicalVTKWidget::removeStation(MeteorologicalStation *station) {
     renderer->RemoveActor(station->getIconActor());
+    renderer->RemoveActor(station->getCaptionActor());
     this->update();
 }
 

@@ -3,7 +3,8 @@
 MeteorologicalParameter::MeteorologicalParameter() : id(0) {}
 
 MeteorologicalParameter::MeteorologicalParameter(const QString &name, const QString &unit, double constantValue) :
-    id(0), name(name), unit(unit), function(MeteorologicalParameterFunction::CONSTANT), constantValue(constantValue)
+    id(0), name(name), unit(unit), function(MeteorologicalParameterFunction::CONSTANT), constantValue(constantValue),
+    xComponent(0), yComponent(0), intensity(0), direction(0)
 {}
 
 uint MeteorologicalParameter::getId() const {
@@ -87,6 +88,10 @@ TimeSeries* MeteorologicalParameter::getTimeSeries(uint id) const {
 
 void MeteorologicalParameter::setTimeSeriesList(const QList<TimeSeries*> timeSeriesList) {
     this->timeSeriesList = timeSeriesList;
+}
+
+void MeteorologicalParameter::addTimeSeries(TimeSeries *timeSeries) {
+    timeSeriesList.append(timeSeries);
 }
 
 double MeteorologicalParameter::getXComponent() const {

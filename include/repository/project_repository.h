@@ -24,6 +24,7 @@ private:
     void loadHydrodynamicParameter(HydrodynamicConfiguration *configuration, Project *project);
     void loadBoundaryConditions(HydrodynamicConfiguration *configuration);
     void loadTimeSeries(BoundaryCondition *boundaryCondition);
+    void loadTimeSeries(MeteorologicalParameter *meteorologicalParameter);
     
     void saveGridDataConfigurations(Project *project);
     void saveGridData(GridDataConfiguration *gridDataConfiguration);
@@ -32,12 +33,14 @@ private:
     void saveHydrodynamicParameters(HydrodynamicConfiguration *configuration);
     void saveBoundaryConditions(HydrodynamicConfiguration *configuration);
     void saveTimeSeries(BoundaryCondition *boundaryCondition);
+    void saveTimeSeries(MeteorologicalParameter *parameter);
     
     void saveMeteorologicalConfigurations(Project *project);
     void saveMeteorologicalStations(MeteorologicalConfiguration *configuration);
     void saveMeteorologicalParameters(MeteorologicalStation *station);
     void loadMeteorologicalConfigurations(Project *project);
-    void loadMeteorologicalParameters(MeteorologicalConfiguration *configuration);
+    void loadMeteorologicalStations(MeteorologicalConfiguration *configuration);
+    void loadMeteorologicalParameters(MeteorologicalStation *station);
 
 public:
     ProjectRepository(const QString &databaseName);

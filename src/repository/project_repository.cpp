@@ -46,6 +46,7 @@ void ProjectRepository::open() {
     loadMeshes(project);
     loadGridDataConfigurations(project);
     loadHydrodynamicConfigurations(project);
+    loadMeteorologicalConfigurations(project);
     
     if (!operationCanceled) {
         IPHApplication::setCurrentProject(project);
@@ -281,6 +282,27 @@ void ProjectRepository::loadTimeSeries(BoundaryCondition *boundaryCondition) {
     }
 }
 
+void ProjectRepository::loadTimeSeries(MeteorologicalParameter *meteorologicalParameter) {
+    QSqlQuery query(databaseUtility->getDatabase());
+    QList<TimeSeries*> timeSeriesList;
+    
+    query.prepare("select * from time_series where object_id = " + QString::number(meteorologicalParameter->getId()) + " and object_type = 'MeteorologicalParameter'");
+    query.exec();
+    
+    while (query.next() && !operationCanceled) {
+        TimeSeries *timeSeries = new TimeSeries();
+        timeSeries->setId(query.value("id").toUInt());
+        timeSeries->setTimeStamp(query.value("time_stamp").toInt());
+        timeSeries->setValue1(query.value("value1").toDouble());
+        timeSeries->setValue2(query.value("value2").toDouble());
+        
+        meteorologicalParameter->addTimeSeries(timeSeries);
+        
+        emit updateProgress(currentProgress++);
+        QApplication::processEvents();
+    }
+}
+
 void ProjectRepository::save(bool makeCopy) {
     currentProgress = 0;
     emit updateProgressText("Saving project...");
@@ -318,6 +340,7 @@ void ProjectRepository::save(bool makeCopy) {
         saveMeshes(project);
         saveGridDataConfigurations(project);
         saveHydrodynamicConfigurations(project);
+        saveMeteorologicalConfigurations(project);
         
         if (operationCanceled) {
             QSqlDatabase::database().rollback();
@@ -784,6 +807,48 @@ void ProjectRepository::saveTimeSeries(BoundaryCondition *boundaryCondition) {
     query.exec();
 }
 
+void ProjectRepository::saveTimeSeries(MeteorologicalParameter *parameter) {
+    QList<TimeSeries*> timeSeriesList = parameter->getTimeSeriesList();
+    QSqlQuery query(databaseUtility->getDatabase());
+    QStringList timeSeriesIds;
+    
+    for (int i = 0; i < timeSeriesList.size() && !operationCanceled; i++) {
+        TimeSeries *timeSeries = timeSeriesList[i];
+        
+        if (timeSeries->isPersisted()) {
+            query.prepare("update time_series set time_stamp = :t, value = :v where id = :i");
+            query.bindValue(":i", timeSeries->getId());
+        } else {
+            query.prepare("insert into time_series (time_stamp, value1, value2, object_id, object_type) values (:t, :v1, :v2, :oi, :ot)");
+            query.bindValue(":oi", parameter->getId());
+            query.bindValue(":ot", "MeteorologicalParameter");
+        }
+        
+        query.bindValue(":t", timeSeries->getTimeStamp());
+        query.bindValue(":v1", timeSeries->getValue1());
+        query.bindValue(":v2", timeSeries->getValue2());
+        
+        if (!query.exec()) {
+            throw DatabaseException(QString("Unable to save time stamps. Error: %1.").arg(query.lastError().text()));
+        }
+        
+        emit updateProgress(currentProgress++);
+        QApplication::processEvents();
+        
+        timeSeries->setId(query.lastInsertId().toUInt());
+        timeSeriesIds.append(QString::number(timeSeries->getId()));
+    }
+    
+    if (operationCanceled) {
+        return;
+    }
+    
+    QString deleteQuery = "delete from time_series where id not in (%1) and object_id = %2 and object_type = %3";
+    deleteQuery = deleteQuery.arg(timeSeriesIds.join(",")).arg(parameter->getId()).arg("'MeteorologicalParameter'");
+    query.prepare(deleteQuery);
+    query.exec();
+}
+
 void ProjectRepository::saveMeteorologicalConfigurations(Project *project) {
     QSet<MeteorologicalConfiguration*> configurations = project->getMeteorologicalConfigurations();
     QSqlQuery query(databaseUtility->getDatabase());
@@ -798,14 +863,14 @@ void ProjectRepository::saveMeteorologicalConfigurations(Project *project) {
         MeteorologicalConfiguration *configuration = *it;
         
         if (configuration->isPersisted()) {
-            query.prepare("update meteorological_configuration set name = :n, mesh_id = :m where id = :i");
+            query.prepare("update meteorological_configuration set name = :n, grid_data_configuration_id = :g where id = :i");
             query.bindValue(":i", configuration->getId());
         } else {
-            query.prepare("insert into meteorological_configuration (name, mesh_id) values (:n, :m)");
+            query.prepare("insert into meteorological_configuration (name, grid_data_configuration_id) values (:n, :g)");
         }
         
         query.bindValue(":n", configuration->getName());
-        query.bindValue(":m", configuration->getMesh()->getId());
+        query.bindValue(":g", configuration->getGridDataConfiguration()->getId());
         
         if (!query.exec()) {
             throw DatabaseException(QString("Unable to save meteorological data configurations. Error: %1.").arg(query.lastError().text()));
@@ -847,20 +912,25 @@ void ProjectRepository::saveMeteorologicalStations(MeteorologicalConfiguration *
     QSqlQuery query(databaseUtility->getDatabase());
     QStringList stationIds;
     
-    for (QList<MeteorologicalStation*>::const_iterator it = stations.constBegin(); it != stations.constEnd() && !operationCanceled; it++) {
-        MeteorologicalStation *station = *it;
+    for (MeteorologicalStation *station : stations) {
+        if (operationCanceled) {
+            return;
+        }
         
         if (station->isPersisted()) {
-            query.prepare("update meteorological_station set name = :n, utm_x = :x, utm_y = :y where id = :i");
+            query.prepare("update meteorological_station set name = :n, use_latitude_longitude = :u, utm_x = :x, utm_y = :y, latitude = :la, longitude = :lo where id = :i");
             query.bindValue(":i", station->getId());
         } else {
-            query.prepare("insert into meteorological_station (name, utm_x, utm_y, meteorological_configuration_id) values (:n, :x, :y, :m)");
+            query.prepare("insert into meteorological_station (name, use_latitude_longitude, utm_x, utm_y, latitude, longitude, meteorological_configuration_id) values (:n, :u, :x, :y, :la, :lo, :m)");
             query.bindValue(":m", configuration->getId());
         }
         
         query.bindValue(":n", station->getName());
+        query.bindValue(":u", station->getUseLatitudeLongitude());
         query.bindValue(":x", station->getUtmX());
         query.bindValue(":y", station->getUtmY());
+        query.bindValue(":la", station->getLatitude());
+        query.bindValue(":lo", station->getLongitude());
         
         if (!query.exec()) {
             throw DatabaseException(QString("Unable to save meteorological stations. Error: %1.").arg(query.lastError().text()));
@@ -871,49 +941,156 @@ void ProjectRepository::saveMeteorologicalStations(MeteorologicalConfiguration *
         
         station->setId(query.lastInsertId().toUInt());
         stationIds.append(QString::number(station->getId()));
+        saveMeteorologicalParameters(station);
+    }
+    
+    // Handle exclusions
+    QStringList queries;
+    
+    if (stationIds.isEmpty()) {
+        queries << "delete from meteorological_station";
+        queries << "delete from meteorological_parameter";
+    } else {
+        QString stationIdsStr = stationIds.join(",");
+        
+        queries << "delete from meteorological_station where id not in (" + stationIdsStr + ")";
+        queries << "delete from meteorological_parameter where meteorological_station_id not in (" + stationIdsStr + ")";
+    }
+    
+    for (QString sql : queries) {
+        query.prepare(sql);
+        query.exec();
     }
 }
 
 void ProjectRepository::saveMeteorologicalParameters(MeteorologicalStation *station) {
-//    QList<MeteorologicalParameter*> parameters = station->getParameters();
-//    QSqlQuery query(databaseUtility->getDatabase());
-//    QStringList parameterIds;
-//    
-//    for (QList<MeteorologicalParameter*>::const_iterator it = parameters.constBegin(); it != parameters.constEnd() && !operationCanceled; it++) {
-//        MeteorologicalParameter *parameter = parameters[i];
-//        
-//        if (parameter->isPersisted()) {
-//            query.prepare("update hydrodynamic_parameter set value = :v, selected = :s where id = :i");
-//            query.bindValue(":i", parameter->getId());
-//        } else {
-//            query.prepare("insert into hydrodynamic_parameter (name, type, value, selected, enabled, hydrodynamic_configuration_id) values (:n, :t, :v, :s, :e, :h)");
-//            query.bindValue(":n", parameter->getName());
-//            query.bindValue(":t", HydrodynamicParameter::mapStringFromType(parameter->getType()));
-//            query.bindValue(":e", parameter->isEnabled());
-//            query.bindValue(":h", station->getId());
-//        }
-//        
-//        query.bindValue(":v", parameter->getValue());
-//        query.bindValue(":s", parameter->isSelected());
-//        
-//        if (!query.exec()) {
-//            throw DatabaseException(QString("Unable to save hydrodynamic parameters. Error: %1.").arg(query.lastError().text()));
-//        }
-//        
-//        emit updateProgress(currentProgress++);
-//        QApplication::processEvents();
-//        
-//        parameter->setId(query.lastInsertId().toUInt());
-//        parameterIds.append(QString::number(parameter->getId()));
-//    }
+    QList<MeteorologicalParameter*> parameters = station->getParameters();
+    QSqlQuery query(databaseUtility->getDatabase());
+    QStringList parameterIds;
+    
+    for (MeteorologicalParameter *parameter : parameters) {
+        if (operationCanceled) {
+            return;
+        }
+        
+        if (parameter->isPersisted()) {
+            query.prepare("update meteorological_parameter set function = :f, constant_value = :c, x_component = :x, y_component = :y, intensity = :in, direction = :d where id = :i");
+            query.bindValue(":i", parameter->getId());
+        } else {
+            query.prepare("insert into meteorological_parameter (name, unit, function, constant_value, x_component, y_component, intensity, direction, meteorological_station_id) values (:n, :u, :f, :c, :x, :y, :in, :d, :i)");
+            query.bindValue(":n", parameter->getName());
+            query.bindValue(":u", parameter->getUnit());
+            query.bindValue(":i", station->getId());
+        }
+        
+        query.bindValue(":f", (int) parameter->getFunction());
+        query.bindValue(":c", parameter->getConstantValue());
+        query.bindValue(":x", parameter->getXComponent());
+        query.bindValue(":y", parameter->getYComponent());
+        query.bindValue(":in", parameter->getIntensity());
+        query.bindValue(":d", parameter->getDirection());
+        
+        if (!query.exec()) {
+            throw DatabaseException(QString("Unable to save meteorological parameters. Error: %1.").arg(query.lastError().text()));
+        }
+        
+        emit updateProgress(currentProgress++);
+        QApplication::processEvents();
+        
+        parameter->setId(query.lastInsertId().toUInt());
+        parameterIds.append(QString::number(parameter->getId()));
+        saveTimeSeries(parameter);
+    }
+    
+    // Handle exclusions
+    QStringList queries;
+    
+    if (parameterIds.isEmpty()) {
+        queries << "delete from meteorological_parameter";
+    } else {
+        queries << "delete from meteorological_parameter where meteorological_station_id not in (" + parameterIds.join(",") + ")";
+    }
+    
+    for (QString sql : queries) {
+        query.prepare(sql);
+        query.exec();
+    }
 }
 
 void ProjectRepository::loadMeteorologicalConfigurations(Project *project) {
+    QSqlQuery query(databaseUtility->getDatabase());
     
+    emit updateProgressText("Loading meteorological data...");
+    QApplication::processEvents();
+    
+    query.prepare("select * from meteorological_configuration");
+    query.exec();
+    
+    while (query.next() && !operationCanceled) {
+        MeteorologicalConfiguration *configuration = new MeteorologicalConfiguration();
+        configuration->setId(query.value("id").toUInt());
+        configuration->setName(query.value("name").toString());
+        configuration->setGridDataConfiguration(project->getGridDataConfiguration(query.value("grid_data_configuration_id").toUInt()));
+
+        project->addMeteorologicalConfiguration(configuration);
+        
+        emit updateProgress(currentProgress++);
+        QApplication::processEvents();
+        
+        loadMeteorologicalStations(configuration);
+    }
 }
 
-void ProjectRepository::loadMeteorologicalParameters(MeteorologicalConfiguration *configuration) {
+void ProjectRepository::loadMeteorologicalStations(MeteorologicalConfiguration *configuration) {
+    QSqlQuery query(databaseUtility->getDatabase());
     
+    query.prepare("select * from meteorological_station");
+    query.exec();
+    
+    while (query.next() && !operationCanceled) {
+        MeteorologicalStation *station = new MeteorologicalStation();
+        station->setId(query.value("id").toUInt());
+        station->setName(query.value("name").toString());
+        station->setUseLatitudeLongitude(query.value("use_latitude_longitude").toBool());
+        station->setUtmX(query.value("utm_x").toDouble());
+        station->setUtmY(query.value("utm_y").toDouble());
+        station->setLatitude(query.value("latitude").toDouble());
+        station->setLongitude(query.value("longitude").toDouble());
+        
+        configuration->addStation(station);
+        
+        emit updateProgress(currentProgress++);
+        QApplication::processEvents();
+        
+        loadMeteorologicalParameters(station);
+    }
+}
+
+void ProjectRepository::loadMeteorologicalParameters(MeteorologicalStation *station) {
+    QSqlQuery query(databaseUtility->getDatabase());
+    
+    query.prepare("select * from meteorological_parameter");
+    query.exec();
+    
+    while (query.next() && !operationCanceled) {
+        MeteorologicalParameter *parameter = new MeteorologicalParameter();
+        parameter->setId(query.value("id").toUInt());
+        parameter->setName(query.value("name").toString());
+        parameter->setUnit(query.value("unit").toString());
+        parameter->setFunction((MeteorologicalParameterFunction) query.value("function").toInt());
+        parameter->setConstantValue(query.value("constant_value").toDouble());
+        parameter->setXComponent(query.value("x_component").toDouble());
+        parameter->setYComponent(query.value("y_component").toDouble());
+        parameter->setIntensity(query.value("intensity").toDouble());
+        parameter->setDirection(query.value("direction").toDouble());
+        
+        station->addMeteorologicalParameter(parameter);
+        
+        emit updateProgress(currentProgress++);
+        QApplication::processEvents();
+        
+        loadTimeSeries(parameter);
+    }
 }
 
 int ProjectRepository::getMaximumSaveProgress() {
@@ -944,7 +1121,7 @@ int ProjectRepository::getMaximumLoadProgress() {
     QSqlQuery query(databaseUtility->getDatabase());
     QStringList tables = {
         "mesh", "mesh_polygon", "grid_data_configuration", "grid_data", "hydrodynamic_configuration", "hydrodynamic_parameter",
-        "boundary_condition", "time_series", "meteorological_configuration", "meteorological_parameter"
+        "boundary_condition", "time_series", "meteorological_configuration", "meteorological_station", "meteorological_parameter"
     };
     
     for (QString table : tables) {

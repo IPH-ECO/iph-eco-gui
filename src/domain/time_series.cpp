@@ -60,6 +60,14 @@ void TimeSeries::setObjectType(const QString &objectType) {
     this->objectType = objectType;
 }
 
+TimeSeriesType TimeSeries::getTimeSeriesType() const {
+    return timeSeriesType;
+}
+
+void TimeSeries::setTimeSeriesType(const TimeSeriesType &timeSeriesType) {
+    this->timeSeriesType = timeSeriesType;
+}
+
 SimulationDataType::TimeSeries TimeSeries::toSimulationDataType() const {
     SimulationDataType::TimeSeries timeSeries;
     

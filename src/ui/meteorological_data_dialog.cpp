@@ -19,11 +19,11 @@ MeteorologicalDataDialog::MeteorologicalDataDialog(QWidget *parent) :
 	ui->setupUi(this);
     
     Project *project = IPHApplication::getCurrentProject();
-    QSet<HydrodynamicConfiguration*> hydrodynamicConfigurations = project->getHydrodynamicConfigurations();
+    QSet<MeteorologicalConfiguration*> meteorologicalConfigurations = project->getMeteorologicalConfigurations();
     QSet<GridDataConfiguration*> gridDataConfigurations = project->getGridDataConfigurations();
     
     ui->cbxConfiguration->blockSignals(true);
-    for (HydrodynamicConfiguration *configuration : hydrodynamicConfigurations) {
+    for (MeteorologicalConfiguration *configuration : meteorologicalConfigurations) {
         ui->cbxConfiguration->addItem(configuration->getName());
     }
     ui->cbxConfiguration->setCurrentIndex(-1);
@@ -247,6 +247,7 @@ void MeteorologicalDataDialog::on_btnApplyStation_clicked() {
         QTreeWidgetItem *stationItem = new QTreeWidgetItem({ currentStation->getName() });
         QList<MeteorologicalParameter*> parameters = MeteorologicalParameter::createDefaultParameters();
         
+        currentStation->setParameters(parameters);
         stationItem->setData(0, Qt::UserRole, QVariant::fromValue(currentStation));
         
         for (MeteorologicalParameter *parameter : parameters) {
@@ -259,6 +260,7 @@ void MeteorologicalDataDialog::on_btnApplyStation_clicked() {
         ui->trStations->setCurrentItem(stationItem);
     }
     
+    currentConfiguration->addStation(currentStation);
     ui->vtkWidget->addStation(currentStation);
 }
 
@@ -356,6 +358,7 @@ void MeteorologicalDataDialog::on_btnShowTimeSeries_clicked() {
 
 void MeteorologicalDataDialog::on_btnNewConfiguration_clicked() {
     currentConfiguration = unsavedConfiguration;
+    ui->cbxConfiguration->setCurrentIndex(-1);
     ui->edtConfigurationName->setText("");
     ui->trStations->clear();
     ui->cbxGridData->setCurrentIndex(-1);
@@ -389,7 +392,11 @@ void MeteorologicalDataDialog::on_btnApplyConfiguration_clicked() {
             return;
         }
         
+        GridDataConfiguration *gridDataConfiguration = project->getGridDataConfiguration(ui->cbxGridData->currentText());
+        
         currentConfiguration->setName(newConfigurationName);
+        currentConfiguration->setGridDataConfiguration(gridDataConfiguration);
+        // TODO: add stations
         project->addMeteorologicalConfiguration(currentConfiguration);
         unsavedConfiguration = new MeteorologicalConfiguration();
         
@@ -415,5 +422,31 @@ void MeteorologicalDataDialog::on_btnRemoveConfiguration_clicked() {
         IPHApplication::getCurrentProject()->removeMeteorologicalConfiguration(configurationName);
         ui->cbxConfiguration->removeItem(ui->cbxConfiguration->currentIndex());
         this->on_btnNewConfiguration_clicked();
+    }
+}
+
+void MeteorologicalDataDialog::on_cbxConfiguration_currentIndexChanged(const QString &configurationName) {
+    if (configurationName.isEmpty()) {
+        return;
+    }
+    
+    MeteorologicalConfiguration *configuration = IPHApplication::getCurrentProject()->getMeteorologicalConfiguration(configurationName);
+    
+    ui->edtConfigurationName->setText(configuration->getName());
+    ui->cbxGridData->setCurrentText(configuration->getGridDataConfiguration()->getName());
+    ui->trStations->clear();
+    
+    for (MeteorologicalStation *station : configuration->getStations()) {
+        QTreeWidgetItem *stationItem = new QTreeWidgetItem({ station->getName() });
+        stationItem->setData(0, Qt::UserRole, QVariant::fromValue(station));
+        
+        for (MeteorologicalParameter *parameter : station->getParameters()) {
+            QTreeWidgetItem *parameterItem = new QTreeWidgetItem({ parameter->getName() });
+            parameterItem->setData(0, Qt::UserRole, QVariant::fromValue(parameter));
+            stationItem->addChild(parameterItem);
+        }
+        
+        ui->trStations->addTopLevelItem(stationItem);
+        ui->vtkWidget->addStation(station);
     }
 }

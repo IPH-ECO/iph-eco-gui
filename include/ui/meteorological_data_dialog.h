@@ -33,6 +33,7 @@ private slots:
     void on_btnNewConfiguration_clicked();
     void on_btnApplyConfiguration_clicked();
     void on_btnRemoveConfiguration_clicked();
+    void on_cbxConfiguration_currentIndexChanged(const QString &configurationName);
 private:
 	Ui::MeteorologicalDataDialog *ui;
     MeteorologicalConfiguration *unsavedConfiguration;

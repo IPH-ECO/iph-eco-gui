@@ -41,6 +41,7 @@ public:
     QList<TimeSeries*> getTimeSeriesList() const;
     TimeSeries* getTimeSeries(uint id) const;
     void setTimeSeriesList(const QList<TimeSeries*> timeSeriesList);
+    void addTimeSeries(TimeSeries *timeSeries);
     double getXComponent() const;
     void setXComponent(double xComponent);
     double getYComponent() const;

@@ -24,12 +24,12 @@ void MeteorologicalConfiguration::setName(const QString &name) {
     this->name = name;
 }
 
-Mesh* MeteorologicalConfiguration::getMesh() const {
-    return mesh;
+GridDataConfiguration* MeteorologicalConfiguration::getGridDataConfiguration() const {
+    return gridDataConfiguration;
 }
 
-void MeteorologicalConfiguration::setMesh(Mesh *mesh) {
-    this->mesh = mesh;
+void MeteorologicalConfiguration::setGridDataConfiguration(GridDataConfiguration *gridDataConfiguration) {
+    this->gridDataConfiguration = gridDataConfiguration;
 }
 
 QList<MeteorologicalStation*> MeteorologicalConfiguration::getStations() const {
