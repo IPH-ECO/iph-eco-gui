@@ -51,6 +51,7 @@ public:
     double getDirection() const;
     void setDirection(double direction);
     static QList<MeteorologicalParameter*> createDefaultParameters();
+    SimulationDataType::MeteorologicalParameter toSimulationDataType() const;
 };
 
 Q_DECLARE_METATYPE(MeteorologicalParameter*)

@@ -3,18 +3,18 @@ subroutine startSimulation(sim) bind(C, name="startSimulation")
 	use domain_types
 	
     type(Simulation) :: sim
-    type(HydrodynamicConfiguration), pointer :: hydroConfiguration
-    type(BoundaryCondition), pointer :: boundaryConditions(:)
-    type(BoundaryConditionCell), pointer :: cells(:)
+    type(MeteorologicalConfiguration), pointer :: mc
+    type(MeteorologicalStation), pointer :: stations(:)
+    type(MeteorologicalParameter), pointer :: parameters(:)
 	
-	call c_f_pointer(sim%hydrodynamicConfiguration, hydroConfiguration)
-	call c_f_pointer(hydroConfiguration%boundaryConditions, boundaryConditions, [hydroConfiguration%numberOfBoundaryConditions])
+	call c_f_pointer(sim%meteorologicalConfiguration, mc)
+	call c_f_pointer(mc%stations, stations, [mc%stationsLength])
 	
-    do i = 1, hydroConfiguration%numberOfBoundaryConditions
-    	call c_f_pointer(boundaryConditions(i)%cells, cells, [boundaryConditions(i)%cellsLength])
+    do i = 1, mc%stationsLength
+        call c_f_pointer(stations(i)%parameters, parameters, [stations(i)%parametersLength])
 
-    	do j = 1, boundaryConditions(i)%cellsLength
-		    print *, cells(j)%cellId, cells(j)%verticeIds(1), cells(j)%verticeIds(2)
-    	end do
+        do j = 1, stations(i)%parametersLength
+            print *, parameters(j)%constantValue
+        end do
     end do
 end subroutine

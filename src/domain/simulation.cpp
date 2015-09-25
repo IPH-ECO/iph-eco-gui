@@ -93,6 +93,14 @@ void Simulation::setHydrodynamicConfiguration(HydrodynamicConfiguration *configu
 	this->hydrodynamicConfiguration = configuration;
 }
 
+MeteorologicalConfiguration* Simulation::getMeteorologicalConfiguration() const {
+    return meteorologicalConfiguration;
+}
+
+void Simulation::setMeteorologicalConfiguration(MeteorologicalConfiguration *configuration) {
+    this->meteorologicalConfiguration = configuration;
+}
+
 double Simulation::getMinimumVerticalLimit() const {
     return minimumVerticalLimit;
 }
@@ -150,6 +158,7 @@ SimulationDataType::Simulation Simulation::toSimulationDataType() const {
 	}
 
 	simulation.hydrodynamicConfiguration = this->hydrodynamicConfiguration->toSimulationDataType();
+    simulation.meteorologicalConfiguration = this->meteorologicalConfiguration->toSimulationDataType();
     simulation.minimumVerticalLimit = this->minimumVerticalLimit;
     simulation.maximumVerticalLimit = this->maximumVerticalLimit;
 

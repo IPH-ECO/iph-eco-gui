@@ -18,6 +18,10 @@ CreateSimulationDialog::CreateSimulationDialog(QWidget *parent) :
     for (HydrodynamicConfiguration *configuration : project->getHydrodynamicConfigurations()) {
         ui->cbxHydrodynamic->addItem(configuration->getName());
     }
+    
+    for (MeteorologicalConfiguration *configuration : project->getMeteorologicalConfigurations()) {
+        ui->cbxMeteorological->addItem(configuration->getName());
+    }
 }
 
 CreateSimulationDialog::~CreateSimulationDialog() {
@@ -32,6 +36,36 @@ bool CreateSimulationDialog::isValid() {
 
 	if (ui->edtInitialTime->text().isEmpty()) {
 		QMessageBox::warning(this, tr("Create Simulation"), tr("Initial time can't be blank."));
+		return false;
+	}
+    
+    if (ui->edtPeriod->text().isEmpty()) {
+		QMessageBox::warning(this, tr("Create Simulation"), tr("Period can't be blank."));
+		return false;
+	}
+
+	if (ui->edtStepTime->text().isEmpty()) {
+		QMessageBox::warning(this, tr("Create Simulation"), tr("Step time can't be blank."));
+		return false;
+	}
+
+	if (ui->cbxHydrodynamic->currentIndex() == -1) {
+		QMessageBox::warning(this, tr("Create Simulation"), tr("Hydrodynamic data can't be blank."));
+		return false;
+	}
+
+//	if (ui->cbxWaterQuality->currentIndex() == -1) {
+//		QMessageBox::warning(this, tr("Create Simulation"), tr("Water quality data can't be blank."));
+//		return false;
+//	}
+//
+//	if (ui->cbxSediment->currentIndex() == -1) {
+//		QMessageBox::warning(this, tr("Create Simulation"), tr("Sediment data can't be blank."));
+//		return false;
+//	}
+
+	if (ui->cbxMeteorological->currentIndex() == -1) {
+		QMessageBox::warning(this, tr("Create Simulation"), tr("Meteorological data can't be blank."));
 		return false;
 	}
     
@@ -63,36 +97,6 @@ bool CreateSimulationDialog::isValid() {
         return false;
     }
 
-	if (ui->edtPeriod->text().isEmpty()) {
-		QMessageBox::warning(this, tr("Create Simulation"), tr("Period can't be blank."));
-		return false;
-	}
-
-	if (ui->edtStepTime->text().isEmpty()) {
-		QMessageBox::warning(this, tr("Create Simulation"), tr("Step time can't be blank."));
-		return false;
-	}
-
-	if (ui->cbxHydrodynamic->currentIndex() == -1) {
-		QMessageBox::warning(this, tr("Create Simulation"), tr("Hydrodynamic data can't be blank."));
-		return false;
-	}
-
-//	if (ui->cbxWaterQuality->currentIndex() == -1) {
-//		QMessageBox::warning(this, tr("Create Simulation"), tr("Water quality data can't be blank."));
-//		return false;
-//	}
-//
-//	if (ui->cbxSediment->currentIndex() == -1) {
-//		QMessageBox::warning(this, tr("Create Simulation"), tr("Sediment data can't be blank."));
-//		return false;
-//	}
-//
-//	if (ui->cbxMeteorological->currentIndex() == -1) {
-//		QMessageBox::warning(this, tr("Create Simulation"), tr("Meteorological data can't be blank."));
-//		return false;
-//	}
-
     if (ui->tblLayers->rowCount() > 0) {
         double minLimit = ui->edtMinLimit->text().toDouble();
         double maxLimit = ui->edtMaxLimit->text().toDouble();
@@ -120,6 +124,7 @@ void CreateSimulationDialog::accept() {
     bool startOnCreate = ui->chkStart->isChecked();
     Project *project = IPHApplication::getCurrentProject();
     HydrodynamicConfiguration *hydrodynamicConfiguration = project->getHydrodynamicConfiguration(ui->cbxHydrodynamic->currentText());
+    MeteorologicalConfiguration *meteorologicalConfiguration = project->getMeteorologicalConfiguration(ui->cbxMeteorological->currentText());
     QDateTime time = ui->edtInitialTime->dateTime();
     
     time.setTimeSpec(Qt::UTC);
@@ -138,6 +143,7 @@ void CreateSimulationDialog::accept() {
     
     simulation->setLayers(layers);
     simulation->setHydrodynamicConfiguration(hydrodynamicConfiguration);
+    simulation->setMeteorologicalConfiguration(meteorologicalConfiguration);
     simulation->setObservation(ui->txtObservations->toPlainText());
     simulation->setStartOnCreate(startOnCreate);
     

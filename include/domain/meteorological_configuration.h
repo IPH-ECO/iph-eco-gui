@@ -24,6 +24,7 @@ public:
     bool addStation(MeteorologicalStation *station);
     void removeStation(MeteorologicalStation *station);
     void removeStation(const QString &stationName);
+    SimulationDataType::MeteorologicalConfiguration* toSimulationDataType() const;
 };
 
 #endif // METEOROLOGICAL_CONFIGURATION_H

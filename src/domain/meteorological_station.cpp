@@ -92,3 +92,18 @@ vtkSmartPointer<vtkCaptionActor2D> MeteorologicalStation::getCaptionActor() cons
 void MeteorologicalStation::setCaptionActor(vtkSmartPointer<vtkCaptionActor2D> captionActor) {
     this->captionActor = captionActor;
 }
+
+SimulationDataType::MeteorologicalStation MeteorologicalStation::toSimulationDataType() const {
+    SimulationDataType::MeteorologicalStation station;
+    
+    station.utmX = this->utmX;
+    station.utmY = this->utmY;
+    station.parametersLength = this->parameters.size();
+    station.parameters = new SimulationDataType::MeteorologicalParameter[this->parameters.size()];
+    
+    for (int i = 0; i < this->parameters.size(); i++) {
+        station.parameters[i] = this->parameters[i]->toSimulationDataType();
+    }
+    
+    return station;
+}

@@ -62,7 +62,33 @@ module domain_types
     type, bind(C) :: TimeSeries
         integer(c_int) :: timeStampSize
         type(c_ptr) :: timeStamp
-        real(c_double) :: value
+        real(c_double) :: value1
+        real(c_double) :: value2
+    end type
+
+    type, bind(C) :: MeteorologicalParameter
+        integer(c_int) :: nameLength
+        type(c_ptr) :: name
+        integer(c_int) :: function
+        real(c_double) :: constantValue
+        real(c_double) :: xComponent
+        real(c_double) :: yComponent
+        real(c_double) :: intensity
+        real(c_double) :: direction
+        integer(c_int) :: timeSizeListLength
+        type(c_ptr) :: timeSeriesList
+    end type
+
+    type, bind(C) :: MeteorologicalStation
+        real(c_double) :: utmX
+        real(c_double) :: utmY
+        integer(c_int) :: parametersLength
+        type(c_ptr) :: parameters
+    end type
+
+    type, bind(C) :: MeteorologicalConfiguration
+        integer(c_int) :: stationsLength
+        type(c_ptr) :: stations
     end type
 
     type, bind(C) :: HydrodynamicConfiguration
@@ -86,6 +112,7 @@ module domain_types
         integer(c_int) :: layersLength
         type(c_ptr) :: layers
         type(c_ptr) :: hydrodynamicConfiguration
+        type(c_ptr) :: meteorologicalConfiguration
         real(c_double) :: minimumVerticalLimit
         real(c_double) :: maximumVerticalLimit
         integer(c_int) :: observationsLength

@@ -61,3 +61,16 @@ void MeteorologicalConfiguration::removeStation(const QString &stationName) {
         }
     }
 }
+
+SimulationDataType::MeteorologicalConfiguration* MeteorologicalConfiguration::toSimulationDataType() const {
+    SimulationDataType::MeteorologicalConfiguration *configuration = new SimulationDataType::MeteorologicalConfiguration();
+    
+    configuration->stationsLength = this->stations.size();
+    configuration->stations = new SimulationDataType::MeteorologicalStation[this->stations.size()];
+    
+    for (int i = 0; i < this->stations.size(); i++) {
+        configuration->stations[i] = this->stations[i]->toSimulationDataType();
+    }
+    
+    return configuration;
+}

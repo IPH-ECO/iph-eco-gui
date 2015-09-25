@@ -954,7 +954,6 @@ void ProjectRepository::saveMeteorologicalStations(MeteorologicalConfiguration *
         QString stationIdsStr = stationIds.join(",");
         
         queries << "delete from meteorological_station where id not in (" + stationIdsStr + ")";
-        queries << "delete from meteorological_parameter where meteorological_station_id not in (" + stationIdsStr + ")";
     }
     
     for (QString sql : queries) {
@@ -1008,7 +1007,7 @@ void ProjectRepository::saveMeteorologicalParameters(MeteorologicalStation *stat
     if (parameterIds.isEmpty()) {
         queries << "delete from meteorological_parameter";
     } else {
-        queries << "delete from meteorological_parameter where meteorological_station_id not in (" + parameterIds.join(",") + ")";
+        queries << "delete from meteorological_parameter where id not in (" + parameterIds.join(",") + ")";
     }
     
     for (QString sql : queries) {

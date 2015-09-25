@@ -47,6 +47,7 @@ public:
     void setIconActor(vtkSmartPointer<vtkActor> iconActor);
     vtkSmartPointer<vtkCaptionActor2D> getCaptionActor() const;
     void setCaptionActor(vtkSmartPointer<vtkCaptionActor2D> captionActor);
+    SimulationDataType::MeteorologicalStation toSimulationDataType() const;
 };
 
 Q_DECLARE_METATYPE(MeteorologicalStation*)

@@ -66,6 +66,31 @@ namespace SimulationDataType {
             bool verticalIntegratedOutflow;
             double quota;
         };
+        
+        struct MeteorologicalParameter {
+            int nameLength;
+            char *name;
+            int function;
+            double constantValue;
+            double xComponent;
+            double yComponent;
+            double intensity;
+            double direction;
+            int timeSizeListLength;
+            SimulationDataType::TimeSeries *timeSeriesList;
+        };
+        
+        struct MeteorologicalStation {
+            double utmX;
+            double utmY;
+            int parametersLength;
+            SimulationDataType::MeteorologicalParameter *parameters;
+        };
+        
+        struct MeteorologicalConfiguration {
+            int stationsLength;
+            SimulationDataType::MeteorologicalStation *stations;
+        };
 
         struct HydrodynamicConfiguration {
             int numberOfParameters;
@@ -87,7 +112,8 @@ namespace SimulationDataType {
             int stepTime;
             int layersLength;
             double *layers;
-            HydrodynamicConfiguration *hydrodynamicConfiguration;
+            SimulationDataType::HydrodynamicConfiguration *hydrodynamicConfiguration;
+            SimulationDataType::MeteorologicalConfiguration *meteorologicalConfiguration;
             double minimumVerticalLimit;
             double maximumVerticalLimit;
             int observationsLength;

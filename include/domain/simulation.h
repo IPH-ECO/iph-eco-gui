@@ -2,6 +2,7 @@
 #define SIMULATION_H
 
 #include "hydrodynamic_configuration.h"
+#include  "meteorological_configuration.h"
 #include "simulation_data_type.h"
 
 #include <QString>
@@ -21,7 +22,7 @@ private:
 	QList<double> layers;
 	HydrodynamicConfiguration *hydrodynamicConfiguration;
 	// WaterQualityConfiguration *waterQualityConfiguration;
-	// MeteorologicalConfiguration *meteorologicalConfiguration;
+    MeteorologicalConfiguration *meteorologicalConfiguration;
     double minimumVerticalLimit;
     double maximumVerticalLimit;
 	QString observations;
@@ -51,6 +52,8 @@ public:
 	void removeLayer(int index);
 	HydrodynamicConfiguration* getHydrodynamicConfiguration() const;
 	void setHydrodynamicConfiguration(HydrodynamicConfiguration *configuration);
+    MeteorologicalConfiguration* getMeteorologicalConfiguration() const;
+    void setMeteorologicalConfiguration(MeteorologicalConfiguration *configuration);
     double getMinimumVerticalLimit() const;
     void setMinimumVerticalLimit(double minimumVerticalLimit);
     double getMaximumVerticalLimit() const;

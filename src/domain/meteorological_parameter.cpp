@@ -137,3 +137,26 @@ QList<MeteorologicalParameter*> MeteorologicalParameter::createDefaultParameters
         new MeteorologicalParameter("Evaporation", "mm/day", 0)
     };
 }
+
+SimulationDataType::MeteorologicalParameter MeteorologicalParameter::toSimulationDataType() const {
+    SimulationDataType::MeteorologicalParameter parameter;
+    std::string nameStdString = this->name.toStdString();
+    
+    parameter.nameLength = this->name.length();
+    parameter.name = new char[this->name.length()];
+    strncpy(parameter.name, nameStdString.c_str(), this->name.length());
+    parameter.function = (int) this->function;
+    parameter.constantValue = this->constantValue;
+    parameter.xComponent = this->xComponent;
+    parameter.yComponent = this->yComponent;
+    parameter.intensity = this->intensity;
+    parameter.direction = this->direction;
+    parameter.timeSizeListLength = this->timeSeriesList.size();
+    parameter.timeSeriesList = new SimulationDataType::TimeSeries[this->timeSeriesList.size()];
+    
+    for (int i = 0; i < this->timeSeriesList.size(); i++) {
+        parameter.timeSeriesList[i] = this->timeSeriesList[i]->toSimulationDataType();
+    }
+    
+    return parameter;
+}
