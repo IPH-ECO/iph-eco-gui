@@ -1,5 +1,6 @@
 #include "include/ui/meteorological_vtk_widget.h"
 
+#include <QFile>
 #include <vtkProperty.h>
 #include <vtkRenderer.h>
 #include <vtkPNGReader.h>
@@ -18,8 +19,11 @@ void MeteorologicalVTKWidget::addStation(MeteorologicalStation *station) {
         renderer->RemoveActor(station->getCaptionActor());
     }
     
+    QFile iconFile(":/icons/station.png");
+    iconFile.copy("./station.png");
+    
     vtkSmartPointer<vtkPNGReader> iconReader = vtkSmartPointer<vtkPNGReader>::New();
-    iconReader->SetFileName("/Users/joaoroberto/4TECHlabs/workspace/iph-eco/icons/station.png");
+    iconReader->SetFileName("./station.png");
     iconReader->Update();
     
     vtkSmartPointer<vtkImageData> imageData = iconReader->GetOutput();
