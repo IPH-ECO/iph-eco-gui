@@ -1,6 +1,8 @@
 #include "include/ui/meteorological_vtk_widget.h"
 
 #include <QFile>
+#include <QFileInfo>
+#include <QTemporaryFile>
 #include <vtkProperty.h>
 #include <vtkRenderer.h>
 #include <vtkPNGReader.h>
@@ -20,10 +22,17 @@ void MeteorologicalVTKWidget::addStation(MeteorologicalStation *station) {
     }
     
     QFile iconFile(":/icons/station.png");
-    iconFile.copy("./station.png");
-    
-    vtkSmartPointer<vtkPNGReader> iconReader = vtkSmartPointer<vtkPNGReader>::New();
-    iconReader->SetFileName("./station.png");
+	QTemporaryFile *tempFile = QTemporaryFile::createNativeFile(iconFile);
+	tempFile->rename("station.png");
+
+	QFileInfo fileInfo(*tempFile);
+	std::string absoluteTempFilePath(fileInfo.absoluteFilePath().toStdString());
+
+	tempFile->close();
+	iconFile.close();
+
+	vtkSmartPointer<vtkPNGReader> iconReader = vtkSmartPointer<vtkPNGReader>::New();
+    iconReader->SetFileName(absoluteTempFilePath.c_str());
     iconReader->Update();
     
     vtkSmartPointer<vtkImageData> imageData = iconReader->GetOutput();
