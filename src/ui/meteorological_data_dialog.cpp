@@ -244,14 +244,14 @@ void MeteorologicalDataDialog::on_btnApplyStation_clicked() {
     if (currentItem) {
         currentItem->setText(0, ui->edtStationName->text());
     } else {
-        QTreeWidgetItem *stationItem = new QTreeWidgetItem({ currentStation->getName() });
+        QTreeWidgetItem *stationItem = new QTreeWidgetItem(QStringList(currentStation->getName()));
         QList<MeteorologicalParameter*> parameters = MeteorologicalParameter::createDefaultParameters();
         
         currentStation->setParameters(parameters);
         stationItem->setData(0, Qt::UserRole, QVariant::fromValue(currentStation));
         
         for (MeteorologicalParameter *parameter : parameters) {
-            QTreeWidgetItem *item = new QTreeWidgetItem({ parameter->getName() });
+            QTreeWidgetItem *item = new QTreeWidgetItem(QStringList(parameter->getName()));
             item->setData(0, Qt::UserRole, QVariant::fromValue(parameter));
             stationItem->addChild(item);
         }
@@ -437,11 +437,11 @@ void MeteorologicalDataDialog::on_cbxConfiguration_currentIndexChanged(const QSt
     ui->trStations->clear();
     
     for (MeteorologicalStation *station : configuration->getStations()) {
-        QTreeWidgetItem *stationItem = new QTreeWidgetItem({ station->getName() });
+        QTreeWidgetItem *stationItem = new QTreeWidgetItem(QStringList(station->getName()));
         stationItem->setData(0, Qt::UserRole, QVariant::fromValue(station));
         
         for (MeteorologicalParameter *parameter : station->getParameters()) {
-            QTreeWidgetItem *parameterItem = new QTreeWidgetItem({ parameter->getName() });
+            QTreeWidgetItem *parameterItem = new QTreeWidgetItem(QStringList(parameter->getName()));
             parameterItem->setData(0, Qt::UserRole, QVariant::fromValue(parameter));
             stationItem->addChild(parameterItem);
         }
