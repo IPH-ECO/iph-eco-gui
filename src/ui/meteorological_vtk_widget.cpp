@@ -23,7 +23,7 @@ void MeteorologicalVTKWidget::addStation(MeteorologicalStation *station) {
     
     QFile iconFile(":/icons/station.png");
 	QTemporaryFile *tempFile = QTemporaryFile::createNativeFile(iconFile);
-	tempFile->rename("station.png");
+	tempFile->rename("iph-eco-station.png");
 
 	QFileInfo fileInfo(*tempFile);
 	std::string absoluteTempFilePath(fileInfo.absoluteFilePath().toStdString());

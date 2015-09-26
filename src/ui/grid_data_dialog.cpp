@@ -67,18 +67,6 @@ void GridDataDialog::setCoordinate(double &x, double &y) {
     ui->lblUTMCoordinate->setText(QString("Easting: %1, Northing: %2").arg(xStr).arg(yStr));
 }
 
-void GridDataDialog::setArea(const double &area) {
-	QString areaStr("Area: ");
-
-	if (area == 0.0) {
-		areaStr += "-";
-	} else {
-		areaStr += QString::number(area, 'f', 2) + " m\u00B2";
-	}
-
-    ui->lblDomainArea->setText(areaStr);
-}
-
 GridDataVTKWidget* GridDataDialog::getGridDataVTKWidget() {
     return ui->gridDataVTKWidget;
 }

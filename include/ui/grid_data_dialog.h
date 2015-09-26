@@ -20,7 +20,6 @@ public:
     explicit GridDataDialog(QWidget *parent = 0);
     ~GridDataDialog();
 
-    void setArea(const double &area);
     GridDataVTKWidget* getGridDataVTKWidget();
 
 public slots:

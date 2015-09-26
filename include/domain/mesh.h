@@ -58,7 +58,6 @@ public:
     void removeMeshPolygon(const QString &name, const MeshPolygonType &meshPolygonType);
     MeshPolygon* getMeshPolygon(const QString &name, const MeshPolygonType &meshPolygonType) const;
 
-    double area();
     bool hasArray(const QString &arrayName);
     void removeArray(const QString &arrayName);
     QSet<vtkIdType> getBoundaryCellIds(vtkSmartPointer<vtkIdTypeArray> edgeIds) const;

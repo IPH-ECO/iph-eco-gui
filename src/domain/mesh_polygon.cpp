@@ -215,14 +215,6 @@ bool MeshPolygon::pointInPolygon(double *point) {
     return vtkPolygon::PointInPolygon(point, numberOfPoints, dataPointer, bounds, normal);
 }
 
-double MeshPolygon::area() {
-    for (vtkIdType i = 0; i < filteredPolygon->GetPointIds()->GetNumberOfIds(); i++) {
-        filteredPolygon->GetPointIds()->SetId(i, i);
-    }
-
-    return filteredPolygon->ComputeArea();
-}
-
 void MeshPolygon::setId(const uint &id) {
     if (!isPersisted()) {
         this->id = id;

@@ -60,7 +60,6 @@ public:
     void build(const CoordinateSystem &coordinateSystem);
     void filter(const double &distanceFilter);
     bool pointInPolygon(double *point);
-    double area();
     bool isPersisted() const;
 
     inline bool isBoundary() const {

@@ -445,8 +445,8 @@ void HydrodynamicDataDialog::on_btnRemoveBoundaryCondition_clicked() {
         BoundaryCondition *boundaryCondition = currentConfiguration->getBoundaryCondition(currentRow);
         
         ui->vtkWidget->getMouseInteractor()->removeBoundaryCondition(boundaryCondition);
-        currentConfiguration->removeBoundaryCondition(currentRow);
         ui->tblBoundaryConditions->removeRow(currentRow);
+        currentConfiguration->removeBoundaryCondition(currentRow);
         
         if (ui->tblBoundaryConditions->rowCount() == 0) {
             ui->btnEditBoundaryCondition->setEnabled(false);

@@ -228,16 +228,6 @@ void Mesh::clear() {
     refinementAreas.clear();
 }
 
-double Mesh::area() {
-    double area = boundaryPolygon->area();
-
-    for (QList<MeshPolygon*>::const_iterator it = islands.begin(); it != islands.end(); it++) {
-        area -= (*it)->area();
-    }
-
-    return area;
-}
-
 bool Mesh::isPersisted() const {
     return this->id != 0;
 }
