@@ -310,14 +310,14 @@ void MeteorologicalDataDialog::on_cbxFunction_currentIndexChanged(const QString 
     ui->edtIntensity->setVisible(isConstant && isWind);
     ui->lblDirection->setVisible(isConstant && isWind);
     ui->edtDirection->setVisible(isConstant && isWind);
-    ui->lblXComponent->setVisible(isConstant && isXYComponent);
-    ui->edtXComponent->setVisible(isConstant && isXYComponent);
-    ui->lblYComponent->setVisible(isConstant && isXYComponent);
-    ui->edtYComponent->setVisible(isConstant && isXYComponent);
-    ui->lblIntensity->setVisible(isConstant && !isXYComponent);
-    ui->edtIntensity->setVisible(isConstant && !isXYComponent);
-    ui->lblDirection->setVisible(isConstant && !isXYComponent);
-    ui->edtDirection->setVisible(isConstant && !isXYComponent);
+    ui->lblXComponent->setVisible(isConstant && isWind && isXYComponent);
+    ui->edtXComponent->setVisible(isConstant && isWind && isXYComponent);
+    ui->lblYComponent->setVisible(isConstant && isWind && isXYComponent);
+    ui->edtYComponent->setVisible(isConstant && isWind && isXYComponent);
+    ui->lblIntensity->setVisible(isConstant && isWind && !isXYComponent);
+    ui->edtIntensity->setVisible(isConstant && isWind && !isXYComponent);
+    ui->lblDirection->setVisible(isConstant && isWind && !isXYComponent);
+    ui->edtDirection->setVisible(isConstant && isWind && !isXYComponent);
     ui->lblEntries->setVisible(isTimeSeries);
     ui->btnShowTimeSeries->setVisible(isTimeSeries);
 }
