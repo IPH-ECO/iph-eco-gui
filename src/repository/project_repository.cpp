@@ -816,7 +816,7 @@ void ProjectRepository::saveTimeSeries(MeteorologicalParameter *parameter) {
         TimeSeries *timeSeries = timeSeriesList[i];
         
         if (timeSeries->isPersisted()) {
-            query.prepare("update time_series set time_stamp = :t, value = :v where id = :i");
+            query.prepare("update time_series set time_stamp = :t, value1 = :v1, value2 = :v2 where id = :i");
             query.bindValue(":i", timeSeries->getId());
         } else {
             query.prepare("insert into time_series (time_stamp, value1, value2, object_id, object_type) values (:t, :v1, :v2, :oi, :ot)");
@@ -893,12 +893,12 @@ void ProjectRepository::saveMeteorologicalConfigurations(Project *project) {
     
     if (configurationIds.isEmpty()) {
         queries << "delete from meteorological_configuration";
-        queries << "delete from meteorological_parameter";
+        queries << "delete from meteorological_station";
     } else {
         QString configurationIdsStr = configurationIds.join(",");
         
         queries << "delete from meteorological_configuration where id not in (" + configurationIdsStr + ")";
-        queries << "delete from meteorological_parameter where hydrodynamic_configuration_id not in (" + configurationIdsStr + ")";
+        queries << "delete from meteorological_station where meteorological_configuration_id not in (" + configurationIdsStr + ")";
     }
     
     for (QString sql : queries) {

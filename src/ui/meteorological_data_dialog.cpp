@@ -40,8 +40,6 @@ MeteorologicalDataDialog::MeteorologicalDataDialog(QWidget *parent) :
     ui->btnRemoveStation->setEnabled(false);
     ui->stationGroupBox->hide();
     ui->parameterGroupBox->hide();
-    ui->btnApplyStation->hide();
-    ui->btnApplyParameter->hide();
     
     toggleModelingOption(true);
 }
@@ -59,8 +57,6 @@ void MeteorologicalDataDialog::on_cbxGridData_currentIndexChanged(const QString 
     if (isNameEmpty) {
         ui->stationGroupBox->hide();
         ui->parameterGroupBox->hide();
-        ui->btnApplyStation->hide();
-        ui->btnApplyParameter->hide();
         ui->btnRemoveStation->setDisabled(true);
     } else {
         Project *project = IPHApplication::getCurrentProject();
@@ -106,8 +102,6 @@ void MeteorologicalDataDialog::on_trStations_itemSelectionChanged() {
             ui->edtDirection->setVisible(isWindParameter && isConstant && ui->cbxType->currentText() == "Intensity and Direction");
             ui->parameterGroupBox->setTitle(QString("%1 (%2)").arg(parameter->getName()).arg(parameter->getUnit()));
             ui->parameterGroupBox->show();
-            ui->btnApplyParameter->show();
-            ui->btnApplyStation->hide();
             currentStation = nullptr;
         } else {
             currentStation = qvariant_cast<MeteorologicalStation*>(selectedItem->data(0, Qt::UserRole));
@@ -125,11 +119,11 @@ void MeteorologicalDataDialog::on_trStations_itemSelectionChanged() {
             }
             
             ui->stationGroupBox->show();
-            ui->btnApplyParameter->hide();
-            ui->btnApplyStation->show();
             ui->vtkWidget->highlightStation(currentStation);
         }
         
+        ui->btnApplyStation->setVisible(!isParameterItem);
+        ui->btnApplyParameter->setVisible(isParameterItem);
         ui->btnRemoveStation->setDisabled(isParameterItem);
     } else {
         on_btnAddStation_clicked();
@@ -168,7 +162,6 @@ void MeteorologicalDataDialog::on_btnRemoveStation_clicked() {
             
             if (!ui->trStations->currentItem()) {
                 ui->stationGroupBox->hide();
-                ui->btnApplyStation->hide();
             }
         }
     }

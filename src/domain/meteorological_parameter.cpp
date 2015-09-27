@@ -12,7 +12,9 @@ uint MeteorologicalParameter::getId() const {
 }
 
 void MeteorologicalParameter::setId(uint id) {
-    this->id = id;
+    if (!isPersisted()) {
+        this->id = id;
+    }
 }
 
 bool MeteorologicalParameter::isPersisted() const {
