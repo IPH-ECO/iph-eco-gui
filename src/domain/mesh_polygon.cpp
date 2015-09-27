@@ -93,7 +93,7 @@ void MeshPolygon::readFromKMLFile(const CoordinateSystem &coordinateSystem) {
                         GeographicLib::GeoCoords utmCoordinate(latitude, coordinateStr.at(0).toDouble());
                         point[0] = utmCoordinate.Easting();
                         point[1] = utmCoordinate.Northing();
-                    } catch (const GeographicLib::GeographicErr &e) {
+                    } catch (const GeographicLib::GeographicErr&) {
                         throw MeshPolygonException(QString("Latitude/longitude out of range at line %1").arg(i + 1));
                     }
                 } else if (coordinateSystem == CoordinateSystem::UTM) { // No conversion needed
@@ -147,7 +147,7 @@ void MeshPolygon::readFromTextFile(const CoordinateSystem &coordinateSystem) {
                 
                 point[0] = utmConverter.Easting();
                 point[1] = utmConverter.Northing();
-            } catch (const GeographicLib::GeographicErr &e) {
+            } catch (const GeographicLib::GeographicErr&) {
                 throw MeshPolygonException(QString("Latitude/longitude out of range at line %1.").arg(i + 1));
             }
         } else if (coordinateSystem == CoordinateSystem::UTM) { // No conversion needed

@@ -124,7 +124,7 @@ SimulationDataType::HydrodynamicConfiguration* HydrodynamicConfiguration::toSimu
     for (HydrodynamicParameter *parameter : this->parameters) {
         std::string name = parameter->getName().toStdString();
         
-        configuration->parameters[i].length = name.size();
+        configuration->parameters[i].length = (int) name.size();
         configuration->parameters[i].name = new char[name.size()];
         strncpy(configuration->parameters[i].name, name.c_str(), name.size());
         configuration->parameters[i].value = parameter->getValue();
