@@ -60,8 +60,7 @@ module domain_types
     end type
 
     type, bind(C) :: TimeSeries
-        integer(c_int) :: timeStampSize
-        type(c_ptr) :: timeStamp
+        type(c_int) :: timeStamp
         real(c_double) :: value1
         real(c_double) :: value2
     end type
