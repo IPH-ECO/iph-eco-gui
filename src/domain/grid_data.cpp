@@ -308,7 +308,7 @@ void GridData::buildInputPolyData() {
             try {
                 GeographicLib::GeoCoords utmCoordinate(point[1], point[0]);
                 inputPoints->SetPoint(i, utmCoordinate.Easting(), utmCoordinate.Northing(), 0.0);
-            } catch (const GeographicLib::GeographicErr &e) {
+            } catch (const GeographicLib::GeographicErr&) {
                 throw GridDataException(QString("Latitude/longitude out of range at line %1.").arg(i + 1));
             }
         }
@@ -464,12 +464,11 @@ void GridData::cancelInterpolation(bool value) {
 }
 
 QString GridData::gridDataInputTypeToString() const {
-    switch (gridDataInputType) {
-    case GridDataInputType::POINT:
-        return "Point";
-    case GridDataInputType::POLYGON:
-        return "Polygon";
-    }
+	if (gridDataInputType == GridDataInputType::POINT) {
+		return "Point";
+	}
+
+	return "Polygon";
 }
 
 QMap<GridDataType, QString> GridData::getGridTypesMap() {

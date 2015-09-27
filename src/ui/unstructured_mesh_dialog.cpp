@@ -209,7 +209,7 @@ void UnstructuredMeshDialog::on_btnGenerateMesh1_clicked() {
     } catch(const MeshPolygonException &e) {
         QMessageBox::critical(this, tr("Unstructured Mesh Generation"), e.what());
         return;
-    } catch (const std::exception& e) {
+    } catch (const std::exception&) {
         QMessageBox::critical(this, tr("Unstructured Mesh Generation"), tr("This triangulation does not deal with intersecting constraints."));
         return;
     }
@@ -245,7 +245,7 @@ void UnstructuredMeshDialog::on_btnGenerateMesh2_clicked() {
         ui->meshVTKWidget->render(currentMesh);
     } catch (const MeshPolygonException &e) {
         QMessageBox::critical(this, tr("Unstructured Mesh Generation"), e.what());
-    } catch (const std::exception& e) {
+    } catch (const std::exception&) {
         QMessageBox::critical(this, tr("Unstructured Mesh Generation"), tr("This triangulation does not deal with intersecting constraints."));
     }
     CGAL::set_error_behaviour(old_behaviour);
