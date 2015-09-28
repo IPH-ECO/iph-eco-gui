@@ -197,6 +197,7 @@ void DatabaseUtility::createApplicationTables() {
         "unit text, " \
         "function integer not null, " \
         "constant_value float, " \
+        "use_xy_component bool default false, " \
         "x_component float default 0, " \
         "y_component float default 0, " \
         "intensity float default 0, " \

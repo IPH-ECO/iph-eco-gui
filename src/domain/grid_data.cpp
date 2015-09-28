@@ -530,7 +530,7 @@ SimulationDataType::GridData GridData::toSimulationDataType() const {
  
     gridData.numberOfElements = numberOfTuples;
     gridData.weights = new double[numberOfTuples];
-    gridData.type = (int) this->gridDataType;
+    gridData.typeId = (int) this->gridDataType;
     
     for (vtkIdType i = 0; i < numberOfTuples; i++) {
         gridData.weights[i] = weights->GetTuple1(i);

@@ -25,7 +25,7 @@ module domain_types
     type, bind(C) :: GridData
         integer(c_long_long) :: numberOfElements
         type(c_ptr) :: weights
-        integer(c_int) :: type
+        integer(c_int) :: typeId
     end type
 
     type, bind(C) :: GridDataConfiguration
@@ -68,8 +68,9 @@ module domain_types
     type, bind(C) :: MeteorologicalParameter
         integer(c_int) :: nameLength
         type(c_ptr) :: name
-        integer(c_int) :: function
+        integer(c_int) :: functionMet
         real(c_double) :: constantValue
+        logical(c_bool) :: useXYComponent
         real(c_double) :: xComponent
         real(c_double) :: yComponent
         real(c_double) :: intensity

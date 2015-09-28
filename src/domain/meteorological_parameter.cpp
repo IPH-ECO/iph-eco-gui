@@ -4,7 +4,7 @@ MeteorologicalParameter::MeteorologicalParameter() : id(0) {}
 
 MeteorologicalParameter::MeteorologicalParameter(const QString &name, const QString &unit, double constantValue) :
     id(0), name(name), unit(unit), function(MeteorologicalParameterFunction::CONSTANT), constantValue(constantValue),
-    xComponent(0), yComponent(0), intensity(0), direction(0)
+    useXYComponent(false), xComponent(0), yComponent(0), intensity(0), direction(0)
 {}
 
 uint MeteorologicalParameter::getId() const {
@@ -128,6 +128,14 @@ void MeteorologicalParameter::setDirection(double direction) {
     this->direction = direction;
 }
 
+bool MeteorologicalParameter::getUseXYComponent() const {
+    return useXYComponent;
+}
+
+void MeteorologicalParameter::setUseXYComponent(bool useXYComponent) {
+    this->useXYComponent = useXYComponent;
+}
+
 QList<MeteorologicalParameter*> MeteorologicalParameter::createDefaultParameters() {
     return {
         new MeteorologicalParameter("Atmospheric Pressure", "atm", 1),
@@ -147,8 +155,9 @@ SimulationDataType::MeteorologicalParameter MeteorologicalParameter::toSimulatio
     parameter.nameLength = this->name.length();
     parameter.name = new char[this->name.length()];
     strncpy(parameter.name, nameStdString.c_str(), this->name.length());
-    parameter.function = (int) this->function;
+    parameter.functionMet = (int) this->function;
     parameter.constantValue = this->constantValue;
+    parameter.useXYComponent = this->useXYComponent;
     parameter.xComponent = this->xComponent;
     parameter.yComponent = this->yComponent;
     parameter.intensity = this->intensity;

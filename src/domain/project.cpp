@@ -199,7 +199,7 @@ bool Project::addHydrodynamicConfiguration(HydrodynamicConfiguration *hydrodynam
 void Project::removeHydrodynamicConfiguration(const QString &configurationName) {
     HydrodynamicConfiguration *hydrodynamicConfiguration = getHydrodynamicConfiguration(configurationName);
     
-    if (hydrodynamicConfiguration != nullptr) {
+    if (hydrodynamicConfiguration) {
         hydrodynamicConfigurations.remove(hydrodynamicConfiguration);
         delete hydrodynamicConfiguration;
     }
@@ -231,10 +231,11 @@ bool Project::addMeteorologicalConfiguration(MeteorologicalConfiguration *meteor
     return true;
 }
 void Project::removeMeteorologicalConfiguration(const QString &configurationName) {
-    for (MeteorologicalConfiguration *configuration : this->meteorologicalConfigurations) {
-        if (configuration->getName() == configurationName) {
-            this->meteorologicalConfigurations.remove(configuration);
-        }
+    MeteorologicalConfiguration *configuration = this->getMeteorologicalConfiguration(configurationName);
+    
+    if (configuration) {
+        this->meteorologicalConfigurations.remove(configuration);
+        delete configuration;
     }
 }
 

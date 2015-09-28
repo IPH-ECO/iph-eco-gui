@@ -27,7 +27,7 @@ namespace SimulationDataType {
         struct GridData {
 			long long int numberOfElements;
             double *weights;
-            int type;
+            int typeId;
         };
         
         struct GridDataConfiguration {
@@ -70,8 +70,9 @@ namespace SimulationDataType {
         struct MeteorologicalParameter {
             int nameLength;
             char *name;
-            int function;
+            int functionMet;
             double constantValue;
+            bool useXYComponent;
             double xComponent;
             double yComponent;
             double intensity;

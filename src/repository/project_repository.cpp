@@ -973,10 +973,10 @@ void ProjectRepository::saveMeteorologicalParameters(MeteorologicalStation *stat
         }
         
         if (parameter->isPersisted()) {
-            query.prepare("update meteorological_parameter set function = :f, constant_value = :c, x_component = :x, y_component = :y, intensity = :in, direction = :d where id = :i");
+            query.prepare("update meteorological_parameter set function = :f, constant_value = :c, use_xy_component = :uxy, x_component = :x, y_component = :y, intensity = :in, direction = :d where id = :i");
             query.bindValue(":i", parameter->getId());
         } else {
-            query.prepare("insert into meteorological_parameter (name, unit, function, constant_value, x_component, y_component, intensity, direction, meteorological_station_id) values (:n, :u, :f, :c, :x, :y, :in, :d, :i)");
+            query.prepare("insert into meteorological_parameter (name, unit, function, constant_value, use_xy_component, x_component, y_component, intensity, direction, meteorological_station_id) values (:n, :u, :f, :c, :uxy, :x, :y, :in, :d, :i)");
             query.bindValue(":n", parameter->getName());
             query.bindValue(":u", parameter->getUnit());
             query.bindValue(":i", station->getId());
@@ -984,6 +984,7 @@ void ProjectRepository::saveMeteorologicalParameters(MeteorologicalStation *stat
         
         query.bindValue(":f", (int) parameter->getFunction());
         query.bindValue(":c", parameter->getConstantValue());
+        query.bindValue(":uxy", parameter->getUseXYComponent());
         query.bindValue(":x", parameter->getXComponent());
         query.bindValue(":y", parameter->getYComponent());
         query.bindValue(":in", parameter->getIntensity());
@@ -1078,6 +1079,7 @@ void ProjectRepository::loadMeteorologicalParameters(MeteorologicalStation *stat
         parameter->setUnit(query.value("unit").toString());
         parameter->setFunction((MeteorologicalParameterFunction) query.value("function").toInt());
         parameter->setConstantValue(query.value("constant_value").toDouble());
+        parameter->setUseXYComponent(query.value("use_xy_component").toBool());
         parameter->setXComponent(query.value("x_component").toDouble());
         parameter->setYComponent(query.value("y_component").toDouble());
         parameter->setIntensity(query.value("intensity").toDouble());

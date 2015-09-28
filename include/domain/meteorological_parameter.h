@@ -22,6 +22,7 @@ protected:
     double yComponent;
     double intensity;
     double direction;
+    bool useXYComponent;
 public:
     MeteorologicalParameter();
     MeteorologicalParameter(const QString &name, const QString &unit, double defaultConstantValue);
@@ -50,6 +51,8 @@ public:
     void setIntensity(double intensity);
     double getDirection() const;
     void setDirection(double direction);
+    bool getUseXYComponent() const;
+    void setUseXYComponent(bool useXYComponent);
     static QList<MeteorologicalParameter*> createDefaultParameters();
     SimulationDataType::MeteorologicalParameter toSimulationDataType() const;
 };

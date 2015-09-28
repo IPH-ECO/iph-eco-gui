@@ -92,14 +92,22 @@ void MeteorologicalDataDialog::on_trStations_itemSelectionChanged() {
             ui->btnShowTimeSeries->setVisible(!isConstant && !isEvaporation);
             ui->lblType->setVisible(isWindParameter);
             ui->cbxType->setVisible(isWindParameter);
-            ui->lblXComponent->setVisible(isWindParameter && isConstant && ui->cbxType->currentText() == "XY Components");
-            ui->edtXComponent->setVisible(isWindParameter && isConstant && ui->cbxType->currentText() == "XY Components");
-            ui->lblYComponent->setVisible(isWindParameter && isConstant && ui->cbxType->currentText() == "XY Components");
-            ui->edtYComponent->setVisible(isWindParameter && isConstant && ui->cbxType->currentText() == "XY Components");
-            ui->lblIntensity->setVisible(isWindParameter && isConstant && ui->cbxType->currentText() == "Intensity and Direction");
-            ui->edtIntensity->setVisible(isWindParameter && isConstant && ui->cbxType->currentText() == "Intensity and Direction");
-            ui->lblDirection->setVisible(isWindParameter && isConstant && ui->cbxType->currentText() == "Intensity and Direction");
-            ui->edtDirection->setVisible(isWindParameter && isConstant && ui->cbxType->currentText() == "Intensity and Direction");
+            ui->cbxType->setCurrentIndex(!parameter->getUseXYComponent());
+            ui->lblXComponent->setVisible(isWindParameter && isConstant && parameter->getUseXYComponent());
+            ui->edtXComponent->setVisible(isWindParameter && isConstant && parameter->getUseXYComponent());
+            ui->lblYComponent->setVisible(isWindParameter && isConstant && parameter->getUseXYComponent());
+            ui->edtYComponent->setVisible(isWindParameter && isConstant && parameter->getUseXYComponent());
+            ui->lblIntensity->setVisible(isWindParameter && isConstant && !parameter->getUseXYComponent());
+            ui->edtIntensity->setVisible(isWindParameter && isConstant && !parameter->getUseXYComponent());
+            ui->lblDirection->setVisible(isWindParameter && isConstant && !parameter->getUseXYComponent());
+            ui->edtDirection->setVisible(isWindParameter && isConstant && !parameter->getUseXYComponent());
+            if (parameter->getUseXYComponent()) {
+                ui->edtXComponent->setText(QString::number(parameter->getXComponent()));
+                ui->edtYComponent->setText(QString::number(parameter->getYComponent()));
+            } else {
+                ui->edtIntensity->setText(QString::number(parameter->getIntensity()));
+                ui->edtDirection->setText(QString::number(parameter->getDirection()));
+            }
             ui->parameterGroupBox->setTitle(QString("%1 (%2)").arg(parameter->getName()).arg(parameter->getUnit()));
             ui->parameterGroupBox->show();
             currentStation = nullptr;
@@ -262,12 +270,13 @@ void MeteorologicalDataDialog::on_btnApplyParameter_clicked() {
     
     if (item) {
         MeteorologicalParameter *parameter = qvariant_cast<MeteorologicalParameter*>(item->data(0, Qt::UserRole));
+        bool useXYComponent = ui->cbxType->currentText() == "XY Components";
         
         if (ui->cbxFunction->currentText() == "Constant") {
             bool isWindParameter = parameter->getName() == "Wind";
             
             if (isWindParameter) {
-                if (ui->cbxType->currentText() == "XY Components") {
+                if (useXYComponent) {
                     if (ui->edtXComponent->text().isEmpty() || ui->edtYComponent->text().isEmpty()) {
                         QMessageBox::warning(this, tr("Meteorological Data"), tr("Invalid parameter values."));
                         return;
@@ -287,6 +296,7 @@ void MeteorologicalDataDialog::on_btnApplyParameter_clicked() {
             }
         }
         
+        parameter->setUseXYComponent(useXYComponent);
         parameter->setFunction(ui->cbxFunction->currentText());
     }
 }
