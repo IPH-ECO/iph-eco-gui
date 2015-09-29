@@ -15,11 +15,11 @@
 
 StructuredMesh::StructuredMesh() : resolution(100) {}
 
-uint StructuredMesh::getResolution() const {
+double StructuredMesh::getResolution() const {
     return resolution;
 }
 
-void StructuredMesh::setResolution(const uint &resolution) {
+void StructuredMesh::setResolution(double resolution) {
     this->resolution = resolution;
 }
 
@@ -34,8 +34,8 @@ void StructuredMesh::generate() {
     
     vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
     vtkSmartPointer<vtkCellArray> quads = vtkSmartPointer<vtkCellArray>::New();
-    int columns = (bounds[1] - bounds[0]) / this->resolution; // xmax - xmin
-    int rows = (bounds[3] - bounds[2]) / this->resolution; // ymax - ymin
+    int columns = (bounds[1] - bounds[0]) / this->resolution + 1; // xmax - xmin
+    int rows = (bounds[3] - bounds[2]) / this->resolution + 1; // ymax - ymin
     double x = bounds[0];
     double y = bounds[2];
     int count = 0, currentStep = 0;
@@ -92,10 +92,10 @@ void StructuredMesh::generate() {
 void StructuredMesh::computeBounds(ulong *points) {
     double *bounds = this->boundaryPolygon->getFilteredPolygon()->GetPoints()->GetBounds();
 
-    points[0] = bounds[0] - ((ulong) bounds[0] % this->resolution); // xmin
-    points[1] = bounds[1] - ((ulong) bounds[1] % this->resolution); // xmax
-    points[2] = bounds[2] - ((ulong) bounds[2] % this->resolution); // ymin
-    points[3] = bounds[3] - ((ulong) bounds[3] % this->resolution); // ymax
+    points[0] = bounds[0] - fmod(bounds[0], this->resolution); // xmin
+    points[1] = bounds[1] - fmod(bounds[1], this->resolution); // xmax
+    points[2] = bounds[2] - fmod(bounds[2], this->resolution); // ymin
+    points[3] = bounds[3] - fmod(bounds[3], this->resolution); // ymax
 }
 
 bool StructuredMesh::pointInMesh(double *point) {

@@ -4,7 +4,7 @@ MeteorologicalParameter::MeteorologicalParameter() : id(0) {}
 
 MeteorologicalParameter::MeteorologicalParameter(const QString &name, const QString &unit, double constantValue) :
     id(0), name(name), unit(unit), function(MeteorologicalParameterFunction::CONSTANT), constantValue(constantValue),
-    useXYComponent(false), xComponent(0), yComponent(0), intensity(0), direction(0)
+    xComponent(0), yComponent(0), intensity(0), direction(0), useXYComponent(false)
 {}
 
 uint MeteorologicalParameter::getId() const {

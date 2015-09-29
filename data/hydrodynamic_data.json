@@ -16,7 +16,7 @@
             "editable": true,
             "hideSiblings": true,
             "selected": true,
-            "enabled": false,
+            "enabled": true,
             "label": "Latitude",
             "name": "latitude",
             "parentName": "constants",

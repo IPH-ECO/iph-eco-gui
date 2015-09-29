@@ -7,15 +7,15 @@
 
 class StructuredMesh : public Mesh {
 private:
-    uint resolution;
+    double resolution;
 
     bool pointInMesh(double *point);
 
 public:
     StructuredMesh();
 
-    uint getResolution() const;
-    void setResolution(const uint &resolution);
+    double getResolution() const;
+    void setResolution(double resolution);
     void computeBounds(ulong *points);
 
     virtual bool instanceOf(const QString &type);

@@ -61,7 +61,7 @@ void StructuredMeshDialog::on_cbxMeshName_currentTextChanged(const QString &mesh
     
     ui->edtMeshName->setText(currentMesh->getName());
     ui->edtBoundaryFileLine->setText(boundaryPolygon->getFilename());
-    ui->sbxResolution->setValue(currentMesh->getResolution());
+    ui->edtResolution->setText(QString::number(currentMesh->getResolution()));
     ui->lstIslands->clear();
     
     for (MeshPolygon *island : islands) {
@@ -83,7 +83,7 @@ void StructuredMeshDialog::on_btnNewMesh_clicked() {
     ui->edtMeshName->setText("");
     ui->edtMeshName->setFocus();
     ui->edtBoundaryFileLine->setText("");
-    ui->sbxResolution->setValue(100);
+    ui->edtResolution->setText("100.0");
     ui->lstIslands->clear();
     ui->vtkWidget->clear();
     // TODO: update status bar text
@@ -195,9 +195,16 @@ void StructuredMeshDialog::on_btnGenerateMesh_clicked() {
         return;
     }
     
+    double resolution = ui->edtResolution->text().replace(",", ".").toDouble();
+    
+    if (resolution == 0) {
+        QMessageBox::warning(this, tr("Structured Mesh Generation"), tr("Invalid resolution value."));
+        return;
+    }
+    
     ulong bounds[4];
     
-    currentMesh->setResolution(ui->sbxResolution->value());
+    currentMesh->setResolution(resolution);
     currentMesh->computeBounds(bounds);
     
     int columns = (bounds[1] - bounds[0]) / currentMesh->getResolution(); // xmax - xmin

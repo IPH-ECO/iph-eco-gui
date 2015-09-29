@@ -3,7 +3,7 @@ module domain_types
 
     type, bind(C) :: StructuredMesh
         integer(c_long_long) :: numberOfElements
-        integer(c_int) :: resolution
+        real(c_double) :: resolution
         type(c_ptr) :: xCoordinates
         type(c_ptr) :: yCoordinates
         type(c_ptr) :: northNeighbors

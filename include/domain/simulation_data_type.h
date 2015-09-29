@@ -5,7 +5,7 @@ namespace SimulationDataType {
     extern "C" {
         struct StructuredMesh {
             long long int numberOfElements;
-			unsigned int resolution;
+			double resolution;
             double *xCoordinates;
             double *yCoordinates;
 			long long int *northNeighbors;

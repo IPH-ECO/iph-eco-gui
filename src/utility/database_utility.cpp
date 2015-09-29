@@ -73,7 +73,7 @@ void DatabaseUtility::createApplicationTables() {
         "coordinates_distance float default 0, " \
         "mesh_poly_data text not null, " \
         "boundary_poly_data text not null, " \
-        "resolution integer" \
+        "resolution float" \
     ")";
 
     sql << "drop table if exists mesh_polygon";
