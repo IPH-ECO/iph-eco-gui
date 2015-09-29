@@ -53,6 +53,9 @@ private slots:
     void enableMenus(bool enable);
     void openRecent();
 
+public slots:
+    void setCoordinate(double &x, double &y);
+
 private:
     Ui::MainWindow *ui;
     QSettings *appSettings;

@@ -357,3 +357,10 @@ void MainWindow::updateRecentFilesActionList() {
 QToolBar* MainWindow::getToolBar() const {
     return ui->toolBar;
 }
+
+void MainWindow::setCoordinate(double &x, double &y) {
+    QString xStr = QString::number(x, 'f', 6);
+    QString yStr = QString::number(y, 'f', 6);
+    
+    ui->statusBar->showMessage(QString("UTM-X: %1, UTM-Y: %2").arg(xStr).arg(yStr), 500);
+}

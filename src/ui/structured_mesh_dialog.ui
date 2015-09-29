@@ -15,9 +15,7 @@
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="1">
-    <layout class="QVBoxLayout" name="rightWidget">
-     <item>
-      <widget class="MeshVTKWidget" name="vtkWidget">
+    <widget class="MeshVTKWidget" name="vtkWidget">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
          <horstretch>0</horstretch>
@@ -31,19 +29,6 @@
         </size>
        </property>
       </widget>
-     </item>
-     <item>
-      <layout class="QHBoxLayout" name="horizontalLayout">
-       <item>
-        <widget class="QLabel" name="lblUTMCoordinate">
-         <property name="text">
-          <string>Easting: -, Northing: -</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
-    </layout>
    </item>
    <item row="0" column="0">
     <widget class="QWidget" name="leftWidget" native="true">

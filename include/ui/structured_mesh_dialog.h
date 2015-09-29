@@ -21,9 +21,6 @@ public:
     explicit StructuredMeshDialog(QWidget *parent = 0);
     ~StructuredMeshDialog();
 
-public slots:
-    void setCoordinate(double &x, double &y);
-
 private slots:
     void on_cbxMeshName_currentTextChanged(const QString &meshName);
     void on_btnNewMesh_clicked();

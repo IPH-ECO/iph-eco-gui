@@ -43,13 +43,6 @@ QString StructuredMeshDialog::getDefaultDirectory() {
     return appSettings->value(BOUNDARY_DEFAULT_DIR_KEY).toString().isEmpty() ? QDir::homePath() : appSettings->value(BOUNDARY_DEFAULT_DIR_KEY).toString();
 }
 
-void StructuredMeshDialog::setCoordinate(double &x, double &y) {
-    QString xStr = QString::number(x, 'f', 6);
-    QString yStr = QString::number(y, 'f', 6);
-
-    ui->lblUTMCoordinate->setText(QString("Easting: %1, Northing: %2").arg(xStr).arg(yStr));
-}
-
 void StructuredMeshDialog::on_cbxMeshName_currentTextChanged(const QString &meshName) {
     if (meshName.isEmpty()) {
         return;

@@ -20,6 +20,7 @@
 #include <vtkInteractorStyleRubberBandZoom.h>
 #include <QList>
 
+#include "include/ui/main_window.h"
 #include "include/ui/structured_mesh_dialog.h"
 #include "include/ui/unstructured_mesh_dialog.h"
 
@@ -130,13 +131,9 @@ void MeshVTKWidget::render(Mesh *mesh) {
     axesActor->SetFlyModeToStaticEdges();
     axesActor->SetVisibility(showAxes);
 
-    if (mesh->instanceOf("StructuredMesh")) {
-        StructuredMeshDialog *structuredMeshDialog = (StructuredMeshDialog*) this->parent();
-        QObject::connect(mouseInteractor, SIGNAL(coordinateChanged(double&, double&)), structuredMeshDialog, SLOT(setCoordinate(double&, double&)));
-    } else {
-        UnstructuredMeshDialog *unstructuredMeshDialog = (UnstructuredMeshDialog*) this->parent();
-        QObject::connect(mouseInteractor, SIGNAL(coordinateChanged(double&, double&)), unstructuredMeshDialog, SLOT(setCoordinate(double&, double&)));
-    }
+    MainWindow *mainWindow = static_cast<MainWindow*>(this->topLevelWidget());
+    QObject::connect(mouseInteractor, SIGNAL(coordinateChanged(double&, double&)), mainWindow, SLOT(setCoordinate(double&, double&)));
+    
     renderer->AddActor(boundaryEdgesActor);
     renderer->AddActor(meshActor);
     renderer->AddActor(axesActor);
