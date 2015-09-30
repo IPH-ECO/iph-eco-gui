@@ -14,7 +14,7 @@
 #include <vtkXMLPolyDataWriter.h>
 #include <vtkXMLPolyDataReader.h>
 
-Mesh::Mesh() : id(0), boundaryPolygon(nullptr), coordinatesDistance(0.0), generationCanceled(false) {}
+Mesh::Mesh() : id(0), boundaryPolygon(nullptr), coordinatesDistance(0.0), generationCanceled(false), color("#FFFFFF"), lineWidth(1), lineStyle(0xFFFF), opacity(100) {}
 
 Mesh::~Mesh() {
     this->clear();
@@ -288,4 +288,36 @@ void Mesh::generateBoundaryPolyData() {
     
     boundaryPolyData = vtkSmartPointer<vtkPolyData>::New();
     boundaryPolyData->ShallowCopy(boundaryEdges->GetOutput());
+}
+
+QString Mesh::getColor() const {
+    return color;
+}
+
+void Mesh::setColor(const QString &color) {
+    this->color = color;
+}
+
+int Mesh::getLineWidth() const {
+    return lineWidth;
+}
+
+void Mesh::setLineWidth(int lineWidth) {
+    this->lineWidth = lineWidth;
+}
+
+int Mesh::getLineStyle() const {
+    return lineStyle;
+}
+
+void Mesh::setLineStyle(int lineStyle) {
+    this->lineStyle = lineStyle;
+}
+
+int Mesh::getOpacity() const {
+    return opacity;
+}
+
+void Mesh::setOpacity(int opacity) {
+    this->opacity = opacity;
 }

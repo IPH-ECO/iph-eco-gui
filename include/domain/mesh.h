@@ -27,6 +27,10 @@ protected:
 
     // Transient attributes
     bool generationCanceled;
+    QString color;
+    int lineWidth;
+    int lineStyle;
+    int opacity;
     
     void generateBoundaryPolyData();
 
@@ -61,6 +65,15 @@ public:
     bool hasArray(const QString &arrayName);
     void removeArray(const QString &arrayName);
     QSet<vtkIdType> getBoundaryCellIds(vtkSmartPointer<vtkIdTypeArray> edgeIds) const;
+    
+    QString getColor() const;
+    void setColor(const QString &color);
+    int getLineWidth() const;
+    void setLineWidth(int lineWidth);
+    int getLineStyle() const;
+    void setLineStyle(int lineStyle);
+    int getOpacity() const;
+    void setOpacity(int opacity);
 
     virtual bool instanceOf(const QString &type) = 0;
     virtual void generate() = 0;

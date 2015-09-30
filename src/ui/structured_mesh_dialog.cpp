@@ -5,6 +5,7 @@
 #include "include/exceptions/mesh_polygon_exception.h"
 #include "include/ui/island_form.h"
 #include "include/ui/coordinate_file_dialog.h"
+#include "include/ui/mesh_properties_dialog.h"
 
 #include <QFileDialog>
 #include <QMessageBox>
@@ -270,6 +271,8 @@ void StructuredMeshDialog::showEvent(QShowEvent *event) {
         toggleVerticeLabelsAction = new QAction(QIcon(":/icons/show-vertice-labels.png"), "Show/Hide cell ids", mainWindow);
         toggleVerticeLabelsAction->setCheckable(true);
         
+        QAction *meshPropertiesAction = new QAction(QIcon(":/icons/format-list-unordered.png"), "Change mesh properties", mainWindow);
+        
         changeBackgroundAction = new QAction("Change background color", mainWindow);
         QColor color = QColor(Qt::white);
         QPixmap px(24, 24);
@@ -278,8 +281,6 @@ void StructuredMeshDialog::showEvent(QShowEvent *event) {
         changeBackgroundAction->setIcon(px);
         
         QAction *exportMapAction = new QAction(QIcon(":/icons/image-x-generic.png"), "Export map to PNG", mainWindow);
-        
-        QAction *meshPropertiesAction = new QAction(QIcon(":/icons/format-list-unordered.png"), "Mesh properties", mainWindow);
         
         toolBarActions.append(separator);
         toolBarActions.append(zoomOriginalAction);
@@ -312,6 +313,7 @@ void StructuredMeshDialog::showEvent(QShowEvent *event) {
         mainWindow->getToolBar()->addAction(toggleAxesAction);
         mainWindow->getToolBar()->addAction(toggleCellLabelsAction);
         mainWindow->getToolBar()->addAction(toggleVerticeLabelsAction);
+        mainWindow->getToolBar()->addAction(meshPropertiesAction);
         mainWindow->getToolBar()->addAction(changeBackgroundAction);
         mainWindow->getToolBar()->addAction(exportMapAction);
     }
@@ -355,5 +357,6 @@ void StructuredMeshDialog::onExportMapClicked() {
 }
 
 void StructuredMeshDialog::onMeshPropertiesClicked() {
-    
+    MeshPropertiesDialog *dialog = new MeshPropertiesDialog(this, currentMesh, ui->vtkWidget);
+    dialog->exec();
 }

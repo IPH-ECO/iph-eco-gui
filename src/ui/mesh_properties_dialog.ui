@@ -6,9 +6,21 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>325</width>
-    <height>275</height>
+    <width>322</width>
+    <height>237</height>
    </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>322</width>
+    <height>237</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>322</width>
+    <height>237</height>
+   </size>
   </property>
   <property name="windowTitle">
    <string>Mesh Properties</string>
@@ -19,7 +31,7 @@
      <item row="2" column="1">
       <layout class="QHBoxLayout" name="horizontalLayout_4">
        <item>
-        <widget class="QSpinBox" name="sbxLineWidth_2">
+        <widget class="QSpinBox" name="sbxLineWidth">
          <property name="alignment">
           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
          </property>
@@ -61,7 +73,7 @@
       </widget>
      </item>
      <item row="1" column="1">
-      <widget class="QComboBox" name="cbxLineStyle_2">
+      <widget class="QComboBox" name="cbxLineStyle">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
          <horstretch>0</horstretch>
@@ -71,7 +83,7 @@
       </widget>
      </item>
      <item row="0" column="1">
-      <widget class="QToolButton" name="btnLineColor_2">
+      <widget class="QToolButton" name="btnMeshColor">
        <property name="text">
         <string/>
        </property>
@@ -101,7 +113,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QSlider" name="sldMeshOpacity_2">
+        <widget class="QSlider" name="sldOpacity">
          <property name="maximum">
           <number>100</number>
          </property>

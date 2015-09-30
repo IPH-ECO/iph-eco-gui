@@ -55,7 +55,7 @@ void MeshVTKWidget::render(Mesh *mesh) {
     
     MeshPolygon *boundaryPolygon = mesh->getBoundaryPolygon();
 
-    if (!boundaryPolygon->getFilteredPolygon()) {
+    if (!boundaryPolygon || !boundaryPolygon->getFilteredPolygon()) {
         return;
     }
     
@@ -113,6 +113,12 @@ void MeshVTKWidget::render(Mesh *mesh) {
     meshActor->SetMapper(meshMapper);
     meshActor->GetProperty()->EdgeVisibilityOn();
     meshActor->SetVisibility(showMesh);
+    
+    QColor backgroundColor(mesh->getColor());
+    renderer->SetBackground(backgroundColor.redF(), backgroundColor.greenF(), backgroundColor.blueF());
+    meshActor->GetProperty()->SetLineStipplePattern(mesh->getLineStyle());
+    meshActor->GetProperty()->SetLineWidth(mesh->getLineWidth());
+    meshActor->GetProperty()->SetOpacity(mesh->getOpacity() / 100.0);
     
     axesActor = vtkSmartPointer<vtkCubeAxesActor>::New();
     axesActor->SetXUnits("m");
