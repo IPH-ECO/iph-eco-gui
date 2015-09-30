@@ -221,7 +221,7 @@ void MeteorologicalDataDialog::on_btnApplyStation_clicked() {
     double utmY = longitude;
     bool useLatitudeLongitude = ui->rdoLatLong->isChecked();
     
-    if (!currentItem) {
+    if (!currentStation) {
         currentStation = new MeteorologicalStation(ui->edtStationName->text());
     }
     
@@ -399,7 +399,6 @@ void MeteorologicalDataDialog::on_btnApplyConfiguration_clicked() {
         
         currentConfiguration->setName(newConfigurationName);
         currentConfiguration->setGridDataConfiguration(gridDataConfiguration);
-        // TODO: add stations
         project->addMeteorologicalConfiguration(currentConfiguration);
         unsavedConfiguration = new MeteorologicalConfiguration();
         
@@ -433,13 +432,13 @@ void MeteorologicalDataDialog::on_cbxConfiguration_currentIndexChanged(const QSt
         return;
     }
     
-    MeteorologicalConfiguration *configuration = IPHApplication::getCurrentProject()->getMeteorologicalConfiguration(configurationName);
+    currentConfiguration = IPHApplication::getCurrentProject()->getMeteorologicalConfiguration(configurationName);
     
-    ui->edtConfigurationName->setText(configuration->getName());
-    ui->cbxGridData->setCurrentText(configuration->getGridDataConfiguration()->getName());
+    ui->edtConfigurationName->setText(currentConfiguration->getName());
+    ui->cbxGridData->setCurrentText(currentConfiguration->getGridDataConfiguration()->getName());
     ui->trStations->clear();
     
-    for (MeteorologicalStation *station : configuration->getStations()) {
+    for (MeteorologicalStation *station : currentConfiguration->getStations()) {
         QTreeWidgetItem *stationItem = new QTreeWidgetItem(QStringList(station->getName()));
         stationItem->setData(0, Qt::UserRole, QVariant::fromValue(station));
         

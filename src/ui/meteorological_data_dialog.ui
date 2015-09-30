@@ -126,6 +126,12 @@
          <height>100</height>
         </size>
        </property>
+       <property name="maximumSize">
+        <size>
+         <width>16777215</width>
+         <height>250</height>
+        </size>
+       </property>
        <column>
         <property name="text">
          <string>Stations</string>

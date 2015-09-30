@@ -953,7 +953,7 @@ void ProjectRepository::saveMeteorologicalStations(MeteorologicalConfiguration *
     } else {
         QString stationIdsStr = stationIds.join(",");
         
-        queries << "delete from meteorological_station where id not in (" + stationIdsStr + ")";
+        queries << "delete from meteorological_station where id not in (" + stationIdsStr + ") and meteorological_configuration_id = " + configuration->getId();
     }
     
     for (QString sql : queries) {

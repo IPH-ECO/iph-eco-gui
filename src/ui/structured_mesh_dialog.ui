@@ -16,19 +16,19 @@
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="1">
     <widget class="MeshVTKWidget" name="vtkWidget">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>800</width>
-         <height>600</height>
-        </size>
-       </property>
-      </widget>
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>800</width>
+       <height>600</height>
+      </size>
+     </property>
+    </widget>
    </item>
    <item row="0" column="0">
     <widget class="QWidget" name="leftWidget" native="true">
@@ -231,6 +231,9 @@
              <width>80</width>
              <height>16777215</height>
             </size>
+           </property>
+           <property name="text">
+            <string>100</string>
            </property>
           </widget>
          </item>
