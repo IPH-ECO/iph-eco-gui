@@ -187,13 +187,31 @@ void MainWindow::on_actionStructuredMeshGeneration_triggered() {
 }
 
 void MainWindow::on_actionGridData_triggered() {
-    GridDataDialog *gridDataDialog = new GridDataDialog(this);
-    gridDataDialog->exec();
+    GridDataDialog *gridDataDialog = new GridDataDialog();
+    QMdiSubWindow *subWindow = new QMdiSubWindow(mdiArea);
+    
+    subWindow->setWidget(gridDataDialog);
+    subWindow->setWindowFlags(subWindow->windowFlags() | Qt::FramelessWindowHint);
+    subWindow->setWindowState(subWindow->windowState() | Qt::WindowMaximized);
+    gridDataDialog->show();
+    
+#ifdef __APPLE__
+    this->update();
+#endif
 }
 
 void MainWindow::on_actionHydrodynamicData_triggered() {
     HydrodynamicDataDialog *hydrodynamicDataDialog = new HydrodynamicDataDialog(this);
-    hydrodynamicDataDialog->exec();
+    QMdiSubWindow *subWindow = new QMdiSubWindow(mdiArea);
+    
+    subWindow->setWidget(hydrodynamicDataDialog);
+    subWindow->setWindowFlags(subWindow->windowFlags() | Qt::FramelessWindowHint);
+    subWindow->setWindowState(subWindow->windowState() | Qt::WindowMaximized);
+    hydrodynamicDataDialog->show();
+    
+#ifdef __APPLE__
+    this->update();
+#endif
 }
 
 void MainWindow::on_actionMeteorologyData_triggered() {

@@ -2,7 +2,7 @@
 #define UNSTRUCTURED_MESH_DIALOG_H
 
 #include "include/domain/unstructured_mesh.h"
-#include "include/ui/abstract_mesh_dialog.h"
+#include "abstract_mesh_dialog.h"
 
 #include <QDialog>
 #include <QWidget>

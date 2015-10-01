@@ -1,6 +1,6 @@
 #include "include/ui/hydrodynamic_vtk_widget.h"
 
-#include "include/ui/hydrodynamic_data_dialog.h"
+#include "include/ui/main_window.h"
 #include "include/utility/hydrodynamic_mouse_interactor.h"
 
 #include <vtkInteractorStyleRubberBandZoom.h>
@@ -28,8 +28,8 @@ HydrodynamicVTKWidget::HydrodynamicVTKWidget(QWidget *parent) : QVTKWidget(paren
     this->SetRenderWindow(renderWindow);
     renderWindow->Render();
 
-    HydrodynamicDataDialog *hydrodynamicDataDialog = static_cast<HydrodynamicDataDialog*>(parent);
-    QObject::connect(mouseInteractor, SIGNAL(coordinateChanged(double&, double&)), hydrodynamicDataDialog, SLOT(setCoordinate(double&, double&)));
+    MainWindow *mainWindow = static_cast<MainWindow*>(this->topLevelWidget());
+    QObject::connect(mouseInteractor, SIGNAL(coordinateChanged(double&, double&)), mainWindow, SLOT(setCoordinate(double&, double&)));
     QObject::connect(this, SIGNAL(mouseEvent(QMouseEvent*)), this, SLOT(handleMouseEvent(QMouseEvent*)));
 }
 
