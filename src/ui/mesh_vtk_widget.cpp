@@ -268,3 +268,7 @@ void MeshVTKWidget::exportToImage(const QString &fileName) {
     writer->SetInputConnection(windowToImageFilter->GetOutputPort());
     writer->Write();
 }
+
+Mesh* MeshVTKWidget::getMesh() const {
+    return currentMesh;
+}

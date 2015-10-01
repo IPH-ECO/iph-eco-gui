@@ -9,8 +9,8 @@
 #include <QColorDialog>
 #include <QDialogButtonBox>
 
-MeshPropertiesDialog::MeshPropertiesDialog(QWidget *parent, Mesh *mesh, MeshVTKWidget *vtkWidget) :
-    QDialog(parent), ui(new Ui::MeshPropertiesDialog), vtkWidget(vtkWidget), mesh(mesh)
+MeshPropertiesDialog::MeshPropertiesDialog(QWidget *parent, MeshVTKWidget *vtkWidget) :
+    QDialog(parent), ui(new Ui::MeshPropertiesDialog), vtkWidget(vtkWidget), mesh(vtkWidget->getMesh())
 {
 	ui->setupUi(this);
     QColor color(mesh->getColor());

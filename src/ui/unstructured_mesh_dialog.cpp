@@ -10,11 +10,11 @@
 #include <QMessageBox>
 #include <CGAL/assertions_behaviour.h>
 
-UnstructuredMeshDialog::UnstructuredMeshDialog(QWidget *parent) :
-    QDialog(parent), BOUNDARY_DEFAULT_DIR_KEY("boundary_default_dir"), ui(new Ui::UnstructuredMeshDialog),
+UnstructuredMeshDialog::UnstructuredMeshDialog(QWidget *parent) : AbstractMeshDialog(parent), ui(new Ui::UnstructuredMeshDialog),
     unsavedMesh(new UnstructuredMesh()), currentMesh(unsavedMesh)
 {
     ui->setupUi(this);
+    this->vtkWidget = ui->vtkWidget;
 
 	Qt::WindowFlags flags = this->windowFlags() | Qt::WindowMaximizeButtonHint;
 	this->setWindowFlags(flags);
@@ -33,25 +33,12 @@ UnstructuredMeshDialog::UnstructuredMeshDialog(QWidget *parent) :
     
     ui->lstRefinementAreas->addItem(MeshPolygon::BOUNDARY_POLYGON_NAME);
     
-    appSettings = new QSettings(QApplication::organizationName(), QApplication::applicationName(), this);
     connect(ui->lstIslands->model(), SIGNAL(dataChanged(const QModelIndex&, const QModelIndex&)), this, SLOT(on_islandItemEdited(const QModelIndex&, const QModelIndex&)));
 }
 
 UnstructuredMeshDialog::~UnstructuredMeshDialog() {
-    delete appSettings;
     delete unsavedMesh;
     delete ui;
-}
-
-QString UnstructuredMeshDialog::getDefaultDirectory() {
-    return appSettings->value(BOUNDARY_DEFAULT_DIR_KEY).toString().isEmpty() ? QDir::homePath() : appSettings->value(BOUNDARY_DEFAULT_DIR_KEY).toString();
-}
-
-void UnstructuredMeshDialog::setCoordinate(double &x, double &y) {
-    QString xStr = QString::number(x, 'f', 6);
-    QString yStr = QString::number(y, 'f', 6);
-
-    ui->lblUTMCoordinate->setText(QString("Easting: %1, Northing: %2").arg(xStr).arg(yStr));
 }
 
 void UnstructuredMeshDialog::on_btnBoundaryFileBrowser_clicked() {
@@ -215,7 +202,7 @@ void UnstructuredMeshDialog::on_btnGenerateMesh1_clicked() {
     }
     CGAL::set_error_behaviour(old_behaviour);
     
-    ui->meshVTKWidget->render(currentMesh);
+    ui->vtkWidget->render(currentMesh);
     ui->lstRefinementAreas->setCurrentRow(0);
     ui->sbxMaximumEdgeLength->setValue(boundaryPolygon->getMaximumEdgeLength());
     ui->sbxMinimumAngle->setValue(boundaryPolygon->getMinimumAngle());
@@ -242,7 +229,7 @@ void UnstructuredMeshDialog::on_btnGenerateMesh2_clicked() {
         boundaryPolygon->setMinimumAngle(ui->sbxMinimumAngle->value());
         boundaryPolygon->setMaximumEdgeLength(ui->sbxMaximumEdgeLength->value());
         currentMesh->generate();
-        ui->meshVTKWidget->render(currentMesh);
+        ui->vtkWidget->render(currentMesh);
     } catch (const MeshPolygonException &e) {
         QMessageBox::critical(this, tr("Unstructured Mesh Generation"), e.what());
     } catch (const std::exception&) {
@@ -278,7 +265,7 @@ void UnstructuredMeshDialog::on_cbxMeshName_currentIndexChanged(int index) {
             ui->lstIslands->addItem(item);
         }
 
-        ui->meshVTKWidget->render(currentMesh);
+        ui->vtkWidget->render(currentMesh);
     } else {
         resetMeshForm();
     }
@@ -332,7 +319,7 @@ void UnstructuredMeshDialog::on_btnRemoveMesh_clicked() {
 
         ui->cbxMeshName->removeItem(ui->cbxMeshName->currentIndex());
         ui->cbxMeshName->setCurrentIndex(-1);
-        ui->meshVTKWidget->clear();
+        ui->vtkWidget->clear();
     }
 }
 
@@ -348,7 +335,7 @@ void UnstructuredMeshDialog::resetMeshForm() {
     unsavedMesh->clear();
     currentMesh = unsavedMesh;
 
-    ui->meshVTKWidget->clear();
+    ui->vtkWidget->clear();
     ui->edtMeshName->clear();
     ui->edtBoundaryFileLine->clear();
     ui->lstIslands->clear();
@@ -356,7 +343,6 @@ void UnstructuredMeshDialog::resetMeshForm() {
     ui->lstRefinementAreas->clear();
     ui->sbxMinimumAngle->setValue(MeshPolygon::DEFAULT_MINIMUM_ANGLE);
     ui->sbxMaximumEdgeLength->setValue(MeshPolygon::DEFAULT_MAXIMUM_EDGE_LENGTH);
-    ui->lblUTMCoordinate->setText("UTM: -");
     ui->btnRemoveMesh->setEnabled(false);
 
     enableMeshForm(false);

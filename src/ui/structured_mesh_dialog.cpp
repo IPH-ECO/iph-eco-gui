@@ -14,11 +14,11 @@
 #include <QProgressDialog>
 
 StructuredMeshDialog::StructuredMeshDialog(QWidget *parent) :
-    QDialog(parent), BOUNDARY_DEFAULT_DIR_KEY("boundary_default_dir"), ui(new Ui::StructuredMeshDialog), unsavedMesh(new StructuredMesh), currentMesh(unsavedMesh)
+    AbstractMeshDialog(parent), ui(new Ui::StructuredMeshDialog), unsavedMesh(new StructuredMesh), currentMesh(unsavedMesh)
 {
     ui->setupUi(this);
-    appSettings = new QSettings(QApplication::organizationName(), QApplication::applicationName(), this);
-
+    this->vtkWidget = ui->vtkWidget;
+    
     Project *project = IPHApplication::getCurrentProject();
     QSet<Mesh*> meshes = project->getMeshes();
 
@@ -38,10 +38,6 @@ StructuredMeshDialog::~StructuredMeshDialog() {
     delete appSettings;
     delete unsavedMesh;
     delete ui;
-}
-
-QString StructuredMeshDialog::getDefaultDirectory() {
-    return appSettings->value(BOUNDARY_DEFAULT_DIR_KEY).toString().isEmpty() ? QDir::homePath() : appSettings->value(BOUNDARY_DEFAULT_DIR_KEY).toString();
 }
 
 void StructuredMeshDialog::on_cbxMeshName_currentTextChanged(const QString &meshName) {
@@ -238,125 +234,4 @@ void StructuredMeshDialog::on_btnClose_clicked() {
     
     QMdiSubWindow *parentWindow = static_cast<QMdiSubWindow*>(parent());
     parentWindow->close();
-}
-
-void StructuredMeshDialog::showEvent(QShowEvent *event) {
-    if (!event->spontaneous() && this->windowState() & Qt::WindowMaximized) {
-        MainWindow *mainWindow = static_cast<MainWindow*>(this->topLevelWidget());
-        
-        QAction *separator = mainWindow->getToolBar()->addSeparator();
-        QAction *zoomOriginalAction = new QAction(QIcon(":/icons/zoom-original.png"), "Reset zoom", mainWindow);
-
-        QAction *zoomAreaAction = new QAction(QIcon(":/icons/zoom-select.png"), "Zoom area", mainWindow);
-        zoomAreaAction->setCheckable(true);
-        
-//        QAction *lockViewAction = new QAction(QIcon(":/icons/lock-view.png"), "Lock/Unlock view", mainWindow);
-//        lockViewAction->setChecked(true);
-        
-        QAction *toggleMeshAction = new QAction(QIcon(":/icons/unstructured-mesh.png"), "Show/Hide mesh", mainWindow);
-        toggleMeshAction->setCheckable(true);
-        toggleMeshAction->setChecked(true);
-        
-        QAction *toggleBoundaryEdgesAction = new QAction(QIcon(":/icons/boundary-domain.png"), "Show/Hide boundary edges", mainWindow);
-        toggleBoundaryEdgesAction->setCheckable(true);
-        toggleBoundaryEdgesAction->setChecked(true);
-        
-        QAction *toggleAxesAction = new QAction(QIcon(":/icons/show-axis.png"), "Show/Hide axes", mainWindow);
-        toggleAxesAction->setCheckable(true);
-        toggleAxesAction->setChecked(true);
-        
-        toggleCellLabelsAction = new QAction(QIcon(":/icons/show-cell-labels-mesh.png"), "Show/Hide cell ids", mainWindow);
-        toggleCellLabelsAction->setCheckable(true);
-        
-        toggleVerticeLabelsAction = new QAction(QIcon(":/icons/show-vertice-labels.png"), "Show/Hide cell ids", mainWindow);
-        toggleVerticeLabelsAction->setCheckable(true);
-        
-        QAction *meshPropertiesAction = new QAction(QIcon(":/icons/format-list-unordered.png"), "Change mesh properties", mainWindow);
-        
-        changeBackgroundAction = new QAction("Change background color", mainWindow);
-        QColor color = QColor(Qt::white);
-        QPixmap px(24, 24);
-        
-        px.fill(color);
-        changeBackgroundAction->setIcon(px);
-        
-        QAction *exportMapAction = new QAction(QIcon(":/icons/image-x-generic.png"), "Export map to PNG", mainWindow);
-        
-        toolBarActions.append(separator);
-        toolBarActions.append(zoomOriginalAction);
-        toolBarActions.append(zoomAreaAction);
-//        toolBarActions.append(lockViewAction);
-        toolBarActions.append(toggleAxesAction);
-        toolBarActions.append(toggleMeshAction);
-        toolBarActions.append(toggleBoundaryEdgesAction);
-        toolBarActions.append(toggleCellLabelsAction);
-        toolBarActions.append(toggleVerticeLabelsAction);
-        toolBarActions.append(changeBackgroundAction);
-        toolBarActions.append(exportMapAction);
-        toolBarActions.append(meshPropertiesAction);
-        
-        QObject::connect(zoomAreaAction, SIGNAL(triggered(bool)), ui->vtkWidget, SLOT(toggleZoomArea(bool)));
-        QObject::connect(zoomOriginalAction, SIGNAL(triggered()), ui->vtkWidget, SLOT(resetZoom()));
-        QObject::connect(toggleAxesAction, SIGNAL(triggered(bool)), ui->vtkWidget, SLOT(toggleAxes(bool)));
-        QObject::connect(toggleMeshAction, SIGNAL(triggered(bool)), ui->vtkWidget, SLOT(toggleMesh(bool)));
-        QObject::connect(toggleBoundaryEdgesAction, SIGNAL(triggered(bool)), ui->vtkWidget, SLOT(toggleBoundaryEdges(bool)));
-        QObject::connect(toggleCellLabelsAction, SIGNAL(triggered(bool)), this, SLOT(onToggleLabelsClicked(bool)));
-        QObject::connect(toggleVerticeLabelsAction, SIGNAL(triggered(bool)), this, SLOT(onToggleLabelsClicked(bool)));
-        QObject::connect(changeBackgroundAction, SIGNAL(triggered()), this, SLOT(onChangeBackgroundClicked()));
-        QObject::connect(exportMapAction, SIGNAL(triggered()), this, SLOT(onExportMapClicked()));
-        QObject::connect(meshPropertiesAction, SIGNAL(triggered()), this, SLOT(onMeshPropertiesClicked()));
-        
-        mainWindow->getToolBar()->addAction(zoomOriginalAction);
-        mainWindow->getToolBar()->addAction(zoomAreaAction);
-        mainWindow->getToolBar()->addAction(toggleMeshAction);
-        mainWindow->getToolBar()->addAction(toggleBoundaryEdgesAction);
-        mainWindow->getToolBar()->addAction(toggleAxesAction);
-        mainWindow->getToolBar()->addAction(toggleCellLabelsAction);
-        mainWindow->getToolBar()->addAction(toggleVerticeLabelsAction);
-        mainWindow->getToolBar()->addAction(meshPropertiesAction);
-        mainWindow->getToolBar()->addAction(changeBackgroundAction);
-        mainWindow->getToolBar()->addAction(exportMapAction);
-    }
-    
-    QDialog::showEvent(event);
-}
-
-void StructuredMeshDialog::onToggleLabelsClicked(bool show) {
-    QAction *sender = static_cast<QAction*>(QObject::sender());
-    bool toggleVerticeLabels = sender == toggleVerticeLabelsAction;
-    LabelType labelType = toggleVerticeLabels ? LabelType::VERTICE_ID : LabelType::CELL_ID;
-    
-    if (toggleVerticeLabels && show && toggleCellLabelsAction->isChecked()) {
-        toggleCellLabelsAction->setChecked(false);
-    } else if (!toggleVerticeLabels && show && toggleVerticeLabelsAction->isChecked()) {
-        toggleVerticeLabelsAction->setChecked(false);
-    }
-    
-    ui->vtkWidget->toggleLabels(show ? labelType : LabelType::UNDEFINED);
-}
-
-void StructuredMeshDialog::onChangeBackgroundClicked() {
-    QColor color = QColorDialog::getColor(Qt::white, this, "Select a background color");
-    
-    if (color.isValid()) {
-        QPixmap px(24, 24);
-        px.fill(color);
-        
-        ui->vtkWidget->changeBackgroundColor(color.redF(), color.greenF(), color.blueF());
-        changeBackgroundAction->setIcon(px);
-    }
-}
-
-void StructuredMeshDialog::onExportMapClicked() {
-    QString fileName = QFileDialog::getSaveFileName(this, tr("Export to PNG"), getDefaultDirectory(), tr("Portable Network Graphics (*.png)"));
-    
-    if (!fileName.isEmpty()) {
-        ui->vtkWidget->exportToImage(fileName);
-        QMessageBox::information(this, tr("Structured Mesh Generation"), tr("Map exported."));
-    }
-}
-
-void StructuredMeshDialog::onMeshPropertiesClicked() {
-    MeshPropertiesDialog *dialog = new MeshPropertiesDialog(this, currentMesh, ui->vtkWidget);
-    dialog->exec();
 }

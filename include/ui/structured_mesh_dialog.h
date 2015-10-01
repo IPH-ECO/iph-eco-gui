@@ -2,6 +2,7 @@
 #define STRUCTURED_MESH_DIALOG_H
 
 #include "include/domain/structured_mesh.h"
+#include "include/ui/abstract_mesh_dialog.h"
 
 #include <QList>
 #include <QDialog>
@@ -14,12 +15,12 @@ namespace Ui {
     class StructuredMeshDialog;
 }
 
-class StructuredMeshDialog : public QDialog {
+class StructuredMeshDialog : public AbstractMeshDialog {
     Q_OBJECT
 
 public:
     explicit StructuredMeshDialog(QWidget *parent = 0);
-    ~StructuredMeshDialog();
+    virtual ~StructuredMeshDialog();
 
 private slots:
     void on_cbxMeshName_currentTextChanged(const QString &meshName);
@@ -33,10 +34,6 @@ private slots:
     void on_lstIslands_currentTextChanged(const QString &currentText);
     void on_islandItemEdited(const QModelIndex &topLeft, const QModelIndex &bottomRight);
     void on_btnClose_clicked();
-    void onToggleLabelsClicked(bool show);
-    void onChangeBackgroundClicked();
-    void onExportMapClicked();
-    void onMeshPropertiesClicked();
 
 private:
     const QString BOUNDARY_DEFAULT_DIR_KEY;
@@ -44,17 +41,8 @@ private:
     Ui::StructuredMeshDialog *ui;
     StructuredMesh *unsavedMesh;
     StructuredMesh *currentMesh;
-    QSettings *appSettings;
     QString currentMeshPolygonName;
-    QList<QAction*> toolBarActions;
-    QAction *toggleVerticeLabelsAction;
-    QAction *toggleCellLabelsAction;
-    QAction *changeBackgroundAction;
     CoordinateSystem coordinateSystem;
-
-    QString getDefaultDirectory();
-    
-    virtual void showEvent(QShowEvent *event);
 };
 
 #endif // STRUCTURED_MESH_DIALOG_H

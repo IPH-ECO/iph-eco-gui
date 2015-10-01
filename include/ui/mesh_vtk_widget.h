@@ -37,6 +37,7 @@ public:
     ~MeshVTKWidget();
     void render(Mesh *mesh);
     virtual void clear();
+    Mesh* getMesh() const;
 
 public slots:
     void toggleBoundaryEdges(bool show);

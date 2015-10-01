@@ -2,24 +2,23 @@
 #define UNSTRUCTURED_MESH_DIALOG_H
 
 #include "include/domain/unstructured_mesh.h"
+#include "include/ui/abstract_mesh_dialog.h"
+
 #include <QDialog>
 #include <QWidget>
 #include <QSettings>
 #include <QModelIndex>
 
 namespace Ui {
-class UnstructuredMeshDialog;
+    class UnstructuredMeshDialog;
 }
 
-class UnstructuredMeshDialog : public QDialog {
+class UnstructuredMeshDialog : public AbstractMeshDialog {
     Q_OBJECT
 
 public:
     explicit UnstructuredMeshDialog(QWidget *parent = 0);
-    ~UnstructuredMeshDialog();
-
-public slots:
-    void setCoordinate(double &x, double &y);
+    virtual ~UnstructuredMeshDialog();
 
 private slots:
     // Domain tab events
@@ -50,12 +49,10 @@ private:
     Ui::UnstructuredMeshDialog *ui;
     UnstructuredMesh *unsavedMesh;
     UnstructuredMesh *currentMesh;
-    QSettings *appSettings;
     QString currentIslandName;
     QString currentRefinementAreaName;
     CoordinateSystem meshCoordinateSystem;
 
-    QString getDefaultDirectory();
     void resetMeshForm();
     void enableMeshForm(bool enable);
 };

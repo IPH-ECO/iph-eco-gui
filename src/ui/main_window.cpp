@@ -159,8 +159,17 @@ void MainWindow::on_actionCloseProject_triggered() {
 }
 
 void MainWindow::on_actionUnstructuredMeshGeneration_triggered() {
-    UnstructuredMeshDialog *unstructuredMeshDialog = new UnstructuredMeshDialog(this);
-    unstructuredMeshDialog->exec();
+    UnstructuredMeshDialog *unstructuredMeshDialog = new UnstructuredMeshDialog();
+    QMdiSubWindow *subWindow = new QMdiSubWindow(mdiArea);
+    
+    subWindow->setWidget(unstructuredMeshDialog);
+    subWindow->setWindowFlags(subWindow->windowFlags() | Qt::FramelessWindowHint);
+    subWindow->setWindowState(subWindow->windowState() | Qt::WindowMaximized);
+    unstructuredMeshDialog->show();
+    
+#ifdef __APPLE__
+    this->update();
+#endif
 }
 
 void MainWindow::on_actionStructuredMeshGeneration_triggered() {
@@ -172,7 +181,9 @@ void MainWindow::on_actionStructuredMeshGeneration_triggered() {
     subWindow->setWindowState(subWindow->windowState() | Qt::WindowMaximized);
     structuredMeshDialog->show();
     
+#ifdef __APPLE__
     this->update();
+#endif
 }
 
 void MainWindow::on_actionGridData_triggered() {

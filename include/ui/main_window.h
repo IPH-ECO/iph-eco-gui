@@ -1,19 +1,19 @@
 #ifndef MAIN_WINDOW_H
 #define MAIN_WINDOW_H
 
+#include <QMdiArea>
+#include <QToolBar>
+#include <QSettings>
 #include <QCloseEvent>
 #include <QFileDialog>
 #include <QMainWindow>
-#include <QSettings>
-#include <QMdiArea>
-#include <QToolBar>
 
 #include "new_project_dialog.h"
 #include "project_properties_dialog.h"
 #include "unstructured_mesh_dialog.h"
 
 namespace Ui {
-class MainWindow;
+    class MainWindow;
 }
 
 class MainWindow : public QMainWindow {
