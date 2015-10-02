@@ -28,7 +28,7 @@ public:
 	virtual void showEvent(QShowEvent *event);
 
 private slots:
-	void onToggleLabelsClicked(bool show);
+	virtual void onToggleLabelsClicked(bool show);
 	void onExportMapClicked();
 	void onMeshPropertiesClicked();
 };

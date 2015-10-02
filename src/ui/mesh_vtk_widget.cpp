@@ -13,6 +13,8 @@
 #include <vtkSmartPointer.h>
 #include <vtkExtractEdges.h>
 #include <vtkRenderWindow.h>
+#include <vtkTextProperty.h>
+#include <vtkPolyDataMapper.h>
 #include <vtkWorldPointPicker.h>
 #include <vtkLabeledDataMapper.h>
 #include <vtkWindowToImageFilter.h>
@@ -26,19 +28,24 @@
 
 vtkStandardNewMacro(MeshMouseInteractor);
 
-MeshVTKWidget::MeshVTKWidget(QWidget *parent) : QVTKWidget(parent), showBoundaryEdges(true), showMesh(true), showAxes(true) {
+MeshVTKWidget::MeshVTKWidget(QWidget *parent, MeshMouseInteractor *mouseInteractor) : QVTKWidget(parent), showBoundaryEdges(true), showMesh(true), showAxes(true) {
     renderer = vtkSmartPointer<vtkRenderer>::New();
     renderWindow = vtkSmartPointer<vtkRenderWindow>::New();
     renderWindowInteractor = vtkSmartPointer<vtkRenderWindowInteractor>::New();
-    mouseInteractor = vtkSmartPointer<MeshMouseInteractor>::New();
     vtkSmartPointer<vtkAreaPicker> areaPicker = vtkSmartPointer<vtkAreaPicker>::New();
+    
+    if (mouseInteractor) {
+        this->mouseInteractor = mouseInteractor;
+    } else {
+        this->mouseInteractor = vtkSmartPointer<MeshMouseInteractor>::New();
+    }
     
     renderer->SetBackground(1, 1, 1);
     renderWindow->AddRenderer(renderer);
     renderWindowInteractor->SetRenderWindow(renderWindow);
     renderWindowInteractor->SetInteractorStyle(mouseInteractor);
     renderWindowInteractor->SetPicker(areaPicker);
-    mouseInteractor->SetDefaultRenderer(renderer);
+    this->mouseInteractor->SetDefaultRenderer(renderer);
     
     this->SetRenderWindow(renderWindow);
     renderWindow->Render();

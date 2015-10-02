@@ -350,9 +350,9 @@ void HydrodynamicDataDialog::on_btnSave_clicked() {
     ui->btnDone->setEnabled(true);
 }
 
-void HydrodynamicDataDialog::on_btnShowCellLabels_clicked(bool checked) {
+void HydrodynamicDataDialog::onToggleLabelsClicked(bool checked) {
     for (BoundaryCondition *boundaryCondition : currentConfiguration->getBoundaryConditions()) {
-//        boundaryCondition->getLabelsActor()->SetVisibility(checked);
+        boundaryCondition->getLabelsActor()->SetVisibility(checked);
     }
     ui->vtkWidget->update();
 }

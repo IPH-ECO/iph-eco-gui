@@ -19,7 +19,6 @@ BoundaryConditionDialog::BoundaryConditionDialog(HydrodynamicConfiguration *conf
     configuration(configuration), currentBoundaryCondition(boundaryCondition), isNewBoundaryCondition(boundaryCondition == nullptr)
 {
 	ui->setupUi(this);
-    this->setWindowModality(Qt::WindowModal);
 
 	btnIndividualObjectPicker = new QToolButton(this);
     btnIndividualObjectPicker->setCheckable(true);
@@ -93,7 +92,7 @@ void BoundaryConditionDialog::setHydrodynamicDataDialog(HydrodynamicDataDialog *
     this->hydrodynamicDataDialog->ui->vtkWidget->getMouseInteractor()->highlightBoundaryCondition(currentBoundaryCondition, false);
     this->currentBoundaryCondition->getLabelsActor()->SetVisibility(hydrodynamicDataDialog->isCellLabelsActionChecked());
     
-//    connect(hydrodynamicDataDialog->ui->btnShowCellLabels, SIGNAL(clicked(bool)), this, SLOT(toggleLabelsActor(bool)));
+    connect(hydrodynamicDataDialog->toggleCellLabelsAction, SIGNAL(triggered(bool)), this, SLOT(toggleLabelsActor(bool)));
     connect(hydrodynamicDataDialog->ui->vtkWidget->getMouseInteractor(), SIGNAL(objectSelected()), this, SLOT(showObjectIds()));
 }
 

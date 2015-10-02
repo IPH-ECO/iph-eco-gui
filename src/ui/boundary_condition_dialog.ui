@@ -13,13 +13,13 @@
   <property name="minimumSize">
    <size>
     <width>332</width>
-    <height>193</height>
+    <height>282</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
-    <width>440</width>
-    <height>600</height>
+    <width>332</width>
+    <height>282</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -342,6 +342,5 @@
  </connections>
  <buttongroups>
   <buttongroup name="buttonGroup_2"/>
-  <buttongroup name="buttonGroup"/>
  </buttongroups>
 </ui>

@@ -6,9 +6,7 @@
 #include <vtkActor2D.h>
 #include <QVTKWidget.h>
 #include <vtkRenderer.h>
-#include <vtkTextProperty.h>
 #include <vtkCubeAxesActor.h>
-#include <vtkPolyDataMapper.h>
 
 #include "include/domain/mesh.h"
 #include "include/utility/mesh_mouse_interactor.h"
@@ -33,7 +31,7 @@ protected:
     bool showAxes;
 
 public:
-    MeshVTKWidget(QWidget *parent);
+    MeshVTKWidget(QWidget *parent, MeshMouseInteractor *meshMouseInteractor = nullptr);
     ~MeshVTKWidget();
     void render(Mesh *mesh);
     virtual void clear();
