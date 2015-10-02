@@ -22,7 +22,7 @@ void AbstractMeshDialog::showEvent(QShowEvent *event) {
         QAction *separator = mainWindow->getToolBar()->addSeparator();
         QAction *zoomOriginalAction = new QAction(QIcon(":/icons/zoom-original.png"), "Reset zoom", mainWindow);
 
-        QAction *zoomAreaAction = new QAction(QIcon(":/icons/zoom-select.png"), "Zoom area", mainWindow);
+        zoomAreaAction = new QAction(QIcon(":/icons/zoom-select.png"), "Zoom area", mainWindow);
         zoomAreaAction->setCheckable(true);
         
 //        QAction *lockViewAction = new QAction(QIcon(":/icons/lock-view.png"), "Lock/Unlock view", mainWindow);

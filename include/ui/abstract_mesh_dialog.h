@@ -18,6 +18,7 @@ protected:
     QList<QAction*> toolBarActions;
     QAction *toggleVerticeLabelsAction;
     QAction *toggleCellLabelsAction;
+    QAction *zoomAreaAction;
     
     QString getDefaultDirectory();
 public:

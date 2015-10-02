@@ -342,234 +342,20 @@
     </layout>
    </item>
    <item>
-    <layout class="QVBoxLayout" name="rightLayout">
-     <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_2">
-       <item>
-        <widget class="QToolButton" name="btnNavigateMode">
-         <property name="toolTip">
-          <string>Navigation mode</string>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-         <property name="icon">
-          <iconset resource="../../icons.qrc">
-           <normaloff>:/icons/transform-move.png</normaloff>:/icons/transform-move.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>24</width>
-           <height>24</height>
-          </size>
-         </property>
-         <property name="checkable">
-          <bool>true</bool>
-         </property>
-         <property name="checked">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QToolButton" name="btnOriginalZoom">
-         <property name="toolTip">
-          <string>Reset zoom</string>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-         <property name="icon">
-          <iconset resource="../../icons.qrc">
-           <normaloff>:/icons/zoom-original.png</normaloff>:/icons/zoom-original.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>24</width>
-           <height>24</height>
-          </size>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QToolButton" name="btnZoomArea">
-         <property name="toolTip">
-          <string>Zoom area</string>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-         <property name="icon">
-          <iconset resource="../../icons.qrc">
-           <normaloff>:/icons/zoom-select.png</normaloff>:/icons/zoom-select.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>24</width>
-           <height>24</height>
-          </size>
-         </property>
-         <property name="checkable">
-          <bool>true</bool>
-         </property>
-         <property name="checked">
-          <bool>false</bool>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QToolButton" name="btnShowAxes">
-         <property name="toolTip">
-          <string>Show/Hide axes</string>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-         <property name="icon">
-          <iconset resource="../../icons.qrc">
-           <normaloff>:/icons/show-axis.png</normaloff>:/icons/show-axis.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>24</width>
-           <height>24</height>
-          </size>
-         </property>
-         <property name="checkable">
-          <bool>true</bool>
-         </property>
-         <property name="checked">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QToolButton" name="btnShowMesh">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="toolTip">
-          <string>Show/Hide mesh</string>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-         <property name="icon">
-          <iconset resource="../../icons.qrc">
-           <normaloff>:/icons/unstructured-mesh.png</normaloff>:/icons/unstructured-mesh.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>24</width>
-           <height>24</height>
-          </size>
-         </property>
-         <property name="checkable">
-          <bool>true</bool>
-         </property>
-         <property name="checked">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QToolButton" name="btnShowCellLabels">
-         <property name="enabled">
-          <bool>true</bool>
-         </property>
-         <property name="toolTip">
-          <string>Show/Hide cell labels</string>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-         <property name="icon">
-          <iconset resource="../../icons.qrc">
-           <normaloff>:/icons/show-cell-labels.png</normaloff>:/icons/show-cell-labels.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>24</width>
-           <height>24</height>
-          </size>
-         </property>
-         <property name="checkable">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QToolButton" name="btnBackgroundColor">
-         <property name="toolTip">
-          <string>Change background color</string>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>24</width>
-           <height>24</height>
-          </size>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <spacer name="horizontalSpacer_3">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>40</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-      </layout>
-     </item>
-     <item>
-      <widget class="HydrodynamicVTKWidget" name="vtkWidget">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>800</width>
-         <height>562</height>
-        </size>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_5">
-       <item>
-        <spacer name="horizontalSpacer_4">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>40</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item>
-        <widget class="QLabel" name="lblUTMCoordinate">
-         <property name="text">
-          <string>Easting: -, Northing: -</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
-    </layout>
+    <widget class="HydrodynamicVTKWidget" name="vtkWidget">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>800</width>
+       <height>562</height>
+      </size>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>
@@ -579,12 +365,6 @@
    <extends>QFrame</extends>
    <header>include/ui/hydrodynamic_vtk_widget.h</header>
    <container>1</container>
-   <slots>
-    <slot>resetZoom()</slot>
-    <slot>toggleZoomArea(bool)</slot>
-    <slot>toggleAxes(bool)</slot>
-    <slot>toggleMesh(bool)</slot>
-   </slots>
   </customwidget>
  </customwidgets>
  <tabstops>
@@ -601,70 +381,5 @@
  <resources>
   <include location="../../icons.qrc"/>
  </resources>
- <connections>
-  <connection>
-   <sender>btnOriginalZoom</sender>
-   <signal>clicked()</signal>
-   <receiver>vtkWidget</receiver>
-   <slot>resetZoom()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>476</x>
-     <y>30</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>816</x>
-     <y>341</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>btnZoomArea</sender>
-   <signal>clicked(bool)</signal>
-   <receiver>vtkWidget</receiver>
-   <slot>toggleZoomArea(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>518</x>
-     <y>30</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>816</x>
-     <y>341</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>btnShowAxes</sender>
-   <signal>clicked(bool)</signal>
-   <receiver>vtkWidget</receiver>
-   <slot>toggleAxes(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>560</x>
-     <y>30</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>816</x>
-     <y>341</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>btnShowMesh</sender>
-   <signal>clicked(bool)</signal>
-   <receiver>vtkWidget</receiver>
-   <slot>toggleMesh(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>602</x>
-     <y>30</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>816</x>
-     <y>341</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>

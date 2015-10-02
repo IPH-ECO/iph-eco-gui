@@ -4,6 +4,7 @@
 #include "include/domain/hydrodynamic_configuration.h"
 #include "include/repository/hydrodynamic_data_repository.h"
 #include "include/application/iph_types.h"
+#include "abstract_mesh_dialog.h"
 #include "boundary_condition_dialog.h"
 
 #include <QDialog>
@@ -19,7 +20,7 @@ namespace Ui {
 class HydrodynamicVTKWidget;
 class BoundaryConditionDialog;
 
-class HydrodynamicDataDialog : public QDialog {
+class HydrodynamicDataDialog : public AbstractMeshDialog {
     Q_OBJECT
     
     friend class BoundaryConditionDialog;
@@ -48,13 +49,12 @@ private slots:
     void on_btnDone_clicked();
     void on_btnSave_clicked();
     void on_btnShowCellLabels_clicked(bool checked);
-    void on_btnBackgroundColor_clicked();
     void on_tblBoundaryConditions_currentItemChanged(QTableWidgetItem *current, QTableWidgetItem *previous);
 public:
     explicit HydrodynamicDataDialog(QWidget *parent);
     ~HydrodynamicDataDialog();
-public slots:
-    void setCoordinate(double &x, double &y);
+    bool isCellLabelsActionChecked() const;
+    void toggleZoomAreaAction(bool enable);
 };
 
 #endif // HYDRODYNAMIC_DATA_DIALOG_H

@@ -88,11 +88,12 @@ BoundaryConditionDialog::~BoundaryConditionDialog() {
 
 void BoundaryConditionDialog::setHydrodynamicDataDialog(HydrodynamicDataDialog *dialog) {
     this->hydrodynamicDataDialog = dialog;
+    
     this->hydrodynamicDataDialog->ui->vtkWidget->getMouseInteractor()->setBoundaryCondition(currentBoundaryCondition);
     this->hydrodynamicDataDialog->ui->vtkWidget->getMouseInteractor()->highlightBoundaryCondition(currentBoundaryCondition, false);
-    this->currentBoundaryCondition->getLabelsActor()->SetVisibility(hydrodynamicDataDialog->ui->btnShowCellLabels->isChecked());
+    this->currentBoundaryCondition->getLabelsActor()->SetVisibility(hydrodynamicDataDialog->isCellLabelsActionChecked());
     
-    connect(hydrodynamicDataDialog->ui->btnShowCellLabels, SIGNAL(clicked(bool)), this, SLOT(toggleLabelsActor(bool)));
+//    connect(hydrodynamicDataDialog->ui->btnShowCellLabels, SIGNAL(clicked(bool)), this, SLOT(toggleLabelsActor(bool)));
     connect(hydrodynamicDataDialog->ui->vtkWidget->getMouseInteractor(), SIGNAL(objectSelected()), this, SLOT(showObjectIds()));
 }
 
@@ -154,8 +155,7 @@ void BoundaryConditionDialog::on_btnCellColor_clicked() {
 
 void BoundaryConditionDialog::btnIndividualObjectPicker_clicked(bool checked) {
     hydrodynamicDataDialog->ui->vtkWidget->togglePicker(checked, PickerMode::INDIVIDUAL_CELL);
-    hydrodynamicDataDialog->ui->btnZoomArea->setChecked(false);
-    hydrodynamicDataDialog->ui->btnZoomArea->setDisabled(false);
+    hydrodynamicDataDialog->toggleZoomAreaAction(true);
     hydrodynamicDataDialog->ui->vtkWidget->toggleZoomArea(false);
     
     if (checked) {
@@ -170,8 +170,7 @@ void BoundaryConditionDialog::btnIndividualObjectPicker_clicked(bool checked) {
 
 void BoundaryConditionDialog::btnMultipleObjectPicker_clicked(bool checked) {
     hydrodynamicDataDialog->ui->vtkWidget->togglePicker(checked, ui->cbxType->currentText() == "Water Flow" ? PickerMode::MULTIPLE_EDGE : PickerMode::MULTIPLE_CELL);
-    hydrodynamicDataDialog->ui->btnZoomArea->setChecked(false);
-    hydrodynamicDataDialog->ui->btnZoomArea->setDisabled(checked);
+    hydrodynamicDataDialog->toggleZoomAreaAction(checked);
     hydrodynamicDataDialog->ui->vtkWidget->toggleZoomArea(false);
     
     if (checked) {

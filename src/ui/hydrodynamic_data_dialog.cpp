@@ -17,8 +17,8 @@
 #include <QSet>
 
 HydrodynamicDataDialog::HydrodynamicDataDialog(QWidget *parent) :
-    QDialog(parent), ui(new Ui::HydrodynamicDataDialog),
-    unsavedConfiguration(new HydrodynamicConfiguration), currentConfiguration(unsavedConfiguration), currentGridDataConfiguration(nullptr), boundaryConditionDialog(nullptr)
+    AbstractMeshDialog(parent), ui(new Ui::HydrodynamicDataDialog), unsavedConfiguration(new HydrodynamicConfiguration), currentConfiguration(unsavedConfiguration),
+    currentGridDataConfiguration(nullptr), boundaryConditionDialog(nullptr)
 {
     hydrodynamicDataRepository = HydrodynamicDataRepository::getInstance();
     
@@ -27,6 +27,7 @@ HydrodynamicDataDialog::HydrodynamicDataDialog(QWidget *parent) :
     ui->trwParameters->header()->setSectionResizeMode(0, QHeaderView::Stretch);
     ui->tblBoundaryConditions->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     ui->btnRemoveConfiguration->setEnabled(false);
+    this->vtkWidget = ui->vtkWidget;
     
     Project *project = IPHApplication::getCurrentProject();
     QSet<HydrodynamicConfiguration*> configurations = project->getHydrodynamicConfigurations();
@@ -53,7 +54,6 @@ HydrodynamicDataDialog::HydrodynamicDataDialog(QWidget *parent) :
     QPixmap px(24, 24);
     
     px.fill(color);
-    ui->btnBackgroundColor->setIcon(px);
 }
 
 HydrodynamicDataDialog::~HydrodynamicDataDialog() {
@@ -209,8 +209,6 @@ void HydrodynamicDataDialog::on_cbxConfiguration_currentIndexChanged(const QStri
             ui->vtkWidget->getMouseInteractor()->renderBoundaryCondition(boundaryCondition);
             i++;
         }
-        
-        on_btnShowCellLabels_clicked(ui->btnShowCellLabels->isChecked());
     } else {
         ui->edtConfigurationName->clear();
         currentConfiguration = unsavedConfiguration;
@@ -258,7 +256,6 @@ void HydrodynamicDataDialog::on_cbxGridDataConfiguration_currentIndexChanged(con
 
     ui->tblBoundaryConditions->setRowCount(0);
     ui->btnAddBoundaryCondition->setEnabled(isGridDataNamePresent);
-    ui->btnShowMesh->setEnabled(isGridDataNamePresent);
 }
 
 void HydrodynamicDataDialog::on_btnRemoveConfiguration_clicked() {
@@ -355,7 +352,7 @@ void HydrodynamicDataDialog::on_btnSave_clicked() {
 
 void HydrodynamicDataDialog::on_btnShowCellLabels_clicked(bool checked) {
     for (BoundaryCondition *boundaryCondition : currentConfiguration->getBoundaryConditions()) {
-        boundaryCondition->getLabelsActor()->SetVisibility(checked);
+//        boundaryCondition->getLabelsActor()->SetVisibility(checked);
     }
     ui->vtkWidget->update();
 }
@@ -488,29 +485,6 @@ void HydrodynamicDataDialog::toggleWidgets(bool enable) {
             widget->setEnabled(enable);
         }
     }
-    
-    ui->btnShowMesh->setChecked(true);
-    ui->vtkWidget->toggleMesh(true);
-    ui->btnShowMesh->setEnabled(enable);
-}
-
-void HydrodynamicDataDialog::on_btnBackgroundColor_clicked() {
-    QColor color = QColorDialog::getColor(Qt::white, this, "Select a background color");
-    
-    if (color.isValid()) {
-        QPixmap px(24, 24);
-        px.fill(color);
-        
-        ui->vtkWidget->changeBackgroundColor(color.redF(), color.greenF(), color.blueF());
-        ui->btnBackgroundColor->setIcon(px);
-    }
-}
-
-void HydrodynamicDataDialog::setCoordinate(double &x, double &y) {
-    QString xStr = QString::number(x, 'f', 6);
-    QString yStr = QString::number(y, 'f', 6);
-
-    ui->lblUTMCoordinate->setText(QString("Easting: %1, Northing: %2").arg(xStr).arg(yStr));
 }
 
 void HydrodynamicDataDialog::on_tblBoundaryConditions_currentItemChanged(QTableWidgetItem *current, QTableWidgetItem *previous) {
@@ -544,4 +518,14 @@ void HydrodynamicDataDialog::clearLayout(QLayout *layout) {
         }
         delete item;
     }
+}
+
+
+bool HydrodynamicDataDialog::isCellLabelsActionChecked() const {
+    return this->toggleCellLabelsAction->isChecked();
+}
+
+void HydrodynamicDataDialog::toggleZoomAreaAction(bool enable) {
+    this->zoomAreaAction->setChecked(false);
+    this->zoomAreaAction->setEnabled(enable);
 }
