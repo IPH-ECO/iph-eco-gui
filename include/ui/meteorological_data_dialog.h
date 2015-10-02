@@ -3,6 +3,7 @@
 
 #include "include/domain/meteorological_station.h"
 #include "include/domain/meteorological_configuration.h"
+#include "abstract_mesh_dialog.h"
 
 #include <QDialog>
 #include <QWidget>
@@ -11,7 +12,7 @@ namespace Ui {
 	class MeteorologicalDataDialog;
 }
 
-class MeteorologicalDataDialog : public QDialog {
+class MeteorologicalDataDialog : public AbstractMeshDialog {
 	Q_OBJECT
 public:
 	explicit MeteorologicalDataDialog(QWidget *parent = 0);

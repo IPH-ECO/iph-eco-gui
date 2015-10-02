@@ -13,10 +13,11 @@
 #include <GeographicLib/GeoCoords.hpp>
 
 MeteorologicalDataDialog::MeteorologicalDataDialog(QWidget *parent) :
-    QDialog(parent), ui(new Ui::MeteorologicalDataDialog),
+    AbstractMeshDialog(parent), ui(new Ui::MeteorologicalDataDialog),
     unsavedConfiguration(new MeteorologicalConfiguration), currentConfiguration(unsavedConfiguration), currentStation(nullptr)
 {
 	ui->setupUi(this);
+    this->vtkWidget = ui->vtkWidget;
     
     Project *project = IPHApplication::getCurrentProject();
     QSet<MeteorologicalConfiguration*> meteorologicalConfigurations = project->getMeteorologicalConfigurations();
