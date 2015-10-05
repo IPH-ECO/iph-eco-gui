@@ -154,9 +154,8 @@ void MeshVTKWidget::render(Mesh *mesh) {
 }
 
 void MeshVTKWidget::clear() {
-    renderer->RemoveActor(axesActor);
-    renderer->RemoveActor(meshActor);
-    renderer->RemoveActor(boundaryEdgesActor);
+    currentMesh = nullptr;
+    renderer->RemoveAllViewProps();
     this->update();
 }
 

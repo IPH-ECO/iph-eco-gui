@@ -34,15 +34,15 @@ GridDataDialog::GridDataDialog(QWidget *parent) :
     QSet<GridDataConfiguration*> configurations = project->getGridDataConfigurations();
 
     ui->cbxMesh->blockSignals(true);
-    for (QSet<Mesh*>::const_iterator it = meshes.begin(); it != meshes.end(); ++it) {
-        ui->cbxMesh->addItem((*it)->getName());
+    for (Mesh *mesh : meshes) {
+        ui->cbxMesh->addItem(mesh->getName());
     }
     ui->cbxMesh->setCurrentIndex(-1);
     ui->cbxMesh->blockSignals(false);
 
     ui->cbxConfiguration->blockSignals(true);
-    for (QSet<GridDataConfiguration*>::const_iterator it = configurations.begin(); it != configurations.end(); it++) {
-        ui->cbxConfiguration->addItem((*it)->getName());
+    for (GridDataConfiguration *configuration : configurations) {
+        ui->cbxConfiguration->addItem(configuration->getName());
     }
     ui->cbxConfiguration->setCurrentIndex(-1);
     ui->cbxConfiguration->blockSignals(false);
@@ -63,38 +63,39 @@ void GridDataDialog::on_cbxConfiguration_currentIndexChanged(const QString &conf
     ui->tblGridLayers->setRowCount(0);
     
     if (configurationName.isEmpty()) {
-        toggleGridDataConfigurationForm(false);
-        ui->edtConfigurationName->clear();
-        ui->cbxMesh->setCurrentIndex(-1);
-        currentConfiguration = unsavedConfiguration;
-        ui->btnSaveConfiguration->setText("Save");
-    } else {
-        Project *project = IPHApplication::getCurrentProject();
-        currentConfiguration = project->getGridDataConfiguration(configurationName);
-        QVector<GridData*> gridDataVector = currentConfiguration->getGridDataVector();
-
-        ui->edtConfigurationName->setText(currentConfiguration->getName());
-        ui->cbxMesh->setCurrentText(currentConfiguration->getMesh()->getName());
-
-        for (int i = 0; i < gridDataVector.count(); i++) {
-            int rowCount = ui->tblGridLayers->rowCount();
-            GridData *gridData = gridDataVector.at(i);
-
-            ui->tblGridLayers->insertRow(rowCount);
-            ui->tblGridLayers->setItem(rowCount, 0, new QTableWidgetItem(gridData->getName()));
-            ui->tblGridLayers->setItem(rowCount, 1, new QTableWidgetItem(GridData::getGridTypesMap().value(gridData->getGridDataType())));
-            ui->tblGridLayers->setItem(rowCount, 2, new QTableWidgetItem(QString::number(gridData->getInputPolyData()->GetNumberOfPoints())));
-        }
-
-        showGridDataPointsAction->setEnabled(true);
-        showGridDataPointsAction->toggled(false);
-        showColorMapAction->setEnabled(true);
-        showColorMapAction->toggled(true);
-        toggleGridDataConfigurationForm(true);
+        return;
     }
+    
+
+    Project *project = IPHApplication::getCurrentProject();
+    currentConfiguration = project->getGridDataConfiguration(configurationName);
+    QVector<GridData*> gridDataVector = currentConfiguration->getGridDataVector();
+
+    ui->edtConfigurationName->setText(currentConfiguration->getName());
+    ui->cbxMesh->setCurrentText(currentConfiguration->getMesh()->getName());
+
+    for (int i = 0; i < gridDataVector.count(); i++) {
+        int rowCount = ui->tblGridLayers->rowCount();
+        GridData *gridData = gridDataVector.at(i);
+
+        ui->tblGridLayers->insertRow(rowCount);
+        ui->tblGridLayers->setItem(rowCount, 0, new QTableWidgetItem(gridData->getName()));
+        ui->tblGridLayers->setItem(rowCount, 1, new QTableWidgetItem(GridData::getGridTypesMap().value(gridData->getGridDataType())));
+        ui->tblGridLayers->setItem(rowCount, 2, new QTableWidgetItem(QString::number(gridData->getInputPolyData()->GetNumberOfPoints())));
+    }
+
+    showGridDataPointsAction->setEnabled(true);
+    showGridDataPointsAction->toggled(false);
+    showColorMapAction->setEnabled(true);
+    showColorMapAction->toggled(true);
 }
 
 void GridDataDialog::on_cbxMesh_currentIndexChanged(const QString &meshName) {
+    if (meshName.isEmpty()) {
+        ui->vtkWidget->clear();
+        return;
+    }
+    
     bool isMeshNamePresent = !meshName.isEmpty();
 
     if (isMeshNamePresent) {
@@ -242,7 +243,6 @@ void GridDataDialog::on_btnRemoveGridLayer_clicked() {
                 ui->cbxConfiguration->setEnabled(false);
             }
             
-            toggleGridDataConfigurationForm(false);
             ui->btnEditGridLayer->setEnabled(false);
             showGridDataPointsAction->setEnabled(false);
             showGridDataPointsAction->toggled(false);
@@ -250,48 +250,6 @@ void GridDataDialog::on_btnRemoveGridLayer_clicked() {
             showColorMapAction->toggled(false);
         }
     }
-}
-
-void GridDataDialog::toggleGridDataConfigurationForm(bool enable) {
-    ui->btnDoneConfiguration->setEnabled(enable);
-    ui->btnRemoveConfiguration->setEnabled(enable);
-}
-
-void GridDataDialog::on_btnSaveConfiguration_clicked() {
-    QString configurationName = ui->edtConfigurationName->text();
-    
-    if (!isConfigurationValid(configurationName)) {
-        return;
-    }
-    
-    currentConfiguration->setName(configurationName);
-
-    if (ui->cbxConfiguration->currentIndex() == -1) {
-        IPHApplication::getCurrentProject()->addGridDataConfiguration(currentConfiguration);
-        unsavedConfiguration = new GridDataConfiguration();
-
-        ui->cbxConfiguration->addItem(configurationName);
-        ui->cbxConfiguration->setCurrentText(configurationName);
-    } else {
-        ui->cbxConfiguration->setItemText(ui->cbxConfiguration->currentIndex(), configurationName);
-        toggleGridDataConfigurationForm(true);
-    }
-}
-
-void GridDataDialog::on_btnRemoveConfiguration_clicked() {
-    QMessageBox::StandardButton button = QMessageBox::question(this, tr("Grid Data"), tr("Are you sure you want to remove this configuration?"));
-
-    if (button == QMessageBox::Yes) {
-        IPHApplication::getCurrentProject()->removeGridDataConfiguration(ui->cbxConfiguration->currentText());
-
-        ui->cbxConfiguration->removeItem(ui->cbxConfiguration->currentIndex());
-        ui->cbxConfiguration->setCurrentIndex(-1);
-        ui->vtkWidget->clear();
-    }
-}
-
-void GridDataDialog::on_btnDoneConfiguration_clicked() {
-    ui->cbxConfiguration->setCurrentIndex(-1);
 }
 
 bool GridDataDialog::isConfigurationValid(const QString &configurationName) {
@@ -427,5 +385,51 @@ void GridDataDialog::showEvent(QShowEvent *event) {
     
     if (!event->spontaneous() && this->windowState() & Qt::WindowMaximized) {
         QObject::connect(zoomAreaAction, SIGNAL(triggered(bool)), this, SLOT(onZoomAreaAction(bool)));
+    }
+}
+
+void GridDataDialog::on_btnNewConfiguration_clicked() {
+    currentConfiguration = unsavedConfiguration;
+    ui->cbxConfiguration->blockSignals(true);
+    ui->cbxConfiguration->setCurrentIndex(-1);
+    ui->cbxConfiguration->blockSignals(false);
+    ui->cbxMesh->blockSignals(true);
+    ui->cbxMesh->setCurrentIndex(-1);
+    ui->cbxMesh->blockSignals(false);
+    ui->edtConfigurationName->setText("");
+    ui->edtConfigurationName->setFocus();
+    ui->tblGridLayers->setRowCount(0);
+    ui->vtkWidget->clear();
+}
+
+void GridDataDialog::on_btnApplyConfiguration_clicked() {
+    QString oldConfigurationName = ui->cbxConfiguration->currentText();
+    QString newConfigurationName = ui->edtConfigurationName->text();
+    
+    if (!isConfigurationValid(newConfigurationName)) {
+        return;
+    }
+    
+    currentConfiguration->setName(newConfigurationName);
+    
+    if (oldConfigurationName.isEmpty()) { // new configuration
+        IPHApplication::getCurrentProject()->addGridDataConfiguration(currentConfiguration);
+        unsavedConfiguration = new GridDataConfiguration();
+        
+        ui->cbxConfiguration->addItem(newConfigurationName);
+        ui->cbxConfiguration->setCurrentText(newConfigurationName);
+    } else {
+        ui->cbxConfiguration->setItemText(ui->cbxConfiguration->currentIndex(), newConfigurationName);
+    }
+}
+
+void GridDataDialog::on_btnRemoveConfiguration_clicked() {
+    QMessageBox::StandardButton button = QMessageBox::question(this, tr("Grid Data"), tr("Are you sure you want to remove this configuration?"));
+    
+    if (button == QMessageBox::Yes) {
+        IPHApplication::getCurrentProject()->removeGridDataConfiguration(ui->cbxConfiguration->currentText());
+        
+        ui->cbxConfiguration->removeItem(ui->cbxConfiguration->currentIndex());
+        this->on_btnNewConfiguration_clicked();
     }
 }

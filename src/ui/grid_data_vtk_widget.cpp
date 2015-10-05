@@ -31,7 +31,7 @@ GridDataVTKWidget::GridDataVTKWidget(QWidget *parent) : MeshVTKWidget(parent, vt
 void GridDataVTKWidget::render(Mesh *mesh) {
     clear();
     
-    if (mesh == nullptr || currentMesh == mesh) {
+    if (!mesh || currentMesh == mesh) {
         return;
     }
     
@@ -266,11 +266,7 @@ void GridDataVTKWidget::toggleMap(bool show) {
 
 void GridDataVTKWidget::clear() {
     currentGridData = nullptr;
-    renderer->RemoveActor(mapActor);
-    renderer->RemoveActor(mapPointsActor);
-    renderer->RemoveActor2D(mapBarActor);
-    renderer->RemoveActor2D(mapPointsBarActor);
-    this->update();
+    MeshVTKWidget::clear();
 }
 
 void GridDataVTKWidget::handleMouseEvent(QMouseEvent *event) {

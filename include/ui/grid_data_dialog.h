@@ -31,9 +31,9 @@ private slots:
     void on_btnAddGridLayer_clicked();
     void on_btnEditGridLayer_clicked();
     void on_btnRemoveGridLayer_clicked();
-    void on_btnSaveConfiguration_clicked();
+    void on_btnNewConfiguration_clicked();
+    void on_btnApplyConfiguration_clicked();
     void on_btnRemoveConfiguration_clicked();
-    void on_btnDoneConfiguration_clicked();
     void on_tblGridLayers_currentItemChanged(QTableWidgetItem *current, QTableWidgetItem *previous);
     void on_tblGridLayers_cellDoubleClicked(int row, int column);
     void onPickIndividualCellAction(bool checked);
@@ -56,7 +56,6 @@ private:
     QAction *showColorMapAction;
     QAction *showCellWeightsAction;
     
-    void toggleGridDataConfigurationForm(bool enable);
     bool isConfigurationValid(const QString &configurationName);
     void showGridLayerDialog(GridData *gridData);
     QString getDefaultDirectory();
