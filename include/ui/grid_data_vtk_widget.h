@@ -5,6 +5,7 @@
 #include "include/utility/grid_data_mouse_interactor.h"
 #include "cell_update_dialog.h"
 #include "grid_data_context_menu.h"
+#include "mesh_vtk_widget.h"
 
 #include <QWidget>
 #include <QMouseEvent>
@@ -18,33 +19,24 @@
 class GridDataContextMenu;
 class CellUpdateDialog;
 
-class GridDataVTKWidget : public QVTKWidget {
+class GridDataVTKWidget : public MeshVTKWidget {
 	Q_OBJECT
     
     friend class GridDataContextMenu;
     friend class CellUpdateDialog;
     
 private:
-	vtkSmartPointer<vtkRenderer> renderer;
-    vtkSmartPointer<vtkRenderWindow> renderWindow;
-    vtkSmartPointer<vtkRenderWindowInteractor> renderWindowInteractor;
-    vtkSmartPointer<GridDataMouseInteractor> mouseInteractor;
+    vtkSmartPointer<GridDataMouseInteractor> gridDataMouseInteractor;
     
-    vtkSmartPointer<vtkActor> meshActor;
-    vtkSmartPointer<vtkCubeAxesActor> axesActor;
     vtkSmartPointer<vtkActor> mapActor;
     vtkSmartPointer<vtkScalarBarActor> mapBarActor;
     vtkSmartPointer<vtkActor> mapPointsActor;
     vtkSmartPointer<vtkScalarBarActor> mapPointsBarActor;
-    vtkSmartPointer<vtkActor2D> cellLabelsActor;
     
     vtkSmartPointer<vtkIdTypeArray> selectedCellIds;
     
-    Mesh *currentMesh;
     GridData *currentGridData;
     
-    bool showMesh;
-    bool showAxes;
     bool showMapPoints;
     bool showMap;
     bool isCellPickActivated;
@@ -58,19 +50,14 @@ public:
     explicit GridDataVTKWidget(QWidget *parent);
     void render(Mesh *mesh);
     void render(GridData *gridData);
-    void changeBackgroundColor(const double &r, const double &g, const double &b);
     void clear();
     void toggleCellPick(bool activate, const PickerMode &pickerMode = PickerMode::NO_PICKER);
     void toggleCellLabels(const LabelType &labelType = LabelType::UNDEFINED);
     void lockView(bool lock);
-    void exportToImage(const QString &fileName);
 public slots:
     void toggleMesh(bool show);
-    void toggleAxes(bool show);
     void toggleMapPoints(bool show);
     void toggleMap(bool show);
-    void toggleZoomArea(bool activate);
-    void resetZoom();
 };
 
 #endif // GRID_DATA_VTK_WIDGET_H

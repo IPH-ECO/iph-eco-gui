@@ -19,6 +19,7 @@ protected:
     QAction *toggleVerticeLabelsAction;
     QAction *toggleCellLabelsAction;
     QAction *zoomAreaAction;
+    bool enableMeshPropertiesAction;
     
     QString getDefaultDirectory();
 public:

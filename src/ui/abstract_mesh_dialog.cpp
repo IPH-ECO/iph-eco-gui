@@ -20,66 +20,63 @@ void AbstractMeshDialog::showEvent(QShowEvent *event) {
         MainWindow *mainWindow = static_cast<MainWindow*>(this->topLevelWidget());
         
         QAction *separator = mainWindow->getToolBar()->addSeparator();
+        toolBarActions.append(separator);
+        
         QAction *zoomOriginalAction = new QAction(QIcon(":/icons/zoom-original.png"), "Reset zoom", mainWindow);
+        QObject::connect(zoomOriginalAction, SIGNAL(triggered()), vtkWidget, SLOT(resetZoom()));
+        toolBarActions.append(zoomOriginalAction);
 
         zoomAreaAction = new QAction(QIcon(":/icons/zoom-select.png"), "Zoom area", mainWindow);
         zoomAreaAction->setCheckable(true);
+        QObject::connect(zoomAreaAction, SIGNAL(triggered(bool)), vtkWidget, SLOT(toggleZoomArea(bool)));
+        toolBarActions.append(zoomAreaAction);
         
-//        QAction *lockViewAction = new QAction(QIcon(":/icons/lock-view.png"), "Lock/Unlock view", mainWindow);
-//        lockViewAction->setChecked(true);
+//       QAction *lockViewAction = new QAction(QIcon(":/icons/lock-view.png"), "Lock/Unlock view", mainWindow);
+//       lockViewAction->setChecked(true);
         
         QAction *toggleMeshAction = new QAction(QIcon(":/icons/unstructured-mesh.png"), "Show/Hide mesh", mainWindow);
         toggleMeshAction->setCheckable(true);
         toggleMeshAction->setChecked(true);
+        QObject::connect(toggleMeshAction, SIGNAL(triggered(bool)), vtkWidget, SLOT(toggleMesh(bool)));
+        toolBarActions.append(toggleMeshAction);
         
         QAction *toggleBoundaryEdgesAction = new QAction(QIcon(":/icons/boundary-domain.png"), "Show/Hide boundary edges", mainWindow);
         toggleBoundaryEdgesAction->setCheckable(true);
         toggleBoundaryEdgesAction->setChecked(true);
-        
+        QObject::connect(toggleBoundaryEdgesAction, SIGNAL(triggered(bool)), vtkWidget, SLOT(toggleBoundaryEdges(bool)));
+        toolBarActions.append(toggleBoundaryEdgesAction);
+
         QAction *toggleAxesAction = new QAction(QIcon(":/icons/show-axis.png"), "Show/Hide axes", mainWindow);
         toggleAxesAction->setCheckable(true);
         toggleAxesAction->setChecked(true);
-        
+        QObject::connect(toggleAxesAction, SIGNAL(triggered(bool)), vtkWidget, SLOT(toggleAxes(bool)));
+        toolBarActions.append(toggleAxesAction);
+
         toggleCellLabelsAction = new QAction(QIcon(":/icons/show-cell-labels-mesh.png"), "Show/Hide cell ids", mainWindow);
         toggleCellLabelsAction->setCheckable(true);
-        
+        QObject::connect(toggleCellLabelsAction, SIGNAL(triggered(bool)), this, SLOT(onToggleLabelsClicked(bool)));
+        toolBarActions.append(toggleCellLabelsAction);
+
         toggleVerticeLabelsAction = new QAction(QIcon(":/icons/show-vertice-labels.png"), "Show/Hide cell ids", mainWindow);
         toggleVerticeLabelsAction->setCheckable(true);
-        
-        QAction *meshPropertiesAction = new QAction(QIcon(":/icons/format-list-unordered.png"), "Change mesh properties", mainWindow);
-        QAction *exportMapAction = new QAction(QIcon(":/icons/image-x-generic.png"), "Export map to PNG", mainWindow);
-        
-        toolBarActions.append(separator);
-        toolBarActions.append(zoomOriginalAction);
-        toolBarActions.append(zoomAreaAction);
-//        toolBarActions.append(lockViewAction);
-        toolBarActions.append(toggleAxesAction);
-        toolBarActions.append(toggleMeshAction);
-        toolBarActions.append(toggleBoundaryEdgesAction);
-        toolBarActions.append(toggleCellLabelsAction);
-        toolBarActions.append(toggleVerticeLabelsAction);
-        toolBarActions.append(exportMapAction);
-        toolBarActions.append(meshPropertiesAction);
-        
-        QObject::connect(zoomAreaAction, SIGNAL(triggered(bool)), vtkWidget, SLOT(toggleZoomArea(bool)));
-        QObject::connect(zoomOriginalAction, SIGNAL(triggered()), vtkWidget, SLOT(resetZoom()));
-        QObject::connect(toggleAxesAction, SIGNAL(triggered(bool)), vtkWidget, SLOT(toggleAxes(bool)));
-        QObject::connect(toggleMeshAction, SIGNAL(triggered(bool)), vtkWidget, SLOT(toggleMesh(bool)));
-        QObject::connect(toggleBoundaryEdgesAction, SIGNAL(triggered(bool)), vtkWidget, SLOT(toggleBoundaryEdges(bool)));
-        QObject::connect(toggleCellLabelsAction, SIGNAL(triggered(bool)), this, SLOT(onToggleLabelsClicked(bool)));
         QObject::connect(toggleVerticeLabelsAction, SIGNAL(triggered(bool)), this, SLOT(onToggleLabelsClicked(bool)));
-        QObject::connect(exportMapAction, SIGNAL(triggered()), this, SLOT(onExportMapClicked()));
-        QObject::connect(meshPropertiesAction, SIGNAL(triggered()), this, SLOT(onMeshPropertiesClicked()));
+        toolBarActions.append(toggleVerticeLabelsAction);
         
-        mainWindow->getToolBar()->addAction(zoomOriginalAction);
-        mainWindow->getToolBar()->addAction(zoomAreaAction);
-        mainWindow->getToolBar()->addAction(toggleMeshAction);
-        mainWindow->getToolBar()->addAction(toggleBoundaryEdgesAction);
-        mainWindow->getToolBar()->addAction(toggleAxesAction);
-        mainWindow->getToolBar()->addAction(toggleCellLabelsAction);
-        mainWindow->getToolBar()->addAction(toggleVerticeLabelsAction);
-        mainWindow->getToolBar()->addAction(meshPropertiesAction);
-        mainWindow->getToolBar()->addAction(exportMapAction);
+        if (enableMeshPropertiesAction) {
+            QAction *meshPropertiesAction = new QAction(QIcon(":/icons/format-list-unordered.png"), "Change mesh properties", mainWindow);
+            QObject::connect(meshPropertiesAction, SIGNAL(triggered()), this, SLOT(onMeshPropertiesClicked()));
+            toolBarActions.append(meshPropertiesAction);
+        }
+
+        QAction *exportMapAction = new QAction(QIcon(":/icons/image-x-generic.png"), "Export map to PNG", mainWindow);
+        QObject::connect(exportMapAction, SIGNAL(triggered()), this, SLOT(onExportMapClicked()));
+        toolBarActions.append(exportMapAction);
+        
+//        toolBarActions.append(lockViewAction);
+        
+        for (QAction *action : toolBarActions) {
+            mainWindow->getToolBar()->addAction(action);
+        }
     }
     
     QDialog::showEvent(event);

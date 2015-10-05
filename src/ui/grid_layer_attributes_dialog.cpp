@@ -215,7 +215,7 @@ void GridLayerAttributesDialog::on_buttonBox_clicked(QAbstractButton *button) {
     gridData->setMeshOpacity(ui->sldMeshOpacity->value());
     
     GridDataDialog *gridDataDialog = static_cast<GridDataDialog*>(parentWidget());
-    gridDataDialog->getGridDataVTKWidget()->render(gridData);
+    gridDataDialog->getVTKWidget()->render(gridData);
     
     if (standardButton == QDialogButtonBox::Ok) {
         this->accept();

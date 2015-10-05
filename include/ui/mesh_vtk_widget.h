@@ -38,14 +38,14 @@ public:
     Mesh* getMesh() const;
 
 public slots:
-    void toggleBoundaryEdges(bool show);
-    void toggleMesh(bool show);
-    void toggleAxes(bool show);
-    void resetZoom();
-    void toggleZoomArea(bool activate);
-    void toggleLabels(const LabelType &labelType);
-    void changeBackgroundColor(const double &r, const double &g, const double &b);
-    void exportToImage(const QString &fileName);
+    virtual void toggleBoundaryEdges(bool show);
+    virtual void toggleMesh(bool show);
+    virtual void toggleAxes(bool show);
+    virtual void resetZoom();
+    virtual void toggleZoomArea(bool activate);
+    virtual void toggleLabels(const LabelType &labelType);
+    virtual void changeBackgroundColor(const double &r, const double &g, const double &b);
+    virtual void exportToImage(const QString &fileName);
 };
 
 #endif // MESH_VTK_WIDGET_H

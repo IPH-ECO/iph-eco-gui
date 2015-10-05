@@ -1,7 +1,7 @@
 #include "include/ui/grid_data_vtk_widget.h"
+#include "include/ui/main_window.h"
 #include "include/domain/color_gradient.h"
 #include "include/ui/grid_data_context_menu.h"
-#include "include/ui/grid_data_dialog.h"
 
 #include <vtkCellData.h>
 #include <vtkProperty.h>
@@ -21,28 +21,11 @@
 
 vtkStandardNewMacro(GridDataMouseInteractor);
 
-GridDataVTKWidget::GridDataVTKWidget(QWidget *parent) : QVTKWidget(parent), selectedCellIds(nullptr), currentMesh(nullptr), currentGridData(nullptr),
-    showMesh(true), showAxes(true), showMap(true), isCellPickActivated(false)
+GridDataVTKWidget::GridDataVTKWidget(QWidget *parent) : MeshVTKWidget(parent, vtkSmartPointer<GridDataMouseInteractor>::New()),
+    selectedCellIds(nullptr), currentGridData(nullptr), showMap(true), isCellPickActivated(false)
 {
-    renderer = vtkSmartPointer<vtkRenderer>::New();
-    renderWindow = vtkSmartPointer<vtkRenderWindow>::New();
-    renderWindowInteractor = vtkSmartPointer<vtkRenderWindowInteractor>::New();
-    mouseInteractor = vtkSmartPointer<GridDataMouseInteractor>::New();
-    vtkSmartPointer<vtkAreaPicker> areaPicker = vtkSmartPointer<vtkAreaPicker>::New();
-    
-    renderer->SetBackground(1, 1, 1);
-    renderWindow->AddRenderer(renderer);
-    renderWindowInteractor->SetRenderWindow(renderWindow);
-    renderWindowInteractor->SetInteractorStyle(mouseInteractor);
-    renderWindowInteractor->SetPicker(areaPicker);
-    mouseInteractor->SetDefaultRenderer(renderer);
-    
-    this->SetRenderWindow(renderWindow);
-    renderWindow->Render();
-    
-    GridDataDialog *gridDataDialog = static_cast<GridDataDialog*>(parent);
+    gridDataMouseInteractor = GridDataMouseInteractor::SafeDownCast(mouseInteractor);
     QObject::connect(this, SIGNAL(mouseEvent(QMouseEvent*)), this, SLOT(handleMouseEvent(QMouseEvent*)));
-    QObject::connect(mouseInteractor, SIGNAL(coordinateChanged(double&, double&)), gridDataDialog, SLOT(setCoordinate(double&, double&)));
 }
 
 void GridDataVTKWidget::render(Mesh *mesh) {
@@ -58,8 +41,8 @@ void GridDataVTKWidget::render(Mesh *mesh) {
     renderer->RemoveActor(meshActor);
     renderer->RemoveActor(axesActor);
     
-    mouseInteractor->setMeshPolyData(meshPolyData);
-    mouseInteractor->deactivateCellPicking();
+    gridDataMouseInteractor->setMeshPolyData(meshPolyData);
+    gridDataMouseInteractor->deactivateCellPicking();
     
     vtkSmartPointer<vtkExtractEdges> extractEdges = vtkSmartPointer<vtkExtractEdges>::New();
     extractEdges->SetInputData(meshPolyData);
@@ -97,6 +80,9 @@ void GridDataVTKWidget::render(Mesh *mesh) {
     renderer->AddActor(meshActor);
     renderer->AddActor(axesActor);
     renderer->ResetCamera();
+    
+    MainWindow *mainWindow = static_cast<MainWindow*>(this->topLevelWidget());
+    QObject::connect(mouseInteractor, SIGNAL(coordinateChanged(double&, double&)), mainWindow, SLOT(setCoordinate(double&, double&)));
 }
 
 void GridDataVTKWidget::render(GridData *gridData) {
@@ -170,6 +156,9 @@ void GridDataVTKWidget::render(GridData *gridData) {
     renderer->AddActor(mapPointsActor);
     renderer->AddActor2D(mapBarActor);
     renderer->AddActor2D(mapPointsBarActor);
+    
+    MainWindow *mainWindow = static_cast<MainWindow*>(this->topLevelWidget());
+    QObject::connect(mouseInteractor, SIGNAL(coordinateChanged(double&, double&)), mainWindow, SLOT(setCoordinate(double&, double&)));
 }
 
 vtkColorTransferFunction* GridDataVTKWidget::buildColorTransferFunction(bool isColorMap) {
@@ -212,30 +201,24 @@ vtkColorTransferFunction* GridDataVTKWidget::buildColorTransferFunction(bool isC
 }
 
 void GridDataVTKWidget::toggleMesh(bool show) {
-    vtkActor *selectionActor = mouseInteractor->getSelectionActor();
+    vtkActor *selectionActor = gridDataMouseInteractor->getSelectionActor();
     
     this->showMesh = show;
     
     if (show) {
         meshActor->VisibilityOn();
-        selectionActor = mouseInteractor->getSelectionActor();
+        selectionActor = gridDataMouseInteractor->getSelectionActor();
         if (selectionActor != nullptr) {
             selectionActor->VisibilityOn();
-            mouseInteractor->getSelectionIdLabelsActor()->VisibilityOn();
+            gridDataMouseInteractor->getSelectionIdLabelsActor()->VisibilityOn();
         }
     } else {
         meshActor->VisibilityOff();
         if (selectionActor != nullptr) {
             selectionActor->VisibilityOff();
-            mouseInteractor->getSelectionIdLabelsActor()->VisibilityOff();
+            gridDataMouseInteractor->getSelectionIdLabelsActor()->VisibilityOff();
         }
     }
-    this->update();
-}
-
-void GridDataVTKWidget::toggleAxes(bool show) {
-    this->showAxes = show;
-    this->axesActor->SetVisibility(show);
     this->update();
 }
 
@@ -281,11 +264,6 @@ void GridDataVTKWidget::toggleMap(bool show) {
     this->update();
 }
 
-void GridDataVTKWidget::changeBackgroundColor(const double &r, const double &g, const double &b) {
-    renderer->SetBackground(r, g, b);
-    this->update();
-}
-
 void GridDataVTKWidget::clear() {
     currentGridData = nullptr;
     renderer->RemoveActor(mapActor);
@@ -298,7 +276,7 @@ void GridDataVTKWidget::clear() {
 void GridDataVTKWidget::handleMouseEvent(QMouseEvent *event) {
     if (event->type() == QEvent::MouseButtonDblClick && event->button() == Qt::LeftButton) {
         if (isCellPickActivated) {
-            mouseInteractor->pickCell();
+            gridDataMouseInteractor->pickCell();
         }
     } else if (event->type() == QEvent::MouseButtonRelease && event->button() == Qt::RightButton) {
         GridDataContextMenu *contextMenu = new GridDataContextMenu(this->parentWidget()); // GridDataDialog
@@ -311,18 +289,9 @@ void GridDataVTKWidget::handleMouseEvent(QMouseEvent *event) {
     }
 }
 
-void GridDataVTKWidget::toggleZoomArea(bool activate) {
-    if (activate) {
-        vtkSmartPointer<vtkInteractorStyleRubberBandZoom> zoomAreaInteractor = vtkSmartPointer<vtkInteractorStyleRubberBandZoom>::New();
-        renderWindowInteractor->SetInteractorStyle(zoomAreaInteractor);
-    } else {
-        renderWindowInteractor->SetInteractorStyle(mouseInteractor);
-    }
-}
-
 void GridDataVTKWidget::toggleCellPick(bool activate, const PickerMode &pickerMode) {
     isCellPickActivated = activate;
-    mouseInteractor->deactivateCellPicking();
+    gridDataMouseInteractor->deactivateCellPicking();
     
     if (activate && pickerMode != PickerMode::NO_PICKER) {
         selectedCellIds = vtkSmartPointer<vtkIdTypeArray>::New();
@@ -332,12 +301,12 @@ void GridDataVTKWidget::toggleCellPick(bool activate, const PickerMode &pickerMo
         if (pickerMode == PickerMode::MULTIPLE_CELL) {
             mouseInteractor->StartSelect();
         }
-        mouseInteractor->activateCellPicking(pickerMode, selectedCellIds);
+        gridDataMouseInteractor->activateCellPicking(pickerMode, selectedCellIds);
     }
 }
 
 void GridDataVTKWidget::toggleCellLabels(const LabelType &labelType) {
-    renderer->RemoveActor2D(cellLabelsActor);
+    renderer->RemoveActor2D(labelsActor);
     
     if (labelType != LabelType::UNDEFINED) {
         vtkSmartPointer<vtkCellCenters> cellCentersFilter = vtkSmartPointer<vtkCellCenters>::New();
@@ -358,18 +327,13 @@ void GridDataVTKWidget::toggleCellLabels(const LabelType &labelType) {
         labelMapper->GetLabelTextProperty()->BoldOff();
         labelMapper->GetLabelTextProperty()->ShadowOff();
         
-        cellLabelsActor = vtkSmartPointer<vtkActor2D>::New();
-        cellLabelsActor->SetMapper(labelMapper);
+        labelsActor = vtkSmartPointer<vtkActor2D>::New();
+        labelsActor->SetMapper(labelMapper);
         
-        renderer->AddActor2D(cellLabelsActor);
+        renderer->AddActor2D(labelsActor);
     }
     
     renderWindow->Render();
-}
-
-void GridDataVTKWidget::resetZoom() {
-    renderer->ResetCamera();
-    this->update();
 }
 
 void GridDataVTKWidget::lockView(bool lock) {
@@ -378,19 +342,4 @@ void GridDataVTKWidget::lockView(bool lock) {
     } else {
         renderWindowInteractor->Enable();
     }
-}
-
-void GridDataVTKWidget::exportToImage(const QString &fileName) {
-    vtkSmartPointer<vtkWindowToImageFilter> windowToImageFilter = vtkSmartPointer<vtkWindowToImageFilter>::New();
-    windowToImageFilter->SetInput(renderWindow);
-    windowToImageFilter->SetMagnification(1); //set the resolution of the output image (3 times the current resolution of vtk render window)
-    windowToImageFilter->SetInputBufferTypeToRGBA(); //also record the alpha (transparency) channel
-    windowToImageFilter->ReadFrontBufferOff(); // read from the back buffer
-    windowToImageFilter->Update();
-    
-    std::string stdFileName = fileName.toStdString();
-    vtkSmartPointer<vtkPNGWriter> writer = vtkSmartPointer<vtkPNGWriter>::New();
-    writer->SetFileName(stdFileName.c_str());
-    writer->SetInputConnection(windowToImageFilter->GetOutputPort());
-    writer->Write();
 }

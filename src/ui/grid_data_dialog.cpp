@@ -5,6 +5,7 @@
 #include "include/domain/structured_mesh.h"
 #include "include/domain/unstructured_mesh.h"
 #include "include/exceptions/grid_data_exception.h"
+#include "include/ui/main_window.h"
 #include "include/ui/grid_layer_dialog.h"
 #include "include/ui/grid_layer_attributes_dialog.h"
 
@@ -14,13 +15,13 @@
 #include <QFileDialog>
 #include <QVector>
 #include <QObject>
-#include <QPixmap>
 
 GridDataDialog::GridDataDialog(QWidget *parent) :
-    QDialog(parent), GRID_DATA_DEFAULT_DIR_KEY("grid_data_default_dir"), ui(new Ui::GridDataDialog),
-    unsavedConfiguration(new GridDataConfiguration()), currentConfiguration(unsavedConfiguration), currentMesh(nullptr)
+    AbstractMeshDialog(parent), GRID_DATA_DEFAULT_DIR_KEY("grid_data_default_dir"), ui(new Ui::GridDataDialog),
+    unsavedConfiguration(new GridDataConfiguration), currentConfiguration(unsavedConfiguration), currentMesh(nullptr)
 {
     ui->setupUi(this);
+    this->vtkWidget = ui->vtkWidget;
     
     appSettings = new QSettings(QApplication::organizationName(), QApplication::applicationName(), this);
 
@@ -46,13 +47,9 @@ GridDataDialog::GridDataDialog(QWidget *parent) :
     ui->cbxConfiguration->setCurrentIndex(-1);
     ui->cbxConfiguration->blockSignals(false);
     
-    ui->gridDataVTKWidget->clear();
+    ui->vtkWidget->clear();
     
-    QColor color = QColor(Qt::white);
-    QPixmap px(24, 24);
-    
-    px.fill(color);
-    ui->btnBackgroundColor->setIcon(px);
+    QObject::connect(zoomAreaAction, SIGNAL(triggered(bool)), this, SLOT(onZoomAreaAction(bool)));
 }
 
 GridDataDialog::~GridDataDialog() {
@@ -60,15 +57,8 @@ GridDataDialog::~GridDataDialog() {
     delete ui;
 }
 
-void GridDataDialog::setCoordinate(double &x, double &y) {
-    QString xStr = QString::number(x, 'f', 6);
-    QString yStr = QString::number(y, 'f', 6);
-
-    ui->lblUTMCoordinate->setText(QString("Easting: %1, Northing: %2").arg(xStr).arg(yStr));
-}
-
-GridDataVTKWidget* GridDataDialog::getGridDataVTKWidget() {
-    return ui->gridDataVTKWidget;
+GridDataVTKWidget* GridDataDialog::getVTKWidget() {
+    return ui->vtkWidget;
 }
 
 void GridDataDialog::on_cbxConfiguration_currentIndexChanged(const QString &configurationName) {
@@ -98,10 +88,10 @@ void GridDataDialog::on_cbxConfiguration_currentIndexChanged(const QString &conf
             ui->tblGridLayers->setItem(rowCount, 2, new QTableWidgetItem(QString::number(gridData->getInputPolyData()->GetNumberOfPoints())));
         }
 
-        ui->btnShowGridDataPoints->setEnabled(true);
-        ui->btnShowGridDataPoints->toggled(false);
-        ui->btnShowColorMap->setEnabled(true);
-        ui->btnShowColorMap->toggled(true);
+        showGridDataPointsAction->setEnabled(true);
+        showGridDataPointsAction->toggled(false);
+        showColorMapAction->setEnabled(true);
+        showColorMapAction->toggled(true);
         toggleGridDataConfigurationForm(true);
     }
 }
@@ -138,18 +128,16 @@ void GridDataDialog::on_cbxMesh_currentIndexChanged(const QString &meshName) {
         currentMesh = nullptr;
     }
 
-    ui->gridDataVTKWidget->render(currentMesh);
-    ui->gridDataVTKWidget->toggleCellPick(false);
-    ui->btnPickIndividualCells->setChecked(false);
-    ui->btnPickCellSet->setChecked(false);
-    ui->btnPickIndividualCells->setEnabled(isMeshNamePresent);
-    ui->btnPickCellSet->setEnabled(isMeshNamePresent);
-    ui->btnShowCellLabels->setEnabled(isMeshNamePresent);
-    ui->btnShowCellWeights->setEnabled(isMeshNamePresent);
-    ui->btnExport->setEnabled(isMeshNamePresent);
+    ui->vtkWidget->render(currentMesh);
+    ui->vtkWidget->toggleCellPick(false);
+    pickIndividualCellAction->setChecked(false);
+    pickCellSetAction->setChecked(false);
+    pickIndividualCellAction->setEnabled(isMeshNamePresent);
+    pickCellSetAction->setEnabled(isMeshNamePresent);
+    toggleCellLabelsAction->setEnabled(isMeshNamePresent);
+    showCellWeightsAction->setEnabled(isMeshNamePresent);
     ui->btnAddGridLayer->setEnabled(isMeshNamePresent);
     ui->btnRemoveGridLayer->setEnabled(isMeshNamePresent);
-    ui->btnShowMesh->setEnabled(isMeshNamePresent);
 }
 
 void GridDataDialog::on_btnAddGridLayer_clicked() {
@@ -228,9 +216,9 @@ void GridDataDialog::on_tblGridLayers_currentItemChanged(QTableWidgetItem *curre
         QString gridDataName = ui->tblGridLayers->item(current->row(), 0)->text();
         GridData *gridData = currentConfiguration->getGridData(gridDataName);
         
-        ui->gridDataVTKWidget->toggleMapPoints(ui->btnShowGridDataPoints->isChecked());
-        ui->gridDataVTKWidget->toggleMap(ui->btnShowColorMap->isChecked());
-        ui->gridDataVTKWidget->render(gridData);
+        ui->vtkWidget->toggleMapPoints(showGridDataPointsAction->isChecked());
+        ui->vtkWidget->toggleMap(showColorMapAction->isChecked());
+        ui->vtkWidget->render(gridData);
         ui->btnEditGridLayer->setEnabled(true);
     }
 }
@@ -248,7 +236,7 @@ void GridDataDialog::on_btnRemoveGridLayer_clicked() {
 
     if (currentRow > -1 && QMessageBox::question(this, tr("Grid Data"), tr("Are you sure you want to remove the selected grid layer?")) == QMessageBox::Yes) {
         currentConfiguration->removeGridData(currentRow);
-        ui->gridDataVTKWidget->clear();
+        ui->vtkWidget->clear();
         ui->tblGridLayers->removeRow(currentRow);
         
         if (ui->tblGridLayers->rowCount() == 0) {
@@ -258,10 +246,10 @@ void GridDataDialog::on_btnRemoveGridLayer_clicked() {
             
             toggleGridDataConfigurationForm(false);
             ui->btnEditGridLayer->setEnabled(false);
-            ui->btnShowGridDataPoints->setEnabled(false);
-            ui->btnShowGridDataPoints->toggled(false);
-            ui->btnShowColorMap->setEnabled(false);
-            ui->btnShowColorMap->toggled(false);
+            showGridDataPointsAction->setEnabled(false);
+            showGridDataPointsAction->toggled(false);
+            showColorMapAction->setEnabled(false);
+            showColorMapAction->toggled(false);
         }
     }
 }
@@ -300,7 +288,7 @@ void GridDataDialog::on_btnRemoveConfiguration_clicked() {
 
         ui->cbxConfiguration->removeItem(ui->cbxConfiguration->currentIndex());
         ui->cbxConfiguration->setCurrentIndex(-1);
-        ui->gridDataVTKWidget->clear();
+        ui->vtkWidget->clear();
     }
 }
 
@@ -342,55 +330,48 @@ bool GridDataDialog::isConfigurationValid(const QString &configurationName) {
     return true;
 }
 
-void GridDataDialog::on_btnBackgroundColor_clicked() {
-    QColor color = QColorDialog::getColor(Qt::white, this, "Select a background color");
-    
-    if (color.isValid()) {
-        QPixmap px(24, 24);
-        px.fill(color);
-        
-        ui->gridDataVTKWidget->changeBackgroundColor(color.redF(), color.greenF(), color.blueF());
-        ui->btnBackgroundColor->setIcon(px);
-    }
+void GridDataDialog::onPickIndividualCellAction(bool checked) {
+    toggleCellLabelsAction->setChecked(false);
+    toggleCellLabelsAction->setEnabled(!checked);
+    zoomAreaAction->setChecked(false);
+    zoomAreaAction->setEnabled(!checked);
+    showCellWeightsAction->setChecked(false);
+    showCellWeightsAction->setEnabled(!checked);
+    pickCellSetAction->setChecked(false);
+    pickCellSetAction->setEnabled(!checked);
+    ui->vtkWidget->toggleCellLabels(LabelType::UNDEFINED);
+    ui->vtkWidget->toggleCellPick(checked, PickerMode::INDIVIDUAL_CELL);
 }
 
-void GridDataDialog::on_btnPickIndividualCells_clicked(bool checked) {
-    ui->btnShowCellLabels->setChecked(false);
-    ui->btnShowCellLabels->setEnabled(!checked);
-    ui->btnShowCellWeights->setChecked(false);
-    ui->btnShowCellWeights->setEnabled(!checked);
-    ui->btnPickCellSet->setChecked(false);
-    ui->btnPickCellSet->setEnabled(!checked);
-    ui->gridDataVTKWidget->toggleCellLabels(LabelType::UNDEFINED);
-    ui->gridDataVTKWidget->toggleCellPick(checked, PickerMode::INDIVIDUAL_CELL);
+void GridDataDialog::onPickCellSetAction(bool checked) {
+    toggleCellLabelsAction->setChecked(false);
+    toggleCellLabelsAction->setEnabled(!checked);
+    zoomAreaAction->setChecked(false);
+    zoomAreaAction->setEnabled(!checked);
+    showCellWeightsAction->setChecked(false);
+    showCellWeightsAction->setEnabled(!checked);
+    pickIndividualCellAction->setChecked(false);
+    pickIndividualCellAction->setEnabled(!checked);
+    ui->vtkWidget->toggleZoomArea(!checked);
+    ui->vtkWidget->toggleCellLabels(LabelType::UNDEFINED);
+    ui->vtkWidget->toggleCellPick(checked, PickerMode::MULTIPLE_CELL);
 }
 
-void GridDataDialog::on_btnPickCellSet_clicked(bool checked) {
-    ui->btnShowCellLabels->setChecked(false);
-    ui->btnShowCellLabels->setEnabled(!checked);
-    ui->btnShowCellWeights->setChecked(false);
-    ui->btnShowCellWeights->setEnabled(!checked);
-    ui->btnPickIndividualCells->setChecked(false);
-    ui->btnPickIndividualCells->setEnabled(!checked);
-    ui->gridDataVTKWidget->toggleCellLabels(LabelType::UNDEFINED);
-    ui->gridDataVTKWidget->toggleCellPick(checked, PickerMode::MULTIPLE_CELL);
+void GridDataDialog::onShowCellWeightsAction(bool checked) {
+    toggleCellLabelsAction->setChecked(false);
+    toggleCellLabelsAction->setEnabled(!checked);
+    ui->vtkWidget->toggleCellPick(false);
+    ui->vtkWidget->toggleCellLabels(checked ? LabelType::CELL_WEIGHT : LabelType::UNDEFINED);
 }
 
-void GridDataDialog::on_btnShowCellLabels_clicked(bool checked) {
-    ui->btnShowCellWeights->setChecked(false);
-    ui->btnShowCellWeights->setEnabled(!checked);
-    ui->gridDataVTKWidget->toggleCellPick(false);
-    ui->gridDataVTKWidget->toggleCellLabels(checked ? LabelType::CELL_ID : LabelType::UNDEFINED);
+void GridDataDialog::onZoomAreaAction(bool checked) {
+    pickCellSetAction->setChecked(false);
+    pickCellSetAction->setEnabled(!checked);
+    pickIndividualCellAction->setChecked(false);
+    pickIndividualCellAction->setEnabled(!checked);
 }
 
-void GridDataDialog::on_btnShowCellWeights_clicked(bool checked) {
-    ui->btnShowCellLabels->setChecked(false);
-    ui->btnShowCellLabels->setEnabled(!checked);
-    ui->gridDataVTKWidget->toggleCellPick(false);
-    ui->gridDataVTKWidget->toggleCellLabels(checked ? LabelType::CELL_WEIGHT : LabelType::UNDEFINED);
-}
-
-void GridDataDialog::on_btnLockView_clicked(bool checked) {
+/*void GridDataDialog::on_btnLockView_clicked(bool checked) {
     ui->btnNavigateMode->setEnabled(!checked);
     ui->btnOriginalZoom->setEnabled(!checked);
     ui->btnZoomArea->setEnabled(!checked);
@@ -399,22 +380,48 @@ void GridDataDialog::on_btnLockView_clicked(bool checked) {
     ui->btnPickCellSet->setEnabled(!checked);
     ui->btnShowGridDataPoints->setEnabled(!checked);
     ui->btnShowColorMap->setEnabled(!checked);
-    ui->btnShowMesh->setEnabled(!checked);
     ui->btnShowCellLabels->setEnabled(!checked);
-    ui->btnShowCellWeights->setEnabled(!checked);
+    showCellWeightsAction->setEnabled(!checked);
     ui->btnBackgroundColor->setEnabled(!checked);
-    ui->gridDataVTKWidget->lockView(checked);
-}
+    ui->vtkWidget->lockView(checked);
+}*/
 
 QString GridDataDialog::getDefaultDirectory() {
     return appSettings->value(GRID_DATA_DEFAULT_DIR_KEY).toString().isEmpty() ? QDir::homePath() : appSettings->value(GRID_DATA_DEFAULT_DIR_KEY).toString();
 }
 
-void GridDataDialog::on_btnExport_clicked() {
-    QString fileName = QFileDialog::getSaveFileName(this, tr("Export to PNG"), getDefaultDirectory(), tr("Portable Network Graphics (*.png)"));
-    
-    if (!fileName.isEmpty()) {
-        ui->gridDataVTKWidget->exportToImage(fileName);
-        QMessageBox::information(this, tr("Grid Data"), tr("Map exported."));
+void GridDataDialog::showEvent(QShowEvent *event) {
+    if (!event->spontaneous() && this->windowState() & Qt::WindowMaximized) {
+        MainWindow *mainWindow = static_cast<MainWindow*>(this->topLevelWidget());
+        QAction *separator = mainWindow->getToolBar()->addSeparator();
+        toolBarActions.append(separator);
+        
+        pickIndividualCellAction = new QAction(QIcon(":/icons/pick-individual-cell.png"), "Pick individual cells", mainWindow);
+        pickIndividualCellAction->setCheckable(true);
+        QObject::connect(pickIndividualCellAction, SIGNAL(triggered(bool)), this, SLOT(onPickIndividualCellAction(bool)));
+        toolBarActions.append(pickIndividualCellAction);
+        
+        pickCellSetAction = new QAction(QIcon(":/icons/pick-cell-set.png"), "Pick cells from selected area", mainWindow);
+        pickCellSetAction->setCheckable(true);
+        QObject::connect(pickCellSetAction, SIGNAL(triggered(bool)), this, SLOT(onPickCellSetAction(bool)));
+        toolBarActions.append(pickCellSetAction);
+        
+        showGridDataPointsAction = new QAction(QIcon(":/icons/show-hide-points.png"), "Show/Hide input points", mainWindow);
+        showGridDataPointsAction->setCheckable(true);
+        QObject::connect(showGridDataPointsAction, SIGNAL(triggered(bool)), vtkWidget, SLOT(toggleMapPoints(bool)));
+        toolBarActions.append(showGridDataPointsAction);
+        
+        showColorMapAction = new QAction(QIcon(":/icons/interpolation-result.png"), "Show/Hide color map", mainWindow);
+        showColorMapAction->setCheckable(true);
+        showColorMapAction->setChecked(true);
+        QObject::connect(showColorMapAction, SIGNAL(triggered(bool)), vtkWidget, SLOT(toggleMap(bool)));
+        toolBarActions.append(showColorMapAction);
+        
+        showCellWeightsAction = new QAction(QIcon(":/icons/show-cell-weights.png"), "Show/Hide interpolated values", mainWindow);
+        showCellWeightsAction->setCheckable(true);
+        QObject::connect(showCellWeightsAction, SIGNAL(triggered(bool)), this,  SLOT(onShowCellWeightsAction(bool)));
+        toolBarActions.append(showCellWeightsAction);
     }
+    
+    AbstractMeshDialog::showEvent(event);
 }

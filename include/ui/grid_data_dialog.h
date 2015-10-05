@@ -3,6 +3,8 @@
 
 #include "include/domain/grid_data_configuration.h"
 #include "grid_data_vtk_widget.h"
+#include "abstract_mesh_dialog.h"
+
 
 #include <QDialog>
 #include <QWidget>
@@ -13,17 +15,15 @@ namespace Ui {
 class GridDataDialog;
 }
 
-class GridDataDialog : public QDialog {
+class GridDataDialog : public AbstractMeshDialog {
     Q_OBJECT
 
 public:
     explicit GridDataDialog(QWidget *parent = 0);
     ~GridDataDialog();
 
-    GridDataVTKWidget* getGridDataVTKWidget();
-
-public slots:
-    void setCoordinate(double &x, double &y);
+    GridDataVTKWidget* getVTKWidget();
+    virtual void showEvent(QShowEvent *event);
 
 private slots:
     void on_cbxMesh_currentIndexChanged(const QString &meshName);
@@ -36,13 +36,11 @@ private slots:
     void on_btnDoneConfiguration_clicked();
     void on_tblGridLayers_currentItemChanged(QTableWidgetItem *current, QTableWidgetItem *previous);
     void on_tblGridLayers_cellDoubleClicked(int row, int column);
-    void on_btnBackgroundColor_clicked();
-    void on_btnPickIndividualCells_clicked(bool checked);
-    void on_btnPickCellSet_clicked(bool checked);
-    void on_btnShowCellLabels_clicked(bool checked);
-    void on_btnShowCellWeights_clicked(bool checked);
-    void on_btnLockView_clicked(bool checked);
-    void on_btnExport_clicked();
+    void onPickIndividualCellAction(bool checked);
+    void onPickCellSetAction(bool checked);
+    void onShowCellWeightsAction(bool checked);
+    void onZoomAreaAction(bool checked);
+//    void on_btnLockView_clicked(bool checked);
 
 private:
     const QString GRID_DATA_DEFAULT_DIR_KEY;
@@ -52,6 +50,11 @@ private:
     GridDataConfiguration *currentConfiguration;
     Mesh *currentMesh;
     QSettings *appSettings;
+    QAction *pickIndividualCellAction;
+    QAction *pickCellSetAction;
+    QAction *showGridDataPointsAction;
+    QAction *showColorMapAction;
+    QAction *showCellWeightsAction;
     
     void toggleGridDataConfigurationForm(bool enable);
     bool isConfigurationValid(const QString &configurationName);

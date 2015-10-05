@@ -7,7 +7,7 @@
 #include <QIcon>
 
 GridDataContextMenu::GridDataContextMenu(QWidget *parent) : QMenu(parent) {
-    vtkWidget = static_cast<GridDataDialog*>(parent)->getGridDataVTKWidget();
+    vtkWidget = static_cast<GridDataDialog*>(parent)->getVTKWidget();
     editGridLayerAttributesAction = new QAction(QIcon(":/icons/format-list-unordered.png"), tr("E&dit grid layer attributes"), this);
     editWeightsAction = new QAction(QIcon(":/icons/edit-clear.png"), tr("&Edit interpolated values"), this);
     
