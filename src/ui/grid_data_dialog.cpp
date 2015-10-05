@@ -96,47 +96,41 @@ void GridDataDialog::on_cbxMesh_currentIndexChanged(const QString &meshName) {
         return;
     }
     
-    bool isMeshNamePresent = !meshName.isEmpty();
-
-    if (isMeshNamePresent) {
-        Mesh *configurationMesh = currentConfiguration->getMesh();
+    Mesh *configurationMesh = currentConfiguration->getMesh();
+    
+    if (currentMesh != nullptr && configurationMesh != nullptr && currentConfiguration->getMesh()->getName() != meshName && currentConfiguration->getGridDataVector().size() > 0) {
+        QString question = tr("Changing the mesh in this configuration will remove all created grid data. Are you sure?");
+        QMessageBox::StandardButton button = QMessageBox::question(this, tr("Grid Data"), question);
         
-        if (currentMesh != nullptr && configurationMesh != nullptr && currentConfiguration->getMesh()->getName() != meshName && currentConfiguration->getGridDataVector().size() > 0) {
-            QString question = tr("Changing the mesh in this configuration will remove all created grid data. Are you sure?");
-            QMessageBox::StandardButton button = QMessageBox::question(this, tr("Grid Data"), question);
-            
-            if (button == QMessageBox::No) {
-                ui->cbxMesh->blockSignals(true);
-                ui->cbxMesh->setCurrentText(currentMesh->getName());
-                ui->cbxMesh->blockSignals(false);
-                return;
-            }
-            
-            currentConfiguration->clearGridDataVector();
-            ui->tblGridLayers->setRowCount(0);
+        if (button == QMessageBox::No) {
+            ui->cbxMesh->blockSignals(true);
+            ui->cbxMesh->setCurrentText(currentMesh->getName());
+            ui->cbxMesh->blockSignals(false);
+            return;
         }
         
-        currentMesh = IPHApplication::getCurrentProject()->getMesh(meshName);
+        currentConfiguration->clearGridDataVector();
+        ui->tblGridLayers->setRowCount(0);
+    }
+    
+    currentMesh = IPHApplication::getCurrentProject()->getMesh(meshName);
 
-        if (currentMesh->instanceOf("UnstructuredMesh")) {
-            currentMesh = static_cast<UnstructuredMesh*>(currentMesh);
-        } else {
-            currentMesh = static_cast<StructuredMesh*>(currentMesh);
-        }
+    if (currentMesh->instanceOf("UnstructuredMesh")) {
+        currentMesh = static_cast<UnstructuredMesh*>(currentMesh);
     } else {
-        currentMesh = nullptr;
+        currentMesh = static_cast<StructuredMesh*>(currentMesh);
     }
 
     ui->vtkWidget->render(currentMesh);
     ui->vtkWidget->toggleCellPick(false);
     pickIndividualCellAction->setChecked(false);
     pickCellSetAction->setChecked(false);
-    pickIndividualCellAction->setEnabled(isMeshNamePresent);
-    pickCellSetAction->setEnabled(isMeshNamePresent);
-    toggleCellLabelsAction->setEnabled(isMeshNamePresent);
-    showCellWeightsAction->setEnabled(isMeshNamePresent);
-    ui->btnAddGridLayer->setEnabled(isMeshNamePresent);
-    ui->btnRemoveGridLayer->setEnabled(isMeshNamePresent);
+    pickIndividualCellAction->setEnabled(true);
+    pickCellSetAction->setEnabled(true);
+    toggleCellLabelsAction->setEnabled(true);
+    showCellWeightsAction->setEnabled(true);
+    ui->btnAddGridLayer->setEnabled(true);
+    ui->btnRemoveGridLayer->setEnabled(true);
 }
 
 void GridDataDialog::on_btnAddGridLayer_clicked() {
