@@ -38,10 +38,11 @@ private slots:
     void on_btnGenerateMesh2_clicked();
 
     // General dialog events
-    void on_cbxMeshName_currentIndexChanged(int index);
-    void on_btnSaveMesh_clicked();
-    void on_btnCancelMesh_clicked();
+    void on_cbxMeshName_currentIndexChanged(const QString &meshName);
+    void on_btnNewMesh_clicked();
+    void on_btnApplyMesh_clicked();
     void on_btnRemoveMesh_clicked();
+    void on_btnClose_clicked();
 
 private:
     const QString BOUNDARY_DEFAULT_DIR_KEY;
@@ -52,9 +53,6 @@ private:
     QString currentIslandName;
     QString currentRefinementAreaName;
     CoordinateSystem meshCoordinateSystem;
-
-    void resetMeshForm();
-    void enableMeshForm(bool enable);
 };
 
 #endif // UNSTRUCTURED_MESH_DIALOG_H

@@ -76,7 +76,6 @@ void StructuredMeshDialog::on_btnNewMesh_clicked() {
     ui->edtResolution->setText("100.0");
     ui->lstIslands->clear();
     ui->vtkWidget->clear();
-    // TODO: update status bar text
 }
 
 void StructuredMeshDialog::on_btnApplyMesh_clicked() {

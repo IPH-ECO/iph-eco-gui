@@ -7,7 +7,9 @@
 #include <QColorDialog>
 #include <QApplication>
 
-AbstractMeshDialog::AbstractMeshDialog(QWidget *parent) : QDialog(parent), BOUNDARY_DEFAULT_DIR_KEY("boundary_default_dir"), vtkWidget(nullptr) {
+AbstractMeshDialog::AbstractMeshDialog(QWidget *parent) :
+    QDialog(parent), BOUNDARY_DEFAULT_DIR_KEY("boundary_default_dir"), vtkWidget(nullptr), enableMeshPropertiesAction(true)
+{
     appSettings = new QSettings(QApplication::organizationName(), QApplication::applicationName(), this);
 }
 

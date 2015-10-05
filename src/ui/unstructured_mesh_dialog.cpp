@@ -1,13 +1,15 @@
 #include "include/ui/unstructured_mesh_dialog.h"
 #include "ui_unstructured_mesh_dialog.h"
+#include "include/ui/main_window.h"
 #include "include/ui/island_form.h"
 #include "include/application/iph_application.h"
 #include "include/exceptions/mesh_polygon_exception.h"
 #include "include/ui/coordinate_file_dialog.h"
 
+#include <QMessageBox>
 #include <QFileDialog>
 #include <QInputDialog>
-#include <QMessageBox>
+#include <QMdiSubWindow>
 #include <CGAL/assertions_behaviour.h>
 
 UnstructuredMeshDialog::UnstructuredMeshDialog(QWidget *parent) : AbstractMeshDialog(parent), ui(new Ui::UnstructuredMeshDialog),
@@ -23,9 +25,9 @@ UnstructuredMeshDialog::UnstructuredMeshDialog(QWidget *parent) : AbstractMeshDi
     QSet<Mesh*> meshes = project->getMeshes();
 
     ui->cbxMeshName->blockSignals(true);
-    for (QSet<Mesh*>::const_iterator it = meshes.begin(); it != meshes.end(); ++it) {
-        if ((*it)->instanceOf("UnstructuredMesh")) {
-            ui->cbxMeshName->addItem((*it)->getName());
+    for (Mesh *mesh : meshes) {
+        if (mesh->instanceOf("UnstructuredMesh")) {
+            ui->cbxMeshName->addItem(mesh->getName());
         }
     }
     ui->cbxMeshName->setCurrentIndex(-1);
@@ -184,7 +186,6 @@ void UnstructuredMeshDialog::on_btnGenerateMesh1_clicked() {
         }
     }
 
-    enableMeshForm(true);
     currentMesh->setCoordinatesDistance(ui->sbxCoordinatesDistance->value());
     
     MeshPolygon* boundaryPolygon = nullptr;
@@ -218,7 +219,6 @@ void UnstructuredMeshDialog::on_btnGenerateMesh2_clicked() {
         return;
     }
 
-    enableMeshForm(true);
     
     currentMesh->setCoordinatesDistance(ui->sbxCoordinatesDistance->value());
 
@@ -238,112 +238,102 @@ void UnstructuredMeshDialog::on_btnGenerateMesh2_clicked() {
     CGAL::set_error_behaviour(old_behaviour);
 }
 
-void UnstructuredMeshDialog::on_cbxMeshName_currentIndexChanged(int index) {
-    if (index > -1) {
-        QString meshName = ui->cbxMeshName->currentText();
-        currentMesh = static_cast<UnstructuredMesh*>(IPHApplication::getCurrentProject()->getMesh(meshName));
-        MeshPolygon *boundaryPolygon = currentMesh->getBoundaryPolygon();
-        QList<MeshPolygon*> islands = currentMesh->getIslands();
-
-        enableMeshForm(true);
-        ui->btnRemoveMesh->setEnabled(true);
-        ui->edtMeshName->setText(currentMesh->getName());
-        ui->edtBoundaryFileLine->setText(boundaryPolygon->getFilename());
-        ui->sbxCoordinatesDistance->setValue(currentMesh->getCoordinatesDistance());
-        ui->lstRefinementAreas->setCurrentRow(0);
-        ui->sbxMinimumAngle->setValue(currentMesh->getBoundaryPolygon()->getMinimumAngle());
-        ui->sbxMaximumEdgeLength->setValue(currentMesh->getBoundaryPolygon()->getMaximumEdgeLength());
-        ui->chkShowBoundaryEdges->setChecked(true);
-        ui->chkShowMesh->setChecked(true);
-        ui->btnCancelMesh->setText("Done");
-        ui->lstIslands->clear();
-        
-        for (QList<MeshPolygon*>::const_iterator it = islands.begin(); it != islands.end(); it++) {
-            QListWidgetItem *item = new QListWidgetItem((*it)->getName());
-            
-            item->setFlags(item->flags() | Qt::ItemIsEditable);
-            ui->lstIslands->addItem(item);
-        }
-
-        ui->vtkWidget->render(currentMesh);
-    } else {
-        resetMeshForm();
-    }
-}
-
-void UnstructuredMeshDialog::on_btnSaveMesh_clicked() {
-    QString meshName = ui->cbxMeshName->currentIndex() == -1 ? ui->edtMeshName->text() : ui->cbxMeshName->currentText();
-
+void UnstructuredMeshDialog::on_cbxMeshName_currentIndexChanged(const QString &meshName) {
     if (meshName.isEmpty()) {
-        QMessageBox::warning(this, tr("Unstructured Mesh Generation"), tr("Mesh name can't be empty."));
         return;
     }
 
-    currentMesh->setName(meshName);
+    currentMesh = static_cast<UnstructuredMesh*>(IPHApplication::getCurrentProject()->getMesh(meshName));
+    MeshPolygon *boundaryPolygon = currentMesh->getBoundaryPolygon();
+    QList<MeshPolygon*> islands = currentMesh->getIslands();
+
+    ui->edtMeshName->setText(currentMesh->getName());
+    ui->edtBoundaryFileLine->setText(boundaryPolygon->getFilename());
+    ui->sbxCoordinatesDistance->setValue(currentMesh->getCoordinatesDistance());
+    ui->lstRefinementAreas->setCurrentRow(0);
+    ui->sbxMinimumAngle->setValue(currentMesh->getBoundaryPolygon()->getMinimumAngle());
+    ui->sbxMaximumEdgeLength->setValue(currentMesh->getBoundaryPolygon()->getMaximumEdgeLength());
+    ui->lstIslands->clear();
+    
+    for (MeshPolygon *island : islands) {
+        QListWidgetItem *item = new QListWidgetItem(island->getName());
+        
+        item->setFlags(item->flags() | Qt::ItemIsEditable);
+        ui->lstIslands->addItem(item);
+    }
+
+    ui->vtkWidget->render(currentMesh);
+}
+
+void UnstructuredMeshDialog::on_btnNewMesh_clicked() {
+    unsavedMesh->clear();
+    currentMesh = unsavedMesh;
+    ui->cbxMeshName->blockSignals(true);
+    ui->cbxMeshName->setCurrentIndex(-1);
+    ui->cbxMeshName->blockSignals(false);
+    ui->edtMeshName->setText("");
+    ui->edtMeshName->setFocus();
+    ui->edtBoundaryFileLine->setText("");
+    ui->sbxCoordinatesDistance->setValue(0);
+    ui->lstIslands->clear();
+    ui->vtkWidget->clear();
+}
+
+void UnstructuredMeshDialog::on_btnApplyMesh_clicked() {
+    QString oldMeshName = ui->cbxMeshName->currentText();
+    QString newMeshName = ui->edtMeshName->text();
+    
+    if (newMeshName.isEmpty()) {
+        QMessageBox::warning(this, tr("Unstructured Mesh Generation"), tr("Mesh name can't be empty."));
+        return;
+    }
+    
     currentMesh->setCoordinatesDistance(ui->sbxCoordinatesDistance->value());
-
-    if (ui->cbxMeshName->currentIndex() == -1) {
+    
+    if (oldMeshName.isEmpty()) { // new mesh
         Project *project = IPHApplication::getCurrentProject();
-
-        if (project->containsMesh(meshName)) {
+        
+        if (project->containsMesh(newMeshName)) {
             QMessageBox::critical(this, tr("Unstructured Mesh Generation"), tr("Mesh name already used."));
             return;
         }
-
+        
+        currentMesh->setName(newMeshName);
         project->addMesh(currentMesh);
         unsavedMesh = new UnstructuredMesh();
-
-        ui->cbxMeshName->addItem(meshName);
-        ui->cbxMeshName->setCurrentText(meshName);
+        
+        ui->cbxMeshName->addItem(newMeshName);
+        ui->cbxMeshName->setCurrentText(newMeshName);
     } else {
-        ui->cbxMeshName->setItemText(ui->cbxMeshName->currentIndex(), currentMesh->getName());
+        currentMesh->setName(newMeshName);
+        ui->cbxMeshName->setItemText(ui->cbxMeshName->currentIndex(), newMeshName);
     }
-}
-
-void UnstructuredMeshDialog::on_btnCancelMesh_clicked() {
-    if (ui->btnCancelMesh->text() == "Done") {
-        ui->btnCancelMesh->setText("Cancel");
-    }
-
-    resetMeshForm();
-    ui->cbxMeshName->setCurrentIndex(-1);
 }
 
 void UnstructuredMeshDialog::on_btnRemoveMesh_clicked() {
     QString meshName = ui->cbxMeshName->currentText();
-    QMessageBox::StandardButton question = QMessageBox::question(this, tr("Remove mesh"), tr("Are you sure you want to remove '") + meshName + "'? Existing grid data configurations will be also removed.");
-
-    if (question == QMessageBox::Yes) {
+    
+    if (meshName.isEmpty()) {
+        return;
+    }
+    
+    QString questionStr = tr("Are you sure you want to remove '") + meshName + "'? Any existing associations with this mesh will be also removed.";
+    QMessageBox::StandardButton questionBtn = QMessageBox::question(this, tr("Remove mesh"), questionStr);
+    
+    if (questionBtn == QMessageBox::Yes) {
         IPHApplication::getCurrentProject()->removeMesh(currentMesh);
-        currentMesh = unsavedMesh;
-
         ui->cbxMeshName->removeItem(ui->cbxMeshName->currentIndex());
-        ui->cbxMeshName->setCurrentIndex(-1);
-        ui->vtkWidget->clear();
+        this->on_btnNewMesh_clicked();
     }
 }
 
-void UnstructuredMeshDialog::enableMeshForm(bool enable) {
-    ui->chkShowMesh->setEnabled(enable);
-    ui->chkShowBoundaryEdges->setEnabled(enable);
-    ui->chkShowUtmCoordinates->setEnabled(enable);
-    ui->btnSaveMesh->setEnabled(enable);
-    ui->btnCancelMesh->setEnabled(enable);
-}
-
-void UnstructuredMeshDialog::resetMeshForm() {
-    unsavedMesh->clear();
-    currentMesh = unsavedMesh;
-
-    ui->vtkWidget->clear();
-    ui->edtMeshName->clear();
-    ui->edtBoundaryFileLine->clear();
-    ui->lstIslands->clear();
-    ui->sbxCoordinatesDistance->setValue(0.0);
-    ui->lstRefinementAreas->clear();
-    ui->sbxMinimumAngle->setValue(MeshPolygon::DEFAULT_MINIMUM_ANGLE);
-    ui->sbxMaximumEdgeLength->setValue(MeshPolygon::DEFAULT_MAXIMUM_EDGE_LENGTH);
-    ui->btnRemoveMesh->setEnabled(false);
-
-    enableMeshForm(false);
+void UnstructuredMeshDialog::on_btnClose_clicked() {
+    MainWindow *mainWindow = static_cast<MainWindow*>(this->topLevelWidget());
+    
+    for (QAction *action : toolBarActions) {
+        mainWindow->getToolBar()->removeAction(action);
+    }
+    
+    QMdiSubWindow *parentWindow = static_cast<QMdiSubWindow*>(parent());
+    parentWindow->close();
 }
