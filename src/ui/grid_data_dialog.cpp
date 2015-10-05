@@ -48,8 +48,6 @@ GridDataDialog::GridDataDialog(QWidget *parent) :
     ui->cbxConfiguration->blockSignals(false);
     
     ui->vtkWidget->clear();
-    
-    QObject::connect(zoomAreaAction, SIGNAL(triggered(bool)), this, SLOT(onZoomAreaAction(bool)));
 }
 
 GridDataDialog::~GridDataDialog() {
@@ -333,6 +331,8 @@ bool GridDataDialog::isConfigurationValid(const QString &configurationName) {
 void GridDataDialog::onPickIndividualCellAction(bool checked) {
     toggleCellLabelsAction->setChecked(false);
     toggleCellLabelsAction->setEnabled(!checked);
+    toggleVerticeLabelsAction->setChecked(false);
+    toggleVerticeLabelsAction->setEnabled(!checked);
     zoomAreaAction->setChecked(false);
     zoomAreaAction->setEnabled(!checked);
     showCellWeightsAction->setChecked(false);
@@ -424,4 +424,8 @@ void GridDataDialog::showEvent(QShowEvent *event) {
     }
     
     AbstractMeshDialog::showEvent(event);
+    
+    if (!event->spontaneous() && this->windowState() & Qt::WindowMaximized) {
+        QObject::connect(zoomAreaAction, SIGNAL(triggered(bool)), this, SLOT(onZoomAreaAction(bool)));
+    }
 }
