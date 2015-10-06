@@ -398,14 +398,19 @@
   </customwidget>
  </customwidgets>
  <tabstops>
-  <tabstop>cbxMeshName</tabstop>
   <tabstop>edtMeshName</tabstop>
   <tabstop>edtBoundaryFileLine</tabstop>
   <tabstop>btnBoundaryFileBrowser</tabstop>
-  <tabstop>lstIslands</tabstop>
+  <tabstop>edtResolution</tabstop>
   <tabstop>btnAddIsland</tabstop>
   <tabstop>btnRemoveIsland</tabstop>
   <tabstop>btnGenerateMesh</tabstop>
+  <tabstop>btnClose</tabstop>
+  <tabstop>btnNewMesh</tabstop>
+  <tabstop>btnApplyMesh</tabstop>
+  <tabstop>btnRemoveMesh</tabstop>
+  <tabstop>cbxMeshName</tabstop>
+  <tabstop>lstIslands</tabstop>
  </tabstops>
  <resources>
   <include location="../../icons.qrc"/>

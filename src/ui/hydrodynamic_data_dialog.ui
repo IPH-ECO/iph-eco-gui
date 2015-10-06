@@ -411,9 +411,18 @@
  </customwidgets>
  <tabstops>
   <tabstop>edtConfigurationName</tabstop>
+  <tabstop>cbxGridDataConfiguration</tabstop>
   <tabstop>tabWidget</tabstop>
-  <tabstop>tblBoundaryConditions</tabstop>
   <tabstop>trwProcesses</tabstop>
+  <tabstop>btnClose</tabstop>
+  <tabstop>tblBoundaryConditions</tabstop>
+  <tabstop>cbxConfiguration</tabstop>
+  <tabstop>btnNewConfiguration</tabstop>
+  <tabstop>btnApplyConfiguration</tabstop>
+  <tabstop>btnRemoveConfiguration</tabstop>
+  <tabstop>btnAddBoundaryCondition</tabstop>
+  <tabstop>btnEditBoundaryCondition</tabstop>
+  <tabstop>btnRemoveBoundaryCondition</tabstop>
   <tabstop>trwParameters</tabstop>
  </tabstops>
  <resources>

@@ -595,10 +595,26 @@
   <tabstop>trStations</tabstop>
   <tabstop>btnAddStation</tabstop>
   <tabstop>btnRemoveStation</tabstop>
+  <tabstop>cbxFunction</tabstop>
+  <tabstop>edtConstant</tabstop>
+  <tabstop>cbxType</tabstop>
+  <tabstop>edtXComponent</tabstop>
+  <tabstop>edtYComponent</tabstop>
+  <tabstop>edtIntensity</tabstop>
+  <tabstop>edtDirection</tabstop>
+  <tabstop>btnShowTimeSeries</tabstop>
+  <tabstop>btnApplyParameter</tabstop>
+  <tabstop>edtStationName</tabstop>
   <tabstop>edtX</tabstop>
   <tabstop>edtY</tabstop>
+  <tabstop>rdoUtm</tabstop>
   <tabstop>rdoLatLong</tabstop>
+  <tabstop>btnApplyStation</tabstop>
   <tabstop>btnClose</tabstop>
+  <tabstop>btnApplyConfiguration</tabstop>
+  <tabstop>btnRemoveConfiguration</tabstop>
+  <tabstop>btnNewConfiguration</tabstop>
+  <tabstop>cbxConfiguration</tabstop>
  </tabstops>
  <resources>
   <include location="../../icons.qrc"/>

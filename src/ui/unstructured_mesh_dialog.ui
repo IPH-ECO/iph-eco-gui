@@ -661,17 +661,26 @@
   </customwidget>
  </customwidgets>
  <tabstops>
-  <tabstop>tabWidget</tabstop>
   <tabstop>edtMeshName</tabstop>
   <tabstop>edtBoundaryFileLine</tabstop>
   <tabstop>btnBoundaryFileBrowser</tabstop>
+  <tabstop>btnAddIsland</tabstop>
+  <tabstop>btnRemoveIsland</tabstop>
   <tabstop>sbxCoordinatesDistance</tabstop>
   <tabstop>btnGenerateMesh1</tabstop>
-  <tabstop>lstRefinementAreas</tabstop>
-  <tabstop>btnAddCoordinatesFile</tabstop>
+  <tabstop>btnClose</tabstop>
   <tabstop>btnRemoveCoordinatesFile</tabstop>
   <tabstop>sbxMinimumAngle</tabstop>
   <tabstop>sbxMaximumEdgeLength</tabstop>
+  <tabstop>cbxMeshName</tabstop>
+  <tabstop>btnNewMesh</tabstop>
+  <tabstop>btnApplyMesh</tabstop>
+  <tabstop>btnRemoveMesh</tabstop>
+  <tabstop>btnAddCoordinatesFile</tabstop>
+  <tabstop>lstIslands</tabstop>
+  <tabstop>tabWidget</tabstop>
+  <tabstop>lstRefinementAreas</tabstop>
+  <tabstop>btnGenerateMesh2</tabstop>
  </tabstops>
  <resources>
   <include location="../../icons.qrc"/>

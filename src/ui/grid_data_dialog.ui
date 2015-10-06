@@ -370,7 +370,15 @@
  <tabstops>
   <tabstop>edtConfigurationName</tabstop>
   <tabstop>cbxMesh</tabstop>
+  <tabstop>btnAddGridLayer</tabstop>
+  <tabstop>btnEditGridLayer</tabstop>
   <tabstop>btnRemoveGridLayer</tabstop>
+  <tabstop>btnClose</tabstop>
+  <tabstop>btnRemoveConfiguration</tabstop>
+  <tabstop>tblGridLayers</tabstop>
+  <tabstop>btnNewConfiguration</tabstop>
+  <tabstop>cbxConfiguration</tabstop>
+  <tabstop>btnApplyConfiguration</tabstop>
  </tabstops>
  <resources>
   <include location="../../icons.qrc"/>
