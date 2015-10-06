@@ -46,8 +46,8 @@ private slots:
     void on_btnEditBoundaryCondition_clicked();
     void on_btnRemoveBoundaryCondition_clicked();
     void on_btnRemoveConfiguration_clicked();
-    void on_btnDone_clicked();
-    void on_btnSave_clicked();
+    void on_btnNewConfiguration_clicked();
+    void on_btnApplyConfiguration_clicked();
     void on_tblBoundaryConditions_currentItemChanged(QTableWidgetItem *current, QTableWidgetItem *previous);
     virtual void onToggleLabelsClicked(bool checked);
 public:

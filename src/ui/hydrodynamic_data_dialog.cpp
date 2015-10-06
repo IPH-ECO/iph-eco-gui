@@ -26,7 +26,6 @@ HydrodynamicDataDialog::HydrodynamicDataDialog(QWidget *parent) :
     ui->trwParameters->header()->setStretchLastSection(false);
     ui->trwParameters->header()->setSectionResizeMode(0, QHeaderView::Stretch);
     ui->tblBoundaryConditions->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-    ui->btnRemoveConfiguration->setEnabled(false);
     this->vtkWidget = ui->vtkWidget;
     
     Project *project = IPHApplication::getCurrentProject();
@@ -189,13 +188,10 @@ void HydrodynamicDataDialog::expandTrees() {
 }
 
 void HydrodynamicDataDialog::on_cbxConfiguration_currentIndexChanged(const QString &configurationName) {
-    bool isConfigurationNamePresent = !configurationName.isEmpty();
-
     clearLayout(ui->initialConditionsTab->layout());
     
-    if (isConfigurationNamePresent) {
-        Project *project = IPHApplication::getCurrentProject();
-        currentConfiguration = project->getHydrodynamicConfiguration(configurationName);
+    if (!configurationName.isEmpty()) {
+        currentConfiguration = IPHApplication::getCurrentProject()->getHydrodynamicConfiguration(configurationName);
         ui->edtConfigurationName->setText(currentConfiguration->getName());
         ui->cbxGridDataConfiguration->setCurrentText(currentConfiguration->getGridDataConfiguration()->getName());
         
@@ -209,14 +205,8 @@ void HydrodynamicDataDialog::on_cbxConfiguration_currentIndexChanged(const QStri
             ui->vtkWidget->getMouseInteractor()->renderBoundaryCondition(boundaryCondition);
             i++;
         }
-    } else {
-        ui->edtConfigurationName->clear();
-        currentConfiguration = unsavedConfiguration;
-        ui->vtkWidget->getMouseInteractor()->setHydrodynamicConfiguration(nullptr);
     }
     
-    ui->btnDone->setEnabled(isConfigurationNamePresent);
-    ui->btnRemoveConfiguration->setEnabled(isConfigurationNamePresent);
     ui->trwProcesses->clear();
     ui->trwParameters->clear();
     
@@ -224,38 +214,35 @@ void HydrodynamicDataDialog::on_cbxConfiguration_currentIndexChanged(const QStri
 }
 
 void HydrodynamicDataDialog::on_cbxGridDataConfiguration_currentIndexChanged(const QString &gridDataConfigurationName) {
-    bool isGridDataNamePresent = !gridDataConfigurationName.isEmpty();
-
-    if (isGridDataNamePresent) {
-        GridDataConfiguration *gridDataConfiguration = currentConfiguration->getGridDataConfiguration();
+    ui->btnAddBoundaryCondition->setEnabled(!gridDataConfigurationName.isEmpty());
+    
+    if (gridDataConfigurationName.isEmpty()) {
+        return;
+    }
+    
+    GridDataConfiguration *gridDataConfiguration = currentConfiguration->getGridDataConfiguration();
+    
+    if (currentGridDataConfiguration && gridDataConfiguration && currentConfiguration->getGridDataConfiguration()->getName() != gridDataConfigurationName && !currentConfiguration->getBoundaryConditions().empty()) {
+        QString question = tr("Changing the mesh in this configuration will remove all created boundary conditions. Are you sure?");
+        QMessageBox::StandardButton button = QMessageBox::question(this, tr("Hydrodynamic Data"), question);
         
-        if (currentGridDataConfiguration && gridDataConfiguration && currentConfiguration->getGridDataConfiguration()->getName() != gridDataConfigurationName && !currentConfiguration->getBoundaryConditions().empty()) {
-            QString question = tr("Changing the mesh in this configuration will remove all created boundary conditions. Are you sure?");
-            QMessageBox::StandardButton button = QMessageBox::question(this, tr("Hydrodynamic Data"), question);
-            
-            if (button == QMessageBox::No) {
-                ui->cbxGridDataConfiguration->blockSignals(true);
-                ui->cbxGridDataConfiguration->setCurrentText(currentGridDataConfiguration->getName());
-                ui->cbxGridDataConfiguration->blockSignals(false);
-                return;
-            }
-            
-            currentConfiguration->clearBoundaryConditions();
+        if (button == QMessageBox::No) {
+            ui->cbxGridDataConfiguration->blockSignals(true);
+            ui->cbxGridDataConfiguration->setCurrentText(currentGridDataConfiguration->getName());
+            ui->cbxGridDataConfiguration->blockSignals(false);
+            return;
         }
         
-        currentGridDataConfiguration = IPHApplication::getCurrentProject()->getGridDataConfiguration(gridDataConfigurationName);
-        currentConfiguration->setGridDataConfiguration(currentGridDataConfiguration);
-        
-        QLineEdit *latitude = this->findChild<QLineEdit*>("latitude");
-        latitude->setText(QString::number(currentGridDataConfiguration->getMesh()->getLatitudeAverage()));
-        
-        ui->vtkWidget->render(currentConfiguration);
-    } else {
-        currentGridDataConfiguration = nullptr;
+        currentConfiguration->clearBoundaryConditions();
     }
-
-    ui->tblBoundaryConditions->setRowCount(0);
-    ui->btnAddBoundaryCondition->setEnabled(isGridDataNamePresent);
+    
+    currentGridDataConfiguration = IPHApplication::getCurrentProject()->getGridDataConfiguration(gridDataConfigurationName);
+    currentConfiguration->setGridDataConfiguration(currentGridDataConfiguration);
+    
+    QLineEdit *latitude = this->findChild<QLineEdit*>("latitude");
+    latitude->setText(QString::number(currentGridDataConfiguration->getMesh()->getLatitudeAverage()));
+    
+    ui->vtkWidget->render(currentConfiguration);
 }
 
 void HydrodynamicDataDialog::on_btnRemoveConfiguration_clicked() {
@@ -263,29 +250,29 @@ void HydrodynamicDataDialog::on_btnRemoveConfiguration_clicked() {
     
     if (question == QMessageBox::Yes) {
         IPHApplication::getCurrentProject()->removeHydrodynamicConfiguration(ui->cbxConfiguration->currentText());
-        currentConfiguration = unsavedConfiguration;
-        
-        ui->tblBoundaryConditions->setRowCount(0);
-        ui->btnEditBoundaryCondition->setEnabled(false);
-        ui->btnRemoveBoundaryCondition->setEnabled(false);
-        ui->cbxGridDataConfiguration->setCurrentIndex(-1);
         ui->cbxConfiguration->removeItem(ui->cbxConfiguration->currentIndex());
-        ui->cbxConfiguration->setCurrentIndex(-1);
+        this->on_btnNewConfiguration_clicked();
     }
 }
 
-void HydrodynamicDataDialog::on_btnDone_clicked() {
+void HydrodynamicDataDialog::on_btnNewConfiguration_clicked() {
+    currentConfiguration = unsavedConfiguration;
+    currentGridDataConfiguration = nullptr;
     ui->cbxConfiguration->setCurrentIndex(-1);
     ui->cbxGridDataConfiguration->setCurrentIndex(-1);
+    ui->edtConfigurationName->setText("");
+    ui->edtConfigurationName->setFocus();
     ui->tblBoundaryConditions->setRowCount(0);
     ui->btnEditBoundaryCondition->setEnabled(false);
     ui->btnRemoveBoundaryCondition->setEnabled(false);
+    ui->vtkWidget->getMouseInteractor()->setHydrodynamicConfiguration(nullptr);
 }
 
-void HydrodynamicDataDialog::on_btnSave_clicked() {
-    QString configurationName = ui->edtConfigurationName->text();
+void HydrodynamicDataDialog::on_btnApplyConfiguration_clicked() {
+    QString oldConfigurationName = ui->cbxConfiguration->currentText();
+    QString newConfigurationName = ui->edtConfigurationName->text();
     
-    if (configurationName.isEmpty()) {
+    if (newConfigurationName.isEmpty()) {
         QMessageBox::warning(this, tr("Hydrodynamic Data"), tr("Configuration name can't be empty."));
         return;
     }
@@ -331,23 +318,19 @@ void HydrodynamicDataDialog::on_btnSave_clicked() {
         }
     }
     
-    currentConfiguration->setName(configurationName);
+    currentConfiguration->setName(newConfigurationName);
 
     ui->cbxConfiguration->blockSignals(true);
-    if (ui->cbxConfiguration->currentIndex() == -1) {
+    if (oldConfigurationName.isEmpty()) { // new configuration
         IPHApplication::getCurrentProject()->addHydrodynamicConfiguration(currentConfiguration);
         unsavedConfiguration = new HydrodynamicConfiguration();
 
-        ui->cbxConfiguration->addItem(configurationName);
-        ui->cbxConfiguration->setCurrentText(configurationName);
+        ui->cbxConfiguration->addItem(newConfigurationName);
+        ui->cbxConfiguration->setCurrentText(newConfigurationName);
     } else {
-        ui->cbxConfiguration->setItemText(ui->cbxConfiguration->currentIndex(), configurationName);
-        ui->btnRemoveConfiguration->setEnabled(true);
-        ui->btnDone->setEnabled(true);
+        ui->cbxConfiguration->setItemText(ui->cbxConfiguration->currentIndex(), newConfigurationName);
     }
     ui->cbxConfiguration->blockSignals(false);
-    
-    ui->btnDone->setEnabled(true);
 }
 
 void HydrodynamicDataDialog::onToggleLabelsClicked(bool checked) {
@@ -473,7 +456,7 @@ void HydrodynamicDataDialog::toggleWidgets(bool enable) {
     for (int i = 0; i < ui->configurationLayout->count(); i++) {
         QWidget *widget = ui->configurationLayout->itemAt(i)->widget();
         
-        if (widget != nullptr) {
+        if (widget) {
             widget->setEnabled(enable);
         }
     }
@@ -481,7 +464,7 @@ void HydrodynamicDataDialog::toggleWidgets(bool enable) {
     for (int i = 0; i < ui->actionsLayout->count(); i++) {
         QWidget *widget = ui->actionsLayout->itemAt(i)->widget();
         
-        if (widget != nullptr) {
+        if (widget) {
             widget->setEnabled(enable);
         }
     }

@@ -48,7 +48,7 @@ vtkSmartPointer<vtkIdTypeArray> BoundaryCondition::getVTKObjectIds() const {
     vtkObjectIds->SetNumberOfComponents(1);
     vtkObjectIds->SetNumberOfTuples(objectIds.size());
     
-    for (vtkIdType objectId : objectIds) {
+    for (vtkIdType objectId : this->objectIds) {
         vtkObjectIds->SetTuple1(i++, objectId);
     }
     

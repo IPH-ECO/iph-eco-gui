@@ -28,16 +28,6 @@
          </property>
         </widget>
        </item>
-       <item row="0" column="0">
-        <widget class="QLabel" name="label">
-         <property name="text">
-          <string>Configuration</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1">
-        <widget class="QComboBox" name="cbxConfiguration"/>
-       </item>
        <item row="1" column="0">
         <spacer name="verticalSpacer">
          <property name="orientation">
@@ -70,12 +60,74 @@
        <item row="3" column="1">
         <widget class="QComboBox" name="cbxGridDataConfiguration"/>
        </item>
+       <item row="0" column="0" colspan="2">
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <item>
+          <widget class="QLabel" name="label">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>Configuration</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="cbxConfiguration"/>
+         </item>
+         <item>
+          <widget class="QToolButton" name="btnNewConfiguration">
+           <property name="toolTip">
+            <string>Add new mesh</string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="../../icons.qrc">
+             <normaloff>:/icons/archive-insert.png</normaloff>:/icons/archive-insert.png</iconset>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QToolButton" name="btnApplyConfiguration">
+           <property name="toolTip">
+            <string>Apply changes</string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="../../icons.qrc">
+             <normaloff>:/icons/archive-apply.png</normaloff>:/icons/archive-apply.png</iconset>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QToolButton" name="btnRemoveConfiguration">
+           <property name="toolTip">
+            <string>Remove selected mesh</string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="../../icons.qrc">
+             <normaloff>:/icons/archive-remove.png</normaloff>:/icons/archive-remove.png</iconset>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
       </layout>
      </item>
      <item>
       <widget class="QTabWidget" name="tabWidget">
        <property name="currentIndex">
-        <number>3</number>
+        <number>0</number>
        </property>
        <widget class="QWidget" name="tab_3">
         <attribute name="title">
@@ -304,23 +356,13 @@
      <item>
       <layout class="QHBoxLayout" name="actionsLayout">
        <item>
-        <widget class="QPushButton" name="btnDone">
+        <widget class="QPushButton" name="btnClose">
          <property name="text">
-          <string>Done</string>
+          <string>Close</string>
          </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="btnRemoveConfiguration">
-         <property name="text">
-          <string>Remove</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="btnSave">
-         <property name="text">
-          <string>Save</string>
+         <property name="icon">
+          <iconset resource="../../icons.qrc">
+           <normaloff>:/icons/dialog-close.png</normaloff>:/icons/dialog-close.png</iconset>
          </property>
         </widget>
        </item>
@@ -368,13 +410,9 @@
   </customwidget>
  </customwidgets>
  <tabstops>
-  <tabstop>cbxConfiguration</tabstop>
   <tabstop>edtConfigurationName</tabstop>
   <tabstop>tabWidget</tabstop>
   <tabstop>tblBoundaryConditions</tabstop>
-  <tabstop>btnDone</tabstop>
-  <tabstop>btnRemoveConfiguration</tabstop>
-  <tabstop>btnSave</tabstop>
   <tabstop>trwProcesses</tabstop>
   <tabstop>trwParameters</tabstop>
  </tabstops>
