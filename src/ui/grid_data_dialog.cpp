@@ -22,6 +22,7 @@ GridDataDialog::GridDataDialog(QWidget *parent) :
 {
     ui->setupUi(this);
     this->vtkWidget = ui->vtkWidget;
+    this->enableMeshPropertiesAction = false;
     
     appSettings = new QSettings(QApplication::organizationName(), QApplication::applicationName(), this);
 
@@ -65,7 +66,6 @@ void GridDataDialog::on_cbxConfiguration_currentIndexChanged(const QString &conf
     if (configurationName.isEmpty()) {
         return;
     }
-    
 
     Project *project = IPHApplication::getCurrentProject();
     currentConfiguration = project->getGridDataConfiguration(configurationName);

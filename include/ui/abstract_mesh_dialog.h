@@ -19,6 +19,7 @@ protected:
     QAction *toggleVerticeLabelsAction;
     QAction *toggleCellLabelsAction;
     QAction *zoomAreaAction;
+    QAction *changeBackgroundColorAction;
     bool enableMeshPropertiesAction;
     
     QString getDefaultDirectory();
@@ -28,12 +29,12 @@ public:
 
 	virtual void showEvent(QShowEvent *event);
 protected slots:
-    void closeDialog();
-
+    virtual void closeDialog();
 private slots:
 	virtual void onToggleLabelsClicked(bool show);
 	void onExportMapClicked();
 	void onMeshPropertiesClicked();
+    void onChangeBackgroundColorClicked();
 };
 
 #endif // ABSTRACT_MESH_DIALOG_H

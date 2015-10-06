@@ -48,11 +48,6 @@ HydrodynamicDataDialog::HydrodynamicDataDialog(QWidget *parent) :
     ui->cbxGridDataConfiguration->blockSignals(false);
 
     this->setupItems();
-
-    QColor color = QColor(Qt::white);
-    QPixmap px(24, 24);
-    
-    px.fill(color);
 }
 
 HydrodynamicDataDialog::~HydrodynamicDataDialog() {

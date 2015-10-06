@@ -3,6 +3,7 @@
 #include "include/ui/main_window.h"
 
 #include <QIcon>
+#include <QPixmap>
 #include <QMessageBox>
 #include <QColorDialog>
 #include <QApplication>
@@ -75,6 +76,14 @@ void AbstractMeshDialog::showEvent(QShowEvent *event) {
         QObject::connect(exportMapAction, SIGNAL(triggered()), this, SLOT(onExportMapClicked()));
         toolBarActions.append(exportMapAction);
         
+        QColor color = QColor(Qt::white);
+        QPixmap px(24, 24);
+        
+        px.fill(color);
+        changeBackgroundColorAction = new QAction(px, "Change background color", mainWindow);
+        QObject::connect(changeBackgroundColorAction, SIGNAL(triggered()), this, SLOT(onChangeBackgroundColorClicked()));
+        toolBarActions.append(changeBackgroundColorAction);
+        
 //        toolBarActions.append(lockViewAction);
         
         for (QAction *action : toolBarActions) {
@@ -128,4 +137,16 @@ void AbstractMeshDialog::closeDialog() {
     
     QMdiSubWindow *parentWindow = static_cast<QMdiSubWindow*>(parent());
     parentWindow->close();
+}
+
+void AbstractMeshDialog::onChangeBackgroundColorClicked() {
+    QColor color = QColorDialog::getColor(Qt::white, this, "Select a background color");
+    
+    if (color.isValid()) {
+        QPixmap px(24, 24);
+        px.fill(color);
+        
+        vtkWidget->changeBackgroundColor(color.redF(), color.greenF(), color.blueF());
+        changeBackgroundColorAction->setIcon(px);
+    }
 }

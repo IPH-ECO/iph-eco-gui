@@ -14,7 +14,7 @@
 #include <vtkXMLPolyDataWriter.h>
 #include <vtkXMLPolyDataReader.h>
 
-Mesh::Mesh() : id(0), boundaryPolygon(nullptr), coordinatesDistance(0.0), generationCanceled(false), color("#FFFFFF"), lineWidth(1), lineStyle(0xFFFF), opacity(100) {}
+Mesh::Mesh() : id(0), boundaryPolygon(nullptr), coordinatesDistance(0.0), generationCanceled(false), color("#000000"), lineWidth(1), lineStyle(0xFFFF), opacity(100) {}
 
 Mesh::~Mesh() {
     this->clear();
