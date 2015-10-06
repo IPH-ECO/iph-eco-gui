@@ -326,14 +326,3 @@ void UnstructuredMeshDialog::on_btnRemoveMesh_clicked() {
         this->on_btnNewMesh_clicked();
     }
 }
-
-void UnstructuredMeshDialog::on_btnClose_clicked() {
-    MainWindow *mainWindow = static_cast<MainWindow*>(this->topLevelWidget());
-    
-    for (QAction *action : toolBarActions) {
-        mainWindow->getToolBar()->removeAction(action);
-    }
-    
-    QMdiSubWindow *parentWindow = static_cast<QMdiSubWindow*>(parent());
-    parentWindow->close();
-}

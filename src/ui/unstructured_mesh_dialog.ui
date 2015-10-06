@@ -676,5 +676,25 @@
  <resources>
   <include location="../../icons.qrc"/>
  </resources>
- <connections/>
+ <connections>
+  <connection>
+   <sender>btnClose</sender>
+   <signal>clicked()</signal>
+   <receiver>UnstructuredMeshDialog</receiver>
+   <slot>closeDialog()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>66</x>
+     <y>707</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>638</x>
+     <y>369</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>closeDialog()</slot>
+ </slots>
 </ui>

@@ -326,11 +326,6 @@ void MeteorologicalDataDialog::on_cbxFunction_currentIndexChanged(const QString 
     ui->btnShowTimeSeries->setVisible(isTimeSeries);
 }
 
-void MeteorologicalDataDialog::on_btnClose_clicked() {
-    QMdiSubWindow *parentWindow = static_cast<QMdiSubWindow*>(parent());
-    parentWindow->close();
-}
-
 void MeteorologicalDataDialog::on_cbxType_currentIndexChanged(const QString &type) {
     bool isXyComponents = type == "XY Components";
     bool isTimeSeries = ui->cbxFunction->currentText() == "Time Series";

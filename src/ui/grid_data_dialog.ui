@@ -375,5 +375,25 @@
  <resources>
   <include location="../../icons.qrc"/>
  </resources>
- <connections/>
+ <connections>
+  <connection>
+   <sender>btnClose</sender>
+   <signal>clicked()</signal>
+   <receiver>GridDataDialog</receiver>
+   <slot>closeDialog()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>60</x>
+     <y>633</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>616</x>
+     <y>330</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>closeDialog()</slot>
+ </slots>
 </ui>

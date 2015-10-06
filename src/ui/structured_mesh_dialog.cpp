@@ -35,7 +35,6 @@ StructuredMeshDialog::StructuredMeshDialog(QWidget *parent) :
 }
 
 StructuredMeshDialog::~StructuredMeshDialog() {
-    delete appSettings;
     delete unsavedMesh;
     delete ui;
 }
@@ -222,15 +221,4 @@ void StructuredMeshDialog::on_lstIslands_currentTextChanged(const QString &curre
 void StructuredMeshDialog::on_islandItemEdited(const QModelIndex &topLeft, const QModelIndex &bottomRight) {
     MeshPolygon *meshPolygon = currentMesh->getMeshPolygon(currentMeshPolygonName, MeshPolygonType::ISLAND);
     meshPolygon->setName(topLeft.data().toString());
-}
-
-void StructuredMeshDialog::on_btnClose_clicked() {
-    MainWindow *mainWindow = static_cast<MainWindow*>(this->topLevelWidget());
-    
-    for (QAction *action : toolBarActions) {
-        mainWindow->getToolBar()->removeAction(action);
-    }
-    
-    QMdiSubWindow *parentWindow = static_cast<QMdiSubWindow*>(parent());
-    parentWindow->close();
 }

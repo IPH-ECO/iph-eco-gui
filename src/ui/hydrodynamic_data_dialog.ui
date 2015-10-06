@@ -419,5 +419,25 @@
  <resources>
   <include location="../../icons.qrc"/>
  </resources>
- <connections/>
+ <connections>
+  <connection>
+   <sender>btnClose</sender>
+   <signal>clicked()</signal>
+   <receiver>HydrodynamicDataDialog</receiver>
+   <slot>closeDialog()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>61</x>
+     <y>640</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>614</x>
+     <y>334</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>closeDialog()</slot>
+ </slots>
 </ui>

@@ -27,6 +27,8 @@ public:
     virtual ~AbstractMeshDialog();
 
 	virtual void showEvent(QShowEvent *event);
+protected slots:
+    void closeDialog();
 
 private slots:
 	virtual void onToggleLabelsClicked(bool show);

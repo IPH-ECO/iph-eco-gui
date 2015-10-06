@@ -33,7 +33,6 @@ private slots:
     void on_btnRemoveMesh_clicked();
     void on_lstIslands_currentTextChanged(const QString &currentText);
     void on_islandItemEdited(const QModelIndex &topLeft, const QModelIndex &bottomRight);
-    void on_btnClose_clicked();
 
 private:
     const QString BOUNDARY_DEFAULT_DIR_KEY;

@@ -42,7 +42,6 @@ private slots:
     void on_btnNewMesh_clicked();
     void on_btnApplyMesh_clicked();
     void on_btnRemoveMesh_clicked();
-    void on_btnClose_clicked();
 
 private:
     const QString BOUNDARY_DEFAULT_DIR_KEY;

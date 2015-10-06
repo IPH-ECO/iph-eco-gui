@@ -27,7 +27,6 @@ private slots:
     void on_rdoLatLong_clicked(bool checked);
     void on_btnApplyStation_clicked();
     void on_btnApplyParameter_clicked();
-    void on_btnClose_clicked();
     void on_trStations_itemSelectionChanged();
     void on_cbxType_currentIndexChanged(const QString &type);
     void on_btnShowTimeSeries_clicked();

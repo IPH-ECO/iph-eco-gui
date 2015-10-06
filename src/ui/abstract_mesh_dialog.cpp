@@ -6,6 +6,7 @@
 #include <QMessageBox>
 #include <QColorDialog>
 #include <QApplication>
+#include <QMdiSubWindow>
 
 AbstractMeshDialog::AbstractMeshDialog(QWidget *parent) :
     QDialog(parent), BOUNDARY_DEFAULT_DIR_KEY("boundary_default_dir"), vtkWidget(nullptr), enableMeshPropertiesAction(true)
@@ -116,4 +117,15 @@ void AbstractMeshDialog::onMeshPropertiesClicked() {
 
 QString AbstractMeshDialog::getDefaultDirectory() {
     return appSettings->value(BOUNDARY_DEFAULT_DIR_KEY).toString().isEmpty() ? QDir::homePath() : appSettings->value(BOUNDARY_DEFAULT_DIR_KEY).toString();
+}
+
+void AbstractMeshDialog::closeDialog() {
+    MainWindow *mainWindow = static_cast<MainWindow*>(this->topLevelWidget());
+    
+    for (QAction *action : toolBarActions) {
+        mainWindow->getToolBar()->removeAction(action);
+    }
+    
+    QMdiSubWindow *parentWindow = static_cast<QMdiSubWindow*>(parent());
+    parentWindow->close();
 }
