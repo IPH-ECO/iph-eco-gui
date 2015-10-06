@@ -101,6 +101,19 @@ namespace SimulationDataType {
             SimulationDataType::GridDataConfiguration *gridDataConfiguration;
         };
 
+        struct OutputParameter {
+            int parameterType;
+            int nameLength;
+            char *name;
+            double value;
+        };
+
+        struct SimulationStatus {
+            int statusCode;
+            int outputParametersLength;
+            SimulationDataType::OutputParameter *outputParameters;
+        };
+
         struct Simulation {
             bool hydrodynamic;
             bool waterQuality;
@@ -119,6 +132,9 @@ namespace SimulationDataType {
             double maximumVerticalLimit;
             int observationsLength;
             char *observations;
+            int outputDirectoryLength;
+            char *outputDirectory;
+            SimulationDataType::SimulationStatus *simulationStatus;
         };
     }
 }

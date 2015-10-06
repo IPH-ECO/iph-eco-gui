@@ -26,6 +26,7 @@ private:
     double minimumVerticalLimit;
     double maximumVerticalLimit;
 	QString observations;
+    QString outputDirectory;
 
 	// Transient attributes
 	bool startOnCreate;
@@ -62,6 +63,8 @@ public:
 	void setObservation(const QString &observations);
 	bool getStartOnCreate() const;
 	void setStartOnCreate(bool startOnCreate);
+    QString getOutputDirectory() const;
+    void setOutputDirectory(const QString &outputDirectory);
 	SimulationDataType::Simulation toSimulationDataType() const;
 
 	static QMap<SimulationType, QString> getSimulationTypesMap();

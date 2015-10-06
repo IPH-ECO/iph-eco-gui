@@ -133,10 +133,19 @@ void Simulation::setStartOnCreate(bool startOnCreate) {
 	this->startOnCreate = startOnCreate;
 }
 
+QString Simulation::getOutputDirectory() const {
+    return outputDirectory;
+}
+
+void Simulation::setOutputDirectory(const QString &outputDirectory) {
+    this->outputDirectory = outputDirectory;
+}
+
 SimulationDataType::Simulation Simulation::toSimulationDataType() const {
 	SimulationDataType::Simulation simulation;
     Project *project = IPHApplication::getCurrentProject();
 	std::string labelStr = this->label.toStdString();
+	std::string outputDirectoryStr = this->outputDirectory.toStdString();
 	int i = 0;
     
     simulation.hydrodynamic = project->getHydrodynamic();
@@ -161,6 +170,9 @@ SimulationDataType::Simulation Simulation::toSimulationDataType() const {
     simulation.meteorologicalConfiguration = this->meteorologicalConfiguration->toSimulationDataType();
     simulation.minimumVerticalLimit = this->minimumVerticalLimit;
     simulation.maximumVerticalLimit = this->maximumVerticalLimit;
+    simulation.outputDirectoryLength = this->outputDirectory.size();
+	simulation.outputDirectory = new char[simulation.outputDirectoryLength];
+	strncpy(simulation.outputDirectory, outputDirectoryStr.c_str(), simulation.outputDirectoryLength);
 
 	return simulation;
 }

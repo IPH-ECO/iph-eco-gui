@@ -4,7 +4,10 @@
 #include "include/application/iph_application.h"
 #include "include/services/simulation_service.h"
 
+#include <QDir>
+#include <QFileInfo>
 #include <QDateTime>
+#include <QFileDialog>
 #include <QMessageBox>
 
 CreateSimulationDialog::CreateSimulationDialog(QWidget *parent) :
@@ -22,6 +25,9 @@ CreateSimulationDialog::CreateSimulationDialog(QWidget *parent) :
     for (MeteorologicalConfiguration *configuration : project->getMeteorologicalConfigurations()) {
         ui->cbxMeteorological->addItem(configuration->getName());
     }
+    
+    QFileInfo fileInfo(project->getFilename());
+    ui->edtOutputDirectory->setText(fileInfo.absolutePath());
 }
 
 CreateSimulationDialog::~CreateSimulationDialog() {
@@ -68,6 +74,11 @@ bool CreateSimulationDialog::isValid() {
 		QMessageBox::warning(this, tr("Create Simulation"), tr("Meteorological data can't be blank."));
 		return false;
 	}
+    
+    if (!QDir(ui->edtOutputDirectory->text()).exists()) {
+        QMessageBox::warning(this, tr("Create Simulation"), tr("The specified output directory does not exist."));
+        return false;
+    }
     
     Project *project = IPHApplication::getCurrentProject();
     HydrodynamicConfiguration *hydrodynamicConfiguration = project->getHydrodynamicConfiguration(ui->cbxHydrodynamic->currentText());
@@ -129,6 +140,7 @@ void CreateSimulationDialog::accept() {
     
     time.setTimeSpec(Qt::UTC);
     
+    // Settings tab
     simulation->setLabel(ui->edtLabel->text());
     simulation->setSimulationType(Simulation::getSimulationTypesMap().key(ui->cbxType->currentText()));
     simulation->setInitialTime(time.toTime_t());
@@ -146,6 +158,9 @@ void CreateSimulationDialog::accept() {
     simulation->setMeteorologicalConfiguration(meteorologicalConfiguration);
     simulation->setObservation(ui->txtObservations->toPlainText());
     simulation->setStartOnCreate(startOnCreate);
+    
+    // Output tab
+    simulation->setOutputDirectory(ui->edtOutputDirectory->text());
     
     project->addSimulation(simulation);
     
@@ -177,4 +192,15 @@ void CreateSimulationDialog::on_cbxHydrodynamic_currentTextChanged(const QString
     GridData *gridData = gridDataConfiguration->getGridData(GridDataType::BATHYMETRY).first();
     
     ui->edtMinLimit->setText(QString::number(gridData->getMinimumWeight()));
+}
+
+void CreateSimulationDialog::on_btnBrowseOutputDirectory_clicked() {
+    QFileDialog fileDialog(this, tr("Select a output directory"));
+    fileDialog.setFileMode(QFileDialog::Directory);
+    fileDialog.setOption(QFileDialog::ShowDirsOnly);
+    int exitCode = fileDialog.exec();
+    
+    if (exitCode == QDialog::Accepted) {
+        ui->edtOutputDirectory->setText(fileDialog.selectedFiles().first());
+    }
 }
