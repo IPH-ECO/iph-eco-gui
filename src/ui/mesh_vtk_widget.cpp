@@ -28,7 +28,7 @@
 
 vtkStandardNewMacro(MeshMouseInteractor);
 
-MeshVTKWidget::MeshVTKWidget(QWidget *parent, MeshMouseInteractor *mouseInteractor) : QVTKWidget(parent), showBoundaryEdges(true), showMesh(true), showAxes(true) {
+MeshVTKWidget::MeshVTKWidget(QWidget *parent, MeshMouseInteractor *mouseInteractor) : QVTKWidget(parent), showBoundaryEdges(true), showMesh(true), showAxes(true), currentMesh(nullptr) {
     renderer = vtkSmartPointer<vtkRenderer>::New();
     renderWindow = vtkSmartPointer<vtkRenderWindow>::New();
     renderWindowInteractor = vtkSmartPointer<vtkRenderWindowInteractor>::New();
