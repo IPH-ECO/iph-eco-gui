@@ -20,4 +20,6 @@ void SimulationService::run(Simulation *simulation) {
     SimulationDataType::Simulation sSimulation = simulation->toSimulationDataType();
     
     startSimulation(&sSimulation);
+
+    std::cout << "Simulation status code: " << sSimulation.simulationStatus->statusCode << std::endl;
 }

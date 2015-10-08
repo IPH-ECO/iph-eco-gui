@@ -100,16 +100,12 @@ module domain_types
     end type
 
     type, bind(C) :: OutputParameter
-        integer(c_int) :: parameterType
         integer(c_int) :: nameLength
         type(c_ptr) :: name
-        real(c_double) :: value
     end type
 
     type, bind(C) :: SimulationStatus
         integer(c_int) :: statusCode ! RUNNING = 1, PAUSED = 2, STOPPED = 3
-        integer(c_int) :: outputParametersLength
-        type(c_ptr) :: outputParameters
     end type
 
     type, bind(C) :: Simulation
@@ -132,6 +128,8 @@ module domain_types
         type(c_ptr) :: observations
         integer(c_int) :: outputDirectoryLength
         type(c_ptr) :: outputDirectory
+        integer(c_int) :: outputParametersLength
+        type(c_ptr) :: outputParameters
         type(c_ptr) :: simulationStatus
     end type
 end module

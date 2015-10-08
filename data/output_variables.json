@@ -1,0 +1,87 @@
+[
+	{
+		"module": "Hydrodynamic Data",
+		"categories": [
+			{
+				"label": "Primary",
+				"parameters": [
+					{
+						"name": "velocityField",
+						"label": "Velocity field",
+						"selected": true
+					},
+					{
+						"name": "waterSurfaceElevation",
+						"label": "Water surface elevation",
+						"selected": true
+					}
+				]
+			},
+			{
+				"label": "Derivated",
+				"parameters": [
+					{
+						"name": "depth",
+						"label": "Depth",
+						"selected": true
+					},
+					{
+						"name": "horizontalEddyViscosity",
+						"label": "Horizontal eddy viscosity",
+						"selected": true
+					},
+					{
+						"name": "horizontalEddyDiffusivity",
+						"label": "Horizontal eddy diffusivity",
+						"selected": true
+					},
+					{
+						"name": "verticalEddyViscosity",
+						"label": "Vertical eddy viscosity",
+						"selected": true
+					},
+					{
+						"name": "verticalEddyDiffusivity",
+						"label": "Vertical eddy diffusivity",
+						"selected": true
+					},
+					{
+						"name": "barotropicPressure",
+						"label": "Barotropic pressure",
+						"selected": true
+					},
+					{
+						"name": "baroclinicPressure",
+						"label": "Baroclinic pressure",
+						"selected": true
+					},
+					{
+						"name": "nonHydrostaticPressureComponent",
+						"label": "Non-hydrostatic pressure component",
+						"selected": true
+					},
+					{
+						"name": "convectiveAcceleration",
+						"label": "Convective acceleration",
+						"selected": true
+					},
+					{
+						"name": "shearStressOnWaterSurface",
+						"label": "Shear stress on water surface",
+						"selected": true
+					},
+					{
+						"name": "shearStressOnSedimentBed",
+						"label": "Shear stress on sediment bed",
+						"selected": true
+					},
+					{
+						"name": "coriolisComponent",
+						"label": "Coriolis component",
+						"selected": true
+					}
+				]
+			}
+		]
+	}
+]

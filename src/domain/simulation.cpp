@@ -141,6 +141,14 @@ void Simulation::setOutputDirectory(const QString &outputDirectory) {
     this->outputDirectory = outputDirectory;
 }
 
+QList<QString> Simulation::getOutputParameters() const {
+	return outputParameters;
+}
+
+void Simulation::setOutputParameters(const QList<QString> &outputParameters) {
+	this->outputParameters = outputParameters;
+}
+
 SimulationDataType::Simulation Simulation::toSimulationDataType() const {
 	SimulationDataType::Simulation simulation;
     Project *project = IPHApplication::getCurrentProject();
@@ -174,6 +182,18 @@ SimulationDataType::Simulation Simulation::toSimulationDataType() const {
 	simulation.outputDirectory = new char[simulation.outputDirectoryLength];
 	strncpy(simulation.outputDirectory, outputDirectoryStr.c_str(), simulation.outputDirectoryLength);
 
+	simulation.outputParametersLength = this->outputParameters.size();
+    simulation.outputParameters = new SimulationDataType::OutputParameter[simulation.outputParametersLength];
+	i = 0;
+
+	for (QString parameter : this->outputParameters) {
+		std::string parameterStr = parameter.toStdString();
+		simulation.outputParameters[i].nameLength = parameter.size();
+		simulation.outputParameters[i].name = new char[parameter.size()];
+		strncpy(simulation.outputParameters[i].name, parameterStr.c_str(), parameter.size());
+		i++;
+	}
+    
 	return simulation;
 }
 

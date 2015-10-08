@@ -40,5 +40,6 @@
     <file>icons/unstructured-mesh.png</file>
     <file>icons/boundary-domain.png</file>
     <file>data/hydrodynamic_data.json</file>
+    <file>data/output_variables.json</file>
   </qresource>
 </RCC>

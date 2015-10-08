@@ -102,16 +102,12 @@ namespace SimulationDataType {
         };
 
         struct OutputParameter {
-            int parameterType;
             int nameLength;
             char *name;
-            double value;
         };
 
         struct SimulationStatus {
             int statusCode;
-            int outputParametersLength;
-            SimulationDataType::OutputParameter *outputParameters;
         };
 
         struct Simulation {
@@ -134,6 +130,8 @@ namespace SimulationDataType {
             char *observations;
             int outputDirectoryLength;
             char *outputDirectory;
+            int outputParametersLength;
+            SimulationDataType::OutputParameter *outputParameters;
             SimulationDataType::SimulationStatus *simulationStatus;
         };
     }

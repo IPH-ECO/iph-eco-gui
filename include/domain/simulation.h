@@ -10,6 +10,7 @@
 #include <QMap>
 
 enum class SimulationType { DEFAULT = 1, PARAMETER_CALIBRATION, SENSIBILITY_ANALYSIS };
+enum class SimulationStatusCode { RUNNING = 1, PAUSED, STOPPED };
 
 class Simulation {
 private:
@@ -27,6 +28,7 @@ private:
     double maximumVerticalLimit;
 	QString observations;
     QString outputDirectory;
+    QList<QString> outputParameters;
 
 	// Transient attributes
 	bool startOnCreate;
@@ -65,6 +67,8 @@ public:
 	void setStartOnCreate(bool startOnCreate);
     QString getOutputDirectory() const;
     void setOutputDirectory(const QString &outputDirectory);
+    QList<QString> getOutputParameters() const;
+    void setOutputParameters(const QList<QString> &outputParameters);
 	SimulationDataType::Simulation toSimulationDataType() const;
 
 	static QMap<SimulationType, QString> getSimulationTypesMap();

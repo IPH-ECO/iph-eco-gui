@@ -3,6 +3,7 @@
 
 #include "include/application/iph_application.h"
 #include "include/services/simulation_service.h"
+#include "include/repository/simulation_repository.h"
 
 #include <QDir>
 #include <QFileInfo>
@@ -15,6 +16,7 @@ CreateSimulationDialog::CreateSimulationDialog(QWidget *parent) :
 {
 	ui->setupUi(this);
     ui->edtInitialTime->setDateTime(QDateTime(QDate(QDate::currentDate().year(), 1, 1)));
+    ui->trOutputVariables->header()->close();
     
     Project *project = IPHApplication::getCurrentProject();
     
@@ -28,6 +30,31 @@ CreateSimulationDialog::CreateSimulationDialog(QWidget *parent) :
     
     QFileInfo fileInfo(project->getFilename());
     ui->edtOutputDirectory->setText(fileInfo.absolutePath());
+    
+    SimulationRepository::buildTree(ui->trOutputVariables);
+    
+    QTreeWidgetItemIterator it(ui->trOutputVariables, QTreeWidgetItemIterator::All);
+    
+    while (*it) {
+        (*it)->setExpanded(true);
+        it++;
+    }
+    
+    it = QTreeWidgetItemIterator(ui->trOutputVariables, QTreeWidgetItemIterator::All);
+    
+    while (*it) {
+        QTreeWidgetItem *item = *it;
+        
+        if (item->childCount() == 0) {
+            QFont font = item->font(0);
+            
+            font.setBold(true);
+            item->setFont(0, font);
+        }
+        item->setExpanded(true);
+        
+        it++;
+    }
 }
 
 CreateSimulationDialog::~CreateSimulationDialog() {
@@ -161,6 +188,17 @@ void CreateSimulationDialog::accept() {
     
     // Output tab
     simulation->setOutputDirectory(ui->edtOutputDirectory->text());
+
+    QTreeWidgetItemIterator it(ui->trOutputVariables, QTreeWidgetItemIterator::Checked);
+    QList<QString> parameters;
+
+    while (*it) {
+        QString parameter = (*it)->data(0, Qt::UserRole).toString();
+        parameters.append(parameter);
+        it++;
+    }
+
+    simulation->setOutputParameters(parameters);
     
     project->addSimulation(simulation);
     
