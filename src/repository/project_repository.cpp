@@ -102,8 +102,9 @@ void ProjectRepository::loadMeshPolygons(Mesh *mesh) {
         meshPolygon->setId(query.value("id").toUInt());
         meshPolygon->setName(query.value("name").toString());
         meshPolygon->setMeshPolygonType(static_cast<MeshPolygonType>(query.value("type").toInt()));
-        meshPolygon->loadPolygonsFromStringPolyData(query.value("poly_data").toString());
-        meshPolygon->setMinimumAngle(query.value("minimum_angle").toDouble());
+		meshPolygon->loadOriginalPolygonFromStringPolyData(query.value("original_poly_data").toString());
+		meshPolygon->loadFilteredPolygonFromStringPolyData(query.value("filtered_poly_data").toString());
+		meshPolygon->setMinimumAngle(query.value("minimum_angle").toDouble());
         meshPolygon->setMaximumEdgeLength(query.value("maximum_edge_length").toDouble());
         meshPolygon->setLatitudeAverage(query.value("latitude_average").toDouble());
         
@@ -438,7 +439,7 @@ void ProjectRepository::saveMeshPolygons(Mesh *mesh) {
     
     for (MeshPolygon *meshPolygon : meshPolygons) {
         if (meshPolygon->isPersisted()) {
-            QString sql = "update mesh_polygon set name = :n, type = :t, poly_data = :p, minimum_angle = :mi, maximum_edge_length = :ma %1 where id = :i";
+            QString sql = "update mesh_polygon set name = :n, type = :t, original_poly_data = :p, filtered_poly_data = :f, minimum_angle = :mi, maximum_edge_length = :ma %1 where id = :i";
             
             if (meshPolygon->getLatitudeAverage() != 0) {
                 sql = sql.arg(", latitude_average = :l");
@@ -448,13 +449,14 @@ void ProjectRepository::saveMeshPolygons(Mesh *mesh) {
             query.prepare(sql);
             query.bindValue(":i", meshPolygon->getId());
         } else {
-            query.prepare("insert into mesh_polygon (name, type, poly_data, minimum_angle, maximum_edge_length, latitude_average, mesh_id) values (:n, :t, :p, :mi, :ma, :l, :me)");
+            query.prepare("insert into mesh_polygon (name, type, original_poly_data, filtered_poly_data, minimum_angle, maximum_edge_length, latitude_average, mesh_id) values (:n, :t, :p, :f, :mi, :ma, :l, :me)");
             query.bindValue(":me", mesh->getId());
         }
         
         query.bindValue(":n", meshPolygon->getName());
         query.bindValue(":t", (int) meshPolygon->getMeshPolygonType());
-        query.bindValue(":p", meshPolygon->getPolyDataAsString());
+        query.bindValue(":p", meshPolygon->getOriginalPolyDataAsString());
+		query.bindValue(":f", meshPolygon->getFilteredPolyDataAsString());
         if (mesh->instanceOf("UnstructuredMesh")) {
             query.bindValue(":mi", meshPolygon->getMinimumAngle());
             query.bindValue(":ma", meshPolygon->getMaximumEdgeLength());

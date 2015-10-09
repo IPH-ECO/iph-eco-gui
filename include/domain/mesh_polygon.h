@@ -45,8 +45,10 @@ public:
     MeshPolygonType getMeshPolygonType() const;
     vtkPolygon* getOriginalPolygon() const;
     vtkPolygon* getFilteredPolygon() const;
-    QString getPolyDataAsString();
-    void loadPolygonsFromStringPolyData(const QString &polyDataStr);
+    QString getOriginalPolyDataAsString();
+	QString getFilteredPolyDataAsString();
+	void loadOriginalPolygonFromStringPolyData(const QString &polyDataStr);
+	void loadFilteredPolygonFromStringPolyData(const QString &polyDataStr);
     double getLatitudeAverage() const;
     void setLatitudeAverage(double latitudeAverage);
     

@@ -81,8 +81,9 @@ void DatabaseUtility::createApplicationTables() {
         "id integer primary key, " \
         "name varchar(255) not null, " \
         "type varchar(255) not null, " \
-        "poly_data text not null, " \
-        "minimum_angle float, " \
+        "original_poly_data text not null, " \
+		"filtered_poly_data text not null, " \
+		"minimum_angle float, " \
         "maximum_edge_length float, " \
         "latitude_average float default 0, " \
         "mesh_id integer not null" \

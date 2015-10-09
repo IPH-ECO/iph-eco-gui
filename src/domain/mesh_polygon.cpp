@@ -261,26 +261,20 @@ vtkPolygon* MeshPolygon::getFilteredPolygon() const {
     return filteredPolygon;
 }
 
-QString MeshPolygon::getPolyDataAsString() {
+QString MeshPolygon::getOriginalPolyDataAsString() {
     vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
-    vtkIdType count = 0;
     
-    points->SetNumberOfPoints(originalPolygon->GetPoints()->GetNumberOfPoints() + filteredPolygon->GetPoints()->GetNumberOfPoints());
+    points->SetNumberOfPoints(originalPolygon->GetPoints()->GetNumberOfPoints());
     
-    for (vtkIdType i = 0; i < originalPolygon->GetPoints()->GetNumberOfPoints(); i++) {
-        points->SetPoint(count, originalPolygon->GetPoints()->GetPoint(i));
-        originalPolygon->GetPointIds()->SetId(i, count++);
-    }
-    for (vtkIdType i = 0; i < filteredPolygon->GetPoints()->GetNumberOfPoints(); i++) {
-        points->SetPoint(count, filteredPolygon->GetPoints()->GetPoint(i));
-        filteredPolygon->GetPointIds()->SetId(i, count++);
-    }
+	for (vtkIdType i = 0; i < originalPolygon->GetPoints()->GetNumberOfPoints(); i++) {
+		points->SetPoint(i, originalPolygon->GetPoints()->GetPoint(i));
+		originalPolygon->GetPointIds()->SetId(i, i);
+	}
     
     vtkSmartPointer<vtkPolyData> polyData = vtkSmartPointer<vtkPolyData>::New();
     vtkSmartPointer<vtkCellArray> polygons = vtkSmartPointer<vtkCellArray>::New();
     
     polygons->InsertNextCell(originalPolygon);
-    polygons->InsertNextCell(filteredPolygon);
     
     polyData->SetPoints(points);
     polyData->SetPolys(polygons);
@@ -296,23 +290,57 @@ QString MeshPolygon::getPolyDataAsString() {
     return QString::fromStdString(writer->GetOutputString());
 }
 
-void MeshPolygon::loadPolygonsFromStringPolyData(const QString &polyDataStr) {
+QString MeshPolygon::getFilteredPolyDataAsString() {
+	vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
+
+	points->SetNumberOfPoints(filteredPolygon->GetPoints()->GetNumberOfPoints());
+
+	for (vtkIdType i = 0; i < filteredPolygon->GetPoints()->GetNumberOfPoints(); i++) {
+		points->SetPoint(i, filteredPolygon->GetPoints()->GetPoint(i));
+		filteredPolygon->GetPointIds()->SetId(i, i);
+	}
+
+	vtkSmartPointer<vtkPolyData> polyData = vtkSmartPointer<vtkPolyData>::New();
+	vtkSmartPointer<vtkCellArray> polygons = vtkSmartPointer<vtkCellArray>::New();
+
+	polygons->InsertNextCell(filteredPolygon);
+
+	polyData->SetPoints(points);
+	polyData->SetPolys(polygons);
+
+	vtkSmartPointer<vtkXMLPolyDataWriter> writer = vtkSmartPointer<vtkXMLPolyDataWriter>::New();
+
+	writer->SetFileName("MeshPolygonData");
+	writer->SetInputData(polyData);
+	writer->WriteToOutputStringOn();
+	writer->Update();
+	writer->Write();
+
+	return QString::fromStdString(writer->GetOutputString());
+}
+
+void MeshPolygon::loadOriginalPolygonFromStringPolyData(const QString &polyDataStr) {
     vtkSmartPointer<vtkXMLPolyDataReader> reader = vtkSmartPointer<vtkXMLPolyDataReader>::New();
     
     reader->SetInputString(polyDataStr.toStdString());
     reader->ReadFromInputStringOn();
     reader->Update();
     
-    vtkPolyData *polyData = reader->GetOutput();
-    vtkPolygon *polygon = vtkPolygon::SafeDownCast(polyData->GetCell(0));
-    originalPolygon = vtkSmartPointer<vtkPolygon>::New();
-    
-    originalPolygon->DeepCopy(polygon);
-    
-    polygon = vtkPolygon::SafeDownCast(polyData->GetCell(1));
-    filteredPolygon = vtkSmartPointer<vtkPolygon>::New();
-    
-    filteredPolygon->DeepCopy(polygon);
+    vtkSmartPointer<vtkPolyData> polyData = reader->GetOutput();
+	originalPolygon = vtkSmartPointer<vtkPolygon>::New();
+	originalPolygon->DeepCopy(polyData->GetCell(0));
+}
+
+void MeshPolygon::loadFilteredPolygonFromStringPolyData(const QString &polyDataStr) {
+	vtkSmartPointer<vtkXMLPolyDataReader> reader = vtkSmartPointer<vtkXMLPolyDataReader>::New();
+
+	reader->SetInputString(polyDataStr.toStdString());
+	reader->ReadFromInputStringOn();
+	reader->Update();
+
+	vtkSmartPointer<vtkPolyData> polyData = reader->GetOutput();
+	filteredPolygon = vtkSmartPointer<vtkPolygon>::New();
+	filteredPolygon->DeepCopy(polyData->GetCell(0));
 }
 
 void MeshPolygon::setMinimumAngle(const double &minimumAngle) {
