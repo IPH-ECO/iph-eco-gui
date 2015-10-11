@@ -386,7 +386,6 @@
          <zorder>btnGenerateMesh1</zorder>
          <zorder>groupBox_5</zorder>
          <zorder>groupBox_2</zorder>
-         <zorder>verticalSpacer</zorder>
         </widget>
         <widget class="QWidget" name="tabMesh">
          <attribute name="title">

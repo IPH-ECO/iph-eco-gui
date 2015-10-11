@@ -1,6 +1,6 @@
 #include "include/domain/hydrodynamic_parameter.h"
 
-HydrodynamicParameter::HydrodynamicParameter() : selected(false), parent(nullptr), editable(true), hideSiblings(true), rangeMininum(0), rangeMaximum(0), itemWidget(nullptr) {}
+HydrodynamicParameter::HydrodynamicParameter() : id(0), selected(false), parent(nullptr), editable(true), hideSiblings(true), rangeMininum(0), rangeMaximum(0), itemWidget(nullptr) {}
 
 uint HydrodynamicParameter::getId() const {
     return id;
