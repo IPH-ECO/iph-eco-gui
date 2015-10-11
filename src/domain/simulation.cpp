@@ -39,8 +39,24 @@ void Simulation::setSimulationType(const SimulationType &simulationType) {
 	this->simulationType = simulationType;
 }
 
+uint Simulation::getStartTime() const {
+    return startTime;
+}
+
+QDateTime Simulation::getStartTimeAsDateTime() const {
+    return QDateTime::fromTime_t(startTime, Qt::UTC);
+}
+
+void Simulation::setStartTime(uint startTime) {
+    this->startTime = startTime;
+}
+
 uint Simulation::getInitialTime() const {
 	return initialTime;
+}
+
+QDateTime Simulation::getInitialTimeAsDateTime() const {
+    return QDateTime::fromTime_t(initialTime, Qt::UTC);
 }
 
 void Simulation::setInitialTime(uint initialTime) {
@@ -67,8 +83,26 @@ QList<double> Simulation::getLayers() const {
 	return layers;
 }
 
+QString Simulation::getLayersAsString() const {
+    QStringList layersStr;
+    
+    for (double layer : layers) {
+        layersStr.append(QString::number(layer));
+    }
+    
+    return layersStr.join(",");
+}
+
 void Simulation::setLayers(const QList<double> &layers) {
 	this->layers = layers;
+}
+
+void Simulation::setLayersFromString(const QString &layersStr) {
+    if (!layersStr.isEmpty()) {
+        for (QString layer : layersStr.split(",")) {
+            layers.append(layer.toDouble());
+        }
+    }
 }
 
 bool Simulation::addLayer(int layer) {
@@ -141,11 +175,11 @@ void Simulation::setOutputDirectory(const QString &outputDirectory) {
     this->outputDirectory = outputDirectory;
 }
 
-QList<QString> Simulation::getOutputParameters() const {
+QStringList Simulation::getOutputParameters() const {
 	return outputParameters;
 }
 
-void Simulation::setOutputParameters(const QList<QString> &outputParameters) {
+void Simulation::setOutputParameters(const QStringList &outputParameters) {
 	this->outputParameters = outputParameters;
 }
 

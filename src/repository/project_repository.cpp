@@ -47,6 +47,7 @@ void ProjectRepository::open() {
     loadGridDataConfigurations(project);
     loadHydrodynamicConfigurations(project);
     loadMeteorologicalConfigurations(project);
+    loadSimulations(project);
     
     if (!operationCanceled) {
         IPHApplication::setCurrentProject(project);
@@ -342,6 +343,7 @@ void ProjectRepository::save(bool makeCopy) {
         saveGridDataConfigurations(project);
         saveHydrodynamicConfigurations(project);
         saveMeteorologicalConfigurations(project);
+        saveSimulations(project);
         
         if (operationCanceled) {
             QSqlDatabase::database().rollback();
@@ -1096,11 +1098,113 @@ void ProjectRepository::loadMeteorologicalParameters(MeteorologicalStation *stat
     }
 }
 
+void ProjectRepository::saveSimulations(Project *project) {
+    QSqlQuery query(databaseUtility->getDatabase());
+    QSet<Simulation*> simulations = project->getSimulations();
+    QStringList simulationIds;
+    
+    if (!simulations.isEmpty()) {
+        emit updateProgressText("Saving simulations...");
+        QApplication::processEvents();
+    }
+    
+    for (Simulation *simulation : simulations) {
+        if (operationCanceled) {
+            return;
+        }
+        
+        saveSimulation(simulation);
+        simulationIds.append(QString::number(simulation->getId()));
+    }
+    
+    // Handle exclusions
+    QString simulationDeleteSql;
+    
+    if (simulationIds.isEmpty()) {
+        simulationDeleteSql = "delete from simulation";
+    } else {
+        QString simulationIdsStr = simulationIds.join(",");
+        
+        simulationDeleteSql = "delete from simulation where id not in (" + simulationIdsStr + ")";
+    }
+    
+    query.prepare(simulationDeleteSql);
+    query.exec();
+}
+
+void ProjectRepository::loadSimulations(Project *project) {
+    QSqlQuery query(databaseUtility->getDatabase());
+    
+    query.prepare("select * from simulation");
+    query.exec();
+    
+    while (query.next() && !operationCanceled) {
+        Simulation *simulation = new Simulation();
+        simulation->setId(query.value("id").toUInt());
+        simulation->setLabel(query.value("label").toString());
+        simulation->setSimulationType((SimulationType) query.value("simulation_type").toInt());
+        simulation->setStartTime(query.value("start_time").toUInt());
+        simulation->setInitialTime(query.value("initial_time").toUInt());
+        simulation->setPeriod(query.value("period").toDouble());
+        simulation->setStepTime(query.value("step_time").toInt());
+        simulation->setMinimumVerticalLimit(query.value("minimum_vertical_limit").toDouble());
+        simulation->setMaximumVerticalLimit(query.value("maximum_vertical_limit").toDouble());
+        simulation->setLayersFromString(query.value("layers").toString());
+        simulation->setObservation(query.value("observations").toString());
+        simulation->setOutputParameters(query.value("output_parameters").toString().split(","));
+        
+        HydrodynamicConfiguration *hydrodynamicConfiguration = project->getHydrodynamicConfiguration(query.value("hydrodynamic_configuration_id").toUInt());
+        simulation->setHydrodynamicConfiguration(hydrodynamicConfiguration);
+        
+        MeteorologicalConfiguration *meteorologicalConfiguration = project->getMeteorologicalConfiguration(query.value("meteorological_configuration_id").toUInt());
+        simulation->setMeteorologicalConfiguration(meteorologicalConfiguration);
+        
+        project->addSimulation(simulation);
+        
+        emit updateProgress(currentProgress++);
+        QApplication::processEvents();
+    }
+}
+
+void ProjectRepository::saveSimulation(Simulation *simulation) {
+    QSqlQuery query(databaseUtility->getDatabase());
+    QString sql;
+    
+    if (simulation->isPersisted()) {
+        query.prepare("update simulation set label = :l, observations = :o where id = :s");
+        query.bindValue(":s", simulation->getId());
+    } else {
+        query.prepare("insert into simulation (label, simulation_type, start_time, initial_time, period, step_time, minimum_vertical_limit, maximum_vertical_limit, layers, observations, output_parameters, hydrodynamic_configuration_id, meteorological_configuration_id) values (:l, :t, :st1, :it, :p, :st2, :min, :max, :la, :o, :op, :h, :m)");
+    }
+    
+    query.bindValue(":l", simulation->getLabel());
+    query.bindValue(":t", (int) simulation->getSimulationType());
+    query.bindValue(":st1", simulation->getStartTime());
+    query.bindValue(":it", simulation->getInitialTime());
+    query.bindValue(":p", simulation->getPeriod());
+    query.bindValue(":st2", simulation->getStepTime());
+    query.bindValue(":min", simulation->getMinimumVerticalLimit());
+    query.bindValue(":max", simulation->getMaximumVerticalLimit());
+    query.bindValue(":la", simulation->getLayersAsString());
+    query.bindValue(":o", simulation->getObservations());
+    query.bindValue(":op", simulation->getOutputParameters().join(","));
+    query.bindValue(":h", simulation->getHydrodynamicConfiguration()->getId());
+    query.bindValue(":m", simulation->getMeteorologicalConfiguration()->getId());
+    
+    if (!query.exec()) {
+        throw DatabaseException(QString("Unable to save simulations. Error: %1.").arg(query.lastError().text()));
+    }
+    
+    emit updateProgress(currentProgress++);
+    QApplication::processEvents();
+    
+    simulation->setId(query.lastInsertId().toUInt());
+}
+
 int ProjectRepository::getMaximumSaveProgress() {
     int saveSteps = 0;
     Project *project = IPHApplication::getCurrentProject();
     QSet<Mesh*> meshes = project->getMeshes();
-    QSet<GridDataConfiguration*> configurations = project->getGridDataConfigurations();
     
     saveSteps += meshes.size();
     
@@ -1108,11 +1212,30 @@ int ProjectRepository::getMaximumSaveProgress() {
         saveSteps += 1 + mesh->getIslands().size() + mesh->getRefinementAreas().size(); // plus one for boundary polygon
     }
     
-    saveSteps += configurations.size();
+    QSet<GridDataConfiguration*> gridDataConfigurations = project->getGridDataConfigurations();
     
-    for (GridDataConfiguration *configuration : configurations) {
+    saveSteps += gridDataConfigurations.size();
+    
+    for (GridDataConfiguration *configuration : gridDataConfigurations) {
         saveSteps += configuration->getGridDataVector().size();
     }
+    
+    QSet<HydrodynamicConfiguration*> hydrodynamicConfigurations = project->getHydrodynamicConfigurations();
+    
+    saveSteps += hydrodynamicConfigurations.size();
+    
+    for (HydrodynamicConfiguration *configuration : hydrodynamicConfigurations) {
+        saveSteps += configuration->getParameters().size();
+        saveSteps += configuration->getBoundaryConditions().size();
+    }
+    
+    QSet<MeteorologicalConfiguration*> meteorologicalConfigurations = project->getMeteorologicalConfigurations();
+    
+    for (MeteorologicalConfiguration *configuration : meteorologicalConfigurations) {
+        saveSteps += configuration->getStations().size();
+    }
+    
+    saveSteps += project->getSimulations().size();
     
     return saveSteps;
 }
@@ -1124,7 +1247,8 @@ int ProjectRepository::getMaximumLoadProgress() {
     QSqlQuery query(databaseUtility->getDatabase());
     QStringList tables = {
         "mesh", "mesh_polygon", "grid_data_configuration", "grid_data", "hydrodynamic_configuration", "hydrodynamic_parameter",
-        "boundary_condition", "time_series", "meteorological_configuration", "meteorological_station", "meteorological_parameter"
+        "boundary_condition", "time_series", "meteorological_configuration", "meteorological_station", "meteorological_parameter",
+        "simulation"
     };
     
     for (QString table : tables) {

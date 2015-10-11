@@ -41,6 +41,9 @@ private:
     void loadMeteorologicalConfigurations(Project *project);
     void loadMeteorologicalStations(MeteorologicalConfiguration *configuration);
     void loadMeteorologicalParameters(MeteorologicalStation *station);
+    
+    void saveSimulations(Project *project);
+    void loadSimulations(Project *project);
 
 public:
     ProjectRepository(const QString &databaseName);
@@ -48,6 +51,7 @@ public:
     void open();
     void close();
     void save(bool makeCopy = false);
+    void saveSimulation(Simulation *simulation);
     
     int getMaximumSaveProgress();
     int getMaximumLoadProgress();

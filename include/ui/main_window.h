@@ -32,7 +32,6 @@ private slots:
     // File
     void on_actionOpenProject_triggered();
     void on_actionSaveAsProject_triggered();
-    void on_actionSaveProject_triggered();
     void on_actionProjectProperties_triggered();
     void on_actionNewProject_triggered();
     void on_actionCloseProject_triggered();
@@ -48,10 +47,14 @@ private slots:
     void on_actionMeteorologyData_triggered();
     
     // Simulations
-    void on_actionCreate_triggered();
+    void on_actionCreateSimulation_triggered();
+    void on_actionManageSimulation_triggered();
 
     void enableMenus(bool enable);
     void openRecent();
+    
+public slots:
+    void on_actionSaveProject_triggered();
 
 public slots:
     void setCoordinate(double &x, double &y);

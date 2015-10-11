@@ -217,6 +217,16 @@ HydrodynamicConfiguration* Project::getHydrodynamicConfiguration(const QString &
     return nullptr;
 }
 
+HydrodynamicConfiguration* Project::getHydrodynamicConfiguration(uint id) const {
+    for (HydrodynamicConfiguration *hydrodynamicConfiguration : hydrodynamicConfigurations) {
+        if (hydrodynamicConfiguration->getId() == id) {
+            return hydrodynamicConfiguration;
+        }
+    }
+    
+    return nullptr;
+}
+
 QSet<HydrodynamicConfiguration*> Project::getHydrodynamicConfigurations() const {
     return hydrodynamicConfigurations;
 }
@@ -246,6 +256,16 @@ MeteorologicalConfiguration* Project::getMeteorologicalConfiguration(const QStri
         }
     }
 
+    return nullptr;
+}
+
+MeteorologicalConfiguration* Project::getMeteorologicalConfiguration(uint id) const {
+    for (MeteorologicalConfiguration *configuration : this->meteorologicalConfigurations) {
+        if (configuration->getId() == id) {
+            return configuration;
+        }
+    }
+    
     return nullptr;
 }
 

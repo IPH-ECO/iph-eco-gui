@@ -85,8 +85,8 @@
     <property name="title">
      <string>Simulations</string>
     </property>
-    <addaction name="actionCreate"/>
-    <addaction name="actionManage"/>
+    <addaction name="actionCreateSimulation"/>
+    <addaction name="actionManageSimulation"/>
    </widget>
    <widget class="QMenu" name="menuGleon">
     <property name="enabled">
@@ -249,7 +249,7 @@
     <string>Water Quality Data</string>
    </property>
   </action>
-  <action name="actionCreate">
+  <action name="actionCreateSimulation">
    <property name="text">
     <string>Create...</string>
    </property>
@@ -264,7 +264,7 @@
     <string>Meteorology Data</string>
    </property>
   </action>
-  <action name="actionManage">
+  <action name="actionManageSimulation">
    <property name="text">
     <string>Manage</string>
    </property>

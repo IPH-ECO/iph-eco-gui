@@ -7,6 +7,7 @@
 #include "include/ui/grid_data_dialog.h"
 #include "include/ui/hydrodynamic_data_dialog.h"
 #include "include/ui/create_simulation_dialog.h"
+#include "include/ui/simulation_manager_dialog.h"
 #include "include/services/project_service.h"
 #include "include/repository/project_repository.h"
 #include "include/domain/simulation.h"
@@ -226,9 +227,21 @@ void MainWindow::on_actionMeteorologyData_triggered() {
     this->update();
 }
 
-void MainWindow::on_actionCreate_triggered() {
+void MainWindow::on_actionCreateSimulation_triggered() {
     CreateSimulationDialog *createSimulationDialog = new CreateSimulationDialog(this);
     createSimulationDialog->exec();
+}
+
+void MainWindow::on_actionManageSimulation_triggered() {
+    SimulationManagerDialog *simulationManagerDialog = new SimulationManagerDialog(this);
+    QMdiSubWindow *subWindow = new QMdiSubWindow(mdiArea);
+
+    subWindow->setWidget(simulationManagerDialog);
+    subWindow->setWindowFlags(subWindow->windowFlags() | Qt::FramelessWindowHint);
+    subWindow->setWindowState(subWindow->windowState() | Qt::WindowMaximized);
+    simulationManagerDialog->show();
+    
+    this->update();
 }
 
 void MainWindow::on_actionSobre_triggered() {

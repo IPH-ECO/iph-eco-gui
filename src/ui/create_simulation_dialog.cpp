@@ -2,7 +2,10 @@
 #include "ui_create_simulation_dialog.h"
 
 #include "include/application/iph_application.h"
+#include "include/exceptions/database_exception.h"
+#include "include/ui/main_window.h"
 #include "include/services/simulation_service.h"
+#include "include/repository/project_repository.h"
 #include "include/repository/simulation_repository.h"
 
 #include <QDir>
@@ -28,8 +31,10 @@ CreateSimulationDialog::CreateSimulationDialog(QWidget *parent) :
         ui->cbxMeteorological->addItem(configuration->getName());
     }
     
-    QFileInfo fileInfo(project->getFilename());
-    ui->edtOutputDirectory->setText(fileInfo.absolutePath());
+    if (project->isPersisted()) {
+        QFileInfo fileInfo(project->getFilename());
+        ui->edtOutputDirectory->setText(fileInfo.absolutePath());
+    }
     
     SimulationRepository::buildTree(ui->trOutputVariables);
     
@@ -55,6 +60,13 @@ CreateSimulationDialog::CreateSimulationDialog(QWidget *parent) :
         
         it++;
     }
+    
+    ui->cbxTemplate->blockSignals(true);
+    for (Simulation *simulation : project->getSimulations()) {
+        ui->cbxTemplate->addItem(simulation->getLabel());
+    }
+    ui->cbxTemplate->setCurrentIndex(-1);
+    ui->cbxTemplate->blockSignals(false);
 }
 
 CreateSimulationDialog::~CreateSimulationDialog() {
@@ -62,10 +74,17 @@ CreateSimulationDialog::~CreateSimulationDialog() {
 }
 
 bool CreateSimulationDialog::isValid() {
-	if (ui->edtLabel->text().isEmpty()) {
+    Project *project = IPHApplication::getCurrentProject();
+    
+    if (ui->edtLabel->text().isEmpty()) {
 		QMessageBox::warning(this, tr("Create Simulation"), tr("Label can't be blank."));
 		return false;
 	}
+    
+    if (project->getSimulation(ui->edtLabel->text())) {
+        QMessageBox::warning(this, tr("Create Simulation"), tr("Label already used."));
+        return false;
+    }
 
 	if (ui->edtInitialTime->text().isEmpty()) {
 		QMessageBox::warning(this, tr("Create Simulation"), tr("Initial time can't be blank."));
@@ -107,7 +126,6 @@ bool CreateSimulationDialog::isValid() {
         return false;
     }
     
-    Project *project = IPHApplication::getCurrentProject();
     HydrodynamicConfiguration *hydrodynamicConfiguration = project->getHydrodynamicConfiguration(ui->cbxHydrodynamic->currentText());
     QDateTime time = ui->edtInitialTime->dateTime();
     uint initialTimeStamp = time.toTime_t();
@@ -147,6 +165,13 @@ bool CreateSimulationDialog::isValid() {
                 return false;
             }
         }
+    }
+    
+    if (!project->isPersisted()) {
+        QMessageBox::information(this, tr("Create Simulation"), tr("The project must be saved before to create a simulation."));
+        MainWindow *mainWindow = static_cast<MainWindow*>(this->parent());
+        mainWindow->on_actionSaveProject_triggered();
+        return false;
     }
 
 	return true;
@@ -200,7 +225,18 @@ void CreateSimulationDialog::accept() {
 
     simulation->setOutputParameters(parameters);
     
-    project->addSimulation(simulation);
+    if (startOnCreate) {
+        simulation->setStartTime(QDateTime::currentDateTimeUtc().toTime_t());
+    }
+    
+    try {
+        ProjectRepository projectRepository(project->getFilename());
+        projectRepository.saveSimulation(simulation);
+        project->addSimulation(simulation);
+    } catch (DatabaseException &ex) {
+        QMessageBox::critical(this, "Create Simulation", ex.what());
+        return;
+    }
     
     // TODO: run inside a thread
     if (startOnCreate) {
@@ -240,5 +276,36 @@ void CreateSimulationDialog::on_btnBrowseOutputDirectory_clicked() {
     
     if (exitCode == QDialog::Accepted) {
         ui->edtOutputDirectory->setText(fileDialog.selectedFiles().first());
+    }
+}
+
+void CreateSimulationDialog::on_cbxTemplate_currentTextChanged(const QString &simulationLabel) {
+    Project *project = IPHApplication::getCurrentProject();
+    Simulation *simulation = project->getSimulation(simulationLabel);
+    
+    ui->edtLabel->setText(simulation->getLabel());
+    ui->cbxType->setCurrentText(Simulation::getSimulationTypesMap().value(simulation->getSimulationType()));
+    ui->edtInitialTime->setDateTime(simulation->getInitialTimeAsDateTime());
+    ui->edtPeriod->setText(QString::number(simulation->getPeriod()));
+    ui->edtStepTime->setText(QString::number(simulation->getStepTime()));
+    ui->cbxHydrodynamic->setCurrentText(simulation->getHydrodynamicConfiguration()->getName());
+//    ui->cbxWaterQuality->setCurrentText(simulation->getWaterQualityConfiguration()->getName());
+//    ui->cbxSediment->setCurrentText(simulation->getSedimentConfiguration()->getName());
+    ui->cbxMeteorological->setCurrentText(simulation->getMeteorologicalConfiguration()->getName());
+    ui->edtMinLimit->setText(QString::number(simulation->getMinimumVerticalLimit()));
+    ui->edtMaxLimit->setText(QString::number(simulation->getMaximumVerticalLimit()));
+    
+    for (double layer : simulation->getLayers()) {
+        int row = ui->tblLayers->rowCount();
+        ui->tblLayers->insertRow(row);
+        ui->tblLayers->setItem(row, 0, new QTableWidgetItem(QString::number(layer)));
+    }
+    
+    QTreeWidgetItemIterator it(ui->trOutputVariables, QTreeWidgetItemIterator::NoChildren);
+    
+    while (*it) {
+        QString parameterName = (*it)->data(0, Qt::UserRole).toString();
+        (*it)->setCheckState(0, simulation->getOutputParameters().contains(parameterName) ? Qt::Checked : Qt::Unchecked);
+        it++;
     }
 }

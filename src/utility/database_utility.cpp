@@ -211,12 +211,17 @@ void DatabaseUtility::createApplicationTables() {
         "id integer primary key, " \
         "label varchar(255) not null, " \
         "simulation_type integer not null, " \
+        "start_time integer not null, " \
         "initial_time integer not null, " \
-        "simulation_period float not null, " \
+        "period float not null, " \
         "step_time integer not null, " \
+        "minimum_vertical_limit float, " \
+        "maximum_vertical_limit float, " \
         "layers varchar(255), " \
         "observations text, " \
-        "hydrodynamic_configuration_id integer" \
+        "output_parameters text, " \
+        "hydrodynamic_configuration_id integer, " \
+        "meteorological_configuration_id integer" \
     ")";
     
     QSqlQuery query(currentDatabase);

@@ -62,11 +62,13 @@ public:
     bool addHydrodynamicConfiguration(HydrodynamicConfiguration *hydrodynamicConfiguration);
     void removeHydrodynamicConfiguration(const QString &configurationName);
     HydrodynamicConfiguration* getHydrodynamicConfiguration(const QString &configurationName);
+    HydrodynamicConfiguration* getHydrodynamicConfiguration(uint id) const;
     QSet<HydrodynamicConfiguration*> getHydrodynamicConfigurations() const;
     
     bool addMeteorologicalConfiguration(MeteorologicalConfiguration *meteorologicalConfiguration);
     void removeMeteorologicalConfiguration(const QString &configurationName);
     MeteorologicalConfiguration* getMeteorologicalConfiguration(const QString &configurationName) const;
+    MeteorologicalConfiguration* getMeteorologicalConfiguration(uint id) const;
     QSet<MeteorologicalConfiguration*> getMeteorologicalConfigurations() const;
     
     bool addSimulation(Simulation *simulation);

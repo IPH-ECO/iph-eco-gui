@@ -5,6 +5,7 @@
 #include  "meteorological_configuration.h"
 #include "simulation_data_type.h"
 
+#include <QDateTime>
 #include <QString>
 #include <QList>
 #include <QMap>
@@ -17,6 +18,7 @@ private:
 	uint id;
 	QString label;
 	SimulationType simulationType;
+    uint startTime;
 	uint initialTime;
 	double period;
 	int stepTime;
@@ -28,7 +30,7 @@ private:
     double maximumVerticalLimit;
 	QString observations;
     QString outputDirectory;
-    QList<QString> outputParameters;
+    QStringList outputParameters;
 
 	// Transient attributes
 	bool startOnCreate;
@@ -43,14 +45,20 @@ public:
 	void setLabel(const QString &label);
 	SimulationType getSimulationType() const;
 	void setSimulationType(const SimulationType &simulationType);
+    uint getStartTime() const;
+    QDateTime getStartTimeAsDateTime() const;
+    void setStartTime(uint startTime);
 	uint getInitialTime() const;
+    QDateTime getInitialTimeAsDateTime() const;
 	void setInitialTime(uint initialTime);
 	double getPeriod() const;
 	void setPeriod(double period);
 	int getStepTime() const;
 	void setStepTime(int stepTime);
 	QList<double> getLayers() const;
+    QString getLayersAsString() const;
 	void setLayers(const QList<double> &layers);
+    void setLayersFromString(const QString &layersStr);
 	bool addLayer(int layer);
 	void removeLayer(int index);
 	HydrodynamicConfiguration* getHydrodynamicConfiguration() const;
@@ -67,8 +75,8 @@ public:
 	void setStartOnCreate(bool startOnCreate);
     QString getOutputDirectory() const;
     void setOutputDirectory(const QString &outputDirectory);
-    QList<QString> getOutputParameters() const;
-    void setOutputParameters(const QList<QString> &outputParameters);
+    QStringList getOutputParameters() const;
+    void setOutputParameters(const QStringList &outputParameters);
 	SimulationDataType::Simulation toSimulationDataType() const;
 
 	static QMap<SimulationType, QString> getSimulationTypesMap();

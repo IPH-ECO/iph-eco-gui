@@ -28,6 +28,7 @@ private slots:
     void on_btnRemoveLayer_clicked();
     void on_cbxHydrodynamic_currentTextChanged(const QString &configurationName);
     void on_btnBrowseOutputDirectory_clicked();
+    void on_cbxTemplate_currentTextChanged(const QString &simulationLabel);
 };
 
 #endif // CREATE_SIMULATION_DIALOG_H
