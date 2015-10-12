@@ -106,6 +106,7 @@ module domain_types
 
     type, bind(C) :: SimulationStatus
         integer(c_int) :: statusCode ! RUNNING = 1, PAUSED = 2, STOPPED = 3
+        integer(c_int) :: progress
     end type
 
     type, bind(C) :: Simulation

@@ -108,6 +108,7 @@ namespace SimulationDataType {
 
         struct SimulationStatus {
             int statusCode;
+            int progress;
         };
 
         struct Simulation {

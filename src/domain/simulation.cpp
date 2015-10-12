@@ -251,6 +251,9 @@ SimulationDataType::Simulation Simulation::toSimulationDataType() const {
 		i++;
 	}
     
+    simulation.simulationStatus = new SimulationDataType::SimulationStatus();
+    simulation.simulationStatus->progress = 0;
+    
 	return simulation;
 }
 
