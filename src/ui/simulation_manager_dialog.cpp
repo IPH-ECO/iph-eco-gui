@@ -14,7 +14,7 @@ SimulationManagerDialog::SimulationManagerDialog(QWidget *parent) : QWidget(pare
     ui->tblRunning->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     ui->tblPaused->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     ui->tblFinished->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-    
+
 	Project *project = IPHApplication::getCurrentProject();
 
 	for (Simulation *simulation : project->getSimulations()) {
@@ -50,6 +50,30 @@ SimulationManagerDialog::SimulationManagerDialog(QWidget *parent) : QWidget(pare
             ui->tblFinished->setItem(row, 1, progressItem->clone());
         }
 	}
+}
+
+void SimulationManagerDialog::on_tblAll_currentItemChanged(QTableWidgetItem *current, QTableWidgetItem *previous) {
+    QTableWidgetItem *statusItem = ui->tblAll->item(current->row(), 1);
+    SimulationStatus status = Simulation::getSimulationStatusMap().key(statusItem->text());
+
+    ui->btnResume->setEnabled(status == SimulationStatus::IDLE || status == SimulationStatus::PAUSED);
+    ui->btnPause->setEnabled(status == SimulationStatus::RUNNING);
+}
+
+void SimulationManagerDialog::on_tblIdle_currentItemChanged(QTableWidgetItem *current, QTableWidgetItem *previous) {
+
+}
+
+void SimulationManagerDialog::on_tblRunning_currentItemChanged(QTableWidgetItem *current, QTableWidgetItem *previous) {
+
+}
+
+void SimulationManagerDialog::on_tblPaused_currentItemChanged(QTableWidgetItem *current, QTableWidgetItem *previous) {
+
+}
+
+void SimulationManagerDialog::on_tblFinished_currentItemChanged(QTableWidgetItem *current, QTableWidgetItem *previous) {
+
 }
 
 void SimulationManagerDialog::on_btnClose_clicked() {

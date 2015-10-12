@@ -1,5 +1,8 @@
 #include "include/repository/simulation_repository.h"
 
+#include "include/exceptions/database_exception.h"
+#include "include/utility/database_utility.h"
+
 #include <QFile>
 #include <QJsonArray>
 #include <QJsonObject>
@@ -7,7 +10,7 @@
 #include <QJsonDocument>
 #include <QTreeWidgetItem>
 
-void SimulationRepository::buildTree(QTreeWidget *trOutputVariables) {
+void SimulationRepository::loadOutputParametersTree(QTreeWidget *trOutputVariables) {
 	QFile dataFile(":/data/output_variables.json");
     
     dataFile.open(QFile::ReadOnly);
@@ -37,4 +40,20 @@ void SimulationRepository::buildTree(QTreeWidget *trOutputVariables) {
     		}
     	}
     }
+}
+
+void SimulationRepository::updateSimulationStatus(Simulation *simulation, const SimulationStatus &status) {
+    DatabaseUtility *databaseUtility = DatabaseUtility::getInstance();
+    QSqlDatabase database(databaseUtility->getDatabase());
+    QSqlQuery query(database);
+    
+    query.prepare("update simulation set status = :s where id = :i");
+    query.bindValue(":s", (int) status);
+    query.bindValue(":i", simulation->getId());
+    
+    if (!query.exec()) {
+        throw DatabaseException(QString("Unable to update simulation status.").arg(simulation->getId()));
+    }
+    
+    simulation->setStatus(status);
 }

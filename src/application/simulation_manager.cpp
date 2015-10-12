@@ -1,5 +1,7 @@
 #include "include/application/simulation_manager.h"
 
+#include "include/repository/simulation_repository.h"
+
 SimulationManager* SimulationManager::instance = nullptr;
 
 SimulationManager::SimulationManager() {}
@@ -52,22 +54,19 @@ SimulationWorker* SimulationManager::getWorker(Simulation *simulation) const {
 }
 
 void SimulationManager::addIdle(Simulation *simulation) {
-	simulation->setStatus(SimulationStatus::IDLE);
-	// TODO: save simulation
+    SimulationRepository::updateSimulationStatus(simulation, SimulationStatus::IDLE);
 	this->add(simulation);
 }
 
 void SimulationManager::start(Simulation *simulation) {
-	simulation->setStatus(SimulationStatus::RUNNING);
-	// TODO: save simulation
+	SimulationRepository::updateSimulationStatus(simulation, SimulationStatus::RUNNING);
 	SimulationWorker *worker = this->add(simulation);
 	worker->start();
 }
 
 void SimulationManager::pause(Simulation *simulation) {
-	simulation->setStatus(SimulationStatus::PAUSED);
-	// TODO: save simulation
-	// SimulationWorker *worker = this->getWorker(simulation);
+    SimulationRepository::updateSimulationStatus(simulation, SimulationStatus::PAUSED);
+    SimulationWorker *worker = this->getWorker(simulation);
 }
 
 void SimulationManager::stop(Simulation *simulation) {

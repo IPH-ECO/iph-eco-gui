@@ -36,7 +36,7 @@ CreateSimulationDialog::CreateSimulationDialog(QWidget *parent) :
         ui->edtOutputDirectory->setText(fileInfo.absolutePath());
     }
     
-    SimulationRepository::buildTree(ui->trOutputVariables);
+    SimulationRepository::loadOutputParametersTree(ui->trOutputVariables);
     
     QTreeWidgetItemIterator it(ui->trOutputVariables, QTreeWidgetItemIterator::All);
     
