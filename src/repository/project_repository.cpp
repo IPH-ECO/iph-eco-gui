@@ -1172,8 +1172,8 @@ void ProjectRepository::saveSimulation(Simulation *simulation) {
     QString sql;
     
     if (simulation->isPersisted()) {
-        query.prepare("update simulation set label = :l, observations = :o where id = :s");
-        query.bindValue(":s", simulation->getId());
+        query.prepare("update simulation set label = :l, observations = :o where id = :i");
+        query.bindValue(":i", simulation->getId());
     } else {
         query.prepare("insert into simulation (label, simulation_type, start_time, initial_time, period, step_time, minimum_vertical_limit, maximum_vertical_limit, layers, observations, output_parameters, status, hydrodynamic_configuration_id, meteorological_configuration_id) values (:l, :t, :st1, :it, :p, :st2, :min, :max, :la, :o, :op, :s, :h, :m)");
     }
