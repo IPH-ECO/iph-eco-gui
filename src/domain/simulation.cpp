@@ -1,7 +1,7 @@
 #include "include/domain/simulation.h"
 #include "include/application/iph_application.h"
 
-Simulation::Simulation() : id(0), hydrodynamicConfiguration(nullptr) {}
+Simulation::Simulation() : id(0), hydrodynamicConfiguration(nullptr), status(SimulationStatus::IDLE) {}
 
 QMap<SimulationType, QString> Simulation::simulationTypesMap = {
 	std::pair<SimulationType, QString>(SimulationType::DEFAULT, "Default"),
@@ -181,6 +181,14 @@ QStringList Simulation::getOutputParameters() const {
 
 void Simulation::setOutputParameters(const QStringList &outputParameters) {
 	this->outputParameters = outputParameters;
+}
+
+SimulationStatus Simulation::getStatus() const {
+    return status;
+}
+
+void Simulation::setStatus(const SimulationStatus &status) {
+    this->status = status;
 }
 
 SimulationDataType::Simulation Simulation::toSimulationDataType() const {

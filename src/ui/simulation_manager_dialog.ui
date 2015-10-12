@@ -11,9 +11,9 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string>Simulation Manager</string>
   </property>
-  <layout class="QHBoxLayout" name="horizontalLayout">
+  <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,2">
    <item>
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
@@ -21,9 +21,9 @@
        <property name="currentIndex">
         <number>0</number>
        </property>
-       <widget class="QWidget" name="tabIdle">
+       <widget class="QWidget" name="tabAll">
         <attribute name="title">
-         <string>Idle</string>
+         <string>All</string>
         </attribute>
         <layout class="QVBoxLayout" name="verticalLayout_2">
          <item>
@@ -31,6 +31,11 @@
            <column>
             <property name="text">
              <string>Label</string>
+            </property>
+           </column>
+           <column>
+            <property name="text">
+             <string>Status</string>
             </property>
            </column>
            <column>
@@ -99,6 +104,11 @@
           </layout>
          </item>
         </layout>
+       </widget>
+       <widget class="QWidget" name="tabIdle">
+        <attribute name="title">
+         <string>Idle</string>
+        </attribute>
        </widget>
        <widget class="QWidget" name="tabRunning">
         <attribute name="title">

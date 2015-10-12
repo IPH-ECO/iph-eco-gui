@@ -11,7 +11,12 @@
 #include <QMap>
 
 enum class SimulationType { DEFAULT = 1, PARAMETER_CALIBRATION, SENSIBILITY_ANALYSIS };
-enum class SimulationStatusCode { RUNNING = 1, PAUSED, STOPPED };
+enum class SimulationStatus {
+	IDLE = 1, // Never entered on RUNNING state
+	RUNNING, // In execution
+	PAUSED, // Paused by either the user or the application
+	FINISHED // The execution terminated sucessfuly
+};
 
 class Simulation {
 private:
@@ -31,6 +36,7 @@ private:
 	QString observations;
     QString outputDirectory;
     QStringList outputParameters;
+    SimulationStatus status;
 
 	// Transient attributes
 	bool startOnCreate;
@@ -77,6 +83,8 @@ public:
     void setOutputDirectory(const QString &outputDirectory);
     QStringList getOutputParameters() const;
     void setOutputParameters(const QStringList &outputParameters);
+    SimulationStatus getStatus() const;
+    void setStatus(const SimulationStatus &status);
 	SimulationDataType::Simulation toSimulationDataType() const;
 
 	static QMap<SimulationType, QString> getSimulationTypesMap();

@@ -4,7 +4,7 @@
 #include "include/application/iph_application.h"
 #include "include/exceptions/database_exception.h"
 #include "include/ui/main_window.h"
-#include "include/services/simulation_service.h"
+#include "include/application/simulation_manager.h"
 #include "include/repository/project_repository.h"
 #include "include/repository/simulation_repository.h"
 
@@ -238,10 +238,12 @@ void CreateSimulationDialog::accept() {
         return;
     }
     
-    // TODO: run inside a thread
+    SimulationManager *simulationManager = SimulationManager::getInstance();
+
     if (startOnCreate) {
-        SimulationService *simulationService = SimulationService::getInstance();
-        simulationService->run(simulation);
+        simulationManager->start(simulation);
+    } else {
+        simulationManager->addIdle(simulation);
     }
     
     QDialog::accept();
@@ -283,7 +285,6 @@ void CreateSimulationDialog::on_cbxTemplate_currentTextChanged(const QString &si
     Project *project = IPHApplication::getCurrentProject();
     Simulation *simulation = project->getSimulation(simulationLabel);
     
-    ui->edtLabel->setText(simulation->getLabel());
     ui->cbxType->setCurrentText(Simulation::getSimulationTypesMap().value(simulation->getSimulationType()));
     ui->edtInitialTime->setDateTime(simulation->getInitialTimeAsDateTime());
     ui->edtPeriod->setText(QString::number(simulation->getPeriod()));
