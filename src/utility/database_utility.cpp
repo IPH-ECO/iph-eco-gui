@@ -220,6 +220,7 @@ void DatabaseUtility::createApplicationTables() {
         "layers varchar(255), " \
         "observations text, " \
         "output_parameters text, " \
+        "status integer default 1, " \
         "hydrodynamic_configuration_id integer, " \
         "meteorological_configuration_id integer" \
     ")";

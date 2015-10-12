@@ -1,12 +1,19 @@
 #include "include/domain/simulation.h"
 #include "include/application/iph_application.h"
 
-Simulation::Simulation() : id(0), hydrodynamicConfiguration(nullptr), status(SimulationStatus::IDLE) {}
+Simulation::Simulation() : id(0), hydrodynamicConfiguration(nullptr), status(SimulationStatus::IDLE), progress(0) {}
 
 QMap<SimulationType, QString> Simulation::simulationTypesMap = {
 	std::pair<SimulationType, QString>(SimulationType::DEFAULT, "Default"),
 	std::pair<SimulationType, QString>(SimulationType::PARAMETER_CALIBRATION, "Parameter calibration"),
 	std::pair<SimulationType, QString>(SimulationType::SENSIBILITY_ANALYSIS, "Sensibility analysis")
+};
+
+QMap<SimulationStatus, QString> Simulation::simulationStatusMap = {
+	std::pair<SimulationStatus, QString>(SimulationStatus::IDLE, "Idle"),
+	std::pair<SimulationStatus, QString>(SimulationStatus::RUNNING, "Running"),
+	std::pair<SimulationStatus, QString>(SimulationStatus::PAUSED, "Paused"),
+	std::pair<SimulationStatus, QString>(SimulationStatus::FINISHED, "Finished")
 };
 
 uint Simulation::getId() const {
@@ -191,6 +198,14 @@ void Simulation::setStatus(const SimulationStatus &status) {
     this->status = status;
 }
 
+int Simulation::getProgress() const {
+	return progress;
+}
+
+void Simulation::setProgress(int progress) {
+	this->progress = progress;
+}
+
 SimulationDataType::Simulation Simulation::toSimulationDataType() const {
 	SimulationDataType::Simulation simulation;
     Project *project = IPHApplication::getCurrentProject();
@@ -241,4 +256,8 @@ SimulationDataType::Simulation Simulation::toSimulationDataType() const {
 
 QMap<SimulationType, QString> Simulation::getSimulationTypesMap() {
 	return simulationTypesMap;
+}
+
+QMap<SimulationStatus, QString> Simulation::getSimulationStatusMap() {
+	return simulationStatusMap;
 }

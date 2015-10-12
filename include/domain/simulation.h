@@ -40,8 +40,10 @@ private:
 
 	// Transient attributes
 	bool startOnCreate;
+	int progress;
 
 	static QMap<SimulationType, QString> simulationTypesMap;
+	static QMap<SimulationStatus, QString> simulationStatusMap;
 public:
     Simulation();
 	uint getId() const;
@@ -85,9 +87,12 @@ public:
     void setOutputParameters(const QStringList &outputParameters);
     SimulationStatus getStatus() const;
     void setStatus(const SimulationStatus &status);
+    int getProgress() const;
+    void setProgress(int progress);
 	SimulationDataType::Simulation toSimulationDataType() const;
 
 	static QMap<SimulationType, QString> getSimulationTypesMap();
+	static QMap<SimulationStatus, QString> getSimulationStatusMap();
 };
 
 #endif // SIMULATION_H

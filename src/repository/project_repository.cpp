@@ -1152,6 +1152,7 @@ void ProjectRepository::loadSimulations(Project *project) {
         simulation->setLayersFromString(query.value("layers").toString());
         simulation->setObservation(query.value("observations").toString());
         simulation->setOutputParameters(query.value("output_parameters").toString().split(","));
+        simulation->setStatus((SimulationStatus) query.value("status").toInt());
         
         HydrodynamicConfiguration *hydrodynamicConfiguration = project->getHydrodynamicConfiguration(query.value("hydrodynamic_configuration_id").toUInt());
         simulation->setHydrodynamicConfiguration(hydrodynamicConfiguration);
@@ -1174,7 +1175,7 @@ void ProjectRepository::saveSimulation(Simulation *simulation) {
         query.prepare("update simulation set label = :l, observations = :o where id = :s");
         query.bindValue(":s", simulation->getId());
     } else {
-        query.prepare("insert into simulation (label, simulation_type, start_time, initial_time, period, step_time, minimum_vertical_limit, maximum_vertical_limit, layers, observations, output_parameters, hydrodynamic_configuration_id, meteorological_configuration_id) values (:l, :t, :st1, :it, :p, :st2, :min, :max, :la, :o, :op, :h, :m)");
+        query.prepare("insert into simulation (label, simulation_type, start_time, initial_time, period, step_time, minimum_vertical_limit, maximum_vertical_limit, layers, observations, output_parameters, status, hydrodynamic_configuration_id, meteorological_configuration_id) values (:l, :t, :st1, :it, :p, :st2, :min, :max, :la, :o, :op, :s, :h, :m)");
     }
     
     query.bindValue(":l", simulation->getLabel());
@@ -1188,6 +1189,7 @@ void ProjectRepository::saveSimulation(Simulation *simulation) {
     query.bindValue(":la", simulation->getLayersAsString());
     query.bindValue(":o", simulation->getObservations());
     query.bindValue(":op", simulation->getOutputParameters().join(","));
+    query.bindValue(":s", (int) simulation->getStatus());
     query.bindValue(":h", simulation->getHydrodynamicConfiguration()->getId());
     query.bindValue(":m", simulation->getMeteorologicalConfiguration()->getId());
     
