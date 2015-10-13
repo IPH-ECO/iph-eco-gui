@@ -1,7 +1,14 @@
 #include "include/domain/simulation.h"
 #include "include/application/iph_application.h"
 
-Simulation::Simulation() : id(0), hydrodynamicConfiguration(nullptr), status(SimulationStatus::IDLE), progress(0) {}
+Simulation::Simulation() : id(0), hydrodynamicConfiguration(nullptr), status(SimulationStatus::IDLE), simulationStruct(nullptr), progress(0) {
+    qRegisterMetaType<SimulationStatus>("SimulationStatus");
+}
+
+Simulation::~Simulation() {
+	// TODO: delete children
+	delete simulationStruct;
+}
 
 QMap<SimulationType, QString> Simulation::simulationTypesMap = {
 	std::pair<SimulationType, QString>(SimulationType::DEFAULT, "Default"),
@@ -196,6 +203,7 @@ SimulationStatus Simulation::getStatus() const {
 
 void Simulation::setStatus(const SimulationStatus &status) {
     this->status = status;
+    emit updateStatus(status);
 }
 
 int Simulation::getProgress() const {
@@ -204,57 +212,64 @@ int Simulation::getProgress() const {
 
 void Simulation::setProgress(int progress) {
 	this->progress = progress;
+	emit updateProgress(progress);
+    
+    if (this->progress == 100) {
+        setStatus(SimulationStatus::FINISHED);
+    }
 }
 
-SimulationDataType::Simulation Simulation::toSimulationDataType() const {
-	SimulationDataType::Simulation simulation;
-    Project *project = IPHApplication::getCurrentProject();
-	std::string labelStr = this->label.toStdString();
-	std::string outputDirectoryStr = this->outputDirectory.toStdString();
-	int i = 0;
-    
-    simulation.hydrodynamic = project->getHydrodynamic();
-    simulation.waterQuality = project->getWaterQuality();
-    simulation.sediment = project->getSediment();
+SimulationDataType::Simulation* Simulation::toSimulationDataType() {
+	if (!simulationStruct) {
+		Project *project = IPHApplication::getCurrentProject();
+		std::string labelStr = this->label.toStdString();
+		std::string outputDirectoryStr = this->outputDirectory.toStdString();
+		int i = 0;
+	    
+	    simulationStruct = new SimulationDataType::Simulation();
 
-    simulation.labelLength = this->label.size();
-	simulation.label = new char[simulation.labelLength];
-	strncpy(simulation.label, labelStr.c_str(), simulation.labelLength);
-	simulation.simulationType = (int) this->simulationType;
-	simulation.initialTime = this->initialTime;
-	simulation.period = this->period;
-	simulation.stepTime = this->stepTime;
-	simulation.layersLength = this->layers.size();
-	simulation.layers = new double[simulation.layersLength];
+	    simulationStruct->hydrodynamic = project->getHydrodynamic();
+	    simulationStruct->waterQuality = project->getWaterQuality();
+	    simulationStruct->sediment = project->getSediment();
 
-	for (double depth : layers) {
-		simulation.layers[i++] = depth;
+	    simulationStruct->labelLength = this->label.size();
+		simulationStruct->label = new char[simulationStruct->labelLength];
+		strncpy(simulationStruct->label, labelStr.c_str(), simulationStruct->labelLength);
+		simulationStruct->simulationType = (int) this->simulationType;
+		simulationStruct->initialTime = this->initialTime;
+		simulationStruct->period = this->period;
+		simulationStruct->stepTime = this->stepTime;
+		simulationStruct->layersLength = this->layers.size();
+		simulationStruct->layers = new double[simulationStruct->layersLength];
+
+		for (double depth : layers) {
+			simulationStruct->layers[i++] = depth;
+		}
+
+		simulationStruct->hydrodynamicConfiguration = this->hydrodynamicConfiguration->toSimulationDataType();
+	    simulationStruct->meteorologicalConfiguration = this->meteorologicalConfiguration->toSimulationDataType();
+	    simulationStruct->minimumVerticalLimit = this->minimumVerticalLimit;
+	    simulationStruct->maximumVerticalLimit = this->maximumVerticalLimit;
+	    simulationStruct->outputDirectoryLength = this->outputDirectory.size();
+		simulationStruct->outputDirectory = new char[simulationStruct->outputDirectoryLength];
+		strncpy(simulationStruct->outputDirectory, outputDirectoryStr.c_str(), simulationStruct->outputDirectoryLength);
+
+		simulationStruct->outputParametersLength = this->outputParameters.size();
+	    simulationStruct->outputParameters = new SimulationDataType::OutputParameter[simulationStruct->outputParametersLength];
+		i = 0;
+
+		for (QString parameter : this->outputParameters) {
+			std::string parameterStr = parameter.toStdString();
+			simulationStruct->outputParameters[i].nameLength = parameter.size();
+			simulationStruct->outputParameters[i].name = new char[parameter.size()];
+			strncpy(simulationStruct->outputParameters[i].name, parameterStr.c_str(), parameter.size());
+			i++;
+		}
+        
+        simulationStruct->progress = this->progress;
 	}
 
-	simulation.hydrodynamicConfiguration = this->hydrodynamicConfiguration->toSimulationDataType();
-    simulation.meteorologicalConfiguration = this->meteorologicalConfiguration->toSimulationDataType();
-    simulation.minimumVerticalLimit = this->minimumVerticalLimit;
-    simulation.maximumVerticalLimit = this->maximumVerticalLimit;
-    simulation.outputDirectoryLength = this->outputDirectory.size();
-	simulation.outputDirectory = new char[simulation.outputDirectoryLength];
-	strncpy(simulation.outputDirectory, outputDirectoryStr.c_str(), simulation.outputDirectoryLength);
-
-	simulation.outputParametersLength = this->outputParameters.size();
-    simulation.outputParameters = new SimulationDataType::OutputParameter[simulation.outputParametersLength];
-	i = 0;
-
-	for (QString parameter : this->outputParameters) {
-		std::string parameterStr = parameter.toStdString();
-		simulation.outputParameters[i].nameLength = parameter.size();
-		simulation.outputParameters[i].name = new char[parameter.size()];
-		strncpy(simulation.outputParameters[i].name, parameterStr.c_str(), parameter.size());
-		i++;
-	}
-    
-    simulation.simulationStatus = new SimulationDataType::SimulationStatus();
-    simulation.simulationStatus->progress = 0;
-    
-	return simulation;
+	return simulationStruct;
 }
 
 QMap<SimulationType, QString> Simulation::getSimulationTypesMap() {

@@ -18,7 +18,10 @@ enum class SimulationStatus {
 	FINISHED // The execution terminated sucessfuly
 };
 
-class Simulation {
+Q_DECLARE_METATYPE(SimulationStatus)
+
+class Simulation : public QObject {
+	Q_OBJECT
 private:
 	uint id;
 	QString label;
@@ -39,6 +42,7 @@ private:
     SimulationStatus status;
 
 	// Transient attributes
+	SimulationDataType::Simulation *simulationStruct;
 	bool startOnCreate;
 	int progress;
 
@@ -46,6 +50,7 @@ private:
 	static QMap<SimulationStatus, QString> simulationStatusMap;
 public:
     Simulation();
+    ~Simulation();
 	uint getId() const;
 	void setId(uint id);
 	bool isPersisted() const;
@@ -89,10 +94,14 @@ public:
     void setStatus(const SimulationStatus &status);
     int getProgress() const;
     void setProgress(int progress);
-	SimulationDataType::Simulation toSimulationDataType() const;
+    SimulationDataType::Simulation* toSimulationDataType();
 
 	static QMap<SimulationType, QString> getSimulationTypesMap();
 	static QMap<SimulationStatus, QString> getSimulationStatusMap();
+
+signals:
+	void updateProgress(int progress);
+    void updateStatus(SimulationStatus status);
 };
 
 #endif // SIMULATION_H

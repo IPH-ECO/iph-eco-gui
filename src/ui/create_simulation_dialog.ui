@@ -328,7 +328,7 @@
        <item row="2" column="0">
         <widget class="QLabel" name="label_17">
          <property name="text">
-          <string>Output Time Inteval (sec)</string>
+          <string>Output Time Inteval (step time unit)</string>
          </property>
         </widget>
        </item>
@@ -345,6 +345,9 @@
            <width>100</width>
            <height>16777215</height>
           </size>
+         </property>
+         <property name="text">
+          <string>100</string>
          </property>
         </widget>
        </item>

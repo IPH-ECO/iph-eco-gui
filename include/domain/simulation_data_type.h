@@ -108,7 +108,6 @@ namespace SimulationDataType {
 
         struct SimulationStatus {
             int statusCode;
-            int progress;
         };
 
         struct Simulation {
@@ -134,6 +133,7 @@ namespace SimulationDataType {
             int outputParametersLength;
             SimulationDataType::OutputParameter *outputParameters;
             SimulationDataType::SimulationStatus *simulationStatus;
+            int progress;
         };
     }
 }

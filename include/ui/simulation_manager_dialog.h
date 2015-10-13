@@ -1,6 +1,8 @@
 #ifndef SIMULATION_MANAGER_DIALOG_H
 #define SIMULATION_MANAGER_DIALOG_H
 
+#include "include/domain/simulation.h"
+
 #include <QList>
 #include <QWidget>
 #include <QAction>
@@ -23,6 +25,10 @@ private slots:
     void on_tblRunning_currentItemChanged(QTableWidgetItem *current, QTableWidgetItem *previous);
     void on_tblPaused_currentItemChanged(QTableWidgetItem *current, QTableWidgetItem *previous);
     void on_tblFinished_currentItemChanged(QTableWidgetItem *current, QTableWidgetItem *previous);
+    void onUpdateSimulationProgress(int progress);
+    void onUpdateSimulationStatus(SimulationStatus status);
+    void on_btnResume_clicked();
+    void on_btnPause_clicked();
     void on_btnClose_clicked();
 };
 

@@ -1,4 +1,5 @@
 #include "include/application/simulation_worker.h"
+#include "include/application/simulation_progress_listener.h"
 
 extern "C" {
     void startSimulation(SimulationDataType::Simulation *simulation);
@@ -11,8 +12,10 @@ Simulation* SimulationWorker::getSimulation() const {
 }
 
 void SimulationWorker::run() {
-	SimulationDataType::Simulation sSimulation = simulation->toSimulationDataType();
+	SimulationDataType::Simulation *simulationStruct = simulation->toSimulationDataType();
+	SimulationProgressListener listener(simulation);
 
-	std::cout << "Running simulation #" << simulation->getId() << std::endl;
-    startSimulation(&sSimulation);
+    listener.start();
+    startSimulation(simulationStruct);
+    listener.exit();
 }
