@@ -57,3 +57,19 @@ void SimulationRepository::updateSimulationStatus(Simulation *simulation, const 
     
     simulation->setStatus(status);
 }
+
+void SimulationRepository::updateSimulationProgress(Simulation *simulation, int progress) {
+    DatabaseUtility *databaseUtility = DatabaseUtility::getInstance();
+    QSqlDatabase database(databaseUtility->getDatabase());
+    QSqlQuery query(database);
+    
+    query.prepare("update simulation set progress = :p where id = :i");
+    query.bindValue(":p", progress);
+    query.bindValue(":i", simulation->getId());
+    
+    if (!query.exec()) {
+        throw DatabaseException(QString("Unable to update simulation status.").arg(simulation->getId()));
+    }
+    
+    simulation->setProgress(progress);
+}

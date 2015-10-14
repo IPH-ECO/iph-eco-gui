@@ -280,6 +280,8 @@ bool Project::addSimulation(Simulation *simulation) {
     
     simulations.insert(simulation);
     
+    emit simulationCreated(simulation);
+    
     return true;
 }
 

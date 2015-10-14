@@ -231,19 +231,20 @@ void CreateSimulationDialog::accept() {
     
     try {
         ProjectRepository projectRepository(project->getFilename());
+        SimulationManager *simulationManager = SimulationManager::getInstance();
+        
         projectRepository.saveSimulation(simulation);
-        project->addSimulation(simulation);
+        
+        if (startOnCreate) {
+            simulationManager->start(simulation);
+        } else {
+            simulationManager->addIdle(simulation);
+        }
+        
+        project->addSimulation(simulation); // Must be added after start to handle the simulation
     } catch (DatabaseException &ex) {
         QMessageBox::critical(this, "Create Simulation", ex.what());
         return;
-    }
-    
-    SimulationManager *simulationManager = SimulationManager::getInstance();
-
-    if (startOnCreate) {
-        simulationManager->start(simulation);
-    } else {
-        simulationManager->addIdle(simulation);
     }
     
     QDialog::accept();

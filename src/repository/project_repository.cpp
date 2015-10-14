@@ -1153,6 +1153,7 @@ void ProjectRepository::loadSimulations(Project *project) {
         simulation->setObservation(query.value("observations").toString());
         simulation->setOutputParameters(query.value("output_parameters").toString().split(","));
         simulation->setStatus((SimulationStatus) query.value("status").toInt());
+        simulation->setProgress(query.value("progress").toInt());
         
         HydrodynamicConfiguration *hydrodynamicConfiguration = project->getHydrodynamicConfiguration(query.value("hydrodynamic_configuration_id").toUInt());
         simulation->setHydrodynamicConfiguration(hydrodynamicConfiguration);

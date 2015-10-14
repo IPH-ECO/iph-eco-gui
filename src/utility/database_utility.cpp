@@ -221,6 +221,7 @@ void DatabaseUtility::createApplicationTables() {
         "observations text, " \
         "output_parameters text, " \
         "status integer default 1, " \
+        "progress integer default 0, " \
         "hydrodynamic_configuration_id integer, " \
         "meteorological_configuration_id integer" \
     ")";

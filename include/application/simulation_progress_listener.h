@@ -1,7 +1,7 @@
 #ifndef SIMULATION_PROGRESS_LISTENER_H
 #define SIMULATION_PROGRESS_LISTENER_H
 
-#include "include/domain/simulation.h"
+#include "include/repository/simulation_repository.h"
 
 #include <QThread>
 
@@ -14,12 +14,12 @@ private:
 		int progress = simulationStruct->progress;
 
 		while (progress != 100) {
-			if (progress != simulationStruct->progress) {
+            if (progress != simulationStruct->progress) {
 				progress = simulationStruct->progress;
-                simulation->setProgress(progress);
+                SimulationRepository::updateSimulationProgress(simulation, progress);
 			}
 		}
-	}
+    }
 public:
 	SimulationProgressListener(Simulation *simulation) : simulation(simulation) {}
 };

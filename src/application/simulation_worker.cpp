@@ -17,5 +17,5 @@ void SimulationWorker::run() {
 
     listener.start();
     startSimulation(simulationStruct);
-    listener.exit();
+    listener.wait();
 }

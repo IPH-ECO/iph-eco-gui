@@ -1,7 +1,9 @@
 #include "include/domain/simulation.h"
 #include "include/application/iph_application.h"
 
-Simulation::Simulation() : id(0), hydrodynamicConfiguration(nullptr), status(SimulationStatus::IDLE), simulationStruct(nullptr), progress(0) {
+Simulation::Simulation() :
+    id(0), hydrodynamicConfiguration(nullptr), status(SimulationStatus::IDLE), previousStatus(SimulationStatus::UNDEFINED), simulationStruct(nullptr), progress(0)
+{
     qRegisterMetaType<SimulationStatus>("SimulationStatus");
 }
 
@@ -202,8 +204,13 @@ SimulationStatus Simulation::getStatus() const {
 }
 
 void Simulation::setStatus(const SimulationStatus &status) {
+    this->previousStatus = this->status;
     this->status = status;
     emit updateStatus(status);
+}
+
+SimulationStatus Simulation::getPreviousStatus() const {
+    return previousStatus;
 }
 
 int Simulation::getProgress() const {

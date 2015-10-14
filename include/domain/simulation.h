@@ -15,7 +15,8 @@ enum class SimulationStatus {
 	IDLE = 1, // Never entered on RUNNING state
 	RUNNING, // In execution
 	PAUSED, // Paused by either the user or the application
-	FINISHED // The execution terminated sucessfuly
+	FINISHED, // The execution terminated sucessfuly
+    UNDEFINED
 };
 
 Q_DECLARE_METATYPE(SimulationStatus)
@@ -40,6 +41,7 @@ private:
     QString outputDirectory;
     QStringList outputParameters;
     SimulationStatus status;
+    SimulationStatus previousStatus;
 
 	// Transient attributes
 	SimulationDataType::Simulation *simulationStruct;
@@ -92,6 +94,7 @@ public:
     void setOutputParameters(const QStringList &outputParameters);
     SimulationStatus getStatus() const;
     void setStatus(const SimulationStatus &status);
+    SimulationStatus getPreviousStatus() const;
     int getProgress() const;
     void setProgress(int progress);
     SimulationDataType::Simulation* toSimulationDataType();

@@ -6,6 +6,7 @@
 #include <QList>
 #include <QWidget>
 #include <QAction>
+#include <QTableWidget>
 #include <QTableWidgetItem>
 
 namespace Ui {
@@ -17,6 +18,9 @@ class SimulationManagerDialog : public QWidget {
 private:
 	Ui::SimulationManagerDialog *ui;
     QList<QAction*> toolBarActions;
+    
+    Simulation* getCurrentSimulation() const;
+    QTableWidget* getTableWidgetBySimulationStatus(const SimulationStatus &status);
 public:
 	explicit SimulationManagerDialog(QWidget *parent);
 private slots:
@@ -27,8 +31,10 @@ private slots:
     void on_tblFinished_currentItemChanged(QTableWidgetItem *current, QTableWidgetItem *previous);
     void onUpdateSimulationProgress(int progress);
     void onUpdateSimulationStatus(SimulationStatus status);
+    void onSimulationCreated(Simulation *simulation);
     void on_btnResume_clicked();
     void on_btnPause_clicked();
+    void on_btnRemove_clicked();
     void on_btnClose_clicked();
 };
 

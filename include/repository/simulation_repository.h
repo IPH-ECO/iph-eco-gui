@@ -9,6 +9,7 @@ class SimulationRepository {
 public:
 	static void loadOutputParametersTree(QTreeWidget *trOutputVariables);
     static void updateSimulationStatus(Simulation *simulation, const SimulationStatus &status);
+    static void updateSimulationProgress(Simulation *simulation, int progress);
 };
 
 #endif // SIMULATION_REPOSITORY_H

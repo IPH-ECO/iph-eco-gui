@@ -9,7 +9,8 @@
 #include "meteorological_configuration.h"
 #include "simulation.h"
 
-class Project {
+class Project : public QObject {
+    Q_OBJECT
 private:
     uint id;
     QString name;
@@ -80,6 +81,9 @@ public:
     bool isPersisted() const;
     bool isDirty() const;
     void setDirty(const bool &dirty);
+    
+signals:
+    void simulationCreated(Simulation *simulation);
 };
 
 #endif // PROJECT_H
