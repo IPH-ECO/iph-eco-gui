@@ -128,6 +128,7 @@ module domain_types
         type(c_ptr) :: observations
         integer(c_int) :: outputDirectoryLength
         type(c_ptr) :: outputDirectory
+        integer(c_int) :: outputTimeInterval
         integer(c_int) :: outputParametersLength
         type(c_ptr) :: outputParameters
         integer(c_int) :: statusCode

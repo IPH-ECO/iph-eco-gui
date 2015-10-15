@@ -130,6 +130,7 @@ namespace SimulationDataType {
             char *observations;
             int outputDirectoryLength;
             char *outputDirectory;
+            int outputTimeInterval;
             int outputParametersLength;
             SimulationDataType::OutputParameter *outputParameters;
             int statusCode;

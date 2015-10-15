@@ -42,6 +42,7 @@ private:
     QStringList outputParameters;
     SimulationStatus status;
     SimulationStatus previousStatus;
+    int outputTimeInterval;
 
 	// Transient attributes
 	SimulationDataType::Simulation *simulationStruct;
@@ -95,6 +96,8 @@ public:
     SimulationStatus getStatus() const;
     void setStatus(const SimulationStatus &status);
     SimulationStatus getPreviousStatus() const;
+    void setOutputTimeInterval(int outputTimeInterval);
+    int getOutputTimeInterval() const;
     int getProgress() const;
     void setProgress(int progress);
     SimulationDataType::Simulation* toSimulationDataType();

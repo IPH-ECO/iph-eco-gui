@@ -218,6 +218,14 @@ SimulationStatus Simulation::getPreviousStatus() const {
     return previousStatus;
 }
 
+void Simulation::setOutputTimeInterval(int outputTimeInterval) {
+    this->outputTimeInterval = outputTimeInterval;
+}
+
+int Simulation::getOutputTimeInterval() const {
+    return outputTimeInterval;
+}
+
 int Simulation::getProgress() const {
 	return progress;
 }
@@ -262,10 +270,12 @@ SimulationDataType::Simulation* Simulation::toSimulationDataType() {
 	    simulationStruct->meteorologicalConfiguration = this->meteorologicalConfiguration->toSimulationDataType();
 	    simulationStruct->minimumVerticalLimit = this->minimumVerticalLimit;
 	    simulationStruct->maximumVerticalLimit = this->maximumVerticalLimit;
+        
 	    simulationStruct->outputDirectoryLength = this->outputDirectory.size();
 		simulationStruct->outputDirectory = new char[simulationStruct->outputDirectoryLength];
 		strncpy(simulationStruct->outputDirectory, outputDirectoryStr.c_str(), simulationStruct->outputDirectoryLength);
 
+        simulationStruct->outputTimeInterval = this->outputTimeInterval;
 		simulationStruct->outputParametersLength = this->outputParameters.size();
 	    simulationStruct->outputParameters = new SimulationDataType::OutputParameter[simulationStruct->outputParametersLength];
 		i = 0;
