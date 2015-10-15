@@ -1,6 +1,7 @@
 #include "include/application/simulation_manager.h"
-
 #include "include/repository/simulation_repository.h"
+
+#include <QThread>
 
 SimulationManager* SimulationManager::instance = nullptr;
 
@@ -20,18 +21,11 @@ SimulationManager* SimulationManager::getInstance() {
 	return instance;
 }
 
-SimulationWorker* SimulationManager::add(Simulation *simulation) {
-	for (SimulationWorker *worker : workers) {
-		if (worker->getSimulation() == simulation) {
-			return worker;
-		}
-	}
-
+void SimulationManager::createWorker(Simulation *simulation) {
 	SimulationWorker *worker = new SimulationWorker(simulation);
-
-	workers.insert(worker);
-
-	return worker;
+    
+    connect(this, SIGNAL(startSimulation()), worker, SLOT(simulate()));
+    workers.insert(worker);
 }
 
 void SimulationManager::remove(Simulation *simulation) {
@@ -55,18 +49,28 @@ SimulationWorker* SimulationManager::getWorker(Simulation *simulation) const {
 
 void SimulationManager::addIdle(Simulation *simulation) {
     SimulationRepository::updateSimulationStatus(simulation, SimulationStatus::IDLE);
-	this->add(simulation);
+	this->createWorker(simulation);
 }
 
 void SimulationManager::start(Simulation *simulation) {
-	SimulationRepository::updateSimulationStatus(simulation, SimulationStatus::RUNNING);
-	SimulationWorker *worker = this->add(simulation);
-	worker->start();
+	this->createWorker(simulation);
+    emit startSimulation();
 }
 
 void SimulationManager::pause(Simulation *simulation) {
     SimulationRepository::updateSimulationStatus(simulation, SimulationStatus::PAUSED);
     SimulationWorker *worker = this->getWorker(simulation);
+    worker->pause();
+}
+
+void SimulationManager::resume(Simulation *simulation) {
+    SimulationWorker *worker = this->getWorker(simulation);
+    
+    if (worker) {
+        worker->resume();
+    } else {
+        this->start(simulation);
+    }
 }
 
 void SimulationManager::stop(Simulation *simulation) {

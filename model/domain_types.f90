@@ -130,7 +130,7 @@ module domain_types
         type(c_ptr) :: outputDirectory
         integer(c_int) :: outputParametersLength
         type(c_ptr) :: outputParameters
-        type(c_ptr) :: simulationStatus
+        integer(c_int) :: statusCode
         integer(c_int) :: progress
     end type
 end module

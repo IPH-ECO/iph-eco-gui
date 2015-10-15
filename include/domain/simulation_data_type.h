@@ -106,9 +106,9 @@ namespace SimulationDataType {
             char *name;
         };
 
-        struct SimulationStatus {
-            int statusCode;
-        };
+//        struct SimulationStatus {
+//            int statusCode;
+//        };
 
         struct Simulation {
             bool hydrodynamic;
@@ -132,7 +132,7 @@ namespace SimulationDataType {
             char *outputDirectory;
             int outputParametersLength;
             SimulationDataType::OutputParameter *outputParameters;
-            SimulationDataType::SimulationStatus *simulationStatus;
+            int statusCode;
             int progress;
         };
     }

@@ -5,14 +5,21 @@
 
 #include <QThread>
 
-class SimulationWorker : public QThread {
+class SimulationWorker : public QObject {
+    Q_OBJECT
 private:
-	Simulation *simulation;
-
-	virtual void run();
+    Simulation *simulation;
+    QThread thread;
+public slots:
+    void simulate();
 public:
 	SimulationWorker(Simulation *simulation);
+    ~SimulationWorker();
     Simulation* getSimulation() const;
+    void pause();
+    void resume();
+signals:
+    void listenProgress(Simulation *simulation);
 };
 
 #endif // SIMULATION_WORKER_H

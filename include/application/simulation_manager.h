@@ -6,14 +6,15 @@
 
 #include <QSet>
 
-class SimulationManager {
+class SimulationManager : public QObject {
+    Q_OBJECT
 private:
 	static SimulationManager *instance;
 	QSet<SimulationWorker*> workers;
 
 	SimulationManager();
 
-	SimulationWorker* add(Simulation *simulation);
+	void createWorker(Simulation *simulation);
 	void remove(Simulation *simulation);
 	SimulationWorker* getWorker(Simulation *simulation) const;
 public:
@@ -24,7 +25,10 @@ public:
 	void addIdle(Simulation *simulation);
 	void start(Simulation *simulation);
 	void pause(Simulation *simulation);
+    void resume(Simulation *simulation);
 	void stop(Simulation *simulation);
+signals:
+    void startSimulation();
 };
 
 #endif // SIMULATION_MANAGER_H

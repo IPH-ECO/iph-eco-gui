@@ -5,11 +5,12 @@
 
 #include <QThread>
 
-class SimulationProgressListener : public QThread {
+class SimulationProgressListener : public QObject {
+    Q_OBJECT
 private:
-	Simulation *simulation;
-
-	virtual void run() {
+    QThread thread;
+public slots:
+    void listen(Simulation *simulation) {
 		SimulationDataType::Simulation *simulationStruct = simulation->toSimulationDataType();
 		int progress = simulationStruct->progress;
 
@@ -21,7 +22,14 @@ private:
 		}
     }
 public:
-	SimulationProgressListener(Simulation *simulation) : simulation(simulation) {}
+    SimulationProgressListener() {
+        this->moveToThread(&thread);
+        thread.start();
+    }
+    
+    ~SimulationProgressListener() {
+        thread.wait();
+    }
 };
 
 #endif // SIMULATION_PROGRESS_LISTENER_H

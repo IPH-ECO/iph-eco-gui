@@ -214,7 +214,7 @@ void SimulationManagerDialog::on_btnResume_clicked() {
     Simulation *simulation = this->getCurrentSimulation();
     SimulationManager *simulationManager = SimulationManager::getInstance();
     
-    simulationManager->start(simulation);
+    simulationManager->resume(simulation);
 }
 
 void SimulationManagerDialog::on_btnPause_clicked() {
