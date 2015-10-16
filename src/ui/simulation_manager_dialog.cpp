@@ -102,8 +102,10 @@ void SimulationManagerDialog::on_tblAll_currentItemChanged(QTableWidgetItem *cur
         ui->btnResume->setEnabled(status == SimulationStatus::IDLE || status == SimulationStatus::PAUSED);
         ui->btnPause->setEnabled(status == SimulationStatus::RUNNING);
         ui->btnRemove->setEnabled(true);
+        ui->btnFinish->setEnabled(status != SimulationStatus::IDLE && status != SimulationStatus::FINISHED);
     } else {
         ui->btnRemove->setEnabled(false);
+        ui->btnFinish->setEnabled(false);
     }
 }
 
