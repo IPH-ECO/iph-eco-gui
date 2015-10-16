@@ -2,6 +2,7 @@
   <qresource prefix="/">
     <file>icons/media-playback-start.png</file>
     <file>icons/media-playback-pause.png</file>
+    <file>icons/media-playback-stop.png</file>
     <file>icons/station.png</file>
     <file>icons/remove-station.png</file>
     <file>icons/new-station.png</file>

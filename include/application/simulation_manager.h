@@ -15,7 +15,6 @@ private:
 	SimulationManager();
 
 	void createWorker(Simulation *simulation);
-	void remove(Simulation *simulation);
 	SimulationWorker* getWorker(Simulation *simulation) const;
 public:
 	static SimulationManager* getInstance();
@@ -26,9 +25,10 @@ public:
 	void start(Simulation *simulation);
 	void pause(Simulation *simulation);
     void resume(Simulation *simulation);
-	void stop(Simulation *simulation);
+	void finish(Simulation *simulation);
+    void remove(Simulation *simulation);
 signals:
-    void startSimulation();
+    void simulationStarted();
 };
 
 #endif // SIMULATION_MANAGER_H

@@ -1,5 +1,6 @@
 #include "include/repository/simulation_repository.h"
 
+#include "include/application/iph_application.h"
 #include "include/exceptions/database_exception.h"
 #include "include/utility/database_utility.h"
 
@@ -52,7 +53,7 @@ void SimulationRepository::updateSimulationStatus(Simulation *simulation, const 
     query.bindValue(":i", simulation->getId());
     
     if (!query.exec()) {
-        throw DatabaseException(QString("Unable to update simulation status.").arg(simulation->getId()));
+        throw DatabaseException("Unable to update simulation status.");
     }
     
     simulation->setStatus(status);
@@ -68,8 +69,24 @@ void SimulationRepository::updateSimulationProgress(Simulation *simulation, int 
     query.bindValue(":i", simulation->getId());
     
     if (!query.exec()) {
-        throw DatabaseException(QString("Unable to update simulation status.").arg(simulation->getId()));
+        throw DatabaseException("Unable to update simulation progress.");
     }
     
     simulation->setProgress(progress);
+}
+
+void SimulationRepository::deleteSimulation(Simulation *simulation) {
+    DatabaseUtility *databaseUtility = DatabaseUtility::getInstance();
+    QSqlDatabase database(databaseUtility->getDatabase());
+    QSqlQuery query(database);
+    
+    query.prepare("delete from simulation where id = :i");
+    query.bindValue(":i", simulation->getId());
+    
+    if (!query.exec()) {
+        throw DatabaseException("Unable to remove simulation.");
+    }
+    
+    Project *project = IPHApplication::getCurrentProject();
+    project->removeSimulation(simulation->getLabel());
 }

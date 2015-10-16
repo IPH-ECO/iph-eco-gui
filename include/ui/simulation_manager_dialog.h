@@ -34,6 +34,7 @@ private slots:
     void onSimulationCreated(Simulation *simulation);
     void on_btnResume_clicked();
     void on_btnPause_clicked();
+    void on_btnFinish_clicked();
     void on_btnRemove_clicked();
     void on_btnClose_clicked();
 };

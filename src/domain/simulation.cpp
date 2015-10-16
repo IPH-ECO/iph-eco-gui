@@ -23,6 +23,7 @@ QMap<SimulationStatus, QString> Simulation::simulationStatusMap = {
 	std::pair<SimulationStatus, QString>(SimulationStatus::RUNNING, "Running"),
 	std::pair<SimulationStatus, QString>(SimulationStatus::PAUSED, "Paused"),
 	std::pair<SimulationStatus, QString>(SimulationStatus::FINISHED, "Finished"),
+    std::pair<SimulationStatus, QString>(SimulationStatus::ABORTED, "Aborted"),
     std::pair<SimulationStatus, QString>(SimulationStatus::UNDEFINED, "Undefined")
 };
 
@@ -207,11 +208,18 @@ SimulationStatus Simulation::getStatus() const {
 void Simulation::setStatus(const SimulationStatus &status) {
     this->previousStatus = this->status;
     this->status = status;
+    
     if (this->simulationStruct) {
         this->simulationStruct->statusCode = (int) status;
     }
     
-    emit updateStatus(status);
+    if (status == SimulationStatus::FINISHED) {
+        this->setProgress(100);
+    }
+    
+    if (status != SimulationStatus::ABORTED) {
+        emit updateStatus(status);
+    }
 }
 
 SimulationStatus Simulation::getPreviousStatus() const {
@@ -234,7 +242,7 @@ void Simulation::setProgress(int progress) {
 	this->progress = progress;
 	emit updateProgress(progress);
     
-    if (this->progress == 100) {
+    if (this->progress == 100 && this->status != SimulationStatus::FINISHED) {
         setStatus(SimulationStatus::FINISHED);
     }
 }

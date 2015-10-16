@@ -16,6 +16,7 @@ enum class SimulationStatus {
 	RUNNING, // In execution
 	PAUSED, // Paused by either the user or the application
 	FINISHED, // The execution terminated sucessfuly
+    ABORTED, // The user aborted (removed) the simulation
     UNDEFINED
 };
 

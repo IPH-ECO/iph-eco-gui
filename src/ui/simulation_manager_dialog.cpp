@@ -5,6 +5,7 @@
 #include "include/application/simulation_manager.h"
 #include "include/ui/main_window.h"
 
+#include <QMessageBox>
 #include <QMdiSubWindow>
 
 SimulationManagerDialog::SimulationManagerDialog(QWidget *parent) : QWidget(parent), ui(new Ui::SimulationManagerDialog) {
@@ -90,15 +91,20 @@ QTableWidget* SimulationManagerDialog::getTableWidgetBySimulationStatus(const Si
         return ui->tblFinished;
     }
     
-    return nullptr;
+    return ui->tblAll;
 }
 
 void SimulationManagerDialog::on_tblAll_currentItemChanged(QTableWidgetItem *current, QTableWidgetItem *previous) {
-    QTableWidgetItem *statusItem = ui->tblAll->item(current->row(), 1);
-    SimulationStatus status = Simulation::getSimulationStatusMap().key(statusItem->text());
+    if (current) {
+        QTableWidgetItem *statusItem = ui->tblAll->item(current->row(), 1);
+        SimulationStatus status = Simulation::getSimulationStatusMap().key(statusItem->text());
 
-    ui->btnResume->setEnabled(status == SimulationStatus::IDLE || status == SimulationStatus::PAUSED);
-    ui->btnPause->setEnabled(status == SimulationStatus::RUNNING);
+        ui->btnResume->setEnabled(status == SimulationStatus::IDLE || status == SimulationStatus::PAUSED);
+        ui->btnPause->setEnabled(status == SimulationStatus::RUNNING);
+        ui->btnRemove->setEnabled(true);
+    } else {
+        ui->btnRemove->setEnabled(false);
+    }
 }
 
 void SimulationManagerDialog::on_tblIdle_currentItemChanged(QTableWidgetItem *current, QTableWidgetItem *previous) {
@@ -185,7 +191,7 @@ void SimulationManagerDialog::onUpdateSimulationStatus(SimulationStatus status) 
         currentTabWidget->setItem(rowCount, 0, new QTableWidgetItem(simulation->getLabel()));
         
         if (currentTabWidget != ui->tblFinished) {
-            currentTabWidget->setItem(rowCount, 1, new QTableWidgetItem(simulation->getLabel()));
+            currentTabWidget->setItem(rowCount, 1, new QTableWidgetItem(QString::number(simulation->getProgress()) + "%"));
             currentTabWidget->setItem(rowCount, 2, new QTableWidgetItem(Simulation::getSimulationStatusMap().value(simulation->getStatus())));
         }
     }
@@ -217,6 +223,13 @@ void SimulationManagerDialog::on_btnResume_clicked() {
     simulationManager->resume(simulation);
 }
 
+void SimulationManagerDialog::on_btnFinish_clicked() {
+    Simulation *simulation = this->getCurrentSimulation();
+    SimulationManager *simulationManager = SimulationManager::getInstance();
+    
+    simulationManager->finish(simulation);
+}
+
 void SimulationManagerDialog::on_btnPause_clicked() {
     Simulation *simulation = this->getCurrentSimulation();
     SimulationManager *simulationManager = SimulationManager::getInstance();
@@ -225,7 +238,34 @@ void SimulationManagerDialog::on_btnPause_clicked() {
 }
 
 void SimulationManagerDialog::on_btnRemove_clicked() {
+    QString question = tr("Are you sure you want to remove the selected simulation?");
+    QMessageBox::StandardButton button = QMessageBox::question(this, tr("Boundary Condition"), question);
     
+    if (button == QMessageBox::Yes) {
+        Simulation *simulation = this->getCurrentSimulation();
+        SimulationManager *simulationManager = SimulationManager::getInstance();
+        QTableWidget *tableWidget = this->getTableWidgetBySimulationStatus(simulation->getStatus());
+        
+        for (int row = 0; row < ui->tblAll->rowCount(); row++) {
+            QTableWidgetItem *labelItem = ui->tblAll->item(row, 0);
+            
+            if (labelItem->text() == simulation->getLabel()) {
+                ui->tblAll->removeRow(row);
+                break;
+            }
+        }
+        
+        for (int row = 0; row < tableWidget->rowCount(); row++) {
+            QTableWidgetItem *labelItem = tableWidget->item(row, 0);
+            
+            if (labelItem->text() == simulation->getLabel()) {
+                tableWidget->removeRow(row);
+                break;
+            }
+        }
+        
+        simulationManager->remove(simulation);
+    }
 }
 
 void SimulationManagerDialog::on_btnClose_clicked() {

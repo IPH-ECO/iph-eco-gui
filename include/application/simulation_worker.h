@@ -16,8 +16,6 @@ public:
 	SimulationWorker(Simulation *simulation);
     ~SimulationWorker();
     Simulation* getSimulation() const;
-    void pause();
-    void resume();
 signals:
     void listenProgress(Simulation *simulation);
 };

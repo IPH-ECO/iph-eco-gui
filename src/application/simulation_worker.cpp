@@ -18,21 +18,12 @@ Simulation* SimulationWorker::getSimulation() const {
     return simulation;
 }
 
-void SimulationWorker::pause() {
-    simulation->setStatus(SimulationStatus::PAUSED);
-}
-
-void SimulationWorker::resume() {
-    simulation->setStatus(SimulationStatus::RUNNING);
-}
-
 void SimulationWorker::simulate() {
     if (simulation->getStatus() == SimulationStatus::IDLE || simulation->getStatus() == SimulationStatus::PAUSED) {
         SimulationDataType::Simulation *simulationStruct = simulation->toSimulationDataType();
         SimulationProgressListener progressListener;
         
         SimulationRepository::updateSimulationStatus(simulation, SimulationStatus::RUNNING);
-        
         connect(this, SIGNAL(listenProgress(Simulation*)), &progressListener, SLOT(listen(Simulation*)));
         emit listenProgress(simulation);
         startSimulation(simulationStruct);

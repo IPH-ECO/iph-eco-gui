@@ -64,6 +64,9 @@
           <layout class="QHBoxLayout" name="horizontalLayout_5">
            <item>
             <widget class="QToolButton" name="btnResume">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
              <property name="toolTip">
               <string>Start/Resume simulation</string>
              </property>
@@ -78,6 +81,9 @@
            </item>
            <item>
             <widget class="QToolButton" name="btnPause">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
              <property name="toolTip">
               <string>Pause simulation</string>
              </property>
@@ -87,6 +93,23 @@
              <property name="icon">
               <iconset resource="../../icons.qrc">
                <normaloff>:/icons/media-playback-pause.png</normaloff>:/icons/media-playback-pause.png</iconset>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QToolButton" name="btnFinish">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="toolTip">
+              <string>Finish simulation</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../../icons.qrc">
+               <normaloff>:/icons/media-playback-stop.png</normaloff>:/icons/media-playback-stop.png</iconset>
              </property>
             </widget>
            </item>
@@ -105,6 +128,9 @@
            </item>
            <item>
             <widget class="QToolButton" name="btnRemove">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
              <property name="text">
               <string/>
              </property>

@@ -24,17 +24,21 @@ SimulationManager* SimulationManager::getInstance() {
 void SimulationManager::createWorker(Simulation *simulation) {
 	SimulationWorker *worker = new SimulationWorker(simulation);
     
-    connect(this, SIGNAL(startSimulation()), worker, SLOT(simulate()));
+    connect(this, SIGNAL(simulationStarted()), worker, SLOT(simulate()));
     workers.insert(worker);
 }
 
 void SimulationManager::remove(Simulation *simulation) {
 	for (SimulationWorker *worker : workers) {
 		if (worker->getSimulation() == simulation) {
-			delete worker;
-			workers.remove(worker);
+            workers.remove(worker);
+            delete worker;
+            break;
 		}
 	}
+    
+    simulation->setStatus(SimulationStatus::ABORTED);
+    SimulationRepository::deleteSimulation(simulation);
 }
 
 SimulationWorker* SimulationManager::getWorker(Simulation *simulation) const {
@@ -49,30 +53,33 @@ SimulationWorker* SimulationManager::getWorker(Simulation *simulation) const {
 
 void SimulationManager::addIdle(Simulation *simulation) {
     SimulationRepository::updateSimulationStatus(simulation, SimulationStatus::IDLE);
-	this->createWorker(simulation);
+
 }
 
 void SimulationManager::start(Simulation *simulation) {
-	this->createWorker(simulation);
-    emit startSimulation();
+    this->createWorker(simulation);
+    emit simulationStarted();
 }
 
 void SimulationManager::pause(Simulation *simulation) {
     SimulationRepository::updateSimulationStatus(simulation, SimulationStatus::PAUSED);
-    SimulationWorker *worker = this->getWorker(simulation);
-    worker->pause();
 }
 
 void SimulationManager::resume(Simulation *simulation) {
     SimulationWorker *worker = this->getWorker(simulation);
     
     if (worker) {
-        worker->resume();
+        SimulationRepository::updateSimulationStatus(simulation, SimulationStatus::RUNNING);
     } else {
         this->start(simulation);
     }
 }
 
-void SimulationManager::stop(Simulation *simulation) {
-	this->remove(simulation);
+void SimulationManager::finish(Simulation *simulation) {
+    SimulationWorker *worker = this->getWorker(simulation);
+    SimulationRepository::updateSimulationStatus(simulation, SimulationStatus::FINISHED);
+    
+    workers.remove(worker);
+    
+    delete worker;
 }
