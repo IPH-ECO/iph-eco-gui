@@ -14,7 +14,7 @@ public slots:
 		SimulationDataType::Simulation *simulationStruct = simulation->toSimulationDataType();
 		int progress = simulationStruct->progress;
 
-		while (progress != 100) {
+        while (simulation->getStatus() != SimulationStatus::FINISHED && simulation->getStatus() != SimulationStatus::ABORTED) {
             if (progress != simulationStruct->progress) {
 				progress = simulationStruct->progress;
                 SimulationRepository::updateSimulationProgress(simulation, progress);

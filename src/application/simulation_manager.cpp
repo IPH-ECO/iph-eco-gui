@@ -32,7 +32,7 @@ void SimulationManager::remove(Simulation *simulation) {
 	for (SimulationWorker *worker : workers) {
 		if (worker->getSimulation() == simulation) {
             workers.remove(worker);
-            delete worker;
+            worker->deleteLater();
             break;
 		}
 	}
@@ -80,6 +80,5 @@ void SimulationManager::finish(Simulation *simulation) {
     SimulationRepository::updateSimulationStatus(simulation, SimulationStatus::FINISHED);
     
     workers.remove(worker);
-    
-    delete worker;
+    worker->deleteLater();
 }

@@ -47,8 +47,9 @@ void SimulationRepository::updateSimulationStatus(Simulation *simulation, const 
     DatabaseUtility *databaseUtility = DatabaseUtility::getInstance();
     QSqlDatabase database(databaseUtility->getDatabase());
     QSqlQuery query(database);
-    
-    query.prepare("update simulation set status = :s where id = :i");
+    bool isFinished = status == SimulationStatus::FINISHED;
+
+    query.prepare(QString("update simulation set status = :s %1 where id = :i").arg(isFinished ? ", progress = 100" : ""));
     query.bindValue(":s", (int) status);
     query.bindValue(":i", simulation->getId());
     
