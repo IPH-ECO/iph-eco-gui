@@ -9,7 +9,7 @@ SimulationManager::SimulationManager() {}
 
 SimulationManager::~SimulationManager() {
 	for (SimulationWorker *worker : workers) {
-		delete worker;
+		worker->deleteLater();
 	}
 }
 
