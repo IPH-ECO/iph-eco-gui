@@ -164,6 +164,7 @@ void SimulationManagerDialog::onUpdateSimulationStatus(SimulationStatus status) 
             statusItem->setText(Simulation::getSimulationStatusMap().value(simulation->getStatus()));
             ui->btnResume->setEnabled(simulation->getStatus() == SimulationStatus::IDLE || simulation->getStatus() == SimulationStatus::PAUSED);
             ui->btnPause->setEnabled(simulation->getStatus() == SimulationStatus::RUNNING);
+            ui->btnFinish->setEnabled(status != SimulationStatus::IDLE && status != SimulationStatus::FINISHED);
             break;
         }
     }
