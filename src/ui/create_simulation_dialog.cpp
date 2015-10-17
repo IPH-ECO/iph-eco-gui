@@ -214,6 +214,7 @@ void CreateSimulationDialog::accept() {
     // Output tab
     simulation->setOutputDirectory(ui->edtOutputDirectory->text());
     simulation->setOutputTimeInterval(ui->edtOutputTimeInterval->text().toInt());
+    simulation->setAutosaveTimeInterval(ui->edtAutosaveInterval->text().toInt());
 
     QTreeWidgetItemIterator it(ui->trOutputVariables, QTreeWidgetItemIterator::Checked);
     QList<QString> parameters;

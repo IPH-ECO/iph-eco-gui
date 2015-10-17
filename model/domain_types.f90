@@ -129,6 +129,7 @@ module domain_types
         integer(c_int) :: outputDirectoryLength
         type(c_ptr) :: outputDirectory
         integer(c_int) :: outputTimeInterval
+        integer(c_int) :: autosaveTimeInterval
         integer(c_int) :: outputParametersLength
         type(c_ptr) :: outputParameters
         integer(c_int) :: statusCode

@@ -53,7 +53,6 @@ SimulationWorker* SimulationManager::getWorker(Simulation *simulation) const {
 
 void SimulationManager::addIdle(Simulation *simulation) {
     SimulationRepository::updateSimulationStatus(simulation, SimulationStatus::IDLE);
-
 }
 
 void SimulationManager::start(Simulation *simulation) {

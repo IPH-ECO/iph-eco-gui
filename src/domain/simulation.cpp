@@ -2,7 +2,7 @@
 #include "include/application/iph_application.h"
 
 Simulation::Simulation() :
-    id(0), hydrodynamicConfiguration(nullptr), status(SimulationStatus::IDLE), previousStatus(SimulationStatus::UNDEFINED), simulationStruct(nullptr), progress(0)
+    id(0), hydrodynamicConfiguration(nullptr), status(SimulationStatus::IDLE), progress(0), simulationStruct(nullptr), previousStatus(SimulationStatus::UNDEFINED)
 {
     qRegisterMetaType<SimulationStatus>("SimulationStatus");
 }
@@ -226,12 +226,20 @@ SimulationStatus Simulation::getPreviousStatus() const {
     return previousStatus;
 }
 
+int Simulation::getOutputTimeInterval() const {
+    return outputTimeInterval;
+}
+
 void Simulation::setOutputTimeInterval(int outputTimeInterval) {
     this->outputTimeInterval = outputTimeInterval;
 }
 
-int Simulation::getOutputTimeInterval() const {
-    return outputTimeInterval;
+int Simulation::getAutosaveTimeInterval() const {
+    return autosaveTimeInterval;
+}
+
+void Simulation::setAutosaveTimeInterval(int autosaveTimeInterval) {
+    this->autosaveTimeInterval = autosaveTimeInterval;
 }
 
 int Simulation::getProgress() const {
@@ -284,6 +292,7 @@ SimulationDataType::Simulation* Simulation::toSimulationDataType() {
 		strncpy(simulationStruct->outputDirectory, outputDirectoryStr.c_str(), simulationStruct->outputDirectoryLength);
 
         simulationStruct->outputTimeInterval = this->outputTimeInterval;
+        simulationStruct->autosaveTimeInterval = this->autosaveTimeInterval;
 		simulationStruct->outputParametersLength = this->outputParameters.size();
 	    simulationStruct->outputParameters = new SimulationDataType::OutputParameter[simulationStruct->outputParametersLength];
 		i = 0;

@@ -42,14 +42,15 @@ private:
     QString outputDirectory;
     QStringList outputParameters;
     SimulationStatus status;
-    SimulationStatus previousStatus;
     int outputTimeInterval;
-
+    int autosaveTimeInterval;
+    int progress;
+    
 	// Transient attributes
 	SimulationDataType::Simulation *simulationStruct;
 	bool startOnCreate;
-	int progress;
-
+	SimulationStatus previousStatus;
+    
 	static QMap<SimulationType, QString> simulationTypesMap;
 	static QMap<SimulationStatus, QString> simulationStatusMap;
 public:
@@ -90,6 +91,10 @@ public:
 	void setObservation(const QString &observations);
 	bool getStartOnCreate() const;
 	void setStartOnCreate(bool startOnCreate);
+    int getOutputTimeInterval() const;
+    void setOutputTimeInterval(int outputTimeInterval);
+    int getAutosaveTimeInterval() const;
+    void setAutosaveTimeInterval(int autosaveTimeInterval);
     QString getOutputDirectory() const;
     void setOutputDirectory(const QString &outputDirectory);
     QStringList getOutputParameters() const;
@@ -97,8 +102,6 @@ public:
     SimulationStatus getStatus() const;
     void setStatus(const SimulationStatus &status);
     SimulationStatus getPreviousStatus() const;
-    void setOutputTimeInterval(int outputTimeInterval);
-    int getOutputTimeInterval() const;
     int getProgress() const;
     void setProgress(int progress);
     SimulationDataType::Simulation* toSimulationDataType();

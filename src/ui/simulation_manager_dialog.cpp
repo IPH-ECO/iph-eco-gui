@@ -157,7 +157,7 @@ void SimulationManagerDialog::onUpdateSimulationProgress(int progress) {
     
     QTableWidget *currentTabWidget = this->getTableWidgetBySimulationStatus(simulation->getStatus());
     
-    if (currentTabWidget) {
+    if (currentTabWidget && currentTabWidget != ui->tblFinished) {
         for (int row = 0; row < currentTabWidget->rowCount(); row++) {
             QTableWidgetItem *labelItem = currentTabWidget->item(row, 0);
             
@@ -238,17 +238,24 @@ void SimulationManagerDialog::onSimulationCreated(Simulation *simulation) {
 
 void SimulationManagerDialog::on_btnResume_clicked() {
     Simulation *simulation = this->getCurrentSimulation();
-    SimulationManager *simulationManager = SimulationManager::getInstance();
     
-    simulationManager->resume(simulation);
+    if (simulation) {
+        SimulationManager *simulationManager = SimulationManager::getInstance();
+        simulationManager->resume(simulation);
+    }
 }
 
 void SimulationManagerDialog::on_btnFinish_clicked() {
     Simulation *simulation = this->getCurrentSimulation();
     
     if (simulation) { // selected row may be empty
-        SimulationManager *simulationManager = SimulationManager::getInstance();
-        simulationManager->finish(simulation);
+        QString question = tr("Are you sure you want to finish the selected simulation?");
+        QMessageBox::StandardButton button = QMessageBox::question(this, tr("Simulation Manager"), question);
+        
+        if (button == QMessageBox::Yes) {
+            SimulationManager *simulationManager = SimulationManager::getInstance();
+            simulationManager->finish(simulation);
+        }
     }
 }
 
@@ -266,7 +273,7 @@ void SimulationManagerDialog::on_btnRemove_clicked() {
     
     if (simulation) {
         QString question = tr("Are you sure you want to remove the selected simulation?");
-        QMessageBox::StandardButton button = QMessageBox::question(this, tr("Boundary Condition"), question);
+        QMessageBox::StandardButton button = QMessageBox::question(this, tr("Simulation Manager"), question);
         
         if (button == QMessageBox::Yes) {
             SimulationManager *simulationManager = SimulationManager::getInstance();
