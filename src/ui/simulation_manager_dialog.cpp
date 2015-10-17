@@ -15,6 +15,7 @@ SimulationManagerDialog::SimulationManagerDialog(QWidget *parent) : QWidget(pare
     ui->tblRunning->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     ui->tblPaused->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     ui->tblFinished->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    ui->tblOutput->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 
 	Project *project = IPHApplication::getCurrentProject();
     
@@ -75,9 +76,13 @@ Simulation* SimulationManagerDialog::getCurrentSimulation() const {
     }
     
     int row = tableWidget->currentRow();
-    QTableWidgetItem *labelItem = ui->tblAll->item(row, 0);
+    QTableWidgetItem *labelItem = tableWidget->item(row, 0);
     
-    return IPHApplication::getCurrentProject()->getSimulation(labelItem->text());
+    if (labelItem) {
+        return IPHApplication::getCurrentProject()->getSimulation(labelItem->text());
+    }
+    
+    return nullptr;
 }
 
 QTableWidget* SimulationManagerDialog::getTableWidgetBySimulationStatus(const SimulationStatus &status) {
@@ -110,19 +115,31 @@ void SimulationManagerDialog::on_tblAll_currentItemChanged(QTableWidgetItem *cur
 }
 
 void SimulationManagerDialog::on_tblIdle_currentItemChanged(QTableWidgetItem *current, QTableWidgetItem *previous) {
-
+    ui->btnResume->setEnabled(true);
+    ui->btnPause->setEnabled(false);
+    ui->btnRemove->setEnabled(true);
+    ui->btnFinish->setEnabled(true);
 }
 
 void SimulationManagerDialog::on_tblRunning_currentItemChanged(QTableWidgetItem *current, QTableWidgetItem *previous) {
-
+    ui->btnResume->setEnabled(false);
+    ui->btnPause->setEnabled(true);
+    ui->btnRemove->setEnabled(true);
+    ui->btnFinish->setEnabled(true);
 }
 
 void SimulationManagerDialog::on_tblPaused_currentItemChanged(QTableWidgetItem *current, QTableWidgetItem *previous) {
-
+    ui->btnResume->setEnabled(true);
+    ui->btnPause->setEnabled(false);
+    ui->btnRemove->setEnabled(true);
+    ui->btnFinish->setEnabled(true);
 }
 
 void SimulationManagerDialog::on_tblFinished_currentItemChanged(QTableWidgetItem *current, QTableWidgetItem *previous) {
-
+    ui->btnResume->setEnabled(false);
+    ui->btnPause->setEnabled(false);
+    ui->btnRemove->setEnabled(true);
+    ui->btnFinish->setEnabled(false);
 }
 
 void SimulationManagerDialog::onUpdateSimulationProgress(int progress) {
@@ -228,46 +245,53 @@ void SimulationManagerDialog::on_btnResume_clicked() {
 
 void SimulationManagerDialog::on_btnFinish_clicked() {
     Simulation *simulation = this->getCurrentSimulation();
-    SimulationManager *simulationManager = SimulationManager::getInstance();
     
-    simulationManager->finish(simulation);
+    if (simulation) { // selected row may be empty
+        SimulationManager *simulationManager = SimulationManager::getInstance();
+        simulationManager->finish(simulation);
+    }
 }
 
 void SimulationManagerDialog::on_btnPause_clicked() {
     Simulation *simulation = this->getCurrentSimulation();
-    SimulationManager *simulationManager = SimulationManager::getInstance();
     
-    simulationManager->pause(simulation);
+    if (simulation) {
+        SimulationManager *simulationManager = SimulationManager::getInstance();
+        simulationManager->pause(simulation);
+    }
 }
 
 void SimulationManagerDialog::on_btnRemove_clicked() {
-    QString question = tr("Are you sure you want to remove the selected simulation?");
-    QMessageBox::StandardButton button = QMessageBox::question(this, tr("Boundary Condition"), question);
+    Simulation *simulation = this->getCurrentSimulation();
     
-    if (button == QMessageBox::Yes) {
-        Simulation *simulation = this->getCurrentSimulation();
-        SimulationManager *simulationManager = SimulationManager::getInstance();
-        QTableWidget *tableWidget = this->getTableWidgetBySimulationStatus(simulation->getStatus());
+    if (simulation) {
+        QString question = tr("Are you sure you want to remove the selected simulation?");
+        QMessageBox::StandardButton button = QMessageBox::question(this, tr("Boundary Condition"), question);
         
-        for (int row = 0; row < ui->tblAll->rowCount(); row++) {
-            QTableWidgetItem *labelItem = ui->tblAll->item(row, 0);
+        if (button == QMessageBox::Yes) {
+            SimulationManager *simulationManager = SimulationManager::getInstance();
+            QTableWidget *tableWidget = this->getTableWidgetBySimulationStatus(simulation->getStatus());
             
-            if (labelItem->text() == simulation->getLabel()) {
-                ui->tblAll->removeRow(row);
-                break;
+            for (int row = 0; row < ui->tblAll->rowCount(); row++) {
+                QTableWidgetItem *labelItem = ui->tblAll->item(row, 0);
+                
+                if (labelItem->text() == simulation->getLabel()) {
+                    ui->tblAll->removeRow(row);
+                    break;
+                }
             }
-        }
-        
-        for (int row = 0; row < tableWidget->rowCount(); row++) {
-            QTableWidgetItem *labelItem = tableWidget->item(row, 0);
             
-            if (labelItem->text() == simulation->getLabel()) {
-                tableWidget->removeRow(row);
-                break;
+            for (int row = 0; row < tableWidget->rowCount(); row++) {
+                QTableWidgetItem *labelItem = tableWidget->item(row, 0);
+                
+                if (labelItem->text() == simulation->getLabel()) {
+                    tableWidget->removeRow(row);
+                    break;
+                }
             }
+            
+            simulationManager->remove(simulation);
         }
-        
-        simulationManager->remove(simulation);
     }
 }
 
