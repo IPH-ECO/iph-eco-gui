@@ -106,10 +106,6 @@ namespace SimulationDataType {
             char *name;
         };
 
-//        struct SimulationStatus {
-//            int statusCode;
-//        };
-
         struct Simulation {
             bool hydrodynamic;
             bool waterQuality;
@@ -134,8 +130,19 @@ namespace SimulationDataType {
             int autosaveTimeInterval;
             int outputParametersLength;
             SimulationDataType::OutputParameter *outputParameters;
+            SimulationDataType::AutosaveVariables *autosaveVariables;
             int statusCode;
             int progress;
+        };
+
+        struct AutosaveVariables {
+            double *u;
+            int layers;
+            int edges;
+            double *w;
+            int elements;
+            double *eta;
+            int time;
         };
     }
 }

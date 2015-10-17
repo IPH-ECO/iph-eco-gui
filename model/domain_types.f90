@@ -135,4 +135,14 @@ module domain_types
         integer(c_int) :: statusCode
         integer(c_int) :: progress
     end type
+
+    type, bind(C) :: AutosaveVariables
+        type(c_ptr) :: u
+        integer(c_int) :: layers
+        integer(c_int) :: edges
+        type(c_ptr) :: w
+        integer(c_int) :: elements
+        type(c_ptr) :: eta
+        integer(c_int) :: time
+    end type
 end module
