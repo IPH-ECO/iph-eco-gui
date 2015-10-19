@@ -223,8 +223,10 @@ void MainWindow::on_actionMeteorologyData_triggered() {
     subWindow->setWindowFlags(subWindow->windowFlags() | Qt::FramelessWindowHint);
     subWindow->setWindowState(subWindow->windowState() | Qt::WindowMaximized);
     meteorologicalDataDialog->show();
-    
+
+#ifdef __APPLE__
     this->update();
+#endif
 }
 
 void MainWindow::on_actionCreateSimulation_triggered() {
@@ -241,11 +243,13 @@ void MainWindow::on_actionManageSimulation_triggered() {
     subWindow->setWindowState(subWindow->windowState() | Qt::WindowMaximized);
     simulationManagerDialog->show();
     
+#ifdef __APPLE__
     this->update();
+#endif
 }
 
 void MainWindow::on_actionSobre_triggered() {
-    QMessageBox::about(this, tr("Sobre"), tr("IPH-ECO."));
+    QMessageBox::about(this, tr("Sobre"), tr("Desenvolvidor por: João Roberto (joaorobertojr88@gmail.com)."));
 }
 
 void MainWindow::openRecent() {
