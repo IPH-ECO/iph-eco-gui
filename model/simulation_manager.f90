@@ -3,23 +3,43 @@ subroutine startSimulation(sim) bind(C, name="startSimulation")
 	use domain_types
 	
     type(Simulation) :: sim
-    type(AutosaveVariables) :: variables
-    integer :: nLayer = 2
+    type(RecoveryVariables), pointer :: variables
+    integer :: nLayer = 3
     integer :: nEdge = 2
-    real(c_double), dimension(:, :), pointer :: u ! Vetor de velocidade horizontal
+    integer :: elements = 10
+    integer :: uLength
+    real(c_double), dimension(:, :), pointer :: u
+    real(c_double), dimension(:, :), pointer :: w
+    real(c_double), dimension(:), pointer :: eta
 
-    call c_f_pointer(sim%autosaveVariables, variables)
+    !call c_f_pointer(sim%recoveryVariables, variables)
 
+    uLength = nLayer * nEdge
+
+    allocate(variables)
     allocate(u(nLayer, nEdge))
+    allocate(w(nLayer + 1, elements))
+    allocate(eta(elements))
 
-    u(1, 1) = 10
-    u(2, 1) = 20
-    u(1, 2) = 30
-    u(2, 2) = 40
+    do i = 1, nLayer
+        do j = 1, nEdge
+            u(i, j) = i * j
+        end do
+    end do
 
     variables%layers = nLayer
     variables%edges = nEdge
+    variables%elements = elements
+    variables%simulationTime = 681988
     variables%u = c_loc(u)
+    variables%w = c_loc(w)
+    variables%eta = c_loc(eta)
+
+    do k = 1, elements
+        eta(k) = k
+    end do
+
+    sim%recoveryVariables = c_loc(variables)
 
     ! Progress of simulation
     sim%progress = 0

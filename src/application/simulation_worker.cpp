@@ -10,7 +10,7 @@ SimulationWorker::SimulationWorker(Simulation *simulation) : simulation(simulati
     thread.start();
     
     if (simulation->getAutosaveTimeInterval() > 0) {
-        connect(&timer, SIGNAL(timeout()), this, SLOT(autosave()));
+        connect(&timer, SIGNAL(timeout()), this, SLOT(autosave()), Qt::DirectConnection);
         timer.setInterval(simulation->getAutosaveTimeInterval() * simulation->getStepTime() * 1000);
         timer.start();
     }

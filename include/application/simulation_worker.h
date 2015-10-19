@@ -14,6 +14,7 @@ private:
     QTimer timer;
 public slots:
     void simulate();
+private slots:
     void autosave();
 public:
 	SimulationWorker(Simulation *simulation);

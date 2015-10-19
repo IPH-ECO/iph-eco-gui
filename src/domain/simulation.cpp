@@ -1,6 +1,10 @@
 #include "include/domain/simulation.h"
 #include "include/application/iph_application.h"
 
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
+
 Simulation::Simulation() :
     id(0), hydrodynamicConfiguration(nullptr), status(SimulationStatus::IDLE), progress(0), simulationStruct(nullptr), previousStatus(SimulationStatus::UNDEFINED)
 {
@@ -9,6 +13,7 @@ Simulation::Simulation() :
 
 Simulation::~Simulation() {
 	// TODO: delete children
+    delete simulationStruct->recoveryVariables;
 	delete simulationStruct;
 }
 
@@ -255,6 +260,95 @@ void Simulation::setProgress(int progress) {
     }
 }
 
+QString Simulation::getRecoveryVariables() const {
+    return recoveryVariables;
+}
+
+void Simulation::setRecoveryVariables(const QString &recoveryVariables) {
+    this->recoveryVariables = recoveryVariables;
+}
+
+void Simulation::buildRecoveryVariablesJson() {
+    QString json("");
+    
+    if (simulationStruct && simulationStruct->recoveryVariables) {
+        int uLength = simulationStruct->recoveryVariables->layers * simulationStruct->recoveryVariables->edges;
+        QJsonObject jsonObject;
+        QJsonArray u;
+        
+        jsonObject["layers"] = simulationStruct->recoveryVariables->layers;
+        jsonObject["edges"] = simulationStruct->recoveryVariables->edges;
+        jsonObject["elements"] = simulationStruct->recoveryVariables->elements;
+        
+        for (int i = 0; i < uLength; i++) {
+            u.append(simulationStruct->recoveryVariables->u[i]);
+        }
+        
+        jsonObject["u"] = u;
+        
+        int wLength = (simulationStruct->recoveryVariables->layers + 1) * simulationStruct->recoveryVariables->elements;
+        QJsonArray w;
+        
+        for (int i = 0; i < wLength; i++) {
+            w.append(simulationStruct->recoveryVariables->w[i]);
+        }
+        
+        jsonObject["w"] = w;
+        
+        QJsonArray eta;
+        
+        for (int i = 0; i < simulationStruct->recoveryVariables->elements; i++) {
+            eta.append(simulationStruct->recoveryVariables->eta[i]);
+        }
+        
+        jsonObject["eta"] = eta;
+        jsonObject["simulationTime"] = simulationStruct->recoveryVariables->simulationTime;
+    
+        json = QJsonDocument(jsonObject).toJson(QJsonDocument::Compact);
+    }
+    
+    this->recoveryVariables = json;
+}
+
+void Simulation::loadRecoveryVariables() {
+    if (this->recoveryVariables.isEmpty()) {
+        simulationStruct->recoveryVariables = nullptr;
+    } else {
+        QJsonObject jsonObject = QJsonDocument::fromJson(this->recoveryVariables.toUtf8()).object();
+        
+        simulationStruct->recoveryVariables = new SimulationDataType::RecoveryVariables();
+        simulationStruct->recoveryVariables->layers = jsonObject["layers"].toInt();
+        simulationStruct->recoveryVariables->edges = jsonObject["edges"].toInt();
+        simulationStruct->recoveryVariables->elements = jsonObject["elements"].toInt();
+        
+        QJsonArray u = jsonObject["u"].toArray();
+        
+        simulationStruct->recoveryVariables->u = new double[u.size()];
+        
+        for (int i = 0; i < u.size(); i++) {
+            simulationStruct->recoveryVariables->u[i] = u[i].toDouble();
+        }
+        
+        QJsonArray w = jsonObject["w"].toArray();
+        
+        simulationStruct->recoveryVariables->w = new double[w.size()];
+        
+        for (int i = 0; i < w.size(); i++) {
+            simulationStruct->recoveryVariables->w[i] = w[i].toDouble();
+        }
+        
+        QJsonArray eta = jsonObject["eta"].toArray();
+        
+        simulationStruct->recoveryVariables->eta = new double[eta.size()];
+        
+        for (int i = 0; i < eta.size(); i++) {
+            simulationStruct->recoveryVariables->eta[i] = eta[i].toDouble();
+        }
+        
+        simulationStruct->recoveryVariables->simulationTime = jsonObject["simulationTime"].toDouble();
+    }
+}
+
 SimulationDataType::Simulation* Simulation::toSimulationDataType() {
 	if (!simulationStruct) {
 		Project *project = IPHApplication::getCurrentProject();
@@ -306,6 +400,8 @@ SimulationDataType::Simulation* Simulation::toSimulationDataType() {
 		}
         
         simulationStruct->progress = this->progress;
+        
+        loadRecoveryVariables();
 	}
 
 	return simulationStruct;

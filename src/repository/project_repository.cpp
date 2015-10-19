@@ -42,16 +42,13 @@ void ProjectRepository::open() {
     Project *project = new Project(name, description, hydrodynamic, sediment, waterQuality);
     project->setId(query.value("id").toUInt());
     project->setFilename(this->databaseName);
+    IPHApplication::setCurrentProject(project);
     
     loadMeshes(project);
     loadGridDataConfigurations(project);
     loadHydrodynamicConfigurations(project);
     loadMeteorologicalConfigurations(project);
     loadSimulations(project);
-    
-    if (!operationCanceled) {
-        IPHApplication::setCurrentProject(project);
-    }
 }
 
 void ProjectRepository::close() {
@@ -1156,6 +1153,7 @@ void ProjectRepository::loadSimulations(Project *project) {
         simulation->setOutputParameters(query.value("output_parameters").toString().split(","));
         simulation->setStatus((SimulationStatus) query.value("status").toInt());
         simulation->setProgress(query.value("progress").toInt());
+        simulation->setRecoveryVariables(query.value("recovery_variables").toString());
         
         HydrodynamicConfiguration *hydrodynamicConfiguration = project->getHydrodynamicConfiguration(query.value("hydrodynamic_configuration_id").toUInt());
         simulation->setHydrodynamicConfiguration(hydrodynamicConfiguration);
@@ -1178,7 +1176,7 @@ void ProjectRepository::saveSimulation(Simulation *simulation) {
         query.prepare("update simulation set label = :l, observations = :o where id = :i");
         query.bindValue(":i", simulation->getId());
     } else {
-        query.prepare("insert into simulation (label, simulation_type, start_time, initial_time, period, step_time, minimum_vertical_limit, maximum_vertical_limit, layers, observations, output_time_interval, autosave_time_interval, output_parameters, status, hydrodynamic_configuration_id, meteorological_configuration_id) values (:l, :t, :st1, :it, :p, :st2, :min, :max, :la, :o, :oti, :ati, :op, :s, :h, :m)");
+        query.prepare("insert into simulation (label, simulation_type, start_time, initial_time, period, step_time, minimum_vertical_limit, maximum_vertical_limit, layers, observations, output_time_interval, autosave_time_interval, output_parameters, status, recovery_variables, hydrodynamic_configuration_id, meteorological_configuration_id) values (:l, :t, :st1, :it, :p, :st2, :min, :max, :la, :o, :oti, :ati, :op, :s, :r, :h, :m)");
     }
     
     query.bindValue(":l", simulation->getLabel());
@@ -1195,6 +1193,7 @@ void ProjectRepository::saveSimulation(Simulation *simulation) {
     query.bindValue(":ati", simulation->getAutosaveTimeInterval());
     query.bindValue(":op", simulation->getOutputParameters().join(","));
     query.bindValue(":s", (int) simulation->getStatus());
+    query.bindValue(":r", simulation->getRecoveryVariables());
     query.bindValue(":h", simulation->getHydrodynamicConfiguration()->getId());
     query.bindValue(":m", simulation->getMeteorologicalConfiguration()->getId());
     

@@ -42,6 +42,7 @@ private:
     QString outputDirectory;
     QStringList outputParameters;
     SimulationStatus status;
+    QString recoveryVariables;
     int outputTimeInterval;
     int autosaveTimeInterval;
     int progress;
@@ -51,6 +52,7 @@ private:
 	bool startOnCreate;
 	SimulationStatus previousStatus;
     
+    void loadRecoveryVariables();
 	static QMap<SimulationType, QString> simulationTypesMap;
 	static QMap<SimulationStatus, QString> simulationStatusMap;
 public:
@@ -101,6 +103,9 @@ public:
     void setOutputParameters(const QStringList &outputParameters);
     SimulationStatus getStatus() const;
     void setStatus(const SimulationStatus &status);
+    QString getRecoveryVariables() const;
+    void setRecoveryVariables(const QString &recoveryVariables);
+    void buildRecoveryVariablesJson();
     SimulationStatus getPreviousStatus() const;
     int getProgress() const;
     void setProgress(int progress);
