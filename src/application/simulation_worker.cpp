@@ -8,6 +8,12 @@ extern "C" {
 SimulationWorker::SimulationWorker(Simulation *simulation) : simulation(simulation) {
     this->moveToThread(&thread);
     thread.start();
+    
+    if (simulation->getAutosaveTimeInterval() > 0) {
+        connect(&timer, SIGNAL(timeout()), this, SLOT(autosave()));
+        timer.setInterval(simulation->getAutosaveTimeInterval() * simulation->getStepTime() * 1000);
+        timer.start();
+    }
 }
 
 SimulationWorker::~SimulationWorker() {
@@ -27,5 +33,11 @@ void SimulationWorker::simulate() {
         connect(this, SIGNAL(listenProgress(Simulation*)), &progressListener, SLOT(listen(Simulation*)));
         emit listenProgress(simulation);
         startSimulation(simulationStruct);
+    }
+}
+
+void SimulationWorker::autosave() {
+    if (simulation->getStatus() == SimulationStatus::RUNNING) {
+        SimulationRepository::saveRecoveryVariables(simulation);
     }
 }

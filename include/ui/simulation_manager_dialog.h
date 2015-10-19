@@ -5,6 +5,7 @@
 
 #include <QList>
 #include <QWidget>
+#include <QDialog>
 #include <QAction>
 #include <QTableWidget>
 #include <QTableWidgetItem>
@@ -13,7 +14,7 @@ namespace Ui {
 	class SimulationManagerDialog;
 }
 
-class SimulationManagerDialog : public QWidget {
+class SimulationManagerDialog : public QDialog {
     Q_OBJECT
 private:
 	Ui::SimulationManagerDialog *ui;

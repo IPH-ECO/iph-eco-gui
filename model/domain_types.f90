@@ -136,7 +136,7 @@ module domain_types
         integer(c_int) :: progress
     end type
 
-    type, bind(C) :: AutosaveVariables
+    type, bind(C) :: RecoveryVariables
         type(c_ptr) :: u
         integer(c_int) :: layers
         integer(c_int) :: edges

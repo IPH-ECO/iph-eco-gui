@@ -105,6 +105,17 @@ namespace SimulationDataType {
             int nameLength;
             char *name;
         };
+        
+        struct RecoveryVariables {
+            // Hydrodynamic module
+            double *u;
+            int layers;
+            int edges;
+            double *w;
+            int elements;
+            double *eta;
+            int time;
+        };
 
         struct Simulation {
             bool hydrodynamic;
@@ -130,19 +141,9 @@ namespace SimulationDataType {
             int autosaveTimeInterval;
             int outputParametersLength;
             SimulationDataType::OutputParameter *outputParameters;
-            SimulationDataType::AutosaveVariables *autosaveVariables;
+            SimulationDataType::RecoveryVariables *recoveryVariables;
             int statusCode;
             int progress;
-        };
-
-        struct AutosaveVariables {
-            double *u;
-            int layers;
-            int edges;
-            double *w;
-            int elements;
-            double *eta;
-            int time;
         };
     }
 }

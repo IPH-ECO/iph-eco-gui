@@ -4,14 +4,17 @@
 #include "include/domain/simulation.h"
 
 #include <QThread>
+#include <QTimer>
 
 class SimulationWorker : public QObject {
     Q_OBJECT
 private:
     Simulation *simulation;
     QThread thread;
+    QTimer timer;
 public slots:
     void simulate();
+    void autosave();
 public:
 	SimulationWorker(Simulation *simulation);
     ~SimulationWorker();

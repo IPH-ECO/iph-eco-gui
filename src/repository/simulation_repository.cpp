@@ -91,3 +91,17 @@ void SimulationRepository::deleteSimulation(Simulation *simulation) {
     Project *project = IPHApplication::getCurrentProject();
     project->removeSimulation(simulation->getLabel());
 }
+
+void SimulationRepository::saveRecoveryVariables(Simulation *simulation) {
+    DatabaseUtility *databaseUtility = DatabaseUtility::getInstance();
+    QSqlDatabase database(databaseUtility->getDatabase());
+    QSqlQuery query(database);
+    
+    query.prepare("update simulation set autosave_variables = :a where id = :i");
+    query.bindValue(":a", "asdf");
+    query.bindValue(":i", simulation->getId());
+    
+    if (!query.exec()) {
+        throw DatabaseException("Unable to autosave simulation variables.");
+    }
+}

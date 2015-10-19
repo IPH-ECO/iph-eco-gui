@@ -11,6 +11,7 @@ public:
     static void updateSimulationStatus(Simulation *simulation, const SimulationStatus &status);
     static void updateSimulationProgress(Simulation *simulation, int progress);
     static void deleteSimulation(Simulation *simulation);
+    static void saveRecoveryVariables(Simulation *simulation);
 };
 
 #endif // SIMULATION_REPOSITORY_H

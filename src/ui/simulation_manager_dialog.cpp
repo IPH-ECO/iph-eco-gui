@@ -8,7 +8,7 @@
 #include <QMessageBox>
 #include <QMdiSubWindow>
 
-SimulationManagerDialog::SimulationManagerDialog(QWidget *parent) : QWidget(parent), ui(new Ui::SimulationManagerDialog) {
+SimulationManagerDialog::SimulationManagerDialog(QWidget *parent) : QDialog(parent), ui(new Ui::SimulationManagerDialog) {
 	ui->setupUi(this);
     ui->tblAll->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     ui->tblIdle->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
