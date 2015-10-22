@@ -9,6 +9,15 @@ class SimulationProgressListener : public QObject {
     Q_OBJECT
 private:
     QThread thread;
+public:
+    SimulationProgressListener() {
+        this->moveToThread(&thread);
+        thread.start();
+    }
+    
+    ~SimulationProgressListener() {
+        thread.wait();
+    }
 public slots:
     void listen(Simulation *simulation) {
 		SimulationDataType::Simulation *simulationStruct = simulation->toSimulationDataType();
@@ -20,15 +29,6 @@ public slots:
                 SimulationRepository::updateSimulationProgress(simulation, progress);
 			}
 		}
-    }
-public:
-    SimulationProgressListener() {
-        this->moveToThread(&thread);
-        thread.start();
-    }
-    
-    ~SimulationProgressListener() {
-        thread.wait();
     }
 };
 

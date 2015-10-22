@@ -4,6 +4,7 @@
 #include "include/exceptions/database_exception.h"
 #include "include/domain/unstructured_mesh.h"
 #include "include/domain/structured_mesh.h"
+#include "include/repository/simulation_repository.h"
 
 #include <QApplication>
 #include <QSqlQuery>
@@ -1160,6 +1161,10 @@ void ProjectRepository::loadSimulations(Project *project) {
         
         MeteorologicalConfiguration *meteorologicalConfiguration = project->getMeteorologicalConfiguration(query.value("meteorological_configuration_id").toUInt());
         simulation->setMeteorologicalConfiguration(meteorologicalConfiguration);
+        
+        if (simulation->getStatus() == SimulationStatus::RUNNING) {
+            SimulationRepository::updateSimulationStatus(simulation, SimulationStatus::PAUSED);
+        }
         
         project->addSimulation(simulation);
         

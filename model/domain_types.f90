@@ -145,5 +145,6 @@ module domain_types
         integer(c_int) :: elements
         type(c_ptr) :: eta
         integer(c_int) :: simulationTime
+        logical(c_bool) :: changed
     end type
 end module

@@ -13,7 +13,10 @@ Simulation::Simulation() :
 
 Simulation::~Simulation() {
 	// TODO: delete children
-    delete simulationStruct->recoveryVariables;
+    if (simulationStruct) {
+        delete simulationStruct->recoveryVariables;
+    }
+    
 	delete simulationStruct;
 }
 

@@ -74,6 +74,10 @@ void SimulationRepository::updateSimulationProgress(Simulation *simulation, int 
     }
     
     simulation->setProgress(progress);
+    
+    if (progress == 100) {
+        SimulationRepository::updateSimulationStatus(simulation, SimulationStatus::FINISHED);
+    }
 }
 
 void SimulationRepository::deleteSimulation(Simulation *simulation) {

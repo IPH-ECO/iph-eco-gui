@@ -39,7 +39,6 @@ subroutine startSimulation(sim) bind(C, name="startSimulation")
         eta(k) = k
     end do
 
-    sim%recoveryVariables = c_loc(variables)
 
     ! Progress of simulation
     sim%progress = 0
@@ -57,6 +56,9 @@ subroutine startSimulation(sim) bind(C, name="startSimulation")
 
     sim%progress = 25
     print *, '25%'
+
+    variables%changed = logical(.true., kind = c_bool)
+    sim%recoveryVariables = c_loc(variables)
     
     do i = 1, 1000000000
         do while (sim%statusCode == 3)

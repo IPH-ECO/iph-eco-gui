@@ -1,7 +1,5 @@
 #include "include/domain/project.h"
 
-#include "include/application/simulation_manager.h"
-
 #include <QSetIterator>
 
 Project::Project(const QString &name, const QString &description, const bool &hydrodynamic, const bool &sediment, const bool &waterQuality) :
@@ -281,9 +279,6 @@ bool Project::addSimulation(Simulation *simulation) {
     }
     
     simulations.insert(simulation);
-    
-    SimulationManager *manager = SimulationManager::getInstance();
-    manager->resume(simulation);
     
     emit simulationCreated(simulation);
     

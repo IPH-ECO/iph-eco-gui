@@ -115,6 +115,7 @@ namespace SimulationDataType {
             int elements;
             double *eta;
             int simulationTime;
+            bool changed;
         };
 
         struct Simulation {
