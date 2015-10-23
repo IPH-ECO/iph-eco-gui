@@ -220,6 +220,7 @@ void DatabaseUtility::createApplicationTables() {
         "layers varchar(255), " \
         "observations text, " \
         "output_time_interval integer, " \
+        "output_directory text, " \
         "autosave_time_interval integer, " \
         "output_parameters text, " \
         "status integer default 1, " \
