@@ -4,9 +4,12 @@
 #include "include/application/iph_application.h"
 #include "include/application/simulation_manager.h"
 #include "include/ui/main_window.h"
+#include "include/repository/simulation_repository.h"
 
+#include <QDir>
 #include <QMessageBox>
 #include <QMdiSubWindow>
+#include <QTreeWidgetItem>
 
 SimulationManagerDialog::SimulationManagerDialog(QWidget *parent) : QDialog(parent), ui(new Ui::SimulationManagerDialog) {
 	ui->setupUi(this);
@@ -15,7 +18,6 @@ SimulationManagerDialog::SimulationManagerDialog(QWidget *parent) : QDialog(pare
     ui->tblRunning->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     ui->tblPaused->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     ui->tblFinished->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-    ui->tblOutput->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 
 	Project *project = IPHApplication::getCurrentProject();
     
@@ -108,6 +110,7 @@ void SimulationManagerDialog::on_tblAll_currentItemChanged(QTableWidgetItem *cur
         ui->btnPause->setEnabled(status == SimulationStatus::RUNNING);
         ui->btnRemove->setEnabled(true);
         ui->btnFinish->setEnabled(status != SimulationStatus::IDLE && status != SimulationStatus::FINISHED);
+        SimulationRepository::loadOutputParametersTreeFromSimulation(this->getCurrentSimulation(), ui->trOutput);
     } else {
         ui->btnRemove->setEnabled(false);
         ui->btnFinish->setEnabled(false);
@@ -115,6 +118,10 @@ void SimulationManagerDialog::on_tblAll_currentItemChanged(QTableWidgetItem *cur
 }
 
 void SimulationManagerDialog::on_tblIdle_currentItemChanged(QTableWidgetItem *current, QTableWidgetItem *previous) {
+    if (current) {
+        SimulationRepository::loadOutputParametersTreeFromSimulation(this->getCurrentSimulation(), ui->trOutput);
+    }
+    
     ui->btnResume->setEnabled(true);
     ui->btnPause->setEnabled(false);
     ui->btnRemove->setEnabled(true);
@@ -122,6 +129,10 @@ void SimulationManagerDialog::on_tblIdle_currentItemChanged(QTableWidgetItem *cu
 }
 
 void SimulationManagerDialog::on_tblRunning_currentItemChanged(QTableWidgetItem *current, QTableWidgetItem *previous) {
+    if (current) {
+        SimulationRepository::loadOutputParametersTreeFromSimulation(this->getCurrentSimulation(), ui->trOutput);
+    }
+    
     ui->btnResume->setEnabled(false);
     ui->btnPause->setEnabled(true);
     ui->btnRemove->setEnabled(true);
@@ -129,6 +140,10 @@ void SimulationManagerDialog::on_tblRunning_currentItemChanged(QTableWidgetItem 
 }
 
 void SimulationManagerDialog::on_tblPaused_currentItemChanged(QTableWidgetItem *current, QTableWidgetItem *previous) {
+    if (current) {
+        SimulationRepository::loadOutputParametersTreeFromSimulation(this->getCurrentSimulation(), ui->trOutput);
+    }
+    
     ui->btnResume->setEnabled(true);
     ui->btnPause->setEnabled(false);
     ui->btnRemove->setEnabled(true);
@@ -136,6 +151,10 @@ void SimulationManagerDialog::on_tblPaused_currentItemChanged(QTableWidgetItem *
 }
 
 void SimulationManagerDialog::on_tblFinished_currentItemChanged(QTableWidgetItem *current, QTableWidgetItem *previous) {
+    if (current) {
+        SimulationRepository::loadOutputParametersTreeFromSimulation(this->getCurrentSimulation(), ui->trOutput);
+    }
+    
     ui->btnResume->setEnabled(false);
     ui->btnPause->setEnabled(false);
     ui->btnRemove->setEnabled(true);
@@ -298,6 +317,23 @@ void SimulationManagerDialog::on_btnRemove_clicked() {
             }
             
             simulationManager->remove(simulation);
+        }
+    }
+}
+
+void SimulationManagerDialog::on_btnRefresh_clicked() {
+    Simulation *simulation = this->getCurrentSimulation();
+    
+    if (simulation) {
+        QDir outputDirectory(simulation->getOutputDirectory());
+        
+        if (outputDirectory.exists()) {
+            QFileInfoList outputFiles = outputDirectory.entryInfoList({ "*.vtk" }, QDir::Files, QDir::Time);
+            
+            ui->vtkWidget->render(outputFiles.first().absoluteFilePath());
+        } else {
+            QMessageBox::warning(this, tr("Simulation Manager"), tr("Output directory of this simulation doesn't exist."));
+            return;
         }
     }
 }

@@ -6,18 +6,24 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1225</width>
+    <width>1309</width>
     <height>624</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Simulation Manager</string>
   </property>
-  <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,0">
+  <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,3">
    <item>
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
       <widget class="QTabWidget" name="tabWidget">
+       <property name="maximumSize">
+        <size>
+         <width>400</width>
+         <height>16777215</height>
+        </size>
+       </property>
        <property name="currentIndex">
         <number>0</number>
        </property>
@@ -368,6 +374,17 @@
       </spacer>
      </item>
      <item>
+      <widget class="QToolButton" name="btnRefresh">
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="../../icons.qrc">
+         <normaloff>:/icons/view-refresh.png</normaloff>:/icons/view-refresh.png</iconset>
+       </property>
+      </widget>
+     </item>
+     <item>
       <layout class="QVBoxLayout" name="verticalLayout_7">
        <property name="leftMargin">
         <number>8</number>
@@ -376,22 +393,13 @@
         <number>8</number>
        </property>
        <item>
-        <widget class="QTableWidget" name="tblOutput">
-         <property name="editTriggers">
-          <set>QAbstractItemView::NoEditTriggers</set>
+        <widget class="QTreeWidget" name="trOutput">
+         <property name="maximumSize">
+          <size>
+           <width>400</width>
+           <height>16777215</height>
+          </size>
          </property>
-         <property name="alternatingRowColors">
-          <bool>true</bool>
-         </property>
-         <property name="selectionMode">
-          <enum>QAbstractItemView::SingleSelection</enum>
-         </property>
-         <property name="selectionBehavior">
-          <enum>QAbstractItemView::SelectRows</enum>
-         </property>
-         <attribute name="verticalHeaderVisible">
-          <bool>false</bool>
-         </attribute>
          <column>
           <property name="text">
            <string>Output</string>
@@ -432,23 +440,22 @@
     </layout>
    </item>
    <item>
-    <spacer name="horizontalSpacer_3">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="sizeType">
-      <enum>QSizePolicy::Fixed</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>800</width>
-       <height>20</height>
-      </size>
-     </property>
-    </spacer>
+    <widget class="SimulationVTKWidget" name="vtkWidget"/>
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QVTKWidget</class>
+   <extends>QWidget</extends>
+   <header>QVTKWidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>SimulationVTKWidget</class>
+   <extends>QVTKWidget</extends>
+   <header>include/ui/simulation_vtk_widget.h</header>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="../../icons.qrc"/>
  </resources>

@@ -2,6 +2,8 @@
 #include "include/application/simulation_progress_listener.h"
 #include "include/application/simulation_recovery_listener.h"
 
+#include <QDir>
+
 extern "C" {
     void startSimulation(SimulationDataType::Simulation *simulation);
 }

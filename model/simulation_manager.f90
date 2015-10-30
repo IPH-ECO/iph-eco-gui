@@ -12,7 +12,11 @@ subroutine startSimulation(sim) bind(C, name="startSimulation")
     real(c_double), dimension(:, :), pointer :: w
     real(c_double), dimension(:), pointer :: eta
 
-    !call c_f_pointer(sim%recoveryVariables, variables)
+    character, pointer :: dir(:)
+
+    call c_f_pointer(sim%outputDirectory, dir, [sim%outputDirectoryLength])
+
+    print *, dir
 
     uLength = nLayer * nEdge
 

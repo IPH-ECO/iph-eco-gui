@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="/">
+    <file>icons/view-refresh.png</file>
     <file>icons/media-playback-start.png</file>
     <file>icons/media-playback-pause.png</file>
     <file>icons/media-playback-stop.png</file>
