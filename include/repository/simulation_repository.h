@@ -8,7 +8,7 @@
 class SimulationRepository {
 public:
 	static void loadOutputParametersTree(QTreeWidget *trOutputVariables);
-    static void loadOutputParametersTreeFromSimulation(Simulation *simulation, QTreeWidget *treeWidget);
+    static QStringList loadOutputParametersLabels(const QStringList &parameters);
     static void updateSimulationStatus(Simulation *simulation, const SimulationStatus &status);
     static void updateSimulationProgress(Simulation *simulation, int progress);
     static void deleteSimulation(Simulation *simulation);

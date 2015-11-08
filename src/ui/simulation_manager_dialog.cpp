@@ -2,26 +2,34 @@
 #include "ui_simulation_manager_dialog.h"
 
 #include "include/application/iph_application.h"
+#include "include/exceptions/simulation_exception.h"
 #include "include/application/simulation_manager.h"
 #include "include/ui/main_window.h"
 #include "include/repository/simulation_repository.h"
 
 #include <QDir>
+#include <QAction>
+#include <QToolButton>
 #include <QMessageBox>
 #include <QMdiSubWindow>
 #include <QTreeWidgetItem>
+#include <QTableWidgetItem>
 
-SimulationManagerDialog::SimulationManagerDialog(QWidget *parent) : QDialog(parent), ui(new Ui::SimulationManagerDialog) {
+SimulationManagerDialog::SimulationManagerDialog(QWidget *parent) : AbstractMeshDialog(parent), ui(new Ui::SimulationManagerDialog) {
 	ui->setupUi(this);
     ui->tblAll->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     ui->tblIdle->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     ui->tblRunning->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     ui->tblPaused->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     ui->tblFinished->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    ui->tblLayers->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+
+    this->vtkWidget = ui->vtkWidget;
 
 	Project *project = IPHApplication::getCurrentProject();
     
     QObject::connect(project, SIGNAL(simulationCreated(Simulation*)), this, SLOT(onSimulationCreated(Simulation*)));
+    QObject::connect(&frameTimer, SIGNAL(timeout()), this, SLOT(renderNextFrame()));
 
 	for (Simulation *simulation : project->getSimulations()) {
 		int row = ui->tblAll->rowCount();
@@ -105,12 +113,25 @@ void SimulationManagerDialog::on_tblAll_currentItemChanged(QTableWidgetItem *cur
     if (current) {
         QTableWidgetItem *statusItem = ui->tblAll->item(current->row(), 1);
         SimulationStatus status = Simulation::getSimulationStatusMap().key(statusItem->text());
-
+        Simulation *simulation = this->getCurrentSimulation();
+        QFileInfoList outputFiles = simulation->getOutputFiles();
+        
         ui->btnResume->setEnabled(status == SimulationStatus::IDLE || status == SimulationStatus::PAUSED);
         ui->btnPause->setEnabled(status == SimulationStatus::RUNNING);
         ui->btnRemove->setEnabled(true);
         ui->btnFinish->setEnabled(status != SimulationStatus::IDLE && status != SimulationStatus::FINISHED);
-        SimulationRepository::loadOutputParametersTreeFromSimulation(this->getCurrentSimulation(), ui->trOutput);
+        ui->btnRefresh->setEnabled(true);
+        ui->spxFrame->setValue(1);
+        ui->spxFrame->setMaximum(outputFiles.size());
+        ui->lblFrameTotal->setText(QString::number(outputFiles.size()));
+        
+        fillLayersComboBox(simulation);
+        
+        try {
+            ui->vtkWidget->render(simulation, "", ui->spxFrame->value());
+        } catch (const SimulationException &e) {
+            QMessageBox::warning(this, tr("Simulation Manager"), e.what());
+        }
     } else {
         ui->btnRemove->setEnabled(false);
         ui->btnFinish->setEnabled(false);
@@ -118,10 +139,6 @@ void SimulationManagerDialog::on_tblAll_currentItemChanged(QTableWidgetItem *cur
 }
 
 void SimulationManagerDialog::on_tblIdle_currentItemChanged(QTableWidgetItem *current, QTableWidgetItem *previous) {
-    if (current) {
-        SimulationRepository::loadOutputParametersTreeFromSimulation(this->getCurrentSimulation(), ui->trOutput);
-    }
-    
     ui->btnResume->setEnabled(true);
     ui->btnPause->setEnabled(false);
     ui->btnRemove->setEnabled(true);
@@ -129,10 +146,6 @@ void SimulationManagerDialog::on_tblIdle_currentItemChanged(QTableWidgetItem *cu
 }
 
 void SimulationManagerDialog::on_tblRunning_currentItemChanged(QTableWidgetItem *current, QTableWidgetItem *previous) {
-    if (current) {
-        SimulationRepository::loadOutputParametersTreeFromSimulation(this->getCurrentSimulation(), ui->trOutput);
-    }
-    
     ui->btnResume->setEnabled(false);
     ui->btnPause->setEnabled(true);
     ui->btnRemove->setEnabled(true);
@@ -140,10 +153,6 @@ void SimulationManagerDialog::on_tblRunning_currentItemChanged(QTableWidgetItem 
 }
 
 void SimulationManagerDialog::on_tblPaused_currentItemChanged(QTableWidgetItem *current, QTableWidgetItem *previous) {
-    if (current) {
-        SimulationRepository::loadOutputParametersTreeFromSimulation(this->getCurrentSimulation(), ui->trOutput);
-    }
-    
     ui->btnResume->setEnabled(true);
     ui->btnPause->setEnabled(false);
     ui->btnRemove->setEnabled(true);
@@ -151,10 +160,6 @@ void SimulationManagerDialog::on_tblPaused_currentItemChanged(QTableWidgetItem *
 }
 
 void SimulationManagerDialog::on_tblFinished_currentItemChanged(QTableWidgetItem *current, QTableWidgetItem *previous) {
-    if (current) {
-        SimulationRepository::loadOutputParametersTreeFromSimulation(this->getCurrentSimulation(), ui->trOutput);
-    }
-    
     ui->btnResume->setEnabled(false);
     ui->btnPause->setEnabled(false);
     ui->btnRemove->setEnabled(true);
@@ -213,9 +218,6 @@ void SimulationManagerDialog::onUpdateSimulationStatus(SimulationStatus status) 
             
             if (labelItem->text() == simulation->getLabel()) {
                 previousTableWidget->removeRow(row);
-                // TODO:
-//                ui->btnResume->setEnabled(false);
-//                ui->btnPause->setEnabled(false);
                 break;
             }
         }
@@ -325,15 +327,15 @@ void SimulationManagerDialog::on_btnRefresh_clicked() {
     Simulation *simulation = this->getCurrentSimulation();
     
     if (simulation) {
-        QDir outputDirectory(simulation->getOutputDirectory());
+        QFileInfoList outputFiles = simulation->getOutputFiles();
         
-        if (outputDirectory.exists()) {
-            QFileInfoList outputFiles = outputDirectory.entryInfoList({ "*.vtk" }, QDir::Files, QDir::Time);
-            
-            ui->vtkWidget->render(outputFiles.first().absoluteFilePath());
-        } else {
-            QMessageBox::warning(this, tr("Simulation Manager"), tr("Output directory of this simulation doesn't exist."));
-            return;
+        ui->spxFrame->setMaximum(outputFiles.size());
+        ui->lblFrameTotal->setText(QString::number(outputFiles.size()));
+        
+        try {
+            ui->vtkWidget->render(simulation, "", ui->spxFrame->value());
+        } catch (const SimulationException &e) {
+            QMessageBox::warning(this, tr("Simulation Manager"), QString(e.what()));
         }
     }
 }
@@ -347,4 +349,149 @@ void SimulationManagerDialog::on_btnClose_clicked() {
     
     QMdiSubWindow *parentWindow = static_cast<QMdiSubWindow*>(parent());
     parentWindow->close();
+}
+
+void SimulationManagerDialog::on_btnFirstFrame_clicked() {
+    ui->spxFrame->setValue(1);
+}
+
+void SimulationManagerDialog::on_btnPreviousFrame_clicked() {
+    int frame = ui->spxFrame->value();
+    
+    if (frame > 1) {
+        ui->spxFrame->setValue(ui->spxFrame->value() - 1);
+    }
+}
+
+void SimulationManagerDialog::on_btnStartReproduction_clicked() {
+    frameTimer.start(500);
+    ui->btnStartReproduction->setEnabled(false);
+    ui->btnPauseReproduction->setEnabled(true);
+}
+
+void SimulationManagerDialog::on_btnPauseReproduction_clicked() {
+    frameTimer.stop();
+    ui->btnPauseReproduction->setEnabled(false);
+    ui->btnStartReproduction->setEnabled(true);
+}
+
+void SimulationManagerDialog::on_btnNextFrame_clicked() {
+    Simulation *simulation = this->getCurrentSimulation();
+    
+    if (simulation) {
+        QFileInfoList outputFiles = simulation->getOutputFiles();
+        int frame = ui->spxFrame->value();
+        
+        if (frame != outputFiles.size()) {
+            ui->spxFrame->setValue(ui->spxFrame->value() + 1);
+        }
+    }
+}
+
+void SimulationManagerDialog::on_btnLastFrame_clicked() {
+    Simulation *simulation = this->getCurrentSimulation();
+    
+    if (simulation) {
+        QFileInfoList outputFiles = simulation->getOutputFiles();
+        ui->spxFrame->setValue(outputFiles.size());
+    }
+}
+
+void SimulationManagerDialog::on_btnAddLayer_clicked() {
+    QString layer = ui->cbxLayers->currentText();
+    
+    if (!layer.isEmpty()) {
+        QList<QTableWidgetItem*> foundItems = ui->tblLayers->findItems(layer, Qt::MatchExactly);
+        
+        if (foundItems.isEmpty()) {
+            int row = ui->tblLayers->rowCount();
+            QTableWidgetItem *layerNameItem = new QTableWidgetItem(layer);
+            
+            layerNameItem->setData(Qt::UserRole, ui->cbxLayers->currentData());
+            ui->tblLayers->insertRow(row);
+            ui->tblLayers->setItem(row, 0, layerNameItem);
+            
+            QWidget *itemWidget = new QWidget();
+            QHBoxLayout *hLayout = new QHBoxLayout(itemWidget);
+            QToolButton *showHideLayerButton = new QToolButton();
+            QIcon hiddenIcon(":/icons/layer-visible-on.png");
+            
+            showHideLayerButton->setIcon(hiddenIcon);
+            showHideLayerButton->setToolTip("Show/Hide layer");
+            showHideLayerButton->setCheckable(true);
+            showHideLayerButton->setObjectName(QString("showHideLayerButton-%1").arg(row));
+            
+            hLayout->addWidget(showHideLayerButton);
+            hLayout->setAlignment(Qt::AlignCenter);
+            hLayout->setContentsMargins(0, 0, 0, 0);
+            
+            QToolButton *removeLayerButton = new QToolButton();
+            QIcon removeIcon(":/icons/list-delete.png");
+            
+            removeLayerButton->setIcon(removeIcon);
+            removeLayerButton->setToolTip("Remove layer");
+            removeLayerButton->setObjectName(QString("removeLayerButton-%1").arg(row));
+            
+            hLayout->addWidget(removeLayerButton);
+            hLayout->addStretch();
+            
+            itemWidget->setLayout(hLayout);
+            ui->tblLayers->setCellWidget(row, 1, itemWidget);
+            
+            QObject::connect(showHideLayerButton, SIGNAL(clicked(bool)), this, SLOT(toggleLayerVisibility(bool)));
+            QObject::connect(removeLayerButton, SIGNAL(clicked()), this, SLOT(removeLayer()));
+        } else {
+            QMessageBox::warning(this, tr("Simulation Manager"), tr("Layer already added"));
+        }
+    }
+}
+
+void SimulationManagerDialog::fillLayersComboBox(Simulation *simulation) {
+    QStringList outputParameters = simulation->getOutputParameters();
+    QStringList layers = SimulationRepository::loadOutputParametersLabels(outputParameters);
+    int i = 0;
+    
+    ui->cbxLayers->clear();
+    for (QString layer : layers) {
+        ui->cbxLayers->addItem(layer);
+        ui->cbxLayers->setItemData(i, outputParameters[i]);
+        i++;
+    }
+    ui->cbxLayers->setCurrentIndex(-1);
+}
+
+void SimulationManagerDialog::removeLayer() {
+    QString question = tr("Are you sure you want to remove the selected layer from the list?");
+    QMessageBox::StandardButton button = QMessageBox::question(this, tr("Simulation Manager"), question);
+    int row = static_cast<QToolButton*>(sender())->objectName().split("-")[1].toInt();
+ 
+    if (button == QMessageBox::Yes) {
+        ui->tblLayers->removeRow(row);
+    }
+}
+
+void SimulationManagerDialog::toggleLayerVisibility(bool show) {
+    int row = static_cast<QToolButton*>(sender())->objectName().split("-")[1].toInt();
+    QString layer = ui->tblLayers->item(row, 0)->data(Qt::UserRole).toString();
+    Simulation *simulation = getCurrentSimulation();
+    
+    ui->vtkWidget->render(simulation, layer, ui->spxFrame->value() - 1);
+}
+
+void SimulationManagerDialog::renderNextFrame() {
+    if (ui->spxFrame->value() == ui->spxFrame->maximum()) {
+        if (ui->btnLoop->isChecked()) {
+            ui->spxFrame->setValue(1);
+        }
+    } else {
+        ui->spxFrame->setValue(ui->spxFrame->value() + 1);
+    }
+}
+
+void SimulationManagerDialog::on_spxFrame_valueChanged(int frame) {
+    int row = ui->tblLayers->currentRow();
+    QString layer = ui->tblLayers->item(row, 0)->data(Qt::UserRole).toString();
+    Simulation *simulation = getCurrentSimulation();
+    
+    ui->vtkWidget->render(simulation, layer, frame - 1);
 }

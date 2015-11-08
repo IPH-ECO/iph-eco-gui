@@ -43,7 +43,8 @@ void SimulationRepository::loadOutputParametersTree(QTreeWidget *trOutputVariabl
     }
 }
 
-void SimulationRepository::loadOutputParametersTreeFromSimulation(Simulation *simulation, QTreeWidget *treeWidget) {
+QStringList SimulationRepository::loadOutputParametersLabels(const QStringList &parameters) {
+    QStringList parametersLabels;
     QFile dataFile(":/data/output_variables.json");
     
     dataFile.open(QFile::ReadOnly);
@@ -53,37 +54,25 @@ void SimulationRepository::loadOutputParametersTreeFromSimulation(Simulation *si
     
     dataFile.close();
     
-    treeWidget->clear();
-    
     for (int i = 0; i < jsonArray.size(); i++) {
         QJsonObject moduleJson = jsonArray[i].toObject();
-        QTreeWidgetItem *moduleItem = new QTreeWidgetItem(treeWidget, QStringList(moduleJson["module"].toString()));
         QJsonArray categoriesJson = moduleJson["categories"].toArray();
         
         for (int j = 0; j < categoriesJson.size(); j++) {
             QJsonObject categoryJson = categoriesJson[j].toObject();
-            QTreeWidgetItem *categoryItem = new QTreeWidgetItem(moduleItem, QStringList(categoryJson["label"].toString()));
             QJsonArray parameteresJson = categoryJson["parameters"].toArray();
             
             for (int k = 0; k < parameteresJson.size(); k++) {
                 QJsonObject parameterJson = parameteresJson[k].toObject();
                 
-                if (simulation->getOutputParameters().contains(parameterJson["name"].toString())) {
-                    QTreeWidgetItem *parameterItem = new QTreeWidgetItem(categoryItem, QStringList(parameterJson["label"].toString()));
-                    parameterItem->setData(0, Qt::UserRole, QVariant(parameterJson["name"].toString()));
-                    parameterItem->setCheckState(0, Qt::Checked);
+                if (parameters.contains(parameterJson["name"].toString())) {
+                    parametersLabels.append(parameterJson["label"].toString());
                 }
             }
         }
     }
     
-    QTreeWidgetItemIterator it(treeWidget, QTreeWidgetItemIterator::All);
-    
-    while (*it) {
-        QTreeWidgetItem *item = *it;
-        item->setExpanded(true);
-        it++;
-    }
+    return parametersLabels;
 }
 
 void SimulationRepository::updateSimulationStatus(Simulation *simulation, const SimulationStatus &status) {

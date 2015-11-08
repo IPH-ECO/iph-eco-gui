@@ -6,12 +6,12 @@
 				"label": "Primary",
 				"parameters": [
 					{
-						"name": "velocityField",
+						"name": "VelocityField",
 						"label": "Velocity field",
 						"selected": true
 					},
 					{
-						"name": "waterSurfaceElevation",
+						"name": "SurfaceWaterElevation",
 						"label": "Water surface elevation",
 						"selected": true
 					}

@@ -5,6 +5,7 @@
 #include  "meteorological_configuration.h"
 #include "simulation_data_type.h"
 
+#include <QFileInfo>
 #include <QDateTime>
 #include <QString>
 #include <QList>
@@ -51,6 +52,7 @@ private:
 	SimulationDataType::Simulation *simulationStruct;
 	bool startOnCreate;
 	SimulationStatus previousStatus;
+    QStringList selectedLayers;
     
     void loadRecoveryVariables();
 	static QMap<SimulationType, QString> simulationTypesMap;
@@ -109,6 +111,9 @@ public:
     SimulationStatus getPreviousStatus() const;
     int getProgress() const;
     void setProgress(int progress);
+    QStringList getSelectedLayers() const;
+    void addSelectedLayer(const QString &layer);
+    QFileInfoList getOutputFiles() const;
     SimulationDataType::Simulation* toSimulationDataType();
 
 	static QMap<SimulationType, QString> getSimulationTypesMap();

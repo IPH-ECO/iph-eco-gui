@@ -1,6 +1,7 @@
 #ifndef SIMULATION_VTK_WIDGET_H
 #define SIMULATION_VTK_WIDGET_H
 
+#include "include/domain/simulation.h"
 #include "include/ui/mesh_vtk_widget.h"
 #include "include/domain/meteorological_station.h"
 
@@ -9,7 +10,7 @@ class SimulationVTKWidget : public MeshVTKWidget {
 
 public:
 	explicit SimulationVTKWidget(QWidget *parent);
-	void render(const QString &meshVTKFile);
+	void render(Simulation *simulation, const QString &layer, int frame);
 };
 
 #endif // SIMULATION_VTK_WIDGET_H

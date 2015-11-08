@@ -1,6 +1,7 @@
 #include "include/domain/simulation.h"
 #include "include/application/iph_application.h"
 
+#include <QDir>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
@@ -350,6 +351,25 @@ void Simulation::loadRecoveryVariables() {
         
         simulationStruct->recoveryVariables->simulationTime = jsonObject["simulationTime"].toDouble();
     }
+}
+
+QFileInfoList Simulation::getOutputFiles() const {
+    QDir outputDir(this->outputDirectory);
+    QFileInfoList outputFiles;
+    
+    if (outputDir.exists()) {
+        outputFiles = outputDir.entryInfoList({ "*.vtk" }, QDir::Files, QDir::Time);
+    }
+    
+    return outputFiles;
+}
+
+QStringList Simulation::getSelectedLayers() const {
+    return selectedLayers;
+}
+
+void Simulation::addSelectedLayer(const QString &layer) {
+    selectedLayers.append(layer);
 }
 
 SimulationDataType::Simulation* Simulation::toSimulationDataType() {

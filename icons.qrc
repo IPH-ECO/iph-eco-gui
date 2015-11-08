@@ -1,6 +1,14 @@
 <RCC>
   <qresource prefix="/">
+    <file>icons/layer-visible-on.png</file>
+    <file>icons/pause.png</file>
+    <file>icons/last-frame.png</file>
+    <file>icons/loop.png</file>
+    <file>icons/play.png</file>
+    <file>icons/first-frame.png</file>
+    <file>icons/previous-frame.png</file>
     <file>icons/view-refresh.png</file>
+    <file>icons/next-frame.png</file>
     <file>icons/media-playback-start.png</file>
     <file>icons/media-playback-pause.png</file>
     <file>icons/media-playback-stop.png</file>
