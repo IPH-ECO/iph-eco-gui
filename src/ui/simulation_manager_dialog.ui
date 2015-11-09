@@ -459,6 +459,9 @@
           </item>
           <item>
            <widget class="QSpinBox" name="spxFrame">
+            <property name="minimum">
+             <number>1</number>
+            </property>
             <property name="maximum">
              <number>99</number>
             </property>
@@ -556,6 +559,9 @@
           </item>
           <item>
            <widget class="QToolButton" name="btnPauseReproduction">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
             <property name="toolTip">
              <string>Pause</string>
             </property>

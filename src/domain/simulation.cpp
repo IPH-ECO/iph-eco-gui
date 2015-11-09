@@ -358,18 +358,22 @@ QFileInfoList Simulation::getOutputFiles() const {
     QFileInfoList outputFiles;
     
     if (outputDir.exists()) {
-        outputFiles = outputDir.entryInfoList({ "*.vtk" }, QDir::Files, QDir::Time);
+        QFileInfoList tempList = outputDir.entryInfoList({ "*.vtk" }, QDir::Files, QDir::Time);
+        
+        for (int i = tempList.size() - 1; i >= 0; i--) {
+            outputFiles.append(tempList.at(i));
+        }
     }
     
     return outputFiles;
 }
 
-QStringList Simulation::getSelectedLayers() const {
+QMap<QString, LayerProperties*> Simulation::getSelectedLayers() const {
     return selectedLayers;
 }
 
 void Simulation::addSelectedLayer(const QString &layer) {
-    selectedLayers.append(layer);
+    selectedLayers.insert(layer, new LayerProperties());
 }
 
 SimulationDataType::Simulation* Simulation::toSimulationDataType() {

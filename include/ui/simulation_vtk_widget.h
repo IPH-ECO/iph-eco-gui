@@ -10,7 +10,7 @@ class SimulationVTKWidget : public MeshVTKWidget {
 
 public:
 	explicit SimulationVTKWidget(QWidget *parent);
-	void render(Simulation *simulation, const QString &layer, int frame);
+	void render(Simulation *simulation, const QString &layer, const QString &component, int frame);
 };
 
 #endif // SIMULATION_VTK_WIDGET_H

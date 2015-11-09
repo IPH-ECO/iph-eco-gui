@@ -18,17 +18,8 @@
 
 SimulationVTKWidget::SimulationVTKWidget(QWidget *parent) : MeshVTKWidget(parent) {}
 
-void SimulationVTKWidget::render(Simulation *simulation, const QString &layer, int frame) {
+void SimulationVTKWidget::render(Simulation *simulation, const QString &layer, const QString &component, int frame) {
     QFileInfoList outputFiles = simulation->getOutputFiles();
-    QFileInfoList outputFiles2;
-    
-    for (int i = outputFiles.size() - 1; i >= 0; i--) {
-        outputFiles2.append(outputFiles.at(i));
-    }
-    
-    if (layer.isEmpty()) {
-        return;
-    }
     
     if (frame >= outputFiles.size()) {
         throw SimulationException("Layer out of range.");
@@ -36,7 +27,7 @@ void SimulationVTKWidget::render(Simulation *simulation, const QString &layer, i
     
     clear();
     
-    std::string filename = outputFiles2.at(frame).absoluteFilePath().toStdString();
+    std::string filename = outputFiles.at(frame).absoluteFilePath().toStdString();
     std::string arrayName = layer.toStdString();
     
     vtkSmartPointer<vtkGenericDataObjectReader> reader = vtkSmartPointer<vtkGenericDataObjectReader>::New();

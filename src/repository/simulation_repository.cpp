@@ -43,8 +43,8 @@ void SimulationRepository::loadOutputParametersTree(QTreeWidget *trOutputVariabl
     }
 }
 
-QStringList SimulationRepository::loadOutputParametersLabels(const QStringList &parameters) {
-    QStringList parametersLabels;
+QMap<QString, QString> SimulationRepository::loadOutputParametersLabels(const QStringList &parameters) {
+    QMap<QString, QString> parametersLabels;
     QFile dataFile(":/data/output_variables.json");
     
     dataFile.open(QFile::ReadOnly);
@@ -66,7 +66,18 @@ QStringList SimulationRepository::loadOutputParametersLabels(const QStringList &
                 QJsonObject parameterJson = parameteresJson[k].toObject();
                 
                 if (parameters.contains(parameterJson["name"].toString())) {
-                    parametersLabels.append(parameterJson["label"].toString());
+                    QString components = parameterJson["components"].toString();
+                    QString name = parameterJson["name"].toString();
+                    
+                    if (components.isEmpty()) {
+                        parametersLabels.insert(parameterJson["label"].toString(), name + "-");
+                    } else {
+                        for (QString component : components.split(",")) {
+                            QString label = QString("%1 (%2)").arg(parameterJson["label"].toString()).arg(component);
+                            QString nameAndComponent = QString("%1-%2").arg(name).arg(component);
+                            parametersLabels.insert(label, nameAndComponent);
+                        }
+                    }
                 }
             }
         }

@@ -8,6 +8,7 @@
 #include "include/repository/simulation_repository.h"
 
 #include <QDir>
+#include <QRegExp>
 #include <QAction>
 #include <QToolButton>
 #include <QMessageBox>
@@ -126,12 +127,6 @@ void SimulationManagerDialog::on_tblAll_currentItemChanged(QTableWidgetItem *cur
         ui->lblFrameTotal->setText(QString::number(outputFiles.size()));
         
         fillLayersComboBox(simulation);
-        
-        try {
-            ui->vtkWidget->render(simulation, "", ui->spxFrame->value());
-        } catch (const SimulationException &e) {
-            QMessageBox::warning(this, tr("Simulation Manager"), e.what());
-        }
     } else {
         ui->btnRemove->setEnabled(false);
         ui->btnFinish->setEnabled(false);
@@ -331,12 +326,6 @@ void SimulationManagerDialog::on_btnRefresh_clicked() {
         
         ui->spxFrame->setMaximum(outputFiles.size());
         ui->lblFrameTotal->setText(QString::number(outputFiles.size()));
-        
-        try {
-            ui->vtkWidget->render(simulation, "", ui->spxFrame->value());
-        } catch (const SimulationException &e) {
-            QMessageBox::warning(this, tr("Simulation Manager"), QString(e.what()));
-        }
     }
 }
 
@@ -364,9 +353,9 @@ void SimulationManagerDialog::on_btnPreviousFrame_clicked() {
 }
 
 void SimulationManagerDialog::on_btnStartReproduction_clicked() {
-    frameTimer.start(500);
     ui->btnStartReproduction->setEnabled(false);
     ui->btnPauseReproduction->setEnabled(true);
+    frameTimer.start(500);
 }
 
 void SimulationManagerDialog::on_btnPauseReproduction_clicked() {
@@ -405,11 +394,12 @@ void SimulationManagerDialog::on_btnAddLayer_clicked() {
         
         if (foundItems.isEmpty()) {
             int row = ui->tblLayers->rowCount();
-            QTableWidgetItem *layerNameItem = new QTableWidgetItem(layer);
+            QTableWidgetItem *layerItem = new QTableWidgetItem(layer);
             
-            layerNameItem->setData(Qt::UserRole, ui->cbxLayers->currentData());
+            layerItem->setData(Qt::UserRole, ui->cbxLayers->currentData());
+
             ui->tblLayers->insertRow(row);
-            ui->tblLayers->setItem(row, 0, layerNameItem);
+            ui->tblLayers->setItem(row, 0, layerItem);
             
             QWidget *itemWidget = new QWidget();
             QHBoxLayout *hLayout = new QHBoxLayout(itemWidget);
@@ -448,13 +438,13 @@ void SimulationManagerDialog::on_btnAddLayer_clicked() {
 
 void SimulationManagerDialog::fillLayersComboBox(Simulation *simulation) {
     QStringList outputParameters = simulation->getOutputParameters();
-    QStringList layers = SimulationRepository::loadOutputParametersLabels(outputParameters);
+    QMap<QString, QString> layers = SimulationRepository::loadOutputParametersLabels(outputParameters);
     int i = 0;
     
     ui->cbxLayers->clear();
-    for (QString layer : layers) {
-        ui->cbxLayers->addItem(layer);
-        ui->cbxLayers->setItemData(i, outputParameters[i]);
+    for (QString layerLabel : layers.keys()) {
+        ui->cbxLayers->addItem(layerLabel);
+        ui->cbxLayers->setItemData(i, layers.value(layerLabel));
         i++;
     }
     ui->cbxLayers->setCurrentIndex(-1);
@@ -466,16 +456,19 @@ void SimulationManagerDialog::removeLayer() {
     int row = static_cast<QToolButton*>(sender())->objectName().split("-")[1].toInt();
  
     if (button == QMessageBox::Yes) {
+        frameTimer.stop();
+        ui->vtkWidget->clear();
         ui->tblLayers->removeRow(row);
     }
 }
 
 void SimulationManagerDialog::toggleLayerVisibility(bool show) {
     int row = static_cast<QToolButton*>(sender())->objectName().split("-")[1].toInt();
-    QString layer = ui->tblLayers->item(row, 0)->data(Qt::UserRole).toString();
+    QTableWidgetItem *layerItem = ui->tblLayers->item(row, 0);
+    QStringList layerAndComponent = layerItem->data(Qt::UserRole).toString().split("-");
     Simulation *simulation = getCurrentSimulation();
     
-    ui->vtkWidget->render(simulation, layer, ui->spxFrame->value() - 1);
+    ui->vtkWidget->render(simulation, layerAndComponent.first(), layerAndComponent.last(), ui->spxFrame->value() - 1);
 }
 
 void SimulationManagerDialog::renderNextFrame() {
@@ -489,9 +482,15 @@ void SimulationManagerDialog::renderNextFrame() {
 }
 
 void SimulationManagerDialog::on_spxFrame_valueChanged(int frame) {
-    int row = ui->tblLayers->currentRow();
-    QString layer = ui->tblLayers->item(row, 0)->data(Qt::UserRole).toString();
-    Simulation *simulation = getCurrentSimulation();
-    
-    ui->vtkWidget->render(simulation, layer, frame - 1);
+    for (QToolButton *button : ui->tblLayers->findChildren<QToolButton*>(QRegExp("^showHideLayerButton"))) {
+        if (button->isChecked()) {
+            int row = button->objectName().split("-")[1].toInt();
+            QTableWidgetItem *layerItem = ui->tblLayers->item(row, 0);
+            QStringList layerAndComponent = layerItem->data(Qt::UserRole).toString().split("-");
+            Simulation *simulation = getCurrentSimulation();
+            
+            ui->vtkWidget->render(simulation, layerAndComponent.first(), layerAndComponent.last(), ui->spxFrame->value() - 1);
+            break;
+        }
+    }
 }

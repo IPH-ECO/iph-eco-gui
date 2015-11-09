@@ -2,8 +2,9 @@
 #define SIMULATION_H
 
 #include "hydrodynamic_configuration.h"
-#include  "meteorological_configuration.h"
+#include "meteorological_configuration.h"
 #include "simulation_data_type.h"
+#include "layer_properties.h"
 
 #include <QFileInfo>
 #include <QDateTime>
@@ -52,7 +53,7 @@ private:
 	SimulationDataType::Simulation *simulationStruct;
 	bool startOnCreate;
 	SimulationStatus previousStatus;
-    QStringList selectedLayers;
+    QMap<QString, LayerProperties*> selectedLayers;
     
     void loadRecoveryVariables();
 	static QMap<SimulationType, QString> simulationTypesMap;
@@ -111,7 +112,7 @@ public:
     SimulationStatus getPreviousStatus() const;
     int getProgress() const;
     void setProgress(int progress);
-    QStringList getSelectedLayers() const;
+    QMap<QString, LayerProperties*> getSelectedLayers() const;
     void addSelectedLayer(const QString &layer);
     QFileInfoList getOutputFiles() const;
     SimulationDataType::Simulation* toSimulationDataType();
