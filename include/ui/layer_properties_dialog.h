@@ -1,8 +1,7 @@
-#ifndef GRID_LAYER_ATTRIBUTES_DIALOG_H
-#define GRID_LAYER_ATTRIBUTES_DIALOG_H
+#ifndef LAYER_PROPERTIES_DIALOG_H
+#define LAYER_PROPERTIES_DIALOG_H
 
-#include "include/domain/grid_data.h"
-#include "include/domain/simulation.h"
+#include "include/domain/layer_properties.h"
 
 #include <QColor>
 #include <QDialog>
@@ -10,18 +9,14 @@
 #include <QAbstractButton>
 
 namespace Ui {
-    class GridLayerAttributesDialog;
+	class LayerPropertiesDialog;
 }
 
-class GridLayerAttributesDialog : public QDialog {
+class LayerPropertiesDialog : public QDialog {
     Q_OBJECT
 private:
-    Ui::GridLayerAttributesDialog *ui;
-    double defaultMapMinimum;
-    double defaultMapMaximum;
-    double defaultPointsMinimum;
-    double defaultPointsMaximum;
-    GridData *gridData;
+    Ui::LayerPropertiesDialog *ui;
+    LayerProperties *layerProperties;
     QColor currentLineColor;
     QToolButton *currentMapColorGradientButton;
     QToolButton *defaultMapColorGradientButton;
@@ -40,8 +35,10 @@ private slots:
     void colorGradientButtonClicked(bool checked);
     void on_buttonBox_clicked(QAbstractButton *button);
 public:
-    GridLayerAttributesDialog(QWidget *parent, GridData *gridData);
-    ~GridLayerAttributesDialog();
+    LayerPropertiesDialog(QWidget *parent, LayerProperties *layerProperties);
+    ~LayerPropertiesDialog();
+signals:
+    void applyChanges();
 };
 
-#endif // GRID_LAYER_ATTRIBUTES_DIALOG_H
+#endif // LAYER_PROPERTIES_DIALOG_H

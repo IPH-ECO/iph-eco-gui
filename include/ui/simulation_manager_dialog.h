@@ -55,6 +55,7 @@ private slots:
     void toggleLayerVisibility(bool show);
     void removeLayer();
     void renderNextFrame();
+    void editLayerProperties();
 };
 
 #endif // SIMULATION_MANAGER_DIALOG_H

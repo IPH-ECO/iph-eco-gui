@@ -376,6 +376,10 @@ void Simulation::addSelectedLayer(const QString &layer) {
     selectedLayers.insert(layer, new LayerProperties());
 }
 
+Mesh* Simulation::getMesh() const {
+    return hydrodynamicConfiguration->getGridDataConfiguration()->getMesh();
+}
+
 SimulationDataType::Simulation* Simulation::toSimulationDataType() {
 	if (!simulationStruct) {
 		Project *project = IPHApplication::getCurrentProject();

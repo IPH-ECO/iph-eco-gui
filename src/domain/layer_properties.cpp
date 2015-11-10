@@ -149,3 +149,35 @@ int LayerProperties::getMeshOpacity() const {
 void LayerProperties::setMeshOpacity(const int &meshOpacity) {
     this->meshOpacity = meshOpacity;
 }
+
+double LayerProperties::getDefaultMapMinimum() const {
+    return defaultMapMinimum;
+}
+
+void LayerProperties::setDefaultMapMinimum(const double &defaultMapMinimum) {
+    this->defaultMapMinimum = defaultMapMinimum;
+}
+
+double LayerProperties::getDefaultMapMaximum() const {
+    return defaultMapMaximum;
+}
+
+void LayerProperties::setDefaultMapMaximum(const double &defaultMapMaximum) {
+    this->defaultMapMaximum = defaultMapMaximum;
+}
+
+double LayerProperties::getDefaultPointsMinimum() const {
+    return defaultPointsMinimum;
+}
+
+void LayerProperties::setDefaultPointsMinimum(const double &defaultPointsMinimum) {
+    this->defaultPointsMinimum = defaultPointsMinimum;
+}
+
+double LayerProperties::getDefaultPointsMaximum() const {
+    return defaultPointsMaximum;
+}
+
+void LayerProperties::setDefaultPointsMaximum(const double &defaultPointsMaximum) {
+    this->defaultPointsMaximum = defaultPointsMaximum;
+}

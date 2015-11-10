@@ -4,8 +4,9 @@
 #include "include/application/iph_application.h"
 #include "include/exceptions/simulation_exception.h"
 #include "include/application/simulation_manager.h"
-#include "include/ui/main_window.h"
 #include "include/repository/simulation_repository.h"
+#include "include/ui/main_window.h"
+#include "include/ui/layer_properties_dialog.h"
 
 #include <QDir>
 #include <QRegExp>
@@ -415,6 +416,15 @@ void SimulationManagerDialog::on_btnAddLayer_clicked() {
             hLayout->setAlignment(Qt::AlignCenter);
             hLayout->setContentsMargins(0, 0, 0, 0);
             
+            QToolButton *layerPropertiesButton = new QToolButton();
+            QIcon layerPropertiesIcon(":/icons/interpolation-result.png");
+            
+            layerPropertiesButton->setIcon(layerPropertiesIcon);
+            layerPropertiesButton->setToolTip("Layer properties");
+            layerPropertiesButton->setObjectName(QString("layerPropertiesButton-%1").arg(row));
+            
+            hLayout->addWidget(layerPropertiesButton);
+            
             QToolButton *removeLayerButton = new QToolButton();
             QIcon removeIcon(":/icons/list-delete.png");
             
@@ -429,7 +439,12 @@ void SimulationManagerDialog::on_btnAddLayer_clicked() {
             ui->tblLayers->setCellWidget(row, 1, itemWidget);
             
             QObject::connect(showHideLayerButton, SIGNAL(clicked(bool)), this, SLOT(toggleLayerVisibility(bool)));
+            QObject::connect(layerPropertiesButton, SIGNAL(clicked()), this, SLOT(editLayerProperties()));
             QObject::connect(removeLayerButton, SIGNAL(clicked()), this, SLOT(removeLayer()));
+            
+            Simulation *simulation = getCurrentSimulation();
+            
+            simulation->addSelectedLayer(ui->cbxLayers->currentData().toString());
         } else {
             QMessageBox::warning(this, tr("Simulation Manager"), tr("Layer already added"));
         }
@@ -463,18 +478,25 @@ void SimulationManagerDialog::removeLayer() {
 }
 
 void SimulationManagerDialog::toggleLayerVisibility(bool show) {
-    int row = static_cast<QToolButton*>(sender())->objectName().split("-")[1].toInt();
-    QTableWidgetItem *layerItem = ui->tblLayers->item(row, 0);
-    QStringList layerAndComponent = layerItem->data(Qt::UserRole).toString().split("-");
-    Simulation *simulation = getCurrentSimulation();
-    
-    ui->vtkWidget->render(simulation, layerAndComponent.first(), layerAndComponent.last(), ui->spxFrame->value() - 1);
+    if (show) {
+        int row = static_cast<QToolButton*>(sender())->objectName().split("-")[1].toInt();
+        QTableWidgetItem *layerItem = ui->tblLayers->item(row, 0);
+        QStringList layerAndComponent = layerItem->data(Qt::UserRole).toString().split("-");
+        Simulation *simulation = getCurrentSimulation();
+        
+        ui->vtkWidget->render(simulation, layerAndComponent.first(), layerAndComponent.last(), ui->spxFrame->value() - 1);
+    } else {
+        frameTimer.stop();
+        ui->vtkWidget->clear();
+    }
 }
 
 void SimulationManagerDialog::renderNextFrame() {
     if (ui->spxFrame->value() == ui->spxFrame->maximum()) {
         if (ui->btnLoop->isChecked()) {
             ui->spxFrame->setValue(1);
+        } else {
+            on_btnPauseReproduction_clicked();
         }
     } else {
         ui->spxFrame->setValue(ui->spxFrame->value() + 1);
@@ -493,4 +515,15 @@ void SimulationManagerDialog::on_spxFrame_valueChanged(int frame) {
             break;
         }
     }
+}
+
+void SimulationManagerDialog::editLayerProperties() {
+    int row = static_cast<QToolButton*>(sender())->objectName().split("-")[1].toInt();
+    QTableWidgetItem *layerItem = ui->tblLayers->item(row, 0);
+    Simulation *simulation = getCurrentSimulation();
+    LayerProperties *layerProperties = simulation->getSelectedLayers().value(layerItem->data(Qt::UserRole).toString());
+    
+    LayerPropertiesDialog *dialog = new LayerPropertiesDialog(this, layerProperties);
+    QObject::connect(dialog, SIGNAL(applyChanges()), ui->vtkWidget, SLOT(updateLayer()));
+    dialog->exec();
 }

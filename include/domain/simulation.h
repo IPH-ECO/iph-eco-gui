@@ -115,6 +115,7 @@ public:
     QMap<QString, LayerProperties*> getSelectedLayers() const;
     void addSelectedLayer(const QString &layer);
     QFileInfoList getOutputFiles() const;
+    Mesh* getMesh() const;
     SimulationDataType::Simulation* toSimulationDataType();
 
 	static QMap<SimulationType, QString> getSimulationTypesMap();

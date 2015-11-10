@@ -1,12 +1,8 @@
-#include "include/ui/grid_layer_attributes_dialog.h"
-#include "ui_grid_layer_attributes_dialog.h"
+#include "include/ui/layer_properties_dialog.h"
+#include "ui_layer_properties_dialog.h"
 
 #include "include/domain/color_gradient.h"
-#include "include/ui/grid_data_dialog.h"
 
-#include <vtkPolyData.h>
-#include <vtkCellData.h>
-#include <vtkPointData.h>
 #include <QDialogButtonBox>
 #include <QLinearGradient>
 #include <QColorDialog>
@@ -17,8 +13,8 @@
 #include <QRect>
 #include <QPen>
 
-GridLayerAttributesDialog::GridLayerAttributesDialog(QWidget *parent, GridData *gridData) :
-    QDialog(parent), ui(new Ui::GridLayerAttributesDialog), gridData(gridData)
+LayerPropertiesDialog::LayerPropertiesDialog(QWidget *parent, LayerProperties *layerProperties) :
+    QDialog(parent), ui(new Ui::LayerPropertiesDialog), layerProperties(layerProperties)
 {
     ui->setupUi(this);
     
@@ -29,42 +25,34 @@ GridLayerAttributesDialog::GridLayerAttributesDialog(QWidget *parent, GridData *
     this->setFixedSize(this->sizeHint());
 }
 
-GridLayerAttributesDialog::~GridLayerAttributesDialog() {
+LayerPropertiesDialog::~LayerPropertiesDialog() {
     delete ui;
 }
 
-void GridLayerAttributesDialog::setupMapTab() {
-    double *range = gridData->getMesh()->getMeshPolyData()->GetCellData()->GetScalars(gridData->getName().toStdString().c_str())->GetRange();
-    this->defaultMapMinimum = range[0];
-    this->defaultMapMaximum = range[1];
-    
-    ui->edtMapMinimum->setText(QString::number(gridData->getMapMininumRange()));
-    ui->edtMapMaximum->setText(QString::number(gridData->getMapMaximumRange()));
-    ui->lblMapOriginalValues->setText(QString("[%1, %2]").arg(this->defaultMapMinimum).arg(this->defaultMapMaximum));
+void LayerPropertiesDialog::setupMapTab() {
+    ui->edtMapMinimum->setText(QString::number(layerProperties->getMapMininumRange()));
+    ui->edtMapMaximum->setText(QString::number(layerProperties->getMapMaximumRange()));
+    ui->lblMapOriginalValues->setText(QString("[%1, %2]").arg(layerProperties->getDefaultMapMinimum()).arg(layerProperties->getDefaultMapMaximum()));
     this->setupColorGradientTemplates(defaultMapColorGradientButton, currentMapColorGradientButton, true);
-    ui->chkMapInvertColorTemplate->setChecked(gridData->getMapInvertColorGradient());
-    ui->sldMapOpacity->setValue(gridData->getMapOpacity());
-    ui->chkMapLegend->setChecked(gridData->getMapLegend());
-    ui->chkMapLighting->setChecked(gridData->getMapLighting());
+    ui->chkMapInvertColorTemplate->setChecked(layerProperties->getMapInvertColorGradient());
+    ui->sldMapOpacity->setValue(layerProperties->getMapOpacity());
+    ui->chkMapLegend->setChecked(layerProperties->getMapLegend());
+    ui->chkMapLighting->setChecked(layerProperties->getMapLighting());
 }
 
-void GridLayerAttributesDialog::setupPointsTab() {
-    double *range = gridData->getInputPolyData()->GetPointData()->GetScalars()->GetRange();
-    this->defaultPointsMinimum = range[0];
-    this->defaultPointsMaximum = range[1];
-    
-    ui->edtPointsMinimum->setText(QString::number(gridData->getPointsMininumRange()));
-    ui->edtPointsMaximum->setText(QString::number(gridData->getPointsMaximumRange()));
-    ui->lblPointsOriginalValues->setText(QString("[%1, %2]").arg(this->defaultPointsMinimum).arg(this->defaultPointsMaximum));
+void LayerPropertiesDialog::setupPointsTab() {
+    ui->edtPointsMinimum->setText(QString::number(layerProperties->getPointsMininumRange()));
+    ui->edtPointsMaximum->setText(QString::number(layerProperties->getPointsMaximumRange()));
+    ui->lblPointsOriginalValues->setText(QString("[%1, %2]").arg(layerProperties->getDefaultPointsMinimum()).arg(layerProperties->getDefaultPointsMaximum()));
     this->setupColorGradientTemplates(defaultPointsColorGradientButton, currentPointsColorGradientButton, false);
-    ui->chkPointsInvertColorTemplate->setChecked(gridData->getPointsInvertColorGradient());
-    ui->sldPointsOpacity->setValue(gridData->getPointsOpacity());
-    ui->spbPointsSize->setValue(gridData->getPointsSize());
-    ui->chkPointsLegend->setChecked(gridData->getPointsLegend());
+    ui->chkPointsInvertColorTemplate->setChecked(layerProperties->getPointsInvertColorGradient());
+    ui->sldPointsOpacity->setValue(layerProperties->getPointsOpacity());
+    ui->spbPointsSize->setValue(layerProperties->getPointsSize());
+    ui->chkPointsLegend->setChecked(layerProperties->getPointsLegend());
 }
 
-void GridLayerAttributesDialog::setupMeshTab() {
-    this->currentLineColor = QColor(gridData->getMeshLineColor());
+void LayerPropertiesDialog::setupMeshTab() {
+    this->currentLineColor = QColor(layerProperties->getMeshLineColor());
     QPixmap px(16, 16);
     
     px.fill(currentLineColor);
@@ -87,12 +75,12 @@ void GridLayerAttributesDialog::setupMeshTab() {
         ui->cbxLineStyle->addItem(QIcon(pix), "");
     }
     
-    ui->cbxLineStyle->setCurrentIndex(gridData->getMeshLineStyle() != 0xFFFF);
-    ui->sbxLineWidth->setValue(gridData->getMeshLineWidth());
-    ui->sldMeshOpacity->setValue(gridData->getMeshOpacity());
+    ui->cbxLineStyle->setCurrentIndex(layerProperties->getMeshLineStyle() != 0xFFFF);
+    ui->sbxLineWidth->setValue(layerProperties->getMeshLineWidth());
+    ui->sldMeshOpacity->setValue(layerProperties->getMeshOpacity());
 }
 
-void GridLayerAttributesDialog::setupColorGradientTemplates(QToolButton *&defaultButton, QToolButton *&currentButton, bool isMapTab) {
+void LayerPropertiesDialog::setupColorGradientTemplates(QToolButton *&defaultButton, QToolButton *&currentButton, bool isMapTab) {
     QGridLayout *layout = static_cast<QGridLayout*>(isMapTab ? ui->mapColorTemplateLayout->layout() : ui->pointsColorTemplateLayout->layout());
     int buttonWidth = 60, buttonHeight = 16;
     int row = 0, column = 0;
@@ -126,11 +114,11 @@ void GridLayerAttributesDialog::setupColorGradientTemplates(QToolButton *&defaul
             defaultButton = colorGradientButton;
         }
         
-        if (isMapTab && gridData->getMapColorGradient() == templateName) {
+        if (isMapTab && layerProperties->getMapColorGradient() == templateName) {
             currentButton = colorGradientButton;
             currentButton->setChecked(true);
         }
-        if (!isMapTab && gridData->getPointsColorGradient() == templateName) {
+        if (!isMapTab && layerProperties->getPointsColorGradient() == templateName) {
             currentButton = colorGradientButton;
             currentButton->setChecked(true);
         }
@@ -141,17 +129,17 @@ void GridLayerAttributesDialog::setupColorGradientTemplates(QToolButton *&defaul
     }
 }
 
-void GridLayerAttributesDialog::on_btnUseMapOriginalValues_clicked() {
-    ui->edtMapMinimum->setText(QString::number(this->defaultMapMinimum));
-    ui->edtMapMaximum->setText(QString::number(this->defaultMapMaximum));
+void LayerPropertiesDialog::on_btnUseMapOriginalValues_clicked() {
+    ui->edtMapMinimum->setText(QString::number(layerProperties->getDefaultMapMinimum()));
+    ui->edtMapMaximum->setText(QString::number(layerProperties->getDefaultMapMaximum()));
 }
 
-void GridLayerAttributesDialog::on_btnUsePointsOriginalValues_clicked() {
-    ui->edtPointsMinimum->setText(QString::number(this->defaultPointsMinimum));
-    ui->edtPointsMaximum->setText(QString::number(this->defaultPointsMaximum));
+void LayerPropertiesDialog::on_btnUsePointsOriginalValues_clicked() {
+    ui->edtPointsMinimum->setText(QString::number(layerProperties->getDefaultPointsMinimum()));
+    ui->edtPointsMaximum->setText(QString::number(layerProperties->getDefaultPointsMaximum()));
 }
 
-void GridLayerAttributesDialog::on_btnLineColor_clicked() {
+void LayerPropertiesDialog::on_btnLineColor_clicked() {
     QColor color = QColorDialog::getColor(Qt::white, this, "Select a line color");
     
     if (color.isValid()) {
@@ -163,7 +151,7 @@ void GridLayerAttributesDialog::on_btnLineColor_clicked() {
     }
 }
 
-void GridLayerAttributesDialog::colorGradientButtonClicked(bool checked) {
+void LayerPropertiesDialog::colorGradientButtonClicked(bool checked) {
     bool isMapTab = ui->tabWidget->tabText(ui->tabWidget->tabBar()->currentIndex()) == "Map";
     QToolButton *&currentButton = isMapTab ? currentMapColorGradientButton : currentPointsColorGradientButton;
     QToolButton *defaultButton = isMapTab ? defaultMapColorGradientButton : defaultPointsColorGradientButton;
@@ -177,7 +165,7 @@ void GridLayerAttributesDialog::colorGradientButtonClicked(bool checked) {
     }
 }
 
-void GridLayerAttributesDialog::on_buttonBox_clicked(QAbstractButton *button) {
+void LayerPropertiesDialog::on_buttonBox_clicked(QAbstractButton *button) {
     QDialogButtonBox::StandardButton standardButton = ui->buttonBox->standardButton(button);
     
     if (standardButton == QDialogButtonBox::Cancel) {
@@ -190,38 +178,37 @@ void GridLayerAttributesDialog::on_buttonBox_clicked(QAbstractButton *button) {
     }
     
     // Map tab
-    gridData->setMapMinimumRange(ui->edtMapMinimum->text().toDouble());
-    gridData->setMapMaximumRange(ui->edtMapMaximum->text().toDouble());
-    gridData->setMapColorGradient(this->currentMapColorGradientButton->toolTip());
-    gridData->setMapInvertColorGradient(ui->chkMapInvertColorTemplate->isChecked());
-    gridData->setMapOpacity(ui->sldMapOpacity->value());
-    gridData->setMapLegend(ui->chkMapLegend->isChecked());
-    gridData->setMapLighting(ui->chkMapLighting->isChecked());
+    layerProperties->setMapMinimumRange(ui->edtMapMinimum->text().toDouble());
+    layerProperties->setMapMaximumRange(ui->edtMapMaximum->text().toDouble());
+    layerProperties->setMapColorGradient(this->currentMapColorGradientButton->toolTip());
+    layerProperties->setMapInvertColorGradient(ui->chkMapInvertColorTemplate->isChecked());
+    layerProperties->setMapOpacity(ui->sldMapOpacity->value());
+    layerProperties->setMapLegend(ui->chkMapLegend->isChecked());
+    layerProperties->setMapLighting(ui->chkMapLighting->isChecked());
     
     // Points tab
-    gridData->setPointsMinimumRange(ui->edtPointsMinimum->text().toDouble());
-    gridData->setPointsMaximumRange(ui->edtPointsMaximum->text().toDouble());
-    gridData->setPointsColorGradient(this->currentPointsColorGradientButton->toolTip());
-    gridData->setPointsInvertColorGradient(ui->chkPointsInvertColorTemplate->isChecked());
-    gridData->setPointsOpacity(ui->sldPointsOpacity->value());
-    gridData->setPointsSize(ui->spbPointsSize->value());
-    gridData->setPointsLegend(ui->chkPointsLegend->isChecked());
+    layerProperties->setPointsMinimumRange(ui->edtPointsMinimum->text().toDouble());
+    layerProperties->setPointsMaximumRange(ui->edtPointsMaximum->text().toDouble());
+    layerProperties->setPointsColorGradient(this->currentPointsColorGradientButton->toolTip());
+    layerProperties->setPointsInvertColorGradient(ui->chkPointsInvertColorTemplate->isChecked());
+    layerProperties->setPointsOpacity(ui->sldPointsOpacity->value());
+    layerProperties->setPointsSize(ui->spbPointsSize->value());
+    layerProperties->setPointsLegend(ui->chkPointsLegend->isChecked());
     
     // Mesh tab
-    gridData->setMeshLineColor(this->currentLineColor.name());
-    gridData->setMeshLineStyle(ui->cbxLineStyle->currentIndex() == 0 ? 0xFFFF : 0xF0F0);
-    gridData->setMeshLineWidth(ui->sbxLineWidth->value());
-    gridData->setMeshOpacity(ui->sldMeshOpacity->value());
+    layerProperties->setMeshLineColor(this->currentLineColor.name());
+    layerProperties->setMeshLineStyle(ui->cbxLineStyle->currentIndex() == 0 ? 0xFFFF : 0xF0F0);
+    layerProperties->setMeshLineWidth(ui->sbxLineWidth->value());
+    layerProperties->setMeshOpacity(ui->sldMeshOpacity->value());
     
-    GridDataDialog *gridDataDialog = static_cast<GridDataDialog*>(parentWidget());
-    gridDataDialog->getVTKWidget()->render(gridData);
+    emit applyChanges();
     
     if (standardButton == QDialogButtonBox::Ok) {
         this->accept();
     }
 }
 
-bool GridLayerAttributesDialog::isValid() {
+bool LayerPropertiesDialog::isValid() {
     if (ui->edtMapMinimum->text().isEmpty()) {
         QMessageBox::warning(this, tr("Grid Layer"), tr("Minimum range can't be empty on Map tab"));
         return false;
