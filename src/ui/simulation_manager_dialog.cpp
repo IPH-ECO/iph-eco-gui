@@ -33,6 +33,11 @@ SimulationManagerDialog::SimulationManagerDialog(QWidget *parent) : AbstractMesh
     QObject::connect(project, SIGNAL(simulationCreated(Simulation*)), this, SLOT(onSimulationCreated(Simulation*)));
     QObject::connect(&frameTimer, SIGNAL(timeout()), this, SLOT(renderNextFrame()));
 
+    ui->tblAll->blockSignals(true);
+    ui->tblIdle->blockSignals(true);
+    ui->tblRunning->blockSignals(true);
+    ui->tblPaused->blockSignals(true);
+    ui->tblFinished->blockSignals(true);
 	for (Simulation *simulation : project->getSimulations()) {
 		int row = ui->tblAll->rowCount();
         QTableWidgetItem *labelItem = new QTableWidgetItem(simulation->getLabel());
@@ -69,6 +74,11 @@ SimulationManagerDialog::SimulationManagerDialog(QWidget *parent) : AbstractMesh
             ui->tblFinished->setItem(row, 1, progressItem->clone());
         }
 	}
+    ui->tblAll->blockSignals(false);
+    ui->tblIdle->blockSignals(false);
+    ui->tblRunning->blockSignals(false);
+    ui->tblPaused->blockSignals(false);
+    ui->tblFinished->blockSignals(false);
 }
 
 Simulation* SimulationManagerDialog::getCurrentSimulation() const {
@@ -128,6 +138,10 @@ void SimulationManagerDialog::on_tblAll_currentItemChanged(QTableWidgetItem *cur
         ui->lblFrameTotal->setText(QString::number(outputFiles.size()));
         
         fillLayersComboBox(simulation);
+        
+        if (previous) {
+            ui->vtkWidget->render(simulation, "", "", 0); // Only renders the mesh
+        }
     } else {
         ui->btnRemove->setEnabled(false);
         ui->btnFinish->setEnabled(false);
@@ -522,8 +536,9 @@ void SimulationManagerDialog::editLayerProperties() {
     QTableWidgetItem *layerItem = ui->tblLayers->item(row, 0);
     Simulation *simulation = getCurrentSimulation();
     LayerProperties *layerProperties = simulation->getSelectedLayers().value(layerItem->data(Qt::UserRole).toString());
-    
     LayerPropertiesDialog *dialog = new LayerPropertiesDialog(this, layerProperties);
+    
+    dialog->removeMeshTab();
     QObject::connect(dialog, SIGNAL(applyChanges()), ui->vtkWidget, SLOT(updateLayer()));
     dialog->exec();
 }

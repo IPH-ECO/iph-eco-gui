@@ -49,6 +49,7 @@ private slots:
     // Simulations
     void on_actionCreateSimulation_triggered();
     void on_actionManageSimulation_triggered();
+    void on_actionViewResults_triggered();
 
     void enableMenus(bool enable);
     void openRecent();

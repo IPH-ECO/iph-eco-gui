@@ -237,3 +237,10 @@ bool LayerPropertiesDialog::isValid() {
     
     return true;
 }
+
+void LayerPropertiesDialog::removeMeshTab() {
+    QWidget *widget = ui->tabWidget->findChild<QWidget*>("meshTab");
+    int pageIndex = ui->tabWidget->indexOf(widget);
+    
+    ui->tabWidget->removeTab(pageIndex);
+}

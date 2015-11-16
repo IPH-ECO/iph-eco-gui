@@ -37,6 +37,8 @@ private slots:
 public:
     LayerPropertiesDialog(QWidget *parent, LayerProperties *layerProperties);
     ~LayerPropertiesDialog();
+    
+    void removeMeshTab();
 signals:
     void applyChanges();
 };

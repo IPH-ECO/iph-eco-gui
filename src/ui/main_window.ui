@@ -87,6 +87,7 @@
     </property>
     <addaction name="actionCreateSimulation"/>
     <addaction name="actionManageSimulation"/>
+    <addaction name="actionViewResults"/>
    </widget>
    <widget class="QMenu" name="menuGleon">
     <property name="enabled">
@@ -252,6 +253,14 @@
   <action name="actionCreateSimulation">
    <property name="text">
     <string>Create...</string>
+   </property>
+  </action>
+  <action name="actionViewResults">
+   <property name="text">
+    <string>View Results</string>
+   </property>
+   <property name="toolTip">
+    <string>View simulation results</string>
    </property>
   </action>
   <action name="actionSediment_Data">

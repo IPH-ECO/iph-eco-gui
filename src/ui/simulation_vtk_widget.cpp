@@ -4,13 +4,21 @@
 #include "include/exceptions/simulation_exception.h"
 
 #include <QFileInfo>
+#include <vtkPointData.h>
+#include <vtkCellArray.h>
 #include <vtkCellData.h>
 #include <vtkProperty.h>
+#include <vtkGlyph3D.h>
+#include <vtkGlyph2D.h>
 #include <vtkLookupTable.h>
+#include <vtkDoubleArray.h>
+#include <vtkArrowSource.h>
 #include <vtkDataSetMapper.h>
+#include <vtkPolyDataMapper.h>
 #include <vtkUnstructuredGrid.h>
 #include <vtkColorTransferFunction.h>
 #include <vtkGenericDataObjectReader.h>
+#include <vtkGenericGlyph3DFilter.h>
 
 SimulationVTKWidget::SimulationVTKWidget(QWidget *parent) :
     MeshVTKWidget(parent), currentSimulation(nullptr), layerProperties(nullptr), showSurface(true)
@@ -23,6 +31,8 @@ void SimulationVTKWidget::render(Simulation *simulation, const QString &layer, c
     currentComponent = component;
     currentFrame = frame;
     
+    clear();
+    
     if (layer.isEmpty()) {
         MeshVTKWidget::render(simulation->getMesh());
     } else {
@@ -32,8 +42,6 @@ void SimulationVTKWidget::render(Simulation *simulation, const QString &layer, c
             throw SimulationException("Layer out of range.");
         }
         
-        clear();
-        
         std::string filename = outputFiles.at(frame).absoluteFilePath().toStdString();
         std::string arrayName = layer.toStdString();
         
@@ -42,29 +50,57 @@ void SimulationVTKWidget::render(Simulation *simulation, const QString &layer, c
         reader->Update();
         
         vtkSmartPointer<vtkUnstructuredGrid> unstructuredGrid = reader->GetUnstructuredGridOutput();
-        double *range = unstructuredGrid->GetCellData()->GetArray(arrayName.c_str())->GetRange();
+        vtkSmartPointer<vtkDoubleArray> array = vtkDoubleArray::SafeDownCast(unstructuredGrid->GetCellData()->GetArray(arrayName.c_str()));
+        double *range = array->GetRange();
+        
         layerProperties->setMapMinimumRange(range[0]);
         layerProperties->setMapMaximumRange(range[1]);
         layerProperties->setPointsMinimumRange(range[0]);
         layerProperties->setPointsMaximumRange(range[1]);
         
+        bool isVector = array->GetNumberOfComponents() == 3;
+        
         vtkSmartPointer<vtkDataSetMapper> mapper = vtkSmartPointer<vtkDataSetMapper>::New();
         vtkSmartPointer<vtkColorTransferFunction> pointsColorTransferFunction = buildColorTransferFunction(true);
         
-        mapper->SetScalarModeToUseCellData();
-        mapper->UseLookupTableScalarRangeOn();
-        mapper->SetInputData(unstructuredGrid);
-        mapper->SelectColorArray(arrayName.c_str());
+        if (isVector) {
+            vtkSmartPointer<vtkPolyData> vectorPolyData = vtkSmartPointer<vtkPolyData>::New();
+            vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
+            
+            for (vtkIdType i = 0; i < array->GetNumberOfTuples(); i++) {
+                points->InsertNextPoint(array->GetTuple(i));
+            }
+            
+            vectorPolyData->SetPoints(points);
+            
+            vtkSmartPointer<vtkArrowSource> arrowSource = vtkSmartPointer<vtkArrowSource>::New();
+            
+            vtkSmartPointer<vtkGlyph3D> glyph = vtkSmartPointer<vtkGlyph3D>::New();
+            glyph->SetSourceData(vectorPolyData);
+            glyph->SetInputConnection(arrowSource->GetOutputPort());
+            glyph->ScalingOn();
+            glyph->SetVectorModeToUseVector();
+            glyph->OrientOn();
+            glyph->Update();
+            
+            mapper->SetInputConnection(glyph->GetOutputPort());
+            mapper->Update();
+        } else {
+            mapper->SetScalarModeToUseCellData();
+            mapper->SetInputData(unstructuredGrid);
+            mapper->SelectColorArray(arrayName.c_str());
+        }
+        
         mapper->SetLookupTable(pointsColorTransferFunction);
+        mapper->UseLookupTableScalarRangeOn();
         
-        simulationActor = vtkSmartPointer<vtkActor>::New();
-        simulationActor->SetMapper(mapper);
-
-        renderer->AddActor(simulationActor);
+        mapActor = vtkSmartPointer<vtkActor>::New();
+        mapActor->SetMapper(mapper);
+        mapActor->GetProperty()->SetOpacity(layerProperties->getMapOpacity() / 100.0);
+        mapActor->GetProperty()->SetLighting(layerProperties->getMapLighting());
+        
+        renderer->AddActor(mapActor);
         renderer->ResetCamera();
-        
-        MainWindow *mainWindow = static_cast<MainWindow*>(this->topLevelWidget());
-        QObject::connect(mouseInteractor, SIGNAL(coordinateChanged(double&, double&)), mainWindow, SLOT(setCoordinate(double&, double&)));
     }
 }
 
@@ -112,4 +148,9 @@ void SimulationVTKWidget::toggleRepresentation(bool showSurface) {
 
 void SimulationVTKWidget::updateLayer() {
     this->render(currentSimulation, currentLayer, currentComponent, currentFrame);
+}
+
+void SimulationVTKWidget::clear() {
+    renderer->RemoveActor(mapActor);
+    this->update();
 }

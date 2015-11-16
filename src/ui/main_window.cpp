@@ -8,6 +8,7 @@
 #include "include/ui/hydrodynamic_data_dialog.h"
 #include "include/ui/create_simulation_dialog.h"
 #include "include/ui/simulation_manager_dialog.h"
+#include "include/ui/view_results_dialog.h"
 #include "include/services/project_service.h"
 #include "include/repository/project_repository.h"
 #include "include/domain/simulation.h"
@@ -242,6 +243,20 @@ void MainWindow::on_actionManageSimulation_triggered() {
     subWindow->setWindowFlags(subWindow->windowFlags() | Qt::FramelessWindowHint);
     subWindow->setWindowState(subWindow->windowState() | Qt::WindowMaximized);
     simulationManagerDialog->show();
+    
+#ifdef __APPLE__
+    this->update();
+#endif
+}
+
+void MainWindow::on_actionViewResults_triggered() {
+    ViewResultsDialog *viewResultsDialog = new ViewResultsDialog(this);
+    QMdiSubWindow *subWindow = new QMdiSubWindow(mdiArea);
+    
+    subWindow->setWidget(viewResultsDialog);
+    subWindow->setWindowFlags(subWindow->windowFlags() | Qt::FramelessWindowHint);
+    subWindow->setWindowState(subWindow->windowState() | Qt::WindowMaximized);
+    viewResultsDialog->show();
     
 #ifdef __APPLE__
     this->update();

@@ -19,7 +19,7 @@
      <property name="currentIndex">
       <number>0</number>
      </property>
-     <widget class="QWidget" name="tab">
+     <widget class="QWidget" name="mapTab">
       <attribute name="title">
        <string>Map</string>
       </attribute>
@@ -189,7 +189,7 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tab_3">
+     <widget class="QWidget" name="pointsTab">
       <attribute name="title">
        <string>Points</string>
       </attribute>
@@ -386,7 +386,7 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tab_2">
+     <widget class="QWidget" name="meshTab">
       <attribute name="title">
        <string>Mesh</string>
       </attribute>
