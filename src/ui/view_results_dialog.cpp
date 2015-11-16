@@ -287,9 +287,8 @@ void ViewResultsDialog::toggleLayerVisibility(bool show) {
 
 void ViewResultsDialog::renderNextFrame() {
     if (ui->spxFrame->value() == ui->spxFrame->maximum()) {
-        if (ui->btnLoop->isChecked()) {
-            ui->spxFrame->setValue(1);
-        } else {
+        ui->spxFrame->setValue(1);
+        if (!ui->btnLoop->isChecked()) {
             on_btnPauseReproduction_clicked();
         }
     } else {
