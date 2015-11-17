@@ -270,7 +270,7 @@
   </action>
   <action name="actionMeteorologyData">
    <property name="text">
-    <string>Meteorology Data</string>
+    <string>Meteorological Data</string>
    </property>
   </action>
   <action name="actionManageSimulation">
