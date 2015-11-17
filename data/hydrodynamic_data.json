@@ -371,7 +371,7 @@
             "rangeMinimum": 0
         },
         {
-            "defaultValue": 1,
+            "defaultValue": 0,
             "editable": true,
             "hideSiblings": true,
             "selected": true,
@@ -382,7 +382,7 @@
             "rangeMinimum": 1e-10
         },
         {
-            "defaultValue": 1,
+            "defaultValue": 0,
             "editable": true,
             "hideSiblings": true,
             "selected": true,
