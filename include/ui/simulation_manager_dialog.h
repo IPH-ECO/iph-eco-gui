@@ -2,14 +2,11 @@
 #define SIMULATION_MANAGER_DIALOG_H
 
 #include "include/domain/simulation.h"
-#include "include/ui/abstract_mesh_dialog.h"
 
 #include <QList>
-#include <QTimer>
 #include <QWidget>
 #include <QDialog>
 #include <QAction>
-#include <QShowEvent>
 #include <QTableWidget>
 #include <QTableWidgetItem>
 
@@ -17,16 +14,14 @@ namespace Ui {
 	class SimulationManagerDialog;
 }
 
-class SimulationManagerDialog : public AbstractMeshDialog {
+class SimulationManagerDialog : public QDialog {
     Q_OBJECT
 private:
 	Ui::SimulationManagerDialog *ui;
     QList<QAction*> toolBarActions;
-    QTimer frameTimer;
     
     Simulation* getCurrentSimulation() const;
     QTableWidget* getTableWidgetBySimulationStatus(const SimulationStatus &status);
-    void fillLayersComboBox(Simulation *simulation);
 public:
 	explicit SimulationManagerDialog(QWidget *parent);
 private slots:
@@ -42,20 +37,7 @@ private slots:
     void on_btnPause_clicked();
     void on_btnFinish_clicked();
     void on_btnRemove_clicked();
-    void on_btnRefresh_clicked();
     void on_btnClose_clicked();
-    void on_btnFirstFrame_clicked();
-    void on_btnPreviousFrame_clicked();
-    void on_btnStartReproduction_clicked();
-    void on_btnPauseReproduction_clicked();
-    void on_btnNextFrame_clicked();
-    void on_btnLastFrame_clicked();
-    void on_btnAddLayer_clicked();
-    void on_spxFrame_valueChanged(int i);
-    void toggleLayerVisibility(bool show);
-    void removeLayer();
-    void renderNextFrame();
-    void editLayerProperties();
 };
 
 #endif // SIMULATION_MANAGER_DIALOG_H
