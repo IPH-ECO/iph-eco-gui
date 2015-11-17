@@ -133,13 +133,10 @@ void MeshPolygon::readFromTextFile(const CoordinateSystem &coordinateSystem) {
     originalPolygon->GetPoints()->SetNumberOfPoints(numberOfPoints);
     originalPolygon->GetPointIds()->SetNumberOfIds(numberOfPoints);
     
-    this->latitudeAverage = 0.0;
-    
     for (vtkIdType i = 0; i < numberOfPoints; i++) {
         double point[3];
         
         polyData->GetPoints()->GetPoint(i, point);
-        latitudeAverage += point[1];
         
         if (coordinateSystem == CoordinateSystem::LATITUDE_LONGITUDE) {
             try {
@@ -158,8 +155,6 @@ void MeshPolygon::readFromTextFile(const CoordinateSystem &coordinateSystem) {
         originalPolygon->GetPoints()->SetPoint(i, point);
         originalPolygon->GetPointIds()->SetId(i, i);
     }
-    
-    latitudeAverage /= (double) numberOfPoints;
 }
 
 void MeshPolygon::filter(const double &distanceFilter) {
