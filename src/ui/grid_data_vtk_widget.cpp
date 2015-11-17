@@ -5,7 +5,6 @@
 
 #include <vtkCellData.h>
 #include <vtkProperty.h>
-#include <vtkPointData.h>
 #include <vtkPNGWriter.h>
 #include <vtkAreaPicker.h>
 #include <vtkDoubleArray.h>
@@ -16,7 +15,6 @@
 #include <vtkPolyDataMapper.h>
 #include <vtkScalarBarActor.h>
 #include <vtkLabeledDataMapper.h>
-#include <vtkWindowToImageFilter.h>
 #include <vtkColorTransferFunction.h>
 #include <vtkScalarBarRepresentation.h>
 #include <vtkInteractorStyleRubberBandZoom.h>

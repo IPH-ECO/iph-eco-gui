@@ -7,18 +7,13 @@
 #include <vtkProperty.h>
 #include <vtkCellArray.h>
 #include <vtkPNGWriter.h>
-#include <vtkProperty2D.h>
 #include <vtkAreaPicker.h>
 #include <vtkCellCenters.h>
-#include <vtkSmartPointer.h>
 #include <vtkExtractEdges.h>
-#include <vtkRenderWindow.h>
 #include <vtkTextProperty.h>
 #include <vtkPolyDataMapper.h>
-#include <vtkWorldPointPicker.h>
 #include <vtkLabeledDataMapper.h>
 #include <vtkWindowToImageFilter.h>
-#include <vtkRenderWindowInteractor.h>
 #include <vtkInteractorStyleRubberBandZoom.h>
 #include <QList>
 
