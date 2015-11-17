@@ -14,9 +14,11 @@
 #include <vtkExtractEdges.h>
 #include <vtkTextProperty.h>
 #include <vtkPolyDataMapper.h>
+#include <vtkScalarBarActor.h>
 #include <vtkLabeledDataMapper.h>
 #include <vtkWindowToImageFilter.h>
 #include <vtkColorTransferFunction.h>
+#include <vtkScalarBarRepresentation.h>
 #include <vtkInteractorStyleRubberBandZoom.h>
 
 vtkStandardNewMacro(GridDataMouseInteractor);
@@ -116,15 +118,21 @@ void GridDataVTKWidget::render(GridData *gridData) {
     
     std::string mapPointsBarActorTitle = currentGridData->getName().toStdString();
     
-    mapPointsBarActor = vtkSmartPointer<vtkScalarBarActor>::New();
-    mapPointsBarActor->SetLookupTable(pointsColorTransferFunction);
-    mapPointsBarActor->SetTitle(mapPointsBarActorTitle.c_str());
-    mapPointsBarActor->SetNumberOfLabels(4);
-    mapPointsBarActor->SetWidth(0.1);
-    mapPointsBarActor->SetHeight(0.5);
-    mapPointsBarActor->SetPosition(0.05, 0.05);
-    mapPointsBarActor->SetVisibility(currentGridData->getPointsLegend());
-
+    pointsScalarBarWidget = vtkSmartPointer<vtkScalarBarWidget>::New();
+    pointsScalarBarWidget->SetInteractor(this->GetInteractor());
+    pointsScalarBarWidget->GetScalarBarActor()->SetLookupTable(pointsColorTransferFunction);
+    pointsScalarBarWidget->GetScalarBarActor()->SetTitle(mapPointsBarActorTitle.c_str());
+    pointsScalarBarWidget->GetScalarBarActor()->SetNumberOfLabels(4);
+    pointsScalarBarWidget->GetScalarBarActor()->SetVisibility(currentGridData->getPointsLegend());
+    pointsScalarBarWidget->RepositionableOn();
+    pointsScalarBarWidget->SelectableOn();
+    pointsScalarBarWidget->ResizableOn();
+    pointsScalarBarWidget->EnabledOn();
+    
+    vtkScalarBarRepresentation *scalarBarRepresentation = vtkScalarBarRepresentation::SafeDownCast(pointsScalarBarWidget->GetRepresentation());
+    scalarBarRepresentation->GetPositionCoordinate()->SetValue(0.05, 0.05);
+    scalarBarRepresentation->GetPosition2Coordinate()->SetValue(0.1, 0.35);
+    
     vtkSmartPointer<vtkPolyData> meshPolyData = mesh->getMeshPolyData();
 	std::string gridDataName(currentGridData->getName().toStdString());
     vtkColorTransferFunction *mapColorTransferFunction = buildColorTransferFunction(true);
@@ -142,23 +150,29 @@ void GridDataVTKWidget::render(GridData *gridData) {
     mapActor->GetProperty()->SetOpacity(gridData->getMapOpacity() / 100.0);
     mapActor->GetProperty()->SetLighting(currentGridData->getMapLighting());
     mapActor->SetVisibility(showMap);
+        
+    mapScalarBarWidget = vtkSmartPointer<vtkScalarBarWidget>::New();
+    mapScalarBarWidget->SetInteractor(this->GetInteractor());
+    mapScalarBarWidget->GetScalarBarActor()->SetLookupTable(mapColorTransferFunction);
+    mapScalarBarWidget->GetScalarBarActor()->SetTitle("Color Map");
+    mapScalarBarWidget->GetScalarBarActor()->SetNumberOfLabels(4);
+    mapScalarBarWidget->GetScalarBarActor()->SetVisibility(currentGridData->getMapLegend());
+    mapScalarBarWidget->RepositionableOn();
+    mapScalarBarWidget->SelectableOn();
+    mapScalarBarWidget->ResizableOn();
+    mapScalarBarWidget->EnabledOn();
     
-    mapBarActor = vtkSmartPointer<vtkScalarBarActor>::New();
-    mapBarActor->SetLookupTable(mapColorTransferFunction);
-    mapBarActor->SetTitle("Color Map");
-    mapBarActor->SetNumberOfLabels(4);
-    mapBarActor->SetWidth(0.1);
-    mapBarActor->SetHeight(0.5);
-    mapBarActor->SetPosition(0.85, 0.05);
-    mapBarActor->SetVisibility(currentGridData->getMapLegend());
+    scalarBarRepresentation = vtkScalarBarRepresentation::SafeDownCast(mapScalarBarWidget->GetRepresentation());
+    scalarBarRepresentation->GetPositionCoordinate()->SetValue(0.86, 0.05);
+    scalarBarRepresentation->GetPosition2Coordinate()->SetValue(0.1, 0.35);
     
     renderer->AddActor(mapActor);
     renderer->AddActor(mapPointsActor);
-    renderer->AddActor2D(mapBarActor);
-    renderer->AddActor2D(mapPointsBarActor);
     
     MainWindow *mainWindow = static_cast<MainWindow*>(this->topLevelWidget());
     QObject::connect(mouseInteractor, SIGNAL(coordinateChanged(double&, double&)), mainWindow, SLOT(setCoordinate(double&, double&)));
+    
+    this->GetRenderWindow()->Render();
 }
 
 vtkColorTransferFunction* GridDataVTKWidget::buildColorTransferFunction(bool isColorMap) {
@@ -204,20 +218,11 @@ void GridDataVTKWidget::toggleMesh(bool show) {
     vtkActor *selectionActor = gridDataMouseInteractor->getSelectionActor();
     
     this->showMesh = show;
-    
-    if (show) {
-        meshActor->VisibilityOn();
-        selectionActor = gridDataMouseInteractor->getSelectionActor();
-        if (selectionActor != nullptr) {
-            selectionActor->VisibilityOn();
-            gridDataMouseInteractor->getSelectionIdLabelsActor()->VisibilityOn();
-        }
-    } else {
-        meshActor->VisibilityOff();
-        if (selectionActor != nullptr) {
-            selectionActor->VisibilityOff();
-            gridDataMouseInteractor->getSelectionIdLabelsActor()->VisibilityOff();
-        }
+    this->meshActor->SetVisibility(show);
+
+    if (selectionActor) {
+        selectionActor->SetVisibility(show);
+        gridDataMouseInteractor->getSelectionIdLabelsActor()->SetVisibility(show);
     }
     this->update();
 }
@@ -225,42 +230,24 @@ void GridDataVTKWidget::toggleMesh(bool show) {
 void GridDataVTKWidget::toggleMapPoints(bool show) {
     this->showMapPoints = show;
     
-    if (currentGridData == nullptr || mapPointsActor == nullptr || mapPointsBarActor == nullptr) {
+    if (currentGridData == nullptr || mapPointsActor == nullptr || pointsScalarBarWidget == nullptr) {
         return;
     }
     
-    if (show) {
-        mapPointsActor->VisibilityOn();
-        if (currentGridData->getPointsLegend()) {
-            mapPointsBarActor->VisibilityOn();
-        } else {
-            mapPointsBarActor->VisibilityOff();
-        }
-    } else {
-        mapPointsActor->VisibilityOff();
-        mapPointsBarActor->VisibilityOff();
-    }
+    mapPointsActor->SetVisibility(show);
+    pointsScalarBarWidget->GetScalarBarActor()->SetVisibility(show && currentGridData->getPointsLegend());
     this->update();
 }
 
 void GridDataVTKWidget::toggleMap(bool show) {
     this->showMap = show;
     
-    if (currentGridData == nullptr || mapActor == nullptr || mapBarActor == nullptr) {
+    if (currentGridData == nullptr || mapActor == nullptr || mapScalarBarWidget == nullptr) {
         return;
     }
     
-    if (show) {
-        mapActor->VisibilityOn();
-        if (currentGridData->getMapLegend()) {
-            mapBarActor->VisibilityOn();
-        } else {
-            mapBarActor->VisibilityOff();
-        }
-    } else {
-        mapActor->VisibilityOff();
-        mapBarActor->VisibilityOff();
-    }
+    mapActor->SetVisibility(show);
+    mapScalarBarWidget->GetScalarBarActor()->SetVisibility(show && currentGridData->getMapLegend());
     this->update();
 }
 
@@ -329,13 +316,13 @@ void GridDataVTKWidget::toggleCellLabels(const LabelType &labelType) {
         renderer->AddActor2D(labelsActor);
     }
     
-    renderWindow->Render();
+    this->GetRenderWindow()->Render();
 }
 
 void GridDataVTKWidget::lockView(bool lock) {
     if (lock) {
-        renderWindowInteractor->Disable();
+        this->GetInteractor()->Disable();
     } else {
-        renderWindowInteractor->Enable();
+        this->GetInteractor()->Enable();
     }
 }

@@ -30,8 +30,6 @@ vtkStandardNewMacro(MeshMouseInteractor);
 
 MeshVTKWidget::MeshVTKWidget(QWidget *parent, MeshMouseInteractor *mouseInteractor) : QVTKWidget(parent), currentMesh(nullptr), showBoundaryEdges(true), showMesh(true), showAxes(true) {
     renderer = vtkSmartPointer<vtkRenderer>::New();
-    renderWindow = vtkSmartPointer<vtkRenderWindow>::New();
-    renderWindowInteractor = vtkSmartPointer<vtkRenderWindowInteractor>::New();
     vtkSmartPointer<vtkAreaPicker> areaPicker = vtkSmartPointer<vtkAreaPicker>::New();
     
     if (mouseInteractor) {
@@ -41,14 +39,10 @@ MeshVTKWidget::MeshVTKWidget(QWidget *parent, MeshMouseInteractor *mouseInteract
     }
     
     renderer->SetBackground(1, 1, 1);
-    renderWindow->AddRenderer(renderer);
-    renderWindowInteractor->SetRenderWindow(renderWindow);
-    renderWindowInteractor->SetInteractorStyle(this->mouseInteractor);
-    renderWindowInteractor->SetPicker(areaPicker);
     this->mouseInteractor->SetDefaultRenderer(renderer);
-    
-    this->SetRenderWindow(renderWindow);
-    renderWindow->Render();
+    this->GetRenderWindow()->AddRenderer(renderer);
+    this->GetInteractor()->SetInteractorStyle(this->mouseInteractor);
+    this->GetInteractor()->SetPicker(areaPicker);
 }
 
 MeshVTKWidget::~MeshVTKWidget() {}
@@ -190,9 +184,9 @@ void MeshVTKWidget::resetZoom() {
 void MeshVTKWidget::toggleZoomArea(bool activate) {
     if (activate) {
         vtkSmartPointer<vtkInteractorStyleRubberBandZoom> zoomAreaInteractor = vtkSmartPointer<vtkInteractorStyleRubberBandZoom>::New();
-        renderWindowInteractor->SetInteractorStyle(zoomAreaInteractor);
+        this->GetInteractor()->SetInteractorStyle(zoomAreaInteractor);
     } else {
-        renderWindowInteractor->SetInteractorStyle(mouseInteractor);
+        this->GetInteractor()->SetInteractorStyle(mouseInteractor);
     }
 }
 
@@ -253,7 +247,7 @@ void MeshVTKWidget::toggleLabels(const LabelType &labelType) {
         renderer->AddActor2D(labelsActor);
     }
     
-    renderWindow->Render();
+    this->GetRenderWindow()->Render();
 }
 
 void MeshVTKWidget::changeBackgroundColor(const double &r, const double &g, const double &b) {
@@ -263,7 +257,7 @@ void MeshVTKWidget::changeBackgroundColor(const double &r, const double &g, cons
 
 void MeshVTKWidget::exportToImage(const QString &fileName) {
     vtkSmartPointer<vtkWindowToImageFilter> windowToImageFilter = vtkSmartPointer<vtkWindowToImageFilter>::New();
-    windowToImageFilter->SetInput(renderWindow);
+    windowToImageFilter->SetInput(this->GetRenderWindow());
     windowToImageFilter->SetMagnification(1); //set the resolution of the output image (3 times the current resolution of vtk render window)
     windowToImageFilter->SetInputBufferTypeToRGBA(); //also record the alpha (transparency) channel
     windowToImageFilter->ReadFrontBufferOff(); // read from the back buffer

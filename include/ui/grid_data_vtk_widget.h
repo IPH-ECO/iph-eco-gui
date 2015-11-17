@@ -11,7 +11,7 @@
 #include <QMouseEvent>
 #include <QVTKWidget.h>
 #include <vtkCubeAxesActor.h>
-#include <vtkScalarBarActor.h>
+#include <vtkScalarBarWidget.h>
 #include <vtkWorldPointPicker.h>
 #include <vtkColorTransferFunction.h>
 #include <vtkRenderWindowInteractor.h>
@@ -29,9 +29,9 @@ private:
     vtkSmartPointer<GridDataMouseInteractor> gridDataMouseInteractor;
     
     vtkSmartPointer<vtkActor> mapActor;
-    vtkSmartPointer<vtkScalarBarActor> mapBarActor;
+    vtkSmartPointer<vtkScalarBarWidget> mapScalarBarWidget;
     vtkSmartPointer<vtkActor> mapPointsActor;
-    vtkSmartPointer<vtkScalarBarActor> mapPointsBarActor;
+    vtkSmartPointer<vtkScalarBarWidget> pointsScalarBarWidget;
     
     vtkSmartPointer<vtkIdTypeArray> selectedCellIds;
     
