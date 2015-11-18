@@ -4,29 +4,31 @@
 #include "include/exceptions/simulation_exception.h"
 
 #include <QFileInfo>
-#include <vtkPointData.h>
-#include <vtkCellArray.h>
+#include <vtkGlyph3D.h>
 #include <vtkCellData.h>
 #include <vtkProperty.h>
-#include <vtkGlyph3D.h>
-#include <vtkGlyph2D.h>
+#include <vtkPointData.h>
 #include <vtkLookupTable.h>
 #include <vtkDoubleArray.h>
 #include <vtkArrowSource.h>
+#include <vtkCellCenters.h>
 #include <vtkDataSetMapper.h>
 #include <vtkPolyDataMapper.h>
+#include <vtkScalarBarActor.h>
 #include <vtkUnstructuredGrid.h>
 #include <vtkColorTransferFunction.h>
+#include <vtkScalarBarRepresentation.h>
 #include <vtkGenericDataObjectReader.h>
-#include <vtkGenericGlyph3DFilter.h>
 
 SimulationVTKWidget::SimulationVTKWidget(QWidget *parent) :
     MeshVTKWidget(parent), currentSimulation(nullptr), layerProperties(nullptr), showSurface(true)
 {}
 
 void SimulationVTKWidget::render(Simulation *simulation, const QString &layer, const QString &component, int frame) {
+    QString layerKey = QString("%1-%2").arg(layer).arg(component);
+    
     currentSimulation = simulation;
-    layerProperties = simulation->getSelectedLayers().value(QString("%1-%2").arg(layer).arg(component));
+    layerProperties = simulation->getSelectedLayers().value(layerKey);
     currentLayer = layer;
     currentComponent = component;
     currentFrame = frame;
@@ -58,48 +60,69 @@ void SimulationVTKWidget::render(Simulation *simulation, const QString &layer, c
         layerProperties->setPointsMinimumRange(range[0]);
         layerProperties->setPointsMaximumRange(range[1]);
         
-        bool isVector = array->GetNumberOfComponents() == 3;
+        vtkSmartPointer<vtkActor> actor = vtkSmartPointer<vtkActor>::New();
+        actor->GetProperty()->SetOpacity(layerProperties->getMapOpacity() / 100.0);
+        actor->GetProperty()->SetLighting(layerProperties->getMapLighting());
         
-        vtkSmartPointer<vtkDataSetMapper> mapper = vtkSmartPointer<vtkDataSetMapper>::New();
-        vtkSmartPointer<vtkColorTransferFunction> pointsColorTransferFunction = buildColorTransferFunction(true);
-        
-        if (isVector) {
+        if (array->GetNumberOfComponents() == 3) { // Is vector
+            vtkSmartPointer<vtkCellCenters> cellCentersFilter = vtkSmartPointer<vtkCellCenters>::New();
+            cellCentersFilter->SetInputData(unstructuredGrid);
+            cellCentersFilter->Update();
+            
             vtkSmartPointer<vtkPolyData> vectorPolyData = vtkSmartPointer<vtkPolyData>::New();
-            vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
-            
-            for (vtkIdType i = 0; i < array->GetNumberOfTuples(); i++) {
-                points->InsertNextPoint(array->GetTuple(i));
-            }
-            
-            vectorPolyData->SetPoints(points);
+            vectorPolyData->SetPoints(cellCentersFilter->GetOutput()->GetPoints());
+            vectorPolyData->GetPointData()->SetVectors(array);
             
             vtkSmartPointer<vtkArrowSource> arrowSource = vtkSmartPointer<vtkArrowSource>::New();
-            
             vtkSmartPointer<vtkGlyph3D> glyph = vtkSmartPointer<vtkGlyph3D>::New();
-            glyph->SetSourceData(vectorPolyData);
-            glyph->SetInputConnection(arrowSource->GetOutputPort());
-            glyph->ScalingOn();
+            glyph->SetSourceConnection(arrowSource->GetOutputPort());
+            glyph->SetInputData(vectorPolyData);
             glyph->SetVectorModeToUseVector();
+            glyph->SetScaleModeToScaleByVector();
+            glyph->SetColorModeToColorByScale();
+            glyph->SetScaleFactor(10000);
             glyph->OrientOn();
             glyph->Update();
             
-            mapper->SetInputConnection(glyph->GetOutputPort());
-            mapper->Update();
+            vtkSmartPointer<vtkPolyDataMapper> mapMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+            mapMapper->SetInputConnection(glyph->GetOutputPort());
+            mapMapper->Update();
+            
+            actor->SetMapper(mapMapper);
         } else {
-            mapper->SetScalarModeToUseCellData();
-            mapper->SetInputData(unstructuredGrid);
-            mapper->SelectColorArray(arrayName.c_str());
+            if (mapScalarBarWidget) {
+                mapScalarBarWidget->EnabledOff();
+                renderer->RemoveActor(mapScalarBarWidget->GetScalarBarActor());
+            }
+            
+            vtkSmartPointer<vtkColorTransferFunction> mapColorTransferFunction = buildColorTransferFunction(true);
+            mapScalarBarWidget = vtkSmartPointer<vtkScalarBarWidget>::New();
+            mapScalarBarWidget->SetInteractor(this->GetInteractor());
+            mapScalarBarWidget->GetScalarBarActor()->SetLookupTable(mapColorTransferFunction);
+            mapScalarBarWidget->GetScalarBarActor()->SetTitle("Color Map");
+            mapScalarBarWidget->GetScalarBarActor()->SetNumberOfLabels(4);
+            mapScalarBarWidget->GetScalarBarActor()->SetVisibility(layerProperties->getMapLegend());
+            mapScalarBarWidget->RepositionableOn();
+            mapScalarBarWidget->SelectableOn();
+            mapScalarBarWidget->ResizableOn();
+            mapScalarBarWidget->EnabledOn();
+            
+            vtkScalarBarRepresentation *scalarBarRepresentation = vtkScalarBarRepresentation::SafeDownCast(mapScalarBarWidget->GetRepresentation());
+            scalarBarRepresentation->GetPositionCoordinate()->SetValue(0.86, 0.05);
+            scalarBarRepresentation->GetPosition2Coordinate()->SetValue(0.1, 0.35);
+            
+            vtkSmartPointer<vtkDataSetMapper> mapMapper = vtkSmartPointer<vtkDataSetMapper>::New();
+            mapMapper->SetScalarModeToUseCellData();
+            mapMapper->SetInputData(unstructuredGrid);
+            mapMapper->SelectColorArray(arrayName.c_str());
+            mapMapper->SetLookupTable(mapColorTransferFunction);
+            mapMapper->UseLookupTableScalarRangeOn();
+            
+            actor->SetMapper(mapMapper);
         }
         
-        mapper->SetLookupTable(pointsColorTransferFunction);
-        mapper->UseLookupTableScalarRangeOn();
-        
-        mapActor = vtkSmartPointer<vtkActor>::New();
-        mapActor->SetMapper(mapper);
-        mapActor->GetProperty()->SetOpacity(layerProperties->getMapOpacity() / 100.0);
-        mapActor->GetProperty()->SetLighting(layerProperties->getMapLighting());
-        
-        renderer->AddActor(mapActor);
+        layerActors.insert(layerKey, actor);
+        renderer->AddActor(actor);
         renderer->ResetCamera();
     }
 }
@@ -151,6 +174,5 @@ void SimulationVTKWidget::updateLayer() {
 }
 
 void SimulationVTKWidget::clear() {
-    renderer->RemoveActor(mapActor);
     this->update();
 }

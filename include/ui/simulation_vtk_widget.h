@@ -5,15 +5,14 @@
 #include "include/ui/mesh_vtk_widget.h"
 #include "include/domain/meteorological_station.h"
 
-#include <vtkScalarBarActor.h>
+#include <vtkScalarBarWidget.h>
 #include <vtkColorTransferFunction.h>
 
 class SimulationVTKWidget : public MeshVTKWidget {
 	Q_OBJECT
 private:
-    vtkSmartPointer<vtkActor> mapActor;
-    vtkSmartPointer<vtkScalarBarActor> mapBarActor;
-    vtkSmartPointer<vtkScalarBarActor> mapPointsBarActor;
+    QMap<QString, vtkSmartPointer<vtkActor> > layerActors;
+    vtkSmartPointer<vtkScalarBarWidget> mapScalarBarWidget;
     Simulation *currentSimulation;
     LayerProperties *layerProperties;
     QString currentLayer;
