@@ -152,6 +152,8 @@ bool TimeSeriesDialog::isValid() {
         QString timestamp = ui->tblTimeSeries->item(i, 0)->text();
         QDateTime dateTime = QDateTime::fromString(timestamp, Qt::ISODate);
         
+		dateTime.setTimeSpec(Qt::UTC);
+
         if (!dateTime.isValid()) {
             QMessageBox::warning(this, tr("Time Series"), QString("Invalid timestamp format at row %1.").arg(i + 1));
             return false;

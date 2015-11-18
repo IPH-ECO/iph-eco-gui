@@ -861,12 +861,12 @@ void ProjectRepository::saveMeteorologicalConfigurations(Project *project) {
             throw DatabaseException(QString("Unable to save meteorological data configurations. Error: %1.").arg(query.lastError().text()));
         }
         
-        emit updateProgress(currentProgress++);
-        QApplication::processEvents();
-        
         configuration->setId(query.lastInsertId().toUInt());
         configurationIds.append(QString::number(configuration->getId()));
         saveMeteorologicalStations(configuration);
+
+		emit updateProgress(currentProgress++);
+		QApplication::processEvents();
     }
     
     // Handle exclusions
