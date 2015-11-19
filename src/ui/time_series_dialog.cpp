@@ -44,6 +44,7 @@ void TimeSeriesDialog::loadTimeSeriesList(const QList<TimeSeries*> &timeSeriesLi
         }
         
         progressDialog->setValue(i);
+		QApplication::processEvents();
         
         ui->tblTimeSeries->insertRow(i);
         ui->tblTimeSeries->setItem(i, 0, new QTableWidgetItem(time.toString(dateTimeFormat)));
