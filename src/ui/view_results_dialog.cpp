@@ -305,7 +305,6 @@ void ViewResultsDialog::on_spxFrame_valueChanged(int frame) {
                 QStringList layerAndComponent = layerItem->data(Qt::UserRole).toString().split("-");
                 
                 ui->vtkWidget->render(this->currentSimulation, layerAndComponent.first(), layerAndComponent.last(), ui->spxFrame->value() - 1);
-                break;
             }
         }
     }

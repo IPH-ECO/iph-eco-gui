@@ -134,7 +134,7 @@ void BoundaryConditionDialog::on_btnTimeSeries_clicked() {
     int exitCode = timeSeriesDialog->exec();
     
     if (exitCode == QDialog::Accepted) {
-        timeSeriesList = timeSeriesDialog->getTimeSeriesList();
+        timeSeriesList = *timeSeriesDialog->getTimeSeriesList();
     }
 }
 

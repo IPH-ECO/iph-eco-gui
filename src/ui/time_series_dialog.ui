@@ -39,6 +39,13 @@
       </widget>
      </item>
      <item>
+      <widget class="QLabel" name="lblLoading">
+       <property name="text">
+        <string>Loading...</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <spacer name="horizontalSpacer">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>

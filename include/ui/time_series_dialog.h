@@ -23,7 +23,7 @@ private:
 	Ui::TimeSeriesDialog *ui;
     BoundaryCondition *currentBoundaryCondition;
     MeteorologicalParameter *currentMeteorologicalParameter;
-    QList<TimeSeries*> timeSeriesList;
+    QList<TimeSeries*> *timeSeriesList;
     TimeSeriesType timeSeriesType;
     
     QString getDefaultDirectory();
@@ -34,7 +34,7 @@ public:
 	explicit TimeSeriesDialog(QWidget *parent, const TimeSeriesType &timeSeriesType);
     ~TimeSeriesDialog();
     
-    QList<TimeSeries*> getTimeSeriesList() const;
+    QList<TimeSeries*>* getTimeSeriesList() const;
     void setBoundaryCondition(BoundaryCondition *boundaryCondition);
     void setMeteorologicalParameter(MeteorologicalParameter *meteorologicalParameter);
     void loadTimeSeriesList(const QList<TimeSeries*> &timeSeriesList);
