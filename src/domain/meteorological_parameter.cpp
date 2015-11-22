@@ -96,6 +96,13 @@ void MeteorologicalParameter::addTimeSeries(TimeSeries *timeSeries) {
     timeSeriesList.append(timeSeries);
 }
 
+void MeteorologicalParameter::clearTimeSeries() {
+    for (TimeSeries *timeSeries : timeSeriesList) {
+        delete timeSeries;
+    }
+    timeSeriesList.clear();
+}
+
 double MeteorologicalParameter::getXComponent() const {
     return xComponent;
 }

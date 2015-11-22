@@ -295,6 +295,8 @@ void MeteorologicalDataDialog::on_btnApplyParameter_clicked() {
             } else {
                 parameter->setConstantValue(ui->edtConstant->text().toDouble());
             }
+            
+            parameter->clearTimeSeries();
         }
         
         parameter->setUseXYComponent(useXYComponent);
