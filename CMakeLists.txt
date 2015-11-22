@@ -18,7 +18,9 @@ find_package(VTK REQUIRED)
 find_package(CGAL REQUIRED COMPONENTS Core)
 find_package(GeographicLib REQUIRED)
 
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+if(NOT MSVC)
+	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+endif()
 
 include(${VTK_USE_FILE})
 include(${CGAL_USE_FILE})
