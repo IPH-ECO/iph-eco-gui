@@ -13,16 +13,39 @@
 #include <QRect>
 #include <QPen>
 
-LayerPropertiesDialog::LayerPropertiesDialog(QWidget *parent, LayerProperties *layerProperties) :
-    QDialog(parent), ui(new Ui::LayerPropertiesDialog), layerProperties(layerProperties)
+LayerPropertiesDialog::LayerPropertiesDialog(QWidget *parent, LayerProperties *layerProperties, const LayerPropertiesTab &tabs) :
+    QDialog(parent), ui(new Ui::LayerPropertiesDialog), layerProperties(layerProperties), tabs(tabs)
 {
     ui->setupUi(this);
     
-    this->setupMapTab();
-    this->setupPointsTab();
-    this->setupMeshTab();
+    if (tabs & LayerPropertiesTab::MAP) {
+        setupMapTab();
+    } else {
+        removeTab(LayerPropertiesTab::MAP);
+    }
+    
+    if (tabs & LayerPropertiesTab::POINTS) {
+        setupPointsTab();
+    } else {
+        removeTab(LayerPropertiesTab::POINTS);
+    }
+    
+    if (tabs & LayerPropertiesTab::MESH) {
+        setupMeshTab();
+    } else {
+        removeTab(LayerPropertiesTab::MESH);
+    }
+    
+    if (tabs & LayerPropertiesTab::VECTORS) {
+        setupVectorsTab();
+    } else {
+        removeTab(LayerPropertiesTab::VECTORS);
+    }
 
     this->setFixedSize(this->sizeHint());
+    
+    QObject::connect(ui->btnLineColor, SIGNAL(clicked()), this, SLOT(showColorPickerDialog()));
+    QObject::connect(ui->btnVectorColor, SIGNAL(clicked()), this, SLOT(showColorPickerDialog()));
 }
 
 LayerPropertiesDialog::~LayerPropertiesDialog() {
@@ -78,6 +101,36 @@ void LayerPropertiesDialog::setupMeshTab() {
     ui->cbxLineStyle->setCurrentIndex(layerProperties->getMeshLineStyle() != 0xFFFF);
     ui->sbxLineWidth->setValue(layerProperties->getMeshLineWidth());
     ui->sldMeshOpacity->setValue(layerProperties->getMeshOpacity());
+}
+
+void LayerPropertiesDialog::setupVectorsTab() {
+    QPixmap px(16, 16);
+    
+    currentVectorColor = QColor(layerProperties->getVectorColor());
+    px.fill(currentVectorColor);
+    ui->btnVectorColor->setIcon(px);
+    
+    ui->edtVectorScale->setText(QString::number(layerProperties->getVectorScale()));
+    ui->sbxVectorWidth->setValue(layerProperties->getVectorWidth());
+}
+
+void LayerPropertiesDialog::removeTab(const LayerPropertiesTab &tab) {
+    QString tabName;
+    
+    if (tab == LayerPropertiesTab::MAP) {
+        tabName = "mapTab";
+    } else if (tab == LayerPropertiesTab::POINTS) {
+        tabName = "pointsTab";
+    } else if (tab == LayerPropertiesTab::MESH) {
+        tabName = "meshTab";
+    } else {
+        tabName = "vectorsTab";
+    }
+    
+    QWidget *widget = ui->tabWidget->findChild<QWidget*>(tabName);
+    int pageIndex = ui->tabWidget->indexOf(widget);
+    
+    ui->tabWidget->removeTab(pageIndex);
 }
 
 void LayerPropertiesDialog::setupColorGradientTemplates(QToolButton *&defaultButton, QToolButton *&currentButton, bool isMapTab) {
@@ -139,15 +192,18 @@ void LayerPropertiesDialog::on_btnUsePointsOriginalValues_clicked() {
     ui->edtPointsMaximum->setText(QString::number(layerProperties->getDefaultPointsMaximum()));
 }
 
-void LayerPropertiesDialog::on_btnLineColor_clicked() {
-    QColor color = QColorDialog::getColor(Qt::white, this, "Select a line color");
+void LayerPropertiesDialog::showColorPickerDialog() {
+    bool isVectorTab = ui->tabWidget->tabText(ui->tabWidget->tabBar()->currentIndex()) == "Vectors";
+    QToolButton *colorButton = isVectorTab ? ui->btnVectorColor : ui->btnLineColor;
+    QColor *selectedColor = isVectorTab ? &currentVectorColor : &currentLineColor;
+    QColor color = QColorDialog::getColor(Qt::white, this, "Select a color");
     
     if (color.isValid()) {
         QPixmap px(16, 16);
         px.fill(color);
         
-        this->currentLineColor = color;
-        ui->btnLineColor->setIcon(px);
+        *selectedColor = color;
+        colorButton->setIcon(px);
     }
 }
 
@@ -178,28 +234,42 @@ void LayerPropertiesDialog::on_buttonBox_clicked(QAbstractButton *button) {
     }
     
     // Map tab
-    layerProperties->setMapMinimumRange(ui->edtMapMinimum->text().toDouble());
-    layerProperties->setMapMaximumRange(ui->edtMapMaximum->text().toDouble());
-    layerProperties->setMapColorGradient(this->currentMapColorGradientButton->toolTip());
-    layerProperties->setMapInvertColorGradient(ui->chkMapInvertColorTemplate->isChecked());
-    layerProperties->setMapOpacity(ui->sldMapOpacity->value());
-    layerProperties->setMapLegend(ui->chkMapLegend->isChecked());
-    layerProperties->setMapLighting(ui->chkMapLighting->isChecked());
+    if (tabs & LayerPropertiesTab::MAP) {
+        layerProperties->setMapMinimumRange(ui->edtMapMinimum->text().toDouble());
+        layerProperties->setMapMaximumRange(ui->edtMapMaximum->text().toDouble());
+        layerProperties->setMapColorGradient(this->currentMapColorGradientButton->toolTip());
+        layerProperties->setMapInvertColorGradient(ui->chkMapInvertColorTemplate->isChecked());
+        layerProperties->setMapOpacity(ui->sldMapOpacity->value());
+        layerProperties->setMapLegend(ui->chkMapLegend->isChecked());
+        layerProperties->setMapLighting(ui->chkMapLighting->isChecked());
+    }
     
     // Points tab
-    layerProperties->setPointsMinimumRange(ui->edtPointsMinimum->text().toDouble());
-    layerProperties->setPointsMaximumRange(ui->edtPointsMaximum->text().toDouble());
-    layerProperties->setPointsColorGradient(this->currentPointsColorGradientButton->toolTip());
-    layerProperties->setPointsInvertColorGradient(ui->chkPointsInvertColorTemplate->isChecked());
-    layerProperties->setPointsOpacity(ui->sldPointsOpacity->value());
-    layerProperties->setPointsSize(ui->spbPointsSize->value());
-    layerProperties->setPointsLegend(ui->chkPointsLegend->isChecked());
+    if (tabs & LayerPropertiesTab::POINTS) {
+        layerProperties->setPointsMinimumRange(ui->edtPointsMinimum->text().toDouble());
+        layerProperties->setPointsMaximumRange(ui->edtPointsMaximum->text().toDouble());
+        layerProperties->setPointsColorGradient(this->currentPointsColorGradientButton->toolTip());
+        layerProperties->setPointsInvertColorGradient(ui->chkPointsInvertColorTemplate->isChecked());
+        layerProperties->setPointsOpacity(ui->sldPointsOpacity->value());
+        layerProperties->setPointsSize(ui->spbPointsSize->value());
+        layerProperties->setPointsLegend(ui->chkPointsLegend->isChecked());
+    }
     
     // Mesh tab
-    layerProperties->setMeshLineColor(this->currentLineColor.name());
-    layerProperties->setMeshLineStyle(ui->cbxLineStyle->currentIndex() == 0 ? 0xFFFF : 0xF0F0);
-    layerProperties->setMeshLineWidth(ui->sbxLineWidth->value());
-    layerProperties->setMeshOpacity(ui->sldMeshOpacity->value());
+    if (tabs & LayerPropertiesTab::MESH) {
+        layerProperties->setMeshLineColor(this->currentLineColor.name());
+        layerProperties->setMeshLineStyle(ui->cbxLineStyle->currentIndex() == 0 ? 0xFFFF : 0xF0F0);
+        layerProperties->setMeshLineWidth(ui->sbxLineWidth->value());
+        layerProperties->setMeshOpacity(ui->sldMeshOpacity->value());
+    }
+    
+    // Vector tab
+    if (tabs & LayerPropertiesTab::VECTORS) {
+        layerProperties->setVectorColorMode(ui->chkMagnitude->isChecked() ? VectorColorMode::MAGNITUDE : VectorColorMode::CONSTANT);
+        layerProperties->setVectorColor(this->currentVectorColor.name());
+        layerProperties->setVectorScale(ui->edtVectorScale->text().toDouble());
+        layerProperties->setVectorWidth(ui->sbxVectorWidth->value());
+    }
     
     emit applyChanges();
     
@@ -209,38 +279,35 @@ void LayerPropertiesDialog::on_buttonBox_clicked(QAbstractButton *button) {
 }
 
 bool LayerPropertiesDialog::isValid() {
-    if (ui->edtMapMinimum->text().isEmpty()) {
-        QMessageBox::warning(this, tr("Grid Layer"), tr("Minimum range can't be empty on Map tab"));
-        return false;
-    }
-    if (ui->edtMapMaximum->text().isEmpty()) {
-        QMessageBox::warning(this, tr("Grid Layer"), tr("Maximum range can't be empty on Map tab"));
-        return false;
-    }
-    if (ui->edtMapMinimum->text().toDouble() > ui->edtMapMaximum->text().toDouble()) {
-        QMessageBox::warning(this, tr("Grid Layer"), tr("Invalid range on Map tab."));
-        return false;
+    if (tabs & LayerPropertiesTab::MAP) {
+        if (ui->edtMapMinimum->text().isEmpty()) {
+            QMessageBox::warning(this, tr("Grid Layer"), tr("Minimum range can't be empty on Map tab"));
+            return false;
+        }
+        if (ui->edtMapMaximum->text().isEmpty()) {
+            QMessageBox::warning(this, tr("Grid Layer"), tr("Maximum range can't be empty on Map tab"));
+            return false;
+        }
+        if (ui->edtMapMinimum->text().toDouble() > ui->edtMapMaximum->text().toDouble()) {
+            QMessageBox::warning(this, tr("Grid Layer"), tr("Invalid range on Map tab."));
+            return false;
+        }
     }
     
-    if (ui->edtPointsMinimum->text().isEmpty()) {
-        QMessageBox::warning(this, tr("Grid Layer"), tr("Minimum range can't be empty on Points tab"));
-        return false;
-    }
-    if (ui->edtPointsMaximum->text().isEmpty()) {
-        QMessageBox::warning(this, tr("Grid Layer"), tr("Maximum range can't be empty on Points tab"));
-        return false;
-    }
-    if (ui->edtPointsMinimum->text().toDouble() > ui->edtPointsMaximum->text().toDouble()) {
-        QMessageBox::warning(this, tr("Grid Layer"), tr("Invalid range on Points tab."));
-        return false;
+    if (tabs & LayerPropertiesTab::POINTS) {
+        if (ui->edtPointsMinimum->text().isEmpty()) {
+            QMessageBox::warning(this, tr("Grid Layer"), tr("Minimum range can't be empty on Points tab"));
+            return false;
+        }
+        if (ui->edtPointsMaximum->text().isEmpty()) {
+            QMessageBox::warning(this, tr("Grid Layer"), tr("Maximum range can't be empty on Points tab"));
+            return false;
+        }
+        if (ui->edtPointsMinimum->text().toDouble() > ui->edtPointsMaximum->text().toDouble()) {
+            QMessageBox::warning(this, tr("Grid Layer"), tr("Invalid range on Points tab."));
+            return false;
+        }
     }
     
     return true;
-}
-
-void LayerPropertiesDialog::removeMeshTab() {
-    QWidget *widget = ui->tabWidget->findChild<QWidget*>("meshTab");
-    int pageIndex = ui->tabWidget->indexOf(widget);
-    
-    ui->tabWidget->removeTab(pageIndex);
 }

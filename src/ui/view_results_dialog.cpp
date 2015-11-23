@@ -263,26 +263,28 @@ void ViewResultsDialog::fillLayersComboBox() {
 void ViewResultsDialog::removeLayer() {
     QString question = tr("Are you sure you want to remove the selected layer from the list?");
     QMessageBox::StandardButton button = QMessageBox::question(this, tr("View Results"), question);
-    int row = static_cast<QToolButton*>(sender())->objectName().split("-")[1].toInt();
- 
+    
     if (button == QMessageBox::Yes) {
-        on_btnPauseReproduction_clicked();
-        ui->vtkWidget->clear();
+        int row = static_cast<QToolButton*>(sender())->objectName().split("-")[1].toInt();
+        QTableWidgetItem *layerItem = ui->tblLayers->item(row, 0);
+        QString layerKey = layerItem->data(Qt::UserRole).toString();
+        
+        ui->vtkWidget->removeLayer(layerKey);
         ui->tblLayers->removeRow(row);
     }
 }
 
 void ViewResultsDialog::toggleLayerVisibility(bool show) {
+    int row = static_cast<QToolButton*>(sender())->objectName().split("-")[1].toInt();
+    QTableWidgetItem *layerItem = ui->tblLayers->item(row, 0);
+    QString layerKey = layerItem->data(Qt::UserRole).toString();
+    QStringList layerAndComponent = layerKey.split("-");
+    
     if (show) {
-        int row = static_cast<QToolButton*>(sender())->objectName().split("-")[1].toInt();
-        QTableWidgetItem *layerItem = ui->tblLayers->item(row, 0);
-        QStringList layerAndComponent = layerItem->data(Qt::UserRole).toString().split("-");
-        
         ui->vtkWidget->render(this->currentSimulation, layerAndComponent.first(), layerAndComponent.last(), ui->spxFrame->value() - 1);
-    } else {
-        frameTimer.stop();
-        ui->vtkWidget->clear();
     }
+    
+    ui->vtkWidget->toggleLayerVisibility(layerKey, show);
 }
 
 void ViewResultsDialog::renderNextFrame() {
@@ -313,10 +315,11 @@ void ViewResultsDialog::on_spxFrame_valueChanged(int frame) {
 void ViewResultsDialog::editLayerProperties() {
     int row = static_cast<QToolButton*>(sender())->objectName().split("-")[1].toInt();
     QTableWidgetItem *layerItem = ui->tblLayers->item(row, 0);
+    QStringList layerAndComponent = layerItem->data(Qt::UserRole).toString().split("-");
     LayerProperties *layerProperties = this->currentSimulation->getSelectedLayers().value(layerItem->data(Qt::UserRole).toString());
-    LayerPropertiesDialog *dialog = new LayerPropertiesDialog(this, layerProperties);
+    LayerPropertiesDialog::LayerPropertiesTab tab = layerAndComponent.last().isEmpty() ? LayerPropertiesDialog::MAP : LayerPropertiesDialog::VECTORS;
+    LayerPropertiesDialog *dialog = new LayerPropertiesDialog(this, layerProperties, tab);
     
-    dialog->removeMeshTab();
     QObject::connect(dialog, SIGNAL(applyChanges()), ui->vtkWidget, SLOT(updateLayer()));
     dialog->exec();
 }

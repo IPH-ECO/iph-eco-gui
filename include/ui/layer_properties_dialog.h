@@ -14,10 +14,22 @@ namespace Ui {
 
 class LayerPropertiesDialog : public QDialog {
     Q_OBJECT
+public:
+    enum LayerPropertiesTab {
+        MAP = (1 << 0),
+        POINTS = (1 << 1),
+        MESH = (1 << 2),
+        VECTORS = (1 << 3)
+    };
+    
+    LayerPropertiesDialog(QWidget *parent, LayerProperties *layerProperties, const LayerPropertiesTab &tabs = static_cast<LayerPropertiesTab>( LayerPropertiesTab::MAP | LayerPropertiesTab::POINTS | LayerPropertiesTab::MESH));
+    ~LayerPropertiesDialog();
 private:
     Ui::LayerPropertiesDialog *ui;
     LayerProperties *layerProperties;
+    LayerPropertiesTab tabs;
     QColor currentLineColor;
+    QColor currentVectorColor;
     QToolButton *currentMapColorGradientButton;
     QToolButton *defaultMapColorGradientButton;
     QToolButton *currentPointsColorGradientButton;
@@ -26,19 +38,16 @@ private:
     void setupMapTab();
     void setupPointsTab();
     void setupMeshTab();
+    void setupVectorsTab();
+    void removeTab(const LayerPropertiesTab &tab);
     void setupColorGradientTemplates(QToolButton *&defaultButton, QToolButton *&currentButton, bool isMapTab);
     bool isValid();
 private slots:
     void on_btnUseMapOriginalValues_clicked();
     void on_btnUsePointsOriginalValues_clicked();
-    void on_btnLineColor_clicked();
     void colorGradientButtonClicked(bool checked);
     void on_buttonBox_clicked(QAbstractButton *button);
-public:
-    LayerPropertiesDialog(QWidget *parent, LayerProperties *layerProperties);
-    ~LayerPropertiesDialog();
-    
-    void removeMeshTab();
+    void showColorPickerDialog();
 signals:
     void applyChanges();
 };

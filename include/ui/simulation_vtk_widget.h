@@ -12,6 +12,7 @@ class SimulationVTKWidget : public MeshVTKWidget {
 	Q_OBJECT
 private:
     QMap<QString, vtkSmartPointer<vtkActor> > layerActors;
+    QMap<vtkSmartPointer<vtkActor>, vtkSmartPointer<vtkScalarBarActor> > scalarBarActors;
     vtkSmartPointer<vtkScalarBarWidget> mapScalarBarWidget;
     Simulation *currentSimulation;
     LayerProperties *layerProperties;
@@ -24,9 +25,9 @@ private:
 public:
 	explicit SimulationVTKWidget(QWidget *parent);
 	void render(Simulation *simulation, const QString &layer, const QString &component, int frame);
-    virtual void clear();
+    void removeLayer(const QString &layerKey);
 public slots:
-    void toggleRepresentation(bool showSurface);
+    void toggleLayerVisibility(const QString &layerKey, bool visible);
     void updateLayer();
 };
 

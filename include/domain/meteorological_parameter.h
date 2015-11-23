@@ -43,6 +43,7 @@ public:
     TimeSeries* getTimeSeries(uint id) const;
     void setTimeSeriesList(const QList<TimeSeries*> timeSeriesList);
     void addTimeSeries(TimeSeries *timeSeries);
+    void clearTimeSeries();
     double getXComponent() const;
     void setXComponent(double xComponent);
     double getYComponent() const;

@@ -35,7 +35,6 @@ MainWindow::~MainWindow() {
     delete ui;
 }
 
-//slots
 void MainWindow::on_actionOpenProject_triggered() {
     on_actionCloseProject_triggered();
 

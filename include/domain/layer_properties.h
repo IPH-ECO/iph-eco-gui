@@ -4,6 +4,8 @@
 #include "color_gradient.h"
 #include <QString>
 
+enum class VectorColorMode { MAGNITUDE, CONSTANT };
+
 class LayerProperties {
 private:
     double mapMinimumRange;
@@ -26,6 +28,11 @@ private:
     int meshLineStyle;
     int meshLineWidth;
     int meshOpacity;
+    
+    VectorColorMode vectorColorMode;
+    QString vectorColor;
+    int vectorWidth;
+    double vectorScale;
 
     // Transient attributes
     double defaultMapMinimum;
@@ -82,6 +89,15 @@ public:
     void setDefaultPointsMinimum(const double &defaultPointsMinimum);
     double getDefaultPointsMaximum() const;
     void setDefaultPointsMaximum(const double &defaultPointsMaximum);
+    
+    VectorColorMode getVectorColorMode() const;
+    void setVectorColorMode(const VectorColorMode &vectorColorMode);
+    QString getVectorColor() const;
+    void setVectorColor(const QString &vectorColor);
+    int getVectorWidth() const;
+    void setVectorWidth(int vectorWidth);
+    double getVectorScale() const;
+    void setVectorScale(double vectorScale);
 };
 
 #endif // LAYER_PROPERTIES_H
