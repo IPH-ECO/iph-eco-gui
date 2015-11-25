@@ -317,7 +317,7 @@ void ViewResultsDialog::editLayerProperties() {
     QTableWidgetItem *layerItem = ui->tblLayers->item(row, 0);
     QStringList layerAndComponent = layerItem->data(Qt::UserRole).toString().split("-");
     LayerProperties *layerProperties = this->currentSimulation->getSelectedLayers().value(layerItem->data(Qt::UserRole).toString());
-    LayerPropertiesDialog::LayerPropertiesTab tab = layerAndComponent.last().isEmpty() ? LayerPropertiesDialog::MAP : LayerPropertiesDialog::VECTORS;
+    LayerPropertiesDialog::LayerPropertiesTab tab = layerAndComponent.last() == "Vector" ? LayerPropertiesDialog::VECTORS : LayerPropertiesDialog::MAP;
     LayerPropertiesDialog *dialog = new LayerPropertiesDialog(this, layerProperties, tab);
     
     QObject::connect(dialog, SIGNAL(applyChanges()), ui->vtkWidget, SLOT(updateLayer()));
