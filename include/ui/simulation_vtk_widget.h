@@ -6,22 +6,26 @@
 #include "include/domain/meteorological_station.h"
 
 #include <vtkScalarBarWidget.h>
+#include <vtkUnstructuredGrid.h>
 #include <vtkColorTransferFunction.h>
 
 class SimulationVTKWidget : public MeshVTKWidget {
 	Q_OBJECT
 private:
     QMap<QString, vtkSmartPointer<vtkActor> > layerActors;
-    QMap<vtkSmartPointer<vtkActor>, vtkSmartPointer<vtkScalarBarActor> > scalarBarActors;
-    vtkSmartPointer<vtkScalarBarWidget> mapScalarBarWidget;
+    QMap<vtkSmartPointer<vtkActor>, vtkSmartPointer<vtkScalarBarWidget> > scalarBarWidgets;
     Simulation *currentSimulation;
     LayerProperties *layerProperties;
     QString currentLayer;
     QString currentComponent;
     int currentFrame;
-    bool showSurface;
     
-    vtkSmartPointer<vtkColorTransferFunction> buildColorTransferFunction(bool isColorMap);
+    const char *MAGNITUDE_ARRAY_NAME;
+    
+    vtkSmartPointer<vtkColorTransferFunction> buildColorTransferFunction();
+    vtkSmartPointer<vtkPolyData> renderVectors(vtkSmartPointer<vtkUnstructuredGrid> layerGrid);
+    vtkSmartPointer<vtkUnstructuredGrid> convertToMagnitudeGrid(vtkSmartPointer<vtkUnstructuredGrid> layerGrid);
+    vtkSmartPointer<vtkScalarBarWidget> renderScalarBar(vtkSmartPointer<vtkActor> layerActor);
 public:
 	explicit SimulationVTKWidget(QWidget *parent);
 	void render(Simulation *simulation, const QString &layer, const QString &component, int frame);
