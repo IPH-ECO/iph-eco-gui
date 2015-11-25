@@ -6,7 +6,8 @@
 
 enum class VectorColorMode { MAGNITUDE, CONSTANT };
 
-class LayerProperties {
+class LayerProperties : public QObject {
+    Q_OBJECT
 private:
     double mapMinimumRange;
     double mapMaximumRange;
@@ -35,8 +36,10 @@ private:
     double vectorScale;
 
     // Transient attributes
+    bool useDefaultMapValues;
     double defaultMapMinimum;
     double defaultMapMaximum;
+    bool useDefaultPointsValues;
     double defaultPointsMinimum;
     double defaultPointsMaximum;
 public:
@@ -81,10 +84,12 @@ public:
     int getMeshOpacity() const;
     void setMeshOpacity(const int &meshOpacity);
 
+    bool getUseDefaultMapValues() const;
     double getDefaultMapMinimum() const;
     void setDefaultMapMinimum(const double &defaultMapMinimum);
     double getDefaultMapMaximum() const;
     void setDefaultMapMaximum(const double &defaultMapMaximum);
+    bool getUseDefaultPointsValues() const;
     double getDefaultPointsMinimum() const;
     void setDefaultPointsMinimum(const double &defaultPointsMinimum);
     double getDefaultPointsMaximum() const;
@@ -98,6 +103,9 @@ public:
     void setVectorWidth(int vectorWidth);
     double getVectorScale() const;
     void setVectorScale(double vectorScale);
+public slots:
+    void setUseDefaultMapValues(bool useDefaultMapValues);
+    void setUseDefaultPointsValues(bool useDefaultPointsValues);
 };
 
 #endif // LAYER_PROPERTIES_H

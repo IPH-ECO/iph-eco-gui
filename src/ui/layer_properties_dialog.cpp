@@ -46,6 +46,8 @@ LayerPropertiesDialog::LayerPropertiesDialog(QWidget *parent, LayerProperties *l
     
     QObject::connect(ui->btnLineColor, SIGNAL(clicked()), this, SLOT(showColorPickerDialog()));
     QObject::connect(ui->btnVectorColor, SIGNAL(clicked()), this, SLOT(showColorPickerDialog()));
+    QObject::connect(ui->chkUseMapDefaultValues, SIGNAL(clicked(bool)), layerProperties, SLOT(setUseDefaultMapValues(bool)));
+    QObject::connect(ui->chkUsePointsDefaultValues, SIGNAL(clicked(bool)), layerProperties, SLOT(setUseDefaultPointsValues(bool)));
 }
 
 LayerPropertiesDialog::~LayerPropertiesDialog() {
@@ -53,8 +55,11 @@ LayerPropertiesDialog::~LayerPropertiesDialog() {
 }
 
 void LayerPropertiesDialog::setupMapTab() {
+    ui->chkUseMapDefaultValues->setChecked(layerProperties->getUseDefaultMapValues());
     ui->edtMapMinimum->setText(QString::number(layerProperties->getMapMininumRange()));
     ui->edtMapMaximum->setText(QString::number(layerProperties->getMapMaximumRange()));
+    ui->edtMapMinimum->setDisabled(ui->chkUseMapDefaultValues->isChecked());
+    ui->edtMapMaximum->setDisabled(ui->chkUseMapDefaultValues->isChecked());
     ui->lblMapOriginalValues->setText(QString("[%1, %2]").arg(layerProperties->getDefaultMapMinimum()).arg(layerProperties->getDefaultMapMaximum()));
     this->setupColorGradientTemplates(defaultMapColorGradientButton, currentMapColorGradientButton, true);
     ui->chkMapInvertColorTemplate->setChecked(layerProperties->getMapInvertColorGradient());
@@ -64,8 +69,11 @@ void LayerPropertiesDialog::setupMapTab() {
 }
 
 void LayerPropertiesDialog::setupPointsTab() {
+    ui->chkUsePointsDefaultValues->setChecked(layerProperties->getUseDefaultPointsValues());
     ui->edtPointsMinimum->setText(QString::number(layerProperties->getPointsMininumRange()));
     ui->edtPointsMaximum->setText(QString::number(layerProperties->getPointsMaximumRange()));
+    ui->edtPointsMinimum->setDisabled(ui->chkUsePointsDefaultValues->isChecked());
+    ui->edtPointsMaximum->setDisabled(ui->chkUsePointsDefaultValues->isChecked());
     ui->lblPointsOriginalValues->setText(QString("[%1, %2]").arg(layerProperties->getDefaultPointsMinimum()).arg(layerProperties->getDefaultPointsMaximum()));
     this->setupColorGradientTemplates(defaultPointsColorGradientButton, currentPointsColorGradientButton, false);
     ui->chkPointsInvertColorTemplate->setChecked(layerProperties->getPointsInvertColorGradient());
@@ -182,16 +190,6 @@ void LayerPropertiesDialog::setupColorGradientTemplates(QToolButton *&defaultBut
     }
 }
 
-void LayerPropertiesDialog::on_btnUseMapOriginalValues_clicked() {
-    ui->edtMapMinimum->setText(QString::number(layerProperties->getDefaultMapMinimum()));
-    ui->edtMapMaximum->setText(QString::number(layerProperties->getDefaultMapMaximum()));
-}
-
-void LayerPropertiesDialog::on_btnUsePointsOriginalValues_clicked() {
-    ui->edtPointsMinimum->setText(QString::number(layerProperties->getDefaultPointsMinimum()));
-    ui->edtPointsMaximum->setText(QString::number(layerProperties->getDefaultPointsMaximum()));
-}
-
 void LayerPropertiesDialog::showColorPickerDialog() {
     bool isVectorTab = ui->tabWidget->tabText(ui->tabWidget->tabBar()->currentIndex()) == "Vectors";
     QToolButton *colorButton = isVectorTab ? ui->btnVectorColor : ui->btnLineColor;
@@ -237,6 +235,7 @@ void LayerPropertiesDialog::on_buttonBox_clicked(QAbstractButton *button) {
     if (tabs & LayerPropertiesTab::MAP) {
         layerProperties->setMapMinimumRange(ui->edtMapMinimum->text().toDouble());
         layerProperties->setMapMaximumRange(ui->edtMapMaximum->text().toDouble());
+        layerProperties->setUseDefaultMapValues(ui->chkUseMapDefaultValues->isChecked());
         layerProperties->setMapColorGradient(this->currentMapColorGradientButton->toolTip());
         layerProperties->setMapInvertColorGradient(ui->chkMapInvertColorTemplate->isChecked());
         layerProperties->setMapOpacity(ui->sldMapOpacity->value());
@@ -248,6 +247,7 @@ void LayerPropertiesDialog::on_buttonBox_clicked(QAbstractButton *button) {
     if (tabs & LayerPropertiesTab::POINTS) {
         layerProperties->setPointsMinimumRange(ui->edtPointsMinimum->text().toDouble());
         layerProperties->setPointsMaximumRange(ui->edtPointsMaximum->text().toDouble());
+        layerProperties->setUseDefaultPointsValues(ui->chkUsePointsDefaultValues->isChecked());
         layerProperties->setPointsColorGradient(this->currentPointsColorGradientButton->toolTip());
         layerProperties->setPointsInvertColorGradient(ui->chkPointsInvertColorTemplate->isChecked());
         layerProperties->setPointsOpacity(ui->sldPointsOpacity->value());

@@ -57,11 +57,30 @@
           <item>
            <layout class="QHBoxLayout" name="horizontalLayout">
             <item>
-             <widget class="QPushButton" name="btnUseMapOriginalValues">
+             <widget class="QCheckBox" name="chkUseMapDefaultValues">
               <property name="text">
-               <string>Use original values</string>
+               <string>Use default values</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
               </property>
              </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_8">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeType">
+               <enum>QSizePolicy::Fixed</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>30</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
             </item>
             <item>
              <widget class="QLabel" name="lblMapOriginalValues">
@@ -227,11 +246,30 @@
           <item>
            <layout class="QHBoxLayout" name="horizontalLayout_5">
             <item>
-             <widget class="QPushButton" name="btnUsePointsOriginalValues">
+             <widget class="QCheckBox" name="chkUsePointsDefaultValues">
               <property name="text">
-               <string>Use original values</string>
+               <string>Use default values</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
               </property>
              </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_9">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeType">
+               <enum>QSizePolicy::Fixed</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>30</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
             </item>
             <item>
              <widget class="QLabel" name="lblPointsOriginalValues">
@@ -681,6 +719,32 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>sbxVectorWidth</tabstop>
+  <tabstop>chkLayerLegend</tabstop>
+  <tabstop>edtPointsMinimum</tabstop>
+  <tabstop>edtPointsMaximum</tabstop>
+  <tabstop>edtMapMaximum</tabstop>
+  <tabstop>tabWidget</tabstop>
+  <tabstop>edtMapMinimum</tabstop>
+  <tabstop>chkUseMapDefaultValues</tabstop>
+  <tabstop>chkMapInvertColorTemplate</tabstop>
+  <tabstop>sldMapOpacity</tabstop>
+  <tabstop>chkMapLegend</tabstop>
+  <tabstop>chkMapLighting</tabstop>
+  <tabstop>chkPointsInvertColorTemplate</tabstop>
+  <tabstop>sldPointsOpacity</tabstop>
+  <tabstop>spbPointsSize</tabstop>
+  <tabstop>chkPointsLegend</tabstop>
+  <tabstop>btnLineColor</tabstop>
+  <tabstop>cbxLineStyle</tabstop>
+  <tabstop>sbxLineWidth</tabstop>
+  <tabstop>sldMeshOpacity</tabstop>
+  <tabstop>chkMagnitude</tabstop>
+  <tabstop>chkConstant</tabstop>
+  <tabstop>btnVectorColor</tabstop>
+  <tabstop>edtVectorScale</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>
@@ -712,6 +776,70 @@
     <hint type="destinationlabel">
      <x>130</x>
      <y>82</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>chkUseMapDefaultValues</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>edtMapMinimum</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>119</x>
+     <y>110</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>182</x>
+     <y>76</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>chkUseMapDefaultValues</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>edtMapMaximum</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>119</x>
+     <y>110</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>394</x>
+     <y>76</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>chkUsePointsDefaultValues</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>edtPointsMinimum</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>119</x>
+     <y>110</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>182</x>
+     <y>76</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>chkUsePointsDefaultValues</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>edtPointsMaximum</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>119</x>
+     <y>110</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>394</x>
+     <y>76</y>
     </hint>
    </hints>
   </connection>

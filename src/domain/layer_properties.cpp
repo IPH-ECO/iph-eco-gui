@@ -4,7 +4,8 @@ LayerProperties::LayerProperties() :
     mapColorGradient(ColorGradientTemplate::defaultTemplateName), mapInvertColorGradient(false), mapOpacity(100), mapLegend(true), mapLighting(false),
     pointsColorGradient(ColorGradientTemplate::defaultTemplateName), pointsInvertColorGradient(false), pointsOpacity(100), pointsSize(1), pointsLegend(false),
     meshLineColor("#000000"), meshLineStyle(0xFFFF), meshLineWidth(1), meshOpacity(100),
-    vectorColorMode(VectorColorMode::MAGNITUDE), vectorColor("#000000"), vectorWidth(1), vectorScale(0.5)
+    vectorColorMode(VectorColorMode::MAGNITUDE), vectorColor("#000000"), vectorWidth(1), vectorScale(0.5),
+    useDefaultMapValues(true), useDefaultPointsValues(true)
 {}
 
 double LayerProperties::getMapMininumRange() const {
@@ -151,6 +152,14 @@ void LayerProperties::setMeshOpacity(const int &meshOpacity) {
     this->meshOpacity = meshOpacity;
 }
 
+bool LayerProperties::getUseDefaultMapValues() const {
+    return useDefaultMapValues;
+}
+
+void LayerProperties::setUseDefaultMapValues(bool useDefaultMapValues) {
+    this->useDefaultMapValues = useDefaultMapValues;
+}
+
 double LayerProperties::getDefaultMapMinimum() const {
     return defaultMapMinimum;
 }
@@ -165,6 +174,14 @@ double LayerProperties::getDefaultMapMaximum() const {
 
 void LayerProperties::setDefaultMapMaximum(const double &defaultMapMaximum) {
     this->defaultMapMaximum = defaultMapMaximum;
+}
+
+bool LayerProperties::getUseDefaultPointsValues() const {
+    return useDefaultPointsValues;
+}
+
+void LayerProperties::setUseDefaultPointsValues(bool useDefaultPointsValues) {
+    this->useDefaultPointsValues = useDefaultPointsValues;
 }
 
 double LayerProperties::getDefaultPointsMinimum() const {

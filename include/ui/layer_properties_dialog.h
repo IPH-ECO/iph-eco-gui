@@ -43,8 +43,6 @@ private:
     void setupColorGradientTemplates(QToolButton *&defaultButton, QToolButton *&currentButton, bool isMapTab);
     bool isValid();
 private slots:
-    void on_btnUseMapOriginalValues_clicked();
-    void on_btnUsePointsOriginalValues_clicked();
     void colorGradientButtonClicked(bool checked);
     void on_buttonBox_clicked(QAbstractButton *button);
     void showColorPickerDialog();

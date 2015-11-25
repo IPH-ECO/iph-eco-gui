@@ -2,9 +2,12 @@
 #include "include/application/iph_application.h"
 
 #include <QDir>
-#include <QJsonDocument>
-#include <QJsonObject>
 #include <QJsonArray>
+#include <QJsonObject>
+#include <QJsonDocument>
+#include <vtkCellData.h>
+#include <vtkUnstructuredGrid.h>
+#include <vtkGenericDataObjectReader.h>
 
 Simulation::Simulation() :
     id(0), hydrodynamicConfiguration(nullptr), status(SimulationStatus::IDLE), progress(0), simulationStruct(nullptr), previousStatus(SimulationStatus::UNDEFINED)
@@ -372,8 +375,21 @@ QMap<QString, LayerProperties*> Simulation::getSelectedLayers() const {
     return selectedLayers;
 }
 
-void Simulation::addSelectedLayer(const QString &layer) {
-    selectedLayers.insert(layer, new LayerProperties());
+void Simulation::addSelectedLayer(const QString &layerAndComponent) {
+    std::string firstFileName = this->getOutputFiles().first().absoluteFilePath().toStdString();
+    vtkSmartPointer<vtkGenericDataObjectReader> reader = vtkSmartPointer<vtkGenericDataObjectReader>::New();
+    reader->SetFileName(firstFileName.c_str());
+    reader->Update();
+    
+    vtkSmartPointer<vtkUnstructuredGrid> layerGrid = reader->GetUnstructuredGridOutput();
+    std::string layer = layerAndComponent.split("-").first().toStdString();
+    double *layerRange = layerGrid->GetCellData()->GetArray(layer.c_str())->GetRange();
+    
+    LayerProperties *layerProperties = new LayerProperties();
+    layerProperties->setDefaultMapMinimum(layerRange[0]);
+    layerProperties->setDefaultMapMaximum(layerRange[1]);
+    
+    selectedLayers.insert(layerAndComponent, layerProperties);
 }
 
 Mesh* Simulation::getMesh() const {

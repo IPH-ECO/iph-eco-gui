@@ -82,15 +82,9 @@ void SimulationVTKWidget::render(Simulation *simulation, const QString &layer, c
         
         actor->SetMapper(mapMapper);
     } else {
-        std::string layerArrayName = layer.toStdString();
-        double *layerRange = layerGrid->GetCellData()->GetArray(layerArrayName.c_str())->GetRange();
-        
-        // To be removed
-        layerProperties->setMapMinimumRange(layerRange[0]);
-        layerProperties->setMapMaximumRange(layerRange[1]);
-        
-        vtkSmartPointer<vtkScalarBarWidget> scalarBarWidget = renderScalarBar(actor);
         vtkSmartPointer<vtkDataSetMapper> mapMapper = vtkSmartPointer<vtkDataSetMapper>::New();
+        vtkSmartPointer<vtkScalarBarWidget> scalarBarWidget = renderScalarBar(actor);
+        std::string layerArrayName = layer.toStdString();
         
         mapMapper->SetLookupTable(scalarBarWidget->GetScalarBarActor()->GetLookupTable());
         mapMapper->SetResolveCoincidentTopologyToPolygonOffset();
@@ -130,14 +124,7 @@ vtkSmartPointer<vtkUnstructuredGrid> SimulationVTKWidget::convertToMagnitudeGrid
     magnitudeFunction->SetInputData(layerGrid);
     magnitudeFunction->Update();
     
-    vtkSmartPointer<vtkUnstructuredGrid> magnitudeGrid = magnitudeFunction->GetUnstructuredGridOutput();
-    double *magnitudeRange = magnitudeGrid->GetCellData()->GetArray(MAGNITUDE_ARRAY_NAME)->GetRange();
-    
-    // To be removed
-    layerProperties->setMapMinimumRange(magnitudeRange[0]);
-    layerProperties->setMapMaximumRange(magnitudeRange[1]);
-    
-    return magnitudeGrid;
+    return vtkSmartPointer<vtkUnstructuredGrid>(magnitudeFunction->GetUnstructuredGridOutput());
 }
 
 vtkSmartPointer<vtkScalarBarWidget> SimulationVTKWidget::renderScalarBar(vtkSmartPointer<vtkActor> layerActor) {
@@ -208,9 +195,9 @@ vtkSmartPointer<vtkColorTransferFunction> SimulationVTKWidget::buildColorTransfe
     vtkSmartPointer<vtkColorTransferFunction> colorTransferFunction = vtkSmartPointer<vtkColorTransferFunction>::New();
     QList<QColor> colors = ColorGradientTemplate::getColors(layerProperties->getMapColorGradient());
     bool invertScalarBar = layerProperties->getMapInvertColorGradient();
-    double minimumRange = layerProperties->getMapMininumRange();
-    double maximumRange = layerProperties->getMapMaximumRange();
-    double interval = layerProperties->getMapMaximumRange() - layerProperties->getMapMininumRange();
+    double minimumRange = layerProperties->getUseDefaultMapValues() ? layerProperties->getDefaultMapMinimum() : layerProperties->getMapMininumRange();
+    double maximumRange = layerProperties->getUseDefaultMapValues() ? layerProperties->getDefaultMapMaximum() : layerProperties->getMapMaximumRange();
+    double interval = maximumRange - minimumRange;
     
     if (invertScalarBar) {
         for (int i = colors.size() - 1, j = 0; i > 0; i--, j++) {
