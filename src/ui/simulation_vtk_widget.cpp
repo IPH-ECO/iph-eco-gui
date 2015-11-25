@@ -157,7 +157,7 @@ vtkSmartPointer<vtkScalarBarWidget> SimulationVTKWidget::renderScalarBar(vtkSmar
     
     vtkSmartPointer<vtkColorTransferFunction> mapColorTransferFunction = buildColorTransferFunction();
     scalarBarWidget->GetScalarBarActor()->SetLookupTable(mapColorTransferFunction);
-//    scalarBarWidget->GetScalarBarActor()->SetVisibility(layerProperties->getMapLegend());
+    scalarBarWidget->GetScalarBarActor()->SetVisibility(layerProperties->getMapLegend());
     scalarBarWidget->EnabledOn();
     
     vtkScalarBarRepresentation *scalarBarRepresentation = vtkScalarBarRepresentation::SafeDownCast(scalarBarWidget->GetRepresentation());

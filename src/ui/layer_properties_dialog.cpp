@@ -265,6 +265,7 @@ void LayerPropertiesDialog::on_buttonBox_clicked(QAbstractButton *button) {
     
     // Vector tab
     if (tabs & LayerPropertiesTab::VECTORS) {
+        layerProperties->setMapLegend(ui->chkLayerLegend->isChecked());
         layerProperties->setVectorColorMode(ui->chkMagnitude->isChecked() ? VectorColorMode::MAGNITUDE : VectorColorMode::CONSTANT);
         layerProperties->setVectorColor(this->currentVectorColor.name());
         layerProperties->setVectorScale(ui->edtVectorScale->text().toDouble());
