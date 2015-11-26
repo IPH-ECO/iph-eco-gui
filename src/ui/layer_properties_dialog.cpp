@@ -322,30 +322,49 @@ void LayerPropertiesDialog::on_buttonBox_clicked(QAbstractButton *button) {
 bool LayerPropertiesDialog::isValid() {
     if (tabs & LayerPropertiesTab::MAP) {
         if (ui->edtMapMinimum->text().isEmpty()) {
-            QMessageBox::warning(this, tr("Grid Layer"), tr("Minimum range can't be empty on Map tab"));
+            QMessageBox::warning(this, tr("Layer Properties"), tr("Minimum range can't be empty on Map tab."));
             return false;
         }
         if (ui->edtMapMaximum->text().isEmpty()) {
-            QMessageBox::warning(this, tr("Grid Layer"), tr("Maximum range can't be empty on Map tab"));
+            QMessageBox::warning(this, tr("Layer Properties"), tr("Maximum range can't be empty on Map tab."));
             return false;
         }
         if (ui->edtMapMinimum->text().toDouble() > ui->edtMapMaximum->text().toDouble()) {
-            QMessageBox::warning(this, tr("Grid Layer"), tr("Invalid range on Map tab."));
+            QMessageBox::warning(this, tr("Layer Properties"), tr("Invalid range on Map tab."));
             return false;
         }
     }
     
     if (tabs & LayerPropertiesTab::POINTS) {
         if (ui->edtPointsMinimum->text().isEmpty()) {
-            QMessageBox::warning(this, tr("Grid Layer"), tr("Minimum range can't be empty on Points tab"));
+            QMessageBox::warning(this, tr("Layer Properties"), tr("Minimum range can't be empty on Points tab."));
             return false;
         }
         if (ui->edtPointsMaximum->text().isEmpty()) {
-            QMessageBox::warning(this, tr("Grid Layer"), tr("Maximum range can't be empty on Points tab"));
+            QMessageBox::warning(this, tr("Layer Properties"), tr("Maximum range can't be empty on Points tab."));
             return false;
         }
         if (ui->edtPointsMinimum->text().toDouble() > ui->edtPointsMaximum->text().toDouble()) {
-            QMessageBox::warning(this, tr("Grid Layer"), tr("Invalid range on Points tab."));
+            QMessageBox::warning(this, tr("Layer Properties"), tr("Invalid range on Points tab."));
+            return false;
+        }
+    }
+    
+    if (tabs & LayerPropertiesTab::VECTORS) {
+        if (ui->edtPointsMinimum->text().isEmpty()) {
+            QMessageBox::warning(this, tr("Layer Properties"), tr("Minimum range can't be empty on Vectors tab."));
+            return false;
+        }
+        if (ui->edtPointsMaximum->text().isEmpty()) {
+            QMessageBox::warning(this, tr("Layer Properties"), tr("Maximum range can't be empty on Vectors tab."));
+            return false;
+        }
+        if (ui->edtPointsMinimum->text().toDouble() > ui->edtPointsMaximum->text().toDouble()) {
+            QMessageBox::warning(this, tr("Layer Properties"), tr("Invalid range on Points tab."));
+            return false;
+        }
+        if (ui->edtVectorsScale->text().toDouble() <= 0) {
+            QMessageBox::warning(this, tr("Layer Properties"), tr("Vectors scale must be greater than 0."));
             return false;
         }
     }
