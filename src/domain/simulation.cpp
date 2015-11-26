@@ -388,7 +388,7 @@ void Simulation::addSelectedLayer(const QString &layerKey) {
     std::string component = layerAndComponent.last().toStdString();
     LayerProperties *layerProperties = new LayerProperties();
     bool setVectorRange = component == "Vector";
-    double *layerRange;
+    double layerRange[2];
     
     if (component == "Vector" || component == "Magnitude") {
         vtkSmartPointer<vtkArrayCalculator> magnitudeFunction = vtkSmartPointer<vtkArrayCalculator>::New();
@@ -402,9 +402,9 @@ void Simulation::addSelectedLayer(const QString &layerKey) {
         magnitudeFunction->SetInputData(layerGrid);
         magnitudeFunction->Update();
         
-        layerRange = magnitudeFunction->GetUnstructuredGridOutput()->GetCellData()->GetArray("magnitudeArray")->GetRange();
+        magnitudeFunction->GetUnstructuredGridOutput()->GetCellData()->GetArray("magnitudeArray")->GetRange(layerRange);
     } else {
-        layerRange = layerGrid->GetCellData()->GetArray(layer.c_str())->GetRange();
+        layerGrid->GetCellData()->GetArray(layer.c_str())->GetRange(layerRange);
     }
     
     if (setVectorRange) {
