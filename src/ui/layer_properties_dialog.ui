@@ -434,9 +434,9 @@
          <property name="title">
           <string>Bounds</string>
          </property>
-         <layout class="QVBoxLayout" name="verticalLayout_9">
+         <layout class="QVBoxLayout" name="verticalLayout_13">
           <item>
-           <layout class="QGridLayout" name="gridLayout_3">
+           <layout class="QGridLayout" name="gridLayout_5">
             <item row="0" column="0">
              <widget class="QLabel" name="label_24">
               <property name="text">
@@ -460,7 +460,7 @@
            </layout>
           </item>
           <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_5">
+           <layout class="QHBoxLayout" name="horizontalLayout_10">
             <item>
              <widget class="QCheckBox" name="chkUseVectorsDefaultValues">
               <property name="text">
@@ -517,7 +517,7 @@
          <property name="title">
           <string>Color Template</string>
          </property>
-         <layout class="QVBoxLayout" name="verticalLayout_8">
+         <layout class="QVBoxLayout" name="verticalLayout_14">
           <item>
            <layout class="QHBoxLayout" name="horizontalLayout_9">
             <item>
