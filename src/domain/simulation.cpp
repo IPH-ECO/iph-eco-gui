@@ -6,6 +6,7 @@
 #include <QJsonObject>
 #include <QJsonDocument>
 #include <vtkCellData.h>
+#include <vtkArrayCalculator.h>
 #include <vtkUnstructuredGrid.h>
 #include <vtkGenericDataObjectReader.h>
 
@@ -375,21 +376,46 @@ QMap<QString, LayerProperties*> Simulation::getSelectedLayers() const {
     return selectedLayers;
 }
 
-void Simulation::addSelectedLayer(const QString &layerAndComponent) {
+void Simulation::addSelectedLayer(const QString &layerKey) {
     std::string firstFileName = this->getOutputFiles().first().absoluteFilePath().toStdString();
     vtkSmartPointer<vtkGenericDataObjectReader> reader = vtkSmartPointer<vtkGenericDataObjectReader>::New();
     reader->SetFileName(firstFileName.c_str());
     reader->Update();
     
     vtkSmartPointer<vtkUnstructuredGrid> layerGrid = reader->GetUnstructuredGridOutput();
-    std::string layer = layerAndComponent.split("-").first().toStdString();
-    double *layerRange = layerGrid->GetCellData()->GetArray(layer.c_str())->GetRange();
-    
+    QStringList layerAndComponent = layerKey.split("-");
+    std::string layer = layerAndComponent.first().toStdString();
+    std::string component = layerAndComponent.last().toStdString();
     LayerProperties *layerProperties = new LayerProperties();
-    layerProperties->setDefaultMapMinimum(layerRange[0]);
-    layerProperties->setDefaultMapMaximum(layerRange[1]);
+    bool setVectorRange = component == "Vector";
+    double *layerRange;
     
-    selectedLayers.insert(layerAndComponent, layerProperties);
+    if (component == "Vector" || component == "Magnitude") {
+        vtkSmartPointer<vtkArrayCalculator> magnitudeFunction = vtkSmartPointer<vtkArrayCalculator>::New();
+        
+        magnitudeFunction->AddScalarVariable("x", layer.c_str(), 0);
+        magnitudeFunction->AddScalarVariable("y", layer.c_str(), 1);
+        magnitudeFunction->AddScalarVariable("z", layer.c_str(), 2);
+        magnitudeFunction->SetResultArrayName("magnitudeArray");
+        magnitudeFunction->SetFunction("sqrt(x^2 + y^2 + z^2)");
+        magnitudeFunction->SetAttributeModeToUseCellData();
+        magnitudeFunction->SetInputData(layerGrid);
+        magnitudeFunction->Update();
+        
+        layerRange = magnitudeFunction->GetUnstructuredGridOutput()->GetCellData()->GetArray("magnitudeArray")->GetRange();
+    } else {
+        layerRange = layerGrid->GetCellData()->GetArray(layer.c_str())->GetRange();
+    }
+    
+    if (setVectorRange) {
+        layerProperties->setDefaultVectorsMinimum(layerRange[0]);
+        layerProperties->setDefaultVectorsMaximum(layerRange[1]);
+    } else {
+        layerProperties->setDefaultMapMinimum(layerRange[0]);
+        layerProperties->setDefaultMapMaximum(layerRange[1]);
+    }
+    
+    selectedLayers.insert(layerKey, layerProperties);
 }
 
 Mesh* Simulation::getMesh() const {

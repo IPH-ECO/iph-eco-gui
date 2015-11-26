@@ -1,11 +1,37 @@
 #include "include/domain/layer_properties.h"
 
-LayerProperties::LayerProperties() : 
-    mapColorGradient(ColorGradientTemplate::defaultTemplateName), mapInvertColorGradient(false), mapOpacity(100), mapLegend(true), mapLighting(false),
-    pointsColorGradient(ColorGradientTemplate::defaultTemplateName), pointsInvertColorGradient(false), pointsOpacity(100), pointsSize(1), pointsLegend(false),
-    meshLineColor("#000000"), meshLineStyle(0xFFFF), meshLineWidth(1), meshOpacity(100),
-    vectorColorMode(VectorColorMode::MAGNITUDE), vectorColor("#000000"), vectorWidth(1), vectorScale(0.5),
-    useDefaultMapValues(true), useDefaultPointsValues(true)
+LayerProperties::LayerProperties() :
+    mapMinimumRange(0),
+    mapMaximumRange(0),
+    mapColorGradient(ColorGradientTemplate::defaultTemplateName),
+    mapInvertColorGradient(false),
+    mapOpacity(100),
+    mapLegend(true),
+    mapLighting(false),
+    pointsMinimumRange(0),
+    pointsMaximumRange(0),
+    pointsColorGradient(ColorGradientTemplate::defaultTemplateName),
+    pointsInvertColorGradient(false),
+    pointsOpacity(100),
+    pointsSize(1),
+    pointsLegend(false),
+    vectorsMinimumRange(0),
+    vectorsMaximumRange(0),
+    useDefaultVectorsValues(true),
+    vectorColorMode(VectorColorMode::MAGNITUDE),
+    vectorsColorGradient(ColorGradientTemplate::defaultTemplateName),
+    vectorsColor("#000000"),
+    vectorsInvertColorGradient(true),
+    vectorsOpacity(100),
+    vectorsScale(0.5),
+    vectorsWidth(1),
+    vectorsLegend(true),
+    meshLineColor("#000000"),
+    meshLineStyle(0xFFFF),
+    meshLineWidth(1),
+    meshOpacity(100),
+    useDefaultMapValues(true),
+    useDefaultPointsValues(true)
 {}
 
 double LayerProperties::getMapMininumRange() const {
@@ -120,6 +146,94 @@ void LayerProperties::setPointsLegend(const bool &pointsLegend) {
     this->pointsLegend = pointsLegend;
 }
 
+double LayerProperties::getVectorsMinimumRange() const {
+    return vectorsMinimumRange;
+}
+
+void LayerProperties::setVectorsMinimumRange(const double &vectorsMinimumRange) {
+    this->vectorsMinimumRange = vectorsMinimumRange;
+}
+
+double LayerProperties::getVectorsMaximumRange() const {
+    return vectorsMaximumRange;
+}
+
+void LayerProperties::setVectorsMaximumRange(const double &vectorsMaximumRange) {
+    this->vectorsMaximumRange = vectorsMaximumRange;
+}
+
+bool LayerProperties::getUseDefaultVectorsValues() const {
+    return useDefaultVectorsValues;
+}
+
+void LayerProperties::setUseDefaultVectorsValues(const bool &useDefaultVectorsValues) {
+    this->useDefaultVectorsValues = useDefaultVectorsValues;
+}
+
+VectorColorMode LayerProperties::getVectorColorMode() const {
+    return vectorColorMode;
+}
+
+void LayerProperties::setVectorColorMode(const VectorColorMode &vectorColorMode) {
+    this->vectorColorMode = vectorColorMode;
+}
+
+QString LayerProperties::getVectorsColorGradient() const {
+    return vectorsColorGradient;
+}
+
+void LayerProperties::setVectorsColorGradient(const QString &vectorsColorGradient) {
+    this->vectorsColorGradient = vectorsColorGradient;
+}
+
+QString LayerProperties::getVectorsColor() const {
+    return vectorsColor;
+}
+
+void LayerProperties::setVectorsColor(const QString &vectorsColor) {
+    this->vectorsColor = vectorsColor;
+}
+
+bool LayerProperties::getVectorsInvertColorGradient() const {
+    return vectorsInvertColorGradient;
+}
+
+void LayerProperties::setVectorsInvertColorGradient(const bool &vectorsInvertColorGradient) {
+    this->vectorsInvertColorGradient = vectorsInvertColorGradient;
+}
+
+int LayerProperties::getVectorsOpacity() const {
+    return vectorsOpacity;
+}
+
+void LayerProperties::setVectorsOpacity(const int &vectorsOpacity) {
+    this->vectorsOpacity = vectorsOpacity;
+}
+
+double LayerProperties::getVectorsScale() const {
+    return vectorsScale;
+}
+
+void LayerProperties::setVectorsScale(const double &vectorsScale) {
+    this->vectorsScale = vectorsScale;
+}
+
+int LayerProperties::getVectorsWidth() const {
+    return vectorsWidth;
+}
+
+void LayerProperties::setVectorsWidth(const int &vectorsWidth) {
+    this->vectorsWidth = vectorsWidth;
+}
+
+bool LayerProperties::getVectorsLegend() const {
+    return vectorsLegend;
+}
+
+void LayerProperties::setVectorsLegend(const bool &vectorsLegend) {
+    this->vectorsLegend = vectorsLegend;
+}
+
 QString LayerProperties::getMeshLineColor() const {
     return meshLineColor;
 }
@@ -200,34 +314,18 @@ void LayerProperties::setDefaultPointsMaximum(const double &defaultPointsMaximum
     this->defaultPointsMaximum = defaultPointsMaximum;
 }
 
-VectorColorMode LayerProperties::getVectorColorMode() const {
-    return vectorColorMode;
+double LayerProperties::getDefaultVectorsMinimum() const {
+    return defaultVectorsMinimum;
 }
 
-void LayerProperties::setVectorColorMode(const VectorColorMode &vectorColorMode) {
-    this->vectorColorMode = vectorColorMode;
+void LayerProperties::setDefaultVectorsMinimum(const double &defaultVectorsMinimum) {
+    this->defaultVectorsMinimum = defaultVectorsMinimum;
 }
 
-QString LayerProperties::getVectorColor() const {
-    return vectorColor;
+double LayerProperties::getDefaultVectorsMaximum() const {
+    return defaultVectorsMaximum;
 }
 
-void LayerProperties::setVectorColor(const QString &vectorColor) {
-    this->vectorColor = vectorColor;
-}
-
-int LayerProperties::getVectorWidth() const {
-    return vectorWidth;
-}
-
-void LayerProperties::setVectorWidth(int vectorWidth) {
-    this->vectorWidth = vectorWidth;
-}
-
-double LayerProperties::getVectorScale() const {
-    return vectorScale;
-}
-
-void LayerProperties::setVectorScale(double vectorScale) {
-    this->vectorScale = vectorScale;
+void LayerProperties::setDefaultVectorsMaximum(const double &defaultVectorsMaximum) {
+    this->defaultVectorsMaximum = defaultVectorsMaximum;
 }

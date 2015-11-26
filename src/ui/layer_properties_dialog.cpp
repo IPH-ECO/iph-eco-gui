@@ -30,24 +30,22 @@ LayerPropertiesDialog::LayerPropertiesDialog(QWidget *parent, LayerProperties *l
         removeTab(LayerPropertiesTab::POINTS);
     }
     
-    if (tabs & LayerPropertiesTab::MESH) {
-        setupMeshTab();
-    } else {
-        removeTab(LayerPropertiesTab::MESH);
-    }
-    
     if (tabs & LayerPropertiesTab::VECTORS) {
         setupVectorsTab();
     } else {
         removeTab(LayerPropertiesTab::VECTORS);
     }
+    
+    if (tabs & LayerPropertiesTab::MESH) {
+        setupMeshTab();
+    } else {
+        removeTab(LayerPropertiesTab::MESH);
+    }
 
-    this->setFixedSize(this->sizeHint());
+    this->setFixedSize(this->minimumSize());
     
     QObject::connect(ui->btnLineColor, SIGNAL(clicked()), this, SLOT(showColorPickerDialog()));
     QObject::connect(ui->btnVectorColor, SIGNAL(clicked()), this, SLOT(showColorPickerDialog()));
-    QObject::connect(ui->chkUseMapDefaultValues, SIGNAL(clicked(bool)), layerProperties, SLOT(setUseDefaultMapValues(bool)));
-    QObject::connect(ui->chkUsePointsDefaultValues, SIGNAL(clicked(bool)), layerProperties, SLOT(setUseDefaultPointsValues(bool)));
 }
 
 LayerPropertiesDialog::~LayerPropertiesDialog() {
@@ -55,13 +53,15 @@ LayerPropertiesDialog::~LayerPropertiesDialog() {
 }
 
 void LayerPropertiesDialog::setupMapTab() {
+    QGridLayout *paletteLayout = static_cast<QGridLayout*>(ui->mapColorTemplateLayout->layout());
+    
     ui->chkUseMapDefaultValues->setChecked(layerProperties->getUseDefaultMapValues());
     ui->edtMapMinimum->setText(QString::number(layerProperties->getMapMininumRange()));
     ui->edtMapMaximum->setText(QString::number(layerProperties->getMapMaximumRange()));
     ui->edtMapMinimum->setDisabled(ui->chkUseMapDefaultValues->isChecked());
     ui->edtMapMaximum->setDisabled(ui->chkUseMapDefaultValues->isChecked());
     ui->lblMapOriginalValues->setText(QString("[%1, %2]").arg(layerProperties->getDefaultMapMinimum()).arg(layerProperties->getDefaultMapMaximum()));
-    this->setupColorGradientTemplates(defaultMapColorGradientButton, currentMapColorGradientButton, true);
+    this->setupColorGradientTemplates(defaultMapColorGradientButton, currentMapColorGradientButton, paletteLayout);
     ui->chkMapInvertColorTemplate->setChecked(layerProperties->getMapInvertColorGradient());
     ui->sldMapOpacity->setValue(layerProperties->getMapOpacity());
     ui->chkMapLegend->setChecked(layerProperties->getMapLegend());
@@ -69,17 +69,43 @@ void LayerPropertiesDialog::setupMapTab() {
 }
 
 void LayerPropertiesDialog::setupPointsTab() {
+    QGridLayout *paletteLayout = static_cast<QGridLayout*>(ui->pointsColorTemplateLayout->layout());
+    
     ui->chkUsePointsDefaultValues->setChecked(layerProperties->getUseDefaultPointsValues());
     ui->edtPointsMinimum->setText(QString::number(layerProperties->getPointsMininumRange()));
     ui->edtPointsMaximum->setText(QString::number(layerProperties->getPointsMaximumRange()));
     ui->edtPointsMinimum->setDisabled(ui->chkUsePointsDefaultValues->isChecked());
     ui->edtPointsMaximum->setDisabled(ui->chkUsePointsDefaultValues->isChecked());
     ui->lblPointsOriginalValues->setText(QString("[%1, %2]").arg(layerProperties->getDefaultPointsMinimum()).arg(layerProperties->getDefaultPointsMaximum()));
-    this->setupColorGradientTemplates(defaultPointsColorGradientButton, currentPointsColorGradientButton, false);
+    this->setupColorGradientTemplates(defaultPointsColorGradientButton, currentPointsColorGradientButton, paletteLayout);
     ui->chkPointsInvertColorTemplate->setChecked(layerProperties->getPointsInvertColorGradient());
     ui->sldPointsOpacity->setValue(layerProperties->getPointsOpacity());
     ui->spbPointsSize->setValue(layerProperties->getPointsSize());
     ui->chkPointsLegend->setChecked(layerProperties->getPointsLegend());
+}
+
+void LayerPropertiesDialog::setupVectorsTab() {
+    QGridLayout *paletteLayout = static_cast<QGridLayout*>(ui->vectorsColorTemplateLayout->layout());
+    
+    ui->chkUseVectorsDefaultValues->setChecked(layerProperties->getUseDefaultVectorsValues());
+    ui->edtVectorsMinimum->setText(QString::number(layerProperties->getVectorsMinimumRange()));
+    ui->edtVectorsMaximum->setText(QString::number(layerProperties->getVectorsMaximumRange()));
+    ui->edtVectorsMinimum->setDisabled(ui->chkUseVectorsDefaultValues->isChecked());
+    ui->edtVectorsMaximum->setDisabled(ui->chkUseVectorsDefaultValues->isChecked());
+    ui->lblVectorsOriginalValues->setText(QString("[%1, %2]").arg(layerProperties->getDefaultVectorsMinimum()).arg(layerProperties->getDefaultVectorsMaximum()));
+    this->setupColorGradientTemplates(defaultVectorsColorGradientButton, currentVectorsColorGradientButton, paletteLayout);
+    ui->chkVectorsInvertColorTemplate->setChecked(layerProperties->getVectorsInvertColorGradient());
+    ui->sldVectorsOpacity->setValue(layerProperties->getVectorsOpacity());
+    ui->chkVectorsLegend->setChecked(layerProperties->getVectorsLegend());    
+    
+    QPixmap px(16, 16);
+    
+    currentVectorColor = QColor(layerProperties->getVectorsColor());
+    px.fill(currentVectorColor);
+    ui->btnVectorColor->setIcon(px);
+    
+    ui->edtVectorsScale->setText(QString::number(layerProperties->getVectorsScale()));
+    ui->sbxVectorsWidth->setValue(layerProperties->getVectorsWidth());
 }
 
 void LayerPropertiesDialog::setupMeshTab() {
@@ -111,17 +137,6 @@ void LayerPropertiesDialog::setupMeshTab() {
     ui->sldMeshOpacity->setValue(layerProperties->getMeshOpacity());
 }
 
-void LayerPropertiesDialog::setupVectorsTab() {
-    QPixmap px(16, 16);
-    
-    currentVectorColor = QColor(layerProperties->getVectorColor());
-    px.fill(currentVectorColor);
-    ui->btnVectorColor->setIcon(px);
-    
-    ui->edtVectorScale->setText(QString::number(layerProperties->getVectorScale()));
-    ui->sbxVectorWidth->setValue(layerProperties->getVectorWidth());
-}
-
 void LayerPropertiesDialog::removeTab(const LayerPropertiesTab &tab) {
     QString tabName;
     
@@ -141,8 +156,7 @@ void LayerPropertiesDialog::removeTab(const LayerPropertiesTab &tab) {
     ui->tabWidget->removeTab(pageIndex);
 }
 
-void LayerPropertiesDialog::setupColorGradientTemplates(QToolButton *&defaultButton, QToolButton *&currentButton, bool isMapTab) {
-    QGridLayout *layout = static_cast<QGridLayout*>(isMapTab ? ui->mapColorTemplateLayout->layout() : ui->pointsColorTemplateLayout->layout());
+void LayerPropertiesDialog::setupColorGradientTemplates(QToolButton *&defaultButton, QToolButton *&currentButton, QGridLayout *paletteLayout) {
     int buttonWidth = 60, buttonHeight = 16;
     int row = 0, column = 0;
     
@@ -165,7 +179,7 @@ void LayerPropertiesDialog::setupColorGradientTemplates(QToolButton *&defaultBut
         painter.fillRect(rectangle, gradient);
         
         QString templateName = ColorGradientTemplate::getTemplateName(i);
-        QToolButton *colorGradientButton = new QToolButton(layout->widget());
+        QToolButton *colorGradientButton = new QToolButton(paletteLayout->widget());
         colorGradientButton->setIcon(icon);
         colorGradientButton->setCheckable(true);
         colorGradientButton->setIconSize(QSize(buttonWidth, buttonHeight));
@@ -175,18 +189,14 @@ void LayerPropertiesDialog::setupColorGradientTemplates(QToolButton *&defaultBut
             defaultButton = colorGradientButton;
         }
         
-        if (isMapTab && layerProperties->getMapColorGradient() == templateName) {
-            currentButton = colorGradientButton;
-            currentButton->setChecked(true);
-        }
-        if (!isMapTab && layerProperties->getPointsColorGradient() == templateName) {
+        if (layerProperties->getMapColorGradient() == templateName) {
             currentButton = colorGradientButton;
             currentButton->setChecked(true);
         }
         
         QObject::connect(colorGradientButton, SIGNAL(clicked(bool)), this, SLOT(colorGradientButtonClicked(bool)));
         
-        layout->addWidget(colorGradientButton, row, column++);
+        paletteLayout->addWidget(colorGradientButton, row, column++);
     }
 }
 
@@ -206,16 +216,40 @@ void LayerPropertiesDialog::showColorPickerDialog() {
 }
 
 void LayerPropertiesDialog::colorGradientButtonClicked(bool checked) {
-    bool isMapTab = ui->tabWidget->tabText(ui->tabWidget->tabBar()->currentIndex()) == "Map";
-    QToolButton *&currentButton = isMapTab ? currentMapColorGradientButton : currentPointsColorGradientButton;
-    QToolButton *defaultButton = isMapTab ? defaultMapColorGradientButton : defaultPointsColorGradientButton;
+    QToolButton **currentButton = nullptr;
+    QToolButton *defaultButton = nullptr;
+    
+    if (currentTab == LayerPropertiesTab::MAP) {
+        currentButton = &currentMapColorGradientButton;
+        defaultButton = defaultMapColorGradientButton;
+    } else if (currentTab == LayerPropertiesTab::POINTS) {
+        currentButton = &currentPointsColorGradientButton;
+        defaultButton = defaultPointsColorGradientButton;
+    } else if (currentTab == LayerPropertiesTab::VECTORS) {
+        currentButton = &currentVectorsColorGradientButton;
+        defaultButton = defaultVectorsColorGradientButton;
+    }
     
     if (checked) {
-        currentButton->setChecked(false);
-        currentButton = static_cast<QToolButton*>(QObject::sender());
+        (*currentButton)->setChecked(false);
+        *currentButton = static_cast<QToolButton*>(QObject::sender());
     } else {
-        currentButton = defaultButton;
-        currentButton->setChecked(true);
+        *currentButton = defaultButton;
+        (*currentButton)->setChecked(true);
+    }
+}
+
+void LayerPropertiesDialog::on_tabWidget_currentChanged(int index) {
+    QString tabText = ui->tabWidget->tabText(index);
+    
+    if (tabText == "Map") {
+        currentTab = LayerPropertiesTab::MAP;
+    } else if (tabText == "Points") {
+        currentTab = LayerPropertiesTab::POINTS;
+    } else if (tabText == "Vectors") {
+        currentTab = LayerPropertiesTab::VECTORS;
+    } else {
+        currentTab = LayerPropertiesTab::MESH;
     }
 }
 
@@ -255,21 +289,27 @@ void LayerPropertiesDialog::on_buttonBox_clicked(QAbstractButton *button) {
         layerProperties->setPointsLegend(ui->chkPointsLegend->isChecked());
     }
     
+    // Vector tab
+    if (tabs & LayerPropertiesTab::VECTORS) {
+        layerProperties->setVectorsMinimumRange(ui->edtVectorsMinimum->text().toDouble());
+        layerProperties->setVectorsMaximumRange(ui->edtVectorsMaximum->text().toDouble());
+        layerProperties->setUseDefaultVectorsValues(ui->chkUseVectorsDefaultValues->isChecked());
+        layerProperties->setVectorColorMode(ui->chkMagnitude->isChecked() ? VectorColorMode::MAGNITUDE : VectorColorMode::CONSTANT);
+        layerProperties->setVectorsColor(this->currentVectorColor.name());
+        layerProperties->setVectorsColorGradient(this->currentVectorsColorGradientButton->toolTip());
+        layerProperties->setVectorsInvertColorGradient(ui->chkVectorsInvertColorTemplate->isChecked());
+        layerProperties->setVectorsOpacity(ui->sldVectorsOpacity->value());
+        layerProperties->setVectorsScale(ui->edtVectorsScale->text().toDouble());
+        layerProperties->setVectorsWidth(ui->sbxVectorsWidth->value());
+        layerProperties->setVectorsLegend(ui->chkVectorsLegend->isChecked());
+    }
+    
     // Mesh tab
     if (tabs & LayerPropertiesTab::MESH) {
         layerProperties->setMeshLineColor(this->currentLineColor.name());
         layerProperties->setMeshLineStyle(ui->cbxLineStyle->currentIndex() == 0 ? 0xFFFF : 0xF0F0);
         layerProperties->setMeshLineWidth(ui->sbxLineWidth->value());
         layerProperties->setMeshOpacity(ui->sldMeshOpacity->value());
-    }
-    
-    // Vector tab
-    if (tabs & LayerPropertiesTab::VECTORS) {
-        layerProperties->setMapLegend(ui->chkLayerLegend->isChecked());
-        layerProperties->setVectorColorMode(ui->chkMagnitude->isChecked() ? VectorColorMode::MAGNITUDE : VectorColorMode::CONSTANT);
-        layerProperties->setVectorColor(this->currentVectorColor.name());
-        layerProperties->setVectorScale(ui->edtVectorScale->text().toDouble());
-        layerProperties->setVectorWidth(ui->sbxVectorWidth->value());
     }
     
     emit applyChanges();

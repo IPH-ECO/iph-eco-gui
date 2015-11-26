@@ -4,10 +4,9 @@
 #include "color_gradient.h"
 #include <QString>
 
-enum class VectorColorMode { MAGNITUDE, CONSTANT };
+enum class VectorColorMode { MAGNITUDE = 1, CONSTANT };
 
-class LayerProperties : public QObject {
-    Q_OBJECT
+class LayerProperties {
 private:
     double mapMinimumRange;
     double mapMaximumRange;
@@ -25,15 +24,22 @@ private:
     int pointsSize;
     bool pointsLegend;
     
+    double vectorsMinimumRange;
+    double vectorsMaximumRange;
+    bool useDefaultVectorsValues;
+    VectorColorMode vectorColorMode;
+    QString vectorsColorGradient;
+    QString vectorsColor;
+    bool vectorsInvertColorGradient;
+    int vectorsOpacity;
+    double vectorsScale;
+    int vectorsWidth;
+    bool vectorsLegend;
+    
     QString meshLineColor;
     int meshLineStyle;
     int meshLineWidth;
     int meshOpacity;
-    
-    VectorColorMode vectorColorMode;
-    QString vectorColor;
-    int vectorWidth;
-    double vectorScale;
 
     // Transient attributes
     bool useDefaultMapValues;
@@ -42,6 +48,8 @@ private:
     bool useDefaultPointsValues;
     double defaultPointsMinimum;
     double defaultPointsMaximum;
+    double defaultVectorsMinimum;
+    double defaultVectorsMaximum;
 public:
 	LayerProperties();
 
@@ -75,6 +83,29 @@ public:
     bool getPointsLegend() const;
     void setPointsLegend(const bool &pointsLegend);
     
+    double getVectorsMinimumRange() const;
+    void setVectorsMinimumRange(const double &vectorsMinimumRange);
+    double getVectorsMaximumRange() const;
+    void setVectorsMaximumRange(const double &vectorsMaximumRange);
+    bool getUseDefaultVectorsValues() const;
+    void setUseDefaultVectorsValues(const bool &useDefaultVectorsValues);
+    VectorColorMode getVectorColorMode() const;
+    void setVectorColorMode(const VectorColorMode &vectorColorMode);
+    QString getVectorsColorGradient() const;
+    void setVectorsColorGradient(const QString &vectorsColorGradient);
+    QString getVectorsColor() const;
+    void setVectorsColor(const QString &vectorsColor);
+    bool getVectorsInvertColorGradient() const;
+    void setVectorsInvertColorGradient(const bool &vectorsInvertColorGradient);
+    int getVectorsOpacity() const;
+    void setVectorsOpacity(const int &vectorsOpacity);
+    double getVectorsScale() const;
+    void setVectorsScale(const double &vectorsScale);
+    int getVectorsWidth() const;
+    void setVectorsWidth(const int &vectorsWidth);
+    bool getVectorsLegend() const;
+    void setVectorsLegend(const bool &vectorsLegend);
+    
     QString getMeshLineColor() const;
     void setMeshLineColor(const QString &meshLineColor);
     int getMeshLineStyle() const;
@@ -85,27 +116,21 @@ public:
     void setMeshOpacity(const int &meshOpacity);
 
     bool getUseDefaultMapValues() const;
+    void setUseDefaultMapValues(bool useDefaultMapValues);
     double getDefaultMapMinimum() const;
     void setDefaultMapMinimum(const double &defaultMapMinimum);
     double getDefaultMapMaximum() const;
     void setDefaultMapMaximum(const double &defaultMapMaximum);
     bool getUseDefaultPointsValues() const;
+    void setUseDefaultPointsValues(bool useDefaultPointsValues);
     double getDefaultPointsMinimum() const;
     void setDefaultPointsMinimum(const double &defaultPointsMinimum);
     double getDefaultPointsMaximum() const;
     void setDefaultPointsMaximum(const double &defaultPointsMaximum);
-    
-    VectorColorMode getVectorColorMode() const;
-    void setVectorColorMode(const VectorColorMode &vectorColorMode);
-    QString getVectorColor() const;
-    void setVectorColor(const QString &vectorColor);
-    int getVectorWidth() const;
-    void setVectorWidth(int vectorWidth);
-    double getVectorScale() const;
-    void setVectorScale(double vectorScale);
-public slots:
-    void setUseDefaultMapValues(bool useDefaultMapValues);
-    void setUseDefaultPointsValues(bool useDefaultPointsValues);
+    double getDefaultVectorsMinimum() const;
+    void setDefaultVectorsMinimum(const double &defaultVectorsMinimum);
+    double getDefaultVectorsMaximum() const;
+    void setDefaultVectorsMaximum(const double &defaultVectorsMaximum);
 };
 
 #endif // LAYER_PROPERTIES_H

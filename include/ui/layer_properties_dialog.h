@@ -5,6 +5,7 @@
 
 #include <QColor>
 #include <QDialog>
+#include <QGridLayout>
 #include <QToolButton>
 #include <QAbstractButton>
 
@@ -28,22 +29,26 @@ private:
     Ui::LayerPropertiesDialog *ui;
     LayerProperties *layerProperties;
     LayerPropertiesTab tabs;
+    LayerPropertiesTab currentTab;
     QColor currentLineColor;
     QColor currentVectorColor;
     QToolButton *currentMapColorGradientButton;
     QToolButton *defaultMapColorGradientButton;
     QToolButton *currentPointsColorGradientButton;
     QToolButton *defaultPointsColorGradientButton;
+    QToolButton *currentVectorsColorGradientButton;
+    QToolButton *defaultVectorsColorGradientButton;
     
     void setupMapTab();
     void setupPointsTab();
     void setupMeshTab();
     void setupVectorsTab();
     void removeTab(const LayerPropertiesTab &tab);
-    void setupColorGradientTemplates(QToolButton *&defaultButton, QToolButton *&currentButton, bool isMapTab);
+    void setupColorGradientTemplates(QToolButton *&defaultButton, QToolButton *&currentButton, QGridLayout *paletteLayout);
     bool isValid();
 private slots:
     void colorGradientButtonClicked(bool checked);
+    void on_tabWidget_currentChanged(int index);
     void on_buttonBox_clicked(QAbstractButton *button);
     void showColorPickerDialog();
 signals:

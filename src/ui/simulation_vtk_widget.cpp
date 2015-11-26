@@ -57,9 +57,10 @@ void SimulationVTKWidget::render(Simulation *simulation, const QString &layer, c
         actor = vtkSmartPointer<vtkActor>::New();
     }
     
+    vtkSmartPointer<vtkScalarBarWidget> scalarBarWidget = renderScalarBar(actor);
+    
     if (component == "Magnitude") {
         vtkSmartPointer<vtkUnstructuredGrid> magnitudeGrid = convertToMagnitudeGrid(layerGrid);
-        vtkSmartPointer<vtkScalarBarWidget> scalarBarWidget = renderScalarBar(actor);
         vtkSmartPointer<vtkDataSetMapper> mapMapper = vtkSmartPointer<vtkDataSetMapper>::New();
         
         mapMapper->SetLookupTable(scalarBarWidget->GetScalarBarActor()->GetLookupTable());
@@ -72,8 +73,8 @@ void SimulationVTKWidget::render(Simulation *simulation, const QString &layer, c
         actor->SetMapper(mapMapper);
     } else if (component == "Vector") {
         vtkSmartPointer<vtkPolyData> vectorsPolyData = renderVectors(layerGrid);
-        vtkSmartPointer<vtkScalarBarWidget> scalarBarWidget = renderScalarBar(actor);
         vtkSmartPointer<vtkPolyDataMapper> mapMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+        
         mapMapper->SetScalarModeToUsePointData();
         mapMapper->SetInputData(vectorsPolyData);
         mapMapper->UseLookupTableScalarRangeOn();
@@ -83,7 +84,6 @@ void SimulationVTKWidget::render(Simulation *simulation, const QString &layer, c
         actor->SetMapper(mapMapper);
     } else {
         vtkSmartPointer<vtkDataSetMapper> mapMapper = vtkSmartPointer<vtkDataSetMapper>::New();
-        vtkSmartPointer<vtkScalarBarWidget> scalarBarWidget = renderScalarBar(actor);
         std::string layerArrayName = layer.toStdString();
         
         mapMapper->SetLookupTable(scalarBarWidget->GetScalarBarActor()->GetLookupTable());
@@ -96,14 +96,16 @@ void SimulationVTKWidget::render(Simulation *simulation, const QString &layer, c
         actor->SetMapper(mapMapper);
     }
     
-    if (component == "Magnitude" || component.isEmpty()) {
-        actor->GetProperty()->SetOpacity(layerProperties->getMapOpacity() / 100.0);
-        actor->GetProperty()->SetLighting(layerProperties->getMapLighting());
-    } else {
+    if (component == "Vector") {
+        actor->GetProperty()->SetOpacity(layerProperties->getVectorsOpacity());
+        
         if (layerProperties->getVectorColorMode() == VectorColorMode::CONSTANT) {
-            QColor vectorColor = layerProperties->getVectorColor();
+            QColor vectorColor = layerProperties->getVectorsColor();
             actor->GetProperty()->SetColor(vectorColor.redF(), vectorColor.greenF(), vectorColor.blueF());
         }
+    } else {
+        actor->GetProperty()->SetOpacity(layerProperties->getMapOpacity() / 100.0);
+        actor->GetProperty()->SetLighting(layerProperties->getMapLighting());
     }
     
     renderer->AddActor(actor);
@@ -142,10 +144,9 @@ vtkSmartPointer<vtkScalarBarWidget> SimulationVTKWidget::renderScalarBar(vtkSmar
         scalarBarWidget->ResizableOn();
     }
     
-    vtkSmartPointer<vtkColorTransferFunction> mapColorTransferFunction = buildColorTransferFunction();
-    scalarBarWidget->GetScalarBarActor()->SetLookupTable(mapColorTransferFunction);
-    scalarBarWidget->GetScalarBarActor()->SetVisibility(layerProperties->getMapLegend());
-    scalarBarWidget->EnabledOn();
+    vtkSmartPointer<vtkColorTransferFunction> colorTransferFunction = buildColorTransferFunction();
+    scalarBarWidget->GetScalarBarActor()->SetLookupTable(colorTransferFunction);
+    scalarBarWidget->SetEnabled(currentComponent == "Vector" ? layerProperties->getVectorsLegend() : layerProperties->getMapLegend());
     
     vtkScalarBarRepresentation *scalarBarRepresentation = vtkScalarBarRepresentation::SafeDownCast(scalarBarWidget->GetRepresentation());
     scalarBarRepresentation->GetPositionCoordinate()->SetValue(0.86, 0.05);
@@ -170,8 +171,8 @@ vtkSmartPointer<vtkPolyData> SimulationVTKWidget::renderVectors(vtkSmartPointer<
     vtkSmartPointer<vtkArrowSource> arrowSource = vtkSmartPointer<vtkArrowSource>::New();
     arrowSource->SetShaftResolution(10);
     arrowSource->SetTipResolution(10);
-    arrowSource->SetShaftRadius(layerProperties->getVectorWidth() * 0.03); // VTK default
-    arrowSource->SetTipRadius(layerProperties->getVectorWidth() * 0.1); // VTK default
+    arrowSource->SetShaftRadius(layerProperties->getVectorsWidth() * 0.03); // VTK default
+    arrowSource->SetTipRadius(layerProperties->getVectorsWidth() * 0.1); // VTK default
     arrowSource->Update();
     
     vtkSmartPointer<vtkUnstructuredGrid> magnitudeGrid = convertToMagnitudeGrid(layerGrid);
@@ -182,7 +183,7 @@ vtkSmartPointer<vtkPolyData> SimulationVTKWidget::renderVectors(vtkSmartPointer<
     glyph->SetVectorModeToUseVector();
     glyph->SetScaleModeToScaleByVector();
     glyph->SetColorMode(layerProperties->getVectorColorMode() == VectorColorMode::MAGNITUDE ? VTK_COLOR_BY_VECTOR : VTK_COLOR_BY_SCALE);
-    glyph->SetScaleFactor(layerProperties->getVectorScale() * 1000);
+    glyph->SetScaleFactor(layerProperties->getVectorsScale() * 1000);
     glyph->SetRange(magnitudeRange);
     glyph->ClampingOn();
     glyph->OrientOn();
@@ -192,11 +193,41 @@ vtkSmartPointer<vtkPolyData> SimulationVTKWidget::renderVectors(vtkSmartPointer<
 }
 
 vtkSmartPointer<vtkColorTransferFunction> SimulationVTKWidget::buildColorTransferFunction() {
+    QList<QColor> colors;
+    bool invertScalarBar;
+    double minimumRange;
+    double maximumRange;
+    
+    if (currentComponent == "Vector") {
+        if (layerProperties->getVectorColorMode() == VectorColorMode::CONSTANT) {
+            colors << QColor(layerProperties->getVectorsColor()) << QColor(layerProperties->getVectorsColor());
+            invertScalarBar = false;
+        } else {
+            colors = ColorGradientTemplate::getColors(layerProperties->getVectorsColorGradient());
+            invertScalarBar = layerProperties->getVectorsInvertColorGradient();
+        }
+        
+        if (layerProperties->getUseDefaultVectorsValues()) {
+            minimumRange = layerProperties->getDefaultVectorsMinimum();
+            maximumRange = layerProperties->getDefaultVectorsMaximum();
+        } else {
+            minimumRange = layerProperties->getVectorsMinimumRange();
+            maximumRange = layerProperties->getVectorsMaximumRange();
+        }
+    } else {
+        colors = ColorGradientTemplate::getColors(layerProperties->getMapColorGradient());
+        invertScalarBar = layerProperties->getMapInvertColorGradient();
+        
+        if (layerProperties->getUseDefaultMapValues()) {
+            minimumRange = layerProperties->getDefaultMapMinimum();
+            maximumRange = layerProperties->getDefaultMapMaximum();
+        } else {
+            minimumRange = layerProperties->getMapMininumRange();
+            maximumRange = layerProperties->getMapMaximumRange();
+        }
+    }
+    
     vtkSmartPointer<vtkColorTransferFunction> colorTransferFunction = vtkSmartPointer<vtkColorTransferFunction>::New();
-    QList<QColor> colors = ColorGradientTemplate::getColors(layerProperties->getMapColorGradient());
-    bool invertScalarBar = layerProperties->getMapInvertColorGradient();
-    double minimumRange = layerProperties->getUseDefaultMapValues() ? layerProperties->getDefaultMapMinimum() : layerProperties->getMapMininumRange();
-    double maximumRange = layerProperties->getUseDefaultMapValues() ? layerProperties->getDefaultMapMaximum() : layerProperties->getMapMaximumRange();
     double interval = maximumRange - minimumRange;
     
     if (invertScalarBar) {
