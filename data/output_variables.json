@@ -13,7 +13,7 @@
 					},
 					{
 						"name": "SurfaceWaterElevation",
-						"label": "Water surface elevation",
+						"label": "Surface water elevation",
 						"selected": true
 					}
 				]
