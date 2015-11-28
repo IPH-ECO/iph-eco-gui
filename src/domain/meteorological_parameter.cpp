@@ -78,6 +78,10 @@ QList<TimeSeries*> MeteorologicalParameter::getTimeSeriesList() const {
     return timeSeriesList;
 }
 
+QList<TimeSeries*>* MeteorologicalParameter::getTimeSeriesListPointer() {
+    return &timeSeriesList;
+}
+
 TimeSeries* MeteorologicalParameter::getTimeSeries(uint id) const {
     for (TimeSeries *timeSeries : timeSeriesList) {
         if (timeSeries->getId() == id) {
@@ -94,13 +98,6 @@ void MeteorologicalParameter::setTimeSeriesList(const QList<TimeSeries*> timeSer
 
 void MeteorologicalParameter::addTimeSeries(TimeSeries *timeSeries) {
     timeSeriesList.append(timeSeries);
-}
-
-void MeteorologicalParameter::clearTimeSeries() {
-    for (TimeSeries *timeSeries : timeSeriesList) {
-        delete timeSeries;
-    }
-    timeSeriesList.clear();
 }
 
 double MeteorologicalParameter::getXComponent() const {

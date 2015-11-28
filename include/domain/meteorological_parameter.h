@@ -40,10 +40,10 @@ public:
     double getConstantValue() const;
     void setConstantValue(double constantValue);
     QList<TimeSeries*> getTimeSeriesList() const;
+    QList<TimeSeries*>* getTimeSeriesListPointer();
     TimeSeries* getTimeSeries(uint id) const;
     void setTimeSeriesList(const QList<TimeSeries*> timeSeriesList);
     void addTimeSeries(TimeSeries *timeSeries);
-    void clearTimeSeries();
     double getXComponent() const;
     void setXComponent(double xComponent);
     double getYComponent() const;

@@ -141,6 +141,10 @@ QList<TimeSeries*> BoundaryCondition::getTimeSeriesList() const {
 	return timeSeriesList;
 }
 
+QList<TimeSeries*>* BoundaryCondition::getTimeSeriesListPointer() {
+    return &timeSeriesList;
+}
+
 TimeSeries* BoundaryCondition::getTimeSeries(uint id) const {
     for (TimeSeries *timeSeries : timeSeriesList) {
         if (timeSeries->getId() == id) {

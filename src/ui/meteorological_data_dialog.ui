@@ -347,7 +347,7 @@
           <item>
            <widget class="QPushButton" name="btnApplyParameter">
             <property name="text">
-             <string>Apply</string>
+             <string>Update</string>
             </property>
             <property name="icon">
              <iconset resource="../../icons.qrc">

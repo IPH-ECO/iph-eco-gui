@@ -295,8 +295,6 @@ void MeteorologicalDataDialog::on_btnApplyParameter_clicked() {
             } else {
                 parameter->setConstantValue(ui->edtConstant->text().toDouble());
             }
-            
-            parameter->clearTimeSeries();
         }
         
         parameter->setUseXYComponent(useXYComponent);
@@ -326,6 +324,19 @@ void MeteorologicalDataDialog::on_cbxFunction_currentIndexChanged(const QString 
     ui->edtDirection->setVisible(isConstant && isWind && !isXYComponent);
     ui->lblEntries->setVisible(isTimeSeries);
     ui->btnShowTimeSeries->setVisible(isTimeSeries);
+    
+    MeteorologicalParameter *parameter = qvariant_cast<MeteorologicalParameter*>(ui->trStations->currentItem()->data(0, Qt::UserRole));
+    
+    if (!isTimeSeries && !parameter->getTimeSeriesListPointer()->isEmpty() && parameter->getFunction() == MeteorologicalParameterFunction::TIME_SERIES) {
+        QString question = tr("Would you like to remove %1 time series entries?").arg(parameter->getName());
+        QMessageBox::StandardButton button = QMessageBox::question(this, tr("Meteorological Data"), question);
+        
+        if (button == QMessageBox::Yes) {
+            parameter->getTimeSeriesListPointer()->clear();
+        }
+    }
+    
+    parameter->setFunction(function);
 }
 
 void MeteorologicalDataDialog::on_cbxType_currentIndexChanged(const QString &type) {
@@ -348,14 +359,9 @@ void MeteorologicalDataDialog::on_btnShowTimeSeries_clicked() {
     TimeSeriesType timeSeriesType = isWind ? TimeSeries::mapStringToEnumType(ui->cbxType->currentText()) : TimeSeriesType::DEFAULT;
     TimeSeriesDialog *timeSeriesDialog = new TimeSeriesDialog(this, timeSeriesType);
 
-    timeSeriesDialog->loadTimeSeriesList(parameter->getTimeSeriesList());
+    timeSeriesDialog->loadTimeSeriesList(parameter->getTimeSeriesListPointer());
     timeSeriesDialog->setMeteorologicalParameter(parameter);
-    int exitCode = timeSeriesDialog->exec();
-
-    if (exitCode == QDialog::Accepted) {
-        QList<TimeSeries*> *timeSeriesList = timeSeriesDialog->getTimeSeriesList();
-        parameter->setTimeSeriesList(*timeSeriesList);
-    }
+    timeSeriesDialog->exec();
 }
 
 void MeteorologicalDataDialog::on_btnNewConfiguration_clicked() {
