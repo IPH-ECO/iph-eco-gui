@@ -3,7 +3,11 @@
 #include <QStringList>
 #include <vtkProperty.h>
 
-BoundaryCondition::BoundaryCondition() : id(0), type(BoundaryConditionType::WATER_LEVEL), function(BoundaryConditionFunction::CONSTANT), cellColor("#FF0000"),
+BoundaryCondition::BoundaryCondition() :
+    id(0),
+    type(BoundaryConditionType::WATER_LEVEL),
+    function(BoundaryConditionFunction::CONSTANT),
+    cellColor("#FF0000"),
     selectionActor(vtkSmartPointer<vtkActor>::New()),
     labelsActor(vtkSmartPointer<vtkActor2D>::New()),
     timeSeriesChanged(false)

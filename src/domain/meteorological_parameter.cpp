@@ -1,6 +1,6 @@
 #include "include/domain/meteorological_parameter.h"
 
-MeteorologicalParameter::MeteorologicalParameter() : id(0) {}
+MeteorologicalParameter::MeteorologicalParameter() : id(0), timeSeriesChanged(false) {}
 
 MeteorologicalParameter::MeteorologicalParameter(const QString &name, const QString &unit, double constantValue) :
     id(0), name(name), unit(unit), function(MeteorologicalParameterFunction::CONSTANT), constantValue(constantValue),
