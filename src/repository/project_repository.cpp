@@ -865,12 +865,14 @@ void ProjectRepository::saveBoundaryConditions(HydrodynamicConfiguration *config
 void ProjectRepository::saveTimeSeries(BoundaryCondition *boundaryCondition) {
     if (boundaryCondition->isTimeSeriesChanged()) {
         saveTimeSeries(boundaryCondition->getId(), "BoundaryCondition", boundaryCondition->getTimeSeriesList());
+		boundaryCondition->setTimeSeriesChanged(false);
     }
 }
 
 void ProjectRepository::saveTimeSeries(MeteorologicalParameter *parameter) {
     if (parameter->isTimeSeriesChanged()) {
         saveTimeSeries(parameter->getId(), "MeteorologicalParameter", parameter->getTimeSeriesList());
+		parameter->setTimeSeriesChanged(false);
     }
 }
 
