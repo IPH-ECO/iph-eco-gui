@@ -16,11 +16,15 @@ ProjectRepository::ProjectRepository(const QString &databaseName) : databaseName
     databaseUtility = DatabaseUtility::getInstance();
 }
 
+void ProjectRepository::updateProgressAndProcessEvents() {
+    emit updateProgress(currentProgress++);
+    QApplication::processEvents();
+}
+
 void ProjectRepository::open() {
     currentProgress = 0;
     emit updateProgressText("Loading project...");
-    emit updateProgress(currentProgress++);
-    QApplication::processEvents();
+    updateProgressAndProcessEvents();
     
     databaseUtility->connect(this->databaseName);
     
@@ -83,8 +87,7 @@ void ProjectRepository::loadMeshes(Project *project) {
         mesh->loadBoundaryPolyDataFromString(query.value("boundary_poly_data").toString());
         project->addMesh(mesh);
         
-        emit updateProgress(currentProgress++);
-        QApplication::processEvents();
+        updateProgressAndProcessEvents();
         
         loadMeshPolygons(mesh);
     }
@@ -109,8 +112,7 @@ void ProjectRepository::loadMeshPolygons(Mesh *mesh) {
         
         mesh->addMeshPolygon(meshPolygon);
         
-        emit updateProgress(currentProgress++);
-        QApplication::processEvents();
+        updateProgressAndProcessEvents();
     }
 }
 
@@ -129,8 +131,7 @@ void ProjectRepository::loadGridDataConfigurations(Project *project) {
         configuration->setName(query.value("name").toString());
         project->addGridDataConfiguration(configuration);
         
-        emit updateProgress(currentProgress++);
-        QApplication::processEvents();
+        updateProgressAndProcessEvents();
         
         loadGridData(configuration, project);
     }
@@ -179,8 +180,7 @@ void ProjectRepository::loadGridData(GridDataConfiguration *gridDataConfiguratio
         
         gridDataConfiguration->addGridData(gridData);
         
-        emit updateProgress(currentProgress++);
-        QApplication::processEvents();
+        updateProgressAndProcessEvents();
     }
 }
 
@@ -202,8 +202,7 @@ void ProjectRepository::loadHydrodynamicConfigurations(Project *project) {
         configuration->setGridDataConfiguration(gridDataConfiguration);
         project->addHydrodynamicConfiguration(configuration);
         
-        emit updateProgress(currentProgress++);
-        QApplication::processEvents();
+        updateProgressAndProcessEvents();
         
         loadHydrodynamicParameter(configuration, project);
         loadBoundaryConditions(configuration);
@@ -227,8 +226,7 @@ void ProjectRepository::loadHydrodynamicParameter(HydrodynamicConfiguration *con
 
         configuration->addHydrodynamicParameter(parameter);
 
-        emit updateProgress(currentProgress++);
-        QApplication::processEvents();
+        updateProgressAndProcessEvents();
     }
 }
 
@@ -254,8 +252,7 @@ void ProjectRepository::loadBoundaryConditions(HydrodynamicConfiguration *config
         
         configuration->addBoundaryCondition(boundaryCondition);
         
-        emit updateProgress(currentProgress++);
-        QApplication::processEvents();
+        updateProgressAndProcessEvents();
 
         loadTimeSeries(boundaryCondition);
     }
@@ -276,8 +273,7 @@ void ProjectRepository::loadTimeSeries(BoundaryCondition *boundaryCondition) {
         
         boundaryCondition->addTimeSeries(timeSeries);
         
-        emit updateProgress(currentProgress++);
-        QApplication::processEvents();
+        updateProgressAndProcessEvents();
     }
 }
 
@@ -296,16 +292,131 @@ void ProjectRepository::loadTimeSeries(MeteorologicalParameter *meteorologicalPa
         
         meteorologicalParameter->addTimeSeries(timeSeries);
         
-        emit updateProgress(currentProgress++);
-        QApplication::processEvents();
+        updateProgressAndProcessEvents();
+    }
+}
+
+void ProjectRepository::loadMeteorologicalConfigurations(Project *project) {
+    QSqlQuery query(databaseUtility->getDatabase());
+    
+    emit updateProgressText("Loading meteorological data...");
+    QApplication::processEvents();
+    
+    query.prepare("select * from meteorological_configuration");
+    query.exec();
+    
+    while (query.next() && !operationCanceled) {
+        MeteorologicalConfiguration *configuration = new MeteorologicalConfiguration();
+        configuration->setId(query.value("id").toUInt());
+        configuration->setName(query.value("name").toString());
+        configuration->setGridDataConfiguration(project->getGridDataConfiguration(query.value("grid_data_configuration_id").toUInt()));
+        
+        project->addMeteorologicalConfiguration(configuration);
+        
+        updateProgressAndProcessEvents();
+        
+        loadMeteorologicalStations(configuration);
+    }
+}
+
+void ProjectRepository::loadMeteorologicalStations(MeteorologicalConfiguration *configuration) {
+    QSqlQuery query(databaseUtility->getDatabase());
+    
+    query.prepare("select * from meteorological_station");
+    query.exec();
+    
+    while (query.next() && !operationCanceled) {
+        MeteorologicalStation *station = new MeteorologicalStation();
+        station->setId(query.value("id").toUInt());
+        station->setName(query.value("name").toString());
+        station->setUseLatitudeLongitude(query.value("use_latitude_longitude").toBool());
+        station->setUtmX(query.value("utm_x").toDouble());
+        station->setUtmY(query.value("utm_y").toDouble());
+        station->setLatitude(query.value("latitude").toDouble());
+        station->setLongitude(query.value("longitude").toDouble());
+        
+        configuration->addStation(station);
+        
+        updateProgressAndProcessEvents();
+        
+        loadMeteorologicalParameters(station);
+    }
+}
+
+void ProjectRepository::loadMeteorologicalParameters(MeteorologicalStation *station) {
+    QSqlQuery query(databaseUtility->getDatabase());
+    
+    query.prepare("select * from meteorological_parameter");
+    query.exec();
+    
+    while (query.next() && !operationCanceled) {
+        MeteorologicalParameter *parameter = new MeteorologicalParameter();
+        parameter->setId(query.value("id").toUInt());
+        parameter->setName(query.value("name").toString());
+        parameter->setUnit(query.value("unit").toString());
+        parameter->setFunction((MeteorologicalParameterFunction) query.value("function").toInt());
+        parameter->setConstantValue(query.value("constant_value").toDouble());
+        parameter->setUseXYComponent(query.value("use_xy_component").toBool());
+        parameter->setXComponent(query.value("x_component").toDouble());
+        parameter->setYComponent(query.value("y_component").toDouble());
+        parameter->setIntensity(query.value("intensity").toDouble());
+        parameter->setDirection(query.value("direction").toDouble());
+        
+        station->addMeteorologicalParameter(parameter);
+        
+        updateProgressAndProcessEvents();
+        
+        loadTimeSeries(parameter);
+    }
+}
+
+void ProjectRepository::loadSimulations(Project *project) {
+    QSqlQuery query(databaseUtility->getDatabase());
+    
+    query.prepare("select * from simulation");
+    query.exec();
+    
+    while (query.next() && !operationCanceled) {
+        Simulation *simulation = new Simulation();
+        simulation->setId(query.value("id").toUInt());
+        simulation->setLabel(query.value("label").toString());
+        simulation->setSimulationType((SimulationType) query.value("simulation_type").toInt());
+        simulation->setStartTime(query.value("start_time").toUInt());
+        simulation->setInitialTime(query.value("initial_time").toUInt());
+        simulation->setPeriod(query.value("period").toDouble());
+        simulation->setStepTime(query.value("step_time").toInt());
+        simulation->setMinimumVerticalLimit(query.value("minimum_vertical_limit").toDouble());
+        simulation->setMaximumVerticalLimit(query.value("maximum_vertical_limit").toDouble());
+        simulation->setLayersFromString(query.value("layers").toString());
+        simulation->setObservation(query.value("observations").toString());
+        simulation->setOutputTimeInterval(query.value("output_time_interval").toInt());
+        simulation->setOutputDirectory(query.value("output_directory").toString());
+        simulation->setAutosaveTimeInterval(query.value("autosave_time_interval").toInt());
+        simulation->setOutputParameters(query.value("output_parameters").toString().split(","));
+        simulation->setStatus((SimulationStatus) query.value("status").toInt());
+        simulation->setProgress(query.value("progress").toInt());
+        simulation->setRecoveryVariables(query.value("recovery_variables").toString());
+        
+        HydrodynamicConfiguration *hydrodynamicConfiguration = project->getHydrodynamicConfiguration(query.value("hydrodynamic_configuration_id").toUInt());
+        simulation->setHydrodynamicConfiguration(hydrodynamicConfiguration);
+        
+        MeteorologicalConfiguration *meteorologicalConfiguration = project->getMeteorologicalConfiguration(query.value("meteorological_configuration_id").toUInt());
+        simulation->setMeteorologicalConfiguration(meteorologicalConfiguration);
+        
+        if (simulation->getStatus() == SimulationStatus::RUNNING) {
+            SimulationRepository::updateSimulationStatus(simulation, SimulationStatus::PAUSED);
+        }
+        
+        project->addSimulation(simulation);
+        
+        updateProgressAndProcessEvents();
     }
 }
 
 void ProjectRepository::save(bool makeCopy) {
     currentProgress = 0;
     emit updateProgressText("Saving project...");
-    emit updateProgress(currentProgress++);
-    QApplication::processEvents();
+    updateProgressAndProcessEvents();
     
     Project *project = IPHApplication::getCurrentProject();
     QString sql;
@@ -399,8 +510,7 @@ void ProjectRepository::saveMeshes(Project *project) {
             throw DatabaseException(QString("Unable to save meshes. Error: %1.").arg(query.lastError().text()));
         }
         
-        emit updateProgress(currentProgress++);
-        QApplication::processEvents();
+        updateProgressAndProcessEvents();
         
         mesh->setId(query.lastInsertId().toUInt());
         meshIds.append(QString::number(mesh->getId()));
@@ -470,8 +580,7 @@ void ProjectRepository::saveMeshPolygons(Mesh *mesh) {
             throw DatabaseException(QString("Unable to save project meshes. Error: %1.").arg(query.lastError().text()));
         }
         
-        emit updateProgress(currentProgress++);
-        QApplication::processEvents();
+        updateProgressAndProcessEvents();
         
         meshPolygon->setId(query.lastInsertId().toUInt());
         meshPolygonIds.append(QString::number(meshPolygon->getId()));
@@ -509,8 +618,7 @@ void ProjectRepository::saveGridDataConfigurations(Project *project) {
             throw DatabaseException(QString("Unable to save grid data configurations. Error: %1.").arg(query.lastError().text()));
         }
         
-        emit updateProgress(currentProgress++);
-        QApplication::processEvents();
+        updateProgressAndProcessEvents();
         
         configuration->setId(query.lastInsertId().toUInt());
         configurationIds.append(QString::number(configuration->getId()));
@@ -605,8 +713,7 @@ void ProjectRepository::saveGridData(GridDataConfiguration *gridDataConfiguratio
             throw DatabaseException(QString("Unable to save grid data configurations. Error: %1.").arg(query.lastError().text()));
         }
         
-        emit updateProgress(currentProgress++);
-        QApplication::processEvents();
+        updateProgressAndProcessEvents();
         
         gridData->setId(query.lastInsertId().toUInt());
         gridDataIds.append(QString::number(gridData->getId()));
@@ -645,8 +752,7 @@ void ProjectRepository::saveHydrodynamicConfigurations(Project *project) {
             throw DatabaseException(QString("Unable to save hydrodynamic data configurations. Error: %1.").arg(query.lastError().text()));
         }
         
-        emit updateProgress(currentProgress++);
-        QApplication::processEvents();
+        updateProgressAndProcessEvents();
         
         configuration->setId(query.lastInsertId().toUInt());
         configurationIds.append(QString::number(configuration->getId()));
@@ -704,8 +810,7 @@ void ProjectRepository::saveHydrodynamicParameters(HydrodynamicConfiguration *co
             throw DatabaseException(QString("Unable to save hydrodynamic parameters. Error: %1.").arg(query.lastError().text()));
         }
 
-        emit updateProgress(currentProgress++);
-        QApplication::processEvents();
+        updateProgressAndProcessEvents();
 
         parameter->setId(query.lastInsertId().toUInt());
         parameterIds.append(QString::number(parameter->getId()));
@@ -742,8 +847,7 @@ void ProjectRepository::saveBoundaryConditions(HydrodynamicConfiguration *config
             throw DatabaseException(QString("Unable to save hydrodynamic boundary conditions. Error: %1.").arg(query.lastError().text()));
         }
 
-        emit updateProgress(currentProgress++);
-        QApplication::processEvents();
+        updateProgressAndProcessEvents();
 
         boundaryCondition->setId(query.lastInsertId().toUInt());
         boundaryConditionIds.append(QString::number(boundaryCondition->getId()));
@@ -801,6 +905,8 @@ void ProjectRepository::saveTimeSeries(const int &objectId, const QString &objec
             insertValues.clear();
         }
         
+        updateProgressAndProcessEvents();
+        
         i++;
     }
 }
@@ -834,12 +940,11 @@ void ProjectRepository::saveMeteorologicalConfigurations(Project *project) {
             throw DatabaseException(QString("Unable to save meteorological data configurations. Error: %1.").arg(query.lastError().text()));
         }
         
+        updateProgressAndProcessEvents();
+        
         configuration->setId(query.lastInsertId().toUInt());
         configurationIds.append(QString::number(configuration->getId()));
         saveMeteorologicalStations(configuration);
-
-		emit updateProgress(currentProgress++);
-		QApplication::processEvents();
     }
     
     // Handle exclusions
@@ -888,6 +993,8 @@ void ProjectRepository::saveMeteorologicalStations(MeteorologicalConfiguration *
         if (!query.exec()) {
             throw DatabaseException(QString("Unable to save meteorological stations. Error: %1.").arg(query.lastError().text()));
         }
+        
+        updateProgressAndProcessEvents();
         
         station->setId(query.lastInsertId().toUInt());
         stationIds.append(QString::number(station->getId()));
@@ -943,6 +1050,8 @@ void ProjectRepository::saveMeteorologicalParameters(MeteorologicalStation *stat
             throw DatabaseException(QString("Unable to save meteorological parameters. Error: %1.").arg(query.lastError().text()));
         }
         
+        updateProgressAndProcessEvents();
+        
         parameter->setId(query.lastInsertId().toUInt());
         parameterIds.append(QString::number(parameter->getId()));
         saveTimeSeries(parameter);
@@ -963,85 +1072,7 @@ void ProjectRepository::saveMeteorologicalParameters(MeteorologicalStation *stat
     }
 }
 
-void ProjectRepository::loadMeteorologicalConfigurations(Project *project) {
-    QSqlQuery query(databaseUtility->getDatabase());
-    
-    emit updateProgressText("Loading meteorological data...");
-    QApplication::processEvents();
-    
-    query.prepare("select * from meteorological_configuration");
-    query.exec();
-    
-    while (query.next() && !operationCanceled) {
-        MeteorologicalConfiguration *configuration = new MeteorologicalConfiguration();
-        configuration->setId(query.value("id").toUInt());
-        configuration->setName(query.value("name").toString());
-        configuration->setGridDataConfiguration(project->getGridDataConfiguration(query.value("grid_data_configuration_id").toUInt()));
-
-        project->addMeteorologicalConfiguration(configuration);
-        
-        emit updateProgress(currentProgress++);
-        QApplication::processEvents();
-        
-        loadMeteorologicalStations(configuration);
-    }
-}
-
-void ProjectRepository::loadMeteorologicalStations(MeteorologicalConfiguration *configuration) {
-    QSqlQuery query(databaseUtility->getDatabase());
-    
-    query.prepare("select * from meteorological_station");
-    query.exec();
-    
-    while (query.next() && !operationCanceled) {
-        MeteorologicalStation *station = new MeteorologicalStation();
-        station->setId(query.value("id").toUInt());
-        station->setName(query.value("name").toString());
-        station->setUseLatitudeLongitude(query.value("use_latitude_longitude").toBool());
-        station->setUtmX(query.value("utm_x").toDouble());
-        station->setUtmY(query.value("utm_y").toDouble());
-        station->setLatitude(query.value("latitude").toDouble());
-        station->setLongitude(query.value("longitude").toDouble());
-        
-        configuration->addStation(station);
-        
-        emit updateProgress(currentProgress++);
-        QApplication::processEvents();
-        
-        loadMeteorologicalParameters(station);
-    }
-}
-
-void ProjectRepository::loadMeteorologicalParameters(MeteorologicalStation *station) {
-    QSqlQuery query(databaseUtility->getDatabase());
-    
-    query.prepare("select * from meteorological_parameter");
-    query.exec();
-    
-    while (query.next() && !operationCanceled) {
-        MeteorologicalParameter *parameter = new MeteorologicalParameter();
-        parameter->setId(query.value("id").toUInt());
-        parameter->setName(query.value("name").toString());
-        parameter->setUnit(query.value("unit").toString());
-        parameter->setFunction((MeteorologicalParameterFunction) query.value("function").toInt());
-        parameter->setConstantValue(query.value("constant_value").toDouble());
-        parameter->setUseXYComponent(query.value("use_xy_component").toBool());
-        parameter->setXComponent(query.value("x_component").toDouble());
-        parameter->setYComponent(query.value("y_component").toDouble());
-        parameter->setIntensity(query.value("intensity").toDouble());
-        parameter->setDirection(query.value("direction").toDouble());
-        
-        station->addMeteorologicalParameter(parameter);
-        
-        emit updateProgress(currentProgress++);
-        QApplication::processEvents();
-        
-        loadTimeSeries(parameter);
-    }
-}
-
 void ProjectRepository::saveSimulations(Project *project) {
-    QSqlQuery query(databaseUtility->getDatabase());
     QSet<Simulation*> simulations = project->getSimulations();
     QStringList simulationIds;
     
@@ -1070,52 +1101,8 @@ void ProjectRepository::saveSimulations(Project *project) {
         simulationDeleteSql = "delete from simulation where id not in (" + simulationIdsStr + ")";
     }
     
-    query.prepare(simulationDeleteSql);
-    query.exec();
-}
-
-void ProjectRepository::loadSimulations(Project *project) {
     QSqlQuery query(databaseUtility->getDatabase());
-    
-    query.prepare("select * from simulation");
-    query.exec();
-    
-    while (query.next() && !operationCanceled) {
-        Simulation *simulation = new Simulation();
-        simulation->setId(query.value("id").toUInt());
-        simulation->setLabel(query.value("label").toString());
-        simulation->setSimulationType((SimulationType) query.value("simulation_type").toInt());
-        simulation->setStartTime(query.value("start_time").toUInt());
-        simulation->setInitialTime(query.value("initial_time").toUInt());
-        simulation->setPeriod(query.value("period").toDouble());
-        simulation->setStepTime(query.value("step_time").toInt());
-        simulation->setMinimumVerticalLimit(query.value("minimum_vertical_limit").toDouble());
-        simulation->setMaximumVerticalLimit(query.value("maximum_vertical_limit").toDouble());
-        simulation->setLayersFromString(query.value("layers").toString());
-        simulation->setObservation(query.value("observations").toString());
-        simulation->setOutputTimeInterval(query.value("output_time_interval").toInt());
-        simulation->setOutputDirectory(query.value("output_directory").toString());
-        simulation->setAutosaveTimeInterval(query.value("autosave_time_interval").toInt());
-        simulation->setOutputParameters(query.value("output_parameters").toString().split(","));
-        simulation->setStatus((SimulationStatus) query.value("status").toInt());
-        simulation->setProgress(query.value("progress").toInt());
-        simulation->setRecoveryVariables(query.value("recovery_variables").toString());
-        
-        HydrodynamicConfiguration *hydrodynamicConfiguration = project->getHydrodynamicConfiguration(query.value("hydrodynamic_configuration_id").toUInt());
-        simulation->setHydrodynamicConfiguration(hydrodynamicConfiguration);
-        
-        MeteorologicalConfiguration *meteorologicalConfiguration = project->getMeteorologicalConfiguration(query.value("meteorological_configuration_id").toUInt());
-        simulation->setMeteorologicalConfiguration(meteorologicalConfiguration);
-        
-        if (simulation->getStatus() == SimulationStatus::RUNNING) {
-            SimulationRepository::updateSimulationStatus(simulation, SimulationStatus::PAUSED);
-        }
-        
-        project->addSimulation(simulation);
-        
-        emit updateProgress(currentProgress++);
-        QApplication::processEvents();
-    }
+    query.exec(simulationDeleteSql);
 }
 
 void ProjectRepository::saveSimulation(Simulation *simulation) {
@@ -1152,8 +1139,7 @@ void ProjectRepository::saveSimulation(Simulation *simulation) {
         throw DatabaseException(QString("Unable to save simulations. Error: %1.").arg(query.lastError().text()));
     }
     
-    emit updateProgress(currentProgress++);
-    QApplication::processEvents();
+    updateProgressAndProcessEvents();
     
     simulation->setId(query.lastInsertId().toUInt());
 }
@@ -1171,6 +1157,10 @@ int ProjectRepository::getMaximumSaveProgress() {
     
     QSet<GridDataConfiguration*> gridDataConfigurations = project->getGridDataConfigurations();
     
+    for (GridDataConfiguration *configuration : gridDataConfigurations) {
+        saveSteps += configuration->getGridDataVector().size();
+    }
+    
     saveSteps += gridDataConfigurations.size();
     
     for (GridDataConfiguration *configuration : gridDataConfigurations) {
@@ -1184,9 +1174,31 @@ int ProjectRepository::getMaximumSaveProgress() {
     for (HydrodynamicConfiguration *configuration : hydrodynamicConfigurations) {
         saveSteps += configuration->getParameters().size();
         saveSteps += configuration->getBoundaryConditions().size();
+        
+        for (BoundaryCondition *boundaryCondition : configuration->getBoundaryConditions()) {
+            saveSteps += boundaryCondition->getTimeSeriesListPointer()->size();
+        }
     }
     
-    saveSteps += project->getMeteorologicalConfigurations().size();
+    QSet<MeteorologicalConfiguration*> meteorologicalConfigurations = project->getMeteorologicalConfigurations();
+    
+    saveSteps += meteorologicalConfigurations.size();
+    
+    for (MeteorologicalConfiguration *configuration : meteorologicalConfigurations) {
+        QList<MeteorologicalStation*> stations = configuration->getStations();
+
+        saveSteps += stations.size();
+        
+        for (MeteorologicalStation *station : stations) {
+            QList<MeteorologicalParameter*> parameters = station->getParameters();
+            
+            saveSteps += parameters.size();
+            
+            for (MeteorologicalParameter *parameter : parameters) {
+                saveSteps += parameter->getTimeSeriesListPointer()->size();
+            }
+        }
+    }
     
     saveSteps += project->getSimulations().size();
     

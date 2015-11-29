@@ -13,6 +13,8 @@ private:
     int currentProgress;
     bool operationCanceled;
     
+    void updateProgressAndProcessEvents();
+    
     void saveMeshes(Project *project);
     void saveMeshPolygons(Mesh *mesh);
     void loadMeshes(Project *project);
