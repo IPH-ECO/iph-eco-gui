@@ -1176,7 +1176,9 @@ int ProjectRepository::getMaximumSaveProgress() {
         saveSteps += configuration->getBoundaryConditions().size();
         
         for (BoundaryCondition *boundaryCondition : configuration->getBoundaryConditions()) {
-            saveSteps += boundaryCondition->getTimeSeriesListPointer()->size();
+            if (boundaryCondition->isTimeSeriesChanged()) {
+                saveSteps += boundaryCondition->getTimeSeriesListPointer()->size();
+            }
         }
     }
     
@@ -1195,7 +1197,9 @@ int ProjectRepository::getMaximumSaveProgress() {
             saveSteps += parameters.size();
             
             for (MeteorologicalParameter *parameter : parameters) {
-                saveSteps += parameter->getTimeSeriesListPointer()->size();
+                if (parameter->isTimeSeriesChanged()) {
+                    saveSteps += parameter->getTimeSeriesListPointer()->size();
+                }
             }
         }
     }
