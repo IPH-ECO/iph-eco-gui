@@ -9,7 +9,6 @@ enum class TimeSeriesType { DEFAULT = 1, XY_COMPONENTS, INTENSITY_DIRECTION };
 
 class TimeSeries {
 private:
-	uint id;
 	int timeStamp;
 	double value1;
     double value2;
@@ -17,10 +16,6 @@ private:
     QString objectType;
     TimeSeriesType timeSeriesType;
 public:
-	TimeSeries();
-	uint getId() const;
-	void setId(uint id);
-	bool isPersisted() const;
 	int getTimeStamp() const;
 	void setTimeStamp(int timeStamp);
 	QDateTime toDateTime() const;

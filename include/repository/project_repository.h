@@ -32,6 +32,7 @@ private:
     void saveHydrodynamicConfigurations(Project *project);
     void saveHydrodynamicParameters(HydrodynamicConfiguration *configuration);
     void saveBoundaryConditions(HydrodynamicConfiguration *configuration);
+    void saveTimeSeries(const int &objectId, const QString &objectType, const QList<TimeSeries*> &timeSeriesList);
     void saveTimeSeries(BoundaryCondition *boundaryCondition);
     void saveTimeSeries(MeteorologicalParameter *parameter);
     

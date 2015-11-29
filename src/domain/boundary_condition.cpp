@@ -3,10 +3,12 @@
 #include <QStringList>
 #include <vtkProperty.h>
 
-BoundaryCondition::BoundaryCondition() : id(0), type(BoundaryConditionType::WATER_LEVEL), function(BoundaryConditionFunction::CONSTANT), cellColor("#FF0000") {
-    selectionActor = vtkSmartPointer<vtkActor>::New();
+BoundaryCondition::BoundaryCondition() : id(0), type(BoundaryConditionType::WATER_LEVEL), function(BoundaryConditionFunction::CONSTANT), cellColor("#FF0000"),
+    selectionActor(vtkSmartPointer<vtkActor>::New()),
+    labelsActor(vtkSmartPointer<vtkActor2D>::New()),
+    timeSeriesChanged(false)
+{
     selectionActor->GetProperty()->LightingOff();
-    labelsActor = vtkSmartPointer<vtkActor2D>::New();
 }
 
 uint BoundaryCondition::getId() const {
@@ -145,16 +147,6 @@ QList<TimeSeries*>* BoundaryCondition::getTimeSeriesListPointer() {
     return &timeSeriesList;
 }
 
-TimeSeries* BoundaryCondition::getTimeSeries(uint id) const {
-    for (TimeSeries *timeSeries : timeSeriesList) {
-        if (timeSeries->getId() == id) {
-            return timeSeries;
-        }
-    }
-    
-    return nullptr;
-}
-
 void BoundaryCondition::setTimeSeriesList(const QList<TimeSeries*> &timeSeriesList) {
 	this->timeSeriesList = timeSeriesList;
 }
@@ -207,6 +199,14 @@ vtkSmartPointer<vtkActor2D> BoundaryCondition::getLabelsActor() const {
 
 void BoundaryCondition::setLabelsActor(vtkSmartPointer<vtkActor2D> labelsActor) {
     this->labelsActor = labelsActor;
+}
+
+bool BoundaryCondition::isTimeSeriesChanged() const {
+    return timeSeriesChanged;
+}
+
+void BoundaryCondition::setTimeSeriesChanged(bool timeSeriesChanged) {
+    this->timeSeriesChanged = timeSeriesChanged;
 }
 
 SimulationDataType::BoundaryCondition BoundaryCondition::toSimulationDataType(Mesh *mesh) const {

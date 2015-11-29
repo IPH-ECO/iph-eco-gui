@@ -361,7 +361,11 @@ void MeteorologicalDataDialog::on_btnShowTimeSeries_clicked() {
 
     timeSeriesDialog->loadTimeSeriesList(parameter->getTimeSeriesListPointer());
     timeSeriesDialog->setMeteorologicalParameter(parameter);
-    timeSeriesDialog->exec();
+    int exitCode = timeSeriesDialog->exec();
+    
+    if (exitCode == QDialog::Accepted) {
+        parameter->setTimeSeriesChanged(timeSeriesDialog->hasChanges());
+    }
 }
 
 void MeteorologicalDataDialog::on_btnNewConfiguration_clicked() {

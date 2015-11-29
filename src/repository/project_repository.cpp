@@ -270,7 +270,6 @@ void ProjectRepository::loadTimeSeries(BoundaryCondition *boundaryCondition) {
     
     while (query.next() && !operationCanceled) {
         TimeSeries *timeSeries = new TimeSeries();
-        timeSeries->setId(query.value("id").toUInt());
         timeSeries->setTimeStamp(query.value("time_stamp").toInt());
         timeSeries->setValue1(query.value("value1").toDouble());
         timeSeries->setValue2(query.value("value2").toDouble());
@@ -291,7 +290,6 @@ void ProjectRepository::loadTimeSeries(MeteorologicalParameter *meteorologicalPa
     
     while (query.next() && !operationCanceled) {
         TimeSeries *timeSeries = new TimeSeries();
-        timeSeries->setId(query.value("id").toUInt());
         timeSeries->setTimeStamp(query.value("time_stamp").toInt());
         timeSeries->setValue1(query.value("value1").toDouble());
         timeSeries->setValue2(query.value("value2").toDouble());
@@ -761,75 +759,50 @@ void ProjectRepository::saveBoundaryConditions(HydrodynamicConfiguration *config
 }
 
 void ProjectRepository::saveTimeSeries(BoundaryCondition *boundaryCondition) {
-    QSqlQuery query(databaseUtility->getDatabase());
-    QStringList timeSeriesIds;
-    
-    for (TimeSeries *timeSeries : boundaryCondition->getTimeSeriesList()) {
-        if (operationCanceled) {
-            return;
-        }
-        
-        if (timeSeries->isPersisted()) {
-            query.prepare("update time_series set time_stamp = :t, value = :v where id = :i");
-            query.bindValue(":i", timeSeries->getId());
-        } else {
-            query.prepare("insert into time_series (time_stamp, value1, value2, object_id, object_type) values (:t, :v1, :v2, :oi, :ot)");
-            query.bindValue(":oi", boundaryCondition->getId());
-            query.bindValue(":ot", "BoundaryCondition");
-        }
-        
-        query.bindValue(":t", timeSeries->getTimeStamp());
-        query.bindValue(":v1", timeSeries->getValue1());
-        query.bindValue(":v2", timeSeries->getValue2());
-        
-        if (!query.exec()) {
-            throw DatabaseException(QString("Unable to save time stamps. Error: %1.").arg(query.lastError().text()));
-        }
-        
-        timeSeries->setId(query.lastInsertId().toUInt());
-        timeSeriesIds.append(QString::number(timeSeries->getId()));
+    if (boundaryCondition->isTimeSeriesChanged()) {
+        saveTimeSeries(boundaryCondition->getId(), "BoundaryCondition", boundaryCondition->getTimeSeriesList());
     }
-    
-    QString deleteQuery = "delete from time_series where id not in (%1) and object_id = %2 and object_type = %3";
-    deleteQuery = deleteQuery.arg(timeSeriesIds.join(",")).arg(boundaryCondition->getId()).arg("'BoundaryCondition'");
-    query.prepare(deleteQuery);
-    query.exec();
 }
 
 void ProjectRepository::saveTimeSeries(MeteorologicalParameter *parameter) {
+    if (parameter->isTimeSeriesChanged()) {
+        saveTimeSeries(parameter->getId(), "MeteorologicalParameter", parameter->getTimeSeriesList());
+    }
+}
+
+void ProjectRepository::saveTimeSeries(const int &objectId, const QString &objectType, const QList<TimeSeries*> &timeSeriesList) {
     QSqlQuery query(databaseUtility->getDatabase());
-    QStringList timeSeriesIds;
+    QString deleteSql = QString("delete from time_series where object_id = %2 and object_type = '%3'").arg(objectId).arg(objectType);
+
+    query.exec(deleteSql);
     
-    for (TimeSeries *timeSeries : parameter->getTimeSeriesList()) {
+    QStringList insertValues;
+    int timeSeriesListSize = timeSeriesList.size();
+    const int BATCH_LIMIT = 500;
+    const int REMAINING = timeSeriesListSize % BATCH_LIMIT;
+    int i = 1;
+    
+    for (TimeSeries *timeSeries : timeSeriesList) {
         if (operationCanceled) {
             return;
         }
         
-        if (timeSeries->isPersisted()) {
-            query.prepare("update time_series set time_stamp = :t, value1 = :v1, value2 = :v2 where id = :i");
-            query.bindValue(":i", timeSeries->getId());
-        } else {
-            query.prepare("insert into time_series (time_stamp, value1, value2, object_id, object_type) values (:t, :v1, :v2, :oi, :ot)");
-            query.bindValue(":oi", parameter->getId());
-            query.bindValue(":ot", "MeteorologicalParameter");
+        insertValues << QString("(%1,%2,%3,%4,'%5')").arg(timeSeries->getTimeStamp()).arg(timeSeries->getValue1()).arg(timeSeries->getValue2()).arg(objectId).arg(objectType);
+        
+        if (i % BATCH_LIMIT == 0 || (i == timeSeriesListSize && REMAINING > 0)) {
+            QString insertQuery("insert into time_series (time_stamp, value1, value2, object_id, object_type) values ");
+            
+            insertQuery += insertValues.join(",");
+            
+            if (!query.exec(insertQuery)) {
+                throw DatabaseException(QString("Unable to save time stamps. Error: %1.").arg(query.lastError().text()));
+            }
+            
+            insertValues.clear();
         }
         
-        query.bindValue(":t", timeSeries->getTimeStamp());
-        query.bindValue(":v1", timeSeries->getValue1());
-        query.bindValue(":v2", timeSeries->getValue2());
-        
-        if (!query.exec()) {
-            throw DatabaseException(QString("Unable to save time stamps. Error: %1.").arg(query.lastError().text()));
-        }
-        
-        timeSeries->setId(query.lastInsertId().toUInt());
-        timeSeriesIds.append(QString::number(timeSeries->getId()));
+        i++;
     }
-    
-    QString deleteQuery = "delete from time_series where id not in (%1) and object_id = %2 and object_type = %3";
-    deleteQuery = deleteQuery.arg(timeSeriesIds.join(",")).arg(parameter->getId()).arg("'MeteorologicalParameter'");
-    query.prepare(deleteQuery);
-    query.exec();
 }
 
 void ProjectRepository::saveMeteorologicalConfigurations(Project *project) {

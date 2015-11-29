@@ -1,21 +1,5 @@
 #include "include/domain/time_series.h"
 
-TimeSeries::TimeSeries() : id(0) {}
-
-uint TimeSeries::getId() const {
-	return id;
-}
-
-void TimeSeries::setId(uint id) {
-	if (!isPersisted()) {
-		this->id = id;
-	}
-}
-
-bool TimeSeries::isPersisted() const {
-	return id != 0;
-}
-
 int TimeSeries::getTimeStamp() const {
 	return timeStamp;
 }

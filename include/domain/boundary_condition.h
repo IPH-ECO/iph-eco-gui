@@ -32,6 +32,7 @@ private:
     // Transient attributes
     vtkSmartPointer<vtkActor> selectionActor;
     vtkSmartPointer<vtkActor2D> labelsActor;
+    bool timeSeriesChanged;
 
 public:
 	BoundaryCondition();
@@ -61,7 +62,6 @@ public:
 	QString getObjectIdsStr() const;
 	QList<TimeSeries*> getTimeSeriesList() const;
     QList<TimeSeries*>* getTimeSeriesListPointer();
-    TimeSeries* getTimeSeries(uint id) const;
 	void setTimeSeriesList(const QList<TimeSeries*> &timeSeriesList);
 	bool addTimeSeries(TimeSeries *timeSeries);
     QString getCellColor() const;
@@ -75,6 +75,8 @@ public:
     void setSelectionActor(vtkSmartPointer<vtkActor> selectionActor);
     vtkSmartPointer<vtkActor2D> getLabelsActor() const;
     void setLabelsActor(vtkSmartPointer<vtkActor2D> labelsActor);
+    bool isTimeSeriesChanged() const;
+    void setTimeSeriesChanged(bool timeSeriesChanged);
     
     SimulationDataType::BoundaryCondition toSimulationDataType(Mesh *mesh) const;
 };

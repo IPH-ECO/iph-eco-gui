@@ -30,7 +30,7 @@ private:
     TimeSeriesType timeSeriesType;
     int currentPage;
     int pagesTotal;
-    bool hasChanges;
+    bool changed;
     
     QString getDefaultDirectory();
 public:
@@ -42,6 +42,7 @@ public:
     void setMeteorologicalParameter(MeteorologicalParameter *meteorologicalParameter);
     void loadTimeSeriesList(QList<TimeSeries*> *timeSeriesList);
     virtual void accept();
+    bool hasChanges() const;
 private slots:
     void on_btnImportCSV_clicked();
     void on_btnClear_clicked();

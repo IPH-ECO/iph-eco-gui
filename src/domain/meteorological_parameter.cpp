@@ -4,7 +4,7 @@ MeteorologicalParameter::MeteorologicalParameter() : id(0) {}
 
 MeteorologicalParameter::MeteorologicalParameter(const QString &name, const QString &unit, double constantValue) :
     id(0), name(name), unit(unit), function(MeteorologicalParameterFunction::CONSTANT), constantValue(constantValue),
-    xComponent(0), yComponent(0), intensity(0), direction(0), useXYComponent(false)
+    xComponent(0), yComponent(0), intensity(0), direction(0), useXYComponent(false), timeSeriesChanged(false)
 {}
 
 uint MeteorologicalParameter::getId() const {
@@ -82,16 +82,6 @@ QList<TimeSeries*>* MeteorologicalParameter::getTimeSeriesListPointer() {
     return &timeSeriesList;
 }
 
-TimeSeries* MeteorologicalParameter::getTimeSeries(uint id) const {
-    for (TimeSeries *timeSeries : timeSeriesList) {
-        if (timeSeries->getId() == id) {
-            return timeSeries;
-        }
-    }
-    
-    return nullptr;
-}
-
 void MeteorologicalParameter::setTimeSeriesList(const QList<TimeSeries*> timeSeriesList) {
     this->timeSeriesList = timeSeriesList;
 }
@@ -150,6 +140,14 @@ QList<MeteorologicalParameter*> MeteorologicalParameter::createDefaultParameters
         new MeteorologicalParameter("Precipitation", "mm/day", 0),
         new MeteorologicalParameter("Evaporation", "mm/day", 0)
     };
+}
+
+bool MeteorologicalParameter::isTimeSeriesChanged() const {
+    return timeSeriesChanged;
+}
+
+void MeteorologicalParameter::setTimeSeriesChanged(bool timeSeriesChanged) {
+    this->timeSeriesChanged = timeSeriesChanged;
 }
 
 SimulationDataType::MeteorologicalParameter MeteorologicalParameter::toSimulationDataType() const {

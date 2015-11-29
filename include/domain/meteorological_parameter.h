@@ -23,6 +23,9 @@ protected:
     double intensity;
     double direction;
     bool useXYComponent;
+    
+    // Transient attributes
+    bool timeSeriesChanged;
 public:
     MeteorologicalParameter();
     MeteorologicalParameter(const QString &name, const QString &unit, double defaultConstantValue);
@@ -41,7 +44,6 @@ public:
     void setConstantValue(double constantValue);
     QList<TimeSeries*> getTimeSeriesList() const;
     QList<TimeSeries*>* getTimeSeriesListPointer();
-    TimeSeries* getTimeSeries(uint id) const;
     void setTimeSeriesList(const QList<TimeSeries*> timeSeriesList);
     void addTimeSeries(TimeSeries *timeSeries);
     double getXComponent() const;
@@ -55,6 +57,8 @@ public:
     bool getUseXYComponent() const;
     void setUseXYComponent(bool useXYComponent);
     static QList<MeteorologicalParameter*> createDefaultParameters();
+    bool isTimeSeriesChanged() const;
+    void setTimeSeriesChanged(bool timeSeriesChanged);
     SimulationDataType::MeteorologicalParameter toSimulationDataType() const;
 };
 

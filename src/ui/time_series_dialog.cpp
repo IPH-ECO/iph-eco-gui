@@ -19,7 +19,7 @@ TimeSeriesDialog::TimeSeriesDialog(QWidget *parent, const TimeSeriesType &timeSe
     currentBoundaryCondition(nullptr),
     currentMeteorologicalParameter(nullptr),
     timeSeriesType(timeSeriesType),
-    hasChanges(false)
+    changed(false)
 {
     ui->setupUi(this);
     ui->tblTimeSeries->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
@@ -59,7 +59,7 @@ void TimeSeriesDialog::loadTimeSeriesList(QList<TimeSeries*> *timeSeriesList) {
 }
 
 void TimeSeriesDialog::accept() {
-    if (hasChanges) {
+    if (changed) {
         for (TimeSeries *timeSeries : *originalTimeSeriesList) {
             delete timeSeries;
         }
@@ -69,7 +69,6 @@ void TimeSeriesDialog::accept() {
             TimeSeries *newTimeSeries = new TimeSeries();
             TimeSeries *copyTimeSeries = &copyTimeSeriesList[i];
             
-            newTimeSeries->setId(copyTimeSeries->getId());
             newTimeSeries->setTimeStamp(copyTimeSeries->getTimeStamp());
             newTimeSeries->setValue1(copyTimeSeries->getValue1());
             newTimeSeries->setValue2(copyTimeSeries->getValue2());
@@ -156,7 +155,7 @@ void TimeSeriesDialog::on_btnImportCSV_clicked() {
             if (i > 0) {
                 int itemsTotal = i + 1;
                 
-                hasChanges = true;
+                changed = true;
                 pagesTotal = itemsTotal / ITEMS_PER_PAGE + (itemsTotal % ITEMS_PER_PAGE > 0 ? 1 : 0);
                 ui->spxCurrentPage->setMaximum(pagesTotal);
                 ui->lblPagesTotal->setText(QString("of %1").arg(pagesTotal));
@@ -225,14 +224,14 @@ void TimeSeriesDialog::on_tblTimeSeries_itemChanged(QTableWidgetItem *item) {
             ui->tblTimeSeries->blockSignals(false);
         } else {
             timeSeries->setTimeStamp(currentDateTime.toTime_t());
-            hasChanges = true;
+            changed = true;
         }
     } else {
         // scalar columns
         TimeSeries *timeSeries = &copyTimeSeriesList[i];
         double value = item->text().toDouble();
         
-        hasChanges = true;
+        changed = true;
         
         if (item->column() == 1) {
             timeSeries->setValue1(value);
@@ -247,7 +246,7 @@ void TimeSeriesDialog::on_btnClear_clicked() {
     QMessageBox::StandardButton button = QMessageBox::question(this, tr("Time Series"), question);
 
     if (button == QMessageBox::Yes) {
-        hasChanges = true;
+        changed = true;
         copyTimeSeriesList.clear();
         ui->tblTimeSeries->setRowCount(0);
         ui->lblPagesTotal->setText("of 1");
@@ -310,4 +309,8 @@ void TimeSeriesDialog::on_spxCurrentPage_valueChanged(int page) {
         }
     }
     ui->tblTimeSeries->blockSignals(false);
+}
+
+bool TimeSeriesDialog::hasChanges() const {
+    return changed;
 }
