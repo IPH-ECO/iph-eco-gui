@@ -57,11 +57,11 @@ void SimulationVTKWidget::render(Simulation *simulation, const QString &layer, c
         actor = vtkSmartPointer<vtkActor>::New();
     }
     
-    vtkSmartPointer<vtkScalarBarWidget> scalarBarWidget = renderScalarBar(actor);
-    
     if (component == "Magnitude") {
         vtkSmartPointer<vtkUnstructuredGrid> magnitudeGrid = convertToMagnitudeGrid(layerGrid);
         vtkSmartPointer<vtkDataSetMapper> mapMapper = vtkSmartPointer<vtkDataSetMapper>::New();
+        double *scalarBarRange = magnitudeGrid->GetCellData()->GetArray(MAGNITUDE_ARRAY_NAME)->GetRange();
+        vtkSmartPointer<vtkScalarBarWidget> scalarBarWidget = renderScalarBar(actor, scalarBarRange);
         
         mapMapper->SetLookupTable(scalarBarWidget->GetScalarBarActor()->GetLookupTable());
         mapMapper->SetResolveCoincidentTopologyToPolygonOffset();
@@ -74,6 +74,8 @@ void SimulationVTKWidget::render(Simulation *simulation, const QString &layer, c
     } else if (component == "Vector") {
         vtkSmartPointer<vtkPolyData> vectorsPolyData = renderVectors(layerGrid);
         vtkSmartPointer<vtkPolyDataMapper> mapMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+        double *scalarBarRange = vectorsPolyData->GetCellData()->GetArray(MAGNITUDE_ARRAY_NAME)->GetRange();
+        vtkSmartPointer<vtkScalarBarWidget> scalarBarWidget = renderScalarBar(actor, scalarBarRange);
         
         mapMapper->SetScalarModeToUsePointData();
         mapMapper->SetInputData(vectorsPolyData);
@@ -85,6 +87,8 @@ void SimulationVTKWidget::render(Simulation *simulation, const QString &layer, c
     } else {
         vtkSmartPointer<vtkDataSetMapper> mapMapper = vtkSmartPointer<vtkDataSetMapper>::New();
         std::string layerArrayName = layer.toStdString();
+        double *scalarBarRange = layerGrid->GetCellData()->GetArray(layerArrayName.c_str())->GetRange();
+        vtkSmartPointer<vtkScalarBarWidget> scalarBarWidget = renderScalarBar(actor, scalarBarRange);
         
         mapMapper->SetLookupTable(scalarBarWidget->GetScalarBarActor()->GetLookupTable());
         mapMapper->SetResolveCoincidentTopologyToPolygonOffset();
@@ -129,7 +133,7 @@ vtkSmartPointer<vtkUnstructuredGrid> SimulationVTKWidget::convertToMagnitudeGrid
     return vtkSmartPointer<vtkUnstructuredGrid>(magnitudeFunction->GetUnstructuredGridOutput());
 }
 
-vtkSmartPointer<vtkScalarBarWidget> SimulationVTKWidget::renderScalarBar(vtkSmartPointer<vtkActor> layerActor) {
+vtkSmartPointer<vtkScalarBarWidget> SimulationVTKWidget::renderScalarBar(vtkSmartPointer<vtkActor> layerActor, double *scalarBarRange) {
     vtkSmartPointer<vtkScalarBarWidget> scalarBarWidget = scalarBarWidgets.value(layerActor);
     
     if (!scalarBarWidget) {
@@ -144,7 +148,7 @@ vtkSmartPointer<vtkScalarBarWidget> SimulationVTKWidget::renderScalarBar(vtkSmar
         scalarBarWidget->ResizableOn();
     }
     
-    vtkSmartPointer<vtkColorTransferFunction> colorTransferFunction = buildColorTransferFunction();
+    vtkSmartPointer<vtkColorTransferFunction> colorTransferFunction = buildColorTransferFunction(scalarBarRange);
     scalarBarWidget->GetScalarBarActor()->SetLookupTable(colorTransferFunction);
     scalarBarWidget->SetEnabled(currentComponent == "Vector" ? layerProperties->getVectorsLegend() : layerProperties->getMapLegend());
     
@@ -176,7 +180,8 @@ vtkSmartPointer<vtkPolyData> SimulationVTKWidget::renderVectors(vtkSmartPointer<
     arrowSource->Update();
     
     vtkSmartPointer<vtkUnstructuredGrid> magnitudeGrid = convertToMagnitudeGrid(layerGrid);
-    double *magnitudeRange = magnitudeGrid->GetCellData()->GetArray(MAGNITUDE_ARRAY_NAME)->GetRange();
+    vtkSmartPointer<vtkDoubleArray> magnitudeArray = vtkDoubleArray::SafeDownCast(magnitudeGrid->GetCellData()->GetArray(MAGNITUDE_ARRAY_NAME));
+    double *magnitudeRange = magnitudeArray->GetRange();
     vtkSmartPointer<vtkGlyph3D> glyph = vtkSmartPointer<vtkGlyph3D>::New();
     glyph->SetSourceConnection(arrowSource->GetOutputPort());
     glyph->SetInputData(arrowsPolyData);
@@ -189,10 +194,13 @@ vtkSmartPointer<vtkPolyData> SimulationVTKWidget::renderVectors(vtkSmartPointer<
     glyph->OrientOn();
     glyph->Update();
     
-    return vtkSmartPointer<vtkPolyData>(glyph->GetOutput());
+    vtkSmartPointer<vtkPolyData> vectorPolyData = glyph->GetOutput();
+    vectorPolyData->GetCellData()->AddArray(magnitudeArray);
+    
+    return vectorPolyData;
 }
 
-vtkSmartPointer<vtkColorTransferFunction> SimulationVTKWidget::buildColorTransferFunction() {
+vtkSmartPointer<vtkColorTransferFunction> SimulationVTKWidget::buildColorTransferFunction(double *scalarBarRange) {
     QList<QColor> colors;
     bool invertScalarBar;
     double minimumRange;
@@ -208,8 +216,8 @@ vtkSmartPointer<vtkColorTransferFunction> SimulationVTKWidget::buildColorTransfe
         }
         
         if (layerProperties->getUseDefaultVectorsValues()) {
-            minimumRange = layerProperties->getDefaultVectorsMinimum();
-            maximumRange = layerProperties->getDefaultVectorsMaximum();
+            minimumRange = scalarBarRange[0];
+            maximumRange = scalarBarRange[1];
         } else {
             minimumRange = layerProperties->getVectorsMinimumRange();
             maximumRange = layerProperties->getVectorsMaximumRange();
@@ -219,8 +227,8 @@ vtkSmartPointer<vtkColorTransferFunction> SimulationVTKWidget::buildColorTransfe
         invertScalarBar = layerProperties->getMapInvertColorGradient();
         
         if (layerProperties->getUseDefaultMapValues()) {
-            minimumRange = layerProperties->getDefaultMapMinimum();
-            maximumRange = layerProperties->getDefaultMapMaximum();
+            minimumRange = scalarBarRange[0];
+            maximumRange = scalarBarRange[1];
         } else {
             minimumRange = layerProperties->getMapMininumRange();
             maximumRange = layerProperties->getMapMaximumRange();

@@ -22,10 +22,10 @@ private:
     
     const char *MAGNITUDE_ARRAY_NAME;
     
-    vtkSmartPointer<vtkColorTransferFunction> buildColorTransferFunction();
+    vtkSmartPointer<vtkColorTransferFunction> buildColorTransferFunction(double *scalarBarRange);
     vtkSmartPointer<vtkPolyData> renderVectors(vtkSmartPointer<vtkUnstructuredGrid> layerGrid);
     vtkSmartPointer<vtkUnstructuredGrid> convertToMagnitudeGrid(vtkSmartPointer<vtkUnstructuredGrid> layerGrid);
-    vtkSmartPointer<vtkScalarBarWidget> renderScalarBar(vtkSmartPointer<vtkActor> layerActor);
+    vtkSmartPointer<vtkScalarBarWidget> renderScalarBar(vtkSmartPointer<vtkActor> layerActor, double *scalarBarRange);
 public:
 	explicit SimulationVTKWidget(QWidget *parent);
 	void render(Simulation *simulation, const QString &layer, const QString &component, int frame);

@@ -5,10 +5,6 @@
 #include <QJsonArray>
 #include <QJsonObject>
 #include <QJsonDocument>
-#include <vtkCellData.h>
-#include <vtkArrayCalculator.h>
-#include <vtkUnstructuredGrid.h>
-#include <vtkGenericDataObjectReader.h>
 
 Simulation::Simulation() :
     id(0), hydrodynamicConfiguration(nullptr), status(SimulationStatus::IDLE), progress(0), simulationStruct(nullptr), previousStatus(SimulationStatus::UNDEFINED)
@@ -377,45 +373,11 @@ QMap<QString, LayerProperties*> Simulation::getSelectedLayers() const {
 }
 
 void Simulation::addSelectedLayer(const QString &layerKey) {
-    std::string firstFileName = this->getOutputFiles().first().absoluteFilePath().toStdString();
-    vtkSmartPointer<vtkGenericDataObjectReader> reader = vtkSmartPointer<vtkGenericDataObjectReader>::New();
-    reader->SetFileName(firstFileName.c_str());
-    reader->Update();
-    
-    vtkSmartPointer<vtkUnstructuredGrid> layerGrid = reader->GetUnstructuredGridOutput();
     QStringList layerAndComponent = layerKey.split("-");
     std::string layer = layerAndComponent.first().toStdString();
     std::string component = layerAndComponent.last().toStdString();
-    LayerProperties *layerProperties = new LayerProperties();
-    bool setVectorRange = component == "Vector";
-    double layerRange[2];
     
-    if (component == "Vector" || component == "Magnitude") {
-        vtkSmartPointer<vtkArrayCalculator> magnitudeFunction = vtkSmartPointer<vtkArrayCalculator>::New();
-        
-        magnitudeFunction->AddScalarVariable("x", layer.c_str(), 0);
-        magnitudeFunction->AddScalarVariable("y", layer.c_str(), 1);
-        magnitudeFunction->AddScalarVariable("z", layer.c_str(), 2);
-        magnitudeFunction->SetResultArrayName("magnitudeArray");
-        magnitudeFunction->SetFunction("sqrt(x^2 + y^2 + z^2)");
-        magnitudeFunction->SetAttributeModeToUseCellData();
-        magnitudeFunction->SetInputData(layerGrid);
-        magnitudeFunction->Update();
-        
-        magnitudeFunction->GetUnstructuredGridOutput()->GetCellData()->GetArray("magnitudeArray")->GetRange(layerRange);
-    } else {
-        layerGrid->GetCellData()->GetArray(layer.c_str())->GetRange(layerRange);
-    }
-    
-    if (setVectorRange) {
-        layerProperties->setDefaultVectorsMinimum(layerRange[0]);
-        layerProperties->setDefaultVectorsMaximum(layerRange[1]);
-    } else {
-        layerProperties->setDefaultMapMinimum(layerRange[0]);
-        layerProperties->setDefaultMapMaximum(layerRange[1]);
-    }
-    
-    selectedLayers.insert(layerKey, layerProperties);
+    selectedLayers.insert(layerKey, new LayerProperties());
 }
 
 Mesh* Simulation::getMesh() const {

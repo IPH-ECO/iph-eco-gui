@@ -48,8 +48,6 @@ private:
     bool useDefaultPointsValues;
     double defaultPointsMinimum;
     double defaultPointsMaximum;
-    double defaultVectorsMinimum;
-    double defaultVectorsMaximum;
 public:
 	LayerProperties();
 
@@ -127,10 +125,6 @@ public:
     void setDefaultPointsMinimum(const double &defaultPointsMinimum);
     double getDefaultPointsMaximum() const;
     void setDefaultPointsMaximum(const double &defaultPointsMaximum);
-    double getDefaultVectorsMinimum() const;
-    void setDefaultVectorsMinimum(const double &defaultVectorsMinimum);
-    double getDefaultVectorsMaximum() const;
-    void setDefaultVectorsMaximum(const double &defaultVectorsMaximum);
 };
 
 #endif // LAYER_PROPERTIES_H

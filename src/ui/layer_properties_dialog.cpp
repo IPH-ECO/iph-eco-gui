@@ -92,7 +92,6 @@ void LayerPropertiesDialog::setupVectorsTab() {
     ui->edtVectorsMaximum->setText(QString::number(layerProperties->getVectorsMaximumRange()));
     ui->edtVectorsMinimum->setDisabled(ui->chkUseVectorsDefaultValues->isChecked());
     ui->edtVectorsMaximum->setDisabled(ui->chkUseVectorsDefaultValues->isChecked());
-    ui->lblVectorsOriginalValues->setText(QString("[%1, %2]").arg(layerProperties->getDefaultVectorsMinimum()).arg(layerProperties->getDefaultVectorsMaximum()));
     this->setupColorGradientTemplates(defaultVectorsColorGradientButton, currentVectorsColorGradientButton, paletteLayout);
     ui->chkVectorsInvertColorTemplate->setChecked(layerProperties->getVectorsInvertColorGradient());
     ui->sldVectorsOpacity->setValue(layerProperties->getVectorsOpacity());

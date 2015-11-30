@@ -23,7 +23,7 @@ LayerProperties::LayerProperties() :
     vectorsColor("#000000"),
     vectorsInvertColorGradient(true),
     vectorsOpacity(100),
-    vectorsScale(0.5),
+    vectorsScale(0.25),
     vectorsWidth(1),
     vectorsLegend(true),
     meshLineColor("#000000"),
@@ -312,20 +312,4 @@ double LayerProperties::getDefaultPointsMaximum() const {
 
 void LayerProperties::setDefaultPointsMaximum(const double &defaultPointsMaximum) {
     this->defaultPointsMaximum = defaultPointsMaximum;
-}
-
-double LayerProperties::getDefaultVectorsMinimum() const {
-    return defaultVectorsMinimum;
-}
-
-void LayerProperties::setDefaultVectorsMinimum(const double &defaultVectorsMinimum) {
-    this->defaultVectorsMinimum = defaultVectorsMinimum;
-}
-
-double LayerProperties::getDefaultVectorsMaximum() const {
-    return defaultVectorsMaximum;
-}
-
-void LayerProperties::setDefaultVectorsMaximum(const double &defaultVectorsMaximum) {
-    this->defaultVectorsMaximum = defaultVectorsMaximum;
 }
