@@ -278,7 +278,7 @@ bool Project::addSimulation(Simulation *simulation) {
         return false;
     }
     
-    simulations.insert(simulation);
+    simulations.append(simulation);
     
     emit simulationCreated(simulation);
     
@@ -289,7 +289,7 @@ void Project::removeSimulation(const QString &simulationLabel) {
     Simulation *simulation = getSimulation(simulationLabel);
     
     if (simulation != nullptr) {
-        simulations.remove(simulation);
+        simulations.removeOne(simulation);
         delete simulation;
     }
 }
@@ -304,7 +304,7 @@ Simulation* Project::getSimulation(const QString &label) const {
     return nullptr;
 }
 
-QSet<Simulation*> Project::getSimulations() const {
+QList<Simulation*> Project::getSimulations() const {
     return simulations;
 }
 

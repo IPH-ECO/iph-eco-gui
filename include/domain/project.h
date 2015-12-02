@@ -23,7 +23,7 @@ private:
     QSet<GridDataConfiguration*> gridDataConfigurations;
     QSet<HydrodynamicConfiguration*> hydrodynamicConfigurations;
     QSet<MeteorologicalConfiguration*> meteorologicalConfigurations;
-    QSet<Simulation*> simulations;
+    QList<Simulation*> simulations;
 
     //Transient attributes
     bool dirty;
@@ -75,7 +75,7 @@ public:
     bool addSimulation(Simulation *simulation);
     void removeSimulation(const QString &simulationLabel);
     Simulation* getSimulation(const QString &label) const;
-    QSet<Simulation*> getSimulations() const;
+    QList<Simulation*> getSimulations() const;
     
     //Transient gets and sets
     bool isPersisted() const;

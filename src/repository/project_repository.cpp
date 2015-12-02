@@ -373,7 +373,7 @@ void ProjectRepository::loadMeteorologicalParameters(MeteorologicalStation *stat
 void ProjectRepository::loadSimulations(Project *project) {
     QSqlQuery query(databaseUtility->getDatabase());
     
-    query.prepare("select * from simulation");
+    query.prepare("select * from simulation order by label asc");
     query.exec();
     
     while (query.next() && !operationCanceled) {
@@ -1075,7 +1075,7 @@ void ProjectRepository::saveMeteorologicalParameters(MeteorologicalStation *stat
 }
 
 void ProjectRepository::saveSimulations(Project *project) {
-    QSet<Simulation*> simulations = project->getSimulations();
+    QList<Simulation*> simulations = project->getSimulations();
     QStringList simulationIds;
     
     if (!simulations.isEmpty()) {
