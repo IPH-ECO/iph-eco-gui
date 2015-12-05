@@ -37,8 +37,6 @@ void SimulationVTKWidget::render(Simulation *simulation, const QString &layer, c
         currentSimulation = simulation;
         currentMesh = simulation->getMesh();
         
-        layerArrayMap.clear();
-        
         renderMeshLayer();
     }
     
@@ -59,12 +57,12 @@ void SimulationVTKWidget::render(Simulation *simulation, const QString &layer, c
     
     readFrame(frame);
     
-    vtkSmartPointer<vtkDoubleArray> layerArray = layerArrayMap.value(layerKey);
     std::string layerArrayName = layer.toStdString();
     double layerRange[2];
     
     if (component == "Magnitude") {
-        layerArray = this->buildMagnitudeArray();
+        vtkSmartPointer<vtkDoubleArray> layerArray = this->buildMagnitudeArray();
+        
         layerArray->GetRange(layerRange);
         layerGrid->GetCellData()->AddArray(layerArray);
         meshActor->GetProperty()->SetRepresentationToSurface();
@@ -91,12 +89,19 @@ void SimulationVTKWidget::render(Simulation *simulation, const QString &layer, c
         
         vectorsActor->SetMapper(vectorsPolyDataMapper);
         
-        if (vectorActors.value(layerKey)) {
-            renderer->RemoveActor(vectorActors.take(layerKey));
+        if (vectorsActors.value(layerKey)) {
+            renderer->RemoveActor(vectorsActors.take(layerKey));
         }
         
-        vectorActors.insert(layerKey, vectorsActor);
+        vectorsActors.insert(layerKey, vectorsActor);
         renderer->AddActor(vectorsActor);
+        
+        vectorsActor->GetProperty()->SetOpacity(layerProperties->getVectorsOpacity() / 100.0);
+        
+        if (layerProperties->getVectorColorMode() == VectorColorMode::CONSTANT) {
+            QColor vectorColor = layerProperties->getVectorsColor();
+            vectorsActor->GetProperty()->SetColor(vectorColor.redF(), vectorColor.greenF(), vectorColor.blueF());
+        }
     } else {
         vtkSmartPointer<vtkScalarBarWidget> scalarBarWidget = renderScalarBar(layerKey, layerRange);
         
@@ -106,19 +111,10 @@ void SimulationVTKWidget::render(Simulation *simulation, const QString &layer, c
         layerDataSetMapper->UseLookupTableScalarRangeOn();
         layerDataSetMapper->SetScalarModeToUseCellData();
         layerDataSetMapper->ScalarVisibilityOn();
+        
+        meshActor->GetProperty()->SetOpacity(layerProperties->getMapOpacity() / 100.0);
+        meshActor->GetProperty()->SetLighting(layerProperties->getMapLighting());
     }
-    
-//    if (component == "Vector") {
-//        layerActor->GetProperty()->SetOpacity(layerProperties->getVectorsOpacity());
-//        
-//        if (layerProperties->getVectorColorMode() == VectorColorMode::CONSTANT) {
-//            QColor vectorColor = layerProperties->getVectorsColor();
-//            layerActor->GetProperty()->SetColor(vectorColor.redF(), vectorColor.greenF(), vectorColor.blueF());
-//        }
-//    } else {
-//        layerActor->GetProperty()->SetOpacity(layerProperties->getMapOpacity() / 100.0);
-//        layerActor->GetProperty()->SetLighting(layerProperties->getMapLighting());
-//    }
     
     this->GetRenderWindow()->Render();
 }
@@ -164,7 +160,7 @@ vtkSmartPointer<vtkDoubleArray> SimulationVTKWidget::buildMagnitudeArray() {
     magnitudeFunction->AddScalarVariable("x", vectorsArrayName.c_str(), 0);
     magnitudeFunction->AddScalarVariable("y", vectorsArrayName.c_str(), 1);
     magnitudeFunction->AddScalarVariable("z", vectorsArrayName.c_str(), 2);
-    magnitudeFunction->SetResultArrayName(vectorsArrayName.c_str());
+    magnitudeFunction->SetResultArrayName(MAGNITUDE_ARRAY_NAME);
     magnitudeFunction->SetFunction("sqrt(x^2 + y^2 + z^2)");
     magnitudeFunction->SetAttributeModeToUseCellData();
     magnitudeFunction->SetInputData(layerGrid);
@@ -172,7 +168,7 @@ vtkSmartPointer<vtkDoubleArray> SimulationVTKWidget::buildMagnitudeArray() {
     
     vtkSmartPointer<vtkUnstructuredGrid> magnitudePolyData = magnitudeFunction->GetUnstructuredGridOutput();
     
-    return vtkSmartPointer<vtkDoubleArray>(vtkDoubleArray::SafeDownCast(magnitudePolyData->GetCellData()->GetArray(vectorsArrayName.c_str())));
+    return vtkSmartPointer<vtkDoubleArray>(vtkDoubleArray::SafeDownCast(magnitudePolyData->GetCellData()->GetArray(MAGNITUDE_ARRAY_NAME)));
 }
 
 vtkSmartPointer<vtkScalarBarWidget> SimulationVTKWidget::renderScalarBar(const QString &layerKey, double *scalarBarRange) {
@@ -299,7 +295,7 @@ void SimulationVTKWidget::hideLayer(const QString &layerKey) {
     std::string component = layerAndComponent.last().toStdString();
     
     if (component == "Vector") {
-        vectorActors.value(layerKey)->VisibilityOff();
+        vectorsActors.value(layerKey)->VisibilityOff();
     } else {
         meshActor->GetProperty()->SetRepresentationToWireframe();
         layerDataSetMapper->ScalarVisibilityOff();
@@ -319,11 +315,10 @@ void SimulationVTKWidget::removeLayer(const QString &layerKey) {
     QStringList layerAndComponent = layerKey.split("-");
     
     if (layerAndComponent.last() == "Vector") {
-        vtkSmartPointer<vtkActor> vectorsActor = vectorActors.take(layerKey);
-        this->renderer->RemoveActor(vectorsActor);
-    } else {
-        std::string arrayName = layerAndComponent.last() == "Magnitude" ? MAGNITUDE_ARRAY_NAME : layerAndComponent.first().toStdString();
-        layerGrid->GetCellData()->RemoveArray(arrayName.c_str());
+        this->renderer->RemoveActor(vectorsActors.take(layerKey));
+    } else if (layerAndComponent.first() == layerDataSetMapper->GetArrayName()) {
+        meshActor->GetProperty()->SetRepresentationToWireframe();
+        layerDataSetMapper->ScalarVisibilityOff();
     }
     
     vtkSmartPointer<vtkScalarBarWidget> scalarBarWidget = scalarBarWidgets.take(layerKey);

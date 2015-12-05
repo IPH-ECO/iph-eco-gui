@@ -43,6 +43,7 @@ LayerPropertiesDialog::LayerPropertiesDialog(QWidget *parent, LayerProperties *l
     }
 
     this->setFixedSize(this->minimumSize());
+    this->on_tabWidget_currentChanged(0);
     
     QObject::connect(ui->btnLineColor, SIGNAL(clicked()), this, SLOT(showColorPickerDialog()));
     QObject::connect(ui->btnVectorColor, SIGNAL(clicked()), this, SLOT(showColorPickerDialog()));

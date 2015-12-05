@@ -17,10 +17,8 @@ class SimulationVTKWidget : public MeshVTKWidget {
 private:
     vtkSmartPointer<vtkUnstructuredGrid> layerGrid;
     vtkSmartPointer<vtkDataSetMapper> layerDataSetMapper;
-    QMap<QString, vtkSmartPointer<vtkDoubleArray> > layerArrayMap;
-    QMap<QString, vtkSmartPointer<vtkActor> > vectorActors;
+    QMap<QString, vtkSmartPointer<vtkActor> > vectorsActors;
     QMap<QString, vtkSmartPointer<vtkScalarBarWidget> > scalarBarWidgets;
-    QList<QString> visibleLayers;
     Simulation *currentSimulation;
     QFileInfoList outputFiles;
     LayerProperties *layerProperties;
