@@ -43,12 +43,6 @@ void AbstractMeshDialog::showEvent(QShowEvent *event) {
         toggleMeshAction->setChecked(true);
         QObject::connect(toggleMeshAction, SIGNAL(triggered(bool)), vtkWidget, SLOT(toggleMesh(bool)));
         toolBarActions.append(toggleMeshAction);
-        
-        QAction *toggleBoundaryEdgesAction = new QAction(QIcon(":/icons/boundary-domain.png"), "Show/Hide boundary edges", mainWindow);
-        toggleBoundaryEdgesAction->setCheckable(true);
-        toggleBoundaryEdgesAction->setChecked(true);
-        QObject::connect(toggleBoundaryEdgesAction, SIGNAL(triggered(bool)), vtkWidget, SLOT(toggleBoundaryEdges(bool)));
-        toolBarActions.append(toggleBoundaryEdgesAction);
 
         QAction *toggleAxesAction = new QAction(QIcon(":/icons/show-axis.png"), "Show/Hide axes", mainWindow);
         toggleAxesAction->setCheckable(true);

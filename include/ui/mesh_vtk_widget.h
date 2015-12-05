@@ -19,7 +19,6 @@ protected:
     
     vtkSmartPointer<vtkActor> meshActor;
     vtkSmartPointer<vtkCubeAxesActor> axesActor;
-	vtkSmartPointer<vtkActor> boundaryEdgesActor;
     vtkSmartPointer<vtkActor2D> labelsActor;
     vtkSmartPointer<vtkActor> verticesActor;
     
@@ -37,7 +36,6 @@ public:
     Mesh* getMesh() const;
 
 public slots:
-    virtual void toggleBoundaryEdges(bool show);
     virtual void toggleMesh(bool show);
     virtual void toggleAxes(bool show);
     virtual void resetZoom();

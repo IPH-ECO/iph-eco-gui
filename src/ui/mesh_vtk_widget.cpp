@@ -1,8 +1,7 @@
 #include "include/ui/mesh_vtk_widget.h"
 
+#include <QList>
 #include <vtkVertex.h>
-#include <vtkPoints.h>
-#include <vtkPolygon.h>
 #include <vtkPolyData.h>
 #include <vtkProperty.h>
 #include <vtkCellArray.h>
@@ -15,7 +14,6 @@
 #include <vtkLabeledDataMapper.h>
 #include <vtkWindowToImageFilter.h>
 #include <vtkInteractorStyleRubberBandZoom.h>
-#include <QList>
 
 #include "include/ui/main_window.h"
 #include "include/ui/structured_mesh_dialog.h"
@@ -62,47 +60,6 @@ void MeshVTKWidget::render(Mesh *mesh) {
     }
     
     currentMesh = mesh;
-
-    // Contour rendering
-    vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
-    vtkSmartPointer<vtkCellArray> polygons = vtkSmartPointer<vtkCellArray>::New();
-    QList<MeshPolygon*> meshPolygons = mesh->getIslands();
-    int count = 0;
-
-    meshPolygons.prepend(boundaryPolygon);
-
-    for (MeshPolygon* meshPolygon : meshPolygons) {
-        vtkPolygon *vtkMeshPolygon = meshPolygon->getFilteredPolygon();
-
-        for (vtkIdType i = 0; i < vtkMeshPolygon->GetPoints()->GetNumberOfPoints(); i++) {
-            double point[3];
-
-            vtkMeshPolygon->GetPoints()->GetPoint(i, point); // Safe call
-            vtkMeshPolygon->GetPointIds()->SetId(i, count);
-            points->InsertNextPoint(point);
-            count++;
-        }
-
-        polygons->InsertNextCell(vtkMeshPolygon);
-    }
-    
-    vtkSmartPointer<vtkPolyData> boundaryPolyData = vtkSmartPointer<vtkPolyData>::New();
-    boundaryPolyData->SetPoints(points);
-    boundaryPolyData->SetPolys(polygons);
-
-    vtkSmartPointer<vtkExtractEdges> boundaryEdges = vtkSmartPointer<vtkExtractEdges>::New();
-    boundaryEdges->SetInputData(boundaryPolyData);
-    boundaryEdges->Update();
-
-    vtkSmartPointer<vtkPolyDataMapper> boundaryEdgesMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-    boundaryEdgesMapper->SetInputData(boundaryEdges->GetOutput());
-    
-    boundaryEdgesActor = vtkSmartPointer<vtkActor>::New();
-    boundaryEdgesActor->SetMapper(boundaryEdgesMapper);
-    boundaryEdgesActor->GetProperty()->EdgeVisibilityOn();
-    boundaryEdgesActor->SetVisibility(showBoundaryEdges);
-    
-    renderer->AddActor(boundaryEdgesActor);
     
     // Mesh rendering
     vtkSmartPointer<vtkExtractEdges> meshEdges = vtkSmartPointer<vtkExtractEdges>::New();
@@ -165,16 +122,7 @@ void MeshVTKWidget::clear() {
     currentMesh = nullptr;
     renderer->RemoveActor(meshActor);
     renderer->RemoveActor(axesActor);
-    renderer->RemoveActor(boundaryEdgesActor);
     this->update();
-}
-
-void MeshVTKWidget::toggleBoundaryEdges(bool show) {
-    this->showBoundaryEdges = show;
-    if (this->boundaryEdgesActor) {
-        this->boundaryEdgesActor->SetVisibility(show);
-        this->update();
-    }
 }
 
 void MeshVTKWidget::toggleMesh(bool show) {
