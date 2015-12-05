@@ -9,8 +9,8 @@
 #include <QColorDialog>
 #include <QDialogButtonBox>
 
-MeshPropertiesDialog::MeshPropertiesDialog(QWidget *parent, MeshVTKWidget *vtkWidget) :
-    QDialog(parent), ui(new Ui::MeshPropertiesDialog), vtkWidget(vtkWidget), mesh(vtkWidget->getMesh())
+MeshPropertiesDialog::MeshPropertiesDialog(QWidget *parent, Mesh *mesh) :
+    QDialog(parent), ui(new Ui::MeshPropertiesDialog), mesh(mesh)
 {
 	ui->setupUi(this);
     QColor color(mesh->getColor());
@@ -79,7 +79,7 @@ void MeshPropertiesDialog::on_buttonBox_clicked(QAbstractButton *button) {
         return;
     }
 
-	vtkWidget->render(mesh);
+    emit applyChanges(mesh);
 
 	if (standardButton == QDialogButtonBox::Ok) {
         this->accept();

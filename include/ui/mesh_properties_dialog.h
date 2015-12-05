@@ -25,7 +25,9 @@ private slots:
     void on_sldOpacity_valueChanged(int opacity);
     void on_sbxLineWidth_valueChanged(int width);
 public:
-	explicit MeshPropertiesDialog(QWidget *parent, MeshVTKWidget *vtkWidget);
+	explicit MeshPropertiesDialog(QWidget *parent, Mesh *mesh);
+signals:
+    void applyChanges(Mesh *mesh);
 };
 
 #endif // MESH_PROPERTIES_DIALOG_H

@@ -3,7 +3,6 @@
 #include "include/ui/main_window.h"
 #include "include/exceptions/simulation_exception.h"
 
-#include <QFileInfo>
 #include <vtkGlyph3D.h>
 #include <vtkCellData.h>
 #include <vtkProperty.h>
@@ -12,24 +11,43 @@
 #include <vtkDoubleArray.h>
 #include <vtkArrowSource.h>
 #include <vtkCellCenters.h>
-#include <vtkDataSetMapper.h>
 #include <vtkPolyDataMapper.h>
 #include <vtkScalarBarActor.h>
+#include <vtkGeometryFilter.h>
 #include <vtkArrayCalculator.h>
 #include <vtkColorTransferFunction.h>
 #include <vtkScalarBarRepresentation.h>
 #include <vtkGenericDataObjectReader.h>
 
 SimulationVTKWidget::SimulationVTKWidget(QWidget *parent) :
-    MeshVTKWidget(parent), currentSimulation(nullptr), layerProperties(nullptr), MAGNITUDE_ARRAY_NAME("magnitudeArray")
+    MeshVTKWidget(parent),
+    currentSimulation(nullptr),
+    layerProperties(nullptr),
+    MAGNITUDE_ARRAY_NAME("VectorMagnitude")
 {}
 
 void SimulationVTKWidget::render(Simulation *simulation, const QString &layer, const QString &component, int frame) {
-    currentSimulation = simulation;
+    if (currentSimulation != simulation) {
+        outputFiles = simulation->getOutputFiles();
+        
+        if (outputFiles.isEmpty()) {
+            throw SimulationException("Output files for this simulation were not found.");
+        }
+        
+        currentSimulation = simulation;
+        currentMesh = simulation->getMesh();
+        
+        layerArrayMap.clear();
+        
+        renderMeshLayer();
+    }
     
     if (layer.isEmpty()) {
-        MeshVTKWidget::render(simulation->getMesh());
         return;
+    }
+    
+    if (frame >= outputFiles.size()) {
+        throw SimulationException("Frame out of range.");
     }
     
     QString layerKey = QString("%1-%2").arg(layer).arg(component);
@@ -38,103 +56,127 @@ void SimulationVTKWidget::render(Simulation *simulation, const QString &layer, c
     currentLayer = layer;
     currentComponent = component;
     currentFrame = frame;
-
-    QFileInfoList outputFiles = simulation->getOutputFiles();
     
-    if (frame >= outputFiles.size()) {
-        throw SimulationException("Frame out of range.");
-    }
+    readFrame(frame);
     
-    std::string filename = outputFiles.at(frame).absoluteFilePath().toStdString();
-    vtkSmartPointer<vtkGenericDataObjectReader> reader = vtkSmartPointer<vtkGenericDataObjectReader>::New();
-    reader->SetFileName(filename.c_str());
-    reader->Update();
-    
-    vtkSmartPointer<vtkUnstructuredGrid> layerGrid = reader->GetUnstructuredGridOutput();
-    vtkSmartPointer<vtkActor> actor = layerActors.value(layerKey);
-    
-    if (!actor) {
-        actor = vtkSmartPointer<vtkActor>::New();
-    }
+    vtkSmartPointer<vtkDoubleArray> layerArray = layerArrayMap.value(layerKey);
+    std::string layerArrayName = layer.toStdString();
+    double layerRange[2];
     
     if (component == "Magnitude") {
-        vtkSmartPointer<vtkUnstructuredGrid> magnitudeGrid = convertToMagnitudeGrid(layerGrid);
-        vtkSmartPointer<vtkDataSetMapper> mapMapper = vtkSmartPointer<vtkDataSetMapper>::New();
-        double *scalarBarRange = magnitudeGrid->GetCellData()->GetArray(MAGNITUDE_ARRAY_NAME)->GetRange();
-        vtkSmartPointer<vtkScalarBarWidget> scalarBarWidget = renderScalarBar(actor, scalarBarRange);
-        
-        mapMapper->SetLookupTable(scalarBarWidget->GetScalarBarActor()->GetLookupTable());
-        mapMapper->SetResolveCoincidentTopologyToPolygonOffset();
-        mapMapper->SelectColorArray(MAGNITUDE_ARRAY_NAME);
-        mapMapper->UseLookupTableScalarRangeOn();
-        mapMapper->SetScalarModeToUseCellData();
-        mapMapper->SetInputData(magnitudeGrid);
-        
-        actor->SetMapper(mapMapper);
+        layerArray = this->buildMagnitudeArray();
+        layerArray->GetRange(layerRange);
+        layerGrid->GetCellData()->AddArray(layerArray);
+        meshActor->GetProperty()->SetRepresentationToSurface();
     } else if (component == "Vector") {
-        vtkSmartPointer<vtkPolyData> vectorsPolyData = renderVectors(layerGrid);
-        vtkSmartPointer<vtkPolyDataMapper> mapMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-        double *scalarBarRange = vectorsPolyData->GetCellData()->GetArray(MAGNITUDE_ARRAY_NAME)->GetRange();
-        vtkSmartPointer<vtkScalarBarWidget> scalarBarWidget = renderScalarBar(actor, scalarBarRange);
-        
-        mapMapper->SetScalarModeToUsePointData();
-        mapMapper->SetInputData(vectorsPolyData);
-        mapMapper->UseLookupTableScalarRangeOn();
-        mapMapper->SetResolveCoincidentTopologyToPolygonOffset();
-        mapMapper->SetLookupTable(scalarBarWidget->GetScalarBarActor()->GetLookupTable());
-        
-        actor->SetMapper(mapMapper);
-    } else {
-        vtkSmartPointer<vtkDataSetMapper> mapMapper = vtkSmartPointer<vtkDataSetMapper>::New();
-        std::string layerArrayName = layer.toStdString();
-        double *scalarBarRange = layerGrid->GetCellData()->GetArray(layerArrayName.c_str())->GetRange();
-        vtkSmartPointer<vtkScalarBarWidget> scalarBarWidget = renderScalarBar(actor, scalarBarRange);
-        
-        mapMapper->SetLookupTable(scalarBarWidget->GetScalarBarActor()->GetLookupTable());
-        mapMapper->SetResolveCoincidentTopologyToPolygonOffset();
-        mapMapper->SelectColorArray(layerArrayName.c_str());
-        mapMapper->UseLookupTableScalarRangeOn();
-        mapMapper->SetScalarModeToUseCellData();
-        mapMapper->SetInputData(layerGrid);
-        
-        actor->SetMapper(mapMapper);
+        layerArrayName = MAGNITUDE_ARRAY_NAME;
+    } else { // Arbritary layer
+        layerGrid->GetCellData()->GetArray(layerArrayName.c_str())->GetRange(layerRange);
+        meshActor->GetProperty()->SetRepresentationToSurface();
     }
     
     if (component == "Vector") {
-        actor->GetProperty()->SetOpacity(layerProperties->getVectorsOpacity());
+        vtkSmartPointer<vtkPolyData> vectorsPolyData = renderVectors();
+        vtkSmartPointer<vtkActor> vectorsActor = vtkSmartPointer<vtkActor>::New();
         
-        if (layerProperties->getVectorColorMode() == VectorColorMode::CONSTANT) {
-            QColor vectorColor = layerProperties->getVectorsColor();
-            actor->GetProperty()->SetColor(vectorColor.redF(), vectorColor.greenF(), vectorColor.blueF());
+        vectorsPolyData->GetPointData()->GetArray(layerArrayName.c_str())->GetRange(layerRange);
+        
+        vtkSmartPointer<vtkScalarBarWidget> scalarBarWidget = renderScalarBar(layerKey, layerRange);
+        
+        vtkSmartPointer<vtkPolyDataMapper> vectorsPolyDataMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+        vectorsPolyDataMapper->SetInputData(vectorsPolyData);
+        vectorsPolyDataMapper->SetScalarModeToUsePointData();
+        vectorsPolyDataMapper->UseLookupTableScalarRangeOn();
+        vectorsPolyDataMapper->SetLookupTable(scalarBarWidget->GetScalarBarActor()->GetLookupTable());
+        
+        vectorsActor->SetMapper(vectorsPolyDataMapper);
+        
+        if (vectorActors.value(layerKey)) {
+            renderer->RemoveActor(vectorActors.take(layerKey));
         }
+        
+        vectorActors.insert(layerKey, vectorsActor);
+        renderer->AddActor(vectorsActor);
     } else {
-        actor->GetProperty()->SetOpacity(layerProperties->getMapOpacity() / 100.0);
-        actor->GetProperty()->SetLighting(layerProperties->getMapLighting());
+        vtkSmartPointer<vtkScalarBarWidget> scalarBarWidget = renderScalarBar(layerKey, layerRange);
+        
+        layerDataSetMapper->SetInputData(layerGrid);
+        layerDataSetMapper->SetLookupTable(scalarBarWidget->GetScalarBarActor()->GetLookupTable());
+        layerDataSetMapper->SelectColorArray(layerArrayName.c_str());
+        layerDataSetMapper->UseLookupTableScalarRangeOn();
+        layerDataSetMapper->SetScalarModeToUseCellData();
+        layerDataSetMapper->ScalarVisibilityOn();
     }
     
-    renderer->AddActor(actor);
+//    if (component == "Vector") {
+//        layerActor->GetProperty()->SetOpacity(layerProperties->getVectorsOpacity());
+//        
+//        if (layerProperties->getVectorColorMode() == VectorColorMode::CONSTANT) {
+//            QColor vectorColor = layerProperties->getVectorsColor();
+//            layerActor->GetProperty()->SetColor(vectorColor.redF(), vectorColor.greenF(), vectorColor.blueF());
+//        }
+//    } else {
+//        layerActor->GetProperty()->SetOpacity(layerProperties->getMapOpacity() / 100.0);
+//        layerActor->GetProperty()->SetLighting(layerProperties->getMapLighting());
+//    }
+    
     this->GetRenderWindow()->Render();
-    layerActors.insert(layerKey, actor);
 }
 
-vtkSmartPointer<vtkUnstructuredGrid> SimulationVTKWidget::convertToMagnitudeGrid(vtkSmartPointer<vtkUnstructuredGrid> layerGrid) {
+void SimulationVTKWidget::readFrame(const int frame) {
+    std::string fileName = outputFiles.at(frame).absoluteFilePath().toStdString();
+    vtkSmartPointer<vtkGenericDataObjectReader> reader = vtkSmartPointer<vtkGenericDataObjectReader>::New();
+    reader->SetFileName(fileName.c_str());
+    reader->Update();
+    
+    layerGrid = reader->GetUnstructuredGridOutput();
+}
+
+void SimulationVTKWidget::renderMeshLayer() {
+    this->readFrame(0);
+    
+    layerDataSetMapper = vtkSmartPointer<vtkDataSetMapper>::New();
+    layerDataSetMapper->SetInputData(layerGrid);
+    layerDataSetMapper->ScalarVisibilityOff();
+    
+    this->renderer->RemoveActor(meshActor);
+    
+    QColor meshColor(currentMesh->getColor());
+    
+    meshActor = vtkSmartPointer<vtkActor>::New();
+    meshActor->SetMapper(layerDataSetMapper);
+    meshActor->GetProperty()->SetRepresentationToWireframe();
+    meshActor->GetProperty()->EdgeVisibilityOn();
+    meshActor->GetProperty()->SetColor(meshColor.redF(), meshColor.greenF(), meshColor.blueF());
+    meshActor->GetProperty()->LightingOff();
+    meshActor->SetScale(1, 1, 100);
+    
+    this->renderer->AddActor(meshActor);
+    this->renderAxesActor();
+    this->renderer->ResetCamera();
+    this->GetRenderWindow()->Render();
+}
+
+vtkSmartPointer<vtkDoubleArray> SimulationVTKWidget::buildMagnitudeArray() {
     vtkSmartPointer<vtkArrayCalculator> magnitudeFunction = vtkSmartPointer<vtkArrayCalculator>::New();
     std::string vectorsArrayName = currentLayer.toStdString();
     
     magnitudeFunction->AddScalarVariable("x", vectorsArrayName.c_str(), 0);
     magnitudeFunction->AddScalarVariable("y", vectorsArrayName.c_str(), 1);
     magnitudeFunction->AddScalarVariable("z", vectorsArrayName.c_str(), 2);
-    magnitudeFunction->SetResultArrayName(MAGNITUDE_ARRAY_NAME);
+    magnitudeFunction->SetResultArrayName(vectorsArrayName.c_str());
     magnitudeFunction->SetFunction("sqrt(x^2 + y^2 + z^2)");
     magnitudeFunction->SetAttributeModeToUseCellData();
     magnitudeFunction->SetInputData(layerGrid);
     magnitudeFunction->Update();
     
-    return vtkSmartPointer<vtkUnstructuredGrid>(magnitudeFunction->GetUnstructuredGridOutput());
+    vtkSmartPointer<vtkUnstructuredGrid> magnitudePolyData = magnitudeFunction->GetUnstructuredGridOutput();
+    
+    return vtkSmartPointer<vtkDoubleArray>(vtkDoubleArray::SafeDownCast(magnitudePolyData->GetCellData()->GetArray(vectorsArrayName.c_str())));
 }
 
-vtkSmartPointer<vtkScalarBarWidget> SimulationVTKWidget::renderScalarBar(vtkSmartPointer<vtkActor> layerActor, double *scalarBarRange) {
-    vtkSmartPointer<vtkScalarBarWidget> scalarBarWidget = scalarBarWidgets.value(layerActor);
+vtkSmartPointer<vtkScalarBarWidget> SimulationVTKWidget::renderScalarBar(const QString &layerKey, double *scalarBarRange) {
+    vtkSmartPointer<vtkScalarBarWidget> scalarBarWidget = scalarBarWidgets.value(layerKey);
     
     if (!scalarBarWidget) {
         std::string scalarBarLabel = currentLayer.toStdString();
@@ -156,12 +198,12 @@ vtkSmartPointer<vtkScalarBarWidget> SimulationVTKWidget::renderScalarBar(vtkSmar
     scalarBarRepresentation->GetPositionCoordinate()->SetValue(0.86, 0.05);
     scalarBarRepresentation->GetPosition2Coordinate()->SetValue(0.1, 0.35);
     
-    scalarBarWidgets.insert(layerActor, scalarBarWidget);
+    scalarBarWidgets.insert(layerKey, scalarBarWidget);
     
     return scalarBarWidget;
 }
 
-vtkSmartPointer<vtkPolyData> SimulationVTKWidget::renderVectors(vtkSmartPointer<vtkUnstructuredGrid> layerGrid) {
+vtkSmartPointer<vtkPolyData> SimulationVTKWidget::renderVectors() {
     vtkSmartPointer<vtkCellCenters> cellCentersFilter = vtkSmartPointer<vtkCellCenters>::New();
     cellCentersFilter->SetInputData(layerGrid);
     cellCentersFilter->Update();
@@ -179,9 +221,6 @@ vtkSmartPointer<vtkPolyData> SimulationVTKWidget::renderVectors(vtkSmartPointer<
     arrowSource->SetTipRadius(layerProperties->getVectorsWidth() * 0.1); // VTK default
     arrowSource->Update();
     
-    vtkSmartPointer<vtkUnstructuredGrid> magnitudeGrid = convertToMagnitudeGrid(layerGrid);
-    vtkSmartPointer<vtkDoubleArray> magnitudeArray = vtkDoubleArray::SafeDownCast(magnitudeGrid->GetCellData()->GetArray(MAGNITUDE_ARRAY_NAME));
-    double *magnitudeRange = magnitudeArray->GetRange();
     vtkSmartPointer<vtkGlyph3D> glyph = vtkSmartPointer<vtkGlyph3D>::New();
     glyph->SetSourceConnection(arrowSource->GetOutputPort());
     glyph->SetInputData(arrowsPolyData);
@@ -189,15 +228,14 @@ vtkSmartPointer<vtkPolyData> SimulationVTKWidget::renderVectors(vtkSmartPointer<
     glyph->SetScaleModeToScaleByVector();
     glyph->SetColorMode(layerProperties->getVectorColorMode() == VectorColorMode::MAGNITUDE ? VTK_COLOR_BY_VECTOR : VTK_COLOR_BY_SCALE);
     glyph->SetScaleFactor(layerProperties->getVectorsScale() * 1000);
-    glyph->SetRange(magnitudeRange);
-    glyph->ClampingOn();
     glyph->OrientOn();
     glyph->Update();
     
-    vtkSmartPointer<vtkPolyData> vectorPolyData = glyph->GetOutput();
-    vectorPolyData->GetCellData()->AddArray(magnitudeArray);
+    glyph->SetRange(glyph->GetOutput()->GetPointData()->GetArray("VectorMagnitude")->GetRange());
+    glyph->ClampingOn();
+    glyph->Update();
     
-    return vectorPolyData;
+    return vtkSmartPointer<vtkPolyData>(glyph->GetOutput());
 }
 
 vtkSmartPointer<vtkColorTransferFunction> SimulationVTKWidget::buildColorTransferFunction(double *scalarBarRange) {
@@ -255,19 +293,22 @@ vtkSmartPointer<vtkColorTransferFunction> SimulationVTKWidget::buildColorTransfe
     return colorTransferFunction;
 }
 
-void SimulationVTKWidget::toggleLayerVisibility(const QString &layerKey, bool visible) {
-    vtkSmartPointer<vtkActor> actor = layerActors.value(layerKey);
+void SimulationVTKWidget::hideLayer(const QString &layerKey) {
+    QStringList layerAndComponent = layerKey.split("-");
+    std::string layer = layerAndComponent.first().toStdString();
+    std::string component = layerAndComponent.last().toStdString();
     
-    if (actor) {
-        vtkSmartPointer<vtkScalarBarWidget> scalarBarWidget = scalarBarWidgets.value(actor);
-        
-        if (scalarBarWidget) {
-            scalarBarWidget->SetEnabled(visible);
-        }
-        
-        actor->SetVisibility(visible);
-        this->GetRenderWindow()->Render();
+    if (component == "Vector") {
+        vectorActors.value(layerKey)->VisibilityOff();
+    } else {
+        meshActor->GetProperty()->SetRepresentationToWireframe();
+        layerDataSetMapper->ScalarVisibilityOff();
     }
+    
+    // Refactor
+    scalarBarWidgets.value(layerKey)->EnabledOff();
+    
+    this->GetRenderWindow()->Render();
 }
 
 void SimulationVTKWidget::updateLayer() {
@@ -275,19 +316,21 @@ void SimulationVTKWidget::updateLayer() {
 }
 
 void SimulationVTKWidget::removeLayer(const QString &layerKey) {
-    vtkSmartPointer<vtkActor> actor = layerActors.value(layerKey);
+    QStringList layerAndComponent = layerKey.split("-");
     
-    if (actor) {
-        vtkSmartPointer<vtkScalarBarWidget> scalarBarWidget = scalarBarWidgets.value(actor);
-        
-        if (scalarBarWidget) {
-            scalarBarWidget->EnabledOff();
-        }
-        
-        renderer->RemoveActor(actor);
-        this->GetRenderWindow()->Render();
-        
-        scalarBarWidgets.remove(actor);
-        layerActors.remove(layerKey);
+    if (layerAndComponent.last() == "Vector") {
+        vtkSmartPointer<vtkActor> vectorsActor = vectorActors.take(layerKey);
+        this->renderer->RemoveActor(vectorsActor);
+    } else {
+        std::string arrayName = layerAndComponent.last() == "Magnitude" ? MAGNITUDE_ARRAY_NAME : layerAndComponent.first().toStdString();
+        layerGrid->GetCellData()->RemoveArray(arrayName.c_str());
     }
+    
+    vtkSmartPointer<vtkScalarBarWidget> scalarBarWidget = scalarBarWidgets.take(layerKey);
+    
+    if (scalarBarWidget) {
+        scalarBarWidget->EnabledOff();
+    }
+    
+    this->GetRenderWindow()->Render();
 }

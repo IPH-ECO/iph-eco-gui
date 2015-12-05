@@ -23,8 +23,14 @@
 
 vtkStandardNewMacro(MeshMouseInteractor);
 
-MeshVTKWidget::MeshVTKWidget(QWidget *parent, MeshMouseInteractor *mouseInteractor) : QVTKWidget(parent), currentMesh(nullptr), showBoundaryEdges(true), showMesh(true), showAxes(true) {
-    renderer = vtkSmartPointer<vtkRenderer>::New();
+MeshVTKWidget::MeshVTKWidget(QWidget *parent, MeshMouseInteractor *mouseInteractor) :
+    QVTKWidget(parent),
+    renderer(vtkSmartPointer<vtkRenderer>::New()),
+    currentMesh(nullptr),
+    showBoundaryEdges(true),
+    showMesh(true),
+    showAxes(true)
+{
     vtkSmartPointer<vtkAreaPicker> areaPicker = vtkSmartPointer<vtkAreaPicker>::New();
     
     if (mouseInteractor) {
@@ -96,6 +102,8 @@ void MeshVTKWidget::render(Mesh *mesh) {
     boundaryEdgesActor->GetProperty()->EdgeVisibilityOn();
     boundaryEdgesActor->SetVisibility(showBoundaryEdges);
     
+    renderer->AddActor(boundaryEdgesActor);
+    
     // Mesh rendering
     vtkSmartPointer<vtkExtractEdges> meshEdges = vtkSmartPointer<vtkExtractEdges>::New();
     meshEdges->SetInputData(mesh->getMeshPolyData());
@@ -110,37 +118,47 @@ void MeshVTKWidget::render(Mesh *mesh) {
     meshActor = vtkSmartPointer<vtkActor>::New();
     meshActor->SetMapper(meshMapper);
     meshActor->GetProperty()->EdgeVisibilityOn();
-    meshActor->SetVisibility(showMesh);
-    
     meshActor->GetProperty()->SetEdgeColor(meshColor.redF(), meshColor.greenF(), meshColor.blueF());
     meshActor->GetProperty()->SetLineStipplePattern(mesh->getLineStyle());
     meshActor->GetProperty()->SetLineWidth(mesh->getLineWidth());
     meshActor->GetProperty()->SetOpacity(mesh->getOpacity() / 100.0);
+    meshActor->SetVisibility(showMesh);
+    
+    renderer->AddActor(meshActor);
+    
+    renderAxesActor();
+
+    renderer->ResetCamera();
+
+    MainWindow *mainWindow = static_cast<MainWindow*>(this->topLevelWidget());
+    QObject::connect(mouseInteractor, SIGNAL(coordinateChanged(double&, double&)), mainWindow, SLOT(setCoordinate(double&, double&)));
+}
+
+void MeshVTKWidget::renderAxesActor() {
+    renderer->RemoveActor(axesActor);
     
     axesActor = vtkSmartPointer<vtkCubeAxesActor>::New();
     axesActor->SetXUnits("m");
     axesActor->SetXLabelFormat("%4.2f");
     axesActor->SetYUnits("m");
     axesActor->SetYLabelFormat("%4.2f");
-    axesActor->ZAxisVisibilityOff();
+    axesActor->SetZUnits("m");
+    axesActor->SetZLabelFormat("%0.2f");
     axesActor->GetLabelTextProperty(0)->SetColor(0, 0, 0);
     axesActor->GetTitleTextProperty(0)->SetColor(0, 0, 0);
     axesActor->GetXAxesLinesProperty()->SetColor(0, 0, 0);
     axesActor->GetLabelTextProperty(1)->SetColor(0, 0, 0);
     axesActor->GetTitleTextProperty(1)->SetColor(0, 0, 0);
     axesActor->GetYAxesLinesProperty()->SetColor(0, 0, 0);
-    axesActor->SetBounds(mesh->getMeshPolyData()->GetBounds());
+    axesActor->GetLabelTextProperty(2)->SetColor(0, 0, 0);
+    axesActor->GetTitleTextProperty(2)->SetColor(0, 0, 0);
+    axesActor->GetZAxesLinesProperty()->SetColor(0, 0, 0);
+    axesActor->SetBounds(meshActor->GetBounds());
     axesActor->SetCamera(renderer->GetActiveCamera());
     axesActor->SetFlyModeToStaticEdges();
     axesActor->SetVisibility(showAxes);
-
-    renderer->AddActor(boundaryEdgesActor);
-    renderer->AddActor(meshActor);
+    
     renderer->AddActor(axesActor);
-    renderer->ResetCamera();
-
-    MainWindow *mainWindow = static_cast<MainWindow*>(this->topLevelWidget());
-    QObject::connect(mouseInteractor, SIGNAL(coordinateChanged(double&, double&)), mainWindow, SLOT(setCoordinate(double&, double&)));
 }
 
 void MeshVTKWidget::clear() {

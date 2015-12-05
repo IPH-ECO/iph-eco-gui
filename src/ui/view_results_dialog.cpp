@@ -275,16 +275,34 @@ void ViewResultsDialog::removeLayer() {
 }
 
 void ViewResultsDialog::toggleLayerVisibility(bool show) {
-    int row = static_cast<QToolButton*>(sender())->objectName().split("-")[1].toInt();
-    QTableWidgetItem *layerItem = ui->tblLayers->item(row, 0);
-    QString layerKey = layerItem->data(Qt::UserRole).toString();
-    QStringList layerAndComponent = layerKey.split("-");
+    QToolButton *showHideLayerButton = static_cast<QToolButton*>(sender());
+    QString layerKey = getLayerKeyFromButton(showHideLayerButton);
     
     if (show) {
+        QStringList layerAndComponent = layerKey.split("-");
+        
+        if (layerAndComponent.last() != "Vector") {
+            for (QToolButton *toolButton : ui->tblLayers->findChildren<QToolButton*>(QRegExp("^showHideLayerButton"))) {
+                if (toolButton != showHideLayerButton && toolButton->isChecked()) {
+                    QString buttonLayerKey = getLayerKeyFromButton(toolButton);
+                    
+                    if (buttonLayerKey.split("-").last() != "Vector") {
+                        toolButton->setChecked(false);
+                    }
+                }
+            }
+        }
+        
         ui->vtkWidget->render(this->currentSimulation, layerAndComponent.first(), layerAndComponent.last(), ui->spxFrame->value() - 1);
+    } else {
+        ui->vtkWidget->hideLayer(layerKey);
     }
-    
-    ui->vtkWidget->toggleLayerVisibility(layerKey, show);
+}
+
+QString ViewResultsDialog::getLayerKeyFromButton(QToolButton *button) {
+    int row = button->objectName().split("-").last().toInt();
+    QTableWidgetItem *layerItem = ui->tblLayers->item(row, 0);
+    return layerItem->data(Qt::UserRole).toString();
 }
 
 void ViewResultsDialog::renderNextFrame() {

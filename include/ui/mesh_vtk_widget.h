@@ -27,7 +27,8 @@ protected:
     bool showBoundaryEdges;
     bool showMesh;
     bool showAxes;
-
+    
+    void renderAxesActor();
 public:
     MeshVTKWidget(QWidget *parent, MeshMouseInteractor *meshMouseInteractor = nullptr);
     ~MeshVTKWidget();

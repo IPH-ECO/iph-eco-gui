@@ -33,16 +33,12 @@
           <item>
            <layout class="QGridLayout" name="gridLayout">
             <item row="0" column="0">
-             <widget class="QLabel" name="label">
+             <widget class="QCheckBox" name="chkMapMinimum">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
               <property name="text">
                <string>Minimum</string>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="2">
-             <widget class="QLabel" name="label_2">
-              <property name="text">
-               <string>Maximum</string>
               </property>
              </widget>
             </item>
@@ -51,6 +47,16 @@
             </item>
             <item row="0" column="3">
              <widget class="QLineEdit" name="edtMapMaximum"/>
+            </item>
+            <item row="0" column="2">
+             <widget class="QCheckBox" name="chkMapMaximum">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="text">
+               <string>Maximum</string>
+              </property>
+             </widget>
             </item>
            </layout>
           </item>
@@ -221,25 +227,31 @@
          <layout class="QVBoxLayout" name="verticalLayout_9">
           <item>
            <layout class="QGridLayout" name="gridLayout_3">
+            <item row="0" column="1">
+             <widget class="QLineEdit" name="edtPointsMinimum"/>
+            </item>
+            <item row="0" column="3">
+             <widget class="QLineEdit" name="edtPointsMaximum"/>
+            </item>
             <item row="0" column="0">
-             <widget class="QLabel" name="label_13">
+             <widget class="QCheckBox" name="chkPointsMinimum">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
               <property name="text">
                <string>Minimum</string>
               </property>
              </widget>
             </item>
             <item row="0" column="2">
-             <widget class="QLabel" name="label_14">
+             <widget class="QCheckBox" name="chkPointsMaximum">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
               <property name="text">
                <string>Maximum</string>
               </property>
              </widget>
-            </item>
-            <item row="0" column="1">
-             <widget class="QLineEdit" name="edtPointsMinimum"/>
-            </item>
-            <item row="0" column="3">
-             <widget class="QLineEdit" name="edtPointsMaximum"/>
             </item>
            </layout>
           </item>
@@ -437,25 +449,31 @@
          <layout class="QVBoxLayout" name="verticalLayout_13">
           <item>
            <layout class="QGridLayout" name="gridLayout_5">
+            <item row="0" column="1">
+             <widget class="QLineEdit" name="edtVectorsMinimum"/>
+            </item>
+            <item row="0" column="3">
+             <widget class="QLineEdit" name="edtVectorsMaximum"/>
+            </item>
             <item row="0" column="0">
-             <widget class="QLabel" name="label_24">
+             <widget class="QCheckBox" name="chkVectorsMinimum">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
               <property name="text">
                <string>Minimum</string>
               </property>
              </widget>
             </item>
             <item row="0" column="2">
-             <widget class="QLabel" name="label_23">
+             <widget class="QCheckBox" name="chkVectorsMaximum">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
               <property name="text">
                <string>Maximum</string>
               </property>
              </widget>
-            </item>
-            <item row="0" column="1">
-             <widget class="QLineEdit" name="edtVectorsMinimum"/>
-            </item>
-            <item row="0" column="3">
-             <widget class="QLineEdit" name="edtVectorsMaximum"/>
             </item>
            </layout>
           </item>
@@ -1077,6 +1095,118 @@
     <hint type="destinationlabel">
      <x>411</x>
      <y>78</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>chkUseMapDefaultValues</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>chkMapMinimum</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>119</x>
+     <y>153</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>90</x>
+     <y>90</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>chkUseMapDefaultValues</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>edtMapMaximum</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>119</x>
+     <y>153</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>420</x>
+     <y>90</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>chkUseMapDefaultValues</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>chkMapMaximum</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>119</x>
+     <y>153</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>312</x>
+     <y>90</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>chkUsePointsDefaultValues</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>chkPointsMinimum</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>119</x>
+     <y>153</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>90</x>
+     <y>90</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>chkUsePointsDefaultValues</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>chkPointsMaximum</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>119</x>
+     <y>153</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>312</x>
+     <y>90</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>chkUseVectorsDefaultValues</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>chkVectorsMinimum</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>119</x>
+     <y>120</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>90</x>
+     <y>79</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>chkUseVectorsDefaultValues</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>chkVectorsMaximum</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>119</x>
+     <y>120</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>312</x>
+     <y>79</y>
     </hint>
    </hints>
   </connection>

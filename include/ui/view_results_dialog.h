@@ -4,9 +4,10 @@
 #include "include/domain/simulation.h"
 #include "include/ui/abstract_mesh_dialog.h"
 
-#include <QTableWidgetItem>
-#include <QWidget>
 #include <QTimer>
+#include <QWidget>
+#include <QToolButton>
+#include <QTableWidgetItem>
 
 namespace Ui {
 	class ViewResultsDialog;
@@ -20,6 +21,7 @@ private:
     QTimer frameTimer;
 
     void fillLayersComboBox();
+    QString getLayerKeyFromButton(QToolButton *button);
 public:
 	explicit ViewResultsDialog(QWidget *parent);
 private slots:
