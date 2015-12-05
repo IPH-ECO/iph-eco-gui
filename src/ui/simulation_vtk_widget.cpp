@@ -6,6 +6,7 @@
 #include <vtkGlyph3D.h>
 #include <vtkCellData.h>
 #include <vtkProperty.h>
+#include <vtkTransform.h>
 #include <vtkPointData.h>
 #include <vtkLookupTable.h>
 #include <vtkDoubleArray.h>
@@ -13,9 +14,9 @@
 #include <vtkCellCenters.h>
 #include <vtkPolyDataMapper.h>
 #include <vtkScalarBarActor.h>
-#include <vtkGeometryFilter.h>
 #include <vtkArrayCalculator.h>
 #include <vtkColorTransferFunction.h>
+#include <vtkTransformPolyDataFilter.h>
 #include <vtkScalarBarRepresentation.h>
 #include <vtkGenericDataObjectReader.h>
 
@@ -210,16 +211,26 @@ vtkSmartPointer<vtkPolyData> SimulationVTKWidget::renderVectors() {
     arrowsPolyData->SetPoints(cellCentersFilter->GetOutput()->GetPoints());
     arrowsPolyData->GetPointData()->SetVectors(vectorsArray);
     
+    vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
+    transform->Scale(1, 1, 100);
+    
+    vtkSmartPointer<vtkTransformPolyDataFilter> transformFilter = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
+    transformFilter->SetInputData(arrowsPolyData);
+    transformFilter->SetTransform(transform);
+    transformFilter->Update();
+    
+    // Tip: > Shaft: --
     vtkSmartPointer<vtkArrowSource> arrowSource = vtkSmartPointer<vtkArrowSource>::New();
-    arrowSource->SetShaftResolution(10);
-    arrowSource->SetTipResolution(10);
-    arrowSource->SetShaftRadius(layerProperties->getVectorsWidth() * 0.03); // VTK default
-    arrowSource->SetTipRadius(layerProperties->getVectorsWidth() * 0.1); // VTK default
+    arrowSource->SetShaftResolution(25);
+    arrowSource->SetTipResolution(25);
+    arrowSource->SetTipLength(0.2);
+    arrowSource->SetShaftRadius(layerProperties->getVectorsWidth() * 0.015); // VTK default
+    arrowSource->SetTipRadius(layerProperties->getVectorsWidth() * 0.05); // VTK default
     arrowSource->Update();
     
     vtkSmartPointer<vtkGlyph3D> glyph = vtkSmartPointer<vtkGlyph3D>::New();
     glyph->SetSourceConnection(arrowSource->GetOutputPort());
-    glyph->SetInputData(arrowsPolyData);
+    glyph->SetInputData(transformFilter->GetOutput());
     glyph->SetVectorModeToUseVector();
     glyph->SetScaleModeToScaleByVector();
     glyph->SetColorMode(layerProperties->getVectorColorMode() == VectorColorMode::MAGNITUDE ? VTK_COLOR_BY_VECTOR : VTK_COLOR_BY_SCALE);
