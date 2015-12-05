@@ -43,6 +43,7 @@ public slots:
     virtual void toggleLabels(const LabelType &labelType);
     virtual void changeBackgroundColor(const double &r, const double &g, const double &b);
     virtual void exportToImage(const QString &fileName);
+    virtual void changeMeshProperties(Mesh *mesh);
 };
 
 #endif // MESH_VTK_WIDGET_H

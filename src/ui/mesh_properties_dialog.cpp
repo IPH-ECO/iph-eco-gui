@@ -36,15 +36,10 @@ MeshPropertiesDialog::MeshPropertiesDialog(QWidget *parent, Mesh *mesh) :
         ui->cbxLineStyle->addItem(QIcon(pix), "");
     }
     
-    ui->sbxLineWidth->blockSignals(true);
     ui->sbxLineWidth->setValue(mesh->getLineWidth());
-    ui->sbxLineWidth->blockSignals(false);
-    ui->cbxLineStyle->blockSignals(true);
     ui->cbxLineStyle->setCurrentIndex(mesh->getLineStyle() != 0xFFFF);
-    ui->cbxLineStyle->blockSignals(false);
-    ui->sldOpacity->blockSignals(true);
     ui->sldOpacity->setValue(mesh->getOpacity());
-    ui->sldOpacity->blockSignals(false);
+    meshColor = mesh->getColor();
 }
 
 void MeshPropertiesDialog::on_btnMeshColor_clicked() {
@@ -55,20 +50,8 @@ void MeshPropertiesDialog::on_btnMeshColor_clicked() {
         px.fill(color);
         
         ui->btnMeshColor->setIcon(px);
-        mesh->setColor(color.name());
+        meshColor = color.name();
     }
-}
-
-void MeshPropertiesDialog::on_cbxLineStyle_currentIndexChanged(int index) {
-	mesh->setLineStyle(index ? 0xF0F0 : 0xFFFF);
-}
-
-void MeshPropertiesDialog::on_sbxLineWidth_valueChanged(int width) {
-	mesh->setLineWidth(width);
-}
-
-void MeshPropertiesDialog::on_sldOpacity_valueChanged(int opacity) {
-    mesh->setOpacity(opacity);
 }
 
 void MeshPropertiesDialog::on_buttonBox_clicked(QAbstractButton *button) {
@@ -78,10 +61,15 @@ void MeshPropertiesDialog::on_buttonBox_clicked(QAbstractButton *button) {
         this->reject();
         return;
     }
+    
+    mesh->setLineStyle(ui->cbxLineStyle->currentIndex() ? 0xF0F0 : 0xFFFF);
+    mesh->setLineWidth(ui->sbxLineWidth->value());
+    mesh->setOpacity(ui->sldOpacity->value());
+    mesh->setColor(meshColor);
 
-    emit applyChanges(mesh);
-
-	if (standardButton == QDialogButtonBox::Ok) {
+    if (standardButton == QDialogButtonBox::Ok) {
         this->accept();
     }
+    
+    emit applyChanges(mesh);
 }

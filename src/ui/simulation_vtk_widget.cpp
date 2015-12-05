@@ -39,6 +39,17 @@ void SimulationVTKWidget::render(Simulation *simulation, const QString &layer, c
         currentMesh = simulation->getMesh();
         
         renderMeshLayer();
+        
+        renderer->RemoveActor(layerActor);
+        
+        layerDataSetMapper = vtkSmartPointer<vtkDataSetMapper>::New();
+        layerDataSetMapper->SetInputData(layerGrid);
+        layerDataSetMapper->ScalarVisibilityOff();
+        
+        layerActor = vtkSmartPointer<vtkActor>::New();
+        layerActor->GetProperty()->EdgeVisibilityOff();
+        layerActor->SetScale(1, 1, 100);
+        layerActor->SetMapper(layerDataSetMapper);
     }
     
     if (layer.isEmpty()) {
@@ -66,12 +77,10 @@ void SimulationVTKWidget::render(Simulation *simulation, const QString &layer, c
         
         layerArray->GetRange(layerRange);
         layerGrid->GetCellData()->AddArray(layerArray);
-        meshActor->GetProperty()->SetRepresentationToSurface();
     } else if (component == "Vector") {
         layerArrayName = MAGNITUDE_ARRAY_NAME;
     } else { // Arbritary layer
         layerGrid->GetCellData()->GetArray(layerArrayName.c_str())->GetRange(layerRange);
-        meshActor->GetProperty()->SetRepresentationToSurface();
     }
     
     if (component == "Vector") {
@@ -113,8 +122,13 @@ void SimulationVTKWidget::render(Simulation *simulation, const QString &layer, c
         layerDataSetMapper->SetScalarModeToUseCellData();
         layerDataSetMapper->ScalarVisibilityOn();
         
-        meshActor->GetProperty()->SetOpacity(layerProperties->getMapOpacity() / 100.0);
-        meshActor->GetProperty()->SetLighting(layerProperties->getMapLighting());
+        layerActor->SetMapper(layerDataSetMapper);
+        layerActor->GetProperty()->SetOpacity(layerProperties->getMapOpacity() / 100.0);
+        layerActor->GetProperty()->SetLighting(layerProperties->getMapLighting());
+        layerActor->GetProperty()->SetRepresentationToSurface();
+        layerActor->VisibilityOn();
+        
+        renderer->AddActor(layerActor);
     }
     
     this->GetRenderWindow()->Render();
@@ -132,21 +146,21 @@ void SimulationVTKWidget::readFrame(const int frame) {
 void SimulationVTKWidget::renderMeshLayer() {
     this->readFrame(0);
     
-    layerDataSetMapper = vtkSmartPointer<vtkDataSetMapper>::New();
-    layerDataSetMapper->SetInputData(layerGrid);
-    layerDataSetMapper->ScalarVisibilityOff();
+    vtkSmartPointer<vtkDataSetMapper> meshMapper = vtkSmartPointer<vtkDataSetMapper>::New();
+    meshMapper->SetResolveCoincidentTopologyToShiftZBuffer();
+    meshMapper->SetInputData(layerGrid);
+    meshMapper->ScalarVisibilityOff();
     
     this->renderer->RemoveActor(meshActor);
     
     QColor meshColor(currentMesh->getColor());
     
     meshActor = vtkSmartPointer<vtkActor>::New();
-    meshActor->SetMapper(layerDataSetMapper);
+    meshActor->SetMapper(meshMapper);
     meshActor->GetProperty()->SetRepresentationToWireframe();
-    meshActor->GetProperty()->EdgeVisibilityOn();
-    meshActor->GetProperty()->SetColor(meshColor.redF(), meshColor.greenF(), meshColor.blueF());
     meshActor->GetProperty()->LightingOff();
     meshActor->SetScale(1, 1, 100);
+    this->changeMeshProperties(currentMesh);
     
     this->renderer->AddActor(meshActor);
     this->renderAxesActor();
@@ -308,8 +322,7 @@ void SimulationVTKWidget::hideLayer(const QString &layerKey) {
     if (component == "Vector") {
         vectorsActors.value(layerKey)->VisibilityOff();
     } else {
-        meshActor->GetProperty()->SetRepresentationToWireframe();
-        layerDataSetMapper->ScalarVisibilityOff();
+        layerActor->VisibilityOff();
     }
     
     // Refactor
@@ -328,8 +341,7 @@ void SimulationVTKWidget::removeLayer(const QString &layerKey) {
     if (layerAndComponent.last() == "Vector") {
         this->renderer->RemoveActor(vectorsActors.take(layerKey));
     } else if (layerAndComponent.first() == layerDataSetMapper->GetArrayName()) {
-        meshActor->GetProperty()->SetRepresentationToWireframe();
-        layerDataSetMapper->ScalarVisibilityOff();
+        layerActor->VisibilityOff();
     }
     
     vtkSmartPointer<vtkScalarBarWidget> scalarBarWidget = scalarBarWidgets.take(layerKey);
@@ -339,4 +351,18 @@ void SimulationVTKWidget::removeLayer(const QString &layerKey) {
     }
     
     this->GetRenderWindow()->Render();
+}
+
+
+void SimulationVTKWidget::changeMeshProperties(Mesh *mesh) {
+    if (meshActor) {
+        QColor meshColor(mesh->getColor());
+        
+        meshActor->GetProperty()->SetColor(meshColor.redF(), meshColor.greenF(), meshColor.blueF());
+        meshActor->GetProperty()->SetLineStipplePattern(mesh->getLineStyle());
+        meshActor->GetProperty()->SetLineWidth(mesh->getLineWidth());
+        meshActor->GetProperty()->SetOpacity(mesh->getOpacity() / 100.0);
+        
+        this->GetRenderWindow()->Render();
+    }
 }

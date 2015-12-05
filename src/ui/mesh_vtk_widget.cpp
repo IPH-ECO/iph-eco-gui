@@ -75,11 +75,8 @@ void MeshVTKWidget::render(Mesh *mesh) {
     meshActor = vtkSmartPointer<vtkActor>::New();
     meshActor->SetMapper(meshMapper);
     meshActor->GetProperty()->EdgeVisibilityOn();
-    meshActor->GetProperty()->SetEdgeColor(meshColor.redF(), meshColor.greenF(), meshColor.blueF());
-    meshActor->GetProperty()->SetLineStipplePattern(mesh->getLineStyle());
-    meshActor->GetProperty()->SetLineWidth(mesh->getLineWidth());
-    meshActor->GetProperty()->SetOpacity(mesh->getOpacity() / 100.0);
     meshActor->SetVisibility(showMesh);
+    this->changeMeshProperties(mesh);
     
     renderer->AddActor(meshActor);
     
@@ -235,4 +232,17 @@ void MeshVTKWidget::exportToImage(const QString &fileName) {
 
 Mesh* MeshVTKWidget::getMesh() const {
     return currentMesh;
+}
+
+void MeshVTKWidget::changeMeshProperties(Mesh *mesh) {
+    if (meshActor) {
+        QColor meshColor(mesh->getColor());
+        
+        meshActor->GetProperty()->SetEdgeColor(meshColor.redF(), meshColor.greenF(), meshColor.blueF());
+        meshActor->GetProperty()->SetLineStipplePattern(mesh->getLineStyle());
+        meshActor->GetProperty()->SetLineWidth(mesh->getLineWidth());
+        meshActor->GetProperty()->SetOpacity(mesh->getOpacity() / 100.0);
+        
+        this->GetRenderWindow()->Render();
+    }
 }

@@ -114,9 +114,9 @@ void AbstractMeshDialog::onExportMapClicked() {
 void AbstractMeshDialog::onMeshPropertiesClicked() {
     Mesh *mesh = vtkWidget->getMesh();
     if (mesh) {
-        MeshPropertiesDialog *dialog = new MeshPropertiesDialog(this, mesh);
-//        QObject::connect(dialog, SIGNAL(applyChanges(mesh)), vtkWidget->render(mesh));
-        dialog->exec();
+        MeshPropertiesDialog *meshPropertiesDialog = new MeshPropertiesDialog(this, mesh);
+        QObject::connect(meshPropertiesDialog, SIGNAL(applyChanges(Mesh*)), vtkWidget, SLOT(changeMeshProperties(Mesh*)));
+        meshPropertiesDialog->exec();
     }
 }
 

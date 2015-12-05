@@ -191,10 +191,11 @@ void ViewResultsDialog::on_btnAddLayer_clicked() {
         QList<QTableWidgetItem*> foundItems = ui->tblLayers->findItems(layer, Qt::MatchExactly);
         
         if (foundItems.isEmpty()) {
+            QString layerKey = ui->cbxLayers->currentData().toString();
             int row = ui->tblLayers->rowCount();
             QTableWidgetItem *layerItem = new QTableWidgetItem(layer);
             
-            layerItem->setData(Qt::UserRole, ui->cbxLayers->currentData());
+            layerItem->setData(Qt::UserRole, layerKey); //
 
             ui->tblLayers->insertRow(row);
             ui->tblLayers->setItem(row, 0, layerItem);
@@ -207,7 +208,7 @@ void ViewResultsDialog::on_btnAddLayer_clicked() {
             showHideLayerButton->setIcon(hiddenIcon);
             showHideLayerButton->setToolTip("Show/Hide layer");
             showHideLayerButton->setCheckable(true);
-            showHideLayerButton->setObjectName(QString("showHideLayerButton-%1").arg(row));
+            showHideLayerButton->setObjectName(QString("showHideLayerButton-%1").arg(layerKey));
             
             hLayout->addWidget(showHideLayerButton);
             hLayout->setAlignment(Qt::AlignCenter);
@@ -218,7 +219,7 @@ void ViewResultsDialog::on_btnAddLayer_clicked() {
             
             layerPropertiesButton->setIcon(layerPropertiesIcon);
             layerPropertiesButton->setToolTip("Layer properties");
-            layerPropertiesButton->setObjectName(QString("layerPropertiesButton-%1").arg(row));
+            layerPropertiesButton->setObjectName(QString("layerPropertiesButton-%1").arg(layerKey));
             
             hLayout->addWidget(layerPropertiesButton);
             
@@ -227,7 +228,7 @@ void ViewResultsDialog::on_btnAddLayer_clicked() {
             
             removeLayerButton->setIcon(removeIcon);
             removeLayerButton->setToolTip("Remove layer");
-            removeLayerButton->setObjectName(QString("removeLayerButton-%1").arg(row));
+            removeLayerButton->setObjectName(QString("removeLayerButton-%1").arg(layerKey));
             
             hLayout->addWidget(removeLayerButton);
             hLayout->addStretch();
@@ -265,12 +266,18 @@ void ViewResultsDialog::removeLayer() {
     QMessageBox::StandardButton button = QMessageBox::question(this, tr("View Results"), question);
     
     if (button == QMessageBox::Yes) {
-        int row = static_cast<QToolButton*>(sender())->objectName().split("-")[1].toInt();
-        QTableWidgetItem *layerItem = ui->tblLayers->item(row, 0);
-        QString layerKey = layerItem->data(Qt::UserRole).toString();
+        QString layerKey = getLayerKeyFromButton(static_cast<QToolButton*>(sender()));
         
         ui->vtkWidget->removeLayer(layerKey);
-        ui->tblLayers->removeRow(row);
+        
+        for (int row = 0; row < ui->tblLayers->rowCount(); row++) {
+            QTableWidgetItem *item = ui->tblLayers->item(row, 0);
+
+            if (item->data(Qt::UserRole).toString() == layerKey) {
+                ui->tblLayers->removeRow(row);
+                break;
+            }
+        }
     }
 }
 
@@ -299,10 +306,9 @@ void ViewResultsDialog::toggleLayerVisibility(bool show) {
     }
 }
 
-QString ViewResultsDialog::getLayerKeyFromButton(QToolButton *button) {
-    int row = button->objectName().split("-").last().toInt();
-    QTableWidgetItem *layerItem = ui->tblLayers->item(row, 0);
-    return layerItem->data(Qt::UserRole).toString();
+QString ViewResultsDialog::getLayerKeyFromButton(QToolButton *button) const {
+    QString buttonName = button->objectName();
+    return buttonName.remove(buttonName.split("-").first() + "-");
 }
 
 void ViewResultsDialog::renderNextFrame() {
@@ -320,10 +326,7 @@ void ViewResultsDialog::on_spxFrame_valueChanged(int frame) {
     if (this->currentSimulation) {
         for (QToolButton *button : ui->tblLayers->findChildren<QToolButton*>(QRegExp("^showHideLayerButton"))) {
             if (button->isChecked()) {
-                int row = button->objectName().split("-")[1].toInt();
-                QTableWidgetItem *layerItem = ui->tblLayers->item(row, 0);
-                QStringList layerAndComponent = layerItem->data(Qt::UserRole).toString().split("-");
-                
+                QStringList layerAndComponent = getLayerKeyFromButton(button).split("-");
                 ui->vtkWidget->render(this->currentSimulation, layerAndComponent.first(), layerAndComponent.last(), ui->spxFrame->value() - 1);
             }
         }
@@ -331,10 +334,9 @@ void ViewResultsDialog::on_spxFrame_valueChanged(int frame) {
 }
 
 void ViewResultsDialog::editLayerProperties() {
-    int row = static_cast<QToolButton*>(sender())->objectName().split("-")[1].toInt();
-    QTableWidgetItem *layerItem = ui->tblLayers->item(row, 0);
-    QStringList layerAndComponent = layerItem->data(Qt::UserRole).toString().split("-");
-    LayerProperties *layerProperties = this->currentSimulation->getSelectedLayers().value(layerItem->data(Qt::UserRole).toString());
+    QString layerKey = getLayerKeyFromButton(static_cast<QToolButton*>(sender()));
+    QStringList layerAndComponent = layerKey.split("-");
+    LayerProperties *layerProperties = this->currentSimulation->getSelectedLayers().value(layerKey);
     LayerPropertiesDialog::LayerPropertiesTab tab = layerAndComponent.last() == "Vector" ? LayerPropertiesDialog::VECTORS : LayerPropertiesDialog::MAP;
     LayerPropertiesDialog *dialog = new LayerPropertiesDialog(this, layerProperties, tab);
     

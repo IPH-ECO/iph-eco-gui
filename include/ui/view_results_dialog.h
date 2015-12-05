@@ -21,7 +21,7 @@ private:
     QTimer frameTimer;
 
     void fillLayersComboBox();
-    QString getLayerKeyFromButton(QToolButton *button);
+    QString getLayerKeyFromButton(QToolButton *button) const;
 public:
 	explicit ViewResultsDialog(QWidget *parent);
 private slots:

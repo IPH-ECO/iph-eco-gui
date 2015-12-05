@@ -16,6 +16,7 @@ class SimulationVTKWidget : public MeshVTKWidget {
 	Q_OBJECT
 private:
     vtkSmartPointer<vtkUnstructuredGrid> layerGrid;
+    vtkSmartPointer<vtkActor> layerActor;
     vtkSmartPointer<vtkDataSetMapper> layerDataSetMapper;
     QMap<QString, vtkSmartPointer<vtkActor> > vectorsActors;
     QMap<QString, vtkSmartPointer<vtkScalarBarWidget> > scalarBarWidgets;
@@ -41,6 +42,7 @@ public:
 public slots:
     void hideLayer(const QString &layerKey);
     void updateLayer();
+    virtual void changeMeshProperties(Mesh *mesh);
 };
 
 #endif // SIMULATION_VTK_WIDGET_H

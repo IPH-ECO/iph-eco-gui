@@ -4,6 +4,7 @@
 #include "include/domain/mesh.h"
 #include "include/ui/mesh_vtk_widget.h"
 
+#include <QColor>
 #include <QDialog>
 #include <QWidget>
 #include <QAbstractButton>
@@ -17,13 +18,11 @@ class MeshPropertiesDialog : public QDialog {
 private:
 	Ui::MeshPropertiesDialog *ui;
     MeshVTKWidget *vtkWidget;
+    QString meshColor;
     Mesh *mesh;
 private slots:
     void on_btnMeshColor_clicked();
     void on_buttonBox_clicked(QAbstractButton *button);
-    void on_cbxLineStyle_currentIndexChanged(int index);
-    void on_sldOpacity_valueChanged(int opacity);
-    void on_sbxLineWidth_valueChanged(int width);
 public:
 	explicit MeshPropertiesDialog(QWidget *parent, Mesh *mesh);
 signals:
