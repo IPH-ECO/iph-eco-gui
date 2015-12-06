@@ -18,12 +18,14 @@ class ViewResultsDialog : public AbstractMeshDialog {
 private:
 	Ui::ViewResultsDialog *ui;
     Simulation *currentSimulation;
+    QString axesScale;
     QTimer frameTimer;
 
     void fillLayersComboBox();
     QString getLayerKeyFromButton(QToolButton *button) const;
 public:
 	explicit ViewResultsDialog(QWidget *parent);
+    virtual void showEvent(QShowEvent *event);
 private slots:
     void onUpdateSimulationProgress(int progress);
     void onUpdateSimulationStatus(SimulationStatus status);
@@ -43,6 +45,7 @@ private slots:
     void removeLayer();
     void renderNextFrame();
     void editLayerProperties();
+    void showAxesDialog();
 };
 
 #endif // VIEW_RESULTS_DIALOG_H

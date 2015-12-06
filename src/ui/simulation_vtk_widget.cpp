@@ -24,6 +24,7 @@ SimulationVTKWidget::SimulationVTKWidget(QWidget *parent) :
     MeshVTKWidget(parent),
     currentSimulation(nullptr),
     layerProperties(nullptr),
+    axesScale("1 1 1"),
     MAGNITUDE_ARRAY_NAME("VectorMagnitude")
 {}
 
@@ -48,7 +49,7 @@ void SimulationVTKWidget::render(Simulation *simulation, const QString &layer, c
         
         layerActor = vtkSmartPointer<vtkActor>::New();
         layerActor->GetProperty()->EdgeVisibilityOff();
-        layerActor->SetScale(1, 1, 100);
+        layerActor->SetScale(meshActor->GetScale());
         layerActor->SetMapper(layerDataSetMapper);
     }
     
@@ -154,12 +155,13 @@ void SimulationVTKWidget::renderMeshLayer() {
     this->renderer->RemoveActor(meshActor);
     
     QColor meshColor(currentMesh->getColor());
+    QStringList scales = axesScale.split(" ");
     
     meshActor = vtkSmartPointer<vtkActor>::New();
     meshActor->SetMapper(meshMapper);
     meshActor->GetProperty()->SetRepresentationToWireframe();
     meshActor->GetProperty()->LightingOff();
-    meshActor->SetScale(1, 1, 100);
+    meshActor->SetScale(scales[0].toInt(), scales[1].toInt(), scales[2].toInt());
     this->changeMeshProperties(currentMesh);
     
     this->renderer->AddActor(meshActor);
@@ -226,7 +228,7 @@ vtkSmartPointer<vtkPolyData> SimulationVTKWidget::renderVectors() {
     arrowsPolyData->GetPointData()->SetVectors(vectorsArray);
     
     vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
-    transform->Scale(1, 1, 100);
+    transform->Scale(meshActor->GetScale());
     
     vtkSmartPointer<vtkTransformPolyDataFilter> transformFilter = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
     transformFilter->SetInputData(arrowsPolyData);
@@ -252,7 +254,7 @@ vtkSmartPointer<vtkPolyData> SimulationVTKWidget::renderVectors() {
     glyph->OrientOn();
     glyph->Update();
     
-    glyph->SetRange(glyph->GetOutput()->GetPointData()->GetArray("VectorMagnitude")->GetRange());
+    glyph->SetRange(glyph->GetOutput()->GetPointData()->GetArray(MAGNITUDE_ARRAY_NAME)->GetRange());
     glyph->ClampingOn();
     glyph->Update();
     
@@ -342,6 +344,30 @@ void SimulationVTKWidget::removeLayer(const QString &layerKey) {
     this->GetRenderWindow()->Render();
 }
 
+void SimulationVTKWidget::setAxesScale(const QString &axesScale) {
+    QStringList scales = axesScale.split(" ");
+    int xScale = scales[0].toInt();
+    int yScale = scales[1].toInt();
+    int zScale = scales[2].toInt();
+    
+    this->axesScale = axesScale;
+    
+    if (meshActor) {
+        this->meshActor->SetScale(xScale, yScale, zScale);
+        this->axesActor->SetBounds(meshActor->GetBounds());
+        this->layerActor->SetScale(xScale, yScale, zScale);
+    }
+    
+    if (!vectorsActors.isEmpty()) {
+        for (vtkSmartPointer<vtkActor> vectorsActor : vectorsActors.values()) {
+            vtkSmartPointer<vtkPolyData> vectorsPolyData = renderVectors();
+            vtkSmartPointer<vtkPolyDataMapper> vectorsPolyDataMapper = vtkPolyDataMapper::SafeDownCast(vectorsActor->GetMapper());
+            vectorsPolyDataMapper->SetInputData(vectorsPolyData);
+        }
+    }
+    
+    this->GetRenderWindow()->Render();
+}
 
 void SimulationVTKWidget::changeMeshProperties(Mesh *mesh) {
     if (meshActor) {

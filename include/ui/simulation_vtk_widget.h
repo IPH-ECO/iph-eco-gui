@@ -26,6 +26,7 @@ private:
     QString currentLayer;
     QString currentComponent;
     int currentFrame;
+    QString axesScale;
     
     const char *MAGNITUDE_ARRAY_NAME;
     
@@ -39,6 +40,7 @@ public:
 	explicit SimulationVTKWidget(QWidget *parent);
 	void render(Simulation *simulation, const QString &layer, const QString &component, int frame);
     void removeLayer(const QString &layerKey);
+    void setAxesScale(const QString &axesScale);
 public slots:
     void hideLayer(const QString &layerKey);
     void updateLayer();

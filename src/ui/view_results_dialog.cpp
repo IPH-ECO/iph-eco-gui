@@ -6,10 +6,16 @@
 #include "include/ui/main_window.h"
 #include "include/ui/layer_properties_dialog.h"
 
-#include <QMdiSubWindow>
 #include <QMessageBox>
+#include <QInputDialog>
+#include <QMdiSubWindow>
 
-ViewResultsDialog::ViewResultsDialog(QWidget *parent) : AbstractMeshDialog(parent), ui(new Ui::ViewResultsDialog), currentSimulation(nullptr) {
+ViewResultsDialog::ViewResultsDialog(QWidget *parent) :
+    AbstractMeshDialog(parent),
+    ui(new Ui::ViewResultsDialog),
+    currentSimulation(nullptr),
+    axesScale("1 1 1")
+{
 	ui->setupUi(this);
     ui->tblSimulations->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     ui->tblLayers->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
@@ -342,4 +348,27 @@ void ViewResultsDialog::editLayerProperties() {
     
     QObject::connect(dialog, SIGNAL(applyChanges()), ui->vtkWidget, SLOT(updateLayer()));
     dialog->exec();
+}
+
+void ViewResultsDialog::showEvent(QShowEvent *event) {
+    if (!event->spontaneous() && this->windowState() & Qt::WindowMaximized) {
+        MainWindow *mainWindow = static_cast<MainWindow*>(this->topLevelWidget());
+        QAction *separator = mainWindow->getToolBar()->addSeparator();
+        toolBarActions.append(separator);
+        
+        QAction *scaleAxesAction = new QAction(QIcon(":/icons/scale-axes.png"), "Change axes scale", mainWindow);
+        QObject::connect(scaleAxesAction, SIGNAL(triggered()), this, SLOT(showAxesDialog()));
+        toolBarActions.append(scaleAxesAction);
+    }
+    
+    AbstractMeshDialog::showEvent(event);
+}
+
+void ViewResultsDialog::showAxesDialog() {
+    QString inputText = QInputDialog::getText(this, "Axes scale", "X Y Z", QLineEdit::Normal, axesScale);
+    
+    if (!inputText.isEmpty() && axesScale != inputText) {
+        axesScale = inputText;
+        ui->vtkWidget->setAxesScale(axesScale);
+    }
 }
