@@ -9,6 +9,7 @@
 #include <QMessageBox>
 #include <QInputDialog>
 #include <QMdiSubWindow>
+#include <QRegularExpression>
 
 ViewResultsDialog::ViewResultsDialog(QWidget *parent) :
     AbstractMeshDialog(parent),
@@ -368,6 +369,13 @@ void ViewResultsDialog::showAxesDialog() {
     QString inputText = QInputDialog::getText(this, "Axes scale", "X Y Z", QLineEdit::Normal, axesScale);
     
     if (!inputText.isEmpty() && axesScale != inputText) {
+        QRegularExpression regexp("\\d\\ \\d\\ \\d");
+        
+        if (!regexp.match(inputText).hasMatch()) {
+            QMessageBox::warning(this, tr("View Results"), tr("Invalid scaling string."));
+            return;
+        }
+        
         axesScale = inputText;
         ui->vtkWidget->setAxesScale(axesScale);
     }
