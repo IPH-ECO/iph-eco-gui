@@ -274,24 +274,13 @@ vtkSmartPointer<vtkColorTransferFunction> SimulationVTKWidget::buildColorTransfe
             invertScalarBar = layerProperties->getVectorsInvertColorGradient();
         }
         
-        if (layerProperties->getUseDefaultVectorsValues()) {
-            minimumRange = scalarBarRange[0];
-            maximumRange = scalarBarRange[1];
-        } else {
-            minimumRange = layerProperties->getVectorsMinimumRange();
-            maximumRange = layerProperties->getVectorsMaximumRange();
-        }
+        minimumRange = layerProperties->getUseCustomVectorsMinimum() ? layerProperties->getCustomVectorsMinimumRange() : scalarBarRange[0];
+        maximumRange = layerProperties->getUseCustomVectorsMaximum() ? layerProperties->getCustomVectorsMaximumRange() : scalarBarRange[1];
     } else {
         colors = ColorGradientTemplate::getColors(layerProperties->getMapColorGradient());
         invertScalarBar = layerProperties->getMapInvertColorGradient();
-        
-        if (layerProperties->getUseDefaultMapValues()) {
-            minimumRange = scalarBarRange[0];
-            maximumRange = scalarBarRange[1];
-        } else {
-            minimumRange = layerProperties->getMapMininumRange();
-            maximumRange = layerProperties->getMapMaximumRange();
-        }
+        minimumRange = layerProperties->getUseCustomMapMinimum() ? layerProperties->getCustomMapMininumRange() : scalarBarRange[0];
+        maximumRange = layerProperties->getUseCustomMapMaximum() ? layerProperties->getCustomMapMaximumRange() : scalarBarRange[1];
     }
     
     vtkSmartPointer<vtkColorTransferFunction> colorTransferFunction = vtkSmartPointer<vtkColorTransferFunction>::New();

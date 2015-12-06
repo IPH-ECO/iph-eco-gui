@@ -8,25 +8,30 @@ enum class VectorColorMode { MAGNITUDE = 1, CONSTANT };
 
 class LayerProperties {
 private:
-    double mapMinimumRange;
-    double mapMaximumRange;
+    bool useCustomMapMinimum;
+    bool useCustomMapMaximum;
+    double customMapMinimumRange;
+    double customMapMaximumRange;
     QString mapColorGradient;
     bool mapInvertColorGradient;
     int mapOpacity;
     bool mapLegend;
     bool mapLighting;
     
-    double pointsMinimumRange;
-    double pointsMaximumRange;
+    bool useCustomPointsMinimum;
+    bool useCustomPointsMaximum;
+    double customPointsMinimumRange;
+    double customPointsMaximumRange;
     QString pointsColorGradient;
     bool pointsInvertColorGradient;
     int pointsOpacity;
     int pointsSize;
     bool pointsLegend;
     
-    double vectorsMinimumRange;
-    double vectorsMaximumRange;
-    bool useDefaultVectorsValues;
+    bool useCustomVectorsMinimum;
+    bool useCustomVectorsMaximum;
+    double customVectorsMinimumRange;
+    double customVectorsMaximumRange;
     VectorColorMode vectorColorMode;
     QString vectorsColorGradient;
     QString vectorsColor;
@@ -40,21 +45,17 @@ private:
     int meshLineStyle;
     int meshLineWidth;
     int meshOpacity;
-
-    // Transient attributes
-    bool useDefaultMapValues;
-    double defaultMapMinimum;
-    double defaultMapMaximum;
-    bool useDefaultPointsValues;
-    double defaultPointsMinimum;
-    double defaultPointsMaximum;
 public:
 	LayerProperties();
 
-	double getMapMininumRange() const;
-    void setMapMinimumRange(const double &mapMinimumRange);
-    double getMapMaximumRange() const;
-    void setMapMaximumRange(const double &mapMaximumRange);
+	bool getUseCustomMapMinimum() const;
+    void setUseCustomMapMinimum(const bool &useCustomMapMinimum);
+    bool getUseCustomMapMaximum() const;
+    void setUseCustomMapMaximum(const bool &useCustomMapMaximum);
+    double getCustomMapMininumRange() const;
+    void setCustomMapMinimumRange(const double &customMapMinimumRange);
+    double getCustomMapMaximumRange() const;
+    void setCustomMapMaximumRange(const double &customMapMaximumRange);
     QString getMapColorGradient() const;
     void setMapColorGradient(const QString &mapColorGradient);
     bool getMapInvertColorGradient() const;
@@ -66,10 +67,14 @@ public:
     bool getMapLighting() const;
     void setMapLighting(const bool &mapLighting);
     
-    double getPointsMininumRange() const;
-    void setPointsMinimumRange(const double &pointsMinimumRange);
-    double getPointsMaximumRange() const;
-    void setPointsMaximumRange(const double &pointsMaximumRange);
+    bool getUseCustomPointsMinimum() const;
+    void setUseCustomPointsMinimum(const bool &useCustomPointsMinimum);
+    bool getUseCustomPointsMaximum() const;
+    void setUseCustomPointsMaximum(const bool &useCustomPointsMaximum);
+    double getCustomPointsMininumRange() const;
+    void setCustomPointsMinimumRange(const double &customPointsMinimumRange);
+    double getCustomPointsMaximumRange() const;
+    void setCustomPointsMaximumRange(const double &customPointsMaximumRange);
     QString getPointsColorGradient() const;
     void setPointsColorGradient(const QString &pointsColorGradient);
     bool getPointsInvertColorGradient() const;
@@ -81,12 +86,14 @@ public:
     bool getPointsLegend() const;
     void setPointsLegend(const bool &pointsLegend);
     
-    double getVectorsMinimumRange() const;
-    void setVectorsMinimumRange(const double &vectorsMinimumRange);
-    double getVectorsMaximumRange() const;
-    void setVectorsMaximumRange(const double &vectorsMaximumRange);
-    bool getUseDefaultVectorsValues() const;
-    void setUseDefaultVectorsValues(const bool &useDefaultVectorsValues);
+    bool getUseCustomVectorsMinimum() const;
+    void setUseCustomVectorsMinimum(const bool &useCustomVectorsMinimum);
+    bool getUseCustomVectorsMaximum() const;
+    void setUseCustomVectorsMaximum(const bool &useCustomVectorsMaximum);
+    double getCustomVectorsMinimumRange() const;
+    void setCustomVectorsMinimumRange(const double &customVectorsMinimumRange);
+    double getCustomVectorsMaximumRange() const;
+    void setCustomVectorsMaximumRange(const double &customVectorsMaximumRange);
     VectorColorMode getVectorColorMode() const;
     void setVectorColorMode(const VectorColorMode &vectorColorMode);
     QString getVectorsColorGradient() const;
@@ -112,19 +119,6 @@ public:
     void setMeshLineWidth(const int &meshLineWidth);
     int getMeshOpacity() const;
     void setMeshOpacity(const int &meshOpacity);
-
-    bool getUseDefaultMapValues() const;
-    void setUseDefaultMapValues(bool useDefaultMapValues);
-    double getDefaultMapMinimum() const;
-    void setDefaultMapMinimum(const double &defaultMapMinimum);
-    double getDefaultMapMaximum() const;
-    void setDefaultMapMaximum(const double &defaultMapMaximum);
-    bool getUseDefaultPointsValues() const;
-    void setUseDefaultPointsValues(bool useDefaultPointsValues);
-    double getDefaultPointsMinimum() const;
-    void setDefaultPointsMinimum(const double &defaultPointsMinimum);
-    double getDefaultPointsMaximum() const;
-    void setDefaultPointsMaximum(const double &defaultPointsMaximum);
 };
 
 #endif // LAYER_PROPERTIES_H

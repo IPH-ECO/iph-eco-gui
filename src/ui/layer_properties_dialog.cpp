@@ -56,12 +56,12 @@ LayerPropertiesDialog::~LayerPropertiesDialog() {
 void LayerPropertiesDialog::setupMapTab() {
     QGridLayout *paletteLayout = static_cast<QGridLayout*>(ui->mapColorTemplateLayout->layout());
     
-    ui->chkUseMapDefaultValues->setChecked(layerProperties->getUseDefaultMapValues());
-    ui->edtMapMinimum->setText(QString::number(layerProperties->getMapMininumRange()));
-    ui->edtMapMaximum->setText(QString::number(layerProperties->getMapMaximumRange()));
-    ui->edtMapMinimum->setDisabled(ui->chkUseMapDefaultValues->isChecked());
-    ui->edtMapMaximum->setDisabled(ui->chkUseMapDefaultValues->isChecked());
-    ui->lblMapOriginalValues->setText(QString("[%1, %2]").arg(layerProperties->getDefaultMapMinimum()).arg(layerProperties->getDefaultMapMaximum()));
+    ui->chkMapMinimum->setChecked(layerProperties->getUseCustomMapMinimum());
+    ui->chkMapMaximum->setChecked(layerProperties->getUseCustomMapMaximum());
+    ui->edtMapMinimum->setText(QString::number(layerProperties->getCustomMapMininumRange()));
+    ui->edtMapMaximum->setText(QString::number(layerProperties->getCustomMapMaximumRange()));
+    ui->edtMapMinimum->setDisabled(ui->chkMapMinimum->isChecked());
+    ui->edtMapMaximum->setDisabled(ui->chkMapMaximum->isChecked());
     this->setupColorGradientTemplates(defaultMapColorGradientButton, currentMapColorGradientButton, paletteLayout);
     ui->chkMapInvertColorTemplate->setChecked(layerProperties->getMapInvertColorGradient());
     ui->sldMapOpacity->setValue(layerProperties->getMapOpacity());
@@ -72,12 +72,12 @@ void LayerPropertiesDialog::setupMapTab() {
 void LayerPropertiesDialog::setupPointsTab() {
     QGridLayout *paletteLayout = static_cast<QGridLayout*>(ui->pointsColorTemplateLayout->layout());
     
-    ui->chkUsePointsDefaultValues->setChecked(layerProperties->getUseDefaultPointsValues());
-    ui->edtPointsMinimum->setText(QString::number(layerProperties->getPointsMininumRange()));
-    ui->edtPointsMaximum->setText(QString::number(layerProperties->getPointsMaximumRange()));
-    ui->edtPointsMinimum->setDisabled(ui->chkUsePointsDefaultValues->isChecked());
-    ui->edtPointsMaximum->setDisabled(ui->chkUsePointsDefaultValues->isChecked());
-    ui->lblPointsOriginalValues->setText(QString("[%1, %2]").arg(layerProperties->getDefaultPointsMinimum()).arg(layerProperties->getDefaultPointsMaximum()));
+    ui->chkPointsMinimum->setChecked(layerProperties->getUseCustomPointsMinimum());
+    ui->chkPointsMaximum->setChecked(layerProperties->getUseCustomPointsMaximum());
+    ui->edtPointsMinimum->setText(QString::number(layerProperties->getCustomPointsMininumRange()));
+    ui->edtPointsMaximum->setText(QString::number(layerProperties->getCustomPointsMaximumRange()));
+    ui->edtPointsMinimum->setDisabled(ui->chkPointsMinimum->isChecked());
+    ui->edtPointsMaximum->setDisabled(ui->chkPointsMaximum->isChecked());
     this->setupColorGradientTemplates(defaultPointsColorGradientButton, currentPointsColorGradientButton, paletteLayout);
     ui->chkPointsInvertColorTemplate->setChecked(layerProperties->getPointsInvertColorGradient());
     ui->sldPointsOpacity->setValue(layerProperties->getPointsOpacity());
@@ -88,11 +88,12 @@ void LayerPropertiesDialog::setupPointsTab() {
 void LayerPropertiesDialog::setupVectorsTab() {
     QGridLayout *paletteLayout = static_cast<QGridLayout*>(ui->vectorsColorTemplateLayout->layout());
     
-    ui->chkUseVectorsDefaultValues->setChecked(layerProperties->getUseDefaultVectorsValues());
-    ui->edtVectorsMinimum->setText(QString::number(layerProperties->getVectorsMinimumRange()));
-    ui->edtVectorsMaximum->setText(QString::number(layerProperties->getVectorsMaximumRange()));
-    ui->edtVectorsMinimum->setDisabled(ui->chkUseVectorsDefaultValues->isChecked());
-    ui->edtVectorsMaximum->setDisabled(ui->chkUseVectorsDefaultValues->isChecked());
+    ui->chkVectorsMinimum->setChecked(layerProperties->getUseCustomVectorsMinimum());
+    ui->chkVectorsMaximum->setChecked(layerProperties->getUseCustomVectorsMaximum());
+    ui->edtVectorsMinimum->setText(QString::number(layerProperties->getCustomVectorsMinimumRange()));
+    ui->edtVectorsMaximum->setText(QString::number(layerProperties->getCustomVectorsMaximumRange()));
+    ui->edtVectorsMinimum->setDisabled(ui->chkVectorsMinimum->isChecked());
+    ui->edtVectorsMaximum->setDisabled(ui->chkVectorsMaximum->isChecked());
     this->setupColorGradientTemplates(defaultVectorsColorGradientButton, currentVectorsColorGradientButton, paletteLayout);
     ui->chkVectorsInvertColorTemplate->setChecked(layerProperties->getVectorsInvertColorGradient());
     ui->sldVectorsOpacity->setValue(layerProperties->getVectorsOpacity());
@@ -267,9 +268,10 @@ void LayerPropertiesDialog::on_buttonBox_clicked(QAbstractButton *button) {
     
     // Map tab
     if (tabs & LayerPropertiesTab::MAP) {
-        layerProperties->setMapMinimumRange(ui->edtMapMinimum->text().toDouble());
-        layerProperties->setMapMaximumRange(ui->edtMapMaximum->text().toDouble());
-        layerProperties->setUseDefaultMapValues(ui->chkUseMapDefaultValues->isChecked());
+        layerProperties->setCustomMapMinimumRange(ui->edtMapMinimum->text().toDouble());
+        layerProperties->setCustomMapMaximumRange(ui->edtMapMaximum->text().toDouble());
+        layerProperties->setUseCustomMapMinimum(ui->chkMapMinimum->isChecked());
+        layerProperties->setUseCustomMapMaximum(ui->chkMapMaximum->isChecked());
         layerProperties->setMapColorGradient(this->currentMapColorGradientButton->toolTip());
         layerProperties->setMapInvertColorGradient(ui->chkMapInvertColorTemplate->isChecked());
         layerProperties->setMapOpacity(ui->sldMapOpacity->value());
@@ -279,9 +281,10 @@ void LayerPropertiesDialog::on_buttonBox_clicked(QAbstractButton *button) {
     
     // Points tab
     if (tabs & LayerPropertiesTab::POINTS) {
-        layerProperties->setPointsMinimumRange(ui->edtPointsMinimum->text().toDouble());
-        layerProperties->setPointsMaximumRange(ui->edtPointsMaximum->text().toDouble());
-        layerProperties->setUseDefaultPointsValues(ui->chkUsePointsDefaultValues->isChecked());
+        layerProperties->setCustomPointsMinimumRange(ui->edtPointsMinimum->text().toDouble());
+        layerProperties->setCustomPointsMaximumRange(ui->edtPointsMaximum->text().toDouble());
+        layerProperties->setUseCustomPointsMinimum(ui->chkPointsMinimum->isChecked());
+        layerProperties->setUseCustomPointsMaximum(ui->chkPointsMaximum->isChecked());
         layerProperties->setPointsColorGradient(this->currentPointsColorGradientButton->toolTip());
         layerProperties->setPointsInvertColorGradient(ui->chkPointsInvertColorTemplate->isChecked());
         layerProperties->setPointsOpacity(ui->sldPointsOpacity->value());
@@ -291,9 +294,10 @@ void LayerPropertiesDialog::on_buttonBox_clicked(QAbstractButton *button) {
     
     // Vector tab
     if (tabs & LayerPropertiesTab::VECTORS) {
-        layerProperties->setVectorsMinimumRange(ui->edtVectorsMinimum->text().toDouble());
-        layerProperties->setVectorsMaximumRange(ui->edtVectorsMaximum->text().toDouble());
-        layerProperties->setUseDefaultVectorsValues(ui->chkUseVectorsDefaultValues->isChecked());
+        layerProperties->setCustomVectorsMinimumRange(ui->edtVectorsMinimum->text().toDouble());
+        layerProperties->setCustomVectorsMaximumRange(ui->edtVectorsMaximum->text().toDouble());
+        layerProperties->setUseCustomVectorsMinimum(ui->chkVectorsMinimum->isChecked());
+        layerProperties->setUseCustomVectorsMaximum(ui->chkVectorsMaximum->isChecked());
         layerProperties->setVectorColorMode(ui->chkMagnitude->isChecked() ? VectorColorMode::MAGNITUDE : VectorColorMode::CONSTANT);
         layerProperties->setVectorsColor(this->currentVectorColor.name());
         layerProperties->setVectorsColorGradient(this->currentVectorsColorGradientButton->toolTip());
@@ -321,45 +325,45 @@ void LayerPropertiesDialog::on_buttonBox_clicked(QAbstractButton *button) {
 
 bool LayerPropertiesDialog::isValid() {
     if (tabs & LayerPropertiesTab::MAP) {
-        if (!ui->chkUseMapDefaultValues->isChecked() && ui->edtMapMinimum->text().isEmpty()) {
+        if (ui->chkMapMinimum->isChecked() && ui->edtMapMinimum->text().isEmpty()) {
             QMessageBox::warning(this, tr("Layer Properties"), tr("Minimum range can't be empty on Map tab."));
             return false;
         }
-        if (!ui->chkUseMapDefaultValues->isChecked() && ui->edtMapMaximum->text().isEmpty()) {
+        if (ui->chkMapMaximum->isChecked() && ui->edtMapMaximum->text().isEmpty()) {
             QMessageBox::warning(this, tr("Layer Properties"), tr("Maximum range can't be empty on Map tab."));
             return false;
         }
-        if (!ui->chkUseMapDefaultValues->isChecked() && ui->edtMapMinimum->text().toDouble() > ui->edtMapMaximum->text().toDouble()) {
+        if (!ui->chkMapMinimum->isChecked() && !ui->chkMapMaximum->isChecked() && ui->edtMapMinimum->text().toDouble() > ui->edtMapMaximum->text().toDouble()) {
             QMessageBox::warning(this, tr("Layer Properties"), tr("Invalid range on Map tab."));
             return false;
         }
     }
     
     if (tabs & LayerPropertiesTab::POINTS) {
-        if (!ui->chkUsePointsDefaultValues->isChecked() && ui->edtPointsMinimum->text().isEmpty()) {
+        if (ui->chkPointsMinimum->isChecked() && ui->edtPointsMinimum->text().isEmpty()) {
             QMessageBox::warning(this, tr("Layer Properties"), tr("Minimum range can't be empty on Points tab."));
             return false;
         }
-        if (!ui->chkUsePointsDefaultValues->isChecked() && ui->edtPointsMaximum->text().isEmpty()) {
+        if (ui->chkPointsMaximum->isChecked() && ui->edtPointsMaximum->text().isEmpty()) {
             QMessageBox::warning(this, tr("Layer Properties"), tr("Maximum range can't be empty on Points tab."));
             return false;
         }
-        if (!ui->chkUsePointsDefaultValues->isChecked() && ui->edtPointsMinimum->text().toDouble() > ui->edtPointsMaximum->text().toDouble()) {
+        if (!ui->chkPointsMinimum->isChecked() && !ui->chkPointsMaximum->isChecked() && ui->edtPointsMinimum->text().toDouble() > ui->edtPointsMaximum->text().toDouble()) {
             QMessageBox::warning(this, tr("Layer Properties"), tr("Invalid range on Points tab."));
             return false;
         }
     }
     
     if (tabs & LayerPropertiesTab::VECTORS) {
-        if (!ui->chkUseVectorsDefaultValues->isChecked() && ui->edtVectorsMinimum->text().isEmpty()) {
+        if (ui->chkVectorsMinimum->isChecked() && ui->edtVectorsMinimum->text().isEmpty()) {
             QMessageBox::warning(this, tr("Layer Properties"), tr("Minimum range can't be empty on Vectors tab."));
             return false;
         }
-        if (!ui->chkUseVectorsDefaultValues->isChecked() && ui->edtVectorsMaximum->text().isEmpty()) {
+        if (ui->chkVectorsMaximum->isChecked() && ui->edtVectorsMaximum->text().isEmpty()) {
             QMessageBox::warning(this, tr("Layer Properties"), tr("Maximum range can't be empty on Vectors tab."));
             return false;
         }
-        if (!ui->chkUseVectorsDefaultValues->isChecked() && ui->edtVectorsMinimum->text().toDouble() > ui->edtVectorsMaximum->text().toDouble()) {
+        if (!ui->chkVectorsMinimum->isChecked() && !ui->chkVectorsMaximum->isChecked() && ui->edtVectorsMinimum->text().toDouble() > ui->edtVectorsMaximum->text().toDouble()) {
             QMessageBox::warning(this, tr("Layer Properties"), tr("Invalid range on Points tab."));
             return false;
         }

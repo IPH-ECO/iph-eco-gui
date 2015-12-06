@@ -1,23 +1,28 @@
 #include "include/domain/layer_properties.h"
 
 LayerProperties::LayerProperties() :
-    mapMinimumRange(0),
-    mapMaximumRange(0),
+    useCustomMapMinimum(false),
+    useCustomMapMaximum(false),
+    customMapMinimumRange(0),
+    customMapMaximumRange(0),
     mapColorGradient(ColorGradientTemplate::defaultTemplateName),
     mapInvertColorGradient(false),
     mapOpacity(100),
     mapLegend(true),
     mapLighting(false),
-    pointsMinimumRange(0),
-    pointsMaximumRange(0),
+    useCustomPointsMinimum(false),
+    useCustomPointsMaximum(false),
+    customPointsMinimumRange(0),
+    customPointsMaximumRange(0),
     pointsColorGradient(ColorGradientTemplate::defaultTemplateName),
     pointsInvertColorGradient(false),
     pointsOpacity(100),
     pointsSize(1),
     pointsLegend(false),
-    vectorsMinimumRange(0),
-    vectorsMaximumRange(0),
-    useDefaultVectorsValues(true),
+    useCustomVectorsMinimum(false),
+    useCustomVectorsMaximum(false),
+    customVectorsMinimumRange(0),
+    customVectorsMaximumRange(0),
     vectorColorMode(VectorColorMode::MAGNITUDE),
     vectorsColorGradient(ColorGradientTemplate::defaultTemplateName),
     vectorsColor("#000000"),
@@ -29,25 +34,23 @@ LayerProperties::LayerProperties() :
     meshLineColor("#000000"),
     meshLineStyle(0xFFFF),
     meshLineWidth(1),
-    meshOpacity(100),
-    useDefaultMapValues(true),
-    useDefaultPointsValues(true)
+    meshOpacity(100)
 {}
 
-double LayerProperties::getMapMininumRange() const {
-    return mapMinimumRange;
+double LayerProperties::getCustomMapMininumRange() const {
+    return customMapMinimumRange;
 }
 
-void LayerProperties::setMapMinimumRange(const double &mapMinimumRange) {
-    this->mapMinimumRange = mapMinimumRange;
+void LayerProperties::setCustomMapMinimumRange(const double &customMapMinimumRange) {
+    this->customMapMinimumRange = customMapMinimumRange;
 }
 
-double LayerProperties::getMapMaximumRange() const {
-    return mapMaximumRange;
+double LayerProperties::getCustomMapMaximumRange() const {
+    return customMapMaximumRange;
 }
 
-void LayerProperties::setMapMaximumRange(const double &mapMaximumRange) {
-    this->mapMaximumRange = mapMaximumRange;
+void LayerProperties::setCustomMapMaximumRange(const double &customMapMaximumRange) {
+    this->customMapMaximumRange = customMapMaximumRange;
 }
 
 QString LayerProperties::getMapColorGradient() const {
@@ -90,20 +93,20 @@ void LayerProperties::setMapLighting(const bool &mapLighting) {
     this->mapLighting = mapLighting;
 }
 
-double LayerProperties::getPointsMininumRange() const {
-    return pointsMinimumRange;
+double LayerProperties::getCustomPointsMininumRange() const {
+    return customPointsMinimumRange;
 }
 
-void LayerProperties::setPointsMinimumRange(const double &pointsMinimumRange) {
-    this->pointsMinimumRange = pointsMinimumRange;
+void LayerProperties::setCustomPointsMinimumRange(const double &customPointsMinimumRange) {
+    this->customPointsMinimumRange = customPointsMinimumRange;
 }
 
-double LayerProperties::getPointsMaximumRange() const {
-    return pointsMaximumRange;
+double LayerProperties::getCustomPointsMaximumRange() const {
+    return customPointsMaximumRange;
 }
 
-void LayerProperties::setPointsMaximumRange(const double &pointsMaximumRange) {
-    this->pointsMaximumRange = pointsMaximumRange;
+void LayerProperties::setCustomPointsMaximumRange(const double &customPointsMaximumRange) {
+    this->customPointsMaximumRange = customPointsMaximumRange;
 }
 
 QString LayerProperties::getPointsColorGradient() const {
@@ -146,28 +149,36 @@ void LayerProperties::setPointsLegend(const bool &pointsLegend) {
     this->pointsLegend = pointsLegend;
 }
 
-double LayerProperties::getVectorsMinimumRange() const {
-    return vectorsMinimumRange;
+double LayerProperties::getCustomVectorsMinimumRange() const {
+    return customVectorsMinimumRange;
 }
 
-void LayerProperties::setVectorsMinimumRange(const double &vectorsMinimumRange) {
-    this->vectorsMinimumRange = vectorsMinimumRange;
+void LayerProperties::setCustomVectorsMinimumRange(const double &customVectorsMinimumRange) {
+    this->customVectorsMinimumRange = customVectorsMinimumRange;
 }
 
-double LayerProperties::getVectorsMaximumRange() const {
-    return vectorsMaximumRange;
+double LayerProperties::getCustomVectorsMaximumRange() const {
+    return customVectorsMaximumRange;
 }
 
-void LayerProperties::setVectorsMaximumRange(const double &vectorsMaximumRange) {
-    this->vectorsMaximumRange = vectorsMaximumRange;
+void LayerProperties::setCustomVectorsMaximumRange(const double &customVectorsMaximumRange) {
+    this->customVectorsMaximumRange = customVectorsMaximumRange;
 }
 
-bool LayerProperties::getUseDefaultVectorsValues() const {
-    return useDefaultVectorsValues;
+bool LayerProperties::getUseCustomVectorsMinimum() const {
+    return useCustomVectorsMinimum;
 }
 
-void LayerProperties::setUseDefaultVectorsValues(const bool &useDefaultVectorsValues) {
-    this->useDefaultVectorsValues = useDefaultVectorsValues;
+void LayerProperties::setUseCustomVectorsMinimum(const bool &useCustomVectorsMinimum) {
+    this->useCustomVectorsMinimum = useCustomVectorsMinimum;
+}
+
+bool LayerProperties::getUseCustomVectorsMaximum() const {
+    return useCustomVectorsMaximum;
+}
+
+void LayerProperties::setUseCustomVectorsMaximum(const bool &useCustomVectorsMaximum) {
+    this->useCustomVectorsMaximum = useCustomVectorsMaximum;
 }
 
 VectorColorMode LayerProperties::getVectorColorMode() const {
@@ -266,50 +277,34 @@ void LayerProperties::setMeshOpacity(const int &meshOpacity) {
     this->meshOpacity = meshOpacity;
 }
 
-bool LayerProperties::getUseDefaultMapValues() const {
-    return useDefaultMapValues;
+bool LayerProperties::getUseCustomMapMinimum() const {
+    return useCustomMapMinimum;
 }
 
-void LayerProperties::setUseDefaultMapValues(bool useDefaultMapValues) {
-    this->useDefaultMapValues = useDefaultMapValues;
+void LayerProperties::setUseCustomMapMinimum(const bool &useCustomMapMinimum) {
+    this->useCustomMapMinimum = useCustomMapMinimum;
 }
 
-double LayerProperties::getDefaultMapMinimum() const {
-    return defaultMapMinimum;
+bool LayerProperties::getUseCustomMapMaximum() const {
+    return useCustomMapMaximum;
 }
 
-void LayerProperties::setDefaultMapMinimum(const double &defaultMapMinimum) {
-    this->defaultMapMinimum = defaultMapMinimum;
+void LayerProperties::setUseCustomMapMaximum(const bool &useCustomMapMaximum) {
+    this->useCustomMapMaximum = useCustomMapMaximum;
 }
 
-double LayerProperties::getDefaultMapMaximum() const {
-    return defaultMapMaximum;
+bool LayerProperties::getUseCustomPointsMinimum() const {
+    return useCustomPointsMinimum;
 }
 
-void LayerProperties::setDefaultMapMaximum(const double &defaultMapMaximum) {
-    this->defaultMapMaximum = defaultMapMaximum;
+void LayerProperties::setUseCustomPointsMinimum(const bool &useCustomPointsMinimum) {
+    this->useCustomPointsMinimum = useCustomPointsMinimum;
 }
 
-bool LayerProperties::getUseDefaultPointsValues() const {
-    return useDefaultPointsValues;
+bool LayerProperties::getUseCustomPointsMaximum() const {
+    return useCustomPointsMaximum;
 }
 
-void LayerProperties::setUseDefaultPointsValues(bool useDefaultPointsValues) {
-    this->useDefaultPointsValues = useDefaultPointsValues;
-}
-
-double LayerProperties::getDefaultPointsMinimum() const {
-    return defaultPointsMinimum;
-}
-
-void LayerProperties::setDefaultPointsMinimum(const double &defaultPointsMinimum) {
-    this->defaultPointsMinimum = defaultPointsMinimum;
-}
-
-double LayerProperties::getDefaultPointsMaximum() const {
-    return defaultPointsMaximum;
-}
-
-void LayerProperties::setDefaultPointsMaximum(const double &defaultPointsMaximum) {
-    this->defaultPointsMaximum = defaultPointsMaximum;
+void LayerProperties::setUseCustomPointsMaximum(const bool &useCustomPointsMaximum) {
+    this->useCustomPointsMaximum = useCustomPointsMaximum;
 }
