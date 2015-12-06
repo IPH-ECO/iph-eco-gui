@@ -366,6 +366,7 @@ void SimulationVTKWidget::setAxesScale(const QString &axesScale) {
         }
     }
     
+    this->renderer->ResetCamera();
     this->GetRenderWindow()->Render();
 }
 

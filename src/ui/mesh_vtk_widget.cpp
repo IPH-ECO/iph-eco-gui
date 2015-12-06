@@ -1,7 +1,12 @@
 #include "include/ui/mesh_vtk_widget.h"
 
+#include "include/ui/main_window.h"
+#include "include/ui/structured_mesh_dialog.h"
+#include "include/ui/unstructured_mesh_dialog.h"
+
 #include <QList>
 #include <vtkVertex.h>
+#include <vtkCamera.h>
 #include <vtkPolyData.h>
 #include <vtkProperty.h>
 #include <vtkCellArray.h>
@@ -14,10 +19,6 @@
 #include <vtkLabeledDataMapper.h>
 #include <vtkWindowToImageFilter.h>
 #include <vtkInteractorStyleRubberBandZoom.h>
-
-#include "include/ui/main_window.h"
-#include "include/ui/structured_mesh_dialog.h"
-#include "include/ui/unstructured_mesh_dialog.h"
 
 vtkStandardNewMacro(MeshMouseInteractor);
 
@@ -83,6 +84,7 @@ void MeshVTKWidget::render(Mesh *mesh) {
     renderAxesActor();
 
     renderer->ResetCamera();
+    renderer->GetRenderWindow()->Render();
 
     MainWindow *mainWindow = static_cast<MainWindow*>(this->topLevelWidget());
     QObject::connect(mouseInteractor, SIGNAL(coordinateChanged(double&, double&)), mainWindow, SLOT(setCoordinate(double&, double&)));
@@ -119,26 +121,29 @@ void MeshVTKWidget::clear() {
     currentMesh = nullptr;
     renderer->RemoveActor(meshActor);
     renderer->RemoveActor(axesActor);
-    this->update();
+    this->GetRenderWindow()->Render();
 }
 
 void MeshVTKWidget::toggleMesh(bool show) {
     this->showMesh = show;
     if (this->meshActor) {
         this->meshActor->SetVisibility(show);
-        this->update();
+        this->GetRenderWindow()->Render();
     }
 }
 
 void MeshVTKWidget::toggleAxes(bool show) {
     this->showAxes = show;
     this->axesActor->SetVisibility(show);
-    this->update();
+    this->GetRenderWindow()->Render();
 }
 
 void MeshVTKWidget::resetZoom() {
+    renderer->GetActiveCamera()->SetPosition(0, 0, 0);
+    renderer->GetActiveCamera()->SetFocalPoint(0, 0, -1);
+    renderer->GetActiveCamera()->SetViewUp(0, 1, 0);
     renderer->ResetCamera();
-    this->update();
+    this->GetRenderWindow()->Render();
 }
 
 void MeshVTKWidget::toggleZoomArea(bool activate) {
@@ -212,7 +217,7 @@ void MeshVTKWidget::toggleLabels(const LabelType &labelType) {
 
 void MeshVTKWidget::changeBackgroundColor(const double &r, const double &g, const double &b) {
     renderer->SetBackground(r, g, b);
-    this->update();
+    this->GetRenderWindow()->Render();
 }
 
 void MeshVTKWidget::exportToImage(const QString &fileName) {
