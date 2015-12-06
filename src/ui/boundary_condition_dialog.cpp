@@ -82,6 +82,10 @@ BoundaryConditionDialog::BoundaryConditionDialog(HydrodynamicConfiguration *conf
 }
 
 BoundaryConditionDialog::~BoundaryConditionDialog() {
+    if (isNewBoundaryCondition) {
+        delete currentBoundaryCondition;
+    }
+    
     delete ui;
 }
 
@@ -321,7 +325,6 @@ void BoundaryConditionDialog::toggleLabelsActor(bool show) {
 void BoundaryConditionDialog::undoChanges() {
     if (isNewBoundaryCondition) {
         hydrodynamicDataDialog->ui->vtkWidget->getMouseInteractor()->removeBoundaryCondition(currentBoundaryCondition);
-        delete currentBoundaryCondition;
     } else {
         currentBoundaryCondition->setObjectIds(originalObjectIds);
         currentBoundaryCondition->setTimeSeriesList(originalTimeSeriesList);

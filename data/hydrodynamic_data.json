@@ -379,7 +379,7 @@
             "name": "horizontalEddyViscosity",
             "parentName": "horizontalEddyConstant",
             "rangeMaximum": 1000,
-            "rangeMinimum": 1e-10
+            "rangeMinimum": 0
         },
         {
             "defaultValue": 0,
@@ -390,7 +390,7 @@
             "name": "horizontalEddyDiffusivity",
             "parentName": "horizontalEddyConstant",
             "rangeMaximum": 1000,
-            "rangeMinimum": 1e-10
+            "rangeMinimum": 0
         },
         {
             "defaultValue": 0,
@@ -454,7 +454,7 @@
             "name": "verticalEddyViscosity",
             "parentName": "verticalEddyConstant",
             "rangeMaximum": 1000,
-            "rangeMinimum": 1e-10
+            "rangeMinimum": 0
         },
         {
             "defaultValue": 1,
@@ -465,7 +465,7 @@
             "name": "verticalEddyDiffusivity",
             "parentName": "verticalEddyConstant",
             "rangeMaximum": 1000,
-            "rangeMinimum": 1e-10
+            "rangeMinimum": 0
         },
         {
             "defaultValue": 0,
