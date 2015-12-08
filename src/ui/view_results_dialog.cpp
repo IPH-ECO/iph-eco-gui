@@ -46,7 +46,7 @@ ViewResultsDialog::ViewResultsDialog(QWidget *parent) :
 }
 
 void ViewResultsDialog::on_tblSimulations_currentItemChanged(QTableWidgetItem *current, QTableWidgetItem *previous) {
-    if (current) {
+    if (current && previous) {
         QTableWidgetItem *labelItem = ui->tblSimulations->item(current->row(), 0);
         
         this->currentSimulation = IPHApplication::getCurrentProject()->getSimulation(labelItem->text());
