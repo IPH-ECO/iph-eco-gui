@@ -12,6 +12,7 @@
 #include <vtkDoubleArray.h>
 #include <vtkArrowSource.h>
 #include <vtkCellCenters.h>
+#include <vtkTextProperty.h>
 #include <vtkPolyDataMapper.h>
 #include <vtkScalarBarActor.h>
 #include <vtkArrayCalculator.h>
@@ -22,6 +23,7 @@
 
 SimulationVTKWidget::SimulationVTKWidget(QWidget *parent) :
     MeshVTKWidget(parent),
+    timeStampActor(vtkSmartPointer<vtkTextActor>::New()),
     currentSimulation(nullptr),
     layerProperties(nullptr),
     axesScale("1 1 1"),
@@ -68,10 +70,17 @@ void SimulationVTKWidget::render(Simulation *simulation, const QString &layer, c
     currentComponent = component;
     currentFrame = frame;
     
-    readFrame(frame);
-    
+    std::string timeStamp = readFrame(frame);
     std::string layerArrayName = layer.toStdString();
     double layerRange[2];
+    
+    timeStampActor->GetTextProperty()->SetFontSize(16);
+    timeStampActor->GetTextProperty()->SetColor(0, 0, 0);
+    timeStampActor->SetPosition2(10, 40);
+    timeStampActor->SetInput(timeStamp.c_str());
+    timeStampActor->VisibilityOn();
+    
+    renderer->AddActor2D(timeStampActor);
     
     if (component == "Magnitude") {
         vtkSmartPointer<vtkDoubleArray> layerArray = this->buildMagnitudeArray();
@@ -135,13 +144,16 @@ void SimulationVTKWidget::render(Simulation *simulation, const QString &layer, c
     this->GetRenderWindow()->Render();
 }
 
-void SimulationVTKWidget::readFrame(const int frame) {
+std::string SimulationVTKWidget::readFrame(const int frame) {
     std::string fileName = outputFiles.at(frame).absoluteFilePath().toStdString();
     vtkSmartPointer<vtkGenericDataObjectReader> reader = vtkSmartPointer<vtkGenericDataObjectReader>::New();
     reader->SetFileName(fileName.c_str());
     reader->Update();
     
+    std::string timeStamp = reader->GetHeader();
     layerGrid = reader->GetUnstructuredGridOutput();
+    
+    return timeStamp;
 }
 
 void SimulationVTKWidget::renderMeshLayer() {
@@ -316,6 +328,8 @@ void SimulationVTKWidget::hideLayer(const QString &layerKey) {
         layerActor->VisibilityOff();
     }
     
+    timeStampActor->VisibilityOff();
+    
     // Refactor
     scalarBarWidgets.value(layerKey)->EnabledOff();
     
@@ -328,6 +342,8 @@ void SimulationVTKWidget::updateLayer() {
 
 void SimulationVTKWidget::removeLayer(const QString &layerKey) {
     QStringList layerAndComponent = layerKey.split("-");
+    
+    timeStampActor->VisibilityOff();
     
     if (layerAndComponent.last() == "Vector") {
         this->renderer->RemoveActor(vectorsActors.take(layerKey));

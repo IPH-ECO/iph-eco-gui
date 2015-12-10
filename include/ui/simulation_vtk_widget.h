@@ -6,6 +6,7 @@
 #include "include/domain/meteorological_station.h"
 
 #include <QFileInfo>
+#include <vtkTextActor.h>
 #include <vtkDoubleArray.h>
 #include <vtkDataSetMapper.h>
 #include <vtkScalarBarWidget.h>
@@ -20,6 +21,7 @@ private:
     vtkSmartPointer<vtkDataSetMapper> layerDataSetMapper;
     QMap<QString, vtkSmartPointer<vtkActor> > vectorsActors;
     QMap<QString, vtkSmartPointer<vtkScalarBarWidget> > scalarBarWidgets;
+    vtkSmartPointer<vtkTextActor> timeStampActor;
     Simulation *currentSimulation;
     QFileInfoList outputFiles;
     LayerProperties *layerProperties;
@@ -31,7 +33,7 @@ private:
     const char *MAGNITUDE_ARRAY_NAME;
     
     void renderMeshLayer();
-    void readFrame(const int frame);
+    std::string readFrame(const int frame);
     vtkSmartPointer<vtkDoubleArray> buildMagnitudeArray();
     vtkSmartPointer<vtkColorTransferFunction> buildColorTransferFunction(double *scalarBarRange);
     vtkSmartPointer<vtkPolyData> renderVectors();
