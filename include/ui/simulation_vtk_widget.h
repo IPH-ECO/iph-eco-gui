@@ -9,19 +9,22 @@
 #include <vtkTextActor.h>
 #include <vtkDoubleArray.h>
 #include <vtkDataSetMapper.h>
-#include <vtkScalarBarWidget.h>
+#include <vtkScalarBarActor.h>
 #include <vtkUnstructuredGrid.h>
 #include <vtkColorTransferFunction.h>
 
 class SimulationVTKWidget : public MeshVTKWidget {
 	Q_OBJECT
 private:
+    const char *MAGNITUDE_ARRAY_NAME;
+    
     vtkSmartPointer<vtkUnstructuredGrid> layerGrid;
     vtkSmartPointer<vtkActor> layerActor;
     vtkSmartPointer<vtkDataSetMapper> layerDataSetMapper;
     QMap<QString, vtkSmartPointer<vtkActor> > vectorsActors;
-    QMap<QString, vtkSmartPointer<vtkScalarBarWidget> > scalarBarWidgets;
+    QMap<QString, vtkSmartPointer<vtkScalarBarActor> > scalarBarActors;
     vtkSmartPointer<vtkTextActor> timeStampActor;
+    QList<QString> visibleScalarBarActors;
     Simulation *currentSimulation;
     QFileInfoList outputFiles;
     LayerProperties *layerProperties;
@@ -30,14 +33,12 @@ private:
     int currentFrame;
     QString axesScale;
     
-    const char *MAGNITUDE_ARRAY_NAME;
-    
     void renderMeshLayer();
     std::string readFrame(const int frame);
     vtkSmartPointer<vtkDoubleArray> buildMagnitudeArray();
     vtkSmartPointer<vtkColorTransferFunction> buildColorTransferFunction(double *scalarBarRange);
     vtkSmartPointer<vtkPolyData> renderVectors();
-    vtkSmartPointer<vtkScalarBarWidget> renderScalarBar(const QString &layerKey, double *scalarBarRange);
+    vtkSmartPointer<vtkScalarBarActor> renderScalarBar(const QString &layerKey, double *scalarBarRange);
 public:
 	explicit SimulationVTKWidget(QWidget *parent);
 	void render(Simulation *simulation, const QString &layer, const QString &component, int frame);

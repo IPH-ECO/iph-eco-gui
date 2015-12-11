@@ -23,11 +23,12 @@
 
 SimulationVTKWidget::SimulationVTKWidget(QWidget *parent) :
     MeshVTKWidget(parent),
+    MAGNITUDE_ARRAY_NAME("VectorMagnitude"),
     timeStampActor(vtkSmartPointer<vtkTextActor>::New()),
+    visibleScalarBarActors({ nullptr, nullptr, nullptr }),
     currentSimulation(nullptr),
     layerProperties(nullptr),
-    axesScale("1 1 1"),
-    MAGNITUDE_ARRAY_NAME("VectorMagnitude")
+    axesScale("1 1 1")
 {}
 
 void SimulationVTKWidget::render(Simulation *simulation, const QString &layer, const QString &component, int frame) {
@@ -41,9 +42,22 @@ void SimulationVTKWidget::render(Simulation *simulation, const QString &layer, c
         currentSimulation = simulation;
         currentMesh = simulation->getMesh();
         
-        renderMeshLayer();
-        
         renderer->RemoveActor(layerActor);
+        renderer->RemoveActor(timeStampActor);
+        
+        for (vtkSmartPointer<vtkActor> vectorActor : vectorsActors.values()) {
+            renderer->RemoveActor(vectorActor);
+        }
+        
+        for (vtkSmartPointer<vtkActor2D> scalarBarActor : scalarBarActors.values()) {
+            renderer->RemoveActor(scalarBarActor);
+        }
+        
+        visibleScalarBarActors[0] = nullptr;
+        visibleScalarBarActors[1] = nullptr;
+        visibleScalarBarActors[2] = nullptr;
+        
+        renderMeshLayer();
         
         layerDataSetMapper = vtkSmartPointer<vtkDataSetMapper>::New();
         layerDataSetMapper->SetInputData(layerGrid);
@@ -84,7 +98,6 @@ void SimulationVTKWidget::render(Simulation *simulation, const QString &layer, c
     
     if (component == "Magnitude") {
         vtkSmartPointer<vtkDoubleArray> layerArray = this->buildMagnitudeArray();
-        
         layerArray->GetRange(layerRange);
         layerGrid->GetCellData()->AddArray(layerArray);
     } else if (component == "Vector") {
@@ -99,13 +112,12 @@ void SimulationVTKWidget::render(Simulation *simulation, const QString &layer, c
         
         vectorsPolyData->GetPointData()->GetArray(layerArrayName.c_str())->GetRange(layerRange);
         
-        vtkSmartPointer<vtkScalarBarWidget> scalarBarWidget = renderScalarBar(layerKey, layerRange);
-        
+        vtkSmartPointer<vtkScalarBarActor> scalarBarActor = renderScalarBar(layerKey, layerRange);
         vtkSmartPointer<vtkPolyDataMapper> vectorsPolyDataMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
         vectorsPolyDataMapper->SetInputData(vectorsPolyData);
         vectorsPolyDataMapper->SetScalarModeToUsePointData();
         vectorsPolyDataMapper->UseLookupTableScalarRangeOn();
-        vectorsPolyDataMapper->SetLookupTable(scalarBarWidget->GetScalarBarActor()->GetLookupTable());
+        vectorsPolyDataMapper->SetLookupTable(scalarBarActor->GetLookupTable());
         
         vectorsActor->SetMapper(vectorsPolyDataMapper);
         
@@ -123,10 +135,10 @@ void SimulationVTKWidget::render(Simulation *simulation, const QString &layer, c
             vectorsActor->GetProperty()->SetColor(vectorColor.redF(), vectorColor.greenF(), vectorColor.blueF());
         }
     } else {
-        vtkSmartPointer<vtkScalarBarWidget> scalarBarWidget = renderScalarBar(layerKey, layerRange);
+        vtkSmartPointer<vtkScalarBarActor> scalarBarActor = renderScalarBar(layerKey, layerRange);
         
         layerDataSetMapper->SetInputData(layerGrid);
-        layerDataSetMapper->SetLookupTable(scalarBarWidget->GetScalarBarActor()->GetLookupTable());
+        layerDataSetMapper->SetLookupTable(scalarBarActor->GetLookupTable());
         layerDataSetMapper->SelectColorArray(layerArrayName.c_str());
         layerDataSetMapper->UseLookupTableScalarRangeOn();
         layerDataSetMapper->SetScalarModeToUseCellData();
@@ -200,32 +212,40 @@ vtkSmartPointer<vtkDoubleArray> SimulationVTKWidget::buildMagnitudeArray() {
     return vtkSmartPointer<vtkDoubleArray>(vtkDoubleArray::SafeDownCast(magnitudePolyData->GetCellData()->GetArray(MAGNITUDE_ARRAY_NAME)));
 }
 
-vtkSmartPointer<vtkScalarBarWidget> SimulationVTKWidget::renderScalarBar(const QString &layerKey, double *scalarBarRange) {
-    vtkSmartPointer<vtkScalarBarWidget> scalarBarWidget = scalarBarWidgets.value(layerKey);
+vtkSmartPointer<vtkScalarBarActor> SimulationVTKWidget::renderScalarBar(const QString &layerKey, double *scalarBarRange) {
+    vtkSmartPointer<vtkScalarBarActor> scalarBarActor = scalarBarActors.value(layerKey);
+    int actorPosition = visibleScalarBarActors.contains(layerKey) ? visibleScalarBarActors.indexOf(layerKey) : visibleScalarBarActors.indexOf(nullptr);
+    bool hasPosition = actorPosition > -1;
+    bool scalarBarVisibility = currentComponent == "Vector" ? layerProperties->getVectorsLegend() : layerProperties->getMapLegend();
     
-    if (!scalarBarWidget) {
-        std::string scalarBarLabel = currentLayer.toStdString();
-        scalarBarWidget = vtkSmartPointer<vtkScalarBarWidget>::New();
+    if (!scalarBarActor) {
+        scalarBarActor = vtkSmartPointer<vtkScalarBarActor>::New();
+        std::string scalarBarLabel = (currentLayer + (currentComponent.isEmpty() ? "" : QString(" (%1)").arg(currentComponent))).toStdString();
+        const float PADDING = actorPosition == 0 ? 0 : .03;
         
-        scalarBarWidget->SetInteractor(this->GetInteractor());
-        scalarBarWidget->GetScalarBarActor()->SetTitle(scalarBarLabel.c_str());
-        scalarBarWidget->GetScalarBarActor()->SetNumberOfLabels(4);
-        scalarBarWidget->RepositionableOn();
-        scalarBarWidget->SelectableOn();
-        scalarBarWidget->ResizableOn();
+        scalarBarActor->SetTitle(scalarBarLabel.c_str());
+        scalarBarActor->GetTitleTextProperty()->SetFontSize(16);
+        scalarBarActor->SetNumberOfLabels(4);
+        scalarBarActor->SetWidth(.1);
+        scalarBarActor->SetHeight(.25);
+        
+        if (hasPosition) {
+            scalarBarActor->SetPosition(.01, .74 - scalarBarActor->GetHeight() * actorPosition - PADDING);
+        }
+    }
+    
+    if (hasPosition) {
+        visibleScalarBarActors[actorPosition] = layerKey;
     }
     
     vtkSmartPointer<vtkColorTransferFunction> colorTransferFunction = buildColorTransferFunction(scalarBarRange);
-    scalarBarWidget->GetScalarBarActor()->SetLookupTable(colorTransferFunction);
-    scalarBarWidget->SetEnabled(currentComponent == "Vector" ? layerProperties->getVectorsLegend() : layerProperties->getMapLegend());
+    scalarBarActor->SetLookupTable(colorTransferFunction);
+    scalarBarActor->SetVisibility(scalarBarVisibility && hasPosition);
+
+    renderer->AddActor2D(scalarBarActor);
+    scalarBarActors.insert(layerKey, scalarBarActor);
     
-    vtkScalarBarRepresentation *scalarBarRepresentation = vtkScalarBarRepresentation::SafeDownCast(scalarBarWidget->GetRepresentation());
-    scalarBarRepresentation->GetPositionCoordinate()->SetValue(0.86, 0.05);
-    scalarBarRepresentation->GetPosition2Coordinate()->SetValue(0.1, 0.35);
-    
-    scalarBarWidgets.insert(layerKey, scalarBarWidget);
-    
-    return scalarBarWidget;
+    return scalarBarActor;
 }
 
 vtkSmartPointer<vtkPolyData> SimulationVTKWidget::renderVectors() {
@@ -328,10 +348,13 @@ void SimulationVTKWidget::hideLayer(const QString &layerKey) {
         layerActor->VisibilityOff();
     }
     
-    timeStampActor->VisibilityOff();
+    int scalarBarPosition = visibleScalarBarActors.indexOf(layerKey);
     
-    // Refactor
-    scalarBarWidgets.value(layerKey)->EnabledOff();
+    scalarBarActors.value(layerKey)->VisibilityOff();
+    
+    if (scalarBarPosition > -1) {
+        visibleScalarBarActors[scalarBarPosition] = nullptr;
+    }
     
     this->GetRenderWindow()->Render();
 }
@@ -343,20 +366,19 @@ void SimulationVTKWidget::updateLayer() {
 void SimulationVTKWidget::removeLayer(const QString &layerKey) {
     QStringList layerAndComponent = layerKey.split("-");
     
-    timeStampActor->VisibilityOff();
-    
     if (layerAndComponent.last() == "Vector") {
         this->renderer->RemoveActor(vectorsActors.take(layerKey));
     } else if (layerAndComponent.first() == layerDataSetMapper->GetArrayName()) {
         layerActor->VisibilityOff();
     }
     
-    vtkSmartPointer<vtkScalarBarWidget> scalarBarWidget = scalarBarWidgets.take(layerKey);
+    int scalarBarPosition = visibleScalarBarActors.indexOf(layerKey);
     
-    if (scalarBarWidget) {
-        scalarBarWidget->EnabledOff();
+    if (scalarBarPosition > -1) {
+        visibleScalarBarActors[scalarBarPosition] = nullptr;
     }
     
+    this->renderer->RemoveActor(scalarBarActors.take(layerKey));
     this->GetRenderWindow()->Render();
 }
 

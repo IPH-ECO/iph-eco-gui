@@ -57,6 +57,7 @@ void ViewResultsDialog::on_tblSimulations_currentItemChanged(QTableWidgetItem *c
         ui->spxFrame->setValue(1);
         ui->spxFrame->setMaximum(outputFiles.size());
         ui->lblFrameTotal->setText(QString::number(outputFiles.size()));
+        on_btnPauseReproduction_clicked();
         
         fillLayersComboBox();
         
@@ -266,6 +267,8 @@ void ViewResultsDialog::fillLayersComboBox() {
         i++;
     }
     ui->cbxLayers->setCurrentIndex(-1);
+    
+    ui->tblLayers->setRowCount(0);
 }
 
 void ViewResultsDialog::removeLayer() {
@@ -302,6 +305,7 @@ void ViewResultsDialog::toggleLayerVisibility(bool show) {
                     
                     if (buttonLayerKey.split("-").last() != "Vector") {
                         toolButton->setChecked(false);
+                        ui->vtkWidget->hideLayer(buttonLayerKey);
                     }
                 }
             }
