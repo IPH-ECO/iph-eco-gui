@@ -36,7 +36,7 @@ void SimulationVTKWidget::render(Simulation *simulation, const QString &layer, c
         outputFiles = simulation->getOutputFiles();
         
         if (outputFiles.isEmpty()) {
-            throw SimulationException("Output files for this simulation were not found.");
+            throw SimulationException("The output files for this simulation were not found.");
         }
         
         currentSimulation = simulation;

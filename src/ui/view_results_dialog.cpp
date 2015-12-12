@@ -3,6 +3,7 @@
 
 #include "include/application/iph_application.h"
 #include "include/repository/simulation_repository.h"
+#include "include/exceptions/simulation_exception.h"
 #include "include/ui/main_window.h"
 #include "include/ui/layer_properties_dialog.h"
 
@@ -62,7 +63,11 @@ void ViewResultsDialog::on_tblSimulations_currentItemChanged(QTableWidgetItem *c
         fillLayersComboBox();
         
         if (previous) {
-            ui->vtkWidget->render(this->currentSimulation, "", "", 0); // Only renders the mesh
+			try {
+				ui->vtkWidget->render(this->currentSimulation, "", "", 0); // Only renders the mesh
+			} catch (const SimulationException &e) {
+				QMessageBox::critical(this, tr("View Results"), e.what());
+			}
         }
     }
 }

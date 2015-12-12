@@ -1,7 +1,11 @@
 #include "include/application/iph_application.h"
 #include "include/ui/main_window.h"
 
+#include <clocale>
+
 int main(int argc, char *argv[]) {
+	std::setlocale(LC_ALL, "C");
+
     IPHApplication a(argc, argv);
 
     QApplication::setOrganizationDomain("4techlabs.com.br");
