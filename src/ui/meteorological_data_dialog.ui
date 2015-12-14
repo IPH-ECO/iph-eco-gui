@@ -156,9 +156,6 @@
            <height>24</height>
           </size>
          </property>
-         <property name="shortcut">
-          <string>Ctrl+S</string>
-         </property>
         </widget>
        </item>
        <item>
@@ -541,6 +538,9 @@
          <property name="icon">
           <iconset resource="../../icons.qrc">
            <normaloff>:/icons/dialog-close.png</normaloff>:/icons/dialog-close.png</iconset>
+         </property>
+         <property name="shortcut">
+          <string>Ctrl+F4</string>
          </property>
         </widget>
        </item>
