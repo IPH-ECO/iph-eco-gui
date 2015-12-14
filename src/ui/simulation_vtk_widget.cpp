@@ -36,7 +36,7 @@ void SimulationVTKWidget::render(Simulation *simulation, const QString &layer, c
         outputFiles = simulation->getOutputFiles();
         
         if (outputFiles.isEmpty()) {
-            throw SimulationException("The output files for this simulation were not found.");
+            throw SimulationException("Result files for this simulation were not found.");
         }
         
         currentSimulation = simulation;
@@ -87,6 +87,10 @@ void SimulationVTKWidget::render(Simulation *simulation, const QString &layer, c
     std::string timeStamp = readFrame(frame);
     std::string layerArrayName = layer.toStdString();
     double layerRange[2];
+    
+    if (layerGrid->GetCellData()->HasArray(layerArrayName.c_str())) {
+        throw SimulationException(QString("Layer '%1' not found in result files."));
+    }
     
     timeStampActor->GetTextProperty()->SetFontSize(16);
     timeStampActor->GetTextProperty()->SetColor(0, 0, 0);
