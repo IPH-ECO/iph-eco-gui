@@ -8,6 +8,7 @@
 #include "include/ui/layer_properties_dialog.h"
 
 #include <QMessageBox>
+#include <QMutexLocker>
 #include <QInputDialog>
 #include <QMdiSubWindow>
 #include <QRegularExpression>
@@ -49,10 +50,8 @@ ViewResultsDialog::ViewResultsDialog(QWidget *parent) :
 void ViewResultsDialog::on_tblSimulations_currentItemChanged(QTableWidgetItem *current, QTableWidgetItem *previous) {
     if (current && previous) {
         QTableWidgetItem *labelItem = ui->tblSimulations->item(current->row(), 0);
-        
-        this->currentSimulation = IPHApplication::getCurrentProject()->getSimulation(labelItem->text());
-        
-        QFileInfoList outputFiles = this->currentSimulation->getOutputFiles();
+        Simulation *simulation = IPHApplication::getCurrentProject()->getSimulation(labelItem->text());
+        QFileInfoList outputFiles = simulation->getOutputFiles();
         
         ui->btnRefresh->setEnabled(true);
         ui->spxFrame->setValue(1);
@@ -60,11 +59,14 @@ void ViewResultsDialog::on_tblSimulations_currentItemChanged(QTableWidgetItem *c
         ui->lblFrameTotal->setText(QString::number(outputFiles.size()));
         on_btnPauseReproduction_clicked();
         
-        fillLayersComboBox();
+        fillLayersComboBox(simulation);
         
         if (previous) {
 			try {
-				ui->vtkWidget->render(this->currentSimulation, "", "", 0); // Only renders the mesh
+                QMutexLocker locker(&mutex);
+                
+                this->currentSimulation = simulation;
+                ui->vtkWidget->render(this->currentSimulation, "", "", 0); // Only renders the mesh
 			} catch (const SimulationException &e) {
 				QMessageBox::critical(this, tr("View Results"), e.what());
 			}
@@ -138,7 +140,8 @@ void ViewResultsDialog::onSimulationCreated(Simulation *simulation) {
 void ViewResultsDialog::on_btnRefresh_clicked() {
     if (this->currentSimulation) {
         QFileInfoList outputFiles = this->currentSimulation->getOutputFiles();
-        
+
+        ui->vtkWidget->updateOutputFileList();
         ui->spxFrame->setMaximum(outputFiles.size());
         ui->lblFrameTotal->setText(QString::number(outputFiles.size()));
     }
@@ -260,8 +263,8 @@ void ViewResultsDialog::on_btnAddLayer_clicked() {
     }
 }
 
-void ViewResultsDialog::fillLayersComboBox() {
-    QStringList outputParameters = this->currentSimulation->getOutputParameters();
+void ViewResultsDialog::fillLayersComboBox(Simulation *simulation) {
+    QStringList outputParameters = simulation->getOutputParameters();
     QMap<QString, QString> layers = SimulationRepository::loadOutputParametersLabels(outputParameters);
     int i = 0;
     
@@ -343,6 +346,8 @@ void ViewResultsDialog::on_spxFrame_valueChanged(int frame) {
         for (QToolButton *button : ui->tblLayers->findChildren<QToolButton*>(QRegExp("^showHideLayerButton"))) {
             if (button->isChecked()) {
                 QStringList layerAndComponent = getLayerKeyFromButton(button).split("-");
+                QMutexLocker locker(&mutex);
+                
                 ui->vtkWidget->render(this->currentSimulation, layerAndComponent.first(), layerAndComponent.last(), ui->spxFrame->value() - 1);
             }
         }

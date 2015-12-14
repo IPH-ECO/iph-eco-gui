@@ -5,6 +5,7 @@
 #include "include/ui/abstract_mesh_dialog.h"
 
 #include <QTimer>
+#include <QMutex>
 #include <QWidget>
 #include <QToolButton>
 #include <QTableWidgetItem>
@@ -20,8 +21,9 @@ private:
     Simulation *currentSimulation;
     QString axesScale;
     QTimer frameTimer;
+    QMutex mutex;
 
-    void fillLayersComboBox();
+    void fillLayersComboBox(Simulation *simulation);
     QString getLayerKeyFromButton(QToolButton *button) const;
 public:
 	explicit ViewResultsDialog(QWidget *parent);

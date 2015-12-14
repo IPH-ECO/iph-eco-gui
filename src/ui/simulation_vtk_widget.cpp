@@ -33,14 +33,14 @@ SimulationVTKWidget::SimulationVTKWidget(QWidget *parent) :
 
 void SimulationVTKWidget::render(Simulation *simulation, const QString &layer, const QString &component, int frame) {
     if (currentSimulation != simulation) {
-        outputFiles = simulation->getOutputFiles();
+        currentSimulation = simulation;
+        currentMesh = simulation->getMesh();
+        
+        updateOutputFileList();
         
         if (outputFiles.isEmpty()) {
             throw SimulationException("Result files for this simulation were not found.");
         }
-        
-        currentSimulation = simulation;
-        currentMesh = simulation->getMesh();
         
         renderer->RemoveActor(layerActor);
         renderer->RemoveActor(timeStampActor);
@@ -88,8 +88,8 @@ void SimulationVTKWidget::render(Simulation *simulation, const QString &layer, c
     std::string layerArrayName = layer.toStdString();
     double layerRange[2];
     
-    if (layerGrid->GetCellData()->HasArray(layerArrayName.c_str())) {
-        throw SimulationException(QString("Layer '%1' not found in result files."));
+    if (!layerGrid->GetCellData()->HasArray(layerArrayName.c_str())) {
+        throw SimulationException(QString("Layer '%1' not found in result files.").arg(QString::fromStdString(layerArrayName)));
     }
     
     timeStampActor->GetTextProperty()->SetFontSize(16);
@@ -423,4 +423,8 @@ void SimulationVTKWidget::changeMeshProperties(Mesh *mesh) {
         
         this->GetRenderWindow()->Render();
     }
+}
+
+void SimulationVTKWidget::updateOutputFileList() {
+    this->outputFiles = currentSimulation->getOutputFiles();
 }

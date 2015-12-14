@@ -44,6 +44,7 @@ public:
 	void render(Simulation *simulation, const QString &layer, const QString &component, int frame);
     void removeLayer(const QString &layerKey);
     void setAxesScale(const QString &axesScale);
+    void updateOutputFileList();
 public slots:
     void hideLayer(const QString &layerKey);
     void updateLayer();
