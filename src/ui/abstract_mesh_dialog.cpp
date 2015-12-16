@@ -70,6 +70,10 @@ void AbstractMeshDialog::showEvent(QShowEvent *event) {
         QObject::connect(exportMapAction, SIGNAL(triggered()), this, SLOT(onExportMapClicked()));
         toolBarActions.append(exportMapAction);
         
+        QAction *exportVideoAction = new QAction(QIcon(":/icons/tool-animator.png"), "Export animation to video", mainWindow);
+        QObject::connect(exportVideoAction, SIGNAL(triggered()), vtkWidget, SLOT(exportAnimationToVideo()));
+        toolBarActions.append(exportVideoAction);
+        
         QColor color = QColor(Qt::white);
         QPixmap px(24, 24);
         

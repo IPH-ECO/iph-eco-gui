@@ -428,3 +428,9 @@ void SimulationVTKWidget::changeMeshProperties(Mesh *mesh) {
 void SimulationVTKWidget::updateOutputFileList() {
     this->outputFiles = currentSimulation->getOutputFiles();
 }
+
+void SimulationVTKWidget::exportAnimationToVideo() {
+    if (currentSimulation) {
+        
+    }
+}

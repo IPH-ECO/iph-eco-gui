@@ -49,6 +49,7 @@ public slots:
     void hideLayer(const QString &layerKey);
     void updateLayer();
     virtual void changeMeshProperties(Mesh *mesh);
+    void exportAnimationToVideo();
 };
 
 #endif // SIMULATION_VTK_WIDGET_H
