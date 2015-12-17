@@ -358,7 +358,7 @@ QFileInfoList Simulation::getOutputFiles() const {
     QFileInfoList outputFiles;
     
     if (outputDir.exists()) {
-        QFileInfoList tempList = outputDir.entryInfoList({ "*.vtk" }, QDir::Files, QDir::Time);
+        QFileInfoList tempList = outputDir.entryInfoList({ QString("%1*.vtk").arg(label) }, QDir::Files, QDir::Time);
         
         for (int i = tempList.size() - 1; i >= 0; i--) {
             outputFiles.append(tempList.at(i));

@@ -33,7 +33,7 @@ void DatabaseUtility::connect(const QString &databaseName, bool force) {
 
         if (!currentDatabase.open()) {
             revertConnection();
-            throw DatabaseException(QString("The following error ocurred during database connection: %1").arg(currentDatabase.lastError().text()));
+            throw DatabaseException(QString("The following error ocurred during database connection: %1.").arg(currentDatabase.lastError().text()).toStdString());
         }
     }
 }
@@ -236,7 +236,7 @@ void DatabaseUtility::createApplicationTables() {
 
         if (!query.exec()) {
             revertConnection();
-            throw DatabaseException(QString("An error occurred when creating application tables: %1").arg(query.lastError().text()));
+            throw DatabaseException(QString("An error occurred when creating application tables: %1").arg(query.lastError().text()).toStdString());
         }
     }
 

@@ -59,17 +59,20 @@ void ViewResultsDialog::on_tblSimulations_currentItemChanged(QTableWidgetItem *c
         ui->lblFrameTotal->setText(QString::number(outputFiles.size()));
         on_btnPauseReproduction_clicked();
         
-        fillLayersComboBox(simulation);
+        try {
+            if (frameTimer.isActive()) {
+                mutex.lock();
+            }
+            
+            this->currentSimulation = simulation;
+            ui->vtkWidget->render(this->currentSimulation, "", "", 0); // Only renders the mesh
+            this->fillLayersComboBox(simulation);
+        } catch (const SimulationException &e) {
+            QMessageBox::critical(this, tr("View Results"), e.what());
+        }
         
-        if (previous) {
-			try {
-                QMutexLocker locker(&mutex);
-                
-                this->currentSimulation = simulation;
-                ui->vtkWidget->render(this->currentSimulation, "", "", 0); // Only renders the mesh
-			} catch (const SimulationException &e) {
-				QMessageBox::critical(this, tr("View Results"), e.what());
-			}
+        if (frameTimer.isActive()) {
+            mutex.unlock();
         }
     }
 }

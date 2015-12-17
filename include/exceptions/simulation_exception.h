@@ -1,16 +1,12 @@
 #ifndef SIMULATION_EXCEPTION_H
 #define SIMULATION_EXCEPTION_H
 
-#include <exception>
-#include <QString>
+#include <string>
+#include <stdexcept>
 
-class SimulationException : public std::exception {
-private:
-    char* cause;
+class SimulationException : public std::runtime_error {
 public:
-    SimulationException(const QString &cause);
-
-    const char* what() const throw();
+    SimulationException(const std::string cause) : std::runtime_error(cause) {}
 };
 
 #endif // SIMULATION_EXCEPTION_H

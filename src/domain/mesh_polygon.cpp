@@ -56,7 +56,7 @@ void MeshPolygon::readFromKMLFile(const CoordinateSystem &coordinateSystem) {
     QFile kmlFile(this->filename);
     
     if (!kmlFile.open(QIODevice::ReadOnly | QIODevice::Text) || kmlFile.size() == 0) {
-        throw MeshPolygonException(QString("Unable to open KML file. Error: %1").arg(kmlFile.errorString()));
+        throw MeshPolygonException(QString("Unable to open KML file. Error: %1.").arg(kmlFile.errorString()).toStdString());
     }
     
     QXmlStreamReader kmlReader(&kmlFile);
@@ -73,7 +73,7 @@ void MeshPolygon::readFromKMLFile(const CoordinateSystem &coordinateSystem) {
             } while (kmlReader.name() != "coordinates" && !kmlReader.atEnd());
             
             if (kmlReader.atEnd()) {
-                throw MeshPolygonException(QString("No coordinates found in KML file."));
+                throw MeshPolygonException("No coordinates found in KML file.");
             }
             
             QString coordinatesText = kmlReader.readElementText();
@@ -94,7 +94,7 @@ void MeshPolygon::readFromKMLFile(const CoordinateSystem &coordinateSystem) {
                         point[0] = utmCoordinate.Easting();
                         point[1] = utmCoordinate.Northing();
                     } catch (const GeographicLib::GeographicErr&) {
-                        throw MeshPolygonException(QString("Latitude/longitude out of range at line %1").arg(i + 1));
+                        throw MeshPolygonException(QString("Latitude/longitude out of range at line %1").arg(i + 1).toStdString());
                     }
                 } else if (coordinateSystem == CoordinateSystem::UTM) { // No conversion needed
                     point[0] = coordinateStr.at(0).toDouble();
@@ -145,7 +145,7 @@ void MeshPolygon::readFromTextFile(const CoordinateSystem &coordinateSystem) {
                 point[0] = utmConverter.Easting();
                 point[1] = utmConverter.Northing();
             } catch (const GeographicLib::GeographicErr&) {
-                throw MeshPolygonException(QString("Latitude/longitude out of range at line %1.").arg(i + 1));
+                throw MeshPolygonException(QString("Latitude/longitude out of range at line %1.").arg(i + 1).toStdString());
             }
         } else if (coordinateSystem == CoordinateSystem::UTM) { // No conversion needed
         } else {

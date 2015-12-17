@@ -1,16 +1,12 @@
 #ifndef MESH_EXCEPTION_H
 #define MESH_EXCEPTION_H
 
-#include <exception>
-#include <QString>
+#include <string>
+#include <stdexcept>
 
-class MeshException : public std::exception {
-private:
-    char* cause;
+class MeshException : public std::runtime_error {
 public:
-    MeshException(const QString &cause);
-
-    const char* what() const throw();
+    MeshException(const std::string cause) : std::runtime_error(cause) {}
 };
 
 #endif // MESH_EXCEPTION_H

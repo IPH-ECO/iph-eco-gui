@@ -89,7 +89,7 @@ void SimulationVTKWidget::render(Simulation *simulation, const QString &layer, c
     double layerRange[2];
     
     if (!layerGrid->GetCellData()->HasArray(layerArrayName.c_str())) {
-        throw SimulationException(QString("Layer '%1' not found in result files.").arg(QString::fromStdString(layerArrayName)));
+        throw SimulationException(QString("Layer '%1' not found in result files.").arg(QString::fromStdString(layerArrayName)).toStdString().c_str());
     }
     
     timeStampActor->GetTextProperty()->SetFontSize(16);

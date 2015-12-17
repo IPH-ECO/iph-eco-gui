@@ -1,16 +1,12 @@
 #ifndef MESH_POLYGON_EXCEPTION_H
 #define MESH_POLYGON_EXCEPTION_H
 
-#include <exception>
-#include <QString>
+#include <string>
+#include <stdexcept>
 
-class MeshPolygonException : public std::exception {
-private:
-    char* cause;
+class MeshPolygonException : public std::runtime_error {
 public:
-    MeshPolygonException(const QString &cause);
-    
-    const char* what() const throw();
+    MeshPolygonException(const std::string cause) : std::runtime_error(cause) {}
 };
 
 #endif // MESH_POLYGON_EXCEPTION_H

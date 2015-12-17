@@ -1,16 +1,12 @@
 #ifndef GRID_DATA_EXCEPTION_H
 #define GRID_DATA_EXCEPTION_H
 
-#include <exception>
-#include <QString>
+#include <string>
+#include <stdexcept>
 
-class GridDataException : public std::exception {
-private:
-    char* cause;
+class GridDataException : public std::runtime_error {
 public:
-    GridDataException(const QString &cause);
-    
-    const char* what() const throw();
+    GridDataException(const std::string cause) : std::runtime_error(cause) {}
 };
 
 #endif // GRID_DATA_EXCEPTION_H

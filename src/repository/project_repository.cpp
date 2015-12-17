@@ -442,7 +442,7 @@ void ProjectRepository::save(bool makeCopy) {
         query.bindValue(":s", project->getSediment());
 
         if (!query.exec()) {
-            throw DatabaseException(QString("Unable to save project. Error: %1.").arg(query.lastError().text()));
+            throw DatabaseException(QString("Unable to save project. Error: %1.").arg(query.lastError().text()).toStdString());
         }
         
         project->setId(1);
@@ -457,6 +457,8 @@ void ProjectRepository::save(bool makeCopy) {
             databaseUtility->revertConnection();
         } else {
             QSqlDatabase::database().commit();
+            query.clear();
+            query.exec("vacuum");
         }
     } catch (const DatabaseException &e) {
         QSqlDatabase::database().rollback();
@@ -507,7 +509,7 @@ void ProjectRepository::saveMeshes(Project *project) {
         }
         
         if (!query.exec()) {
-            throw DatabaseException(QString("Unable to save meshes. Error: %1.").arg(query.lastError().text()));
+            throw DatabaseException(QString("Unable to save meshes. Error: %1.").arg(query.lastError().text()).toStdString());
         }
         
         updateProgressAndProcessEvents();
@@ -577,7 +579,7 @@ void ProjectRepository::saveMeshPolygons(Mesh *mesh) {
         }
         
         if (!query.exec()) {
-            throw DatabaseException(QString("Unable to save project meshes. Error: %1.").arg(query.lastError().text()));
+            throw DatabaseException(QString("Unable to save project meshes. Error: %1.").arg(query.lastError().text()).toStdString());
         }
         
         updateProgressAndProcessEvents();
@@ -615,7 +617,7 @@ void ProjectRepository::saveGridDataConfigurations(Project *project) {
         query.bindValue(":n", configuration->getName());
         
         if (!query.exec()) {
-            throw DatabaseException(QString("Unable to save grid data configurations. Error: %1.").arg(query.lastError().text()));
+            throw DatabaseException(QString("Unable to save grid data configurations. Error: %1.").arg(query.lastError().text()).toStdString());
         }
         
         updateProgressAndProcessEvents();
@@ -710,7 +712,7 @@ void ProjectRepository::saveGridData(GridDataConfiguration *gridDataConfiguratio
         query.bindValue(":meop", gridData->getMeshOpacity());
         
         if (!query.exec()) {
-            throw DatabaseException(QString("Unable to save grid data configurations. Error: %1.").arg(query.lastError().text()));
+            throw DatabaseException(QString("Unable to save grid data configurations. Error: %1.").arg(query.lastError().text()).toStdString());
         }
         
         updateProgressAndProcessEvents();
@@ -749,7 +751,7 @@ void ProjectRepository::saveHydrodynamicConfigurations(Project *project) {
         query.bindValue(":g", configuration->getGridDataConfiguration()->getId());
         
         if (!query.exec()) {
-            throw DatabaseException(QString("Unable to save hydrodynamic data configurations. Error: %1.").arg(query.lastError().text()));
+            throw DatabaseException(QString("Unable to save hydrodynamic data configurations. Error: %1.").arg(query.lastError().text()).toStdString());
         }
         
         updateProgressAndProcessEvents();
@@ -807,7 +809,7 @@ void ProjectRepository::saveHydrodynamicParameters(HydrodynamicConfiguration *co
         query.bindValue(":s", parameter->isSelected());
 
         if (!query.exec()) {
-            throw DatabaseException(QString("Unable to save hydrodynamic parameters. Error: %1.").arg(query.lastError().text()));
+            throw DatabaseException(QString("Unable to save hydrodynamic parameters. Error: %1.").arg(query.lastError().text()).toStdString());
         }
 
         updateProgressAndProcessEvents();
@@ -844,7 +846,7 @@ void ProjectRepository::saveBoundaryConditions(HydrodynamicConfiguration *config
         query.bindValue(":q", boundaryCondition->getQuota());
 
         if (!query.exec()) {
-            throw DatabaseException(QString("Unable to save hydrodynamic boundary conditions. Error: %1.").arg(query.lastError().text()));
+            throw DatabaseException(QString("Unable to save hydrodynamic boundary conditions. Error: %1.").arg(query.lastError().text()).toStdString());
         }
 
         updateProgressAndProcessEvents();
@@ -901,7 +903,7 @@ void ProjectRepository::saveTimeSeries(const int &objectId, const QString &objec
             insertQuery += insertValues.join(",");
             
             if (!query.exec(insertQuery)) {
-                throw DatabaseException(QString("Unable to save time stamps. Error: %1.").arg(query.lastError().text()));
+                throw DatabaseException(QString("Unable to save time stamps. Error: %1.").arg(query.lastError().text()).toStdString());
             }
             
             insertValues.clear();
@@ -939,7 +941,7 @@ void ProjectRepository::saveMeteorologicalConfigurations(Project *project) {
         query.bindValue(":g", configuration->getGridDataConfiguration()->getId());
         
         if (!query.exec()) {
-            throw DatabaseException(QString("Unable to save meteorological data configurations. Error: %1.").arg(query.lastError().text()));
+            throw DatabaseException(QString("Unable to save meteorological data configurations. Error: %1.").arg(query.lastError().text()).toStdString());
         }
         
         updateProgressAndProcessEvents();
@@ -993,7 +995,7 @@ void ProjectRepository::saveMeteorologicalStations(MeteorologicalConfiguration *
         query.bindValue(":lo", station->getLongitude());
         
         if (!query.exec()) {
-            throw DatabaseException(QString("Unable to save meteorological stations. Error: %1.").arg(query.lastError().text()));
+            throw DatabaseException(QString("Unable to save meteorological stations. Error: %1.").arg(query.lastError().text()).toStdString());
         }
         
         updateProgressAndProcessEvents();
@@ -1049,7 +1051,7 @@ void ProjectRepository::saveMeteorologicalParameters(MeteorologicalStation *stat
         query.bindValue(":d", parameter->getDirection());
         
         if (!query.exec()) {
-            throw DatabaseException(QString("Unable to save meteorological parameters. Error: %1.").arg(query.lastError().text()));
+            throw DatabaseException(QString("Unable to save meteorological parameters. Error: %1.").arg(query.lastError().text()).toStdString());
         }
         
         updateProgressAndProcessEvents();
@@ -1138,7 +1140,7 @@ void ProjectRepository::saveSimulation(Simulation *simulation) {
     query.bindValue(":m", simulation->getMeteorologicalConfiguration()->getId());
     
     if (!query.exec()) {
-        throw DatabaseException(QString("Unable to save simulations. Error: %1.").arg(query.lastError().text()));
+        throw DatabaseException(QString("Unable to save simulations. Error: %1.").arg(query.lastError().text()).toStdString());
     }
     
     updateProgressAndProcessEvents();
