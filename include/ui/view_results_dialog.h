@@ -32,7 +32,7 @@ private slots:
     void onUpdateSimulationProgress(int progress);
     void onUpdateSimulationStatus(SimulationStatus status);
     void onSimulationCreated(Simulation *simulation);
-    void on_tblSimulations_currentItemChanged(QTableWidgetItem *current, QTableWidgetItem *previous);
+    void on_tblSimulations_cellClicked(int row, int column);
     void on_btnRefresh_clicked();
     void on_btnClose_clicked();
     void on_btnFirstFrame_clicked();

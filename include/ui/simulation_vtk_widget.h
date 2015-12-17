@@ -45,6 +45,7 @@ public:
     void removeLayer(const QString &layerKey);
     void setAxesScale(const QString &axesScale);
     void updateOutputFileList();
+    virtual void clear();
 public slots:
     void hideLayer(const QString &layerKey);
     void updateLayer();

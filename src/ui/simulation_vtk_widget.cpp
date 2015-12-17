@@ -36,26 +36,12 @@ void SimulationVTKWidget::render(Simulation *simulation, const QString &layer, c
         currentSimulation = simulation;
         currentMesh = simulation->getMesh();
         
+        clear();
         updateOutputFileList();
         
         if (outputFiles.isEmpty()) {
             throw SimulationException("Result files for this simulation were not found.");
         }
-        
-        renderer->RemoveActor(layerActor);
-        renderer->RemoveActor(timeStampActor);
-        
-        for (vtkSmartPointer<vtkActor> vectorActor : vectorsActors.values()) {
-            renderer->RemoveActor(vectorActor);
-        }
-        
-        for (vtkSmartPointer<vtkActor2D> scalarBarActor : scalarBarActors.values()) {
-            renderer->RemoveActor(scalarBarActor);
-        }
-        
-        visibleScalarBarActors[0] = nullptr;
-        visibleScalarBarActors[1] = nullptr;
-        visibleScalarBarActors[2] = nullptr;
         
         renderMeshLayer();
         
@@ -89,7 +75,7 @@ void SimulationVTKWidget::render(Simulation *simulation, const QString &layer, c
     double layerRange[2];
     
     if (!layerGrid->GetCellData()->HasArray(layerArrayName.c_str())) {
-        throw SimulationException(QString("Layer '%1' not found in result files.").arg(QString::fromStdString(layerArrayName)).toStdString().c_str());
+        throw SimulationException(QString("Layer '%1' not found in result files.").arg(QString::fromStdString(layerArrayName)).toStdString());
     }
     
     timeStampActor->GetTextProperty()->SetFontSize(16);
@@ -190,6 +176,7 @@ void SimulationVTKWidget::renderMeshLayer() {
     meshActor->GetProperty()->SetRepresentationToWireframe();
     meshActor->GetProperty()->LightingOff();
     meshActor->SetScale(scales[0].toInt(), scales[1].toInt(), scales[2].toInt());
+    meshActor->SetVisibility(showMesh);
     this->changeMeshProperties(currentMesh);
     
     this->renderer->AddActor(meshActor);
@@ -433,4 +420,23 @@ void SimulationVTKWidget::exportAnimationToVideo() {
     if (currentSimulation) {
         
     }
+}
+
+void SimulationVTKWidget::clear() {
+    renderer->RemoveActor(meshActor);
+    renderer->RemoveActor(axesActor);
+    renderer->RemoveActor(layerActor);
+    renderer->RemoveActor(timeStampActor);
+    
+    for (vtkSmartPointer<vtkActor> vectorActor : vectorsActors.values()) {
+        renderer->RemoveActor(vectorActor);
+    }
+    
+    for (vtkSmartPointer<vtkActor2D> scalarBarActor : scalarBarActors.values()) {
+        renderer->RemoveActor(scalarBarActor);
+    }
+    
+    visibleScalarBarActors[0] = nullptr;
+    visibleScalarBarActors[1] = nullptr;
+    visibleScalarBarActors[2] = nullptr;
 }

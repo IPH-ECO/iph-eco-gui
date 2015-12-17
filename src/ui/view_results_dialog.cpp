@@ -47,32 +47,33 @@ ViewResultsDialog::ViewResultsDialog(QWidget *parent) :
     ui->tblSimulations->blockSignals(false);
 }
 
-void ViewResultsDialog::on_tblSimulations_currentItemChanged(QTableWidgetItem *current, QTableWidgetItem *previous) {
-    if (current && previous) {
-        QTableWidgetItem *labelItem = ui->tblSimulations->item(current->row(), 0);
-        Simulation *simulation = IPHApplication::getCurrentProject()->getSimulation(labelItem->text());
+void ViewResultsDialog::on_tblSimulations_cellClicked(int row, int column) {
+    QTableWidgetItem *labelItem = ui->tblSimulations->item(row, 0);
+    Simulation *simulation = IPHApplication::getCurrentProject()->getSimulation(labelItem->text());
+    
+    if (simulation != currentSimulation) {
+        on_btnPauseReproduction_clicked();
+        
         QFileInfoList outputFiles = simulation->getOutputFiles();
         
         ui->btnRefresh->setEnabled(true);
-        ui->spxFrame->setValue(1);
+        ui->spxFrame->blockSignals(true);
         ui->spxFrame->setMaximum(outputFiles.size());
+        ui->spxFrame->setValue(1);
+        ui->spxFrame->blockSignals(false);
         ui->lblFrameTotal->setText(QString::number(outputFiles.size()));
-        on_btnPauseReproduction_clicked();
         
         try {
-            if (frameTimer.isActive()) {
-                mutex.lock();
-            }
+            QMutexLocker locker(&mutex);
             
             this->currentSimulation = simulation;
             ui->vtkWidget->render(this->currentSimulation, "", "", 0); // Only renders the mesh
             this->fillLayersComboBox(simulation);
         } catch (const SimulationException &e) {
+            ui->cbxLayers->clear();
+            ui->tblLayers->setRowCount(0);
+            ui->vtkWidget->clear();
             QMessageBox::critical(this, tr("View Results"), e.what());
-        }
-        
-        if (frameTimer.isActive()) {
-            mutex.unlock();
         }
     }
 }
@@ -365,6 +366,7 @@ void ViewResultsDialog::editLayerProperties() {
     LayerPropertiesDialog *dialog = new LayerPropertiesDialog(this, layerProperties, tab);
     
     QObject::connect(dialog, SIGNAL(applyChanges()), ui->vtkWidget, SLOT(updateLayer()));
+    dialog->setAttribute(Qt::WA_DeleteOnClose, true);
     dialog->exec();
 }
 
