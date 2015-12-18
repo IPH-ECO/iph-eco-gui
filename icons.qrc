@@ -50,7 +50,6 @@
     <file>icons/list-delete.png</file>
     <file>icons/list-add.png</file>
     <file>icons/unstructured-mesh.png</file>
-    <file>icons/boundary-domain.png</file>
     <file>icons/scale-axes.png</file>
     <file>icons/tool-animator.png</file>
     <file>data/hydrodynamic_data.json</file>
