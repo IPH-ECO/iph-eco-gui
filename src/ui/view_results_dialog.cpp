@@ -364,8 +364,12 @@ void ViewResultsDialog::editLayerProperties() {
     LayerProperties *layerProperties = this->currentSimulation->getSelectedLayers().value(layerKey);
     LayerPropertiesDialog::LayerPropertiesTab tab = layerAndComponent.last() == "Vector" ? LayerPropertiesDialog::VECTORS : LayerPropertiesDialog::MAP;
     LayerPropertiesDialog *dialog = new LayerPropertiesDialog(this, layerProperties, tab);
+    QToolButton *showHideLayerButton = static_cast<QToolButton*>(ui->tblLayers->findChild<QToolButton*>(QString("showHideLayerButton-%1").arg(layerKey)));
     
-    QObject::connect(dialog, SIGNAL(applyChanges()), ui->vtkWidget, SLOT(updateLayer()));
+    if (showHideLayerButton->isChecked()) {
+        QObject::connect(dialog, SIGNAL(applyChanges()), ui->vtkWidget, SLOT(updateLayer()));
+    }
+    
     dialog->setAttribute(Qt::WA_DeleteOnClose, true);
     dialog->exec();
 }

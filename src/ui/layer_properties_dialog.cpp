@@ -14,7 +14,10 @@
 #include <QPen>
 
 LayerPropertiesDialog::LayerPropertiesDialog(QWidget *parent, LayerProperties *layerProperties, const LayerPropertiesTab &tabs) :
-    QDialog(parent), ui(new Ui::LayerPropertiesDialog), layerProperties(layerProperties), tabs(tabs)
+    QDialog(parent),
+    ui(new Ui::LayerPropertiesDialog),
+    layerProperties(layerProperties),
+    tabs(tabs)
 {
     ui->setupUi(this);
     
@@ -60,8 +63,6 @@ void LayerPropertiesDialog::setupMapTab() {
     ui->chkMapMaximum->setChecked(layerProperties->getUseCustomMapMaximum());
     ui->edtMapMinimum->setText(QString::number(layerProperties->getCustomMapMininumRange()));
     ui->edtMapMaximum->setText(QString::number(layerProperties->getCustomMapMaximumRange()));
-    ui->edtMapMinimum->setDisabled(ui->chkMapMinimum->isChecked());
-    ui->edtMapMaximum->setDisabled(ui->chkMapMaximum->isChecked());
     this->setupColorGradientTemplates(defaultMapColorGradientButton, currentMapColorGradientButton, paletteLayout);
     ui->chkMapInvertColorTemplate->setChecked(layerProperties->getMapInvertColorGradient());
     ui->sldMapOpacity->setValue(layerProperties->getMapOpacity());
@@ -76,8 +77,6 @@ void LayerPropertiesDialog::setupPointsTab() {
     ui->chkPointsMaximum->setChecked(layerProperties->getUseCustomPointsMaximum());
     ui->edtPointsMinimum->setText(QString::number(layerProperties->getCustomPointsMininumRange()));
     ui->edtPointsMaximum->setText(QString::number(layerProperties->getCustomPointsMaximumRange()));
-    ui->edtPointsMinimum->setDisabled(ui->chkPointsMinimum->isChecked());
-    ui->edtPointsMaximum->setDisabled(ui->chkPointsMaximum->isChecked());
     this->setupColorGradientTemplates(defaultPointsColorGradientButton, currentPointsColorGradientButton, paletteLayout);
     ui->chkPointsInvertColorTemplate->setChecked(layerProperties->getPointsInvertColorGradient());
     ui->sldPointsOpacity->setValue(layerProperties->getPointsOpacity());
@@ -92,8 +91,6 @@ void LayerPropertiesDialog::setupVectorsTab() {
     ui->chkVectorsMaximum->setChecked(layerProperties->getUseCustomVectorsMaximum());
     ui->edtVectorsMinimum->setText(QString::number(layerProperties->getCustomVectorsMinimumRange()));
     ui->edtVectorsMaximum->setText(QString::number(layerProperties->getCustomVectorsMaximumRange()));
-    ui->edtVectorsMinimum->setDisabled(ui->chkVectorsMinimum->isChecked());
-    ui->edtVectorsMaximum->setDisabled(ui->chkVectorsMaximum->isChecked());
     this->setupColorGradientTemplates(defaultVectorsColorGradientButton, currentVectorsColorGradientButton, paletteLayout);
     ui->chkVectorsInvertColorTemplate->setChecked(layerProperties->getVectorsInvertColorGradient());
     ui->sldVectorsOpacity->setValue(layerProperties->getVectorsOpacity());
