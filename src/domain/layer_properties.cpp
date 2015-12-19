@@ -6,7 +6,7 @@ LayerProperties::LayerProperties() :
     customMapMinimumRange(0),
     customMapMaximumRange(0),
     mapColorGradient(ColorGradientTemplate::defaultTemplateName),
-    mapInvertColorGradient(false),
+    mapInvertColorGradient(true),
     mapOpacity(100),
     mapLegend(true),
     mapLighting(false),

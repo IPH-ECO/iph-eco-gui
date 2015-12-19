@@ -3,6 +3,9 @@
 #include "include/ui/main_window.h"
 #include "include/exceptions/simulation_exception.h"
 
+#include <QFile>
+#include <QByteArray>
+#include <QApplication>
 #include <vtkGlyph3D.h>
 #include <vtkCellData.h>
 #include <vtkProperty.h>
@@ -13,9 +16,11 @@
 #include <vtkArrowSource.h>
 #include <vtkCellCenters.h>
 #include <vtkTextProperty.h>
+#include <vtkFFMPEGWriter.h>
 #include <vtkPolyDataMapper.h>
 #include <vtkScalarBarActor.h>
 #include <vtkArrayCalculator.h>
+#include <vtkWindowToImageFilter.h>
 #include <vtkColorTransferFunction.h>
 #include <vtkTransformPolyDataFilter.h>
 #include <vtkScalarBarRepresentation.h>
@@ -416,12 +421,6 @@ void SimulationVTKWidget::updateOutputFileList() {
     this->outputFiles = currentSimulation->getOutputFiles();
 }
 
-void SimulationVTKWidget::exportAnimationToVideo() {
-    if (currentSimulation) {
-        
-    }
-}
-
 void SimulationVTKWidget::clear() {
     renderer->RemoveActor(meshActor);
     renderer->RemoveActor(axesActor);
@@ -439,4 +438,46 @@ void SimulationVTKWidget::clear() {
     visibleScalarBarActors[0] = nullptr;
     visibleScalarBarActors[1] = nullptr;
     visibleScalarBarActors[2] = nullptr;
+}
+
+void SimulationVTKWidget::exportVideo(int initialFrame, int finalFrame, int frameStep, int frameRate, const QString &outputFile) {
+    vtkSmartPointer<vtkWindowToImageFilter> windowToImageFilter = vtkSmartPointer<vtkWindowToImageFilter>::New();
+    windowToImageFilter->SetInput(this->GetRenderWindow());
+    
+    QByteArray outputFileByteArray = outputFile.toLocal8Bit();
+    vtkSmartPointer<vtkFFMPEGWriter> writer = vtkSmartPointer<vtkFFMPEGWriter>::New();
+    writer->SetInputConnection(windowToImageFilter->GetOutputPort());
+    writer->SetQuality(2);
+    writer->SetRate(frameRate);
+    writer->SetFileName(outputFileByteArray.data());
+    writer->Start();
+    
+    this->cancelExportVideoOperation = false;
+    
+    int frame = initialFrame - 1;
+    
+    while (frame < finalFrame && !cancelExportVideoOperation) {
+        render(currentSimulation, currentLayer, currentComponent, frame);
+        
+        windowToImageFilter->Modified();
+        windowToImageFilter->Update();
+        writer->Write();
+        
+        frame += frameStep;
+        emit updateExportVideoProgress(frame);
+        QApplication::processEvents();
+    }
+    
+    if (!cancelExportVideoOperation) {
+        emit updateExportVideoProgress(finalFrame);
+        QApplication::processEvents();
+        
+        writer->End();
+    } else {
+        QFile::remove(outputFile);
+    }
+}
+
+void SimulationVTKWidget::cancelExportVideo() {
+    this->cancelExportVideoOperation = true;
 }

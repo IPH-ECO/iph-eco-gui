@@ -6,6 +6,8 @@
 #include "include/exceptions/simulation_exception.h"
 #include "include/ui/main_window.h"
 #include "include/ui/layer_properties_dialog.h"
+#include "include/ui/video_export_dialog.h"
+#include "include/ui/time_series_chart_dialog.h"
 
 #include <QMessageBox>
 #include <QMutexLocker>
@@ -243,6 +245,15 @@ void ViewResultsDialog::on_btnAddLayer_clicked() {
             
             hLayout->addWidget(layerPropertiesButton);
             
+            QToolButton *timeSeriesButton = new QToolButton();
+            QIcon timeSeriesIcon(":/icons/office-chart-line.png");
+            
+            timeSeriesButton->setIcon(timeSeriesIcon);
+            timeSeriesButton->setToolTip("Show time series chart");
+            timeSeriesButton->setObjectName(QString("timeSeriesButton-%1").arg(layerKey));
+            
+            hLayout->addWidget(timeSeriesButton);
+            
             QToolButton *removeLayerButton = new QToolButton();
             QIcon removeIcon(":/icons/list-delete.png");
             
@@ -258,6 +269,7 @@ void ViewResultsDialog::on_btnAddLayer_clicked() {
             
             QObject::connect(showHideLayerButton, SIGNAL(clicked(bool)), this, SLOT(toggleLayerVisibility(bool)));
             QObject::connect(layerPropertiesButton, SIGNAL(clicked()), this, SLOT(editLayerProperties()));
+            QObject::connect(timeSeriesButton, SIGNAL(clicked()), this, SLOT(showTimeSeriesChart()));
             QObject::connect(removeLayerButton, SIGNAL(clicked()), this, SLOT(removeLayer()));
             
             this->currentSimulation->addSelectedLayer(ui->cbxLayers->currentData().toString());
@@ -281,6 +293,11 @@ void ViewResultsDialog::fillLayersComboBox(Simulation *simulation) {
     ui->cbxLayers->setCurrentIndex(-1);
     
     ui->tblLayers->setRowCount(0);
+}
+
+void ViewResultsDialog::showTimeSeriesChart() {
+    TimeSeriesChartDialog *dialog = new TimeSeriesChartDialog(this);
+    dialog->exec();
 }
 
 void ViewResultsDialog::removeLayer() {
@@ -383,6 +400,10 @@ void ViewResultsDialog::showEvent(QShowEvent *event) {
         QAction *scaleAxesAction = new QAction(QIcon(":/icons/scale-axes.png"), "Change axes scale", mainWindow);
         QObject::connect(scaleAxesAction, SIGNAL(triggered()), this, SLOT(showAxesDialog()));
         toolBarActions.append(scaleAxesAction);
+        
+        QAction *exportVideoAction = new QAction(QIcon(":/icons/tool-animator.png"), "Export animation to video", mainWindow);
+        QObject::connect(exportVideoAction, SIGNAL(triggered()), this, SLOT(showExportVideoDialog()));
+        toolBarActions.append(exportVideoAction);
     }
     
     AbstractMeshDialog::showEvent(event);
@@ -401,5 +422,18 @@ void ViewResultsDialog::showAxesDialog() {
         
         axesScale = inputText;
         ui->vtkWidget->setAxesScale(axesScale);
+    }
+}
+
+void ViewResultsDialog::showExportVideoDialog() {
+    if (this->currentSimulation) {
+        VideoExportDialog *dialog = new VideoExportDialog(this, this->currentSimulation->getOutputFiles());
+        
+        QObject::connect(dialog, SIGNAL(stopReproduction()), &frameTimer, SLOT(stop()));
+        QObject::connect(dialog, SIGNAL(rejected()), ui->vtkWidget, SLOT(cancelExportVideo()));
+        QObject::connect(dialog, SIGNAL(exportVideo(int, int, int, int, const QString&)), ui->vtkWidget, SLOT(exportVideo(int, int, int, int, const QString&)));
+        QObject::connect(ui->vtkWidget, SIGNAL(updateExportVideoProgress(int)), dialog->getProgressBar(), SLOT(setValue(int)));
+        
+        dialog->exec();
     }
 }

@@ -32,6 +32,7 @@ private:
     QString currentComponent;
     int currentFrame;
     QString axesScale;
+    bool cancelExportVideoOperation;
     
     void renderMeshLayer();
     std::string readFrame(const int frame);
@@ -50,7 +51,10 @@ public slots:
     void hideLayer(const QString &layerKey);
     void updateLayer();
     virtual void changeMeshProperties(Mesh *mesh);
-    void exportAnimationToVideo();
+    void exportVideo(int initialFrame, int finalFrame, int frameStep, int frameRate, const QString &outputFile);
+    void cancelExportVideo();
+signals:
+    void updateExportVideoProgress(int progress);
 };
 
 #endif // SIMULATION_VTK_WIDGET_H

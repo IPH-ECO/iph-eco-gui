@@ -44,10 +44,12 @@ private slots:
     void on_btnAddLayer_clicked();
     void on_spxFrame_valueChanged(int i);
     void toggleLayerVisibility(bool show);
+    void showTimeSeriesChart();
     void removeLayer();
     void renderNextFrame();
     void editLayerProperties();
     void showAxesDialog();
+    void showExportVideoDialog();
 };
 
 #endif // VIEW_RESULTS_DIALOG_H

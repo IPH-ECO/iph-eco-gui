@@ -334,7 +334,11 @@
     </layout>
    </item>
    <item>
-    <widget class="SimulationVTKWidget" name="vtkWidget"/>
+    <widget class="SimulationVTKWidget" name="vtkWidget">
+     <property name="cursor">
+      <cursorShape>CrossCursor</cursorShape>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>
