@@ -86,7 +86,7 @@
    <item row="3" column="1" colspan="3">
     <widget class="QLineEdit" name="edtOutputFile">
      <property name="text">
-      <string>/Users/joaoroberto/Desktop/teste.avi</string>
+      <string/>
      </property>
     </widget>
    </item>
@@ -193,13 +193,6 @@
       <widget class="QProgressBar" name="progressBar">
        <property name="value">
         <number>0</number>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="lblPercentage">
-       <property name="text">
-        <string>0%</string>
        </property>
       </widget>
      </item>

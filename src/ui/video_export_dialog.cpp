@@ -58,14 +58,9 @@ void VideoExportDialog::accept() {
     
     ui->progressBar->setMinimum(initialFrame - 1);
     ui->progressBar->setMaximum(finalFrame);
-    QObject::connect(ui->progressBar, SIGNAL(valueChanged(int)), this, SLOT(updateProgressLabel(int)));
     
     emit stopReproduction();
     emit exportVideo(initialFrame, finalFrame, frameStep, frameRate, outputFile);
     
     QDialog::accept();
-}
-
-void VideoExportDialog::updateProgressLabel(int value) {
-    ui->lblPercentage->setText(QString("%1%").arg(value / (double) outputFiles.size() * 100));
 }

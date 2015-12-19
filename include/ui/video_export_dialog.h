@@ -24,7 +24,6 @@ public:
     QProgressBar* getProgressBar() const;
 private slots:
     void on_btnBrowseOutputFile_clicked();
-    void updateProgressLabel(int value);
 signals:
     void stopReproduction();
     void exportVideo(int initialFrame, int finalFrame, int frameStep, int frameRate, const QString &outputFile);
