@@ -36,7 +36,6 @@
     <file>icons/show-axis.png</file>
     <file>icons/lock-view.png</file>
     <file>icons/pick-individual-cell.png</file>
-    <file>icons/transform-move.png</file>
     <file>icons/pick-cell-set.png</file>
     <file>icons/zoom-select.png</file>
     <file>icons/interpolation-result.png</file>
@@ -54,6 +53,7 @@
     <file>icons/office-chart-line.png</file>
     <file>icons/tool-animator.png</file>
     <file>icons/text-csv.png</file>
+    <file>icons/snap-orthogonal.png</file>
     <file>data/hydrodynamic_data.json</file>
     <file>data/output_variables.json</file>
   </qresource>
