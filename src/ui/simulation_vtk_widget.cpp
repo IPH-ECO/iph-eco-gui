@@ -16,7 +16,6 @@
 #include <vtkArrowSource.h>
 #include <vtkCellCenters.h>
 #include <vtkTextProperty.h>
-#include <vtkFFMPEGWriter.h>
 #include <vtkPolyDataMapper.h>
 #include <vtkScalarBarActor.h>
 #include <vtkArrayCalculator.h>
@@ -25,6 +24,12 @@
 #include <vtkTransformPolyDataFilter.h>
 #include <vtkScalarBarRepresentation.h>
 #include <vtkGenericDataObjectReader.h>
+
+#ifdef _WIN32
+#include <vtkAVIWriter.h>
+#else
+#include <vtkFFMPEGWriter.h>
+#endif
 
 SimulationVTKWidget::SimulationVTKWidget(QWidget *parent) :
     MeshVTKWidget(parent),
@@ -444,14 +449,20 @@ void SimulationVTKWidget::exportVideo(int initialFrame, int finalFrame, int fram
     vtkSmartPointer<vtkWindowToImageFilter> windowToImageFilter = vtkSmartPointer<vtkWindowToImageFilter>::New();
     windowToImageFilter->SetInput(this->GetRenderWindow());
     
-    QByteArray outputFileByteArray = outputFile.toLocal8Bit();
+#ifdef _WIN32
+	vtkSmartPointer<vtkAVIWriter> writer = vtkSmartPointer<vtkAVIWriter>::New();
+#else
     vtkSmartPointer<vtkFFMPEGWriter> writer = vtkSmartPointer<vtkFFMPEGWriter>::New();
-    writer->SetInputConnection(windowToImageFilter->GetOutputPort());
-    writer->SetQuality(2);
-    writer->SetRate(frameRate);
-    writer->SetFileName(outputFileByteArray.data());
-    writer->Start();
-    
+#endif
+	
+	QByteArray outputFileByteArray = outputFile.toLocal8Bit();
+	
+	writer->SetQuality(2);
+	writer->SetRate(frameRate);
+	writer->SetInputConnection(windowToImageFilter->GetOutputPort());
+	writer->SetFileName(outputFileByteArray.data());
+	writer->Start();
+
     this->cancelExportVideoOperation = false;
     
     int frame = initialFrame - 1;
