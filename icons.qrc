@@ -54,6 +54,7 @@
     <file>icons/tool-animator.png</file>
     <file>icons/text-csv.png</file>
     <file>icons/snap-orthogonal.png</file>
+    <file>icons/fill-color.png</file>
     <file>data/hydrodynamic_data.json</file>
     <file>data/output_variables.json</file>
   </qresource>
