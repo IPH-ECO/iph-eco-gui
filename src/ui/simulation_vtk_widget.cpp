@@ -35,7 +35,7 @@ SimulationVTKWidget::SimulationVTKWidget(QWidget *parent) :
     MeshVTKWidget(parent),
     MAGNITUDE_ARRAY_NAME("VectorMagnitude"),
     timeStampActor(vtkSmartPointer<vtkTextActor>::New()),
-    visibleScalarBarActors({ nullptr, nullptr, nullptr }),
+    visibleScalarBarActors({ nullptr, nullptr }),
     currentSimulation(nullptr),
     layerProperties(nullptr),
     axesScale("1 1 1")
@@ -442,7 +442,6 @@ void SimulationVTKWidget::clear() {
     
     visibleScalarBarActors[0] = nullptr;
     visibleScalarBarActors[1] = nullptr;
-    visibleScalarBarActors[2] = nullptr;
 }
 
 void SimulationVTKWidget::exportVideo(int initialFrame, int finalFrame, int frameStep, int frameRate, const QString &outputFile) {
