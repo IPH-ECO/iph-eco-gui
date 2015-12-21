@@ -1,9 +1,9 @@
 #ifndef SIMULATION_VTK_WIDGET_H
 #define SIMULATION_VTK_WIDGET_H
 
-#include "include/domain/simulation.h"
-#include "include/ui/mesh_vtk_widget.h"
-#include "include/domain/meteorological_station.h"
+#include <domain/simulation.h>
+#include <ui/mesh_vtk_widget.h>
+#include <domain/meteorological_station.h>
 
 #include <QFileInfo>
 #include <vtkTextActor.h>

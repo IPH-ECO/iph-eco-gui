@@ -1,7 +1,7 @@
 #ifndef CREATE_SIMULATION_DIALOG_H
 #define CREATE_SIMULATION_DIALOG_H
 
-#include "include/domain/simulation.h"
+#include <domain/simulation.h>
 
 #include <QDialog>
 #include <QWidget>

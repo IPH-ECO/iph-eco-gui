@@ -1,7 +1,7 @@
-#include "include/ui/grid_data_vtk_widget.h"
-#include "include/ui/main_window.h"
-#include "include/domain/color_gradient.h"
-#include "include/ui/grid_data_context_menu.h"
+#include <ui/grid_data_vtk_widget.h>
+#include <ui/main_window.h>
+#include <domain/color_gradient.h>
+#include <ui/grid_data_context_menu.h>
 
 #include <vtkCellData.h>
 #include <vtkProperty.h>

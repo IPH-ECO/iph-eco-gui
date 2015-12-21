@@ -1,4 +1,4 @@
-#include "include/ui/meteorological_vtk_widget.h"
+#include <ui/meteorological_vtk_widget.h>
 
 #include <vtkProperty.h>
 #include <vtkRenderer.h>

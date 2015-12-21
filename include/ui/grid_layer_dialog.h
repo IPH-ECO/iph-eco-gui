@@ -1,8 +1,8 @@
 #ifndef GRID_LAYER_DIALOG_H
 #define GRID_LAYER_DIALOG_H
 
-#include "include/domain/grid_data_configuration.h"
-#include "include/domain/grid_data.h"
+#include <domain/grid_data_configuration.h>
+#include <domain/grid_data.h>
 
 #include <QDialog>
 #include <QSettings>

@@ -1,4 +1,4 @@
-#include "include/domain/time_series.h"
+#include <domain/time_series.h>
 
 int TimeSeries::getTimeStamp() const {
 	return timeStamp;

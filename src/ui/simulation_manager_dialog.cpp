@@ -1,8 +1,8 @@
-#include "include/ui/simulation_manager_dialog.h"
+#include <ui/simulation_manager_dialog.h>
 #include "ui_simulation_manager_dialog.h"
 
-#include "include/application/iph_application.h"
-#include "include/application/simulation_manager.h"
+#include <application/iph_application.h>
+#include <application/simulation_manager.h>
 
 #include <QMessageBox>
 #include <QMdiSubWindow>

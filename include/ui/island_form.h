@@ -1,8 +1,8 @@
 #ifndef ISLAND_FORM
 #define ISLAND_FORM
 
-#include "include/domain/mesh_polygon.h"
-#include "include/domain/mesh.h"
+#include <domain/mesh_polygon.h>
+#include <domain/mesh.h>
 #include <QDialog>
 #include <QSettings>
 #include <QAbstractButton>

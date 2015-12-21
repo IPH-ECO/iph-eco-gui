@@ -1,9 +1,9 @@
 #ifndef HYDRODYNAMIC_VTK_WIDGET_H
 #define HYDRODYNAMIC_VTK_WIDGET_H
 
-#include "include/domain/hydrodynamic_configuration.h"
+#include <domain/hydrodynamic_configuration.h>
 #include "mesh_vtk_widget.h"
-#include "include/utility/hydrodynamic_mouse_interactor.h"
+#include <utility/hydrodynamic_mouse_interactor.h>
 
 #include <QMouseEvent>
 

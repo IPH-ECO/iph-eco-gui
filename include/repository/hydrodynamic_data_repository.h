@@ -3,8 +3,8 @@
 
 #include <QJsonArray>
 
-#include "include/utility/database_utility.h"
-#include "include/domain/hydrodynamic_configuration.h"
+#include <utility/database_utility.h>
+#include <domain/hydrodynamic_configuration.h>
 
 class HydrodynamicDataRepository {
 private:

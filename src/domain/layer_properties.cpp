@@ -1,4 +1,4 @@
-#include "include/domain/layer_properties.h"
+#include <domain/layer_properties.h>
 
 LayerProperties::LayerProperties() :
     useCustomMapMinimum(false),

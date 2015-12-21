@@ -1,7 +1,7 @@
 #ifndef SIMULATION_RECOVERY_LISTENER_H
 #define SIMULATION_RECOVERY_LISTENER_H
 
-#include "include/domain/simulation.h"
+#include <domain/simulation.h>
 
 #include <QThread>
 

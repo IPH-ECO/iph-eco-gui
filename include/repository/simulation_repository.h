@@ -1,7 +1,7 @@
 #ifndef SIMULATION_REPOSITORY_H
 #define SIMULATION_REPOSITORY_H
 
-#include "include/domain/simulation.h"
+#include <domain/simulation.h>
 
 #include <QTreeWidget>
 

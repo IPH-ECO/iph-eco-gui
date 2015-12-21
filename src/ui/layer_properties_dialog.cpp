@@ -1,7 +1,7 @@
-#include "include/ui/layer_properties_dialog.h"
+#include <ui/layer_properties_dialog.h>
 #include "ui_layer_properties_dialog.h"
 
-#include "include/domain/color_gradient.h"
+#include <domain/color_gradient.h>
 
 #include <QDialogButtonBox>
 #include <QLinearGradient>

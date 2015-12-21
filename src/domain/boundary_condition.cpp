@@ -1,4 +1,4 @@
-#include "include/domain/boundary_condition.h"
+#include <domain/boundary_condition.h>
 
 #include <QStringList>
 #include <vtkProperty.h>

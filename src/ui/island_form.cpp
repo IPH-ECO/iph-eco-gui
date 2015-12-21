@@ -1,7 +1,7 @@
-#include "include/ui/island_form.h"
+#include <ui/island_form.h>
 #include "ui_island_form.h"
-#include "include/exceptions/mesh_polygon_exception.h"
-#include "include/ui/coordinate_file_dialog.h"
+#include <exceptions/mesh_polygon_exception.h>
+#include <ui/coordinate_file_dialog.h>
 
 #include <QFileDialog>
 #include <QMessageBox>

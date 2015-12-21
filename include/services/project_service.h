@@ -3,7 +3,7 @@
 
 #include <QString>
 
-#include "include/domain/project.h"
+#include <domain/project.h>
 
 class ProjectService {
 private:

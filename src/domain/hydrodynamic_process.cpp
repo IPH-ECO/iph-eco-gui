@@ -1,4 +1,4 @@
-#include "include/domain/hydrodynamic_process.h"
+#include <domain/hydrodynamic_process.h>
 
 HydrodynamicProcess::HydrodynamicProcess() : parent(nullptr), targetParameter(nullptr), checkable(false), itemWidget(nullptr) {}
     

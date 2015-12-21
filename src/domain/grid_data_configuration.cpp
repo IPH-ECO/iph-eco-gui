@@ -1,7 +1,7 @@
-#include "include/domain/grid_data_configuration.h"
+#include <domain/grid_data_configuration.h>
 
-#include "include/domain/structured_mesh.h"
-#include "include/domain/unstructured_mesh.h"
+#include <domain/structured_mesh.h>
+#include <domain/unstructured_mesh.h>
 
 #include <vtkDoubleArray.h>
 #include <vtkCellData.h>

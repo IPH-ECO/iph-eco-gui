@@ -1,7 +1,7 @@
 #ifndef SIMULATION_WORKER_H
 #define SIMULATION_WORKER_H
 
-#include "include/domain/simulation.h"
+#include <domain/simulation.h>
 
 #include <QThread>
 

@@ -1,8 +1,8 @@
 #ifndef METEOROLOGICAL_VTK_WIDGET_H
 #define METEOROLOGICAL_VTK_WIDGET_H
 
-#include "include/ui/mesh_vtk_widget.h"
-#include "include/domain/meteorological_station.h"
+#include <ui/mesh_vtk_widget.h>
+#include <domain/meteorological_station.h>
 
 class MeteorologicalVTKWidget : public MeshVTKWidget {
 	Q_OBJECT

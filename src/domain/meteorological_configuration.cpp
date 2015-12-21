@@ -1,4 +1,4 @@
-#include "include/domain/meteorological_configuration.h"
+#include <domain/meteorological_configuration.h>
 
 MeteorologicalConfiguration::MeteorologicalConfiguration() : id(0) {}
 

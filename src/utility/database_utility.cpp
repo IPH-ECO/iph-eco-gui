@@ -1,7 +1,7 @@
-#include "include/utility/database_utility.h"
+#include <utility/database_utility.h>
 
-#include "include/application/iph_application.h"
-#include "include/exceptions/database_exception.h"
+#include <application/iph_application.h>
+#include <exceptions/database_exception.h>
 
 #include <QJsonDocument>
 #include <QJsonObject>

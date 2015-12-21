@@ -1,4 +1,4 @@
-#include "include/domain/meteorological_station.h"
+#include <domain/meteorological_station.h>
 
 MeteorologicalStation::MeteorologicalStation() : id(0) {}
 

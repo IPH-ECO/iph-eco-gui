@@ -1,4 +1,4 @@
-#include "include/ui/mesh_properties_dialog.h"
+#include <ui/mesh_properties_dialog.h>
 #include "ui_mesh_properties_dialog.h"
 
 #include <QPen>

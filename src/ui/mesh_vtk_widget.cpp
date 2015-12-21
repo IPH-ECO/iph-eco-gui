@@ -1,8 +1,8 @@
-#include "include/ui/mesh_vtk_widget.h"
+#include <ui/mesh_vtk_widget.h>
 
-#include "include/ui/main_window.h"
-#include "include/ui/structured_mesh_dialog.h"
-#include "include/ui/unstructured_mesh_dialog.h"
+#include <ui/main_window.h>
+#include <ui/structured_mesh_dialog.h>
+#include <ui/unstructured_mesh_dialog.h>
 
 #include <QList>
 #include <vtkVertex.h>

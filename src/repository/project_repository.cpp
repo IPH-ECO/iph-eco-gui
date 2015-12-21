@@ -1,10 +1,10 @@
-#include "include/repository/project_repository.h"
+#include <repository/project_repository.h>
 
-#include "include/application/iph_application.h"
-#include "include/exceptions/database_exception.h"
-#include "include/domain/unstructured_mesh.h"
-#include "include/domain/structured_mesh.h"
-#include "include/repository/simulation_repository.h"
+#include <application/iph_application.h>
+#include <exceptions/database_exception.h>
+#include <domain/unstructured_mesh.h>
+#include <domain/structured_mesh.h>
+#include <repository/simulation_repository.h>
 
 #include <QApplication>
 #include <QSqlQuery>

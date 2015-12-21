@@ -1,8 +1,8 @@
 #ifndef GRID_LAYER_ATTRIBUTES_DIALOG_H
 #define GRID_LAYER_ATTRIBUTES_DIALOG_H
 
-#include "include/domain/grid_data.h"
-#include "include/domain/simulation.h"
+#include <domain/grid_data.h>
+#include <domain/simulation.h>
 
 #include <QColor>
 #include <QDialog>

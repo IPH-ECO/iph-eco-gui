@@ -1,7 +1,7 @@
 #ifndef GRID_DATA_POINT_H
 #define GRID_DATA_POINT_H
 
-#include "include/utility/cgal_definitions.h"
+#include <utility/cgal_definitions.h>
 
 class GridDataPoint {
 private:

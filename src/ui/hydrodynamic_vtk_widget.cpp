@@ -1,7 +1,7 @@
-#include "include/ui/hydrodynamic_vtk_widget.h"
+#include <ui/hydrodynamic_vtk_widget.h>
 
-#include "include/ui/main_window.h"
-#include "include/utility/hydrodynamic_mouse_interactor.h"
+#include <ui/main_window.h>
+#include <utility/hydrodynamic_mouse_interactor.h>
 
 #include <vtkInteractorStyleRubberBandZoom.h>
 #include <vtkPolyDataMapper.h>

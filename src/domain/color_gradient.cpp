@@ -1,4 +1,4 @@
-#include "include/domain/color_gradient.h"
+#include <domain/color_gradient.h>
 
 ColorGradient::ColorGradient(const QString &name, const QString &colors) : name(name), colors(colors) {}
 

@@ -1,4 +1,4 @@
-#include "include/application/iph_application.h"
+#include <application/iph_application.h>
 
 Project* IPHApplication::currentProject = NULL;
 

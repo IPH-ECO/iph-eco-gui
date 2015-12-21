@@ -1,18 +1,18 @@
-#include "include/ui/main_window.h"
+#include <ui/main_window.h>
 #include "ui_main_window.h"
 
-#include "include/exceptions/database_exception.h"
-#include "include/application/iph_application.h"
-#include "include/ui/structured_mesh_dialog.h"
-#include "include/ui/grid_data_dialog.h"
-#include "include/ui/hydrodynamic_data_dialog.h"
-#include "include/ui/create_simulation_dialog.h"
-#include "include/ui/simulation_manager_dialog.h"
-#include "include/ui/view_results_dialog.h"
-#include "include/services/project_service.h"
-#include "include/repository/project_repository.h"
-#include "include/domain/simulation.h"
-#include "include/ui/meteorological_data_dialog.h"
+#include <exceptions/database_exception.h>
+#include <application/iph_application.h>
+#include <ui/structured_mesh_dialog.h>
+#include <ui/grid_data_dialog.h>
+#include <ui/hydrodynamic_data_dialog.h>
+#include <ui/create_simulation_dialog.h>
+#include <ui/simulation_manager_dialog.h>
+#include <ui/view_results_dialog.h>
+#include <services/project_service.h>
+#include <repository/project_repository.h>
+#include <domain/simulation.h>
+#include <ui/meteorological_data_dialog.h>
 
 #include <QProgressDialog>
 #include <QMdiSubWindow>

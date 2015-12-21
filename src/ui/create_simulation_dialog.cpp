@@ -1,12 +1,12 @@
-#include "include/ui/create_simulation_dialog.h"
+#include <ui/create_simulation_dialog.h>
 #include "ui_create_simulation_dialog.h"
 
-#include "include/application/iph_application.h"
-#include "include/exceptions/database_exception.h"
-#include "include/ui/main_window.h"
-#include "include/application/simulation_manager.h"
-#include "include/repository/project_repository.h"
-#include "include/repository/simulation_repository.h"
+#include <application/iph_application.h>
+#include <exceptions/database_exception.h>
+#include <ui/main_window.h>
+#include <application/simulation_manager.h>
+#include <repository/project_repository.h>
+#include <repository/simulation_repository.h>
 
 #include <QDir>
 #include <QFileInfo>

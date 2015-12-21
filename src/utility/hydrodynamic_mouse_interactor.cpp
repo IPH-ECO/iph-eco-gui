@@ -1,4 +1,4 @@
-#include "include/utility/hydrodynamic_mouse_interactor.h"
+#include <utility/hydrodynamic_mouse_interactor.h>
 
 #include <vtkExtractSelectedPolyDataIds.h>
 #include <vtkExtractSelectedFrustum.h>

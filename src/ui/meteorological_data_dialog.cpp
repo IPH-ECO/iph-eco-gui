@@ -1,8 +1,8 @@
-#include "include/ui/meteorological_data_dialog.h"
+#include <ui/meteorological_data_dialog.h>
 #include "ui_meteorological_data_dialog.h"
-#include "include/application/iph_application.h"
-#include "include/domain/grid_data_configuration.h"
-#include "include/ui/time_series_dialog.h"
+#include <application/iph_application.h>
+#include <domain/grid_data_configuration.h>
+#include <ui/time_series_dialog.h>
 
 #include <QSet>
 #include <QFile>

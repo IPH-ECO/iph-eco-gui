@@ -1,8 +1,8 @@
-#include "include/repository/simulation_repository.h"
+#include <repository/simulation_repository.h>
 
-#include "include/application/iph_application.h"
-#include "include/exceptions/database_exception.h"
-#include "include/utility/database_utility.h"
+#include <application/iph_application.h>
+#include <exceptions/database_exception.h>
+#include <utility/database_utility.h>
 
 #include <QFile>
 #include <QJsonArray>

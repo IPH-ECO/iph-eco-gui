@@ -1,8 +1,8 @@
 #ifndef SIMULATION_MANAGER_H
 #define SIMULATION_MANAGER_H
 
-#include "include/domain/simulation.h"
-#include "include/application/simulation_worker.h"
+#include <domain/simulation.h>
+#include <application/simulation_worker.h>
 
 #include <QSet>
 

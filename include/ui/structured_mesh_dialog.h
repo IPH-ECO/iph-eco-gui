@@ -1,7 +1,7 @@
 #ifndef STRUCTURED_MESH_DIALOG_H
 #define STRUCTURED_MESH_DIALOG_H
 
-#include "include/domain/structured_mesh.h"
+#include <domain/structured_mesh.h>
 #include "abstract_mesh_dialog.h"
 
 #include <QList>

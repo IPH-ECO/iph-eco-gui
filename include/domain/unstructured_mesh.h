@@ -3,8 +3,8 @@
 
 #include "simulation_data_type.h"
 #include "mesh.h"
-#include "include/exceptions/mesh_exception.h"
-#include "include/utility/cgal_definitions.h"
+#include <exceptions/mesh_exception.h>
+#include <utility/cgal_definitions.h>
 
 #include <QList>
 

@@ -1,8 +1,8 @@
 #ifndef TIME_SERIES_DIALOG_H
 #define TIME_SERIES_DIALOG_H
 
-#include "include/domain/boundary_condition.h"
-#include "include/domain/meteorological_parameter.h"
+#include <domain/boundary_condition.h>
+#include <domain/meteorological_parameter.h>
 
 #include <QList>
 #include <QDialog>

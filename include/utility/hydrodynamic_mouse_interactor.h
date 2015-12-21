@@ -1,8 +1,8 @@
 #ifndef HYDRODYNAMIC_MOUSE_INTERACTOR_H
 #define HYDRODYNAMIC_MOUSE_INTERACTOR_H
 
-#include "include/domain/hydrodynamic_configuration.h"
-#include "include/application/iph_types.h"
+#include <domain/hydrodynamic_configuration.h>
+#include <application/iph_types.h>
 #include "mesh_mouse_interactor.h"
 
 #include <vtkIdTypeArray.h>

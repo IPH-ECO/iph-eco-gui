@@ -1,7 +1,7 @@
 #ifndef ABSTRACT_MESH_DIALOG_H
 #define ABSTRACT_MESH_DIALOG_H
 
-#include "include/ui/mesh_properties_dialog.h"
+#include <ui/mesh_properties_dialog.h>
 
 #include <QDialog>
 #include <QWidget>

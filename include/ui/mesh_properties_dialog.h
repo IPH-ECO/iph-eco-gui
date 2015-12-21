@@ -1,8 +1,8 @@
 #ifndef MESH_PROPERTIES_DIALOG_H
 #define MESH_PROPERTIES_DIALOG_H
 
-#include "include/domain/mesh.h"
-#include "include/ui/mesh_vtk_widget.h"
+#include <domain/mesh.h>
+#include <ui/mesh_vtk_widget.h>
 
 #include <QColor>
 #include <QDialog>

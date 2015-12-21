@@ -10,7 +10,7 @@
 #include <CGAL/Delaunay_mesher_2.h>
 #include <CGAL/Polygon_2.h>
 
-#include "include/domain/delaunay_triangulation_face.h"
+#include <domain/delaunay_triangulation_face.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Triangulation_vertex_base_2<K> Vb;

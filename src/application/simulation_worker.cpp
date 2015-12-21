@@ -1,6 +1,6 @@
-#include "include/application/simulation_worker.h"
-#include "include/application/simulation_progress_listener.h"
-#include "include/application/simulation_recovery_listener.h"
+#include <application/simulation_worker.h>
+#include <application/simulation_progress_listener.h>
+#include <application/simulation_recovery_listener.h>
 
 #include <QDir>
 

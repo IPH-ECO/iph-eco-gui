@@ -1,8 +1,8 @@
 #ifndef METEOROLOGICAL_DATA_DIALOG_H
 #define METEOROLOGICAL_DATA_DIALOG_H
 
-#include "include/domain/meteorological_station.h"
-#include "include/domain/meteorological_configuration.h"
+#include <domain/meteorological_station.h>
+#include <domain/meteorological_configuration.h>
 #include "abstract_mesh_dialog.h"
 
 #include <QDialog>

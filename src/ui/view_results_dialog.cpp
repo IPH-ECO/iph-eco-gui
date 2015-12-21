@@ -1,13 +1,13 @@
-#include "include/ui/view_results_dialog.h"
+#include <ui/view_results_dialog.h>
 #include "ui_view_results_dialog.h"
 
-#include "include/application/iph_application.h"
-#include "include/repository/simulation_repository.h"
-#include "include/exceptions/simulation_exception.h"
-#include "include/ui/main_window.h"
-#include "include/ui/layer_properties_dialog.h"
-#include "include/ui/video_export_dialog.h"
-#include "include/ui/time_series_chart_dialog.h"
+#include <application/iph_application.h>
+#include <repository/simulation_repository.h>
+#include <exceptions/simulation_exception.h>
+#include <ui/main_window.h>
+#include <ui/layer_properties_dialog.h>
+#include <ui/video_export_dialog.h>
+#include <ui/time_series_chart_dialog.h>
 
 #include <QMessageBox>
 #include <QMutexLocker>

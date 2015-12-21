@@ -1,9 +1,9 @@
-#include "include/services/project_service.h"
+#include <services/project_service.h>
 
 #include <QSqlDatabase>
 
-#include "include/application/iph_application.h"
-#include "include/repository/project_repository.h"
+#include <application/iph_application.h>
+#include <repository/project_repository.h>
 
 void ProjectService::setApplicationProject(QString &name, QString &description,
                                            bool &hydrodynamic, bool &sediment, bool &waterQuality) {

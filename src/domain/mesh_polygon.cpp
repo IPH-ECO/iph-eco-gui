@@ -4,8 +4,8 @@
 
 #include <cmath>
 
-#include "include/domain/mesh_polygon.h"
-#include "include/exceptions/mesh_polygon_exception.h"
+#include <domain/mesh_polygon.h>
+#include <exceptions/mesh_polygon_exception.h>
 
 #include <QStringList>
 #include <QMultiMap>

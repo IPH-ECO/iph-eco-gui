@@ -1,7 +1,7 @@
 #ifndef GRID_DATA_MOUSE_INTERACTOR_H
 #define GRID_DATA_MOUSE_INTERACTOR_H
 
-#include "include/application/iph_types.h"
+#include <application/iph_types.h>
 #include "mesh_mouse_interactor.h"
 
 #include <vtkIdTypeArray.h>

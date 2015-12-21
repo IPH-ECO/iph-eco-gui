@@ -1,5 +1,5 @@
-#include "include/application/iph_application.h"
-#include "include/ui/main_window.h"
+#include <application/iph_application.h>
+#include <ui/main_window.h>
 
 #include <clocale>
 

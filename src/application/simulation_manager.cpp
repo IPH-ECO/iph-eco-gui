@@ -1,5 +1,5 @@
-#include "include/application/simulation_manager.h"
-#include "include/repository/simulation_repository.h"
+#include <application/simulation_manager.h>
+#include <repository/simulation_repository.h>
 
 #include <QThread>
 

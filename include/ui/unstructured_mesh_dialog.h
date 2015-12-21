@@ -1,7 +1,7 @@
 #ifndef UNSTRUCTURED_MESH_DIALOG_H
 #define UNSTRUCTURED_MESH_DIALOG_H
 
-#include "include/domain/unstructured_mesh.h"
+#include <domain/unstructured_mesh.h>
 #include "abstract_mesh_dialog.h"
 
 #include <QDialog>

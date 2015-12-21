@@ -1,8 +1,8 @@
-#include "include/domain/grid_data.h"
+#include <domain/grid_data.h>
 
-#include "include/domain/color_gradient.h"
-#include "include/utility/cgal_definitions.h"
-#include "include/exceptions/grid_data_exception.h"
+#include <domain/color_gradient.h>
+#include <utility/cgal_definitions.h>
+#include <exceptions/grid_data_exception.h>
 
 #include <GeographicLib/GeoCoords.hpp>
 #include <vtkRegularPolygonSource.h>

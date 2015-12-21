@@ -1,4 +1,4 @@
-#include "include/utility/grid_data_mouse_interactor.h"
+#include <utility/grid_data_mouse_interactor.h>
 
 #include <vtkExtractSelectedPolyDataIds.h>
 #include <vtkExtractSelectedFrustum.h>

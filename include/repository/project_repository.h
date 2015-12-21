@@ -1,9 +1,9 @@
 #ifndef PROJECT_REPOSITORY_H
 #define PROJECT_REPOSITORY_H
 
-#include "include/domain/project.h"
-#include "include/domain/grid_data_configuration.h"
-#include "include/utility/database_utility.h"
+#include <domain/project.h>
+#include <domain/grid_data_configuration.h>
+#include <utility/database_utility.h>
 
 class ProjectRepository : public QObject {
     Q_OBJECT

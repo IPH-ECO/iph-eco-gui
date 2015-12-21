@@ -8,8 +8,8 @@
 #include <vtkRenderer.h>
 #include <vtkCubeAxesActor.h>
 
-#include "include/domain/mesh.h"
-#include "include/utility/mesh_mouse_interactor.h"
+#include <domain/mesh.h>
+#include <utility/mesh_mouse_interactor.h>
 
 class MeshVTKWidget : public QVTKWidget {
 	Q_OBJECT

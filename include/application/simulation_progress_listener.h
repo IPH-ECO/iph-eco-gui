@@ -1,7 +1,7 @@
 #ifndef SIMULATION_PROGRESS_LISTENER_H
 #define SIMULATION_PROGRESS_LISTENER_H
 
-#include "include/repository/simulation_repository.h"
+#include <repository/simulation_repository.h>
 
 #include <QThread>
 

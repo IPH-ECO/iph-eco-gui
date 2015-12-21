@@ -1,11 +1,11 @@
-#include "include/ui/hydrodynamic_data_dialog.h"
+#include <ui/hydrodynamic_data_dialog.h>
 #include "ui_hydrodynamic_data_dialog.h"
 
-#include "include/application/iph_application.h"
-#include "include/domain/unstructured_mesh.h"
-#include "include/domain/structured_mesh.h"
-#include "include/domain/hydrodynamic_parameter.h"
-#include "include/ui/boundary_condition_dialog.h"
+#include <application/iph_application.h>
+#include <domain/unstructured_mesh.h>
+#include <domain/structured_mesh.h>
+#include <domain/hydrodynamic_parameter.h>
+#include <ui/boundary_condition_dialog.h>
 
 #include <QTreeWidgetItemIterator>
 #include <QColorDialog>

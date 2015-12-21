@@ -1,7 +1,7 @@
-#include "include/ui/new_project_dialog.h"
+#include <ui/new_project_dialog.h>
 #include "ui_new_project_dialog.h"
 
-#include "include/application/iph_application.h"
+#include <application/iph_application.h>
 #include <QMessageBox>
 
 NewProjectDialog::NewProjectDialog(QWidget *parent) : QDialog(parent), ui(new Ui::NewProjectDialog) {

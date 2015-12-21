@@ -1,11 +1,11 @@
-#include "include/ui/structured_mesh_dialog.h"
+#include <ui/structured_mesh_dialog.h>
 #include "ui_structured_mesh_dialog.h"
-#include "include/ui/main_window.h"
-#include "include/application/iph_application.h"
-#include "include/exceptions/mesh_polygon_exception.h"
-#include "include/ui/island_form.h"
-#include "include/ui/coordinate_file_dialog.h"
-#include "include/ui/mesh_properties_dialog.h"
+#include <ui/main_window.h>
+#include <application/iph_application.h>
+#include <exceptions/mesh_polygon_exception.h>
+#include <ui/island_form.h>
+#include <ui/coordinate_file_dialog.h>
+#include <ui/mesh_properties_dialog.h>
 
 #include <QFileDialog>
 #include <QMessageBox>

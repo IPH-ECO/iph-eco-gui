@@ -1,13 +1,13 @@
-#include "include/ui/grid_data_dialog.h"
+#include <ui/grid_data_dialog.h>
 #include "ui_grid_data_dialog.h"
 
-#include "include/application/iph_application.h"
-#include "include/domain/structured_mesh.h"
-#include "include/domain/unstructured_mesh.h"
-#include "include/exceptions/grid_data_exception.h"
-#include "include/ui/main_window.h"
-#include "include/ui/grid_layer_dialog.h"
-#include "include/ui/grid_layer_attributes_dialog.h"
+#include <application/iph_application.h>
+#include <domain/structured_mesh.h>
+#include <domain/unstructured_mesh.h>
+#include <exceptions/grid_data_exception.h>
+#include <ui/main_window.h>
+#include <ui/grid_layer_dialog.h>
+#include <ui/grid_layer_attributes_dialog.h>
 
 #include <QProgressDialog>
 #include <QColorDialog>

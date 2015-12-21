@@ -1,8 +1,8 @@
 #ifndef GRID_DATA_VTK_WIDGET_H
 #define GRID_DATA_VTK_WIDGET_H
 
-#include "include/domain/grid_data.h"
-#include "include/utility/grid_data_mouse_interactor.h"
+#include <domain/grid_data.h>
+#include <utility/grid_data_mouse_interactor.h>
 #include "cell_update_dialog.h"
 #include "grid_data_context_menu.h"
 #include "mesh_vtk_widget.h"

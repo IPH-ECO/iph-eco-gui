@@ -1,7 +1,7 @@
 #ifndef VIDEO_EXPORT_DIALOG_H
 #define VIDEO_EXPORT_DIALOG_H
 
-#include "include/domain/simulation.h"
+#include <domain/simulation.h>
 
 #include <QWidget>
 #include <QDialog>

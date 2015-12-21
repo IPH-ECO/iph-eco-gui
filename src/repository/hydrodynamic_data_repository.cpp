@@ -1,5 +1,5 @@
-#include "include/repository/hydrodynamic_data_repository.h"
-#include "include/application/iph_application.h"
+#include <repository/hydrodynamic_data_repository.h>
+#include <application/iph_application.h>
 
 #include <QJsonDocument>
 #include <QJsonObject>

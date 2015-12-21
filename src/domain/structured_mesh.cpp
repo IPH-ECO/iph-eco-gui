@@ -1,7 +1,7 @@
-#include "include/domain/structured_mesh.h"
+#include <domain/structured_mesh.h>
 
-#include "include/utility/cgal_definitions.h"
-#include "include/domain/boundary_condition.h"
+#include <utility/cgal_definitions.h>
+#include <domain/boundary_condition.h>
 
 #include <vtkQuad.h>
 #include <vtkIdList.h>

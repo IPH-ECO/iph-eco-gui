@@ -1,7 +1,7 @@
 #ifndef GRID_DATA_DIALOG_H
 #define GRID_DATA_DIALOG_H
 
-#include "include/domain/grid_data_configuration.h"
+#include <domain/grid_data_configuration.h>
 #include "grid_data_vtk_widget.h"
 #include "abstract_mesh_dialog.h"
 

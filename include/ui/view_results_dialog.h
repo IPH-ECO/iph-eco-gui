@@ -1,8 +1,8 @@
 #ifndef VIEW_RESULTS_DIALOG_H
 #define VIEW_RESULTS_DIALOG_H
 
-#include "include/domain/simulation.h"
-#include "include/ui/abstract_mesh_dialog.h"
+#include <domain/simulation.h>
+#include <ui/abstract_mesh_dialog.h>
 
 #include <QTimer>
 #include <QMutex>

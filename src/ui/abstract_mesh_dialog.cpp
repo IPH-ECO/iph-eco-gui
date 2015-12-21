@@ -1,6 +1,6 @@
-#include "include/ui/abstract_mesh_dialog.h"
+#include <ui/abstract_mesh_dialog.h>
 
-#include "include/ui/main_window.h"
+#include <ui/main_window.h>
 
 #include <QIcon>
 #include <QPixmap>

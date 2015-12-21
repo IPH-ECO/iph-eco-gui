@@ -1,9 +1,9 @@
 #ifndef HYDRODYNAMIC_DATA_DIALOG_H
 #define HYDRODYNAMIC_DATA_DIALOG_H
 
-#include "include/domain/hydrodynamic_configuration.h"
-#include "include/repository/hydrodynamic_data_repository.h"
-#include "include/application/iph_types.h"
+#include <domain/hydrodynamic_configuration.h>
+#include <repository/hydrodynamic_data_repository.h>
+#include <application/iph_types.h>
 #include "abstract_mesh_dialog.h"
 #include "boundary_condition_dialog.h"
 

@@ -1,7 +1,7 @@
 #ifndef HYDRODYNAMIC_PROCESS_H
 #define HYDRODYNAMIC_PROCESS_H
 
-#include "include/domain/hydrodynamic_parameter.h"
+#include <domain/hydrodynamic_parameter.h>
 #include <QTreeWidgetItem>
 #include <QString>
 #include <QList>

@@ -1,6 +1,6 @@
-#include "include/ui/grid_layer_dialog.h"
+#include <ui/grid_layer_dialog.h>
 #include "ui_grid_layer_dialog.h"
-#include "include/ui/coordinate_file_dialog.h"
+#include <ui/coordinate_file_dialog.h>
 
 #include <QFileDialog>
 #include <QMessageBox>

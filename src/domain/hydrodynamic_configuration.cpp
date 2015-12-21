@@ -1,4 +1,4 @@
-#include "include/domain/hydrodynamic_configuration.h"
+#include <domain/hydrodynamic_configuration.h>
 
 HydrodynamicConfiguration::HydrodynamicConfiguration() : id(0) {}
 

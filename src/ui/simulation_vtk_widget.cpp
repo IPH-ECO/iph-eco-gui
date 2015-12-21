@@ -1,7 +1,7 @@
-#include "include/ui/simulation_vtk_widget.h"
+#include <ui/simulation_vtk_widget.h>
 
-#include "include/ui/main_window.h"
-#include "include/exceptions/simulation_exception.h"
+#include <ui/main_window.h>
+#include <exceptions/simulation_exception.h>
 
 #include <QFile>
 #include <QByteArray>

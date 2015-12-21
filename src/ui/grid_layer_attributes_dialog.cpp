@@ -1,8 +1,8 @@
-#include "include/ui/grid_layer_attributes_dialog.h"
+#include <ui/grid_layer_attributes_dialog.h>
 #include "ui_grid_layer_attributes_dialog.h"
 
-#include "include/domain/color_gradient.h"
-#include "include/ui/grid_data_dialog.h"
+#include <domain/color_gradient.h>
+#include <ui/grid_data_dialog.h>
 
 #include <vtkPolyData.h>
 #include <vtkCellData.h>

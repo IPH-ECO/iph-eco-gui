@@ -1,4 +1,4 @@
-#include "include/domain/meteorological_parameter.h"
+#include <domain/meteorological_parameter.h>
 
 MeteorologicalParameter::MeteorologicalParameter() : id(0), timeSeriesChanged(false) {}
 

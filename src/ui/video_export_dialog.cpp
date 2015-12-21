@@ -1,4 +1,4 @@
-#include "include/ui/video_export_dialog.h"
+#include <ui/video_export_dialog.h>
 #include "ui_video_export_dialog.h"
 
 #include <QFile>

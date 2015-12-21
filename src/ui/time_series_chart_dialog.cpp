@@ -1,4 +1,4 @@
-#include "include/ui/time_series_chart_dialog.h"
+#include <ui/time_series_chart_dialog.h>
 #include "ui_time_series_chart_dialog.h"
 
 #include <QToolButton>

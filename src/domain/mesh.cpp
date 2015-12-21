@@ -1,6 +1,6 @@
-#include "include/domain/mesh.h"
-#include "include/exceptions/mesh_exception.h"
-#include "include/exceptions/mesh_polygon_exception.h"
+#include <domain/mesh.h>
+#include <exceptions/mesh_exception.h>
+#include <exceptions/mesh_polygon_exception.h>
 
 #include <QFile>
 #include <QMultiMap>

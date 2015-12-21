@@ -1,4 +1,4 @@
-#include "include/ui/boundary_condition_dialog.h"
+#include <ui/boundary_condition_dialog.h>
 #include "ui_boundary_condition_dialog.h"
 #include "ui_hydrodynamic_data_dialog.h"
 
@@ -11,8 +11,8 @@
 #include <vtkPolyData.h>
 #include <vtkCellData.h>
 
-#include "include/ui/hydrodynamic_vtk_widget.h"
-#include "include/ui/time_series_dialog.h"
+#include <ui/hydrodynamic_vtk_widget.h>
+#include <ui/time_series_dialog.h>
 
 BoundaryConditionDialog::BoundaryConditionDialog(HydrodynamicConfiguration *configuration, BoundaryCondition *boundaryCondition) :
     QDialog(nullptr), ui(new Ui::BoundaryConditionDialog),

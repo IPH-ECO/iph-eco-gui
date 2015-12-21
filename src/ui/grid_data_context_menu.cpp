@@ -1,8 +1,8 @@
-#include "include/ui/grid_data_context_menu.h"
+#include <ui/grid_data_context_menu.h>
 
-#include "include/ui/grid_data_dialog.h"
-#include "include/ui/grid_layer_attributes_dialog.h"
-#include "include/ui/cell_update_dialog.h"
+#include <ui/grid_data_dialog.h>
+#include <ui/grid_layer_attributes_dialog.h>
+#include <ui/cell_update_dialog.h>
 
 #include <QIcon>
 

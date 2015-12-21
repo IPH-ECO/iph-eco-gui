@@ -1,8 +1,8 @@
-#include "include/ui/project_properties_dialog.h"
+#include <ui/project_properties_dialog.h>
 #include "ui_project_properties_dialog.h"
 
-#include "include/application/iph_application.h"
-#include "include/services/project_service.h"
+#include <application/iph_application.h>
+#include <services/project_service.h>
 
 #include <QDialogButtonBox>
 #include <QMessageBox>

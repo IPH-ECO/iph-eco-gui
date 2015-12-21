@@ -1,7 +1,7 @@
 #ifndef LAYER_PROPERTIES_DIALOG_H
 #define LAYER_PROPERTIES_DIALOG_H
 
-#include "include/domain/layer_properties.h"
+#include <domain/layer_properties.h>
 
 #include <QColor>
 #include <QDialog>

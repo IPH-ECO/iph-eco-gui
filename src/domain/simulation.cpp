@@ -1,5 +1,5 @@
-#include "include/domain/simulation.h"
-#include "include/application/iph_application.h"
+#include <domain/simulation.h>
+#include <application/iph_application.h>
 
 #include <QDir>
 #include <QJsonArray>
