@@ -429,7 +429,7 @@ void ViewResultsDialog::showExportVideoDialog() {
     if (this->currentSimulation) {
         VideoExportDialog *dialog = new VideoExportDialog(this, this->currentSimulation->getOutputFiles());
         
-        QObject::connect(dialog, SIGNAL(stopReproduction()), &frameTimer, SLOT(stop()));
+        QObject::connect(dialog, SIGNAL(stopReproduction()), this, SLOT(on_btnPauseReproduction_clicked()));
         QObject::connect(dialog, SIGNAL(rejected()), ui->vtkWidget, SLOT(cancelExportVideo()));
         QObject::connect(dialog, SIGNAL(exportVideo(int, int, int, int, const QString&)), ui->vtkWidget, SLOT(exportVideo(int, int, int, int, const QString&)));
         QObject::connect(ui->vtkWidget, SIGNAL(updateExportVideoProgress(int)), dialog->getProgressBar(), SLOT(setValue(int)));
