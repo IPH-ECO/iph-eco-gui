@@ -88,6 +88,10 @@ HydrodynamicMouseInteractor* HydrodynamicVTKWidget::getMouseInteractor() const {
 
 void HydrodynamicVTKWidget::handleMouseEvent(QMouseEvent *event) {
     if (event->type() == QEvent::MouseButtonDblClick && event->button() == Qt::LeftButton && mouseInteractor->getPickerMode() != PickerMode::NO_PICKER) {
-        HydrodynamicMouseInteractor::SafeDownCast(mouseInteractor)->pickCell();
+        bool wasCellPicked = HydrodynamicMouseInteractor::SafeDownCast(mouseInteractor)->pickCell();
+        
+        if (wasCellPicked) {
+            emit objectSelected();
+        }
     }
 }

@@ -23,13 +23,13 @@ public:
     
     HydrodynamicMouseInteractor();
     
-    void renderBoundaryCondition(BoundaryCondition *boundaryCondition);
+    bool pickCell();
+    bool renderBoundaryCondition(BoundaryCondition *boundaryCondition);
     void removeBoundaryCondition(BoundaryCondition *boundaryCondition);
     void highlightBoundaryCondition(BoundaryCondition *boundaryCondition, bool hightlight);
     void clearSelection();
     void setHydrodynamicConfiguration(HydrodynamicConfiguration *hydrodynamicConfiguration);
     void setBoundaryCondition(BoundaryCondition *boundaryCondition);
-    void pickCell();
     
     virtual void OnLeftButtonUp();
     virtual void activatePicker(const PickerMode &pickerMode);

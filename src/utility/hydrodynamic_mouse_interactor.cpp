@@ -58,14 +58,16 @@ void HydrodynamicMouseInteractor::OnLeftButtonUp() {
     }
 }
 
-void HydrodynamicMouseInteractor::pickCell() {
+bool HydrodynamicMouseInteractor::pickCell() {
     if (pickerMode == PickerMode::INDIVIDUAL_CELL && lastCellId != -1) {
         currentBoundaryCondition->addObjectId(lastCellId);
-        renderBoundaryCondition(currentBoundaryCondition);
+        return renderBoundaryCondition(currentBoundaryCondition);
     }
+    
+    return false;
 }
 
-void HydrodynamicMouseInteractor::renderBoundaryCondition(BoundaryCondition *boundaryCondition) {
+bool HydrodynamicMouseInteractor::renderBoundaryCondition(BoundaryCondition *boundaryCondition) {
     vtkSmartPointer<vtkIdTypeArray> objectIds = boundaryCondition->getVTKObjectIds();
     vtkSmartPointer<vtkSelectionNode> selectionNode = vtkSmartPointer<vtkSelectionNode>::New();
     selectionNode->SetFieldType(vtkSelectionNode::CELL);
@@ -114,9 +116,7 @@ void HydrodynamicMouseInteractor::renderBoundaryCondition(BoundaryCondition *bou
     
     this->GetDefaultRenderer()->GetRenderWindow()->Render();
     
-    if (pickerMode != PickerMode::NO_PICKER) {
-//        emit objectSelected();
-    }
+    return pickerMode != PickerMode::NO_PICKER;
 }
 
 void HydrodynamicMouseInteractor::removeBoundaryCondition(BoundaryCondition *boundaryCondition) {
