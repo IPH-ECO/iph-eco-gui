@@ -302,7 +302,7 @@ void ViewResultsDialog::showTimeSeriesChart() {
     int numberOfMapLayers = ui->vtkWidget->getNumberOfMapLayers();
     TimeSeriesChartDialog *dialog = new TimeSeriesChartDialog(this, currentSimulation, numberOfMapLayers);
     ui->vtkWidget->togglePicker(true);
-    dialog->exec();
+    dialog->show();
 }
 
 void ViewResultsDialog::removeLayer() {

@@ -10,9 +10,13 @@ MeshMouseInteractor::MeshMouseInteractor() : pickerMode(PickerMode::NO_PICKER), 
 void MeshMouseInteractor::OnLeftButtonDown() {
     int *clickPosition = this->GetInteractor()->GetEventPosition();
     vtkSmartPointer<vtkCellPicker> picker = vtkSmartPointer<vtkCellPicker>::New();
+    vtkSmartPointer<vtkWorldPointPicker> worldPicker = vtkSmartPointer<vtkWorldPointPicker>::New();
     
     picker->SetTolerance(0.0005);
     picker->Pick(clickPosition[0], clickPosition[1], 0, this->GetDefaultRenderer());
+    
+    worldPicker->Pick(clickPosition[0], clickPosition[1], 0, this->GetDefaultRenderer());
+    worldPicker->GetPickPosition(worldCoordinate);
     
     lastCellId = picker->GetCellId();
     

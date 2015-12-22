@@ -13,6 +13,7 @@
 class MeshMouseInteractor : public vtkInteractorStyleRubberBandPick {
 protected:
     PickerMode pickerMode;
+    double worldCoordinate[2];
     vtkIdType lastCellId;
 public:
     static MeshMouseInteractor* New();

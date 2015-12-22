@@ -3,7 +3,6 @@
 
 #include <domain/hydrodynamic_configuration.h>
 #include <repository/hydrodynamic_data_repository.h>
-#include <application/iph_types.h>
 #include "abstract_mesh_dialog.h"
 #include "boundary_condition_dialog.h"
 

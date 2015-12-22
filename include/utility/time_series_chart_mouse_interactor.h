@@ -1,7 +1,6 @@
 #ifndef TIME_SERIES_CHART_MOUSE_INTERACTOR_H
 #define TIME_SERIES_CHART_MOUSE_INTERACTOR_H
 
-#include <application/iph_types.h>
 #include "mesh_mouse_interactor.h"
 
 #include <QMap>
@@ -14,14 +13,12 @@ private:
 	vtkSmartPointer<vtkPolyData> meshPolyData;
 	QMap<QString, vtkSmartPointer<vtkIdTypeArray> > cellIdMap;
 	QMap<vtkIdType, QColor> cellColorMap;
+    QString layerKey;
 public:
     static TimeSeriesChartMouseInteractor* New();
     vtkTypeMacro(TimeSeriesChartMouseInteractor, vtkInteractorStyleRubberBandPick);
-
-    TimeSeriesChartMouseInteractor();
-
-    virtual void OnLeftButtonUp();
     
+    void setLayerKey(const QString &layerKey);
     void pickCell();
 };
 
