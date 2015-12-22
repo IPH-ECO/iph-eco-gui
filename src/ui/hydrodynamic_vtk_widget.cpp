@@ -1,13 +1,10 @@
 #include <ui/hydrodynamic_vtk_widget.h>
 
-#include <ui/main_window.h>
-
 #include <vtkInteractorStyleRubberBandZoom.h>
 #include <vtkPolyDataMapper.h>
 #include <vtkTextProperty.h>
 #include <vtkAreaPicker.h>
 #include <vtkProperty.h>
-#include <QApplication>
 
 vtkStandardNewMacro(HydrodynamicMouseInteractor);
 

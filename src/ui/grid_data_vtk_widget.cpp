@@ -3,7 +3,6 @@
 #include <domain/color_gradient.h>
 #include <utility/grid_data_mouse_interactor.h>
 #include <ui/grid_data_context_menu.h>
-#include <ui/main_window.h>
 
 #include <vtkCellData.h>
 #include <vtkProperty.h>

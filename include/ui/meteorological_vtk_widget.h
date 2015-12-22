@@ -12,7 +12,6 @@ public:
     void addStation(MeteorologicalStation *station);
     void removeStation(MeteorologicalStation *station);
     void highlightStation(MeteorologicalStation *station);
-	void showStations();
     virtual void clear();
 };
 

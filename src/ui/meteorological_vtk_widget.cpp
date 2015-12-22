@@ -75,9 +75,6 @@ void MeteorologicalVTKWidget::highlightStation(MeteorologicalStation *station) {
     this->update();
 }
 
-void MeteorologicalVTKWidget::showStations() {
-}
-
 void MeteorologicalVTKWidget::clear() {
     renderer->RemoveAllViewProps();
     this->update();
