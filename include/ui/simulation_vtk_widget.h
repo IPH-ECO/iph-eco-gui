@@ -2,10 +2,11 @@
 #define SIMULATION_VTK_WIDGET_H
 
 #include <domain/simulation.h>
-#include <ui/mesh_vtk_widget.h>
 #include <domain/meteorological_station.h>
+#include <ui/mesh_vtk_widget.h>
 
 #include <QFileInfo>
+#include <QMouseEvent>
 #include <vtkTextActor.h>
 #include <vtkDoubleArray.h>
 #include <vtkDataSetMapper.h>
@@ -40,12 +41,16 @@ private:
     vtkSmartPointer<vtkColorTransferFunction> buildColorTransferFunction(double *scalarBarRange);
     vtkSmartPointer<vtkPolyData> renderVectors();
     vtkSmartPointer<vtkScalarBarActor> renderScalarBar(const QString &layerKey, double *scalarBarRange);
+private slots:
+    void handleMouseEvent(QMouseEvent *event);
 public:
 	explicit SimulationVTKWidget(QWidget *parent);
 	void render(Simulation *simulation, const QString &layer, const QString &component, int frame);
     void removeLayer(const QString &layerKey);
     void setAxesScale(const QString &axesScale);
     void updateOutputFileList();
+    int getNumberOfMapLayers() const;
+    void togglePicker(bool activate);
     virtual void clear();
 public slots:
     void hideLayer(const QString &layerKey);

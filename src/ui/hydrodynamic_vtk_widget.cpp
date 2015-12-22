@@ -1,18 +1,17 @@
 #include <ui/hydrodynamic_vtk_widget.h>
 
 #include <ui/main_window.h>
-#include <utility/hydrodynamic_mouse_interactor.h>
 
 #include <vtkInteractorStyleRubberBandZoom.h>
 #include <vtkPolyDataMapper.h>
 #include <vtkTextProperty.h>
 #include <vtkAreaPicker.h>
 #include <vtkProperty.h>
+#include <QApplication>
 
 vtkStandardNewMacro(HydrodynamicMouseInteractor);
 
 HydrodynamicVTKWidget::HydrodynamicVTKWidget(QWidget *parent) : MeshVTKWidget(parent, vtkSmartPointer<HydrodynamicMouseInteractor>::New()) {
-    hydrodynamicMouseInteractor = HydrodynamicMouseInteractor::SafeDownCast(mouseInteractor);
     QObject::connect(this, SIGNAL(mouseEvent(QMouseEvent*)), this, SLOT(handleMouseEvent(QMouseEvent*)));
 }
 
@@ -61,10 +60,7 @@ void HydrodynamicVTKWidget::render(HydrodynamicConfiguration *hydrodynamicConfig
     renderer->AddActor(meshActor);
     renderer->AddActor(axesActor);
     
-    hydrodynamicMouseInteractor->setHydrodynamicConfiguration(hydrodynamicConfiguration);
-    
-    MainWindow *mainWindow = static_cast<MainWindow*>(this->topLevelWidget());
-    QObject::connect(hydrodynamicMouseInteractor, SIGNAL(coordinateChanged(double&, double&)), mainWindow, SLOT(setCoordinate(double&, double&)));
+    HydrodynamicMouseInteractor::SafeDownCast(mouseInteractor)->setHydrodynamicConfiguration(hydrodynamicConfiguration);
     
     renderer->ResetCamera();
     this->update();
@@ -72,26 +68,26 @@ void HydrodynamicVTKWidget::render(HydrodynamicConfiguration *hydrodynamicConfig
 
 void HydrodynamicVTKWidget::togglePicker(bool activate, const PickerMode &pickerMode) {
     if (activate && pickerMode != PickerMode::NO_PICKER) {
-        hydrodynamicMouseInteractor->activatePicker(pickerMode);
+        mouseInteractor->activatePicker(pickerMode);
         
         if (pickerMode == PickerMode::MULTIPLE_CELL) {
-            hydrodynamicMouseInteractor->StartSelect();
+            mouseInteractor->StartSelect();
         } else if (pickerMode == PickerMode::MULTIPLE_EDGE) {
-            hydrodynamicMouseInteractor->StartSelect();
+            mouseInteractor->StartSelect();
             meshActor->PickableOff();
         }
     } else {
         meshActor->PickableOn();
-        hydrodynamicMouseInteractor->deactivatePicker();
+        mouseInteractor->deactivatePicker();
     }
 }
 
 HydrodynamicMouseInteractor* HydrodynamicVTKWidget::getMouseInteractor() const {
-    return hydrodynamicMouseInteractor;
+    return HydrodynamicMouseInteractor::SafeDownCast(mouseInteractor);
 }
 
 void HydrodynamicVTKWidget::handleMouseEvent(QMouseEvent *event) {
-    if (event->type() == QEvent::MouseButtonDblClick && event->button() == Qt::LeftButton && hydrodynamicMouseInteractor->getPickerMode() != PickerMode::NO_PICKER) {
-        hydrodynamicMouseInteractor->pickCell();
+    if (event->type() == QEvent::MouseButtonDblClick && event->button() == Qt::LeftButton && mouseInteractor->getPickerMode() != PickerMode::NO_PICKER) {
+        HydrodynamicMouseInteractor::SafeDownCast(mouseInteractor)->pickCell();
     }
 }

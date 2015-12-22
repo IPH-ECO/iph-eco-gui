@@ -353,16 +353,20 @@ void Simulation::loadRecoveryVariables() {
     }
 }
 
-QFileInfoList Simulation::getOutputFiles() const {
-    QDir outputDir(this->outputDirectory);
-    QFileInfoList outputFiles;
-    
-    if (outputDir.exists()) {
-        QFileInfoList tempList = outputDir.entryInfoList({ QString("%1*.vtk").arg(label) }, QDir::Files, QDir::Time);
+QFileInfoList Simulation::getOutputFiles(bool scanOutputDirectory) {
+    if (scanOutputDirectory) {
+        QDir outputDir(this->outputDirectory);
+        QFileInfoList tempOutputFiles;
         
-        for (int i = tempList.size() - 1; i >= 0; i--) {
-            outputFiles.append(tempList.at(i));
+        if (outputDir.exists()) {
+            QFileInfoList tempList = outputDir.entryInfoList({ QString("%1*.vtk").arg(label) }, QDir::Files, QDir::Time);
+            
+            for (int i = tempList.size() - 1; i >= 0; i--) {
+                tempOutputFiles.append(tempList.at(i));
+            }
         }
+        
+        this->outputFiles = tempOutputFiles;
     }
     
     return outputFiles;

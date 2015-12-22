@@ -1,6 +1,5 @@
 #include <ui/mesh_vtk_widget.h>
 
-#include <ui/main_window.h>
 #include <ui/structured_mesh_dialog.h>
 #include <ui/unstructured_mesh_dialog.h>
 
@@ -85,9 +84,6 @@ void MeshVTKWidget::render(Mesh *mesh) {
 
     renderer->ResetCamera();
     renderer->GetRenderWindow()->Render();
-
-    MainWindow *mainWindow = static_cast<MainWindow*>(this->topLevelWidget());
-    QObject::connect(mouseInteractor, SIGNAL(coordinateChanged(double&, double&)), mainWindow, SLOT(setCoordinate(double&, double&)));
 }
 
 void MeshVTKWidget::renderAxesActor() {

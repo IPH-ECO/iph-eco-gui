@@ -56,7 +56,7 @@ void ViewResultsDialog::on_tblSimulations_cellClicked(int row, int column) {
     if (simulation != currentSimulation) {
         on_btnPauseReproduction_clicked();
         
-        QFileInfoList outputFiles = simulation->getOutputFiles();
+        QFileInfoList outputFiles = simulation->getOutputFiles(true);
         
         ui->btnRefresh->setEnabled(true);
         ui->spxFrame->blockSignals(true);
@@ -145,7 +145,7 @@ void ViewResultsDialog::onSimulationCreated(Simulation *simulation) {
 
 void ViewResultsDialog::on_btnRefresh_clicked() {
     if (this->currentSimulation) {
-        QFileInfoList outputFiles = this->currentSimulation->getOutputFiles();
+        QFileInfoList outputFiles = this->currentSimulation->getOutputFiles(true);
 
         ui->vtkWidget->updateOutputFileList();
         ui->spxFrame->setMaximum(outputFiles.size());
@@ -214,10 +214,11 @@ void ViewResultsDialog::on_btnAddLayer_clicked() {
         
         if (foundItems.isEmpty()) {
             QString layerKey = ui->cbxLayers->currentData().toString();
+            QString layerComponent = layerKey.split("-").last();
             int row = ui->tblLayers->rowCount();
             QTableWidgetItem *layerItem = new QTableWidgetItem(layer);
             
-            layerItem->setData(Qt::UserRole, layerKey); //
+            layerItem->setData(Qt::UserRole, layerKey);
 
             ui->tblLayers->insertRow(row);
             ui->tblLayers->setItem(row, 0, layerItem);
@@ -245,14 +246,17 @@ void ViewResultsDialog::on_btnAddLayer_clicked() {
             
             hLayout->addWidget(layerPropertiesButton);
             
-            QToolButton *timeSeriesButton = new QToolButton();
-            QIcon timeSeriesIcon(":/icons/office-chart-line.png");
-            
-            timeSeriesButton->setIcon(timeSeriesIcon);
-            timeSeriesButton->setToolTip("Show time series chart");
-            timeSeriesButton->setObjectName(QString("timeSeriesButton-%1").arg(layerKey));
-            
-            hLayout->addWidget(timeSeriesButton);
+            if (layerComponent != "Vector") {
+                QToolButton *timeSeriesButton = new QToolButton();
+                QIcon timeSeriesIcon(":/icons/office-chart-line.png");
+                
+                timeSeriesButton->setIcon(timeSeriesIcon);
+                timeSeriesButton->setToolTip("Show time series chart");
+                timeSeriesButton->setObjectName(QString("timeSeriesButton-%1").arg(layerKey));
+                QObject::connect(timeSeriesButton, SIGNAL(clicked()), this, SLOT(showTimeSeriesChart()));
+                
+                hLayout->addWidget(timeSeriesButton);
+            }
             
             QToolButton *removeLayerButton = new QToolButton();
             QIcon removeIcon(":/icons/list-delete.png");
@@ -269,7 +273,6 @@ void ViewResultsDialog::on_btnAddLayer_clicked() {
             
             QObject::connect(showHideLayerButton, SIGNAL(clicked(bool)), this, SLOT(toggleLayerVisibility(bool)));
             QObject::connect(layerPropertiesButton, SIGNAL(clicked()), this, SLOT(editLayerProperties()));
-            QObject::connect(timeSeriesButton, SIGNAL(clicked()), this, SLOT(showTimeSeriesChart()));
             QObject::connect(removeLayerButton, SIGNAL(clicked()), this, SLOT(removeLayer()));
             
             this->currentSimulation->addSelectedLayer(ui->cbxLayers->currentData().toString());
@@ -296,7 +299,9 @@ void ViewResultsDialog::fillLayersComboBox(Simulation *simulation) {
 }
 
 void ViewResultsDialog::showTimeSeriesChart() {
-    TimeSeriesChartDialog *dialog = new TimeSeriesChartDialog(this);
+    int numberOfMapLayers = ui->vtkWidget->getNumberOfMapLayers();
+    TimeSeriesChartDialog *dialog = new TimeSeriesChartDialog(this, currentSimulation, numberOfMapLayers);
+    ui->vtkWidget->togglePicker(true);
     dialog->exec();
 }
 

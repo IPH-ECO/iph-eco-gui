@@ -1,37 +1,31 @@
 #ifndef MESH_MOUSE_INTERACTOR_H
 #define MESH_MOUSE_INTERACTOR_H
 
-#include <vtkInteractorStyleRubberBandPick.h>
-#include <vtkRenderWindowInteractor.h>
-#include <vtkRendererCollection.h>
-#include <vtkWorldPointPicker.h>
-#include <vtkAbstractPicker.h>
-#include <vtkObjectFactory.h>
+#include <application/iph_types.h>
+
+#include <vtkRenderer.h>
 #include <vtkRenderWindow.h>
 #include <vtkSmartPointer.h>
-#include <QObject>
+#include <vtkObjectFactory.h>
+#include <vtkRenderWindowInteractor.h>
+#include <vtkInteractorStyleRubberBandPick.h>
 
-class MeshMouseInteractor : public QObject, public vtkInteractorStyleRubberBandPick {
-    Q_OBJECT
+class MeshMouseInteractor : public vtkInteractorStyleRubberBandPick {
+protected:
+    PickerMode pickerMode;
+    vtkIdType lastCellId;
 public:
     static MeshMouseInteractor* New();
     vtkTypeMacro(MeshMouseInteractor, vtkInteractorStyleRubberBandPick);
+    
+    MeshMouseInteractor();
 
-    virtual void OnMouseMove() {
-        vtkSmartPointer<vtkWorldPointPicker> picker = vtkSmartPointer<vtkWorldPointPicker>::New();
-        int *mousePosition = this->Interactor->GetEventPosition();
-        
-        picker->Pick(mousePosition[0], mousePosition[1], 0, this->GetDefaultRenderer());
-        
-        double* worldPosition = picker->GetPickPosition();
-        
-        emit coordinateChanged(worldPosition[0], worldPosition[1]);
-        
-        vtkInteractorStyleRubberBandPick::OnMouseMove();
-    }
+    virtual void OnLeftButtonDown();
+    virtual void OnMouseMove();
+    virtual void activatePicker(const PickerMode &pickerMode);
+    virtual void deactivatePicker();
 
-signals:
-    void coordinateChanged(double &x, double &y);
+    PickerMode getPickerMode() const;
 };
 
 #endif // MESH_MOUSE_INTERACTOR_H

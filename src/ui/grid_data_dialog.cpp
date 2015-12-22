@@ -122,7 +122,7 @@ void GridDataDialog::on_cbxMesh_currentIndexChanged(const QString &meshName) {
     }
 
     ui->vtkWidget->render(currentMesh);
-    ui->vtkWidget->toggleCellPick(false);
+    ui->vtkWidget->toggleCellPicker(false);
     pickIndividualCellAction->setChecked(false);
     pickCellSetAction->setChecked(false);
     pickIndividualCellAction->setEnabled(true);
@@ -292,7 +292,7 @@ void GridDataDialog::onPickIndividualCellAction(bool checked) {
     pickCellSetAction->setChecked(false);
     pickCellSetAction->setEnabled(!checked);
     ui->vtkWidget->toggleCellLabels(LabelType::UNDEFINED);
-    ui->vtkWidget->toggleCellPick(checked, PickerMode::INDIVIDUAL_CELL);
+    ui->vtkWidget->toggleCellPicker(checked, PickerMode::INDIVIDUAL_CELL);
 }
 
 void GridDataDialog::onPickCellSetAction(bool checked) {
@@ -306,13 +306,13 @@ void GridDataDialog::onPickCellSetAction(bool checked) {
     pickIndividualCellAction->setEnabled(!checked);
     ui->vtkWidget->toggleZoomArea(!checked);
     ui->vtkWidget->toggleCellLabels(LabelType::UNDEFINED);
-    ui->vtkWidget->toggleCellPick(checked, PickerMode::MULTIPLE_CELL);
+    ui->vtkWidget->toggleCellPicker(checked, PickerMode::MULTIPLE_CELL);
 }
 
 void GridDataDialog::onShowCellWeightsAction(bool checked) {
     toggleCellLabelsAction->setChecked(false);
     toggleCellLabelsAction->setEnabled(!checked);
-    ui->vtkWidget->toggleCellPick(false);
+    ui->vtkWidget->toggleCellPicker(false);
     ui->vtkWidget->toggleCellLabels(checked ? LabelType::CELL_WEIGHT : LabelType::UNDEFINED);
 }
 

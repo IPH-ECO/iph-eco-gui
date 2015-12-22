@@ -1,7 +1,9 @@
 #include <ui/grid_data_vtk_widget.h>
-#include <ui/main_window.h>
+
 #include <domain/color_gradient.h>
+#include <utility/grid_data_mouse_interactor.h>
 #include <ui/grid_data_context_menu.h>
+#include <ui/main_window.h>
 
 #include <vtkCellData.h>
 #include <vtkProperty.h>
@@ -24,7 +26,6 @@ vtkStandardNewMacro(GridDataMouseInteractor);
 GridDataVTKWidget::GridDataVTKWidget(QWidget *parent) : MeshVTKWidget(parent, vtkSmartPointer<GridDataMouseInteractor>::New()),
     selectedCellIds(nullptr), currentGridData(nullptr), showMap(true), isCellPickActivated(false)
 {
-    gridDataMouseInteractor = GridDataMouseInteractor::SafeDownCast(mouseInteractor);
     QObject::connect(this, SIGNAL(mouseEvent(QMouseEvent*)), this, SLOT(handleMouseEvent(QMouseEvent*)));
 }
 
@@ -41,8 +42,8 @@ void GridDataVTKWidget::render(Mesh *mesh) {
     renderer->RemoveActor(meshActor);
     renderer->RemoveActor(axesActor);
     
-    gridDataMouseInteractor->setMeshPolyData(meshPolyData);
-    gridDataMouseInteractor->deactivateCellPicking();
+    GridDataMouseInteractor::SafeDownCast(mouseInteractor)->setMeshPolyData(meshPolyData);
+    GridDataMouseInteractor::SafeDownCast(mouseInteractor)->deactivatePicker();
     
     vtkSmartPointer<vtkExtractEdges> extractEdges = vtkSmartPointer<vtkExtractEdges>::New();
     extractEdges->SetInputData(meshPolyData);
@@ -80,9 +81,6 @@ void GridDataVTKWidget::render(Mesh *mesh) {
     renderer->AddActor(meshActor);
     renderer->AddActor(axesActor);
     renderer->ResetCamera();
-    
-    MainWindow *mainWindow = static_cast<MainWindow*>(this->topLevelWidget());
-    QObject::connect(mouseInteractor, SIGNAL(coordinateChanged(double&, double&)), mainWindow, SLOT(setCoordinate(double&, double&)));
 }
 
 void GridDataVTKWidget::render(GridData *gridData) {
@@ -167,9 +165,6 @@ void GridDataVTKWidget::render(GridData *gridData) {
     renderer->AddActor(mapActor);
     renderer->AddActor(mapPointsActor);
     
-    MainWindow *mainWindow = static_cast<MainWindow*>(this->topLevelWidget());
-    QObject::connect(mouseInteractor, SIGNAL(coordinateChanged(double&, double&)), mainWindow, SLOT(setCoordinate(double&, double&)));
-    
     this->GetRenderWindow()->Render();
 }
 
@@ -213,14 +208,14 @@ vtkColorTransferFunction* GridDataVTKWidget::buildColorTransferFunction(bool isC
 }
 
 void GridDataVTKWidget::toggleMesh(bool show) {
-    vtkActor *selectionActor = gridDataMouseInteractor->getSelectionActor();
+    vtkActor *selectionActor = GridDataMouseInteractor::SafeDownCast(mouseInteractor)->getSelectionActor();
     
     this->showMesh = show;
     this->meshActor->SetVisibility(show);
 
     if (selectionActor) {
         selectionActor->SetVisibility(show);
-        gridDataMouseInteractor->getSelectionIdLabelsActor()->SetVisibility(show);
+        GridDataMouseInteractor::SafeDownCast(mouseInteractor)->getSelectionIdLabelsActor()->SetVisibility(show);
     }
     this->update();
 }
@@ -257,7 +252,7 @@ void GridDataVTKWidget::clear() {
 void GridDataVTKWidget::handleMouseEvent(QMouseEvent *event) {
     if (event->type() == QEvent::MouseButtonDblClick && event->button() == Qt::LeftButton) {
         if (isCellPickActivated) {
-            gridDataMouseInteractor->pickCell();
+            GridDataMouseInteractor::SafeDownCast(mouseInteractor)->pickCell();
         }
     } else if (event->type() == QEvent::MouseButtonRelease && event->button() == Qt::RightButton) {
         GridDataContextMenu *contextMenu = new GridDataContextMenu(this->parentWidget()); // GridDataDialog
@@ -270,9 +265,9 @@ void GridDataVTKWidget::handleMouseEvent(QMouseEvent *event) {
     }
 }
 
-void GridDataVTKWidget::toggleCellPick(bool activate, const PickerMode &pickerMode) {
+void GridDataVTKWidget::toggleCellPicker(bool activate, const PickerMode &pickerMode) {
     isCellPickActivated = activate;
-    gridDataMouseInteractor->deactivateCellPicking();
+    mouseInteractor->deactivatePicker();
     
     if (activate && pickerMode != PickerMode::NO_PICKER) {
         selectedCellIds = vtkSmartPointer<vtkIdTypeArray>::New();
@@ -282,7 +277,8 @@ void GridDataVTKWidget::toggleCellPick(bool activate, const PickerMode &pickerMo
         if (pickerMode == PickerMode::MULTIPLE_CELL) {
             mouseInteractor->StartSelect();
         }
-        gridDataMouseInteractor->activateCellPicking(pickerMode, selectedCellIds);
+        
+        GridDataMouseInteractor::SafeDownCast(mouseInteractor)->activatePickerWithCellIds(pickerMode, selectedCellIds);
     }
 }
 

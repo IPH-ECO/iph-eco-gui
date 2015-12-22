@@ -48,6 +48,7 @@ private:
     int outputTimeInterval;
     int autosaveTimeInterval;
     int progress;
+    QFileInfoList outputFiles;
     
 	// Transient attributes
 	SimulationDataType::Simulation *simulationStruct;
@@ -114,7 +115,7 @@ public:
     void setProgress(int progress);
     QMap<QString, LayerProperties*> getSelectedLayers() const;
     void addSelectedLayer(const QString &layer);
-    QFileInfoList getOutputFiles() const;
+    QFileInfoList getOutputFiles(bool scanOutputDirectory = false);
     Mesh* getMesh() const;
     SimulationDataType::Simulation* toSimulationDataType();
 

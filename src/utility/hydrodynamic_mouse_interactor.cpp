@@ -17,20 +17,9 @@
 #include <QColor>
 
 HydrodynamicMouseInteractor::HydrodynamicMouseInteractor() :
-    hydrodynamicConfiguration(nullptr), currentBoundaryCondition(nullptr), pickerMode(PickerMode::NO_PICKER), lastCellId(-1)
+    hydrodynamicConfiguration(nullptr),
+    currentBoundaryCondition(nullptr)
 {}
-
-void HydrodynamicMouseInteractor::OnLeftButtonDown() {
-    int *clickPosition = this->GetInteractor()->GetEventPosition();
-    vtkSmartPointer<vtkCellPicker> picker = vtkSmartPointer<vtkCellPicker>::New();
-    
-    picker->SetTolerance(0.0005);
-    picker->Pick(clickPosition[0], clickPosition[1], 0, this->GetDefaultRenderer());
-    
-    lastCellId = picker->GetCellId();
-    
-    vtkInteractorStyleRubberBandPick::OnLeftButtonDown();
-}
 
 void HydrodynamicMouseInteractor::OnLeftButtonUp() {
     vtkInteractorStyleRubberBandPick::OnLeftButtonUp();
@@ -126,7 +115,7 @@ void HydrodynamicMouseInteractor::renderBoundaryCondition(BoundaryCondition *bou
     this->GetDefaultRenderer()->GetRenderWindow()->Render();
     
     if (pickerMode != PickerMode::NO_PICKER) {
-        emit objectSelected();
+//        emit objectSelected();
     }
 }
 
@@ -149,9 +138,6 @@ void HydrodynamicMouseInteractor::highlightBoundaryCondition(BoundaryCondition *
 }
 
 void HydrodynamicMouseInteractor::activatePicker(const PickerMode &pickerMode) {
-    this->pickerMode = pickerMode;
-    this->CurrentMode = 0; // VTKISRBP_ORIENT: resets mouse navigation mode
-    
     if (pickerMode == PickerMode::MULTIPLE_EDGE) {
         vtkSmartPointer<vtkPolyDataMapper> boundaryEdgesMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
         boundaryEdgesMapper->SetInputData(boundaryPolyData);
@@ -166,11 +152,8 @@ void HydrodynamicMouseInteractor::activatePicker(const PickerMode &pickerMode) {
         this->GetDefaultRenderer()->AddActor(boundaryEdgesActor);
         this->GetDefaultRenderer()->GetRenderWindow()->Render();
     }
-}
 
-void HydrodynamicMouseInteractor::deactivatePicker() {
-    pickerMode = PickerMode::NO_PICKER;
-    this->CurrentMode = 0;
+    MeshMouseInteractor::activatePicker(pickerMode);
 }
 
 void HydrodynamicMouseInteractor::clearSelection() {
@@ -196,16 +179,12 @@ void HydrodynamicMouseInteractor::setHydrodynamicConfiguration(HydrodynamicConfi
         this->boundaryPolyData = hydrodynamicConfiguration->getGridDataConfiguration()->getMesh()->getBoundaryPolyData();
         
         this->clearSelection();
-        this->deactivatePicker();
+        MeshMouseInteractor::deactivatePicker();
     }
 }
 
 void HydrodynamicMouseInteractor::setBoundaryCondition(BoundaryCondition *boundaryCondition) {
     currentBoundaryCondition = boundaryCondition;
-}
-
-PickerMode HydrodynamicMouseInteractor::getPickerMode() const {
-    return pickerMode;
 }
 
 vtkSmartPointer<vtkPolyData> HydrodynamicMouseInteractor::getTargetPolyData(BoundaryCondition *boundaryCondition) const {

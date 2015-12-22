@@ -24,6 +24,7 @@ public:
     ~MainWindow();
     
     QToolBar* getToolBar() const;
+    void setCoordinate(double *coordinate);
 
 protected:
     void closeEvent(QCloseEvent *);
@@ -56,9 +57,6 @@ private slots:
     
 public slots:
     void on_actionSaveProject_triggered();
-
-public slots:
-    void setCoordinate(double &x, double &y);
 
 private:
     Ui::MainWindow *ui;

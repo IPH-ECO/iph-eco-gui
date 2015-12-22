@@ -1,7 +1,7 @@
 #include <ui/simulation_vtk_widget.h>
 
-#include <ui/main_window.h>
 #include <exceptions/simulation_exception.h>
+#include <utility/time_series_chart_mouse_interactor.h>
 
 #include <QFile>
 #include <QByteArray>
@@ -31,15 +31,19 @@
 #include <vtkFFMPEGWriter.h>
 #endif
 
+vtkStandardNewMacro(TimeSeriesChartMouseInteractor);
+
 SimulationVTKWidget::SimulationVTKWidget(QWidget *parent) :
-    MeshVTKWidget(parent),
+    MeshVTKWidget(parent, vtkSmartPointer<TimeSeriesChartMouseInteractor>::New()),
     MAGNITUDE_ARRAY_NAME("VectorMagnitude"),
     timeStampActor(vtkSmartPointer<vtkTextActor>::New()),
     visibleScalarBarActors({ nullptr, nullptr }),
     currentSimulation(nullptr),
     layerProperties(nullptr),
     axesScale("1 1 1")
-{}
+{
+    QObject::connect(this, SIGNAL(mouseEvent(QMouseEvent*)), this, SLOT(handleMouseEvent(QMouseEvent*)));
+}
 
 void SimulationVTKWidget::render(Simulation *simulation, const QString &layer, const QString &component, int frame) {
     if (currentSimulation != simulation) {
@@ -490,4 +494,23 @@ void SimulationVTKWidget::exportVideo(int initialFrame, int finalFrame, int fram
 
 void SimulationVTKWidget::cancelExportVideo() {
     this->cancelExportVideoOperation = true;
+}
+
+int SimulationVTKWidget::getNumberOfMapLayers() const {
+    return layerGrid->GetNumberOfCells() / currentSimulation->getMesh()->getMeshPolyData()->GetNumberOfCells();
+}
+
+void SimulationVTKWidget::togglePicker(bool activate) {
+    TimeSeriesChartMouseInteractor *timeSeriesChartMouseInteractor = TimeSeriesChartMouseInteractor::SafeDownCast(mouseInteractor);
+    if (activate) {
+        timeSeriesChartMouseInteractor->activatePicker(PickerMode::INDIVIDUAL_CELL);
+    } else {
+        timeSeriesChartMouseInteractor->deactivatePicker();
+    }
+}
+
+void SimulationVTKWidget::handleMouseEvent(QMouseEvent *event) {
+    if (event->type() == QEvent::MouseButtonDblClick && event->button() == Qt::LeftButton && mouseInteractor->getPickerMode() != PickerMode::NO_PICKER) {
+        TimeSeriesChartMouseInteractor::SafeDownCast(mouseInteractor)->pickCell();
+    }
 }

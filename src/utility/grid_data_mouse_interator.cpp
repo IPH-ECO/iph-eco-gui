@@ -15,20 +15,8 @@
 #include <vtkCellData.h>
 
 GridDataMouseInteractor::GridDataMouseInteractor() :
-    selectionIdLabelsActor(nullptr), selectionActor(nullptr), cellIdsArray(nullptr), meshPolyData(nullptr), pickerMode(PickerMode::NO_PICKER), lastCellId(-1)
+    selectionIdLabelsActor(nullptr), selectionActor(nullptr), cellIdsArray(nullptr), meshPolyData(nullptr)
 {}
-
-void GridDataMouseInteractor::OnLeftButtonDown() {
-    int *clickPosition = this->GetInteractor()->GetEventPosition();
-    vtkSmartPointer<vtkCellPicker> picker = vtkSmartPointer<vtkCellPicker>::New();
-    
-    picker->SetTolerance(0.0005);
-    picker->Pick(clickPosition[0], clickPosition[1], 0, this->GetDefaultRenderer());
-    
-    lastCellId = picker->GetCellId();
-    
-    vtkInteractorStyleRubberBandPick::OnLeftButtonDown();
-}
 
 void GridDataMouseInteractor::OnLeftButtonUp() {
     vtkInteractorStyleRubberBandPick::OnLeftButtonUp();
@@ -128,19 +116,18 @@ vtkActor2D* GridDataMouseInteractor::getSelectionIdLabelsActor() {
     return selectionIdLabelsActor;
 }
 
-void GridDataMouseInteractor::activateCellPicking(const PickerMode &pickerMode, vtkIdTypeArray *cellIdsArray) {
+void GridDataMouseInteractor::activatePickerWithCellIds(const PickerMode &pickerMode, vtkIdTypeArray *cellIdsArray) {
     selectionActor = vtkSmartPointer<vtkActor>::New();
     selectionIdLabelsActor = vtkSmartPointer<vtkActor2D>::New();
     this->cellIdsArray = cellIdsArray;
     this->pickerMode = pickerMode;
-    
+
     this->GetDefaultRenderer()->AddActor(selectionActor);
 }
 
-void GridDataMouseInteractor::deactivateCellPicking() {
+void GridDataMouseInteractor::deactivatePicker() {
+    MeshMouseInteractor::deactivatePicker();
     this->cellIdsArray = nullptr;
-    this->pickerMode = PickerMode::NO_PICKER;
-    this->CurrentMode = 0; // VTKISRBP_ORIENT
     this->GetDefaultRenderer()->RemoveActor(selectionActor);
     this->GetDefaultRenderer()->RemoveActor2D(selectionIdLabelsActor);
     this->GetDefaultRenderer()->GetRenderWindow()->Render();

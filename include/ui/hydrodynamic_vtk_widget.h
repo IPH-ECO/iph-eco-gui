@@ -2,15 +2,14 @@
 #define HYDRODYNAMIC_VTK_WIDGET_H
 
 #include <domain/hydrodynamic_configuration.h>
-#include "mesh_vtk_widget.h"
 #include <utility/hydrodynamic_mouse_interactor.h>
+#include "mesh_vtk_widget.h"
 
 #include <QMouseEvent>
 
 class HydrodynamicVTKWidget : public MeshVTKWidget {
     Q_OBJECT
 private:
-    vtkSmartPointer<HydrodynamicMouseInteractor> hydrodynamicMouseInteractor;
     vtkSmartPointer<vtkIdTypeArray> selectedCellIds;
 private slots:
     void handleMouseEvent(QMouseEvent *event);

@@ -2,7 +2,6 @@
 #define GRID_DATA_VTK_WIDGET_H
 
 #include <domain/grid_data.h>
-#include <utility/grid_data_mouse_interactor.h>
 #include "cell_update_dialog.h"
 #include "grid_data_context_menu.h"
 #include "mesh_vtk_widget.h"
@@ -26,8 +25,6 @@ class GridDataVTKWidget : public MeshVTKWidget {
     friend class CellUpdateDialog;
     
 private:
-    vtkSmartPointer<GridDataMouseInteractor> gridDataMouseInteractor;
-    
     vtkSmartPointer<vtkActor> mapActor;
     vtkSmartPointer<vtkScalarBarWidget> mapScalarBarWidget;
     vtkSmartPointer<vtkActor> mapPointsActor;
@@ -51,7 +48,7 @@ public:
     void render(Mesh *mesh);
     void render(GridData *gridData);
     void clear();
-    void toggleCellPick(bool activate, const PickerMode &pickerMode = PickerMode::NO_PICKER);
+    void toggleCellPicker(bool activate, const PickerMode &pickerMode = PickerMode::NO_PICKER);
     void toggleCellLabels(const LabelType &labelType = LabelType::UNDEFINED);
     void lockView(bool lock);
 public slots:
