@@ -21,7 +21,7 @@ TimeSeriesChartDialog::TimeSeriesChartDialog(QWidget *parent, Simulation *simula
     btnExportToCSV->setIcon(QIcon(":/icons/text-csv.png"));
     btnExportToCSV->setToolTip("Export chart data to CSV");
     ui->buttonBox->addButton(btnExportToCSV, QDialogButtonBox::ActionRole);
-    connect(btnExportToCSV, SIGNAL(clicked()), this, SLOT(exportChartToCSV()));
+    connect(btnExportToCSV, SIGNAL(clicked()), this, SLOT(btnExportToCSV_clicked()));
 }
 
 TimeSeriesChartDialog::~TimeSeriesChartDialog() {
@@ -42,4 +42,8 @@ void TimeSeriesChartDialog::on_buttonBox_clicked(QAbstractButton *button) {
     if (standardButton == QDialogButtonBox::Cancel) {
         QDialog::reject();
     }
+}
+
+void TimeSeriesChartDialog::btnExportToCSV_clicked() {
+    
 }

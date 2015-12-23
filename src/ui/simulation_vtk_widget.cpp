@@ -511,6 +511,7 @@ void SimulationVTKWidget::togglePicker(bool activate) {
 
 void SimulationVTKWidget::handleMouseEvent(QMouseEvent *event) {
     if (event->type() == QEvent::MouseButtonDblClick && event->button() == Qt::LeftButton && mouseInteractor->getPickerMode() != PickerMode::NO_PICKER) {
-        TimeSeriesChartMouseInteractor::SafeDownCast(mouseInteractor)->pickCell();
+        QString layerKey = currentLayer + "-" + currentComponent;
+        TimeSeriesChartMouseInteractor::SafeDownCast(mouseInteractor)->pickCell(layerGrid, layerKey);
     }
 }

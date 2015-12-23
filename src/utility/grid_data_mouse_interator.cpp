@@ -15,7 +15,7 @@
 #include <vtkCellData.h>
 
 GridDataMouseInteractor::GridDataMouseInteractor() :
-    selectionIdLabelsActor(nullptr), selectionActor(nullptr), cellIdsArray(nullptr), meshPolyData(nullptr)
+    cellIdsArray(nullptr), meshPolyData(nullptr)
 {}
 
 void GridDataMouseInteractor::OnLeftButtonUp() {

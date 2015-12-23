@@ -23,6 +23,7 @@ private slots:
     void on_btnBrowseShapefile_clicked();
     void on_btnPlot_clicked();
     void on_buttonBox_clicked(QAbstractButton *button);
+    void btnExportToCSV_clicked();
 };
 
 #endif // TIME_SERIES_CHART_DIALOG_H
