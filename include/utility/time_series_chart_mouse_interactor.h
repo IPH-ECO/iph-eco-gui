@@ -20,6 +20,8 @@ public:
     TimeSeriesChartMouseInteractor();
     
     void pickCell(vtkSmartPointer<vtkUnstructuredGrid> layerGrid, const QString &layerKey);
+    vtkSmartPointer<vtkIdTypeArray> getCellIdArray(const QString &layerKey) const;
+    void deactivatePicker(const QString &layerKey);
 };
 
 #endif // TIME_SERIES_CHART_MOUSE_INTERACTOR_H

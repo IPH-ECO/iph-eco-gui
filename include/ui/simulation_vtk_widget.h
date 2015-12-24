@@ -40,16 +40,22 @@ private:
     vtkSmartPointer<vtkDoubleArray> buildMagnitudeArray();
     vtkSmartPointer<vtkColorTransferFunction> buildColorTransferFunction(double *scalarBarRange);
     vtkSmartPointer<vtkPolyData> renderVectors();
-    vtkSmartPointer<vtkScalarBarActor> renderScalarBar(const QString &layerKey, double *scalarBarRange);
+    vtkSmartPointer<vtkScalarBarActor> renderScalarBar(double *scalarBarRange);
 private slots:
     void handleMouseEvent(QMouseEvent *event);
 public:
 	explicit SimulationVTKWidget(QWidget *parent);
+    
+    inline QString getLayerKey() const {
+        return currentLayer + "-" + currentComponent;
+    }
+    
 	void render(Simulation *simulation, const QString &layer, const QString &component, int frame);
     void removeLayer(const QString &layerKey);
     void setAxesScale(const QString &axesScale);
     void updateOutputFileList();
     int getNumberOfMapLayers() const;
+    Simulation* getCurrentSimulation() const;
     void togglePicker(bool activate);
     virtual void clear();
 public slots:

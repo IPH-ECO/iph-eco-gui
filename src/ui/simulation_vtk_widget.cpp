@@ -22,7 +22,6 @@
 #include <vtkWindowToImageFilter.h>
 #include <vtkColorTransferFunction.h>
 #include <vtkTransformPolyDataFilter.h>
-#include <vtkScalarBarRepresentation.h>
 #include <vtkGenericDataObjectReader.h>
 
 #ifdef _WIN32
@@ -77,12 +76,11 @@ void SimulationVTKWidget::render(Simulation *simulation, const QString &layer, c
         throw SimulationException("Frame out of range.");
     }
     
-    QString layerKey = QString("%1-%2").arg(layer).arg(component);
-    
-    layerProperties = simulation->getSelectedLayers().value(layerKey);
     currentLayer = layer;
     currentComponent = component;
     currentFrame = frame;
+    layerProperties = simulation->getSelectedLayers().value(getLayerKey());
+    
     
     std::string timeStamp = readFrame(frame);
     std::string layerArrayName = layer.toStdString();
@@ -116,7 +114,7 @@ void SimulationVTKWidget::render(Simulation *simulation, const QString &layer, c
         
         vectorsPolyData->GetPointData()->GetArray(layerArrayName.c_str())->GetRange(layerRange);
         
-        vtkSmartPointer<vtkScalarBarActor> scalarBarActor = renderScalarBar(layerKey, layerRange);
+        vtkSmartPointer<vtkScalarBarActor> scalarBarActor = renderScalarBar(layerRange);
         vtkSmartPointer<vtkPolyDataMapper> vectorsPolyDataMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
         vectorsPolyDataMapper->SetInputData(vectorsPolyData);
         vectorsPolyDataMapper->SetScalarModeToUsePointData();
@@ -125,11 +123,11 @@ void SimulationVTKWidget::render(Simulation *simulation, const QString &layer, c
         
         vectorsActor->SetMapper(vectorsPolyDataMapper);
         
-        if (vectorsActors.value(layerKey)) {
-            renderer->RemoveActor(vectorsActors.take(layerKey));
+        if (vectorsActors.value(getLayerKey())) {
+            renderer->RemoveActor(vectorsActors.take(getLayerKey()));
         }
         
-        vectorsActors.insert(layerKey, vectorsActor);
+        vectorsActors.insert(getLayerKey(), vectorsActor);
         renderer->AddActor(vectorsActor);
         
         vectorsActor->GetProperty()->SetOpacity(layerProperties->getVectorsOpacity() / 100.0);
@@ -139,7 +137,7 @@ void SimulationVTKWidget::render(Simulation *simulation, const QString &layer, c
             vectorsActor->GetProperty()->SetColor(vectorColor.redF(), vectorColor.greenF(), vectorColor.blueF());
         }
     } else {
-        vtkSmartPointer<vtkScalarBarActor> scalarBarActor = renderScalarBar(layerKey, layerRange);
+        vtkSmartPointer<vtkScalarBarActor> scalarBarActor = renderScalarBar(layerRange);
         
         layerDataSetMapper->SetInputData(layerGrid);
         layerDataSetMapper->SetLookupTable(scalarBarActor->GetLookupTable());
@@ -217,9 +215,9 @@ vtkSmartPointer<vtkDoubleArray> SimulationVTKWidget::buildMagnitudeArray() {
     return vtkSmartPointer<vtkDoubleArray>(vtkDoubleArray::SafeDownCast(magnitudePolyData->GetCellData()->GetArray(MAGNITUDE_ARRAY_NAME)));
 }
 
-vtkSmartPointer<vtkScalarBarActor> SimulationVTKWidget::renderScalarBar(const QString &layerKey, double *scalarBarRange) {
-    vtkSmartPointer<vtkScalarBarActor> scalarBarActor = scalarBarActors.value(layerKey);
-    int actorPosition = visibleScalarBarActors.contains(layerKey) ? visibleScalarBarActors.indexOf(layerKey) : visibleScalarBarActors.indexOf(nullptr);
+vtkSmartPointer<vtkScalarBarActor> SimulationVTKWidget::renderScalarBar(double *scalarBarRange) {
+    vtkSmartPointer<vtkScalarBarActor> scalarBarActor = scalarBarActors.value(getLayerKey());
+    int actorPosition = visibleScalarBarActors.contains(getLayerKey()) ? visibleScalarBarActors.indexOf(getLayerKey()) : visibleScalarBarActors.indexOf(nullptr);
     bool hasPosition = actorPosition > -1;
     bool scalarBarVisibility = currentComponent == "Vector" ? layerProperties->getVectorsLegend() : layerProperties->getMapLegend();
     
@@ -240,7 +238,7 @@ vtkSmartPointer<vtkScalarBarActor> SimulationVTKWidget::renderScalarBar(const QS
     }
     
     if (hasPosition) {
-        visibleScalarBarActors[actorPosition] = layerKey;
+        visibleScalarBarActors[actorPosition] = getLayerKey();
     }
     
     vtkSmartPointer<vtkColorTransferFunction> colorTransferFunction = buildColorTransferFunction(scalarBarRange);
@@ -248,7 +246,7 @@ vtkSmartPointer<vtkScalarBarActor> SimulationVTKWidget::renderScalarBar(const QS
     scalarBarActor->SetVisibility(scalarBarVisibility && hasPosition);
 
     renderer->AddActor2D(scalarBarActor);
-    scalarBarActors.insert(layerKey, scalarBarActor);
+    scalarBarActors.insert(getLayerKey(), scalarBarActor);
     
     return scalarBarActor;
 }
@@ -457,7 +455,6 @@ void SimulationVTKWidget::exportVideo(int initialFrame, int finalFrame, int fram
 #else
     vtkSmartPointer<vtkFFMPEGWriter> writer = vtkSmartPointer<vtkFFMPEGWriter>::New();
 #endif
-	
 	QByteArray outputFileByteArray = outputFile.toLocal8Bit();
 	
 	writer->SetQuality(2);
@@ -500,18 +497,21 @@ int SimulationVTKWidget::getNumberOfMapLayers() const {
     return layerGrid->GetNumberOfCells() / currentSimulation->getMesh()->getMeshPolyData()->GetNumberOfCells();
 }
 
+Simulation* SimulationVTKWidget::getCurrentSimulation() const {
+    return currentSimulation;
+}
+
 void SimulationVTKWidget::togglePicker(bool activate) {
     TimeSeriesChartMouseInteractor *timeSeriesChartMouseInteractor = TimeSeriesChartMouseInteractor::SafeDownCast(mouseInteractor);
     if (activate) {
         timeSeriesChartMouseInteractor->activatePicker(PickerMode::INDIVIDUAL_CELL);
     } else {
-        timeSeriesChartMouseInteractor->deactivatePicker();
+        timeSeriesChartMouseInteractor->deactivatePicker(getLayerKey());
     }
 }
 
 void SimulationVTKWidget::handleMouseEvent(QMouseEvent *event) {
     if (event->type() == QEvent::MouseButtonDblClick && event->button() == Qt::LeftButton && mouseInteractor->getPickerMode() != PickerMode::NO_PICKER) {
-        QString layerKey = currentLayer + "-" + currentComponent;
-        TimeSeriesChartMouseInteractor::SafeDownCast(mouseInteractor)->pickCell(layerGrid, layerKey);
+        TimeSeriesChartMouseInteractor::SafeDownCast(mouseInteractor)->pickCell(layerGrid, getLayerKey());
     }
 }

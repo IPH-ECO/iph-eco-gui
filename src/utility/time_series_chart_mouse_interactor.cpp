@@ -72,3 +72,21 @@ void TimeSeriesChartMouseInteractor::pickCell(vtkSmartPointer<vtkUnstructuredGri
         this->GetDefaultRenderer()->GetRenderWindow()->Render();
     }
 }
+
+vtkSmartPointer<vtkIdTypeArray> TimeSeriesChartMouseInteractor::getCellIdArray(const QString &layerKey) const {
+    return cellIdMap.value(layerKey);
+}
+
+void TimeSeriesChartMouseInteractor::deactivatePicker(const QString &layerKey) {
+    vtkSmartPointer<vtkIdTypeArray> cellIds = this->cellIdMap.value(layerKey);
+    
+    if (cellIds) {
+        for (vtkIdType i = 0; i < cellIds->GetNumberOfTuples(); i++) {
+            this->GetDefaultRenderer()->RemoveActor(this->cellActors.value(i));
+        }
+    }
+    
+    this->cellIdMap.remove(layerKey);
+    
+    MeshMouseInteractor::deactivatePicker();
+}

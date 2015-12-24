@@ -299,9 +299,7 @@ void ViewResultsDialog::fillLayersComboBox(Simulation *simulation) {
 }
 
 void ViewResultsDialog::showTimeSeriesChart() {
-    int numberOfMapLayers = ui->vtkWidget->getNumberOfMapLayers();
-    TimeSeriesChartDialog *dialog = new TimeSeriesChartDialog(this, currentSimulation, numberOfMapLayers);
-    ui->vtkWidget->togglePicker(true);
+    TimeSeriesChartDialog *dialog = new TimeSeriesChartDialog(this, ui->vtkWidget);
     dialog->show();
 }
 
