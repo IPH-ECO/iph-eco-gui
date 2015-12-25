@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>907</width>
-    <height>691</height>
+    <width>798</width>
+    <height>587</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -218,11 +218,26 @@
       </layout>
      </item>
      <item>
-      <widget class="QPushButton" name="btnPlot">
-       <property name="text">
-        <string>Plot</string>
-       </property>
-      </widget>
+      <layout class="QVBoxLayout" name="verticalLayout_3">
+       <item>
+        <widget class="QToolButton" name="btnPicker">
+         <property name="text">
+          <string/>
+         </property>
+         <property name="icon">
+          <iconset resource="../../icons.qrc">
+           <normaloff>:/icons/individual-object-picker.png</normaloff>:/icons/individual-object-picker.png</iconset>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="btnPlot">
+         <property name="text">
+          <string>Plot</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </item>
     </layout>
    </item>
@@ -235,7 +250,7 @@
       <enum>Qt::Horizontal</enum>
      </property>
      <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+      <set>QDialogButtonBox::Close</set>
      </property>
     </widget>
    </item>
@@ -258,7 +273,9 @@
   <tabstop>edtShapefile</tabstop>
   <tabstop>btnBrowseShapefile</tabstop>
  </tabstops>
- <resources/>
+ <resources>
+  <include location="../../icons.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>chkVerticalProfile</sender>

@@ -21,6 +21,7 @@ public:
     
     void pickCell(vtkSmartPointer<vtkUnstructuredGrid> layerGrid, const QString &layerKey);
     vtkSmartPointer<vtkIdTypeArray> getCellIdArray(const QString &layerKey) const;
+    void getCellColor(const vtkIdType &cellId, double color[3]) const;
     void deactivatePicker(const QString &layerKey);
 };
 

@@ -6,9 +6,10 @@
 
 #include <QWidget>
 #include <QDialog>
+#include <vtkChartXY.h>
 #include <QFileInfoList>
-#include <vtkContextView.h>
 #include <QAbstractButton>
+#include <vtkContextView.h>
 
 namespace Ui {
 	class TimeSeriesChartDialog;
@@ -20,6 +21,7 @@ private:
     Ui::TimeSeriesChartDialog *ui;
     SimulationVTKWidget *simulationVTKWidget;
     vtkSmartPointer<vtkContextView> view;
+    vtkSmartPointer<vtkChartXY> chart;
     
     virtual void reject();
 public:

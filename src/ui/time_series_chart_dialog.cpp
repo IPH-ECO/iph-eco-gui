@@ -3,12 +3,12 @@
 
 #include <utility/time_series_chart_mouse_interactor.h>
 
+#include <vtkPen.h>
 #include <QDateTime>
 #include <vtkAxis.h>
 #include <vtkPlot.h>
 #include <vtkTable.h>
 #include <QToolButton>
-#include <vtkChartXY.h>
 #include <vtkCellData.h>
 #include <vtkRenderer.h>
 #include <vtkStringArray.h>
@@ -20,7 +20,8 @@ TimeSeriesChartDialog::TimeSeriesChartDialog(QWidget *parent, SimulationVTKWidge
 	QDialog(parent),
 	ui(new Ui::TimeSeriesChartDialog),
     simulationVTKWidget(simulationVTKWidget),
-    view(vtkSmartPointer<vtkContextView>::New())
+    view(vtkSmartPointer<vtkContextView>::New()),
+    chart(vtkSmartPointer<vtkChartXY>::New())
 {
     Simulation *simulation = simulationVTKWidget->getCurrentSimulation();
     
@@ -45,6 +46,9 @@ TimeSeriesChartDialog::TimeSeriesChartDialog(QWidget *parent, SimulationVTKWidge
     connect(btnExportToCSV, SIGNAL(clicked()), this, SLOT(btnExportToCSV_clicked()));
 
     simulationVTKWidget->togglePicker(true);
+    
+    chart->SetShowLegend(true);
+    view->GetScene()->AddItem(chart);
 }
 
 TimeSeriesChartDialog::~TimeSeriesChartDialog() {
@@ -56,53 +60,70 @@ void TimeSeriesChartDialog::on_btnBrowseShapefile_clicked() {
 }
 
 void TimeSeriesChartDialog::on_btnPlot_clicked() {
-    vtkSmartPointer<vtkStringArray> timeStampStrings = vtkSmartPointer<vtkStringArray>::New();
-//    timeStampStrings->SetName("Time");
+    TimeSeriesChartMouseInteractor *timeSeriesInteractor = TimeSeriesChartMouseInteractor::SafeDownCast(simulationVTKWidget->GetInteractor()->GetInteractorStyle());
+    vtkSmartPointer<vtkIdTypeArray> pickedCellsIds = timeSeriesInteractor->getCellIdArray(simulationVTKWidget->getLayerKey());
+    QByteArray layerNameByteArray = simulationVTKWidget->getLayerKey().split("-").first().toLocal8Bit();
+    const char *layerName = layerNameByteArray.data();
     
+    QFileInfoList outputFiles = simulationVTKWidget->getCurrentSimulation()->getOutputFiles();
+    int outputFilesSize = outputFiles.size();
+    
+    vtkSmartPointer<vtkStringArray> timeStampStrings = vtkSmartPointer<vtkStringArray>::New();
     vtkSmartPointer<vtkDoubleArray> timeStamps = vtkSmartPointer<vtkDoubleArray>::New();
+    timeStamps->SetNumberOfTuples(outputFilesSize);
     timeStamps->SetName("Time");
     
-    vtkSmartPointer<vtkDoubleArray> scalars = vtkSmartPointer<vtkDoubleArray>::New();
-    scalars->SetName("Y Axis");
+    vtkSmartPointer<vtkTable> table = vtkSmartPointer<vtkTable>::New();
+    table->AddColumn(timeStamps); // X axis
     
-    TimeSeriesChartMouseInteractor *timeSeriesInteractor = TimeSeriesChartMouseInteractor::SafeDownCast(simulationVTKWidget->GetInteractor()->GetInteractorStyle());
-    QString layerKey = simulationVTKWidget->getLayerKey();
-    QByteArray layerNameByteArray = layerKey.split("-").first().toLocal8Bit();
-    vtkIdType cellId = timeSeriesInteractor->getCellIdArray(simulationVTKWidget->getLayerKey())->GetValue(0);
+    chart->ClearPlots();
     
-    QFileInfoList outputFilesInfo = simulationVTKWidget->getCurrentSimulation()->getOutputFiles();
-    
-    for (QFileInfo outputFileInfo : outputFilesInfo) {
-        QByteArray fileNameByteArray = outputFileInfo.absoluteFilePath().toLocal8Bit();
+    for (int i = 0; i < outputFilesSize; i++) {
         vtkSmartPointer<vtkGenericDataObjectReader> reader = vtkSmartPointer<vtkGenericDataObjectReader>::New();
+        QByteArray fileNameByteArray = outputFiles.at(i).absoluteFilePath().toLocal8Bit();
         reader->SetFileName(fileNameByteArray.data());
         reader->Update();
         
-        uint timeStamp = QDateTime::fromString(reader->GetHeader(), Qt::ISODate).toTime_t();
+        std::string headerWithLineBreak = reader->GetHeader();
+        const char *header = headerWithLineBreak.erase(headerWithLineBreak.length() - 1).c_str();
+        QDateTime dateTime = QDateTime::fromString(header, Qt::ISODate);
         
-        timeStamps->InsertNextValue(timeStamp);
-        timeStampStrings->InsertNextValue(reader->GetHeader());
+        dateTime.setTimeSpec(Qt::UTC);
+        table->SetValue(i, 0, dateTime.toTime_t());
+        timeStampStrings->InsertNextValue(header);
         
-        vtkSmartPointer<vtkUnstructuredGrid> unstructuredGrid = reader->GetUnstructuredGridOutput();
-        scalars->InsertNextValue(unstructuredGrid->GetCellData()->GetArray(layerNameByteArray.data())->GetTuple1(cellId));
+        for (vtkIdType j = 0; j < pickedCellsIds->GetNumberOfTuples(); j++) {
+            vtkIdType pickedCellId = pickedCellsIds->GetValue(j);
+            
+            if (j == table->GetNumberOfColumns() - 1) {
+                vtkSmartPointer<vtkDoubleArray> cellCurve = vtkSmartPointer<vtkDoubleArray>::New();
+                std::string cellCurveName = QString("Cell %1").arg(pickedCellId).toStdString();
+                cellCurve->SetNumberOfTuples(outputFilesSize);
+                cellCurve->SetName(cellCurveName.c_str());
+                
+                table->AddColumn(cellCurve);
+            }
+            
+            table->SetValue(i, j + 1, reader->GetUnstructuredGridOutput()->GetCellData()->GetArray(layerName)->GetTuple1(pickedCellId));
+        }
     }
     
-    vtkSmartPointer<vtkTable> table = vtkSmartPointer<vtkTable>::New();
-    table->AddColumn(timeStamps);
-    table->AddColumn(scalars);
-    
-    vtkSmartPointer<vtkChartXY> chart = vtkSmartPointer<vtkChartXY>::New();
-    view->GetScene()->AddItem(chart);
-    
-    vtkSmartPointer<vtkPlot> line = chart->AddPlot(vtkChart::LINE);
-    line->SetInputData(table, 0, 1);
-    line->SetColor(0, 255, 0, 255);
-    line->SetWidth(1.0);
+    for (vtkIdType i = 0; i < pickedCellsIds->GetNumberOfTuples(); i++) {
+        double lineColor[3];
+        timeSeriesInteractor->getCellColor(pickedCellsIds->GetValue(i), lineColor);
+        
+        std::cout << pickedCellsIds->GetValue(i) << std::endl;
+        
+        vtkSmartPointer<vtkPlot> line = chart->AddPlot(vtkChart::LINE);
+        line->GetPen()->SetColor(lineColor[0], lineColor[1], lineColor[2]);
+        line->SetInputData(table, 0, i + 1);
+        line->SetLabel(table->GetColumnName(i + 1));
+        line->SetWidth(3.0);
+    }
     
     vtkSmartPointer<vtkAxis> bottomAxis = chart->GetAxis(vtkAxis::BOTTOM);
-//    bottomAxis->SetCustomTickPositions(timeStamps, timeStampStrings);
     bottomAxis->SetNumberOfTicks(2);
-//    bottomAxis->SetBehavior(vtkAxis::FIXED);
+    bottomAxis->SetCustomTickPositions(timeStamps, timeStampStrings);
     
     ui->vtkWidget->GetRenderWindow()->Render();
 }
@@ -110,7 +131,7 @@ void TimeSeriesChartDialog::on_btnPlot_clicked() {
 void TimeSeriesChartDialog::on_buttonBox_clicked(QAbstractButton *button) {
     QDialogButtonBox::StandardButton standardButton = ui->buttonBox->standardButton(button);
 
-    if (standardButton == QDialogButtonBox::Cancel) {
+    if (standardButton == QDialogButtonBox::Close) {
         TimeSeriesChartDialog::reject();
     }
 }

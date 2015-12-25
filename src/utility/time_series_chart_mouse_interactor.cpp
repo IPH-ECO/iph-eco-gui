@@ -37,7 +37,8 @@ void TimeSeriesChartMouseInteractor::pickCell(vtkSmartPointer<vtkUnstructuredGri
         
         vtkSmartPointer<vtkUnsignedCharArray> cellData = vtkSmartPointer<vtkUnsignedCharArray>::New();
         cellData->SetNumberOfComponents(3);
-        cellData->InsertNextTuple3(vtkMath::Random(0.0, 255.0), vtkMath::Random(0.0, 255.0), vtkMath::Random(0.0, 255.0));
+        cellData->SetNumberOfTuples(1);
+        cellData->InsertTuple3(0, vtkMath::Random(0.0, 255.0), vtkMath::Random(0.0, 255.0), vtkMath::Random(0.0, 255.0));
         
         vtkSmartPointer<vtkIdTypeArray> selectionArray = vtkSmartPointer<vtkIdTypeArray>::New();
         selectionArray->InsertNextValue(lastCellId);
@@ -75,6 +76,10 @@ void TimeSeriesChartMouseInteractor::pickCell(vtkSmartPointer<vtkUnstructuredGri
 
 vtkSmartPointer<vtkIdTypeArray> TimeSeriesChartMouseInteractor::getCellIdArray(const QString &layerKey) const {
     return cellIdMap.value(layerKey);
+}
+
+void TimeSeriesChartMouseInteractor::getCellColor(const vtkIdType &cellId, double color[3]) const {
+    cellActors.value(cellId)->GetMapper()->GetInput()->GetCellData()->GetScalars()->GetTuple(0, color);
 }
 
 void TimeSeriesChartMouseInteractor::deactivatePicker(const QString &layerKey) {
