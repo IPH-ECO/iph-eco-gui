@@ -56,7 +56,6 @@ public:
     void updateOutputFileList();
     int getNumberOfMapLayers() const;
     Simulation* getCurrentSimulation() const;
-    void togglePicker(bool activate);
     virtual void clear();
 public slots:
     void hideLayer(const QString &layerKey);

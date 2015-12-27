@@ -78,20 +78,31 @@ vtkSmartPointer<vtkIdTypeArray> TimeSeriesChartMouseInteractor::getCellIdArray(c
     return cellIdMap.value(layerKey);
 }
 
-void TimeSeriesChartMouseInteractor::getCellColor(const vtkIdType &cellId, double color[3]) const {
-    cellActors.value(cellId)->GetMapper()->GetInput()->GetCellData()->GetScalars()->GetTuple(0, color);
-}
-
-void TimeSeriesChartMouseInteractor::deactivatePicker(const QString &layerKey) {
-    vtkSmartPointer<vtkIdTypeArray> cellIds = this->cellIdMap.value(layerKey);
-    
-    if (cellIds) {
-        for (vtkIdType i = 0; i < cellIds->GetNumberOfTuples(); i++) {
-            this->GetDefaultRenderer()->RemoveActor(this->cellActors.value(i));
+void TimeSeriesChartMouseInteractor::removePickedCells(const QString &layerKey) {
+    if (layerKey.isEmpty()) {
+        for (vtkSmartPointer<vtkIdTypeArray> cellIds : cellIdMap.values()) {
+            for (vtkIdType i = 0; i < cellIds->GetNumberOfTuples(); i++) {
+                this->GetDefaultRenderer()->RemoveActor(cellActors.value(i));
+            }
+        }
+        
+        cellIdMap.clear();
+    } else {
+        vtkSmartPointer<vtkIdTypeArray> cellIds = cellIdMap.value(layerKey);
+        
+        if (cellIds) {
+            for (vtkIdType i = 0; i < cellIds->GetNumberOfTuples(); i++) {
+                vtkSmartPointer<vtkActor> actor = cellActors.value(cellIds->GetValue(i));
+                this->GetDefaultRenderer()->RemoveActor(actor);
+            }
+            
+            cellIdMap.remove(layerKey);
         }
     }
     
-    this->cellIdMap.remove(layerKey);
-    
-    MeshMouseInteractor::deactivatePicker();
+    this->GetDefaultRenderer()->GetRenderWindow()->Render();
+}
+
+void TimeSeriesChartMouseInteractor::getCellColor(const vtkIdType &cellId, double color[3]) const {
+    cellActors.value(cellId)->GetMapper()->GetInput()->GetCellData()->GetScalars()->GetTuple(0, color);
 }

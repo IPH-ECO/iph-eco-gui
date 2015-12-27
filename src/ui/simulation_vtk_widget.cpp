@@ -501,15 +501,6 @@ Simulation* SimulationVTKWidget::getCurrentSimulation() const {
     return currentSimulation;
 }
 
-void SimulationVTKWidget::togglePicker(bool activate) {
-    TimeSeriesChartMouseInteractor *timeSeriesChartMouseInteractor = TimeSeriesChartMouseInteractor::SafeDownCast(mouseInteractor);
-    if (activate) {
-        timeSeriesChartMouseInteractor->activatePicker(PickerMode::INDIVIDUAL_CELL);
-    } else {
-        timeSeriesChartMouseInteractor->deactivatePicker(getLayerKey());
-    }
-}
-
 void SimulationVTKWidget::handleMouseEvent(QMouseEvent *event) {
     if (event->type() == QEvent::MouseButtonDblClick && event->button() == Qt::LeftButton && mouseInteractor->getPickerMode() != PickerMode::NO_PICKER) {
         TimeSeriesChartMouseInteractor::SafeDownCast(mouseInteractor)->pickCell(layerGrid, getLayerKey());

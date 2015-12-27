@@ -299,6 +299,8 @@ void ViewResultsDialog::fillLayersComboBox(Simulation *simulation) {
 }
 
 void ViewResultsDialog::showTimeSeriesChart() {
+    frameTimer.stop();
+    
     TimeSeriesChartDialog *dialog = new TimeSeriesChartDialog(this, ui->vtkWidget);
     dialog->show();
 }

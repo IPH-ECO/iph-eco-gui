@@ -220,15 +220,52 @@
      <item>
       <layout class="QVBoxLayout" name="verticalLayout_3">
        <item>
-        <widget class="QToolButton" name="btnPicker">
-         <property name="text">
-          <string/>
+        <spacer name="verticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
          </property>
-         <property name="icon">
-          <iconset resource="../../icons.qrc">
-           <normaloff>:/icons/individual-object-picker.png</normaloff>:/icons/individual-object-picker.png</iconset>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
          </property>
-        </widget>
+        </spacer>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_5">
+         <item>
+          <widget class="QToolButton" name="btnPicker">
+           <property name="toolTip">
+            <string>Toggle cell picker</string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="../../icons.qrc">
+             <normaloff>:/icons/individual-object-picker.png</normaloff>:/icons/individual-object-picker.png</iconset>
+           </property>
+           <property name="checkable">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QToolButton" name="btnClear">
+           <property name="toolTip">
+            <string>Clear picked cells</string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="../../icons.qrc">
+             <normaloff>:/icons/edit-clear-2.png</normaloff>:/icons/edit-clear-2.png</iconset>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
        <item>
         <widget class="QPushButton" name="btnPlot">
@@ -279,7 +316,7 @@
  <connections>
   <connection>
    <sender>chkVerticalProfile</sender>
-   <signal>clicked(bool)</signal>
+   <signal>toggled(bool)</signal>
    <receiver>cbxLayer</receiver>
    <slot>setDisabled(bool)</slot>
    <hints>
@@ -295,7 +332,7 @@
   </connection>
   <connection>
    <sender>chkImportShapefile</sender>
-   <signal>clicked(bool)</signal>
+   <signal>toggled(bool)</signal>
    <receiver>edtShapefile</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
@@ -311,7 +348,7 @@
   </connection>
   <connection>
    <sender>chkImportShapefile</sender>
-   <signal>clicked(bool)</signal>
+   <signal>toggled(bool)</signal>
    <receiver>btnBrowseShapefile</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
@@ -322,6 +359,38 @@
     <hint type="destinationlabel">
      <x>634</x>
      <y>100</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>chkImportShapefile</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>btnPicker</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>112</x>
+     <y>115</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>730</x>
+     <y>77</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>chkImportShapefile</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>btnClear</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>112</x>
+     <y>115</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>764</x>
+     <y>77</y>
     </hint>
    </hints>
   </connection>
