@@ -10,9 +10,10 @@
 
 class TimeSeriesChartMouseInteractor : public MeshMouseInteractor {
 private:
-    vtkSmartPointer<vtkUnstructuredGrid> layerGrid;
     QMap<QString, vtkSmartPointer<vtkIdTypeArray> > cellIdMap;
     QMap<vtkIdType, vtkSmartPointer<vtkActor> > cellActors;
+    
+    void renderCellId(const vtkIdType &cellId, vtkSmartPointer<vtkUnstructuredGrid> layerGrid);
 public:
     static TimeSeriesChartMouseInteractor* New();
     vtkTypeMacro(TimeSeriesChartMouseInteractor, vtkInteractorStyleRubberBandPick);
@@ -23,6 +24,7 @@ public:
     vtkSmartPointer<vtkIdTypeArray> getCellIdArray(const QString &layerKey) const;
     void getCellColor(const vtkIdType &cellId, double color[3]) const;
     void removePickedCells(const QString &layerKey);
+    void renderCellsIds(const QString &layerKey, vtkSmartPointer<vtkUnstructuredGrid> grid, vtkSmartPointer<vtkIdTypeArray> cellsIds);
 };
 
 #endif // TIME_SERIES_CHART_MOUSE_INTERACTOR_H

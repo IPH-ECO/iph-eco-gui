@@ -362,37 +362,5 @@
     </hint>
    </hints>
   </connection>
-  <connection>
-   <sender>chkImportShapefile</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>btnPicker</receiver>
-   <slot>setDisabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>112</x>
-     <y>115</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>730</x>
-     <y>77</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>chkImportShapefile</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>btnClear</receiver>
-   <slot>setDisabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>112</x>
-     <y>115</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>764</x>
-     <y>77</y>
-    </hint>
-   </hints>
-  </connection>
  </connections>
 </ui>

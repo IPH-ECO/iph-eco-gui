@@ -17,6 +17,7 @@
 #include <vtkStringArray.h>
 #include <vtkDoubleArray.h>
 #include <vtkContextScene.h>
+#include <vtkSimplePointsReader.h>
 #include <vtkGenericDataObjectReader.h>
 
 TimeSeriesChartDialog::TimeSeriesChartDialog(QWidget *parent, SimulationVTKWidget *simulationVTKWidget) :
@@ -59,29 +60,6 @@ TimeSeriesChartDialog::~TimeSeriesChartDialog() {
     delete ui;
 }
 
-void TimeSeriesChartDialog::on_chkImportShapefile_clicked(bool checked) {
-    if (checked) {
-        TimeSeriesChartMouseInteractor *timeSeriesInteractor = TimeSeriesChartMouseInteractor::SafeDownCast(simulationVTKWidget->GetInteractor()->GetInteractorStyle());
-        vtkSmartPointer<vtkIdTypeArray> pickedCellsIds = timeSeriesInteractor->getCellIdArray(simulationVTKWidget->getLayerKey());
-        
-        if (pickedCellsIds) {
-            QMessageBox::StandardButton button = QMessageBox::question(this, "Time Series Chart", "This action will remove the current picked cells. Are you sure?");
-            
-            if (button == QMessageBox::Cancel || button == QMessageBox::No) {
-                ui->chkImportShapefile->setChecked(false);
-                return;
-            }
-            
-            timeSeriesInteractor->removePickedCells(simulationVTKWidget->getLayerKey());
-            chart->ClearPlots();
-        }
-    }
-    
-    if (ui->btnPicker->isChecked()) {
-        ui->btnPicker->setChecked(false);
-    }
-}
-
 void TimeSeriesChartDialog::on_btnBrowseShapefile_clicked() {
     QString extensions = "Keyhole Markup Language file (*.kml);;Text file (*.txt *xyz)";
     CoordinateFileDialog *dialog = new CoordinateFileDialog(this, tr("Select a coordinate file"), getDefaultDirectory(), extensions);
@@ -118,7 +96,7 @@ void TimeSeriesChartDialog::on_btnPlot_clicked() {
     }
     
     TimeSeriesChartMouseInteractor *timeSeriesInteractor = TimeSeriesChartMouseInteractor::SafeDownCast(simulationVTKWidget->GetInteractor()->GetInteractorStyle());
-    vtkSmartPointer<vtkIdTypeArray> pickedCellsIds = timeSeriesInteractor->getCellIdArray(simulationVTKWidget->getLayerKey());
+    vtkSmartPointer<vtkIdTypeArray> pickedCellsIds = getCellsIds();
     
     if (!pickedCellsIds || pickedCellsIds->GetNumberOfTuples() == 0) {
         QMessageBox::warning(this, "Time Series Chart", "No picked cells.");
@@ -261,4 +239,41 @@ bool TimeSeriesChartDialog::isValid() {
 
 QString TimeSeriesChartDialog::getDefaultDirectory() {
     return appSettings->value(BOUNDARY_DEFAULT_DIR_KEY).toString().isEmpty() ? QDir::homePath() : appSettings->value(BOUNDARY_DEFAULT_DIR_KEY).toString();
+}
+
+vtkSmartPointer<vtkIdTypeArray> TimeSeriesChartDialog::getCellsIds() const {
+    TimeSeriesChartMouseInteractor *timeSeriesInteractor = TimeSeriesChartMouseInteractor::SafeDownCast(simulationVTKWidget->GetInteractor()->GetInteractorStyle());
+    
+    if (ui->chkImportShapefile->isChecked()) {
+        vtkSmartPointer<vtkGenericDataObjectReader> genericObjectReader = vtkSmartPointer<vtkGenericDataObjectReader>::New();
+        QByteArray fileNameByteArray = simulationVTKWidget->getCurrentSimulation()->getOutputFiles().first().absoluteFilePath().toLocal8Bit();
+        genericObjectReader->SetFileName(fileNameByteArray.data());
+        genericObjectReader->Update();
+        
+        vtkSmartPointer<vtkSimplePointsReader> pointsReader = vtkSmartPointer<vtkSimplePointsReader>::New();
+        fileNameByteArray = ui->edtShapefile->text().toLocal8Bit();
+        pointsReader->SetFileName(fileNameByteArray.data());
+        pointsReader->Update();
+        
+        vtkSmartPointer<vtkIdTypeArray> cellsIds = vtkSmartPointer<vtkIdTypeArray>::New();
+        cellsIds->SetNumberOfComponents(1);
+        
+        vtkSmartPointer<vtkUnstructuredGrid> firstFrameGrid = genericObjectReader->GetUnstructuredGridOutput();
+        vtkSmartPointer<vtkPoints> points = pointsReader->GetOutput()->GetPoints();
+        double pcoords[3] = {0, 0, 0};
+        double weights[8];
+        int subId;
+        
+        for (vtkIdType i = 0; i < points->GetNumberOfPoints(); i++) {
+            vtkIdType cellId = firstFrameGrid->FindCell(points->GetPoint(i), nullptr, 0, 0.001, subId, pcoords, weights);
+
+            if (cellId != -1) {
+                cellsIds->InsertNextTuple1(cellId);
+            }
+        }
+        
+        timeSeriesInteractor->renderCellsIds(simulationVTKWidget->getLayerKey(), firstFrameGrid, cellsIds);
+    }
+    
+    return timeSeriesInteractor->getCellIdArray(simulationVTKWidget->getLayerKey());
 }

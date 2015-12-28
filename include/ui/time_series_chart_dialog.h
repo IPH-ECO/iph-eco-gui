@@ -29,12 +29,12 @@ private:
     
     bool isValid();
     QString getDefaultDirectory();
+    vtkSmartPointer<vtkIdTypeArray> getCellsIds() const;
     virtual void reject();
 public:
 	explicit TimeSeriesChartDialog(QWidget *parent, SimulationVTKWidget *simulationVTKWidget);
     ~TimeSeriesChartDialog();
 private slots:
-    void on_chkImportShapefile_clicked(bool checked);
     void on_btnBrowseShapefile_clicked();
     void on_btnPicker_toggled(bool checked);
     void on_btnClear_clicked();
