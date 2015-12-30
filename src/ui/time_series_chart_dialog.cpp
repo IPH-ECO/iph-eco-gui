@@ -1,7 +1,6 @@
 #include <ui/time_series_chart_dialog.h>
 #include "ui_time_series_chart_dialog.h"
 
-#include <utility/time_series_chart_mouse_interactor.h>
 #include <ui/coordinate_file_dialog.h>
 
 #include <QFile>
@@ -32,6 +31,7 @@ TimeSeriesChartDialog::TimeSeriesChartDialog(QWidget *parent, SimulationVTKWidge
     view(vtkSmartPointer<vtkContextView>::New()),
     chart(vtkSmartPointer<vtkChartXY>::New())
 {
+    this->timeSeriesInteractor = TimeSeriesChartMouseInteractor::SafeDownCast(simulationVTKWidget->GetInteractor()->GetInteractorStyle());
     Simulation *simulation = simulationVTKWidget->getCurrentSimulation();
     
     ui->setupUi(this);
@@ -46,6 +46,10 @@ TimeSeriesChartDialog::TimeSeriesChartDialog(QWidget *parent, SimulationVTKWidge
     
     for (int i = 0; i < simulationVTKWidget->getNumberOfMapLayers(); i++) {
         ui->cbxLayer->addItem(QString::number(i + 1));
+    }
+    
+    if (simulationVTKWidget->getNumberOfMapLayers() == 1) {
+        ui->chkVerticalProfile->setDisabled(true);
     }
     
     QToolButton *btnExportToCSV = new QToolButton(this);
@@ -81,12 +85,10 @@ void TimeSeriesChartDialog::on_btnBrowseShapeFile_clicked() {
 }
 
 void TimeSeriesChartDialog::on_btnPicker_toggled(bool checked) {
-    TimeSeriesChartMouseInteractor *timeSeriesMouseInteractor = TimeSeriesChartMouseInteractor::SafeDownCast(simulationVTKWidget->GetInteractor()->GetInteractorStyle());
-
     if (checked) {
-        timeSeriesMouseInteractor->activatePicker(PickerMode::INDIVIDUAL_CELL);
+        timeSeriesInteractor->activatePicker(PickerMode::INDIVIDUAL_CELL);
     } else {
-        timeSeriesMouseInteractor->deactivatePicker();
+        timeSeriesInteractor->deactivatePicker();
     }
 }
 
@@ -94,7 +96,6 @@ void TimeSeriesChartDialog::on_btnClear_clicked() {
     QMessageBox::StandardButton button = QMessageBox::question(this, "Time series chart", "Are you sure?");
     
     if (button == QMessageBox::Yes) {
-        TimeSeriesChartMouseInteractor *timeSeriesInteractor = TimeSeriesChartMouseInteractor::SafeDownCast(simulationVTKWidget->GetInteractor()->GetInteractorStyle());
         timeSeriesInteractor->removePickedCells(simulationVTKWidget->getLayerKey());
         chart->ClearPlots();
     }
@@ -105,7 +106,6 @@ void TimeSeriesChartDialog::on_btnPlot_clicked() {
         return;
     }
     
-    TimeSeriesChartMouseInteractor *timeSeriesInteractor = TimeSeriesChartMouseInteractor::SafeDownCast(simulationVTKWidget->GetInteractor()->GetInteractorStyle());
     vtkSmartPointer<vtkIdTypeArray> pickedCellsIds = getCellsIds();
     
     if (!pickedCellsIds || pickedCellsIds->GetNumberOfTuples() == 0) {
@@ -151,18 +151,20 @@ void TimeSeriesChartDialog::on_btnPlot_clicked() {
         timeStampStrings->InsertNextValue(header);
         
         for (vtkIdType j = 0; j < pickedCellsIds->GetNumberOfTuples(); j++) {
+            vtkSmartPointer<vtkUnstructuredGrid> grid = reader->GetUnstructuredGridOutput();
             vtkIdType pickedCellId = pickedCellsIds->GetValue(j);
             
             if (j == table->GetNumberOfColumns() - 1) {
                 vtkSmartPointer<vtkDoubleArray> cellCurve = vtkSmartPointer<vtkDoubleArray>::New();
-                std::string cellCurveName = QString("Cell %1").arg(pickedCellId).toStdString();
+                vtkIdType mappedCellId = grid->GetNumberOfCells() - pickedCellsIds->GetValue(j) - 1;
+                std::string cellCurveName = QString("Cell %1").arg(mappedCellId).toStdString();
                 cellCurve->SetNumberOfTuples(framesTotal);
                 cellCurve->SetName(cellCurveName.c_str());
                 
                 table->AddColumn(cellCurve);
             }
             
-            table->SetValue(i, j + 1, reader->GetUnstructuredGridOutput()->GetCellData()->GetArray(layerName)->GetTuple1(pickedCellId));
+            table->SetValue(i, j + 1, grid->GetCellData()->GetArray(layerName)->GetTuple1(pickedCellId));
         }
         
         frame += frameStep;
@@ -217,12 +219,24 @@ void TimeSeriesChartDialog::btnExportToCSV_clicked() {
             return;
         }
         
+        QStringList fileLines;
+        
+        fileLines << "\"Layer\"";
+        fileLines << "\"Time\"";
+        
+        for (vtkIdType p = 0; p < chart->GetNumberOfPlots(); p++) {
+            fileLines << QString("\"%1\"").arg(chart->GetPlot(p)->GetLabel().c_str());
+        }
+        
         QTextStream outputStream(&csvFile);
+        outputStream << fileLines.join(";");
+        outputStream << "\r\n";
+        
+        fileLines.clear();
         
         for (vtkIdType p = 0; p < chart->GetNumberOfPlots(); p++) {
             vtkSmartPointer<vtkPlot> plot = chart->GetPlot(p);
             vtkSmartPointer<vtkTable> table = plot->GetInput();
-            QStringList fileLines;
             
             for (vtkIdType i = 0; i < table->GetNumberOfRows(); i++) {
                 fileLines << QString("\"%1\"").arg(ui->cbxLayer->currentText());
@@ -250,11 +264,8 @@ void TimeSeriesChartDialog::btnExportToCSV_clicked() {
 }
 
 void TimeSeriesChartDialog::reject() {
-    TimeSeriesChartMouseInteractor *timeSeriesInteractor = TimeSeriesChartMouseInteractor::SafeDownCast(simulationVTKWidget->GetInteractor()->GetInteractorStyle());
-    
     timeSeriesInteractor->removePickedCells(simulationVTKWidget->getLayerKey());
     timeSeriesInteractor->deactivatePicker();
-    
     QDialog::reject();
 }
 
@@ -294,8 +305,6 @@ QString TimeSeriesChartDialog::getDefaultDirectory() {
 }
 
 vtkSmartPointer<vtkIdTypeArray> TimeSeriesChartDialog::getCellsIds() const {
-    TimeSeriesChartMouseInteractor *timeSeriesInteractor = TimeSeriesChartMouseInteractor::SafeDownCast(simulationVTKWidget->GetInteractor()->GetInteractorStyle());
-    
     if (ui->chkImportShapeFile->isChecked()) {
         vtkSmartPointer<vtkGenericDataObjectReader> genericObjectReader = vtkSmartPointer<vtkGenericDataObjectReader>::New();
         QByteArray fileNameByteArray = simulationVTKWidget->getCurrentSimulation()->getOutputFiles().first().absoluteFilePath().toLocal8Bit();

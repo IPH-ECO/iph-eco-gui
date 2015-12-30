@@ -3,6 +3,7 @@
 
 #include <domain/simulation.h>
 #include "simulation_vtk_widget.h"
+#include <utility/time_series_chart_mouse_interactor.h>
 
 #include <QWidget>
 #include <QDialog>
@@ -23,6 +24,7 @@ private:
 
     Ui::TimeSeriesChartDialog *ui;
     SimulationVTKWidget *simulationVTKWidget;
+    TimeSeriesChartMouseInteractor *timeSeriesInteractor;
     vtkSmartPointer<vtkContextView> view;
     vtkSmartPointer<vtkChartXY> chart;
     QSettings *appSettings;
