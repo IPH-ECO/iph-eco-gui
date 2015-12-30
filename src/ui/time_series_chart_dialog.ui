@@ -159,14 +159,14 @@
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_4">
          <item>
-          <widget class="QCheckBox" name="chkImportShapefile">
+          <widget class="QCheckBox" name="chkImportShapeFile">
            <property name="text">
-            <string>Import points from shapefile</string>
+            <string>Import points from shape file</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QLineEdit" name="edtShapefile">
+          <widget class="QLineEdit" name="edtShapeFile">
            <property name="enabled">
             <bool>false</bool>
            </property>
@@ -191,7 +191,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QToolButton" name="btnBrowseShapefile">
+          <widget class="QToolButton" name="btnBrowseShapeFile">
            <property name="enabled">
             <bool>false</bool>
            </property>
@@ -306,9 +306,9 @@
   <tabstop>edtInitialFrame</tabstop>
   <tabstop>edtFrameStep</tabstop>
   <tabstop>edtFinalFrame</tabstop>
-  <tabstop>chkImportShapefile</tabstop>
-  <tabstop>edtShapefile</tabstop>
-  <tabstop>btnBrowseShapefile</tabstop>
+  <tabstop>chkImportShapeFile</tabstop>
+  <tabstop>edtShapeFile</tabstop>
+  <tabstop>btnBrowseShapeFile</tabstop>
  </tabstops>
  <resources>
   <include location="../../icons.qrc"/>
@@ -331,9 +331,9 @@
    </hints>
   </connection>
   <connection>
-   <sender>chkImportShapefile</sender>
+   <sender>chkImportShapeFile</sender>
    <signal>toggled(bool)</signal>
-   <receiver>edtShapefile</receiver>
+   <receiver>edtShapeFile</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -347,9 +347,9 @@
    </hints>
   </connection>
   <connection>
-   <sender>chkImportShapefile</sender>
+   <sender>chkImportShapeFile</sender>
    <signal>toggled(bool)</signal>
-   <receiver>btnBrowseShapefile</receiver>
+   <receiver>btnBrowseShapeFile</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">

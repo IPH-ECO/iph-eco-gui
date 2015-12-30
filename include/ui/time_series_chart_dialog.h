@@ -35,12 +35,13 @@ public:
 	explicit TimeSeriesChartDialog(QWidget *parent, SimulationVTKWidget *simulationVTKWidget);
     ~TimeSeriesChartDialog();
 private slots:
-    void on_btnBrowseShapefile_clicked();
+    void on_btnBrowseShapeFile_clicked();
     void on_btnPicker_toggled(bool checked);
     void on_btnClear_clicked();
     void on_btnPlot_clicked();
     void on_buttonBox_clicked(QAbstractButton *button);
     void btnExportToCSV_clicked();
+    void btnExportToPNG_clicked();
 };
 
 #endif // TIME_SERIES_CHART_DIALOG_H

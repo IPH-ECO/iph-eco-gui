@@ -10,14 +10,18 @@
 #include <vtkAxis.h>
 #include <vtkPlot.h>
 #include <vtkTable.h>
+#include <QTextStream>
 #include <QMessageBox>
 #include <QToolButton>
 #include <vtkCellData.h>
 #include <vtkRenderer.h>
+#include <vtkPNGWriter.h>
 #include <vtkStringArray.h>
 #include <vtkDoubleArray.h>
+#include <vtkTextProperty.h>
 #include <vtkContextScene.h>
 #include <vtkSimplePointsReader.h>
+#include <vtkWindowToImageFilter.h>
 #include <vtkGenericDataObjectReader.h>
 
 TimeSeriesChartDialog::TimeSeriesChartDialog(QWidget *parent, SimulationVTKWidget *simulationVTKWidget) :
@@ -49,6 +53,12 @@ TimeSeriesChartDialog::TimeSeriesChartDialog(QWidget *parent, SimulationVTKWidge
     btnExportToCSV->setToolTip("Export chart data to CSV");
     ui->buttonBox->addButton(btnExportToCSV, QDialogButtonBox::ActionRole);
     connect(btnExportToCSV, SIGNAL(clicked()), this, SLOT(btnExportToCSV_clicked()));
+    
+    QToolButton *btnExportToPNG = new QToolButton(this);
+    btnExportToPNG->setIcon(QIcon(":/icons/image-x-generic.png"));
+    btnExportToPNG->setToolTip("Export chart to PNG");
+    ui->buttonBox->addButton(btnExportToPNG, QDialogButtonBox::ActionRole);
+    connect(btnExportToPNG, SIGNAL(clicked()), this, SLOT(btnExportToPNG_clicked()));
 
     chart->SetShowLegend(true);
     view->GetScene()->AddItem(chart);
@@ -60,13 +70,13 @@ TimeSeriesChartDialog::~TimeSeriesChartDialog() {
     delete ui;
 }
 
-void TimeSeriesChartDialog::on_btnBrowseShapefile_clicked() {
+void TimeSeriesChartDialog::on_btnBrowseShapeFile_clicked() {
     QString extensions = "Keyhole Markup Language file (*.kml);;Text file (*.txt *xyz)";
     CoordinateFileDialog *dialog = new CoordinateFileDialog(this, tr("Select a coordinate file"), getDefaultDirectory(), extensions);
     int exitCode = dialog->exec();
     
     if (exitCode == QDialog::Accepted) {
-        ui->edtShapefile->setText(dialog->selectedFiles().first());
+        ui->edtShapeFile->setText(dialog->selectedFiles().first());
     }
 }
 
@@ -195,6 +205,48 @@ void TimeSeriesChartDialog::btnExportToCSV_clicked() {
         QMessageBox::warning(this, "Time Series Chart", "No plots available.");
         return;
     }
+    
+    QString csvFileName = QFileDialog::getSaveFileName(this, "Time Series Chart", getDefaultDirectory(), "Comma Separated Value (*.csv)");
+    
+    if (!csvFileName.isEmpty()) {
+        QFile csvFile(csvFileName);
+        
+        if (!csvFile.open(QFile::WriteOnly | QFile::Truncate)) {
+            QMessageBox::warning(this, "Time Series Chart", QString("Unable to write to file %1").arg(csvFileName));
+            csvFile.close();
+            return;
+        }
+        
+        QTextStream outputStream(&csvFile);
+        
+        for (vtkIdType p = 0; p < chart->GetNumberOfPlots(); p++) {
+            vtkSmartPointer<vtkPlot> plot = chart->GetPlot(p);
+            vtkSmartPointer<vtkTable> table = plot->GetInput();
+            QStringList fileLines;
+            
+            for (vtkIdType i = 0; i < table->GetNumberOfRows(); i++) {
+                fileLines << QString("\"%1\"").arg(ui->cbxLayer->currentText());
+            
+                for (vtkIdType j = 0; j < table->GetNumberOfColumns(); j++) {
+                    if (j == 0) {
+                        QDateTime dateTime = QDateTime::fromTime_t(table->GetValue(i, 0).ToUnsignedInt(), Qt::UTC);
+                        
+                        fileLines << QString("\"%1\"").arg(dateTime.toString("yyyy-MM-dd HH:mm:ss"));
+                    } else {
+                        fileLines << QString("\"%1\"").arg(QString::number(table->GetValue(i, j).ToDouble(), 'f', 6));
+                    }
+                }
+                
+                outputStream << fileLines.join(";");
+                outputStream << "\r\n";
+                outputStream.flush();
+                
+                fileLines.clear();
+            }
+        }
+        
+        csvFile.close();
+    }
 }
 
 void TimeSeriesChartDialog::reject() {
@@ -229,7 +281,7 @@ bool TimeSeriesChartDialog::isValid() {
         return false;
     }
     
-    if (ui->chkImportShapefile->isChecked() && !QFile::exists(ui->edtShapefile->text())) {
+    if (ui->chkImportShapeFile->isChecked() && !QFile::exists(ui->edtShapeFile->text())) {
         QMessageBox::warning(this, "Time Series Chart", "Shape file not found.");
         return false;
     }
@@ -244,14 +296,14 @@ QString TimeSeriesChartDialog::getDefaultDirectory() {
 vtkSmartPointer<vtkIdTypeArray> TimeSeriesChartDialog::getCellsIds() const {
     TimeSeriesChartMouseInteractor *timeSeriesInteractor = TimeSeriesChartMouseInteractor::SafeDownCast(simulationVTKWidget->GetInteractor()->GetInteractorStyle());
     
-    if (ui->chkImportShapefile->isChecked()) {
+    if (ui->chkImportShapeFile->isChecked()) {
         vtkSmartPointer<vtkGenericDataObjectReader> genericObjectReader = vtkSmartPointer<vtkGenericDataObjectReader>::New();
         QByteArray fileNameByteArray = simulationVTKWidget->getCurrentSimulation()->getOutputFiles().first().absoluteFilePath().toLocal8Bit();
         genericObjectReader->SetFileName(fileNameByteArray.data());
         genericObjectReader->Update();
         
         vtkSmartPointer<vtkSimplePointsReader> pointsReader = vtkSmartPointer<vtkSimplePointsReader>::New();
-        fileNameByteArray = ui->edtShapefile->text().toLocal8Bit();
+        fileNameByteArray = ui->edtShapeFile->text().toLocal8Bit();
         pointsReader->SetFileName(fileNameByteArray.data());
         pointsReader->Update();
         
@@ -276,4 +328,30 @@ vtkSmartPointer<vtkIdTypeArray> TimeSeriesChartDialog::getCellsIds() const {
     }
     
     return timeSeriesInteractor->getCellIdArray(simulationVTKWidget->getLayerKey());
+}
+
+void TimeSeriesChartDialog::btnExportToPNG_clicked() {
+    if (chart->GetNumberOfPlots() == 0) {
+        QMessageBox::warning(this, "Time Series Chart", "No plots available.");
+        return;
+    }
+    
+    QString imageFileName = QFileDialog::getSaveFileName(this, "Time Series Chart", getDefaultDirectory(), "Portable Graphics Network (*.png)");
+    
+    if (!imageFileName.isEmpty()) {
+        vtkSmartPointer<vtkWindowToImageFilter> windowToImageFilter = vtkSmartPointer<vtkWindowToImageFilter>::New();
+        windowToImageFilter->SetInput(ui->vtkWidget->GetRenderWindow());
+        windowToImageFilter->SetMagnification(1); //set the resolution of the output image (3 times the current resolution of vtk render window)
+        windowToImageFilter->SetInputBufferTypeToRGBA(); //also record the alpha (transparency) channel
+        windowToImageFilter->ReadFrontBufferOff(); // read from the back buffer
+        windowToImageFilter->Update();
+        
+        QByteArray imageFileNameByteArray = imageFileName.toLocal8Bit();
+        vtkSmartPointer<vtkPNGWriter> writer = vtkSmartPointer<vtkPNGWriter>::New();
+        writer->SetFileName(imageFileNameByteArray.data());
+        writer->SetInputConnection(windowToImageFilter->GetOutputPort());
+        writer->Write();
+        
+        QMessageBox::information(this, "Time Series Chart", "Chart exported.");
+    }
 }
