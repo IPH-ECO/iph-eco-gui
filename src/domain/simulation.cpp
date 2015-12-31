@@ -2,9 +2,11 @@
 #include <application/iph_application.h>
 
 #include <QDir>
+#include <QVector>
 #include <QJsonArray>
 #include <QJsonObject>
 #include <QJsonDocument>
+#include <QRegularExpression>
 
 Simulation::Simulation() :
     id(0), hydrodynamicConfiguration(nullptr), status(SimulationStatus::IDLE), progress(0), simulationStruct(nullptr), previousStatus(SimulationStatus::UNDEFINED)
@@ -355,18 +357,25 @@ void Simulation::loadRecoveryVariables() {
 
 QFileInfoList Simulation::getOutputFiles(bool scanOutputDirectory) {
     if (scanOutputDirectory) {
+        QVector<QFileInfo> orderedOutputFiles;
         QDir outputDir(this->outputDirectory);
         QFileInfoList tempOutputFiles;
         
         if (outputDir.exists()) {
-            QFileInfoList tempList = outputDir.entryInfoList({ QString("%1*.vtk").arg(label) }, QDir::Files, QDir::Time);
+            QFileInfoList tempList = outputDir.entryInfoList({ QString("%1_*.vtk").arg(label) }, QDir::Files);
+            QRegularExpression regex("_[0-9]*\\.vtk$");
             
-            for (int i = tempList.size() - 1; i >= 0; i--) {
-                tempOutputFiles.append(tempList.at(i));
+            orderedOutputFiles.resize(tempList.size());
+            
+            for (int i = 0; i < tempList.size(); i++) {
+                QRegularExpressionMatch match = regex.match(tempList[i].fileName());
+                int index = match.captured().remove("_").remove(".vtk").toInt() - 1;
+                
+                orderedOutputFiles[index] = tempList[i];
             }
         }
         
-        this->outputFiles = tempOutputFiles;
+        this->outputFiles = orderedOutputFiles.toList();
     }
     
     return outputFiles;

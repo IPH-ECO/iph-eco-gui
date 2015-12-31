@@ -32,6 +32,7 @@ private:
     bool isValid();
     QString getDefaultDirectory();
     vtkSmartPointer<vtkIdTypeArray> getCellsIds() const;
+    vtkIdType getCorrespondingCell(const vtkIdType &sourceCellId) const;
     virtual void reject();
 public:
 	explicit TimeSeriesChartDialog(QWidget *parent, SimulationVTKWidget *simulationVTKWidget);

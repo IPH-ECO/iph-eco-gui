@@ -44,7 +44,7 @@ TimeSeriesChartDialog::TimeSeriesChartDialog(QWidget *parent, SimulationVTKWidge
     
     ui->vtkWidget->SetRenderWindow(view->GetRenderWindow());
     
-    for (int i = 0; i < simulationVTKWidget->getNumberOfMapLayers(); i++) {
+    for (int i = simulationVTKWidget->getNumberOfMapLayers() - 1; i >= 0; i--) {
         ui->cbxLayer->addItem(QString::number(i + 1));
     }
     
@@ -152,19 +152,18 @@ void TimeSeriesChartDialog::on_btnPlot_clicked() {
         
         for (vtkIdType j = 0; j < pickedCellsIds->GetNumberOfTuples(); j++) {
             vtkSmartPointer<vtkUnstructuredGrid> grid = reader->GetUnstructuredGridOutput();
-            vtkIdType pickedCellId = pickedCellsIds->GetValue(j);
+            vtkIdType cellId = getCorrespondingCell(pickedCellsIds->GetValue(j));
             
             if (j == table->GetNumberOfColumns() - 1) {
                 vtkSmartPointer<vtkDoubleArray> cellCurve = vtkSmartPointer<vtkDoubleArray>::New();
-                vtkIdType mappedCellId = grid->GetNumberOfCells() - pickedCellsIds->GetValue(j) - 1;
-                std::string cellCurveName = QString("Cell %1").arg(mappedCellId).toStdString();
+                std::string cellCurveName = QString("Cell %1").arg(cellId).toStdString();
                 cellCurve->SetNumberOfTuples(framesTotal);
                 cellCurve->SetName(cellCurveName.c_str());
                 
                 table->AddColumn(cellCurve);
             }
             
-            table->SetValue(i, j + 1, grid->GetCellData()->GetArray(layerName)->GetTuple1(pickedCellId));
+            table->SetValue(i, j + 1, grid->GetCellData()->GetArray(layerName)->GetTuple1(cellId));
         }
         
         frame += frameStep;
@@ -363,4 +362,15 @@ void TimeSeriesChartDialog::btnExportToPNG_clicked() {
         
         QMessageBox::information(this, "Time Series Chart", "Chart exported.");
     }
+}
+
+vtkIdType TimeSeriesChartDialog::getCorrespondingCell(const vtkIdType &sourceCellId) const {
+    vtkIdType numberOfCells = simulationVTKWidget->getCurrentSimulation()->getMesh()->getMeshPolyData()->GetNumberOfCells();
+    vtkIdType sourceLayer = sourceCellId / numberOfCells;
+    vtkIdType sourceLayerFirstCellId = sourceLayer * numberOfCells;
+    vtkIdType cellOffset = sourceCellId - sourceLayerFirstCellId;
+    vtkIdType targetLayer = ui->cbxLayer->currentText().toInt() - 1;
+    vtkIdType targetLayerFirstCellId = targetLayer * numberOfCells;
+    
+    return targetLayerFirstCellId + cellOffset;
 }
