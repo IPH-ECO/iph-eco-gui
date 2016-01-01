@@ -292,7 +292,7 @@ void GridDataDialog::onPickIndividualCellAction(bool checked) {
     pickCellSetAction->setChecked(false);
     pickCellSetAction->setEnabled(!checked);
     ui->vtkWidget->toggleCellLabels(LabelType::UNDEFINED);
-    ui->vtkWidget->toggleCellPicker(checked, PickerMode::INDIVIDUAL_CELL);
+    ui->vtkWidget->toggleCellPicker(checked, PickerMode::EACH_CELL);
 }
 
 void GridDataDialog::onPickCellSetAction(bool checked) {

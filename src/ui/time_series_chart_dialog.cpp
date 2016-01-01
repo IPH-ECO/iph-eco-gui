@@ -86,7 +86,7 @@ void TimeSeriesChartDialog::on_btnBrowseShapeFile_clicked() {
 
 void TimeSeriesChartDialog::on_btnPicker_toggled(bool checked) {
     if (checked) {
-        timeSeriesInteractor->activatePicker(PickerMode::INDIVIDUAL_CELL);
+        timeSeriesInteractor->activatePicker(ui->chkVerticalProfile->isChecked() ? PickerMode::ONE_CELL : PickerMode::EACH_CELL);
     } else {
         timeSeriesInteractor->deactivatePicker();
     }
@@ -373,4 +373,27 @@ vtkIdType TimeSeriesChartDialog::getCorrespondingCell(const vtkIdType &sourceCel
     vtkIdType targetLayerFirstCellId = targetLayer * numberOfCells;
     
     return targetLayerFirstCellId + cellOffset;
+}
+
+void TimeSeriesChartDialog::on_chkVerticalProfile_toggled(bool checked) {
+    if (checked) {
+        vtkSmartPointer<vtkIdTypeArray> pickedCellsIds = getCellsIds();
+        bool proceed = true;
+        
+        if (pickedCellsIds && pickedCellsIds->GetNumberOfTuples() > 0) {
+            QString question = "This action will discard the current selected cells. Would you like to proceed?";
+            QMessageBox::StandardButton button = QMessageBox::question(this, "Time Series Chart", question);
+            proceed = button == QMessageBox::Yes;
+        }
+        
+        if (proceed) {
+            chart->ClearPlots();
+            timeSeriesInteractor->removePickedCells(simulationVTKWidget->getLayerKey());
+            timeSeriesInteractor->activatePicker(checked ? PickerMode::ONE_CELL : PickerMode::EACH_CELL);
+        } else {
+            ui->chkVerticalProfile->setChecked(false);
+        }
+    } else {
+        timeSeriesInteractor->activatePicker(PickerMode::EACH_CELL);
+    }
 }

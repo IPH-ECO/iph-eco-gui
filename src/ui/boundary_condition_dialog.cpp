@@ -158,7 +158,7 @@ void BoundaryConditionDialog::on_btnCellColor_clicked() {
 }
 
 void BoundaryConditionDialog::btnIndividualObjectPicker_clicked(bool checked) {
-    hydrodynamicDataDialog->ui->vtkWidget->togglePicker(checked, PickerMode::INDIVIDUAL_CELL);
+    hydrodynamicDataDialog->ui->vtkWidget->togglePicker(checked, PickerMode::EACH_CELL);
     hydrodynamicDataDialog->toggleZoomAreaAction(true);
     hydrodynamicDataDialog->ui->vtkWidget->toggleZoomArea(false);
     

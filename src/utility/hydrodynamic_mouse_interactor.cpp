@@ -59,7 +59,7 @@ void HydrodynamicMouseInteractor::OnLeftButtonUp() {
 }
 
 bool HydrodynamicMouseInteractor::pickCell() {
-    if (pickerMode == PickerMode::INDIVIDUAL_CELL && lastCellId != -1) {
+    if (pickerMode == PickerMode::EACH_CELL && lastCellId != -1) {
         currentBoundaryCondition->addObjectId(lastCellId);
         return renderBoundaryCondition(currentBoundaryCondition);
     }

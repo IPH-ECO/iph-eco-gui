@@ -15,7 +15,7 @@ TimeSeriesChartMouseInteractor::TimeSeriesChartMouseInteractor() {
 }
 
 void TimeSeriesChartMouseInteractor::pickCell(vtkSmartPointer<vtkUnstructuredGrid> layerGrid, const QString &layerKey) {
-    if (pickerMode == PickerMode::INDIVIDUAL_CELL && lastCellId != -1) {
+    if (lastCellId != -1 && (pickerMode == PickerMode::EACH_CELL || pickerMode == PickerMode::ONE_CELL)) {
         vtkSmartPointer<vtkIdTypeArray> cellIdArray = cellIdMap.value(layerKey);
         
         if (cellIdMap.contains(layerKey)) {
@@ -33,11 +33,11 @@ void TimeSeriesChartMouseInteractor::pickCell(vtkSmartPointer<vtkUnstructuredGri
             cellIdMap.insert(layerKey, cellIdArray);
         }
         
-        cellIdArray->InsertNextValue(lastCellId);
-        
-        renderCellId(lastCellId, layerGrid);
-        
-        this->GetDefaultRenderer()->GetRenderWindow()->Render();
+        if (pickerMode == PickerMode::EACH_CELL || (pickerMode == PickerMode::ONE_CELL && cellIdArray->GetNumberOfTuples() == 0)) {
+            cellIdArray->InsertNextValue(lastCellId);
+            renderCellId(lastCellId, layerGrid);
+            this->GetDefaultRenderer()->GetRenderWindow()->Render();
+        }
     }
 }
 

@@ -43,6 +43,7 @@ private slots:
     void on_btnClear_clicked();
     void on_btnPlot_clicked();
     void on_buttonBox_clicked(QAbstractButton *button);
+    void on_chkVerticalProfile_toggled(bool checked);
     void btnExportToCSV_clicked();
     void btnExportToPNG_clicked();
 };
