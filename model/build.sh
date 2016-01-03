@@ -5,4 +5,4 @@ rm *.a *.dylib *.o *.mod
 gfortran -c *.f90
 ar rc libsimulationmanager.a *.o
 gfortran -shared -o libsimulationmanager.dylib domain_types.o simulation_manager.o
-cp libsimulationmanager.dylib ../build/Debug/
+cp -v libsimulationmanager.dylib ../build/Debug/
