@@ -50,11 +50,14 @@ public:
         return currentLayer + "-" + currentComponent;
     }
     
+    inline int getNumberOfMapLayers() const {
+        return layerGrid->GetNumberOfCells() / currentSimulation->getMesh()->getMeshPolyData()->GetNumberOfCells();
+    }
+    
 	void render(Simulation *simulation, const QString &layer, const QString &component, int frame);
     void removeLayer(const QString &layerKey);
     void setAxesScale(const QString &axesScale);
     void updateOutputFileList();
-    int getNumberOfMapLayers() const;
     Simulation* getCurrentSimulation() const;
     virtual void clear();
 public slots:

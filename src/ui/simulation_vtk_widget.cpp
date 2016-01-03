@@ -493,10 +493,6 @@ void SimulationVTKWidget::cancelExportVideo() {
     this->cancelExportVideoOperation = true;
 }
 
-int SimulationVTKWidget::getNumberOfMapLayers() const {
-    return layerGrid->GetNumberOfCells() / currentSimulation->getMesh()->getMeshPolyData()->GetNumberOfCells();
-}
-
 Simulation* SimulationVTKWidget::getCurrentSimulation() const {
     return currentSimulation;
 }
