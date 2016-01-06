@@ -159,14 +159,14 @@
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_4">
          <item>
-          <widget class="QCheckBox" name="chkImportShapeFile">
+          <widget class="QCheckBox" name="chkImportPointsFile">
            <property name="text">
-            <string>Import points from shape file</string>
+            <string>Import points from file</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QLineEdit" name="edtShapeFile">
+          <widget class="QLineEdit" name="edtPointsFile">
            <property name="enabled">
             <bool>false</bool>
            </property>
@@ -191,7 +191,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QToolButton" name="btnBrowseShapeFile">
+          <widget class="QToolButton" name="btnBrowsePointsFile">
            <property name="enabled">
             <bool>false</bool>
            </property>
@@ -306,9 +306,9 @@
   <tabstop>edtInitialFrame</tabstop>
   <tabstop>edtFrameStep</tabstop>
   <tabstop>edtFinalFrame</tabstop>
-  <tabstop>chkImportShapeFile</tabstop>
-  <tabstop>edtShapeFile</tabstop>
-  <tabstop>btnBrowseShapeFile</tabstop>
+  <tabstop>chkImportPointsFile</tabstop>
+  <tabstop>edtPointsFile</tabstop>
+  <tabstop>btnBrowsePointsFile</tabstop>
  </tabstops>
  <resources>
   <include location="../../icons.qrc"/>
@@ -331,9 +331,9 @@
    </hints>
   </connection>
   <connection>
-   <sender>chkImportShapeFile</sender>
+   <sender>chkImportPointsFile</sender>
    <signal>toggled(bool)</signal>
-   <receiver>edtShapeFile</receiver>
+   <receiver>edtPointsFile</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -347,9 +347,9 @@
    </hints>
   </connection>
   <connection>
-   <sender>chkImportShapeFile</sender>
+   <sender>chkImportPointsFile</sender>
    <signal>toggled(bool)</signal>
-   <receiver>btnBrowseShapeFile</receiver>
+   <receiver>btnBrowsePointsFile</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -359,6 +359,54 @@
     <hint type="destinationlabel">
      <x>634</x>
      <y>100</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>chkVerticalProfile</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>chkImportPointsFile</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>221</x>
+     <y>29</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>113</x>
+     <y>115</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>chkVerticalProfile</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>edtPointsFile</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>221</x>
+     <y>29</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>414</x>
+     <y>115</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>chkVerticalProfile</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>btnBrowsePointsFile</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>221</x>
+     <y>29</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>637</x>
+     <y>115</y>
     </hint>
    </hints>
   </connection>

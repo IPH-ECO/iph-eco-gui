@@ -9,9 +9,12 @@
 #include <QDialog>
 #include <QSettings>
 #include <vtkChartXY.h>
+#include <vtkRenderer.h>
 #include <QFileInfoList>
 #include <QAbstractButton>
+#include <vtkStringArray.h>
 #include <vtkContextView.h>
+#include <vtkColorTransferFunction.h>
 
 namespace Ui {
 	class TimeSeriesChartDialog;
@@ -25,6 +28,7 @@ private:
     Ui::TimeSeriesChartDialog *ui;
     SimulationVTKWidget *simulationVTKWidget;
     TimeSeriesChartMouseInteractor *timeSeriesInteractor;
+    vtkSmartPointer<vtkRenderer> renderer;
     vtkSmartPointer<vtkContextView> view;
     vtkSmartPointer<vtkChartXY> chart;
     QSettings *appSettings;
@@ -32,13 +36,16 @@ private:
     bool isValid();
     QString getDefaultDirectory();
     vtkSmartPointer<vtkIdTypeArray> getCellsIds() const;
-    vtkIdType getCorrespondingCell(const vtkIdType &sourceCellId) const;
+    vtkIdType getCorrespondingCell(const vtkIdType &sourceCellId, const int &layer) const;
+    void renderVerticalProfileGrid(const char *layerName,  vtkSmartPointer<vtkDoubleArray> x, vtkSmartPointer<vtkDoubleArray> y, vtkSmartPointer<vtkDoubleArray> scalars);
+    void renderVerticalProfileAxes(double *xRange, double *yRange, vtkSmartPointer<vtkStringArray> timeStamps);
+    vtkSmartPointer<vtkColorTransferFunction> buildColorTransferFunction(LayerProperties *layerProperties, double *scalarBarRange);
     virtual void reject();
 public:
 	explicit TimeSeriesChartDialog(QWidget *parent, SimulationVTKWidget *simulationVTKWidget);
     ~TimeSeriesChartDialog();
 private slots:
-    void on_btnBrowseShapeFile_clicked();
+    void on_btnBrowsePointsFile_clicked();
     void on_btnPicker_toggled(bool checked);
     void on_btnClear_clicked();
     void on_btnPlot_clicked();
