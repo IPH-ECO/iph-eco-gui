@@ -31,7 +31,7 @@ vtkStandardNewMacro(TimeSeriesChart2DInteractorStyle);
 
 TimeSeriesChartDialog::TimeSeriesChartDialog(QWidget *parent, SimulationVTKWidget *simulationVTKWidget) :
 	QDialog(parent),
-    BOUNDARY_DEFAULT_DIR_KEY("boundary_default_dir"),
+    TIME_SERIES_CHART_DIR_KEY("time_series_chart_dir"),
 	ui(new Ui::TimeSeriesChartDialog),
     simulationVTKWidget(simulationVTKWidget),
     renderer(vtkSmartPointer<vtkRenderer>::New()),
@@ -42,9 +42,11 @@ TimeSeriesChartDialog::TimeSeriesChartDialog(QWidget *parent, SimulationVTKWidge
     Simulation *simulation = simulationVTKWidget->getCurrentSimulation();
     
     ui->setupUi(this);
+    ui->vtkVerticalProfileWidget->hide();
     ui->edtInitialFrame->setText("1");
     ui->edtFrameStep->setText("1");
     ui->edtFinalFrame->setText(QString::number(simulation->getOutputFiles().size()));
+    this->resize(this->minimumSize());
     
     for (int i = simulationVTKWidget->getNumberOfMapLayers() - 1; i >= 0; i--) {
         ui->cbxLayer->addItem(QString::number(i + 1));
@@ -68,19 +70,20 @@ TimeSeriesChartDialog::TimeSeriesChartDialog(QWidget *parent, SimulationVTKWidge
     connect(btnExportToPNG, SIGNAL(clicked()), this, SLOT(btnExportToPNG_clicked()));
 
     renderer->SetBackground(1.0, 1.0, 1.0);
-    ui->vtkWidget->GetRenderWindow()->AddRenderer(renderer);
-    ui->vtkWidget->GetInteractor()->SetInteractorStyle(vtkSmartPointer<TimeSeriesChart2DInteractorStyle>::New());
+    ui->vtkVerticalProfileWidget->GetRenderWindow()->AddRenderer(renderer);
+    ui->vtkVerticalProfileWidget->GetInteractor()->SetInteractorStyle(vtkSmartPointer<TimeSeriesChart2DInteractorStyle>::New());
     
     appSettings = new QSettings(QApplication::organizationName(), QApplication::applicationName(), this);
     
+    view->SetInteractor(ui->vtkChartWidget->GetInteractor());
     view->GetRenderer()->SetBackground(1.0, 1.0, 1.0);
-    view->SetInteractor(ui->vtkWidget->GetInteractor());
-    ui->vtkWidget->SetRenderWindow(view->GetRenderWindow());
-    chart->SetShowLegend(true);
     view->GetScene()->AddItem(chart);
+    ui->vtkChartWidget->SetRenderWindow(view->GetRenderWindow());
+    chart->SetShowLegend(true);
 }
 
 TimeSeriesChartDialog::~TimeSeriesChartDialog() {
+    delete appSettings;
     delete ui;
 }
 
@@ -169,10 +172,7 @@ void TimeSeriesChartDialog::on_btnPlot_clicked() {
         vtkSmartPointer<vtkUnstructuredGrid> unstructuredGrid = reader->GetUnstructuredGridOutput();
         
         std::string headerWithLineBreak = reader->GetHeader();
-        const char *header = headerWithLineBreak.erase(headerWithLineBreak.length() - 1).c_str();
-        QDateTime dateTime = QDateTime::fromString(header, Qt::ISODate);
-        
-        dateTime.setTimeSpec(Qt::UTC);
+        const char *header = headerWithLineBreak.erase(headerWithLineBreak.length() - 1).c_str(); // removes new line character
         timeStampStrings->InsertNextValue(header);
         
         if (verticalProfile) {
@@ -191,7 +191,6 @@ void TimeSeriesChartDialog::on_btnPlot_clicked() {
             }
         } else {
             table->SetValue(i, 0, i);
-//            table->SetValue(i, 0, dateTime.toTime_t());
             
             for (vtkIdType j = 0; j < pickedCellsIds->GetNumberOfTuples(); j++) {
                 vtkIdType cellId = getCorrespondingCell(pickedCellsIds->GetValue(j), ui->cbxLayer->currentText().toInt());
@@ -213,8 +212,13 @@ void TimeSeriesChartDialog::on_btnPlot_clicked() {
     }
     
     if (verticalProfile) {
+        renderer->RemoveAllViewProps();
         renderVerticalProfileGrid(layerName, xCoordinates, yCoordinates, verticalProfileScalars);
         renderVerticalProfileAxes(xCoordinates->GetRange(), yCoordinates->GetRange(), timeStampStrings);
+        renderer->ResetCamera();
+        ui->vtkChartWidget->hide();
+        ui->vtkVerticalProfileWidget->show();
+        ui->vtkVerticalProfileWidget->GetRenderWindow()->Render();
     } else {
         for (vtkIdType i = 0; i < pickedCellsIds->GetNumberOfTuples(); i++) {
             double lineColor[3];
@@ -233,9 +237,10 @@ void TimeSeriesChartDialog::on_btnPlot_clicked() {
         
         vtkSmartPointer<vtkAxis> leftAxis = chart->GetAxis(vtkAxis::LEFT);
         leftAxis->SetTitle(layerName);
+        
+        ui->vtkVerticalProfileWidget->hide();
+        ui->vtkChartWidget->show();
     }
-    
-    ui->vtkWidget->GetRenderWindow()->Render();
 }
 
 void TimeSeriesChartDialog::on_buttonBox_clicked(QAbstractButton *button) {
@@ -345,7 +350,7 @@ bool TimeSeriesChartDialog::isValid() {
 }
 
 QString TimeSeriesChartDialog::getDefaultDirectory() {
-    return appSettings->value(BOUNDARY_DEFAULT_DIR_KEY).toString().isEmpty() ? QDir::homePath() : appSettings->value(BOUNDARY_DEFAULT_DIR_KEY).toString();
+    return appSettings->value(TIME_SERIES_CHART_DIR_KEY).toString().isEmpty() ? QDir::homePath() : appSettings->value(TIME_SERIES_CHART_DIR_KEY).toString();
 }
 
 vtkSmartPointer<vtkIdTypeArray> TimeSeriesChartDialog::getCellsIds() const {
@@ -393,7 +398,7 @@ void TimeSeriesChartDialog::btnExportToPNG_clicked() {
     
     if (!imageFileName.isEmpty()) {
         vtkSmartPointer<vtkWindowToImageFilter> windowToImageFilter = vtkSmartPointer<vtkWindowToImageFilter>::New();
-        windowToImageFilter->SetInput(ui->vtkWidget->GetRenderWindow());
+        windowToImageFilter->SetInput(ui->vtkChartWidget->GetRenderWindow());
         windowToImageFilter->SetMagnification(1); //set the resolution of the output image (3 times the current resolution of vtk render window)
         windowToImageFilter->SetInputBufferTypeToRGBA(); //also record the alpha (transparency) channel
         windowToImageFilter->ReadFrontBufferOff(); // read from the back buffer
@@ -475,7 +480,6 @@ void TimeSeriesChartDialog::renderVerticalProfileGrid(const char *layerName, vtk
     vtkSmartPointer<vtkActor> verticalProfileActor = vtkSmartPointer<vtkActor>::New();
     verticalProfileActor->SetMapper(rectilinearGridMapper);
     
-    renderer->RemoveAllViewProps();
     renderer->AddActor(verticalProfileActor);
     renderer->AddActor(scalarBarActor);
 }
@@ -502,7 +506,6 @@ void TimeSeriesChartDialog::renderVerticalProfileAxes(double *xRange, double *yR
     axesActor->ZAxisVisibilityOff();
     
     renderer->AddActor(axesActor);
-    renderer->ResetCamera();
 }
 
 vtkSmartPointer<vtkColorTransferFunction> TimeSeriesChartDialog::buildColorTransferFunction(LayerProperties *layerProperties, double *scalarBarRange) {

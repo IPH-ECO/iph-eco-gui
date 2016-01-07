@@ -6,14 +6,14 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>798</width>
-    <height>587</height>
+    <width>824</width>
+    <height>987</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Time Series Chart</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout" stretch="0,1,0">
+  <layout class="QVBoxLayout" name="verticalLayout" stretch="0,1,1,0">
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
@@ -279,7 +279,24 @@
     </layout>
    </item>
    <item>
-    <widget class="QVTKWidget" name="vtkWidget"/>
+    <widget class="QVTKWidget" name="vtkChartWidget">
+     <property name="minimumSize">
+      <size>
+       <width>800</width>
+       <height>400</height>
+      </size>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QVTKWidget" name="vtkVerticalProfileWidget">
+     <property name="minimumSize">
+      <size>
+       <width>800</width>
+       <height>400</height>
+      </size>
+     </property>
+    </widget>
    </item>
    <item>
     <widget class="QDialogButtonBox" name="buttonBox">

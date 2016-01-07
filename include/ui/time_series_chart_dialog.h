@@ -23,7 +23,7 @@ namespace Ui {
 class TimeSeriesChartDialog : public QDialog {
 	Q_OBJECT
 private:
-    const QString BOUNDARY_DEFAULT_DIR_KEY;
+    const QString TIME_SERIES_CHART_DIR_KEY;
 
     Ui::TimeSeriesChartDialog *ui;
     SimulationVTKWidget *simulationVTKWidget;
