@@ -44,6 +44,7 @@ private:
     void renderVerticalProfileGrid(const char *layerName,  vtkSmartPointer<vtkDoubleArray> x, vtkSmartPointer<vtkDoubleArray> y, vtkSmartPointer<vtkDoubleArray> scalars);
     void renderVerticalProfileAxes(double *xRange, double *yRange, vtkSmartPointer<vtkStringArray> timeStamps);
     vtkSmartPointer<vtkColorTransferFunction> buildColorTransferFunction(LayerProperties *layerProperties, double *scalarBarRange);
+    vtkSmartPointer<vtkDoubleArray> getGridArray(vtkSmartPointer<vtkUnstructuredGrid> sourceGrid, const char *layerName) const;
     virtual void reject();
 public:
 	explicit TimeSeriesChartDialog(QWidget *parent, SimulationVTKWidget *simulationVTKWidget);

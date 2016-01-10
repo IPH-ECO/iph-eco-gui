@@ -21,6 +21,7 @@
 #include <vtkTextProperty.h>
 #include <vtkContextScene.h>
 #include <vtkScalarBarActor.h>
+#include <vtkArrayCalculator.h>
 #include <vtkSimplePointsReader.h>
 #include <vtkWindowToImageFilter.h>
 #include <vtkGenericDataObjectReader.h>
@@ -167,6 +168,7 @@ void TimeSeriesChartDialog::on_btnPlot_clicked() {
         reader->Update();
         
         vtkSmartPointer<vtkUnstructuredGrid> unstructuredGrid = reader->GetUnstructuredGridOutput();
+        vtkSmartPointer<vtkDoubleArray> cellDataArray = getGridArray(unstructuredGrid, layerName);
         
         std::string headerWithLineBreak = reader->GetHeader();
         const char *header = headerWithLineBreak.erase(headerWithLineBreak.length() - 1).c_str(); // removes new line character
@@ -184,7 +186,7 @@ void TimeSeriesChartDialog::on_btnPlot_clicked() {
                     yCoordinates->InsertNextTuple1(bounds[4]);
                 }
 
-                verticalProfileScalars->InsertNextTuple1(unstructuredGrid->GetCellData()->GetArray(layerName)->GetTuple1(cellId));
+                verticalProfileScalars->InsertNextTuple1(cellDataArray->GetTuple1(cellId));
             }
         } else {
             table->SetValue(i, 0, i);
@@ -201,7 +203,7 @@ void TimeSeriesChartDialog::on_btnPlot_clicked() {
                     table->AddColumn(cellCurve);
                 }
                 
-                table->SetValue(i, j + 1, unstructuredGrid->GetCellData()->GetArray(layerName)->GetTuple1(cellId));
+                table->SetValue(i, j + 1, cellDataArray->GetTuple1(cellId));
             }
         }
         
@@ -565,4 +567,26 @@ vtkSmartPointer<vtkColorTransferFunction> TimeSeriesChartDialog::buildColorTrans
     }
     
     return colorTransferFunction;
+}
+
+vtkSmartPointer<vtkDoubleArray> TimeSeriesChartDialog::getGridArray(vtkSmartPointer<vtkUnstructuredGrid> sourceGrid, const char *layerName) const {
+    if (sourceGrid->GetCellData()->GetArray(layerName)->GetNumberOfComponents() == 1) {
+        return vtkDoubleArray::SafeDownCast(sourceGrid->GetCellData()->GetArray(layerName));
+    }
+    
+    vtkSmartPointer<vtkArrayCalculator> magnitudeFunction = vtkSmartPointer<vtkArrayCalculator>::New();
+    const char *magnitudeArrayName = "magnitude";
+    
+    magnitudeFunction->AddScalarVariable("x", layerName, 0);
+    magnitudeFunction->AddScalarVariable("y", layerName, 1);
+    magnitudeFunction->AddScalarVariable("z", layerName, 2);
+    magnitudeFunction->SetResultArrayName(magnitudeArrayName);
+    magnitudeFunction->SetFunction("sqrt(x^2 + y^2 + z^2)");
+    magnitudeFunction->SetAttributeModeToUseCellData();
+    magnitudeFunction->SetInputData(sourceGrid);
+    magnitudeFunction->Update();
+    
+    vtkSmartPointer<vtkUnstructuredGrid> magnitudeGrid = magnitudeFunction->GetUnstructuredGridOutput();
+    
+    return vtkSmartPointer<vtkDoubleArray>(vtkDoubleArray::SafeDownCast(magnitudeGrid->GetCellData()->GetArray(magnitudeArrayName)));
 }
