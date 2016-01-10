@@ -25,6 +25,7 @@ private:
 
     void fillLayersComboBox(Simulation *simulation);
     QString getLayerKeyFromButton(QToolButton *button) const;
+    void toggleWidgets(bool enable);
 public:
 	explicit ViewResultsDialog(QWidget *parent);
     virtual void showEvent(QShowEvent *event);
@@ -50,6 +51,7 @@ private slots:
     void editLayerProperties();
     void showAxesDialog();
     void showExportVideoDialog();
+    void disableLeftWidgets();
 };
 
 #endif // VIEW_RESULTS_DIALOG_H

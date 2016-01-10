@@ -20,9 +20,7 @@
 #include <vtkDoubleArray.h>
 #include <vtkTextProperty.h>
 #include <vtkContextScene.h>
-#include <vtkCubeAxesActor.h>
 #include <vtkScalarBarActor.h>
-#include <vtkRectilinearGrid.h>
 #include <vtkSimplePointsReader.h>
 #include <vtkWindowToImageFilter.h>
 #include <vtkGenericDataObjectReader.h>
@@ -61,7 +59,6 @@ TimeSeriesChartDialog::TimeSeriesChartDialog(QWidget *parent, SimulationVTKWidge
     btnExportToCSV->setToolTip("Export chart data to CSV");
     ui->buttonBox->addButton(btnExportToCSV, QDialogButtonBox::ActionRole);
     connect(btnExportToCSV, SIGNAL(clicked()), this, SLOT(btnExportToCSV_clicked()));
-    connect(ui->chkVerticalProfile, SIGNAL(toggled(bool)), btnExportToCSV, SLOT(setDisabled(bool)));
     
     QToolButton *btnExportToPNG = new QToolButton(this);
     btnExportToPNG->setIcon(QIcon(":/icons/image-x-generic.png"));
@@ -225,15 +222,28 @@ void TimeSeriesChartDialog::on_btnPlot_clicked() {
             timeSeriesInteractor->getCellColor(pickedCellsIds->GetValue(i), lineColor);
             
             vtkSmartPointer<vtkPlot> line = chart->AddPlot(vtkChart::LINE);
-            line->GetPen()->SetColor(lineColor[0], lineColor[1], lineColor[2]);
             line->SetInputData(table, 0, i + 1);
+            line->SetIndexedLabels(timeStampStrings);
             line->SetLabel(table->GetColumnName(i + 1));
-            line->SetWidth(3.0);
+            line->GetPen()->SetColor(lineColor[0], lineColor[1], lineColor[2]);
+            line->SetWidth(2.0);
+        }
+        
+        int numberOfTicks = 6;
+        vtkSmartPointer<vtkDoubleArray> labelPositions = vtkSmartPointer<vtkDoubleArray>::New();
+        vtkSmartPointer<vtkStringArray> xLabels = vtkSmartPointer<vtkStringArray>::New();
+        int tickIncrement = table->GetNumberOfRows() / (numberOfTicks - 1);
+        
+        for (vtkIdType i = 0; i < table->GetNumberOfRows(); i++) {
+            if (labelPositions->GetNumberOfTuples() != numberOfTicks && (i % tickIncrement == 0 || i == timeStamps->GetNumberOfTuples() - 1)) {
+                labelPositions->InsertNextValue(timeStamps->GetValue(i));
+                xLabels->InsertNextValue(timeStampStrings->GetValue(i));
+            }
         }
         
         vtkSmartPointer<vtkAxis> bottomAxis = chart->GetAxis(vtkAxis::BOTTOM);
         bottomAxis->SetTitle(timeStamps->GetName());
-        bottomAxis->SetCustomTickPositions(timeStamps, timeStampStrings);
+        bottomAxis->SetCustomTickPositions(labelPositions, xLabels);
         
         vtkSmartPointer<vtkAxis> leftAxis = chart->GetAxis(vtkAxis::LEFT);
         leftAxis->SetTitle(layerName);
@@ -252,7 +262,7 @@ void TimeSeriesChartDialog::on_buttonBox_clicked(QAbstractButton *button) {
 }
 
 void TimeSeriesChartDialog::btnExportToCSV_clicked() {
-    if (chart->GetNumberOfPlots() == 0) {
+    if ((!ui->chkVerticalProfile->isChecked() && chart->GetNumberOfPlots() == 0) || (ui->chkVerticalProfile->isChecked() && !rectilinearGrid)) {
         QMessageBox::warning(this, "Time Series Chart", "No plots available.");
         return;
     }
@@ -268,43 +278,68 @@ void TimeSeriesChartDialog::btnExportToCSV_clicked() {
             return;
         }
         
+        QTextStream outputStream(&csvFile);
         QStringList fileLines;
         
-        fileLines << "\"Layer\"";
-        fileLines << "\"Time\"";
-        
-        for (vtkIdType p = 0; p < chart->GetNumberOfPlots(); p++) {
-            fileLines << QString("\"%1\"").arg(chart->GetPlot(p)->GetLabel().c_str());
-        }
-        
-        QTextStream outputStream(&csvFile);
-        outputStream << fileLines.join(";");
-        outputStream << "\r\n";
-        
-        fileLines.clear();
-        
-        for (vtkIdType p = 0; p < chart->GetNumberOfPlots(); p++) {
-            vtkSmartPointer<vtkPlot> plot = chart->GetPlot(p);
-            vtkSmartPointer<vtkTable> table = plot->GetInput();
+        if (ui->chkVerticalProfile->isChecked()) {
+            fileLines << "\"Time\"";
+            fileLines << "\"Elevation\"";
+            fileLines << "\"Z\"";
             
-            for (vtkIdType i = 0; i < table->GetNumberOfRows(); i++) {
-                fileLines << QString("\"%1\"").arg(ui->cbxLayer->currentText());
+            outputStream << fileLines.join(";");
+            outputStream << "\r\n";
             
-                for (vtkIdType j = 0; j < table->GetNumberOfColumns(); j++) {
-                    if (j == 0) {
-                        QDateTime dateTime = QDateTime::fromTime_t(table->GetValue(i, 0).ToUnsignedInt(), Qt::UTC);
-                        
-                        fileLines << QString("\"%1\"").arg(dateTime.toString("yyyy-MM-dd HH:mm:ss"));
-                    } else {
+            fileLines.clear();
+            
+            vtkSmartPointer<vtkStringArray> timeStampsStrings = this->axesActor->GetAxisLabels(0);
+            
+            for (vtkIdType i = 0; i < timeStampsStrings->GetNumberOfTuples(); i++) {
+                vtkSmartPointer<vtkDataArray> yCoordinates = this->rectilinearGrid->GetYCoordinates();
+                
+                for (vtkIdType j = 0; j < yCoordinates->GetNumberOfTuples(); j++) {
+                    fileLines << QString("\"%1\"").arg(timeStampsStrings->GetValue(i).c_str());
+                    fileLines << QString("\"%1\"").arg(yCoordinates->GetTuple1(j));
+                    fileLines << QString("\"%1\"").arg(rectilinearGrid->GetPointData()->GetScalars()->GetTuple1(i * j));
+
+                    outputStream << fileLines.join(";");
+                    outputStream << "\r\n";
+                    outputStream.flush();
+                    
+                    fileLines.clear();
+                }
+            }
+        } else {
+            fileLines << "\"Layer\"";
+            fileLines << "\"Time\"";
+            
+            for (vtkIdType p = 0; p < chart->GetNumberOfPlots(); p++) {
+                fileLines << QString("\"%1\"").arg(chart->GetPlot(p)->GetLabel().c_str());
+            }
+            
+            outputStream << fileLines.join(";");
+            outputStream << "\r\n";
+            
+            fileLines.clear();
+            
+            for (vtkIdType p = 0; p < chart->GetNumberOfPlots(); p++) {
+                vtkSmartPointer<vtkPlot> plot = chart->GetPlot(p);
+                vtkSmartPointer<vtkTable> table = plot->GetInput();
+                vtkSmartPointer<vtkStringArray> timeStampsStrings = plot->GetIndexedLabels();
+                
+                for (vtkIdType i = 0; i < table->GetNumberOfRows(); i++) {
+                    fileLines << QString("\"%1\"").arg(ui->cbxLayer->currentText());
+                    fileLines << timeStampsStrings->GetValue(i).c_str();
+                
+                    for (vtkIdType j = 1; j < table->GetNumberOfColumns(); j++) {
                         fileLines << QString("\"%1\"").arg(QString::number(table->GetValue(i, j).ToDouble(), 'f', 6));
                     }
+                    
+                    outputStream << fileLines.join(";");
+                    outputStream << "\r\n";
+                    outputStream.flush();
+                    
+                    fileLines.clear();
                 }
-                
-                outputStream << fileLines.join(";");
-                outputStream << "\r\n";
-                outputStream.flush();
-                
-                fileLines.clear();
             }
         }
         
@@ -389,7 +424,7 @@ vtkSmartPointer<vtkIdTypeArray> TimeSeriesChartDialog::getCellsIds() const {
 }
 
 void TimeSeriesChartDialog::btnExportToPNG_clicked() {
-    if (chart->GetNumberOfPlots() == 0) {
+    if ((!ui->chkVerticalProfile->isChecked() && chart->GetNumberOfPlots() == 0) || (ui->chkVerticalProfile->isChecked() && !rectilinearGrid)) {
         QMessageBox::warning(this, "Time Series Chart", "No plots available.");
         return;
     }
@@ -398,7 +433,7 @@ void TimeSeriesChartDialog::btnExportToPNG_clicked() {
     
     if (!imageFileName.isEmpty()) {
         vtkSmartPointer<vtkWindowToImageFilter> windowToImageFilter = vtkSmartPointer<vtkWindowToImageFilter>::New();
-        windowToImageFilter->SetInput(ui->vtkChartWidget->GetRenderWindow());
+        windowToImageFilter->SetInput(ui->chkVerticalProfile->isChecked() ? ui->vtkVerticalProfileWidget->GetRenderWindow() : ui->vtkChartWidget->GetRenderWindow());
         windowToImageFilter->SetMagnification(1); //set the resolution of the output image (3 times the current resolution of vtk render window)
         windowToImageFilter->SetInputBufferTypeToRGBA(); //also record the alpha (transparency) channel
         windowToImageFilter->ReadFrontBufferOff(); // read from the back buffer
@@ -453,7 +488,7 @@ void TimeSeriesChartDialog::renderVerticalProfileGrid(const char *layerName, vtk
     vtkSmartPointer<vtkDoubleArray> zCoordinates = vtkSmartPointer<vtkDoubleArray>::New();
     zCoordinates->InsertNextValue(0.0);
     
-    vtkSmartPointer<vtkRectilinearGrid> rectilinearGrid = vtkSmartPointer<vtkRectilinearGrid>::New();
+    rectilinearGrid = vtkSmartPointer<vtkRectilinearGrid>::New();
     rectilinearGrid->SetDimensions(x->GetNumberOfTuples(), y->GetNumberOfTuples(), 1);
     rectilinearGrid->SetXCoordinates(x);
     rectilinearGrid->SetYCoordinates(y);
@@ -466,8 +501,8 @@ void TimeSeriesChartDialog::renderVerticalProfileGrid(const char *layerName, vtk
     scalarBarActor->SetLookupTable(colorTransferFunction);
     scalarBarActor->SetTitle(layerName);
     scalarBarActor->SetNumberOfLabels(4);
-    scalarBarActor->SetPosition(.01, .48);
-    scalarBarActor->SetHeight(.5);
+    scalarBarActor->SetPosition(.01, .68);
+    scalarBarActor->SetHeight(.3);
     scalarBarActor->SetWidth(.14);
     
     vtkSmartPointer<vtkDataSetMapper> rectilinearGridMapper = vtkSmartPointer<vtkDataSetMapper>::New();
@@ -485,7 +520,7 @@ void TimeSeriesChartDialog::renderVerticalProfileGrid(const char *layerName, vtk
 }
 
 void TimeSeriesChartDialog::renderVerticalProfileAxes(double *xRange, double *yRange, vtkSmartPointer<vtkStringArray> timeStamps) {
-    vtkSmartPointer<vtkCubeAxesActor> axesActor = vtkSmartPointer<vtkCubeAxesActor>::New();
+    axesActor = vtkSmartPointer<vtkCubeAxesActor>::New();
     axesActor->SetXTitle("Time");
     axesActor->SetYUnits("m");
     axesActor->SetYTitle("Elevation");

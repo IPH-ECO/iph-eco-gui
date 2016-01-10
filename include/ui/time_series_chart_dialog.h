@@ -14,6 +14,8 @@
 #include <QAbstractButton>
 #include <vtkStringArray.h>
 #include <vtkContextView.h>
+#include <vtkCubeAxesActor.h>
+#include <vtkRectilinearGrid.h>
 #include <vtkColorTransferFunction.h>
 
 namespace Ui {
@@ -28,6 +30,8 @@ private:
     Ui::TimeSeriesChartDialog *ui;
     SimulationVTKWidget *simulationVTKWidget;
     TimeSeriesChartMouseInteractor *timeSeriesInteractor;
+    vtkSmartPointer<vtkRectilinearGrid> rectilinearGrid;
+    vtkSmartPointer<vtkCubeAxesActor> axesActor;
     vtkSmartPointer<vtkRenderer> renderer;
     vtkSmartPointer<vtkContextView> view;
     vtkSmartPointer<vtkChartXY> chart;

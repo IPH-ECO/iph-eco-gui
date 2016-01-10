@@ -15,7 +15,7 @@
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,3">
    <item>
-    <layout class="QVBoxLayout" name="verticalLayout_2">
+    <layout class="QVBoxLayout" name="leftVerticalLayout">
      <item>
       <widget class="QLabel" name="label_4">
        <property name="text">

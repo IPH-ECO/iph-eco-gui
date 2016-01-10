@@ -302,7 +302,10 @@ void ViewResultsDialog::showTimeSeriesChart() {
     frameTimer.stop();
     
     TimeSeriesChartDialog *dialog = new TimeSeriesChartDialog(this, ui->vtkWidget);
+    QObject::connect(dialog, SIGNAL(rejected()), this, SLOT(disableLeftWidgets()));
     dialog->show();
+    
+    toggleWidgets(false);
 }
 
 void ViewResultsDialog::removeLayer() {
@@ -441,4 +444,35 @@ void ViewResultsDialog::showExportVideoDialog() {
         
         dialog->exec();
     }
+}
+
+void ViewResultsDialog::toggleWidgets(bool enable) {
+    for (int i = 0; i < ui->leftVerticalLayout->count(); i++) {
+        QLayoutItem *layoutItem = ui->leftVerticalLayout->itemAt(i);
+        QWidget *widget = layoutItem->widget();
+        
+        if (widget) {
+            widget->setEnabled(enable);
+        } else {
+            QLayout *childLayout = static_cast<QBoxLayout*>(layoutItem->layout());
+
+            if (childLayout) {
+                for (int j = 0; j < childLayout->count(); j++) {
+                    QWidget *childWidget = childLayout->itemAt(j)->widget();
+                    
+                    if (childWidget) {
+                        childWidget->setEnabled(enable);
+                    }
+                }
+            }
+        }
+    }
+    
+    for (QAction *action : toolBarActions) {
+        action->setEnabled(enable);
+    }
+}
+
+void ViewResultsDialog::disableLeftWidgets() {
+    toggleWidgets(true);
 }
