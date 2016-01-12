@@ -226,10 +226,10 @@ void ViewResultsDialog::on_btnAddLayer_clicked() {
             hLayout->setContentsMargins(0, 0, 0, 0);
             
             QToolButton *layerPropertiesButton = new QToolButton();
-            QIcon layerPropertiesIcon(":/icons/interpolation-result.png");
+            QIcon layerPropertiesIcon(":/icons/layer-properties.png");
             
             layerPropertiesButton->setIcon(layerPropertiesIcon);
-            layerPropertiesButton->setToolTip("Layer properties");
+            layerPropertiesButton->setToolTip("Change layer properties");
             layerPropertiesButton->setObjectName(QString("layerPropertiesButton-%1").arg(layerKey));
             
             hLayout->addWidget(layerPropertiesButton);

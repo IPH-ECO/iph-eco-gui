@@ -346,7 +346,7 @@ void GridDataDialog::showEvent(QShowEvent *event) {
         QObject::connect(showGridDataPointsAction, SIGNAL(triggered(bool)), vtkWidget, SLOT(toggleMapPoints(bool)));
         toolBarActions.append(showGridDataPointsAction);
         
-        showColorMapAction = new QAction(QIcon(":/icons/interpolation-result.png"), "Show/Hide color map", mainWindow);
+        showColorMapAction = new QAction(QIcon(":/icons/layer-properties.png"), "Show/Hide color map", mainWindow);
         showColorMapAction->setCheckable(true);
         showColorMapAction->setChecked(true);
         QObject::connect(showColorMapAction, SIGNAL(triggered(bool)), vtkWidget, SLOT(toggleMap(bool)));

@@ -3,6 +3,7 @@
 
 #include <domain/simulation.h>
 #include "simulation_vtk_widget.h"
+#include <domain/layer_properties.h>
 #include <utility/time_series_chart_mouse_interactor.h>
 
 #include <QWidget>
@@ -35,6 +36,7 @@ private:
     vtkSmartPointer<vtkRenderer> renderer;
     vtkSmartPointer<vtkContextView> view;
     vtkSmartPointer<vtkChartXY> chart;
+    LayerProperties *layerProperties;
     QSettings *appSettings;
     
     bool isValid();
@@ -43,7 +45,7 @@ private:
     vtkIdType getCorrespondingCell(const vtkIdType &sourceCellId, const int &layer) const;
     void renderVerticalProfileGrid(const char *layerName,  vtkSmartPointer<vtkDoubleArray> x, vtkSmartPointer<vtkDoubleArray> y, vtkSmartPointer<vtkDoubleArray> scalars);
     void renderVerticalProfileAxes(double *xRange, double *yRange, vtkSmartPointer<vtkStringArray> timeStamps);
-    vtkSmartPointer<vtkColorTransferFunction> buildColorTransferFunction(LayerProperties *layerProperties, double *scalarBarRange);
+    vtkSmartPointer<vtkColorTransferFunction> buildColorTransferFunction(double *scalarBarRange);
     vtkSmartPointer<vtkDoubleArray> getGridArray(vtkSmartPointer<vtkUnstructuredGrid> sourceGrid, const char *layerName) const;
     virtual void reject();
 public:
@@ -58,6 +60,7 @@ private slots:
     void on_chkVerticalProfile_toggled(bool checked);
     void btnExportToCSV_clicked();
     void btnExportToPNG_clicked();
+    void btnLayerProperties_clicked();
 };
 
 #endif // TIME_SERIES_CHART_DIALOG_H
