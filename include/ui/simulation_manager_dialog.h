@@ -37,7 +37,6 @@ private slots:
     void on_btnPause_clicked();
     void on_btnFinish_clicked();
     void on_btnRemove_clicked();
-    void on_btnClose_clicked();
 };
 
 #endif // SIMULATION_MANAGER_DIALOG_H

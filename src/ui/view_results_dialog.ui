@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>ViewResultsDialog</class>
- <widget class="QWidget" name="ViewResultsDialog">
+ <widget class="QDialog" name="ViewResultsDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -353,5 +353,22 @@
  <resources>
   <include location="../../icons.qrc"/>
  </resources>
- <connections/>
+ <connections>
+  <connection>
+   <sender>btnClose</sender>
+   <signal>clicked()</signal>
+   <receiver>ViewResultsDialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>61</x>
+     <y>629</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>553</x>
+     <y>329</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

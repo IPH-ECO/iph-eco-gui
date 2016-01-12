@@ -12,7 +12,6 @@
 #include <QMessageBox>
 #include <QMutexLocker>
 #include <QInputDialog>
-#include <QMdiSubWindow>
 #include <QRegularExpression>
 
 ViewResultsDialog::ViewResultsDialog(QWidget *parent) :
@@ -151,17 +150,6 @@ void ViewResultsDialog::on_btnRefresh_clicked() {
         ui->spxFrame->setMaximum(outputFiles.size());
         ui->lblFrameTotal->setText(QString::number(outputFiles.size()));
     }
-}
-
-void ViewResultsDialog::on_btnClose_clicked() {
-    MainWindow *mainWindow = static_cast<MainWindow*>(this->topLevelWidget());
-    
-    for (QAction *action : toolBarActions) {
-        mainWindow->getToolBar()->removeAction(action);
-    }
-    
-    QMdiSubWindow *parentWindow = static_cast<QMdiSubWindow*>(parent());
-    parentWindow->close();
 }
 
 void ViewResultsDialog::on_btnFirstFrame_clicked() {

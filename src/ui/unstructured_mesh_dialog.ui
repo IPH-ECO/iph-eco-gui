@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>UnstructuredMeshDialog</class>
- <widget class="QWidget" name="UnstructuredMeshDialog">
+ <widget class="QDialog" name="UnstructuredMeshDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -605,8 +605,8 @@
              <normaloff>:/icons/dialog-close.png</normaloff>:/icons/dialog-close.png</iconset>
            </property>
            <property name="shortcut">
-          <string>Ctrl+F4</string>
-         </property>
+            <string>Ctrl+F4</string>
+           </property>
           </widget>
          </item>
          <item>
@@ -692,7 +692,7 @@
    <sender>btnClose</sender>
    <signal>clicked()</signal>
    <receiver>UnstructuredMeshDialog</receiver>
-   <slot>closeDialog()</slot>
+   <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>66</x>
@@ -705,7 +705,4 @@
    </hints>
   </connection>
  </connections>
- <slots>
-  <slot>closeDialog()</slot>
- </slots>
 </ui>

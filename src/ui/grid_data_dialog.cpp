@@ -47,8 +47,6 @@ GridDataDialog::GridDataDialog(QWidget *parent) :
     }
     ui->cbxConfiguration->setCurrentIndex(-1);
     ui->cbxConfiguration->blockSignals(false);
-    
-    ui->vtkWidget->clear();
 }
 
 GridDataDialog::~GridDataDialog() {
@@ -322,21 +320,6 @@ void GridDataDialog::onZoomAreaAction(bool checked) {
     pickIndividualCellAction->setChecked(false);
     pickIndividualCellAction->setEnabled(!checked);
 }
-
-/*void GridDataDialog::on_btnLockView_clicked(bool checked) {
-    ui->btnNavigateMode->setEnabled(!checked);
-    ui->btnOriginalZoom->setEnabled(!checked);
-    ui->btnZoomArea->setEnabled(!checked);
-    ui->btnShowAxes->setEnabled(!checked);
-    ui->btnPickIndividualCells->setEnabled(!checked);
-    ui->btnPickCellSet->setEnabled(!checked);
-    ui->btnShowGridDataPoints->setEnabled(!checked);
-    ui->btnShowColorMap->setEnabled(!checked);
-    ui->btnShowCellLabels->setEnabled(!checked);
-    showCellWeightsAction->setEnabled(!checked);
-    ui->btnBackgroundColor->setEnabled(!checked);
-    ui->vtkWidget->lockView(checked);
-}*/
 
 QString GridDataDialog::getDefaultDirectory() {
     return appSettings->value(GRID_DATA_DEFAULT_DIR_KEY).toString().isEmpty() ? QDir::homePath() : appSettings->value(GRID_DATA_DEFAULT_DIR_KEY).toString();

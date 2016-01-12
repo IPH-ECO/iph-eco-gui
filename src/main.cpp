@@ -13,8 +13,9 @@ int main(int argc, char *argv[]) {
     QApplication::setApplicationName("IPH-ECO");
     QApplication::setApplicationVersion("1.0.0");
 
-    MainWindow w;
-    w.showMaximized();
+    MainWindow *mainWindow = new MainWindow();
+    mainWindow->showMaximized();
+    IPHApplication::setMainWindow(mainWindow);
 
     return a.exec();
 }

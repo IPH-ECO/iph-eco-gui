@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>SimulationManagerDialog</class>
- <widget class="QWidget" name="SimulationManagerDialog">
+ <widget class="QDialog" name="SimulationManagerDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -405,5 +405,22 @@
  <resources>
   <include location="../../icons.qrc"/>
  </resources>
- <connections/>
+ <connections>
+  <connection>
+   <sender>btnClose</sender>
+   <signal>clicked()</signal>
+   <receiver>SimulationManagerDialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>61</x>
+     <y>594</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>654</x>
+     <y>311</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

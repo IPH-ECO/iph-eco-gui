@@ -15,19 +15,26 @@
 #include <ui/meteorological_data_dialog.h>
 
 #include <QProgressDialog>
-#include <QMdiSubWindow>
 #include <QMessageBox>
 #include <QIcon>
 
-MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow), mdiArea(new QMdiArea()),
-    MAX_RECENT_FILES(4), RECENT_FILES_KEY("recent_files"), PROJECT_DEFAULT_DIR_KEY("default_dir")
+MainWindow::MainWindow(QWidget *parent) :
+    QMainWindow(parent),
+    ui(new Ui::MainWindow),
+    mdiArea(new QMdiArea()),
+    currentSubWindow(new QMdiSubWindow(mdiArea)),
+    MAX_RECENT_FILES(4),
+    RECENT_FILES_KEY("recent_files"),
+    PROJECT_DEFAULT_DIR_KEY("default_dir")
 {
+    ui->setupUi(this);
+    currentSubWindow->setWindowFlags(currentSubWindow->windowFlags() | Qt::FramelessWindowHint);
+    currentSubWindow->setWindowState(currentSubWindow->windowState() | Qt::WindowMaximized);
+    setCentralWidget(mdiArea);
+    
     appSettings = new QSettings(QApplication::organizationName(), QApplication::applicationName(), this);
     readSettings();
-
-    ui->setupUi(this);
     updateRecentFilesActionList();
-    setCentralWidget(mdiArea);
 }
 
 MainWindow::~MainWindow() {
@@ -130,7 +137,11 @@ void MainWindow::on_actionSaveAsProject_triggered() {
 
 void MainWindow::on_actionNewProject_triggered() {
     NewProjectDialog newProjectDialog(this);
-    newProjectDialog.exec();
+    int exitCode = newProjectDialog.exec();
+    
+    if (exitCode == QDialog::Accepted) {
+        this->closeCurrentSubWindow();
+    }
 }
 
 void MainWindow::on_actionProjectProperties_triggered() {
@@ -141,7 +152,7 @@ void MainWindow::on_actionProjectProperties_triggered() {
 void MainWindow::on_actionCloseProject_triggered() {
     Project *project = IPHApplication::getCurrentProject();
 
-    if (project != NULL) {
+    if (project) {
         if (project->isDirty()) {
             QMessageBox::StandardButton button = QMessageBox::question(this, tr("Project has unsaved changes"), tr("Do you want to save the changes before closing the project?"));
             if (button == QMessageBox::Yes) {
@@ -155,75 +166,56 @@ void MainWindow::on_actionCloseProject_triggered() {
     }
     
     IPHApplication::setCurrentProject(nullptr);
+    this->closeCurrentSubWindow();
     enableMenus(false);
     setWindowTitle("IPH-ECO");
 }
 
-void MainWindow::on_actionUnstructuredMeshGeneration_triggered() {
-    UnstructuredMeshDialog *unstructuredMeshDialog = new UnstructuredMeshDialog();
-    QMdiSubWindow *subWindow = new QMdiSubWindow(mdiArea);
-    
-    subWindow->setWidget(unstructuredMeshDialog);
-    subWindow->setWindowFlags(subWindow->windowFlags() | Qt::FramelessWindowHint);
-    subWindow->setWindowState(subWindow->windowState() | Qt::WindowMaximized);
-    unstructuredMeshDialog->show();
-    
+void MainWindow::on_actionStructuredMeshGeneration_triggered() {
+    this->closeCurrentSubWindow();
+    StructuredMeshDialog *structuredMeshDialog = new StructuredMeshDialog(this);
+    currentSubWindow->setWidget(structuredMeshDialog);
+    structuredMeshDialog->show();
 #ifdef __APPLE__
     this->update();
 #endif
 }
 
-void MainWindow::on_actionStructuredMeshGeneration_triggered() {
-    StructuredMeshDialog *structuredMeshDialog = new StructuredMeshDialog();
-    QMdiSubWindow *subWindow = new QMdiSubWindow(mdiArea);
-    
-    subWindow->setWidget(structuredMeshDialog);
-    subWindow->setWindowFlags(subWindow->windowFlags() | Qt::FramelessWindowHint);
-    subWindow->setWindowState(subWindow->windowState() | Qt::WindowMaximized);
-    structuredMeshDialog->show();
-    
+void MainWindow::on_actionUnstructuredMeshGeneration_triggered() {
+    this->closeCurrentSubWindow();
+    UnstructuredMeshDialog *unstructuredMeshDialog = new UnstructuredMeshDialog(this);
+    currentSubWindow->setWidget(unstructuredMeshDialog);
+    unstructuredMeshDialog->show();
 #ifdef __APPLE__
     this->update();
 #endif
 }
 
 void MainWindow::on_actionGridData_triggered() {
-    GridDataDialog *gridDataDialog = new GridDataDialog();
-    QMdiSubWindow *subWindow = new QMdiSubWindow(mdiArea);
-    
-    subWindow->setWidget(gridDataDialog);
-    subWindow->setWindowFlags(subWindow->windowFlags() | Qt::FramelessWindowHint);
-    subWindow->setWindowState(subWindow->windowState() | Qt::WindowMaximized);
+    this->closeCurrentSubWindow();
+    GridDataDialog *gridDataDialog = new GridDataDialog(this);
+    currentSubWindow->setWidget(gridDataDialog);
     gridDataDialog->show();
-    
 #ifdef __APPLE__
     this->update();
 #endif
 }
 
 void MainWindow::on_actionHydrodynamicData_triggered() {
+    this->closeCurrentSubWindow();
     HydrodynamicDataDialog *hydrodynamicDataDialog = new HydrodynamicDataDialog(this);
-    QMdiSubWindow *subWindow = new QMdiSubWindow(mdiArea);
-    
-    subWindow->setWidget(hydrodynamicDataDialog);
-    subWindow->setWindowFlags(subWindow->windowFlags() | Qt::FramelessWindowHint);
-    subWindow->setWindowState(subWindow->windowState() | Qt::WindowMaximized);
+    currentSubWindow->setWidget(hydrodynamicDataDialog);
     hydrodynamicDataDialog->show();
-    
 #ifdef __APPLE__
     this->update();
 #endif
 }
 
 void MainWindow::on_actionMeteorologyData_triggered() {
+    this->closeCurrentSubWindow();
     MeteorologicalDataDialog *meteorologicalDataDialog = new MeteorologicalDataDialog(this);
-    QMdiSubWindow *subWindow = new QMdiSubWindow(mdiArea);
-    
-    subWindow->setWidget(meteorologicalDataDialog);
-    subWindow->setWindowFlags(subWindow->windowFlags() | Qt::FramelessWindowHint);
-    subWindow->setWindowState(subWindow->windowState() | Qt::WindowMaximized);
+    currentSubWindow->setWidget(meteorologicalDataDialog);
     meteorologicalDataDialog->show();
-
 #ifdef __APPLE__
     this->update();
 #endif
@@ -235,28 +227,20 @@ void MainWindow::on_actionCreateSimulation_triggered() {
 }
 
 void MainWindow::on_actionManageSimulation_triggered() {
+    this->closeCurrentSubWindow();
     SimulationManagerDialog *simulationManagerDialog = new SimulationManagerDialog(this);
-    QMdiSubWindow *subWindow = new QMdiSubWindow(mdiArea);
-
-    subWindow->setWidget(simulationManagerDialog);
-    subWindow->setWindowFlags(subWindow->windowFlags() | Qt::FramelessWindowHint);
-    subWindow->setWindowState(subWindow->windowState() | Qt::WindowMaximized);
+    currentSubWindow->setWidget(simulationManagerDialog);
     simulationManagerDialog->show();
-    
 #ifdef __APPLE__
     this->update();
 #endif
 }
 
 void MainWindow::on_actionViewResults_triggered() {
+    this->closeCurrentSubWindow();
     ViewResultsDialog *viewResultsDialog = new ViewResultsDialog(this);
-    QMdiSubWindow *subWindow = new QMdiSubWindow(mdiArea);
-    
-    subWindow->setWidget(viewResultsDialog);
-    subWindow->setWindowFlags(subWindow->windowFlags() | Qt::FramelessWindowHint);
-    subWindow->setWindowState(subWindow->windowState() | Qt::WindowMaximized);
+    currentSubWindow->setWidget(viewResultsDialog);
     viewResultsDialog->show();
-    
 #ifdef __APPLE__
     this->update();
 #endif
@@ -285,7 +269,6 @@ void MainWindow::enableMenus(bool enable) {
     ui->actionCloseProject->setEnabled(enable);
 }
 
-//methods
 void MainWindow::readSettings() {
     appSettings->beginGroup("MainWindow");
     resize(appSettings->value("size", QSize(400, 400)).toSize());
@@ -335,6 +318,7 @@ void MainWindow::openProject(const QString &filename) {
                 enableMenus(false);
                 setWindowTitle("IPH-ECO");
             } else {
+                this->closeCurrentSubWindow();
                 enableMenus(true);
                 updateRecentFilesList(filename);
                 setWindowTitle("IPH-ECO - " + IPHApplication::getCurrentProject()->getName());
@@ -423,4 +407,23 @@ void MainWindow::setCoordinate(double *coordinate) {
     QString yStr = QString::number(coordinate[1], 'f', 6);
     
     ui->statusBar->showMessage(QString("UTM-X: %1, UTM-Y: %2").arg(xStr).arg(yStr), 500);
+}
+
+void MainWindow::closeCurrentSubWindow() {
+    QList<QAction*> actions = {
+        ui->actionNewProject,
+        ui->actionOpenProject,
+        ui->actionSaveProject,
+        ui->actionSaveAsProject,
+        ui->actionProjectProperties,
+        ui->actionCloseProject
+    };
+    
+    for (QAction *action : ui->toolBar->actions()) {
+        if (!actions.contains(action)) {
+            ui->toolBar->removeAction(action);
+        }
+    }
+    
+    mdiArea->closeActiveSubWindow();
 }

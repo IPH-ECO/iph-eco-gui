@@ -40,8 +40,7 @@ private slots:
     void onPickCellSetAction(bool checked);
     void onShowCellWeightsAction(bool checked);
     void onZoomAreaAction(bool checked);
-//    void on_btnLockView_clicked(bool checked);
-
+    
 private:
     const QString GRID_DATA_DEFAULT_DIR_KEY;
     

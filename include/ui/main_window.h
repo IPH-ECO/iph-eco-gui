@@ -7,6 +7,7 @@
 #include <QCloseEvent>
 #include <QFileDialog>
 #include <QMainWindow>
+#include <QMdiSubWindow>
 
 #include "new_project_dialog.h"
 #include "project_properties_dialog.h"
@@ -25,6 +26,10 @@ public:
     
     QToolBar* getToolBar() const;
     void setCoordinate(double *coordinate);
+
+public slots:
+    void on_actionSaveProject_triggered();
+    void closeCurrentSubWindow();
 
 protected:
     void closeEvent(QCloseEvent *);
@@ -54,14 +59,12 @@ private slots:
 
     void enableMenus(bool enable);
     void openRecent();
-    
-public slots:
-    void on_actionSaveProject_triggered();
 
 private:
     Ui::MainWindow *ui;
     QSettings *appSettings;
     QMdiArea *mdiArea;
+    QMdiSubWindow *currentSubWindow;
     
     const int MAX_RECENT_FILES;
     const QString RECENT_FILES_KEY;

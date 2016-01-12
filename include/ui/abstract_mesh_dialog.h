@@ -41,8 +41,6 @@ public:
     virtual ~AbstractMeshDialog();
 
 	virtual void showEvent(QShowEvent *event);
-protected slots:
-    virtual void closeDialog();
 private slots:
 	virtual void onToggleLabelsClicked(bool show);
 	void onExportMapClicked();

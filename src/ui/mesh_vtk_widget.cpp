@@ -127,8 +127,10 @@ void MeshVTKWidget::toggleMesh(bool show) {
 
 void MeshVTKWidget::toggleAxes(bool show) {
     this->showAxes = show;
-    this->axesActor->SetVisibility(show);
-    this->GetRenderWindow()->Render();
+    if (this->axesActor) {
+        this->axesActor->SetVisibility(show);
+        this->GetRenderWindow()->Render();
+    }
 }
 
 void MeshVTKWidget::resetZoom() {

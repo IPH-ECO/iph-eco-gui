@@ -1,6 +1,6 @@
 #include <ui/unstructured_mesh_dialog.h>
 #include "ui_unstructured_mesh_dialog.h"
-#include <ui/main_window.h>
+
 #include <ui/island_form.h>
 #include <application/iph_application.h>
 #include <exceptions/mesh_polygon_exception.h>

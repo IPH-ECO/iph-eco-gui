@@ -624,7 +624,7 @@
    <sender>btnClose</sender>
    <signal>clicked()</signal>
    <receiver>MeteorologicalDataDialog</receiver>
-   <slot>closeDialog()</slot>
+   <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>61</x>
@@ -637,7 +637,4 @@
    </hints>
   </connection>
  </connections>
- <slots>
-  <slot>closeDialog()</slot>
- </slots>
 </ui>

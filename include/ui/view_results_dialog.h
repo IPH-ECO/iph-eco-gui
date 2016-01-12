@@ -35,7 +35,6 @@ private slots:
     void onSimulationCreated(Simulation *simulation);
     void on_tblSimulations_cellClicked(int row, int column);
     void on_btnRefresh_clicked();
-    void on_btnClose_clicked();
     void on_btnFirstFrame_clicked();
     void on_btnPreviousFrame_clicked();
     void on_btnStartReproduction_clicked();

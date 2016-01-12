@@ -7,7 +7,10 @@
 #include <QMessageBox>
 #include <QMdiSubWindow>
 
-SimulationManagerDialog::SimulationManagerDialog(QWidget *parent) : QDialog(parent), ui(new Ui::SimulationManagerDialog) {
+SimulationManagerDialog::SimulationManagerDialog(QWidget *parent) :
+    QDialog(parent),
+    ui(new Ui::SimulationManagerDialog)
+{
 	ui->setupUi(this);
     ui->tblAll->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     ui->tblIdle->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
@@ -16,8 +19,10 @@ SimulationManagerDialog::SimulationManagerDialog(QWidget *parent) : QDialog(pare
     ui->tblFinished->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 
 	Project *project = IPHApplication::getCurrentProject();
-    
+    MainWindow *mainWindow = IPHApplication::getMainWindow();
+
     QObject::connect(project, SIGNAL(simulationCreated(Simulation*)), this, SLOT(onSimulationCreated(Simulation*)));
+    QObject::connect(this, SIGNAL(rejected()), mainWindow, SLOT(closeCurrentSubWindow()));
     
     for (Simulation *simulation : project->getSimulations()) {
 		int row = ui->tblAll->rowCount();
@@ -297,9 +302,4 @@ void SimulationManagerDialog::on_btnRemove_clicked() {
             simulationManager->remove(simulation);
         }
     }
-}
-
-void SimulationManagerDialog::on_btnClose_clicked() {
-    QMdiSubWindow *parentWindow = static_cast<QMdiSubWindow*>(parent());
-    parentWindow->close();
 }
