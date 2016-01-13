@@ -9,15 +9,18 @@
 #include <repository/simulation_repository.h>
 
 #include <QDir>
+#include <QRegExp>
 #include <QFileInfo>
 #include <QDateTime>
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QRegExpValidator>
 
 CreateSimulationDialog::CreateSimulationDialog(QWidget *parent) :
 	QDialog(parent), ui(new Ui::CreateSimulationDialog)
 {
 	ui->setupUi(this);
+    ui->edtLabel->setValidator(new QRegExpValidator(QRegExp("\\w+"), this));
     ui->edtInitialTime->setDateTime(QDateTime(QDate(QDate::currentDate().year(), 1, 1)));
     ui->trOutputVariables->header()->close();
     
@@ -168,7 +171,7 @@ bool CreateSimulationDialog::isValid() {
     }
     
     if (!project->isPersisted()) {
-        QMessageBox::information(this, tr("Create Simulation"), tr("The project must be saved before to create a simulation."));
+        QMessageBox::information(this, tr("Create Simulation"), tr("This project must be saved before to create a simulation."));
         MainWindow *mainWindow = static_cast<MainWindow*>(this->parent());
         mainWindow->on_actionSaveProject_triggered();
         return false;

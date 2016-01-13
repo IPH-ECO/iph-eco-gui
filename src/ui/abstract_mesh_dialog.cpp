@@ -10,7 +10,7 @@
 
 AbstractMeshDialog::AbstractMeshDialog(QWidget *parent) :
     QDialog(parent),
-    BOUNDARY_DEFAULT_DIR_KEY("boundary_default_dir"),
+    GENERAL_DEFAULT_DIR_KEY("boundary_default_dir"),
     appSettings(new QSettings(QApplication::organizationName(), QApplication::applicationName(), this)),
     vtkWidget(nullptr),
     enableMeshPropertiesAction(true)
@@ -77,7 +77,7 @@ void AbstractMeshDialog::showEvent(QShowEvent *event) {
         mainWindow->getToolBar()->addAction(action);
     }
     
-//    QDialog::showEvent(event);
+    QDialog::showEvent(event);
 }
 
 void AbstractMeshDialog::onToggleLabelsClicked(bool show) {
@@ -113,7 +113,7 @@ void AbstractMeshDialog::onMeshPropertiesClicked() {
 }
 
 QString AbstractMeshDialog::getDefaultDirectory() {
-    return appSettings->value(BOUNDARY_DEFAULT_DIR_KEY).toString().isEmpty() ? QDir::homePath() : appSettings->value(BOUNDARY_DEFAULT_DIR_KEY).toString();
+    return appSettings->value(GENERAL_DEFAULT_DIR_KEY).toString().isEmpty() ? QDir::homePath() : appSettings->value(GENERAL_DEFAULT_DIR_KEY).toString();
 }
 
 void AbstractMeshDialog::onChangeBackgroundColorClicked() {

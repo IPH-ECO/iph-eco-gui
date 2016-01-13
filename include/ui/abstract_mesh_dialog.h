@@ -25,7 +25,7 @@ enum class AbstractDialogAction {
 class AbstractMeshDialog : public QDialog {
 	Q_OBJECT
 protected:
-    const QString BOUNDARY_DEFAULT_DIR_KEY;
+    const QString GENERAL_DEFAULT_DIR_KEY;
     QSettings *appSettings;
 	MeshVTKWidget *vtkWidget;
     QList<QAction*> toolBarActions;
