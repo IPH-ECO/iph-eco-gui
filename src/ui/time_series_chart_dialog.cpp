@@ -177,6 +177,7 @@ void TimeSeriesChartDialog::on_btnPlot_clicked() {
     progressDialog->setMaximum(framesTotal);
     progressDialog->setMinimumDuration(500);
     progressDialog->setWindowModality(Qt::WindowModal);
+    progressDialog->setLabelText("Plotting...");
     
     for (int i = 0; i < framesTotal; i++) {
         vtkSmartPointer<vtkGenericDataObjectReader> reader = vtkSmartPointer<vtkGenericDataObjectReader>::New();
@@ -224,10 +225,17 @@ void TimeSeriesChartDialog::on_btnPlot_clicked() {
             }
         }
         
+        if (progressDialog->wasCanceled()) {
+            progressDialog->deleteLater();
+            return;
+        }
+        
         frame += frameStep;
         progressDialog->setValue(i + 1);
         QApplication::processEvents();
     }
+    
+    progressDialog->deleteLater();
     
     if (verticalProfile) {
         renderer->RemoveAllViewProps();

@@ -25,6 +25,8 @@ public:
     
     LayerPropertiesDialog(QWidget *parent, LayerProperties *layerProperties, const LayerPropertiesTab &tabs = static_cast<LayerPropertiesTab>( LayerPropertiesTab::MAP | LayerPropertiesTab::POINTS | LayerPropertiesTab::MESH));
     ~LayerPropertiesDialog();
+public slots:
+    void changed();
 private:
     Ui::LayerPropertiesDialog *ui;
     LayerProperties *layerProperties;
@@ -38,6 +40,7 @@ private:
     QToolButton *defaultPointsColorGradientButton;
     QToolButton *currentVectorsColorGradientButton;
     QToolButton *defaultVectorsColorGradientButton;
+    bool isChanged;
     
     void setupMapTab();
     void setupPointsTab();

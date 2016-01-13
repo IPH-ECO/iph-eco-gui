@@ -862,7 +862,58 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>chkMapMinimum</sender>
+   <signal>clicked()</signal>
+   <receiver>LayerPropertiesDialog</receiver>
+   <slot>changed()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>89</x>
+     <y>103</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>267</x>
+     <y>242</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>chkMapMaximum</sender>
+   <signal>clicked()</signal>
+   <receiver>LayerPropertiesDialog</receiver>
+   <slot>changed()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>311</x>
+     <y>103</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>267</x>
+     <y>242</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>chkMapInvertColorTemplate</sender>
+   <signal>clicked()</signal>
+   <receiver>LayerPropertiesDialog</receiver>
+   <slot>changed()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>79</x>
+     <y>254</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>267</x>
+     <y>242</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
+ <slots>
+  <slot>changed()</slot>
+ </slots>
  <buttongroups>
   <buttongroup name="buttonGroup"/>
  </buttongroups>

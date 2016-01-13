@@ -17,7 +17,8 @@ LayerPropertiesDialog::LayerPropertiesDialog(QWidget *parent, LayerProperties *l
     QDialog(parent),
     ui(new Ui::LayerPropertiesDialog),
     layerProperties(layerProperties),
-    tabs(tabs)
+    tabs(tabs),
+    isChanged(false)
 {
     ui->setupUi(this);
     
@@ -228,6 +229,8 @@ void LayerPropertiesDialog::colorGradientButtonClicked(bool checked) {
         defaultButton = defaultVectorsColorGradientButton;
     }
     
+    isChanged = true;
+    
     if (checked) {
         (*currentButton)->setChecked(false);
         *currentButton = static_cast<QToolButton*>(QObject::sender());
@@ -313,7 +316,10 @@ void LayerPropertiesDialog::on_buttonBox_clicked(QAbstractButton *button) {
         layerProperties->setMeshOpacity(ui->sldMeshOpacity->value());
     }
     
-    emit applyChanges();
+    if (isChanged) {
+        emit applyChanges();
+        isChanged = false;
+    }
     
     if (standardButton == QDialogButtonBox::Ok) {
         this->accept();
@@ -371,4 +377,8 @@ bool LayerPropertiesDialog::isValid() {
     }
     
     return true;
+}
+
+void LayerPropertiesDialog::changed() {
+    this->isChanged = true;
 }
