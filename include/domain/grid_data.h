@@ -8,8 +8,6 @@
 #include <vtkSmartPointer.h>
 #include <vtkIdTypeArray.h>
 #include <vtkPolyData.h>
-#include <vtkPoints.h>
-#include <QObject>
 #include <QSet>
 
 class GridDataConfiguration;
@@ -38,8 +36,7 @@ private:
     bool interpolationCanceled;
     CoordinateSystem coordinateSystem;
     
-    double inverseOfDistance(vtkIdTypeArray *inscribedPointsIndexes, double *cellCenter);
-    double calculateNearestWeight(double *cellCenter);
+    double inverseOfDistance(vtkSmartPointer<vtkIdList> inscribedPointsIds, double *cellCenter);
 
 public:
     GridData(Mesh *mesh);

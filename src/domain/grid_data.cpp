@@ -1,21 +1,18 @@
 #include <domain/grid_data.h>
 
-#include <domain/color_gradient.h>
-#include <utility/cgal_definitions.h>
 #include <exceptions/grid_data_exception.h>
 
 #include <GeographicLib/GeoCoords.hpp>
-#include <vtkRegularPolygonSource.h>
 #include <vtkSimplePointsReader.h>
 #include <vtkXMLPolyDataWriter.h>
 #include <vtkXMLPolyDataReader.h>
+#include <vtkPointLocator.h>
 #include <vtkDoubleArray.h>
-#include <vtkIdTypeArray.h>
+#include <vtkCellCenters.h>
 #include <vtkPointData.h>
 #include <vtkCellData.h>
-#include <vtkTriangle.h>
 #include <QApplication>
-#include <vtkQuad.h>
+#include <vtkMath.h>
 
 GridData::GridData(Mesh *mesh) :
     id(0),
@@ -194,7 +191,7 @@ void GridData::interpolate() {
 	emit updateProgressText("Interpolating grid data...");
     QApplication::processEvents();
 
-    vtkPolyData *meshPolyData = mesh->getMeshPolyData();
+    vtkSmartPointer<vtkPolyData> meshPolyData = mesh->getMeshPolyData();
     vtkSmartPointer<vtkDoubleArray> interpolatedWeightsArray = vtkSmartPointer<vtkDoubleArray>::New();
     std::string gridDataName(this->name.toStdString());
 
@@ -202,74 +199,45 @@ void GridData::interpolate() {
     interpolatedWeightsArray->SetNumberOfComponents(1);
     interpolatedWeightsArray->SetNumberOfTuples(meshPolyData->GetNumberOfCells());
     
-    double cellCenter[3], inputPointsBounds[6], normal[3] = { 0.0, 0.0, 1.0 };
-    vtkPoints *inputPoints = inputPolyData->GetPoints();
+    vtkSmartPointer<vtkCellCenters> cellCentersFilter = vtkSmartPointer<vtkCellCenters>::New();
+    cellCentersFilter->SetInputData(meshPolyData);
+    cellCentersFilter->Update();
     
-    inputPoints->GetBounds(inputPointsBounds);
+    vtkSmartPointer<vtkPolyData> cellCenters = cellCentersFilter->GetOutput();
     
     for (vtkIdType i = 0; i < meshPolyData->GetNumberOfCells() && !interpolationCanceled; i++) {
+        double *cellCenter = cellCenters->GetPoint(i);
         double weight = 0.0;
         
-        if (mesh->instanceOf("UnstructuredMesh")) {
-            vtkTriangle *triangle = vtkTriangle::SafeDownCast(meshPolyData->GetCell(i));
-            double *a = triangle->GetPoints()->GetPoint(0);
-            double *b = triangle->GetPoints()->GetPoint(1);
-            double *c = triangle->GetPoints()->GetPoint(2);
-            
-            vtkTriangle::TriangleCenter(a, b, c, cellCenter);
-        } else {
-            vtkQuad *quad = vtkQuad::SafeDownCast(meshPolyData->GetCell(i));
-            double quadBounds[6];
-            
-            quad->GetBounds(quadBounds);
-            cellCenter[0] = quadBounds[0] + (quadBounds[1] - quadBounds[0]) / 2.0;
-            cellCenter[1] = quadBounds[2] + (quadBounds[3] - quadBounds[2]) / 2.0;
-            cellCenter[2] = 0.0;
-        }
-        
         if (gridDataInputType == GridDataInputType::POINT) {
-            vtkSmartPointer<vtkRegularPolygonSource> circleSource = vtkSmartPointer<vtkRegularPolygonSource>::New();
-            circleSource->SetNumberOfSides(50);
-            circleSource->SetRadius(radius);
-            circleSource->SetCenter(cellCenter);
-            circleSource->Update();
+            vtkSmartPointer<vtkPointLocator> pointLocator = vtkSmartPointer<vtkPointLocator>::New();
+            pointLocator->SetDataSet(inputPolyData);
+            pointLocator->AutomaticOn();
+            pointLocator->SetNumberOfPointsPerBucket(2);
+            pointLocator->BuildLocator();
             
-            vtkPolyData *circlePolyData = circleSource->GetOutput();
-            vtkIdType circleNumberOfPoints = circlePolyData->GetPoints()->GetNumberOfPoints();
-            double *circleDataPointer = static_cast<double*>(circlePolyData->GetPoints()->GetData()->GetVoidPointer(0));
-            double circleBounds[6], point[3];
-            
-            circlePolyData->GetPoints()->GetBounds(circleBounds);
-            
-            vtkSmartPointer<vtkIdTypeArray> inscribedPointsIndexes = vtkSmartPointer<vtkIdTypeArray>::New();
-            inscribedPointsIndexes->SetNumberOfComponents(1);
-            
-            for (vtkIdType j = 0; j < inputPoints->GetNumberOfPoints() && !interpolationCanceled; j++) {
-                inputPoints->GetPoint(j, point);
-                
-                if (vtkPolygon::PointInPolygon(point, circleNumberOfPoints, circleDataPointer, circleBounds, normal)) {
-                    inscribedPointsIndexes->InsertNextTuple1(j);
-                }
-            }
-            
-            if (interpolationCanceled) {
-                break;
-            }
-            
-            if (inscribedPointsIndexes->GetNumberOfTuples() == 0) {
-                weight = calculateNearestWeight(cellCenter);
+            vtkSmartPointer<vtkIdList> inscribedPointsIds = vtkSmartPointer<vtkIdList>::New();
+            pointLocator->FindPointsWithinRadius(radius, cellCenter, inscribedPointsIds);
+
+            if (inscribedPointsIds->GetNumberOfIds() == 1) {
+                vtkIdType nearestPointId = pointLocator->FindClosestPoint(cellCenter);
+                weight = inputPolyData->GetPointData()->GetScalars()->GetTuple1(nearestPointId);
             } else {
-                weight = inverseOfDistance(inscribedPointsIndexes, cellCenter);
+                weight = inverseOfDistance(inscribedPointsIds, cellCenter);
             }
         } else { // GridDataInputType::POLYGON
-            double *gridDataPointer = static_cast<double*>(inputPoints->GetData()->GetVoidPointer(0));
+            double *inputPolyDataPointer = static_cast<double*>(inputPolyData->GetPoints()->GetData()->GetVoidPointer(0));
+            double inputPointsBounds[6], normal[3] = { 0.0, 0.0, 1.0 };
             
-            if (vtkPolygon::PointInPolygon(cellCenter, inputPoints->GetNumberOfPoints(), gridDataPointer, inputPointsBounds, normal)) {
+            inputPolyData->GetPoints()->GetBounds(inputPointsBounds);
+            
+            if (vtkPolygon::PointInPolygon(cellCenter, inputPolyData->GetPoints()->GetNumberOfPoints(), inputPolyDataPointer, inputPointsBounds, normal)) {
                 weight = inputPolyData->GetPointData()->GetScalars()->GetTuple1(0);
             }
         }
         
         interpolatedWeightsArray->SetTuple1(i, weight);
+        
         emit updateProgress(i + 1);
         QApplication::processEvents();
     }
@@ -280,44 +248,23 @@ void GridData::interpolate() {
     }
 }
 
-double GridData::inverseOfDistance(vtkIdTypeArray *inscribedPointsIndexes, double *cellCenter) {
+double GridData::inverseOfDistance(vtkSmartPointer<vtkIdList> inscribedPointsIds, double *cellCenter) {
     double numerator = 0.0, denominator = 0.0;
     
-    for (vtkIdType i = 0; i < inscribedPointsIndexes->GetNumberOfTuples(); i++) {
-        vtkIdType tupleIndex = inscribedPointsIndexes->GetTuple1(i);
-        double point[3];
+    for (vtkIdType i = 0; i < inscribedPointsIds->GetNumberOfIds(); i++) {
+        vtkIdType pointId = inscribedPointsIds->GetId(i);
+        double distance = vtkMath::Distance2BetweenPoints(cellCenter, inputPolyData->GetPoints()->GetPoint(pointId));
         
-        inputPolyData->GetPoints()->GetPoint(tupleIndex, point);
+        if (distance == 0) {
+            continue;
+        }
         
-        double distance = sqrt(pow(point[0] - cellCenter[0], 2.0) + pow(point[1] - cellCenter[1], 2.0));
         double distancePow = pow(distance, exponent);
-        numerator += inputPolyData->GetPointData()->GetScalars()->GetTuple1(tupleIndex) / distancePow;
+        numerator += inputPolyData->GetPointData()->GetScalars()->GetTuple1(pointId) / distancePow;
         denominator += 1.0 / distancePow;
     }
     
-    return numerator / denominator;
-}
-
-double GridData::calculateNearestWeight(double *cellCenter) {
-    vtkIdType nearestId = 0;
-    double point[3];
-    
-    inputPolyData->GetPoints()->GetPoint(nearestId, point);
-    
-    double minimalDistance = sqrt(pow(point[0] - cellCenter[0], 2.0) + pow(point[1] - cellCenter[1], 2.0));
-    
-    for (vtkIdType i = 1; i < inputPolyData->GetPoints()->GetNumberOfPoints(); i++) {
-        inputPolyData->GetPoints()->GetPoint(i, point);
-        
-        double distance = sqrt(pow(point[0] - cellCenter[0], 2.0) + pow(point[1] - cellCenter[1], 2.0));
-        
-        if (minimalDistance > distance) {
-            nearestId = i;
-            minimalDistance = distance;
-        }
-    }
-    
-    return inputPolyData->GetPointData()->GetScalars()->GetTuple1(nearestId);
+    return denominator == 0 ? 0 : numerator / denominator;
 }
 
 void GridData::cancelInterpolation(bool value) {
@@ -367,6 +314,8 @@ int GridData::getMaximumProgress() const {
 	return mesh->getMeshPolyData()->GetNumberOfCells();
 }
 
+
+// TODO: Review
 double GridData::getMinimumWeight() const {
     std::string arrayName = this->name.toStdString();
     vtkSmartPointer<vtkDoubleArray> weights = vtkDoubleArray::SafeDownCast(this->mesh->getMeshPolyData()->GetCellData()->GetArray(arrayName.c_str()));

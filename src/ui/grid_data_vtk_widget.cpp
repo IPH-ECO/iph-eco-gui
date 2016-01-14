@@ -180,7 +180,6 @@ vtkColorTransferFunction* GridDataVTKWidget::buildColorTransferFunction(bool isC
     double minimumRange;
     double maximumRange;
     
-    // TODO: fix custom ranges
     if (isColorMap) {
         QByteArray gridDataNameByteArray = currentGridData->getName().toLocal8Bit();
         const char *gridDataName = gridDataNameByteArray.data();
