@@ -314,22 +314,19 @@ int GridData::getMaximumProgress() const {
 	return mesh->getMeshPolyData()->GetNumberOfCells();
 }
 
-
-// TODO: Review
 double GridData::getMinimumWeight() const {
     std::string arrayName = this->name.toStdString();
     vtkSmartPointer<vtkDoubleArray> weights = vtkDoubleArray::SafeDownCast(this->mesh->getMeshPolyData()->GetCellData()->GetArray(arrayName.c_str()));
-    double minimum = weights->GetTuple1(0);
     
-    for (int i = 1; i < weights->GetNumberOfTuples(); i++) {
-        double weight = weights->GetTuple1(i);
-        
-        if (weight < minimum) {
-            minimum = weight;
-        }
+    if (!weights) {
+        return 0;
     }
     
-    return minimum;
+    double range[2];
+    
+    weights->GetRange(range);
+    
+    return range[0];
 }
 
 SimulationDataType::GridData GridData::toSimulationDataType() const {
