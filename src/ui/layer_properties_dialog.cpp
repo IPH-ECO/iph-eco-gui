@@ -382,3 +382,7 @@ bool LayerPropertiesDialog::isValid() {
 void LayerPropertiesDialog::changed() {
     this->isChanged = true;
 }
+
+void LayerPropertiesDialog::on_cbxLineStyle_currentIndexChanged(int index) {
+    this->changed();
+}

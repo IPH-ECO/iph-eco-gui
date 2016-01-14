@@ -1,8 +1,8 @@
 #include <ui/grid_data_context_menu.h>
 
 #include <ui/grid_data_dialog.h>
-#include <ui/grid_layer_attributes_dialog.h>
 #include <ui/cell_update_dialog.h>
+#include <ui/layer_properties_dialog.h>
 
 #include <QIcon>
 
@@ -27,7 +27,10 @@ void GridDataContextMenu::toggleEditWeightsAction(bool toggle) {
 }
 
 void GridDataContextMenu::editGridLayerAttributes() {
-    GridLayerAttributesDialog *dialog = new GridLayerAttributesDialog(this->parentWidget(), vtkWidget->currentGridData);
+    LayerPropertiesDialog *dialog = new LayerPropertiesDialog(this->parentWidget(), vtkWidget->currentGridData->getLayerProperties());
+
+    QObject::connect(dialog, SIGNAL(applyChanges()), vtkWidget, SLOT(render()));
+    dialog->setAttribute(Qt::WA_DeleteOnClose, true);
     dialog->exec();
 }
 

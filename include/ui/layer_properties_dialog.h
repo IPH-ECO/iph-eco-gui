@@ -53,6 +53,7 @@ private slots:
     void colorGradientButtonClicked(bool checked);
     void on_tabWidget_currentChanged(int index);
     void on_buttonBox_clicked(QAbstractButton *button);
+    void on_cbxLineStyle_currentIndexChanged(int index);
     void showColorPickerDialog();
 signals:
     void applyChanges();

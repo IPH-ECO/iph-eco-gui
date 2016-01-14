@@ -8,7 +8,6 @@
 
 #include <QWidget>
 #include <QMouseEvent>
-#include <QVTKWidget.h>
 #include <vtkCubeAxesActor.h>
 #include <vtkScalarBarWidget.h>
 #include <vtkWorldPointPicker.h>
@@ -33,6 +32,7 @@ private:
     vtkSmartPointer<vtkIdTypeArray> selectedCellIds;
     
     GridData *currentGridData;
+    LayerProperties *layerProperties;
     
     bool showMapPoints;
     bool showMap;
@@ -52,6 +52,7 @@ public:
     void toggleCellLabels(const LabelType &labelType = LabelType::UNDEFINED);
     void lockView(bool lock);
 public slots:
+    void render(); // renders current grid data
     void toggleMesh(bool show);
     void toggleMapPoints(bool show);
     void toggleMap(bool show);

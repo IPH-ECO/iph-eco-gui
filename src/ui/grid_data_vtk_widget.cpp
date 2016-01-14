@@ -6,6 +6,7 @@
 
 #include <vtkCellData.h>
 #include <vtkProperty.h>
+#include <vtkPointData.h>
 #include <vtkPNGWriter.h>
 #include <vtkAreaPicker.h>
 #include <vtkDoubleArray.h>
@@ -88,13 +89,14 @@ void GridDataVTKWidget::render(GridData *gridData) {
     render(mesh);
 
     currentGridData = gridData;
+    layerProperties = gridData->getLayerProperties();
     
-    QColor lineColor(gridData->getMeshLineColor());
+    QColor lineColor(layerProperties->getMeshLineColor());
     
     meshActor->GetProperty()->SetColor(lineColor.redF(), lineColor.greenF(), lineColor.blueF());
-    meshActor->GetProperty()->SetLineStipplePattern(gridData->getMeshLineStyle());
-    meshActor->GetProperty()->SetLineWidth(gridData->getMeshLineWidth());
-    meshActor->GetProperty()->SetOpacity(gridData->getMeshOpacity() / 100.0);
+    meshActor->GetProperty()->SetLineStipplePattern(layerProperties->getMeshLineStyle());
+    meshActor->GetProperty()->SetLineWidth(layerProperties->getMeshLineWidth());
+    meshActor->GetProperty()->SetOpacity(layerProperties->getMeshOpacity() / 100.0);
     
     vtkPolyData *inputPointsPolyData = currentGridData->getInputPolyData();
     vtkColorTransferFunction *pointsColorTransferFunction = buildColorTransferFunction(false);
@@ -107,8 +109,8 @@ void GridDataVTKWidget::render(GridData *gridData) {
     
     mapPointsActor = vtkSmartPointer<vtkActor>::New();
     mapPointsActor->SetMapper(inputPointsMapper);
-    mapPointsActor->GetProperty()->SetPointSize(gridData->getPointsSize());
-    mapPointsActor->GetProperty()->SetOpacity(gridData->getPointsOpacity() / 100.0);
+    mapPointsActor->GetProperty()->SetPointSize(layerProperties->getPointsSize());
+    mapPointsActor->GetProperty()->SetOpacity(layerProperties->getPointsOpacity() / 100.0);
     mapPointsActor->SetVisibility(showMapPoints);
     
     std::string mapPointsBarActorTitle = currentGridData->getName().toStdString();
@@ -118,7 +120,7 @@ void GridDataVTKWidget::render(GridData *gridData) {
     pointsScalarBarWidget->GetScalarBarActor()->SetLookupTable(pointsColorTransferFunction);
     pointsScalarBarWidget->GetScalarBarActor()->SetTitle(mapPointsBarActorTitle.c_str());
     pointsScalarBarWidget->GetScalarBarActor()->SetNumberOfLabels(4);
-    pointsScalarBarWidget->GetScalarBarActor()->SetVisibility(currentGridData->getPointsLegend());
+    pointsScalarBarWidget->GetScalarBarActor()->SetVisibility(layerProperties->getPointsLegend());
     pointsScalarBarWidget->RepositionableOn();
     pointsScalarBarWidget->SelectableOn();
     pointsScalarBarWidget->ResizableOn();
@@ -142,8 +144,8 @@ void GridDataVTKWidget::render(GridData *gridData) {
     
     mapActor = vtkSmartPointer<vtkActor>::New();
     mapActor->SetMapper(mapMapper);
-    mapActor->GetProperty()->SetOpacity(gridData->getMapOpacity() / 100.0);
-    mapActor->GetProperty()->SetLighting(currentGridData->getMapLighting());
+    mapActor->GetProperty()->SetOpacity(layerProperties->getMapOpacity() / 100.0);
+    mapActor->GetProperty()->SetLighting(layerProperties->getMapLighting());
     mapActor->SetVisibility(showMap);
         
     mapScalarBarWidget = vtkSmartPointer<vtkScalarBarWidget>::New();
@@ -151,7 +153,7 @@ void GridDataVTKWidget::render(GridData *gridData) {
     mapScalarBarWidget->GetScalarBarActor()->SetLookupTable(mapColorTransferFunction);
     mapScalarBarWidget->GetScalarBarActor()->SetTitle("Color Map");
     mapScalarBarWidget->GetScalarBarActor()->SetNumberOfLabels(4);
-    mapScalarBarWidget->GetScalarBarActor()->SetVisibility(currentGridData->getMapLegend());
+    mapScalarBarWidget->GetScalarBarActor()->SetVisibility(layerProperties->getMapLegend());
     mapScalarBarWidget->RepositionableOn();
     mapScalarBarWidget->SelectableOn();
     mapScalarBarWidget->ResizableOn();
@@ -167,28 +169,37 @@ void GridDataVTKWidget::render(GridData *gridData) {
     this->GetRenderWindow()->Render();
 }
 
+void GridDataVTKWidget::render() {
+    this->render(currentGridData);
+}
+
 vtkColorTransferFunction* GridDataVTKWidget::buildColorTransferFunction(bool isColorMap) {
     vtkColorTransferFunction *colorTransferFunction = vtkColorTransferFunction::New();
     QList<QColor> colors;
     bool invertScalarBar;
     double minimumRange;
     double maximumRange;
-    double interval;
     
+    // TODO: fix custom ranges
     if (isColorMap) {
-        colors = ColorGradientTemplate::getColors(currentGridData->getMapColorGradient());
-        invertScalarBar = currentGridData->getMapInvertColorGradient();
-        minimumRange = currentGridData->getMapMininumRange();
-        maximumRange = currentGridData->getMapMaximumRange();
-        interval = currentGridData->getMapMaximumRange() - currentGridData->getMapMininumRange();
+        QByteArray gridDataNameByteArray = currentGridData->getName().toLocal8Bit();
+        const char *gridDataName = gridDataNameByteArray.data();
+        double *range = currentMesh->getMeshPolyData()->GetCellData()->GetScalars(gridDataName)->GetRange();
+        
+        colors = ColorGradientTemplate::getColors(layerProperties->getMapColorGradient());
+        invertScalarBar = layerProperties->getMapInvertColorGradient();
+        minimumRange = layerProperties->getUseCustomMapMinimum() ? layerProperties->getCustomMapMininumRange() : range[0];
+        maximumRange = layerProperties->getUseCustomMapMaximum() ? layerProperties->getCustomMapMaximumRange() : range[1];
     } else {
-        colors = ColorGradientTemplate::getColors(currentGridData->getPointsColorGradient());
-        invertScalarBar = currentGridData->getPointsInvertColorGradient();
-        minimumRange = currentGridData->getPointsMininumRange();
-        maximumRange = currentGridData->getPointsMaximumRange();
-        interval = currentGridData->getPointsMaximumRange() - currentGridData->getPointsMininumRange();
+        double *range = currentGridData->getInputPolyData()->GetPointData()->GetScalars()->GetRange();
+        colors = ColorGradientTemplate::getColors(layerProperties->getPointsColorGradient());
+        invertScalarBar = layerProperties->getPointsInvertColorGradient();
+        minimumRange = layerProperties->getUseCustomPointsMinimum() ? layerProperties->getCustomPointsMininumRange() : range[0];
+        maximumRange = layerProperties->getUseCustomVectorsMaximum() ? layerProperties->getCustomPointsMaximumRange() : range[1];
     }
     
+    double interval = maximumRange - minimumRange;
+
     if (invertScalarBar) {
         for (int i = colors.size() - 1, j = 0; i > 0; i--, j++) {
             double x = minimumRange + j * interval / (double) colors.size();
@@ -222,29 +233,30 @@ void GridDataVTKWidget::toggleMesh(bool show) {
 void GridDataVTKWidget::toggleMapPoints(bool show) {
     this->showMapPoints = show;
     
-    if (currentGridData == nullptr || mapPointsActor == nullptr || pointsScalarBarWidget == nullptr) {
+    if (layerProperties == nullptr || mapPointsActor == nullptr || pointsScalarBarWidget == nullptr) {
         return;
     }
     
     mapPointsActor->SetVisibility(show);
-    pointsScalarBarWidget->GetScalarBarActor()->SetVisibility(show && currentGridData->getPointsLegend());
+    pointsScalarBarWidget->GetScalarBarActor()->SetVisibility(show && layerProperties->getPointsLegend());
     this->update();
 }
 
 void GridDataVTKWidget::toggleMap(bool show) {
     this->showMap = show;
     
-    if (currentGridData == nullptr || mapActor == nullptr || mapScalarBarWidget == nullptr) {
+    if (layerProperties == nullptr || mapActor == nullptr || mapScalarBarWidget == nullptr) {
         return;
     }
     
     mapActor->SetVisibility(show);
-    mapScalarBarWidget->GetScalarBarActor()->SetVisibility(show && currentGridData->getMapLegend());
+    mapScalarBarWidget->GetScalarBarActor()->SetVisibility(show && layerProperties->getMapLegend());
     this->update();
 }
 
 void GridDataVTKWidget::clear() {
     currentGridData = nullptr;
+    layerProperties = nullptr;
     MeshVTKWidget::clear();
 }
 

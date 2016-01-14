@@ -18,12 +18,15 @@
 #include <vtkQuad.h>
 
 GridData::GridData(Mesh *mesh) :
-    id(0), mesh(mesh),
-    mapColorGradient(ColorGradientTemplate::defaultTemplateName), mapInvertColorGradient(false), mapOpacity(100), mapLegend(true), mapLighting(false),
-    pointsColorGradient(ColorGradientTemplate::defaultTemplateName), pointsInvertColorGradient(false), pointsOpacity(100), pointsSize(1), pointsLegend(false),
-    meshLineColor("#000000"), meshLineStyle(0xFFFF), meshLineWidth(1), meshOpacity(100),
+    id(0),
+    layerProperties(new LayerProperties()),
+    mesh(mesh),
     interpolationCanceled(false)
 {}
+
+GridData::~GridData() {
+    delete layerProperties;
+}
 
 QMap<GridDataType, QString> GridData::gridTypesMap = {
     std::pair<GridDataType, QString>(GridDataType::BATHYMETRY, "Sediment level (bathymetry)*"),
@@ -106,6 +109,14 @@ void GridData::setGridDataConfiguration(GridDataConfiguration *gridDataConfigura
     this->gridDataConfiguration = gridDataConfiguration;
 }
 
+LayerProperties* GridData::getLayerProperties() const {
+    return layerProperties;
+}
+
+void GridData::setLayerProperties(LayerProperties *layerProperties) {
+    this->layerProperties = layerProperties;
+}
+
 Mesh* GridData::getMesh() const {
     return mesh;
 }
@@ -120,150 +131,6 @@ CoordinateSystem GridData::getCoordinateSystem() const {
 
 void GridData::setCoordinateSystem(const CoordinateSystem &coordinateSystem) {
     this->coordinateSystem = coordinateSystem;
-}
-
-double GridData::getMapMininumRange() const {
-    return mapMinimumRange;
-}
-
-void GridData::setMapMinimumRange(const double &mapMinimumRange) {
-    this->mapMinimumRange = mapMinimumRange;
-}
-
-double GridData::getMapMaximumRange() const {
-    return mapMaximumRange;
-}
-
-void GridData::setMapMaximumRange(const double &mapMaximumRange) {
-    this->mapMaximumRange = mapMaximumRange;
-}
-
-QString GridData::getMapColorGradient() const {
-    return mapColorGradient;
-}
-
-void GridData::setMapColorGradient(const QString &mapColorGradient) {
-    this->mapColorGradient = mapColorGradient;
-}
-
-bool GridData::getMapInvertColorGradient() const {
-    return mapInvertColorGradient;
-}
-
-void GridData::setMapInvertColorGradient(const bool &mapInvertColorGradient) {
-    this->mapInvertColorGradient = mapInvertColorGradient;
-}
-
-int GridData::getMapOpacity() const {
-    return mapOpacity;
-}
-
-void GridData::setMapOpacity(const int &mapOpacity) {
-    this->mapOpacity = mapOpacity;
-}
-
-bool GridData::getMapLegend() const {
-    return mapLegend;
-}
-
-void GridData::setMapLegend(const bool &mapLegend) {
-    this->mapLegend = mapLegend;
-}
-
-bool GridData::getMapLighting() const {
-    return mapLighting;
-}
-
-void GridData::setMapLighting(const bool &mapLighting) {
-    this->mapLighting = mapLighting;
-}
-
-double GridData::getPointsMininumRange() const {
-    return pointsMinimumRange;
-}
-
-void GridData::setPointsMinimumRange(const double &pointsMinimumRange) {
-    this->pointsMinimumRange = pointsMinimumRange;
-}
-
-double GridData::getPointsMaximumRange() const {
-    return pointsMaximumRange;
-}
-
-void GridData::setPointsMaximumRange(const double &pointsMaximumRange) {
-    this->pointsMaximumRange = pointsMaximumRange;
-}
-
-QString GridData::getPointsColorGradient() const {
-    return pointsColorGradient;
-}
-
-void GridData::setPointsColorGradient(const QString &pointsColorGradient) {
-    this->pointsColorGradient = pointsColorGradient;
-}
-
-bool GridData::getPointsInvertColorGradient() const {
-    return pointsInvertColorGradient;
-}
-
-void GridData::setPointsInvertColorGradient(const bool &pointsInvertColorGradient) {
-    this->pointsInvertColorGradient = pointsInvertColorGradient;
-}
-
-int GridData::getPointsOpacity() const {
-    return pointsOpacity;
-}
-
-void GridData::setPointsOpacity(const int &pointsOpacity) {
-    this->pointsOpacity = pointsOpacity;
-}
-
-int GridData::getPointsSize() const {
-    return pointsSize;
-}
-
-void GridData::setPointsSize(const int &pointsSize) {
-    this->pointsSize = pointsSize;
-}
-
-bool GridData::getPointsLegend() const {
-    return pointsLegend;
-}
-
-void GridData::setPointsLegend(const bool &pointsLegend) {
-    this->pointsLegend = pointsLegend;
-}
-
-QString GridData::getMeshLineColor() const {
-    return meshLineColor;
-}
-
-void GridData::setMeshLineColor(const QString &meshLineColor) {
-    this->meshLineColor = meshLineColor;
-}
-
-int GridData::getMeshLineStyle() const {
-    return meshLineStyle;
-}
-
-void GridData::setMeshLineStyle(const int &meshLineStyle) {
-    this->meshLineStyle = meshLineStyle;
-}
-
-int GridData::getMeshLineWidth() const {
-    return meshLineWidth;
-}
-
-void GridData::setMeshLineWidth(const int &meshLineWidth) {
-    this->meshLineWidth = meshLineWidth;
-}
-
-int GridData::getMeshOpacity() const {
-    return meshOpacity;
-}
-
-void GridData::setMeshOpacity(const int &meshOpacity) {
-    this->meshOpacity = meshOpacity;
 }
 
 QString GridData::getInputFile() const {
@@ -316,9 +183,6 @@ void GridData::buildInputPolyData() {
         weights->SetTuple1(i, point[2]);
     }
     
-    double *range = weights->GetRange();
-    this->pointsMinimumRange = range[0];
-    this->pointsMaximumRange = range[1];
     inputPolyData->GetPointData()->SetScalars(weights);
     
     emit updateProgress(1);
@@ -411,9 +275,6 @@ void GridData::interpolate() {
     }
     
     if (!interpolationCanceled) {
-        double *range = interpolatedWeightsArray->GetRange();
-        this->mapMinimumRange = range[0];
-        this->mapMaximumRange = range[1];
         meshPolyData->GetCellData()->RemoveArray(gridDataName.c_str());
         meshPolyData->GetCellData()->AddArray(interpolatedWeightsArray);
     }

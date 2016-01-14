@@ -7,14 +7,13 @@
 #include <exceptions/grid_data_exception.h>
 #include <ui/main_window.h>
 #include <ui/grid_layer_dialog.h>
-#include <ui/grid_layer_attributes_dialog.h>
+#include <ui/layer_properties_dialog.h>
 
 #include <QProgressDialog>
 #include <QColorDialog>
 #include <QMessageBox>
 #include <QFileDialog>
 #include <QVector>
-#include <QObject>
 
 GridDataDialog::GridDataDialog(QWidget *parent) :
     AbstractMeshDialog(parent), GRID_DATA_DEFAULT_DIR_KEY("grid_data_default_dir"), ui(new Ui::GridDataDialog),
@@ -216,9 +215,11 @@ void GridDataDialog::on_tblGridLayers_currentItemChanged(QTableWidgetItem *curre
 
 void GridDataDialog::on_tblGridLayers_cellDoubleClicked(int row, int column) {
     QString gridDataName = ui->tblGridLayers->item(row, 0)->text();
-    GridData *gridData = currentConfiguration->getGridData(gridDataName);
-    GridLayerAttributesDialog *dialog = new GridLayerAttributesDialog(this, gridData);
+    LayerProperties *layerProperties = currentConfiguration->getGridData(gridDataName)->getLayerProperties();
+    LayerPropertiesDialog *dialog = new LayerPropertiesDialog(this, layerProperties);
     
+    QObject::connect(dialog, SIGNAL(applyChanges()), ui->vtkWidget, SLOT(render()));
+    dialog->setAttribute(Qt::WA_DeleteOnClose, true);
     dialog->exec();
 }
 
@@ -326,43 +327,39 @@ QString GridDataDialog::getDefaultDirectory() {
 }
 
 void GridDataDialog::showEvent(QShowEvent *event) {
-    if (!event->spontaneous() && this->windowState() & Qt::WindowMaximized) {
-        MainWindow *mainWindow = static_cast<MainWindow*>(this->topLevelWidget());
-        QAction *separator = mainWindow->getToolBar()->addSeparator();
-        toolBarActions.append(separator);
-        
-        pickIndividualCellAction = new QAction(QIcon(":/icons/pick-individual-cell.png"), "Pick individual cells", mainWindow);
-        pickIndividualCellAction->setCheckable(true);
-        QObject::connect(pickIndividualCellAction, SIGNAL(triggered(bool)), this, SLOT(onPickIndividualCellAction(bool)));
-        toolBarActions.append(pickIndividualCellAction);
-        
-        pickCellSetAction = new QAction(QIcon(":/icons/pick-cell-set.png"), "Pick cells from selected area", mainWindow);
-        pickCellSetAction->setCheckable(true);
-        QObject::connect(pickCellSetAction, SIGNAL(triggered(bool)), this, SLOT(onPickCellSetAction(bool)));
-        toolBarActions.append(pickCellSetAction);
-        
-        showGridDataPointsAction = new QAction(QIcon(":/icons/show-hide-points.png"), "Show/Hide input points", mainWindow);
-        showGridDataPointsAction->setCheckable(true);
-        QObject::connect(showGridDataPointsAction, SIGNAL(triggered(bool)), vtkWidget, SLOT(toggleMapPoints(bool)));
-        toolBarActions.append(showGridDataPointsAction);
-        
-        showColorMapAction = new QAction(QIcon(":/icons/layer-properties.png"), "Show/Hide color map", mainWindow);
-        showColorMapAction->setCheckable(true);
-        showColorMapAction->setChecked(true);
-        QObject::connect(showColorMapAction, SIGNAL(triggered(bool)), vtkWidget, SLOT(toggleMap(bool)));
-        toolBarActions.append(showColorMapAction);
-        
-        showCellWeightsAction = new QAction(QIcon(":/icons/show-cell-weights.png"), "Show/Hide interpolated values", mainWindow);
-        showCellWeightsAction->setCheckable(true);
-        QObject::connect(showCellWeightsAction, SIGNAL(triggered(bool)), this,  SLOT(onShowCellWeightsAction(bool)));
-        toolBarActions.append(showCellWeightsAction);
-    }
+    MainWindow *mainWindow = static_cast<MainWindow*>(this->topLevelWidget());
+    QAction *separator = mainWindow->getToolBar()->addSeparator();
+    toolBarActions.append(separator);
+    
+    pickIndividualCellAction = new QAction(QIcon(":/icons/pick-individual-cell.png"), "Pick individual cells", mainWindow);
+    pickIndividualCellAction->setCheckable(true);
+    QObject::connect(pickIndividualCellAction, SIGNAL(triggered(bool)), this, SLOT(onPickIndividualCellAction(bool)));
+    toolBarActions.append(pickIndividualCellAction);
+    
+    pickCellSetAction = new QAction(QIcon(":/icons/pick-cell-set.png"), "Pick cells from selected area", mainWindow);
+    pickCellSetAction->setCheckable(true);
+    QObject::connect(pickCellSetAction, SIGNAL(triggered(bool)), this, SLOT(onPickCellSetAction(bool)));
+    toolBarActions.append(pickCellSetAction);
+    
+    showGridDataPointsAction = new QAction(QIcon(":/icons/show-hide-points.png"), "Show/Hide input points", mainWindow);
+    showGridDataPointsAction->setCheckable(true);
+    QObject::connect(showGridDataPointsAction, SIGNAL(triggered(bool)), vtkWidget, SLOT(toggleMapPoints(bool)));
+    toolBarActions.append(showGridDataPointsAction);
+    
+    showColorMapAction = new QAction(QIcon(":/icons/layer-properties.png"), "Show/Hide color map", mainWindow);
+    showColorMapAction->setCheckable(true);
+    showColorMapAction->setChecked(true);
+    QObject::connect(showColorMapAction, SIGNAL(triggered(bool)), vtkWidget, SLOT(toggleMap(bool)));
+    toolBarActions.append(showColorMapAction);
+    
+    showCellWeightsAction = new QAction(QIcon(":/icons/show-cell-weights.png"), "Show/Hide interpolated values", mainWindow);
+    showCellWeightsAction->setCheckable(true);
+    QObject::connect(showCellWeightsAction, SIGNAL(triggered(bool)), this,  SLOT(onShowCellWeightsAction(bool)));
+    toolBarActions.append(showCellWeightsAction);
     
     AbstractMeshDialog::showEvent(event);
     
-    if (!event->spontaneous() && this->windowState() & Qt::WindowMaximized) {
-        QObject::connect(zoomAreaAction, SIGNAL(triggered(bool)), this, SLOT(onZoomAreaAction(bool)));
-    }
+    QObject::connect(zoomAreaAction, SIGNAL(triggered(bool)), this, SLOT(onZoomAreaAction(bool)));
 }
 
 void GridDataDialog::on_btnNewConfiguration_clicked() {
