@@ -50,6 +50,7 @@ private slots:
     // Input
     void on_actionGridData_triggered();
     void on_actionHydrodynamicData_triggered();
+    void on_actionWaterQuality_triggered();
     void on_actionMeteorologyData_triggered();
     
     // Simulations

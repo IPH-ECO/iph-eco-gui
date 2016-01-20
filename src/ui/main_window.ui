@@ -74,7 +74,7 @@
     </property>
     <addaction name="actionGridData"/>
     <addaction name="actionHydrodynamicData"/>
-    <addaction name="actionEnvironmental_Variables"/>
+    <addaction name="actionWaterQuality"/>
     <addaction name="actionSediment_Data"/>
     <addaction name="actionMeteorologyData"/>
    </widget>
@@ -245,9 +245,9 @@
     <string>Hydrodynamic Data</string>
    </property>
   </action>
-  <action name="actionEnvironmental_Variables">
+  <action name="actionWaterQuality">
    <property name="text">
-    <string>Water Quality Data</string>
+    <string>Water Quality</string>
    </property>
   </action>
   <action name="actionCreateSimulation">

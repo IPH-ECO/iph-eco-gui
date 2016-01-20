@@ -1,22 +1,23 @@
 #include <ui/main_window.h>
 #include "ui_main_window.h"
 
-#include <exceptions/database_exception.h>
 #include <application/iph_application.h>
+#include <domain/simulation.h>
+#include <exceptions/database_exception.h>
+#include <services/project_service.h>
+#include <repository/project_repository.h>
 #include <ui/structured_mesh_dialog.h>
 #include <ui/grid_data_dialog.h>
 #include <ui/hydrodynamic_data_dialog.h>
 #include <ui/create_simulation_dialog.h>
 #include <ui/simulation_manager_dialog.h>
 #include <ui/view_results_dialog.h>
-#include <services/project_service.h>
-#include <repository/project_repository.h>
-#include <domain/simulation.h>
+#include <ui/water_quality_dialog.h>
 #include <ui/meteorological_data_dialog.h>
 
-#include <QProgressDialog>
-#include <QMessageBox>
 #include <QIcon>
+#include <QMessageBox>
+#include <QProgressDialog>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -209,6 +210,11 @@ void MainWindow::on_actionHydrodynamicData_triggered() {
 #ifdef __APPLE__
     this->update();
 #endif
+}
+
+void MainWindow::on_actionWaterQuality_triggered() {
+    WaterQualityDialog *dialog = new WaterQualityDialog(this);
+    dialog->exec();
 }
 
 void MainWindow::on_actionMeteorologyData_triggered() {
