@@ -57,5 +57,7 @@
     <file>icons/fill-color.png</file>
     <file>data/hydrodynamic_data.json</file>
     <file>data/output_variables.json</file>
+    <file>data/water_quality_diagram.html</file>
+    <file>data/jquery-2.2.0.min.js</file>
   </qresource>
 </RCC>

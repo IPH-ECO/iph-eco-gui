@@ -12,8 +12,6 @@ class WaterQualityDialog : public QDialog {
 	Q_OBJECT
 private:
 	Ui::WaterQualityDialog *ui;
-private slots:
-    void on_btnHide_clicked();
 public:
 	explicit WaterQualityDialog(QWidget *parent = 0);
 };

@@ -17,13 +17,6 @@
    <item>
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
-      <widget class="QPushButton" name="btnHide">
-       <property name="text">
-        <string>Hide</string>
-       </property>
-      </widget>
-     </item>
-     <item>
       <widget class="QPushButton" name="btnClose">
        <property name="text">
         <string>Close</string>
