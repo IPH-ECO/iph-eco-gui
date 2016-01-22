@@ -30,5 +30,8 @@ file(GLOB_RECURSE SOURCES src/main.cpp src/*.cpp include/*.h icons.qrc)
 
 add_executable(iph-eco MACOSX_BUNDLE ${SOURCES})
 target_include_directories(iph-eco PUBLIC include)
-
 target_link_libraries(iph-eco ${IPH_ECO_MODEL_LIBRARY} ${VTK_LIBRARIES} ${CGAL_LIBRARIES} ${GeographicLib_LIBRARIES} Qt5::Widgets Qt5::Sql Qt5::WebKitWidgets)
+
+if(MSVC)
+	set_target_properties(iph-eco PROPERTIES LINK_FLAGS_RELEASE "/SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup")
+endif()
