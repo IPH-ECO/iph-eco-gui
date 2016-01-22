@@ -111,7 +111,6 @@ module domain_types
     type, bind(C) :: Simulation
         logical(c_bool) :: hydrodynamic
         logical(c_bool) :: waterQuality
-        logical(c_bool) :: sediment
         integer(c_int) :: labelLength
         type(c_ptr) :: label
         integer(c_int) :: simulationType
