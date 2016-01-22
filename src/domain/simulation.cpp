@@ -408,7 +408,6 @@ SimulationDataType::Simulation* Simulation::toSimulationDataType() {
 
 	    simulationStruct->hydrodynamic = project->getHydrodynamic();
 	    simulationStruct->waterQuality = project->getWaterQuality();
-	    simulationStruct->sediment = project->getSediment();
 
 	    simulationStruct->labelLength = this->label.size();
 		simulationStruct->label = new char[simulationStruct->labelLength];

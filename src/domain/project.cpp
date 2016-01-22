@@ -2,9 +2,13 @@
 
 #include <QSetIterator>
 
-Project::Project(const QString &name, const QString &description, const bool &hydrodynamic, const bool &sediment, const bool &waterQuality) :
-        id(0), name(name), description(description), hydrodynamic(hydrodynamic), waterQuality(waterQuality),
-        sediment(sediment), dirty(false)
+Project::Project(const QString &name, const QString &description, const bool &hydrodynamic, const bool &waterQuality) :
+        id(0),
+		name(name),
+		description(description),
+		hydrodynamic(hydrodynamic),
+		waterQuality(waterQuality),
+		dirty(false)
 {}
 
 Project::~Project() {
@@ -72,15 +76,6 @@ void Project::setWaterQuality(const bool &waterQuality) {
 
 bool Project::getWaterQuality() const {
     return waterQuality;
-}
-
-void Project::setSediment(const bool &sediment) {
-    this->sediment = sediment;
-    this->setDirty(true);
-}
-
-bool Project::getSediment() const {
-    return sediment;
 }
 
 QSet<Mesh*> Project::getMeshes() const {
@@ -240,6 +235,7 @@ bool Project::addMeteorologicalConfiguration(MeteorologicalConfiguration *meteor
     
     return true;
 }
+
 void Project::removeMeteorologicalConfiguration(const QString &configurationName) {
     MeteorologicalConfiguration *configuration = this->getMeteorologicalConfiguration(configurationName);
     

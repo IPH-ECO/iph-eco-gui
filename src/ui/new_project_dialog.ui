@@ -173,13 +173,6 @@
           </property>
          </widget>
         </item>
-        <item>
-         <widget class="QCheckBox" name="cbxSediment">
-          <property name="text">
-           <string>Sediment</string>
-          </property>
-         </widget>
-        </item>
        </layout>
       </item>
      </layout>
@@ -225,7 +218,6 @@
   <tabstop>edtDescription</tabstop>
   <tabstop>cbxHydrodynamic</tabstop>
   <tabstop>cbxWaterQuality</tabstop>
-  <tabstop>cbxSediment</tabstop>
  </tabstops>
  <resources/>
  <connections>

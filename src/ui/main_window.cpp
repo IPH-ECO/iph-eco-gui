@@ -267,7 +267,6 @@ void MainWindow::enableMenus(bool enable) {
     ui->menuPreprocessing->setEnabled(enable);
     ui->menuInput->setEnabled(enable);
     ui->menuSimulations->setEnabled(enable);
-    ui->menuGleon->setEnabled(enable);
     ui->actionNewProject->setEnabled(!enable);
     ui->actionSaveProject->setEnabled(enable);
     ui->actionSaveAsProject->setEnabled(enable);

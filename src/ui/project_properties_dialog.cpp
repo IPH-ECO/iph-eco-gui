@@ -14,7 +14,6 @@ ProjectPropertiesDialog::ProjectPropertiesDialog(QWidget *parent) : QDialog(pare
     ui->edtName->setText(project->getName());
     ui->txtDescription->setPlainText(project->getDescription());
     ui->cbxHydrodynamic->setChecked(project->getHydrodynamic());
-    ui->cbxSediment->setChecked(project->getSediment());
     ui->cbxWaterQuality->setChecked(project->getWaterQuality());
 }
 
@@ -32,7 +31,6 @@ void ProjectPropertiesDialog::accept() {
     project->setName(ui->edtName->text());
     project->setDescription(ui->txtDescription->toPlainText());
     project->setHydrodynamic(ui->cbxHydrodynamic->isChecked());
-    project->setSediment(ui->cbxSediment->isChecked());
     project->setWaterQuality(ui->cbxWaterQuality->isChecked());
     
     QDialog::accept();
@@ -44,7 +42,7 @@ bool ProjectPropertiesDialog::isFormValid() {
         return false;
     }
 
-    if (!ui->cbxHydrodynamic->isChecked() && !ui->cbxWaterQuality->isChecked() && !ui->cbxSediment->isChecked()) {
+    if (!ui->cbxHydrodynamic->isChecked() && !ui->cbxWaterQuality->isChecked()) {
         QMessageBox::warning(this, tr("New Project"), tr("At least one analysis type must be checked"));
         return false;
     }

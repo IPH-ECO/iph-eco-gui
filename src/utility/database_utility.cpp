@@ -62,7 +62,6 @@ void DatabaseUtility::createApplicationTables() {
         "description text, " \
         "hydrodynamic boolean default false," \
         "water_quality boolean default false," \
-        "sediment boolean default false" \
     ")";
 
     sql << "drop table if exists mesh";

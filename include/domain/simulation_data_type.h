@@ -121,7 +121,6 @@ namespace SimulationDataType {
         struct Simulation {
             bool hydrodynamic;
             bool waterQuality;
-            bool sediment;
             int labelLength;
             char *label;
             int simulationType;

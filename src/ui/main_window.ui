@@ -29,7 +29,7 @@
      <x>0</x>
      <y>0</y>
      <width>805</width>
-     <height>22</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuProject">
@@ -75,7 +75,6 @@
     <addaction name="actionGridData"/>
     <addaction name="actionHydrodynamicData"/>
     <addaction name="actionWaterQuality"/>
-    <addaction name="actionSediment_Data"/>
     <addaction name="actionMeteorologyData"/>
    </widget>
    <widget class="QMenu" name="menuSimulations">
@@ -88,14 +87,6 @@
     <addaction name="actionCreateSimulation"/>
     <addaction name="actionManageSimulation"/>
     <addaction name="actionViewResults"/>
-   </widget>
-   <widget class="QMenu" name="menuGleon">
-    <property name="enabled">
-     <bool>false</bool>
-    </property>
-    <property name="title">
-     <string>Gleon</string>
-    </property>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="enabled">
@@ -110,7 +101,6 @@
    <addaction name="menuPreprocessing"/>
    <addaction name="menuInput"/>
    <addaction name="menuSimulations"/>
-   <addaction name="menuGleon"/>
    <addaction name="menuHelp"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
@@ -261,11 +251,6 @@
    </property>
    <property name="toolTip">
     <string>View simulation results</string>
-   </property>
-  </action>
-  <action name="actionSediment_Data">
-   <property name="text">
-    <string>Sediment Data</string>
    </property>
   </action>
   <action name="actionMeteorologyData">

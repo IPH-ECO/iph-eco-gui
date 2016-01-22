@@ -44,7 +44,7 @@ void ProjectRepository::open() {
     bool sediment = query.value("sediment").toBool();
     bool waterQuality = query.value("water_quality").toBool();
 
-    Project *project = new Project(name, description, hydrodynamic, sediment, waterQuality);
+    Project *project = new Project(name, description, hydrodynamic, waterQuality);
     project->setId(query.value("id").toUInt());
     project->setFilename(this->databaseName);
     IPHApplication::setCurrentProject(project);
@@ -404,10 +404,10 @@ void ProjectRepository::save(bool makeCopy) {
     QSqlDatabase::database().transaction();
     try {
         if (project->isPersisted() && !makeCopy) {
-            sql = "update project set name = :n, description = :d, hydrodynamic = :h, water_quality = :w, sediment = :s";
+            sql = "update project set name = :n, description = :d, hydrodynamic = :h, water_quality = :w";
         } else {
             databaseUtility->createApplicationTables();
-            sql = "insert into project (name, description, hydrodynamic, water_quality, sediment) values (:n, :d, :h, :w, :s)";
+            sql = "insert into project (name, description, hydrodynamic, water_quality) values (:n, :d, :h, :w)";
         }
         
         QSqlQuery query(databaseUtility->getDatabase());
@@ -417,7 +417,6 @@ void ProjectRepository::save(bool makeCopy) {
         query.bindValue(":d", project->getDescription());
         query.bindValue(":h", project->getHydrodynamic());
         query.bindValue(":w", project->getWaterQuality());
-        query.bindValue(":s", project->getSediment());
 
         if (!query.exec()) {
             throw DatabaseException(QString("Unable to save project. Error: %1.").arg(query.lastError().text()).toStdString());

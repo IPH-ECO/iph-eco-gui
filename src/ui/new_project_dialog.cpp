@@ -17,10 +17,9 @@ void NewProjectDialog::accept() {
     QString name = ui->edtName->text();
     QString description = ui->edtDescription->toPlainText();
     bool hydrodynamic = ui->cbxHydrodynamic->isChecked();
-    bool sediment = ui->cbxSediment->isChecked();
     bool waterQuality = ui->cbxWaterQuality->isChecked();
     
-    Project *project = new Project(name, description, hydrodynamic, sediment, waterQuality);
+    Project *project = new Project(name, description, hydrodynamic, waterQuality);
     IPHApplication::setCurrentProject(project);
     
     static_cast<QDialog*>(this->parent())->setWindowTitle("IPH-ECO - " + name);
@@ -34,7 +33,7 @@ bool NewProjectDialog::isFormValid() {
         return false;
     }
 
-    if (!ui->cbxHydrodynamic->isChecked() && !ui->cbxWaterQuality->isChecked() && !ui->cbxSediment->isChecked()) {
+    if (!ui->cbxHydrodynamic->isChecked() && !ui->cbxWaterQuality->isChecked()) {
         QMessageBox::warning(this, tr("New Project"), tr("At least one analysis type must be checked."));
         return false;
     }

@@ -18,7 +18,6 @@ private:
     QString filename;
     bool hydrodynamic;
     bool waterQuality;
-    bool sediment;
     QSet<Mesh*> meshes;
     QSet<GridDataConfiguration*> gridDataConfigurations;
     QSet<HydrodynamicConfiguration*> hydrodynamicConfigurations;
@@ -29,7 +28,7 @@ private:
     bool dirty;
 
 public:
-    Project(const QString &name, const QString &description, const bool &hydrodynamic, const bool &sediment, const bool &waterQuality);
+    Project(const QString &name, const QString &description, const bool &hydrodynamic, const bool &waterQuality);
     ~Project();
 
     void setId(const uint &id);
@@ -44,8 +43,6 @@ public:
     bool getHydrodynamic() const;
     void setWaterQuality(const bool &waterQuality);
     bool getWaterQuality() const;
-    void setSediment(const bool &sediment);
-    bool getSediment() const;
 
     bool addMesh(Mesh *mesh);
     void removeMesh(Mesh *mesh);

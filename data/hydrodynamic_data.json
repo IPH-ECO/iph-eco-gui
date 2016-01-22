@@ -566,6 +566,17 @@
         {
             "defaultValue": 0,
             "editable": false,
+            "hideSiblings": true,
+            "parentValue": 3,
+            "label": "No advection scheme",
+            "name": "noAdvectionScheme",
+            "parentName": "iConv",
+            "rangeMaximum": 0,
+            "rangeMinimum": 0
+        },
+        {
+            "defaultValue": 0,
+            "editable": false,
             "selected": true,
             "hideSiblings": true,
             "parentValue": 0,
@@ -612,21 +623,22 @@
             "defaultValue": 0,
             "editable": false,
             "hideSiblings": true,
-            "parentValue": 3,
-            "label": "No advection scheme",
-            "name": "noAdvectionScheme",
-            "parentName": "iConv",
+            "label": "Pressure",
+            "name": "pressure",
+            "parentName": "",
+            "order": 6,
             "rangeMaximum": 0,
             "rangeMinimum": 0
         },
         {
             "defaultValue": 0,
             "editable": false,
+            "selected": true,
             "hideSiblings": true,
-            "label": "Pressure",
-            "name": "pressure",
-            "parentName": "",
-            "order": 6,
+            "parentValue": 2,
+            "label": "Hydrostatic pressure",
+            "name": "noPressureSimulation",
+            "parentName": "pressure",
             "rangeMaximum": 0,
             "rangeMinimum": 0
         },
@@ -648,18 +660,6 @@
             "parentValue": 1,
             "label": "Non-hydrostatic pressure",
             "name": "iNonHydro",
-            "parentName": "pressure",
-            "rangeMaximum": 0,
-            "rangeMinimum": 0
-        },
-        {
-            "defaultValue": 0,
-            "editable": false,
-            "selected": true,
-            "hideSiblings": true,
-            "parentValue": 2,
-            "label": "No pressure simulation",
-            "name": "noPressureSimulation",
             "parentName": "pressure",
             "rangeMaximum": 0,
             "rangeMinimum": 0
@@ -934,6 +934,14 @@
         },
         {
             "checkable": true,
+            "checked": false,
+            "label": "No advection scheme",
+            "name": "noAdvectionScheme",
+            "parentName": "iConv",
+            "targetParameter": "noAdvectionScheme"
+        },
+        {
+            "checkable": true,
             "label": "Eulerian-Lagrangian Method",
             "name": "eulerianLagrangianMethod",
             "parentName": "iConv",
@@ -956,20 +964,19 @@
             "targetParameter": "highOrderEnoWenoMethod"
         },
         {
-            "checkable": true,
-            "checked": false,
-            "label": "No advection scheme",
-            "name": "noAdvectionScheme",
-            "parentName": "iConv",
-            "targetParameter": "noAdvectionScheme"
-        },
-        {
             "checkable": false,
             "checked": false,
             "label": "Pressure",
             "name": "pressure",
             "parentName": "",
             "targetParameter": ""
+        },
+        {
+            "checkable": true,
+            "label": "Hydrostatic pressure",
+            "name": "noPressureSimulation",
+            "parentName": "pressure",
+            "targetParameter": "noPressureSimulation"
         },
         {
             "checkable": true,
@@ -986,13 +993,6 @@
             "name": "iNonHydro",
             "parentName": "pressure",
             "targetParameter": "iNonHydro"
-        },
-        {
-            "checkable": true,
-            "label": "No pressure simulation",
-            "name": "noPressureSimulation",
-            "parentName": "pressure",
-            "targetParameter": "noPressureSimulation"
         },
         {
             "checkable": true,
