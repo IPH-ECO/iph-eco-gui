@@ -38,6 +38,7 @@ MainWindow::MainWindow(QWidget *parent) :
     readSettings();
     updateRecentFilesActionList();
 	ui->actionWaterQuality->setEnabled(false);
+	ui->actionUnstructuredMeshGeneration->setEnabled(false);
 }
 
 MainWindow::~MainWindow() {
