@@ -168,6 +168,9 @@
         </item>
         <item>
          <widget class="QCheckBox" name="cbxWaterQuality">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
           <property name="text">
            <string>Water Quality</string>
           </property>

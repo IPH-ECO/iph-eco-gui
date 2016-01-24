@@ -36,6 +36,7 @@ MainWindow::MainWindow(QWidget *parent) :
     appSettings = new QSettings(QApplication::organizationName(), QApplication::applicationName(), this);
     readSettings();
     updateRecentFilesActionList();
+	ui->actionWaterQuality->setEnabled(false);
 }
 
 MainWindow::~MainWindow() {
