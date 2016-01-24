@@ -14,6 +14,7 @@
 #include <ui/view_results_dialog.h>
 #include <ui/water_quality_dialog.h>
 #include <ui/meteorological_data_dialog.h>
+#include <ui/about_dialog.h>
 
 #include <QIcon>
 #include <QMessageBox>
@@ -253,8 +254,9 @@ void MainWindow::on_actionViewResults_triggered() {
 #endif
 }
 
-void MainWindow::on_actionSobre_triggered() {
-    QMessageBox::about(this, tr("Sobre"), tr("Desenvolvidor por: João Roberto (joaorobertojr88@gmail.com)."));
+void MainWindow::on_actionAbout_triggered() {
+	AboutDialog *dialog = new AboutDialog(this);
+	dialog->exec();
 }
 
 void MainWindow::openRecent() {

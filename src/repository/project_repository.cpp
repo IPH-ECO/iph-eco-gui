@@ -41,7 +41,6 @@ void ProjectRepository::open() {
     QString name = query.value("name").toString();
     QString description = query.value("description").toString();
     bool hydrodynamic = query.value("hydrodynamic").toBool();
-    bool sediment = query.value("sediment").toBool();
     bool waterQuality = query.value("water_quality").toBool();
 
     Project *project = new Project(name, description, hydrodynamic, waterQuality);

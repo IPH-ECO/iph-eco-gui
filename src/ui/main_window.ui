@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>805</width>
-    <height>507</height>
+    <height>517</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -95,7 +95,7 @@
     <property name="title">
      <string>Help</string>
     </property>
-    <addaction name="actionSobre"/>
+    <addaction name="actionAbout"/>
    </widget>
    <addaction name="menuProject"/>
    <addaction name="menuPreprocessing"/>
@@ -275,7 +275,7 @@
     <string>Close</string>
    </property>
   </action>
-  <action name="actionSobre">
+  <action name="actionAbout">
    <property name="checkable">
     <bool>false</bool>
    </property>
@@ -283,7 +283,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Sobre</string>
+    <string>About</string>
    </property>
   </action>
   <action name="actionEmpty">
