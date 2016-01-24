@@ -41,7 +41,7 @@ private slots:
     void on_actionProjectProperties_triggered();
     void on_actionNewProject_triggered();
     void on_actionCloseProject_triggered();
-    void on_actionSobre_triggered();
+	void on_actionAbout_triggered();
 
     // Preprocessing
     void on_actionUnstructuredMeshGeneration_triggered();
