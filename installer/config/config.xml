@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Installer>
   <Name>IPH-ECO</Name>
-  <Version>1.0.0</Version>
+  <Version>0.1</Version>
   <Title>IPH-ECO Setup</Title>
-  <Publisher>4TechLabs</Publisher>
+  <Publisher>IPH/UFRGS</Publisher>
+  <ProductUrl>https://sites.google.com/site/iphecomodel</ProductUrl>
+  <InstallerWindowIcon>iph-eco</InstallerWindowIcon>
   <StartMenuDir>IPH-ECO</StartMenuDir>
-  <TargetDir>@HomeDir@/IPH-ECO</TargetDir>
+  <AllowSpaceInPath>true</AllowSpaceInPath>
 </Installer>
