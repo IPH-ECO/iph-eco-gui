@@ -92,10 +92,10 @@ bool HydrodynamicMouseInteractor::renderBoundaryCondition(BoundaryCondition *bou
     cellCentersFilter->Update();
     
     vtkSmartPointer<vtkLabeledDataMapper> labelMapper = vtkSmartPointer<vtkLabeledDataMapper>::New();
-    std::string arrayName = boundaryCondition->getVTKObjectsArrayName().toStdString();
+    QByteArray arrayName = boundaryCondition->getVTKObjectsArrayName().toLocal8Bit();
     labelMapper->SetInputConnection(cellCentersFilter->GetOutputPort());
     labelMapper->SetLabelModeToLabelFieldData();
-    labelMapper->SetFieldDataName(arrayName.c_str());
+    labelMapper->SetFieldDataName(arrayName.constData());
     labelMapper->GetLabelTextProperty()->SetColor(0, 0, 0);
     labelMapper->GetLabelTextProperty()->ShadowOff();
     

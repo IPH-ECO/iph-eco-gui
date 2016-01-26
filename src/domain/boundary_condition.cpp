@@ -47,10 +47,10 @@ QSet<vtkIdType> BoundaryCondition::getObjectIds() const {
 
 vtkSmartPointer<vtkIdTypeArray> BoundaryCondition::getVTKObjectIds() const {
     vtkSmartPointer<vtkIdTypeArray> vtkObjectIds = vtkSmartPointer<vtkIdTypeArray>::New();
-    std::string arrayName = getVTKObjectsArrayName().toStdString();
+    QByteArray arrayName = getVTKObjectsArrayName().toLocal8Bit();
     int i = 0;
     
-    vtkObjectIds->SetName(arrayName.c_str());
+    vtkObjectIds->SetName(arrayName.constData());
     vtkObjectIds->SetNumberOfComponents(1);
     vtkObjectIds->SetNumberOfTuples(objectIds.size());
     

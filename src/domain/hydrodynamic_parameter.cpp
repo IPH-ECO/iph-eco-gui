@@ -176,11 +176,11 @@ HydrodynamicParameter* HydrodynamicParameter::getChild(int i) const {
 
 SimulationDataType::HydrodynamicParameter HydrodynamicParameter::toSimulationDataType() const {
     SimulationDataType::HydrodynamicParameter parameter;
-    std::string nameStr = this->name.toStdString();
+    QByteArray name = this->name.toLocal8Bit();
     
     parameter.length = this->name.size();
     parameter.name = new char[parameter.length];
-    strncpy(parameter.name, nameStr.c_str(), this->name.size());
+    strncpy(parameter.name, name.constData(), this->name.size());
     parameter.value = this->value;
     
     return parameter;

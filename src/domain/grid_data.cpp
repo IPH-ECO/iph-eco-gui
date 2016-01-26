@@ -51,11 +51,11 @@ QString GridData::getName() const {
 
 void GridData::setName(const QString &name) {
     if (!this->name.isEmpty()) {
-        std::string stdOldName = this->name.toStdString();
+        QByteArray oldName = this->name.toLocal8Bit();
         
-        if (mesh->getMeshPolyData()->GetCellData()->HasArray(stdOldName.c_str())) {
-            std::string stdNewName = name.toStdString();
-            mesh->getMeshPolyData()->GetCellData()->GetArray(stdOldName.c_str())->SetName(stdNewName.c_str());
+        if (mesh->getMeshPolyData()->GetCellData()->HasArray(oldName.constData())) {
+            QByteArray newName = name.toLocal8Bit();
+            mesh->getMeshPolyData()->GetCellData()->GetArray(oldName.constData())->SetName(newName.constData());
         }
     }
     
@@ -143,8 +143,9 @@ void GridData::buildInputPolyData() {
 	emit updateProgress(0);
 	QApplication::processEvents();
     
+    QByteArray inputFileName = this->inputFile.toLocal8Bit();
     vtkSmartPointer<vtkSimplePointsReader> reader = vtkSmartPointer<vtkSimplePointsReader>::New();
-    reader->SetFileName(this->inputFile.toStdString().c_str());
+    reader->SetFileName(inputFileName.constData());
     reader->Update();
 
     vtkIdType numberOfPoints = reader->GetOutput()->GetPoints()->GetNumberOfPoints();
@@ -193,9 +194,9 @@ void GridData::interpolate() {
 
     vtkSmartPointer<vtkPolyData> meshPolyData = mesh->getMeshPolyData();
     vtkSmartPointer<vtkDoubleArray> interpolatedWeightsArray = vtkSmartPointer<vtkDoubleArray>::New();
-    std::string gridDataName(this->name.toStdString());
+    QByteArray gridDataName = this->name.toLocal8Bit();
 
-	interpolatedWeightsArray->SetName(gridDataName.c_str());
+	interpolatedWeightsArray->SetName(gridDataName.constData());
     interpolatedWeightsArray->SetNumberOfComponents(1);
     interpolatedWeightsArray->SetNumberOfTuples(meshPolyData->GetNumberOfCells());
     
@@ -243,7 +244,7 @@ void GridData::interpolate() {
     }
     
     if (!interpolationCanceled) {
-        meshPolyData->GetCellData()->RemoveArray(gridDataName.c_str());
+        meshPolyData->GetCellData()->RemoveArray(gridDataName.constData());
         meshPolyData->GetCellData()->AddArray(interpolatedWeightsArray);
     }
 }
@@ -315,8 +316,8 @@ int GridData::getMaximumProgress() const {
 }
 
 double GridData::getMinimumWeight() const {
-    std::string arrayName = this->name.toStdString();
-    vtkSmartPointer<vtkDoubleArray> weights = vtkDoubleArray::SafeDownCast(this->mesh->getMeshPolyData()->GetCellData()->GetArray(arrayName.c_str()));
+    QByteArray arrayName = this->name.toLocal8Bit();
+    vtkSmartPointer<vtkDoubleArray> weights = vtkDoubleArray::SafeDownCast(this->mesh->getMeshPolyData()->GetCellData()->GetArray(arrayName.constData()));
     
     if (!weights) {
         return 0;
@@ -331,8 +332,8 @@ double GridData::getMinimumWeight() const {
 
 SimulationDataType::GridData GridData::toSimulationDataType() const {
     SimulationDataType::GridData gridData;
-    std::string arrayName = this->name.toStdString();
-    vtkSmartPointer<vtkDoubleArray> weights = vtkDoubleArray::SafeDownCast(this->mesh->getMeshPolyData()->GetCellData()->GetArray(arrayName.c_str()));
+    QByteArray arrayName = this->name.toLocal8Bit();
+    vtkSmartPointer<vtkDoubleArray> weights = vtkDoubleArray::SafeDownCast(this->mesh->getMeshPolyData()->GetCellData()->GetArray(arrayName.constData()));
     vtkIdType numberOfTuples = weights->GetNumberOfTuples();
  
     gridData.numberOfElements = numberOfTuples;

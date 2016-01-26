@@ -152,11 +152,11 @@ void MeteorologicalParameter::setTimeSeriesChanged(bool timeSeriesChanged) {
 
 SimulationDataType::MeteorologicalParameter MeteorologicalParameter::toSimulationDataType() const {
     SimulationDataType::MeteorologicalParameter parameter;
-    std::string nameStdString = this->name.toStdString();
+    QByteArray name = this->name.toLocal8Bit();
     
     parameter.nameLength = this->name.length();
     parameter.name = new char[this->name.length()];
-    strncpy(parameter.name, nameStdString.c_str(), this->name.length());
+    strncpy(parameter.name, name.constData(), this->name.length());
     parameter.functionMet = (int) this->function;
     parameter.constantValue = this->constantValue;
     parameter.useXYComponent = this->useXYComponent;

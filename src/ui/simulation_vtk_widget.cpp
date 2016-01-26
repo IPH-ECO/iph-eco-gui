@@ -82,18 +82,18 @@ void SimulationVTKWidget::render(Simulation *simulation, const QString &layer, c
     layerProperties = simulation->getSelectedLayers().value(getLayerKey());
     
     
-    std::string timeStamp = readFrame(frame);
-    std::string layerArrayName = layer.toStdString();
+    QByteArray timeStamp = readFrame(frame).toLocal8Bit();
+    QByteArray layerArrayName = layer.toLocal8Bit();
     double layerRange[2];
     
-    if (!layerGrid->GetCellData()->HasArray(layerArrayName.c_str())) {
-        throw SimulationException(QString("Layer '%1' not found in result files.").arg(QString::fromStdString(layerArrayName)).toStdString());
+    if (!layerGrid->GetCellData()->HasArray(layerArrayName.constData())) {
+        throw SimulationException(QString("Layer '%1' not found in result files.").arg(layerArrayName.constData()).toStdString());
     }
     
     timeStampActor->GetTextProperty()->SetFontSize(16);
     timeStampActor->GetTextProperty()->SetColor(0, 0, 0);
     timeStampActor->SetPosition2(10, 40);
-    timeStampActor->SetInput(timeStamp.c_str());
+    timeStampActor->SetInput(timeStamp.constData());
     timeStampActor->VisibilityOn();
     
     renderer->AddActor2D(timeStampActor);
@@ -105,14 +105,14 @@ void SimulationVTKWidget::render(Simulation *simulation, const QString &layer, c
     } else if (component == "Vector") {
         layerArrayName = MAGNITUDE_ARRAY_NAME;
     } else { // Arbritary layer
-        layerGrid->GetCellData()->GetArray(layerArrayName.c_str())->GetRange(layerRange);
+        layerGrid->GetCellData()->GetArray(layerArrayName.constData())->GetRange(layerRange);
     }
     
     if (component == "Vector") {
         vtkSmartPointer<vtkPolyData> vectorsPolyData = renderVectors();
         vtkSmartPointer<vtkActor> vectorsActor = vtkSmartPointer<vtkActor>::New();
         
-        vectorsPolyData->GetPointData()->GetArray(layerArrayName.c_str())->GetRange(layerRange);
+        vectorsPolyData->GetPointData()->GetArray(layerArrayName.constData())->GetRange(layerRange);
         
         vtkSmartPointer<vtkScalarBarActor> scalarBarActor = renderScalarBar(layerRange);
         vtkSmartPointer<vtkPolyDataMapper> vectorsPolyDataMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
@@ -141,7 +141,7 @@ void SimulationVTKWidget::render(Simulation *simulation, const QString &layer, c
         
         layerDataSetMapper->SetInputData(layerGrid);
         layerDataSetMapper->SetLookupTable(scalarBarActor->GetLookupTable());
-        layerDataSetMapper->SelectColorArray(layerArrayName.c_str());
+        layerDataSetMapper->SelectColorArray(layerArrayName.constData());
         layerDataSetMapper->UseLookupTableScalarRangeOn();
         layerDataSetMapper->SetScalarModeToUseCellData();
         layerDataSetMapper->ScalarVisibilityOn();
@@ -158,13 +158,13 @@ void SimulationVTKWidget::render(Simulation *simulation, const QString &layer, c
     this->GetRenderWindow()->Render();
 }
 
-std::string SimulationVTKWidget::readFrame(const int frame) {
-    std::string fileName = outputFiles.at(frame).absoluteFilePath().toStdString();
+QString SimulationVTKWidget::readFrame(const int frame) {
+    QByteArray filename = outputFiles.at(frame).absoluteFilePath().toLocal8Bit();
     vtkSmartPointer<vtkGenericDataObjectReader> reader = vtkSmartPointer<vtkGenericDataObjectReader>::New();
-    reader->SetFileName(fileName.c_str());
+    reader->SetFileName(filename.constData());
     reader->Update();
     
-    std::string timeStamp = reader->GetHeader();
+    QString timeStamp = reader->GetHeader();
     layerGrid = reader->GetUnstructuredGridOutput();
     
     return timeStamp;
@@ -199,11 +199,11 @@ void SimulationVTKWidget::renderMeshLayer() {
 
 vtkSmartPointer<vtkDoubleArray> SimulationVTKWidget::buildMagnitudeArray() {
     vtkSmartPointer<vtkArrayCalculator> magnitudeFunction = vtkSmartPointer<vtkArrayCalculator>::New();
-    std::string vectorsArrayName = currentLayer.toStdString();
+    QByteArray vectorsArrayName = currentLayer.toLocal8Bit();
     
-    magnitudeFunction->AddScalarVariable("x", vectorsArrayName.c_str(), 0);
-    magnitudeFunction->AddScalarVariable("y", vectorsArrayName.c_str(), 1);
-    magnitudeFunction->AddScalarVariable("z", vectorsArrayName.c_str(), 2);
+    magnitudeFunction->AddScalarVariable("x", vectorsArrayName.constData(), 0);
+    magnitudeFunction->AddScalarVariable("y", vectorsArrayName.constData(), 1);
+    magnitudeFunction->AddScalarVariable("z", vectorsArrayName.constData(), 2);
     magnitudeFunction->SetResultArrayName(MAGNITUDE_ARRAY_NAME);
     magnitudeFunction->SetFunction("sqrt(x^2 + y^2 + z^2)");
     magnitudeFunction->SetAttributeModeToUseCellData();
@@ -223,10 +223,10 @@ vtkSmartPointer<vtkScalarBarActor> SimulationVTKWidget::renderScalarBar(double *
     
     if (!scalarBarActor) {
         scalarBarActor = vtkSmartPointer<vtkScalarBarActor>::New();
-        std::string scalarBarLabel = (currentLayer + (currentComponent.isEmpty() ? "" : QString(" (%1)").arg(currentComponent))).toStdString();
+        QByteArray scalarBarLabel = (currentLayer + (currentComponent.isEmpty() ? "" : QString(" (%1)").arg(currentComponent))).toLocal8Bit();
         const float PADDING = actorPosition == 0 ? 0 : .03;
         
-        scalarBarActor->SetTitle(scalarBarLabel.c_str());
+        scalarBarActor->SetTitle(scalarBarLabel.constData());
         scalarBarActor->GetTitleTextProperty()->SetFontSize(16);
         scalarBarActor->SetNumberOfLabels(4);
         scalarBarActor->SetWidth(.1);
@@ -256,8 +256,8 @@ vtkSmartPointer<vtkPolyData> SimulationVTKWidget::renderVectors() {
     cellCentersFilter->SetInputData(layerGrid);
     cellCentersFilter->Update();
     
-    std::string vectorsArrayName = currentLayer.toStdString();
-    vtkSmartPointer<vtkDoubleArray> vectorsArray = vtkDoubleArray::SafeDownCast(layerGrid->GetCellData()->GetArray(vectorsArrayName.c_str()));
+    QByteArray vectorsArrayName = currentLayer.toLocal8Bit();
+    vtkSmartPointer<vtkDoubleArray> vectorsArray = vtkDoubleArray::SafeDownCast(layerGrid->GetCellData()->GetArray(vectorsArrayName.constData()));
     vtkSmartPointer<vtkPolyData> arrowsPolyData = vtkSmartPointer<vtkPolyData>::New();
     arrowsPolyData->SetPoints(cellCentersFilter->GetOutput()->GetPoints());
     arrowsPolyData->GetPointData()->SetVectors(vectorsArray);

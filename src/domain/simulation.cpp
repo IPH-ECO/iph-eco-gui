@@ -400,8 +400,8 @@ Mesh* Simulation::getMesh() const {
 SimulationDataType::Simulation* Simulation::toSimulationDataType() {
 	if (!simulationStruct) {
 		Project *project = IPHApplication::getCurrentProject();
-		std::string labelStr = this->label.toStdString();
-		std::string outputDirectoryStr = this->outputDirectory.toStdString();
+        QByteArray label = this->label.toLocal8Bit();
+        QByteArray outputDirectory = this->outputDirectory.toLocal8Bit();
 		int i = 0;
 	    
 	    simulationStruct = new SimulationDataType::Simulation();
@@ -411,7 +411,7 @@ SimulationDataType::Simulation* Simulation::toSimulationDataType() {
 
 	    simulationStruct->labelLength = this->label.size();
 		simulationStruct->label = new char[simulationStruct->labelLength];
-		strncpy(simulationStruct->label, labelStr.c_str(), simulationStruct->labelLength);
+		strncpy(simulationStruct->label, label.constData(), simulationStruct->labelLength);
 		simulationStruct->simulationType = (int) this->simulationType;
 		simulationStruct->initialTime = this->initialTime;
 		simulationStruct->period = this->period;
@@ -430,7 +430,7 @@ SimulationDataType::Simulation* Simulation::toSimulationDataType() {
         
 	    simulationStruct->outputDirectoryLength = this->outputDirectory.size();
 		simulationStruct->outputDirectory = new char[simulationStruct->outputDirectoryLength];
-		strncpy(simulationStruct->outputDirectory, outputDirectoryStr.c_str(), simulationStruct->outputDirectoryLength);
+		strncpy(simulationStruct->outputDirectory, outputDirectory.constData(), simulationStruct->outputDirectoryLength);
 
         simulationStruct->outputTimeInterval = this->outputTimeInterval;
         simulationStruct->autosaveTimeInterval = this->autosaveTimeInterval;
@@ -439,10 +439,10 @@ SimulationDataType::Simulation* Simulation::toSimulationDataType() {
 		i = 0;
 
 		for (QString parameter : this->outputParameters) {
-			std::string parameterStr = parameter.toStdString();
+			QByteArray parameterByteArray = parameter.toLocal8Bit();
 			simulationStruct->outputParameters[i].nameLength = parameter.size();
 			simulationStruct->outputParameters[i].name = new char[parameter.size()];
-			strncpy(simulationStruct->outputParameters[i].name, parameterStr.c_str(), parameter.size());
+			strncpy(simulationStruct->outputParameters[i].name, parameterByteArray.constData(), parameter.size());
 			i++;
 		}
         

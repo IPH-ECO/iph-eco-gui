@@ -37,9 +37,10 @@ void MeteorologicalVTKWidget::addStation(MeteorologicalStation *station) {
     iconActor->SetMapper(iconMapper);
     station->setIconActor(iconActor);
     
+    QByteArray stationName = station->getName().toLocal8Bit();
     vtkSmartPointer<vtkCaptionActor2D> captionActor = vtkSmartPointer<vtkCaptionActor2D>::New();
     captionActor->SetAttachmentPoint(station->getUtmX(), station->getUtmY(), 0);
-    captionActor->SetCaption(station->getName().toStdString().c_str());
+    captionActor->SetCaption(stationName.constData());
     captionActor->BorderOff();
     station->setCaptionActor(captionActor);
     

@@ -301,8 +301,8 @@ bool BoundaryConditionDialog::isValid() {
         double maxWeight = quota;
         
         for (vtkIdType cellId : boundaryCells) {
-            std::string arrayName = bathymetryGridData->getName().toStdString();
-            double weight = mesh->getMeshPolyData()->GetCellData()->GetScalars(arrayName.c_str())->GetTuple1(cellId);
+            QByteArray arrayName = bathymetryGridData->getName().toLocal8Bit();
+            double weight = mesh->getMeshPolyData()->GetCellData()->GetScalars(arrayName.constData())->GetTuple1(cellId);
             
             if (weight > maxWeight) {
                 maxWeight = weight;
