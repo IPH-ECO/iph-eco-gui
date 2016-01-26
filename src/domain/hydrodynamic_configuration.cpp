@@ -122,11 +122,11 @@ SimulationDataType::HydrodynamicConfiguration* HydrodynamicConfiguration::toSimu
     configuration->numberOfParameters = this->parameters.size();
     
     for (HydrodynamicParameter *parameter : this->parameters) {
-        std::string name = parameter->getName().toStdString();
+        QByteArray name = parameter->getName().toLocal8Bit();
         
         configuration->parameters[i].length = (int) name.size();
         configuration->parameters[i].name = new char[name.size()];
-        strncpy(configuration->parameters[i].name, name.c_str(), name.size());
+        strncpy(configuration->parameters[i].name, name.constData(), name.size());
         configuration->parameters[i].value = parameter->getValue();
         i++;
     }

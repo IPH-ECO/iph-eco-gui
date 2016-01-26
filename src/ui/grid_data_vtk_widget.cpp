@@ -113,12 +113,12 @@ void GridDataVTKWidget::render(GridData *gridData) {
     mapPointsActor->GetProperty()->SetOpacity(layerProperties->getPointsOpacity() / 100.0);
     mapPointsActor->SetVisibility(showMapPoints);
     
-    std::string mapPointsBarActorTitle = currentGridData->getName().toStdString();
+    QByteArray mapPointsBarActorTitle = currentGridData->getName().toLocal8Bit();
     
     pointsScalarBarWidget = vtkSmartPointer<vtkScalarBarWidget>::New();
     pointsScalarBarWidget->SetInteractor(this->GetInteractor());
     pointsScalarBarWidget->GetScalarBarActor()->SetLookupTable(pointsColorTransferFunction);
-    pointsScalarBarWidget->GetScalarBarActor()->SetTitle(mapPointsBarActorTitle.c_str());
+    pointsScalarBarWidget->GetScalarBarActor()->SetTitle(mapPointsBarActorTitle.constData());
     pointsScalarBarWidget->GetScalarBarActor()->SetNumberOfLabels(4);
     pointsScalarBarWidget->GetScalarBarActor()->SetVisibility(layerProperties->getPointsLegend());
     pointsScalarBarWidget->RepositionableOn();
@@ -131,10 +131,10 @@ void GridDataVTKWidget::render(GridData *gridData) {
     scalarBarRepresentation->GetPosition2Coordinate()->SetValue(0.1, 0.35);
     
     vtkSmartPointer<vtkPolyData> meshPolyData = mesh->getMeshPolyData();
-	std::string gridDataName(currentGridData->getName().toStdString());
+    QByteArray gridDataName = currentGridData->getName().toLocal8Bit();
     vtkColorTransferFunction *mapColorTransferFunction = buildColorTransferFunction(true);
 
-    meshPolyData->GetCellData()->SetActiveScalars(gridDataName.c_str());
+    meshPolyData->GetCellData()->SetActiveScalars(gridDataName.constData());
     
     vtkSmartPointer<vtkPolyDataMapper> mapMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
     mapMapper->SetInputData(meshPolyData);

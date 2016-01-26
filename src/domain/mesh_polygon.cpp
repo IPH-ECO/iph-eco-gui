@@ -118,8 +118,9 @@ void MeshPolygon::readFromKMLFile(const CoordinateSystem &coordinateSystem) {
 }
 
 void MeshPolygon::readFromTextFile(const CoordinateSystem &coordinateSystem) {
+    QByteArray filename = this->filename.toLocal8Bit();
     vtkSmartPointer<vtkSimplePointsReader> reader = vtkSmartPointer<vtkSimplePointsReader>::New();
-    reader->SetFileName(this->filename.toStdString().c_str());
+    reader->SetFileName(filename.constData());
     reader->Update();
     
     vtkIdType numberOfPoints = reader->GetOutput()->GetPoints()->GetNumberOfPoints();

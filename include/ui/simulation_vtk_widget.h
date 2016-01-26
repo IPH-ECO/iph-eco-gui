@@ -36,7 +36,7 @@ private:
     bool cancelExportVideoOperation;
     
     void renderMeshLayer();
-    std::string readFrame(const int frame);
+    QString readFrame(const int frame);
     vtkSmartPointer<vtkDoubleArray> buildMagnitudeArray();
     vtkSmartPointer<vtkColorTransferFunction> buildColorTransferFunction(double *scalarBarRange);
     vtkSmartPointer<vtkPolyData> renderVectors();

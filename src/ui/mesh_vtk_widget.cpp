@@ -215,7 +215,7 @@ void MeshVTKWidget::changeBackgroundColor(const double &r, const double &g, cons
     this->GetRenderWindow()->Render();
 }
 
-void MeshVTKWidget::exportToImage(const QString &fileName) {
+void MeshVTKWidget::exportToImage(const QString &filename) {
     vtkSmartPointer<vtkWindowToImageFilter> windowToImageFilter = vtkSmartPointer<vtkWindowToImageFilter>::New();
     windowToImageFilter->SetInput(this->GetRenderWindow());
     windowToImageFilter->SetMagnification(1); //set the resolution of the output image (3 times the current resolution of vtk render window)
@@ -223,9 +223,9 @@ void MeshVTKWidget::exportToImage(const QString &fileName) {
     windowToImageFilter->ReadFrontBufferOff(); // read from the back buffer
     windowToImageFilter->Update();
     
-    std::string stdFileName = fileName.toStdString();
+    QByteArray cFilename = filename.toLocal8Bit();
     vtkSmartPointer<vtkPNGWriter> writer = vtkSmartPointer<vtkPNGWriter>::New();
-    writer->SetFileName(stdFileName.c_str());
+    writer->SetFileName(cFilename.constData());
     writer->SetInputConnection(windowToImageFilter->GetOutputPort());
     writer->Write();
 }

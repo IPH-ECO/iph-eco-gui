@@ -410,20 +410,20 @@
   </customwidget>
  </customwidgets>
  <tabstops>
-  <tabstop>edtConfigurationName</tabstop>
-  <tabstop>cbxGridDataConfiguration</tabstop>
-  <tabstop>tabWidget</tabstop>
-  <tabstop>trwProcesses</tabstop>
-  <tabstop>btnClose</tabstop>
-  <tabstop>tblBoundaryConditions</tabstop>
   <tabstop>cbxConfiguration</tabstop>
   <tabstop>btnNewConfiguration</tabstop>
   <tabstop>btnApplyConfiguration</tabstop>
   <tabstop>btnRemoveConfiguration</tabstop>
+  <tabstop>edtConfigurationName</tabstop>
+  <tabstop>cbxGridDataConfiguration</tabstop>
+  <tabstop>tabWidget</tabstop>
+  <tabstop>trwProcesses</tabstop>
+  <tabstop>trwParameters</tabstop>
+  <tabstop>tblBoundaryConditions</tabstop>
   <tabstop>btnAddBoundaryCondition</tabstop>
   <tabstop>btnEditBoundaryCondition</tabstop>
   <tabstop>btnRemoveBoundaryCondition</tabstop>
-  <tabstop>trwParameters</tabstop>
+  <tabstop>btnClose</tabstop>
  </tabstops>
  <resources>
   <include location="../../icons.qrc"/>

@@ -214,9 +214,9 @@ void TimeSeriesChartDialog::on_btnPlot_clicked() {
                 
                 if (j == table->GetNumberOfColumns() - 1) {
                     vtkSmartPointer<vtkDoubleArray> cellCurve = vtkSmartPointer<vtkDoubleArray>::New();
-                    std::string cellCurveName = QString("Cell %1").arg(cellId).toStdString();
+                    QByteArray cellCurveName = QString("Cell %1").arg(cellId).toLocal8Bit();
                     cellCurve->SetNumberOfTuples(framesTotal);
-                    cellCurve->SetName(cellCurveName.c_str());
+                    cellCurve->SetName(cellCurveName.constData());
                     
                     table->AddColumn(cellCurve);
                 }

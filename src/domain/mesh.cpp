@@ -233,13 +233,13 @@ bool Mesh::isPersisted() const {
 }
 
 bool Mesh::hasArray(const QString &arrayName) {
-    std::string stdArrayName(arrayName.toStdString());
-    return meshPolyData->GetCellData()->HasArray(stdArrayName.c_str());
+    QByteArray cArrayName = arrayName.toLocal8Bit();
+    return meshPolyData->GetCellData()->HasArray(cArrayName.constData());
 }
 
 void Mesh::removeArray(const QString &arrayName) {
-    std::string stdArrayName(arrayName.toStdString());
-    meshPolyData->GetCellData()->RemoveArray(stdArrayName.c_str());
+    QByteArray cArrayName = arrayName.toLocal8Bit();
+    meshPolyData->GetCellData()->RemoveArray(cArrayName.constData());
 }
 
 QSet<vtkIdType> Mesh::getBoundaryCellIds(vtkSmartPointer<vtkIdTypeArray> edgeIds) const {
