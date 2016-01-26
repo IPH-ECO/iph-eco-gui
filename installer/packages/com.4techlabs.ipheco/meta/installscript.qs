@@ -22,8 +22,15 @@ Component.prototype.createOperations = function()
 
     if (systemInfo.productType === "windows") {
         component.addOperation("Execute",
-            "@TargetDir@/vcredist_x64.exe",
+            "@TargetDir@\\vcredist_x64.exe",
             "/install", "/passive", "/quiet");
+        component.addOperation("Execute",
+            "msiexec",
+            "/package", "@TargetDir@\\w_fcompxe_redist_intel64_2015.msi", "/quiet", "/qn");
+
+        component.addOperation("Delete", "@TargetDir@\\vcredist_x64.exe");
+        component.addOperation("Delete", "@TargetDir@\\vcredist_x86.exe");
+        component.addOperation("Delete", "@TargetDir@\\w_fcompxe_redist_intel64_2015.msi");
 
         component.addOperation("CreateShortcut",
             "@TargetDir@/iph-eco.exe",

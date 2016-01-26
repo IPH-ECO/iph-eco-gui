@@ -113,11 +113,6 @@ bool CreateSimulationDialog::isValid() {
 //		QMessageBox::warning(this, tr("Create Simulation"), tr("Water quality data can't be blank."));
 //		return false;
 //	}
-//
-//	if (ui->cbxSediment->currentIndex() == -1) {
-//		QMessageBox::warning(this, tr("Create Simulation"), tr("Sediment data can't be blank."));
-//		return false;
-//	}
 
 	if (ui->cbxMeteorological->currentIndex() == -1) {
 		QMessageBox::warning(this, tr("Create Simulation"), tr("Meteorological data can't be blank."));
@@ -297,7 +292,6 @@ void CreateSimulationDialog::on_cbxTemplate_currentTextChanged(const QString &si
     ui->edtStepTime->setText(QString::number(simulation->getStepTime()));
     ui->cbxHydrodynamic->setCurrentText(simulation->getHydrodynamicConfiguration()->getName());
 //    ui->cbxWaterQuality->setCurrentText(simulation->getWaterQualityConfiguration()->getName());
-//    ui->cbxSediment->setCurrentText(simulation->getSedimentConfiguration()->getName());
     ui->cbxMeteorological->setCurrentText(simulation->getMeteorologicalConfiguration()->getName());
     ui->edtMinLimit->setText(QString::number(simulation->getMinimumVerticalLimit()));
     ui->edtMaxLimit->setText(QString::number(simulation->getMaximumVerticalLimit()));
