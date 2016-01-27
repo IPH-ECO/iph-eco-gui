@@ -101,6 +101,10 @@ void SimulationRepository::updateSimulationStatus(Simulation *simulation, const 
     }
     
     simulation->setStatus(status);
+    
+    if (isFinished) {
+        simulation->deleteSimulationStruct();
+    }
 }
 
 void SimulationRepository::updateSimulationProgress(Simulation *simulation, int progress) {

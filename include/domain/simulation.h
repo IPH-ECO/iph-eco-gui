@@ -118,6 +118,7 @@ public:
     QFileInfoList getOutputFiles(bool scanOutputDirectory = false);
     Mesh* getMesh() const;
     SimulationDataType::Simulation* toSimulationDataType();
+    void deleteSimulationStruct();
 
 	static QMap<SimulationType, QString> getSimulationTypesMap();
 	static QMap<SimulationStatus, QString> getSimulationStatusMap();
