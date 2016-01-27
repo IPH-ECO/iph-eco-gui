@@ -3,6 +3,7 @@ iph-eco.pro.user
 CMakeLists.txt.user
 build/
 release/
+debug/
 model/iph-eco-model/
 installer/packages/com.4techlabs.ipheco/data/
 installer/iph-eco-installer.*
