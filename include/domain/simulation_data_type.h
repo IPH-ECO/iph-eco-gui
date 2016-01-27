@@ -220,7 +220,7 @@ namespace SimulationDataType {
             int autosaveTimeInterval;
             int outputParametersLength;
             SimulationDataType::OutputParameter *outputParameters;
-            SimulationDataType::RecoveryVariables *recoveryVariables;
+            SimulationDataType::RecoveryVariables *recoveryVariables; // Fortran deallocates automatically
             int statusCode;
             int progress;
             
@@ -228,7 +228,6 @@ namespace SimulationDataType {
                 hydrodynamicConfiguration->destroy();
                 meteorologicalConfiguration->destroy();
                 outputParameters->destroy();
-                recoveryVariables->destroy();
                 
                 delete label;
                 delete layers;
@@ -237,7 +236,6 @@ namespace SimulationDataType {
                 delete observations;
                 delete outputDirectory;
                 delete outputParameters;
-                delete recoveryVariables;
             }
         };
     }
