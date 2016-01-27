@@ -15,12 +15,7 @@ Simulation::Simulation() :
 }
 
 Simulation::~Simulation() {
-	// TODO: delete children
-    if (simulationStruct) {
-        delete simulationStruct->recoveryVariables;
-    }
-    
-	delete simulationStruct;
+    this->deleteSimulationStruct();
 }
 
 QMap<SimulationType, QString> Simulation::simulationTypesMap = {
@@ -452,6 +447,14 @@ SimulationDataType::Simulation* Simulation::toSimulationDataType() {
 	}
 
 	return simulationStruct;
+}
+
+void Simulation::deleteSimulationStruct() {
+    if (simulationStruct) {
+        simulationStruct->destroy();
+        delete simulationStruct;
+        simulationStruct = nullptr;
+    }
 }
 
 QMap<SimulationType, QString> Simulation::getSimulationTypesMap() {
