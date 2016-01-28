@@ -302,6 +302,10 @@ void CreateSimulationDialog::on_cbxTemplate_currentTextChanged(const QString &si
         ui->tblLayers->setItem(row, 0, new QTableWidgetItem(QString::number(layer)));
     }
     
+    ui->edtOutputDirectory->setText(simulation->getOutputDirectory());
+    ui->edtOutputTimeInterval->setText(QString::number(simulation->getOutputTimeInterval()));
+    ui->edtAutosaveInterval->setText(QString::number(simulation->getAutosaveTimeInterval()));
+    
     QTreeWidgetItemIterator it(ui->trOutputVariables, QTreeWidgetItemIterator::NoChildren);
     
     while (*it) {
