@@ -1,8 +1,6 @@
 #ifndef PROJECT_H
 #define PROJECT_H
 
-#include <QSet>
-
 #include "mesh.h"
 #include "grid_data_configuration.h"
 #include "hydrodynamic_configuration.h"

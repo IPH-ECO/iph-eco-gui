@@ -12,15 +12,25 @@ Project::Project(const QString &name, const QString &description, const bool &hy
 {}
 
 Project::~Project() {
-    for (QSet<Mesh*>::const_iterator it = meshes.begin(); it != meshes.end(); it++) {
-        delete *it;
+    for (Mesh *mesh : meshes) {
+        delete mesh;
     }
-    meshes.clear();
     
-    for (QSet<GridDataConfiguration*>::const_iterator it = gridDataConfigurations.begin(); it != gridDataConfigurations.end(); it++) {
-        delete *it;
+    for (GridDataConfiguration *configuration : gridDataConfigurations) {
+        delete configuration;
     }
-    gridDataConfigurations.clear();
+    
+    for (HydrodynamicConfiguration *configuration : hydrodynamicConfigurations) {
+        delete configuration;
+    }
+    
+    for (MeteorologicalConfiguration *configuration : meteorologicalConfigurations) {
+        delete configuration;
+    }
+    
+    for (Simulation *simulation : simulations) {
+        delete simulation;
+    }
 }
 
 void Project::setId(const uint &id) {
@@ -31,6 +41,10 @@ void Project::setId(const uint &id) {
 
 uint Project::getId() const {
     return id;
+}
+
+bool Project::isPersisted() const {
+    return this->id != 0;
 }
 
 void Project::setName(const QString &name) {
@@ -88,19 +102,49 @@ bool Project::addMesh(Mesh *mesh) {
     }
     
     meshes.insert(mesh);
+    this->setDirty(true);
     
     return true;
 }
 
 void Project::removeMesh(Mesh *mesh) {
-    QSetIterator<GridDataConfiguration*> it(gridDataConfigurations);
+    for (Simulation *simulation : simulations) {
+        if (simulation->getMesh() == mesh) {
+            simulations.removeOne(simulation);
+            delete simulation;
+        }
+    }
     
-    while (it.hasNext()) {
-        GridDataConfiguration *configuration = it.next();
+    QSetIterator<GridDataConfiguration*> gridDataConfigurationIterator(gridDataConfigurations);
+    
+    while (gridDataConfigurationIterator.hasNext()) {
+        GridDataConfiguration *gridDataConfiguration = gridDataConfigurationIterator.next();
         
-        if (configuration->getMesh() == mesh) {
-            gridDataConfigurations.remove(configuration);
-            delete configuration;
+        if (gridDataConfiguration->getMesh() == mesh) {
+            QSetIterator<HydrodynamicConfiguration*> hydroConfigurationIterator(hydrodynamicConfigurations);
+            
+            while (hydroConfigurationIterator.hasNext()) {
+                HydrodynamicConfiguration *hydrodynamicConfiguration = hydroConfigurationIterator.next();
+                
+                if (hydrodynamicConfiguration->getGridDataConfiguration() == gridDataConfiguration) {
+                    hydrodynamicConfigurations.remove(hydrodynamicConfiguration);
+                    delete hydrodynamicConfiguration;
+                }
+            }
+            
+            QSetIterator<MeteorologicalConfiguration*> meteorologicalConfigurationIterator(meteorologicalConfigurations);
+            
+            while (meteorologicalConfigurationIterator.hasNext()) {
+                MeteorologicalConfiguration *meteorologicalConfiguration = meteorologicalConfigurationIterator.next();
+                
+                if (meteorologicalConfiguration->getGridDataConfiguration() == gridDataConfiguration) {
+                    meteorologicalConfigurations.remove(meteorologicalConfiguration);
+                    delete meteorologicalConfiguration;
+                }
+            }
+            
+            gridDataConfigurations.remove(gridDataConfiguration);
+            delete gridDataConfiguration;
         }
     }
     
@@ -115,9 +159,9 @@ bool Project::containsMesh(const QString &meshName) {
 }
 
 Mesh* Project::getMesh(const QString &meshName) const {
-    for (QSet<Mesh*>::const_iterator it = meshes.begin(); it != meshes.end(); it++) {
-        if ((*it)->getName() == meshName) {
-            return *it;
+    for (Mesh *mesh : meshes) {
+        if (mesh->getName() == meshName) {
+            return mesh;
         }
     }
 
@@ -125,9 +169,9 @@ Mesh* Project::getMesh(const QString &meshName) const {
 }
 
 Mesh* Project::getMesh(const uint &id) const {
-    for (QSet<Mesh*>::const_iterator it = meshes.begin(); it != meshes.end(); it++) {
-        if ((*it)->getId() == id) {
-            return *it;
+    for (Mesh *mesh : meshes) {
+        if (mesh->getId() == id) {
+            return mesh;
         }
     }
     
@@ -148,7 +192,7 @@ bool Project::addGridDataConfiguration(GridDataConfiguration *gridDataConfigurat
 void Project::removeGridDataConfiguration(const QString &configurationName) {
     GridDataConfiguration *gridDataConfiguration = getGridDataConfiguration(configurationName);
 
-    if (gridDataConfiguration != nullptr) {
+    if (gridDataConfiguration) {
         gridDataConfigurations.remove(gridDataConfiguration);
         delete gridDataConfiguration;
     }
@@ -157,9 +201,9 @@ void Project::removeGridDataConfiguration(const QString &configurationName) {
 }
 
 GridDataConfiguration* Project::getGridDataConfiguration(const QString &configurationName) const {
-    for (QSet<GridDataConfiguration*>::const_iterator it = gridDataConfigurations.begin(); it != gridDataConfigurations.end(); it++) {
-        if ((*it)->getName() == configurationName) {
-            return *it;
+    for (GridDataConfiguration *gridDataConfiguration : gridDataConfigurations) {
+        if (gridDataConfiguration->getName() == configurationName) {
+            return gridDataConfiguration;
         }
     }
 
@@ -167,9 +211,9 @@ GridDataConfiguration* Project::getGridDataConfiguration(const QString &configur
 }
 
 GridDataConfiguration* Project::getGridDataConfiguration(const uint &id) const {
-    for (QSet<GridDataConfiguration*>::const_iterator it = gridDataConfigurations.begin(); it != gridDataConfigurations.end(); it++) {
-        if ((*it)->getId() == id) {
-            return *it;
+    for (GridDataConfiguration *gridDataConfiguration : gridDataConfigurations) {
+        if (gridDataConfiguration->getId() == id) {
+            return gridDataConfiguration;
         }
     }
     
@@ -232,6 +276,7 @@ bool Project::addMeteorologicalConfiguration(MeteorologicalConfiguration *meteor
     }
     
     this->meteorologicalConfigurations.insert(meteorologicalConfiguration);
+    this->setDirty(true);
     
     return true;
 }
@@ -241,6 +286,7 @@ void Project::removeMeteorologicalConfiguration(const QString &configurationName
     
     if (configuration) {
         this->meteorologicalConfigurations.remove(configuration);
+        this->setDirty(true);
         delete configuration;
     }
 }
@@ -302,10 +348,6 @@ Simulation* Project::getSimulation(const QString &label) const {
 
 QList<Simulation*> Project::getSimulations() const {
     return simulations;
-}
-
-bool Project::isPersisted() const {
-    return this->id != 0;
 }
 
 void Project::setDirty(const bool &dirty) {

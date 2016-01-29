@@ -29,6 +29,7 @@ protected:
 public:
     MeteorologicalParameter();
     MeteorologicalParameter(const QString &name, const QString &unit, double defaultConstantValue);
+    ~MeteorologicalParameter();
     uint getId() const;
     void setId(uint id);
     bool isPersisted() const;

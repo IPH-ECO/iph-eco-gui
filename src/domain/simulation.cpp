@@ -15,6 +15,10 @@ Simulation::Simulation() :
 }
 
 Simulation::~Simulation() {
+    for (LayerProperties *layerProperties : getSelectedLayers().values()) {
+        delete layerProperties;
+    }
+    
     this->deleteSimulationStruct();
 }
 

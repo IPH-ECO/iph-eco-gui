@@ -15,6 +15,12 @@ BoundaryCondition::BoundaryCondition() :
     selectionActor->GetProperty()->LightingOff();
 }
 
+BoundaryCondition::~BoundaryCondition() {
+    for (TimeSeries *timeSeries : timeSeriesList) {
+        delete timeSeries;
+    }
+}
+
 uint BoundaryCondition::getId() const {
 	return id;
 }

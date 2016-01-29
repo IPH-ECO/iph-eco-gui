@@ -36,6 +36,7 @@ private:
 
 public:
 	BoundaryCondition();
+    ~BoundaryCondition();
 
 	uint getId() const;
 	void setId(uint id);

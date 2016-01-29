@@ -49,7 +49,7 @@ double Mesh::getCoordinatesDistance() const {
 MeshPolygon* Mesh::addMeshPolygon(const QString &name, const QString &filename, const MeshPolygonType &meshPolygonType, const CoordinateSystem &coordinateSystem) {
     MeshPolygon *meshPolygon = getMeshPolygon(name, meshPolygonType);
     
-    if (meshPolygon == nullptr || !meshPolygon->isPersisted()) {
+    if (!meshPolygon || !meshPolygon->isPersisted()) {
         meshPolygon = new MeshPolygon(name, filename, meshPolygonType);
     }
 
@@ -161,7 +161,7 @@ double Mesh::getLatitudeAverage() const {
     QList<MeshPolygon*> meshPolygons = islands + refinementAreas;
     double latitudeAverage = 0;
     
-    if (boundaryPolygon != nullptr) {
+    if (boundaryPolygon) {
         meshPolygons.prepend(boundaryPolygon);
     }
     
@@ -199,7 +199,7 @@ void Mesh::removeMeshPolygon(const QString &name, const MeshPolygonType &meshPol
 MeshPolygon* Mesh::getMeshPolygon(const QString &name, const MeshPolygonType &meshPolygonType) const {
     QList<MeshPolygon*> meshPolygons = islands + refinementAreas;
     
-    if (boundaryPolygon != nullptr) {
+    if (boundaryPolygon) {
         meshPolygons.prepend(boundaryPolygon);
     }
     

@@ -6,7 +6,10 @@ HydrodynamicConfiguration::~HydrodynamicConfiguration() {
     for (int i = 0; i < parameters.size(); i++) {
         delete parameters[i];
     }
-    parameters.empty();
+    
+    for (BoundaryCondition *boundaryCondition : boundaryConditions) {
+        delete boundaryCondition;
+    }
 }
 
 uint HydrodynamicConfiguration::getId() const {
