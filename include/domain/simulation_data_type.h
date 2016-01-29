@@ -15,15 +15,7 @@ namespace SimulationDataType {
             long long int verticeIdsLength;
             long long int *verticeIds;
             
-            void destroy() {
-                delete xCoordinates;
-                delete yCoordinates;
-                delete northNeighbors;
-                delete westNeighbors;
-                delete southNeighbors;
-                delete eastNeighbors;
-                delete verticeIds;
-            }
+            void destroy();
         };
         
         struct UnstructuredMesh {
@@ -33,11 +25,7 @@ namespace SimulationDataType {
 			long long int verticeIdsLength;
 			long long int *verticeIds;
             
-            void destroy() {
-                delete xCoordinates;
-                delete yCoordinates;
-                delete verticeIds;
-            }
+            void destroy();
         };
         
         struct GridData {
@@ -45,9 +33,7 @@ namespace SimulationDataType {
             double *weights;
             int typeId;
             
-            void destroy() {
-                delete weights;
-            }
+            void destroy();
         };
         
         struct GridDataConfiguration {
@@ -57,20 +43,7 @@ namespace SimulationDataType {
             SimulationDataType::StructuredMesh *structuredMesh;
             SimulationDataType::UnstructuredMesh *unstructuredMesh;
             
-            void destroy() {
-                layers->destroy();
-                delete layers;
-
-                if (structuredMesh) {
-                    structuredMesh->destroy();
-                    delete structuredMesh;
-                }
-                
-                if (unstructuredMesh) {
-                    unstructuredMesh->destroy();
-                    delete unstructuredMesh;
-                }
-            }
+            void destroy();
         };
         
         struct HydrodynamicParameter {
@@ -78,9 +51,7 @@ namespace SimulationDataType {
             int length;
             double value;
             
-            void destroy() {
-                delete name;
-            }
+            void destroy();
         };
         
         struct TimeSeries {
@@ -105,10 +76,7 @@ namespace SimulationDataType {
             bool verticalIntegratedOutflow;
             double quota;
             
-            void destroy() {
-                delete cells;
-                delete timeSeriesList;
-            }
+            void destroy();
         };
         
         struct MeteorologicalParameter {
@@ -124,10 +92,7 @@ namespace SimulationDataType {
             int timeSizeListLength;
             SimulationDataType::TimeSeries *timeSeriesList;
             
-            void destroy() {
-                delete name;
-                delete timeSeriesList;
-            }
+            void destroy();
         };
         
         struct MeteorologicalStation {
@@ -136,20 +101,14 @@ namespace SimulationDataType {
             int parametersLength;
             SimulationDataType::MeteorologicalParameter *parameters;
             
-            void destroy() {
-                parameters->destroy();
-                delete parameters;
-            }
+            void destroy();
         };
         
         struct MeteorologicalConfiguration {
             int stationsLength;
             SimulationDataType::MeteorologicalStation *stations;
             
-            void destroy() {
-                stations->destroy();
-                delete stations;
-            }
+            void destroy();
         };
 
         struct HydrodynamicConfiguration {
@@ -159,24 +118,14 @@ namespace SimulationDataType {
             SimulationDataType::BoundaryCondition *boundaryConditions;
             SimulationDataType::GridDataConfiguration *gridDataConfiguration;
             
-            void destroy() {
-                parameters->destroy();
-                boundaryConditions->destroy();
-                gridDataConfiguration->destroy();
-                
-                delete parameters;
-                delete boundaryConditions;
-                delete gridDataConfiguration;
-            }
+            void destroy();
         };
 
         struct OutputParameter {
             int nameLength;
             char *name;
             
-            void destroy() {
-                delete name;
-            }
+            void destroy();
         };
         
         struct RecoveryVariables {
@@ -189,12 +138,8 @@ namespace SimulationDataType {
             double *eta;
             int simulationTime;
             bool changed;
-            
-            void destroy() {
-                delete u;
-                delete w;
-                delete eta;
-            }
+
+            void destroy();
         };
 
         struct Simulation {
@@ -220,23 +165,11 @@ namespace SimulationDataType {
             int autosaveTimeInterval;
             int outputParametersLength;
             SimulationDataType::OutputParameter *outputParameters;
-            SimulationDataType::RecoveryVariables *recoveryVariables; // Fortran deallocates automatically
+            SimulationDataType::RecoveryVariables *recoveryVariables;
             int statusCode;
             int progress;
             
-            void destroy() {
-                hydrodynamicConfiguration->destroy();
-                meteorologicalConfiguration->destroy();
-                outputParameters->destroy();
-                
-                delete label;
-                delete layers;
-                delete hydrodynamicConfiguration;
-                delete meteorologicalConfiguration;
-                delete observations;
-                delete outputDirectory;
-                delete outputParameters;
-            }
+            void destroy();
         };
     }
 }
