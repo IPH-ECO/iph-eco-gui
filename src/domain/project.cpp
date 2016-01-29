@@ -7,8 +7,7 @@ Project::Project(const QString &name, const QString &description, const bool &hy
 		name(name),
 		description(description),
 		hydrodynamic(hydrodynamic),
-		waterQuality(waterQuality),
-		dirty(false)
+		waterQuality(waterQuality)
 {}
 
 Project::~Project() {
@@ -49,7 +48,6 @@ bool Project::isPersisted() const {
 
 void Project::setName(const QString &name) {
     this->name = name;
-    this->setDirty(true);
 }
 
 QString Project::getName() const {
@@ -58,7 +56,6 @@ QString Project::getName() const {
 
 void Project::setDescription(const QString &description) {
     this->description = description;
-    this->setDirty(true);
 }
 
 QString Project::getDescription() const {
@@ -67,7 +64,6 @@ QString Project::getDescription() const {
 
 void Project::setFilename(const QString &filename) {
     this->filename = filename;
-    this->setDirty(true);
 }
 
 QString Project::getFilename() const {
@@ -76,7 +72,6 @@ QString Project::getFilename() const {
 
 void Project::setHydrodynamic(const bool &hydrodynamic) {
     this->hydrodynamic = hydrodynamic;
-    this->setDirty(true);
 }
 
 bool Project::getHydrodynamic() const {
@@ -85,7 +80,6 @@ bool Project::getHydrodynamic() const {
 
 void Project::setWaterQuality(const bool &waterQuality) {
     this->waterQuality = waterQuality;
-    this->setDirty(true);
 }
 
 bool Project::getWaterQuality() const {
@@ -102,7 +96,6 @@ bool Project::addMesh(Mesh *mesh) {
     }
     
     meshes.insert(mesh);
-    this->setDirty(true);
     
     return true;
 }
@@ -151,7 +144,6 @@ void Project::removeMesh(Mesh *mesh) {
     meshes.remove(mesh);
     delete mesh;
     
-    this->setDirty(true);
 }
 
 bool Project::containsMesh(const QString &meshName) {
@@ -184,7 +176,6 @@ bool Project::addGridDataConfiguration(GridDataConfiguration *gridDataConfigurat
     }
 
     this->gridDataConfigurations.insert(gridDataConfiguration);
-    this->setDirty(true);
 
     return true;
 }
@@ -197,7 +188,6 @@ void Project::removeGridDataConfiguration(const QString &configurationName) {
         delete gridDataConfiguration;
     }
 
-    this->setDirty(true);
 }
 
 GridDataConfiguration* Project::getGridDataConfiguration(const QString &configurationName) const {
@@ -230,7 +220,6 @@ bool Project::addHydrodynamicConfiguration(HydrodynamicConfiguration *hydrodynam
     }
     
     this->hydrodynamicConfigurations.insert(hydrodynamicConfiguration);
-    this->setDirty(true);
     
     return true;
 }
@@ -243,7 +232,6 @@ void Project::removeHydrodynamicConfiguration(const QString &configurationName) 
         delete hydrodynamicConfiguration;
     }
     
-    this->setDirty(true);
 }
 
 HydrodynamicConfiguration* Project::getHydrodynamicConfiguration(const QString &configurationName) {
@@ -276,7 +264,6 @@ bool Project::addMeteorologicalConfiguration(MeteorologicalConfiguration *meteor
     }
     
     this->meteorologicalConfigurations.insert(meteorologicalConfiguration);
-    this->setDirty(true);
     
     return true;
 }
@@ -286,7 +273,6 @@ void Project::removeMeteorologicalConfiguration(const QString &configurationName
     
     if (configuration) {
         this->meteorologicalConfigurations.remove(configuration);
-        this->setDirty(true);
         delete configuration;
     }
 }
@@ -348,12 +334,4 @@ Simulation* Project::getSimulation(const QString &label) const {
 
 QList<Simulation*> Project::getSimulations() const {
     return simulations;
-}
-
-void Project::setDirty(const bool &dirty) {
-    this->dirty = dirty;
-}
-
-bool Project::isDirty() const {
-    return this->dirty;
 }

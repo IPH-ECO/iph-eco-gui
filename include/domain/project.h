@@ -22,15 +22,13 @@ private:
     QSet<MeteorologicalConfiguration*> meteorologicalConfigurations;
     QList<Simulation*> simulations;
 
-    //Transient attributes
-    bool dirty;
-
 public:
     Project(const QString &name, const QString &description, const bool &hydrodynamic, const bool &waterQuality);
     ~Project();
 
     void setId(const uint &id);
     uint getId() const;
+    bool isPersisted() const;
     void setName(const QString &name);
     QString getName() const;
     void setDescription(const QString &description);
@@ -71,11 +69,6 @@ public:
     void removeSimulation(const QString &simulationLabel);
     Simulation* getSimulation(const QString &label) const;
     QList<Simulation*> getSimulations() const;
-    
-    //Transient gets and sets
-    bool isPersisted() const;
-    bool isDirty() const;
-    void setDirty(const bool &dirty);
     
 signals:
     void simulationCreated(Simulation *simulation);

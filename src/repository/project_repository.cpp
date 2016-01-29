@@ -46,7 +46,6 @@ void ProjectRepository::open() {
     Project *project = new Project(name, description, hydrodynamic, waterQuality);
     project->setId(query.value("id").toUInt());
     project->setFilename(this->databaseName);
-    project->setDirty(false);
     IPHApplication::setCurrentProject(project);
     
     loadMeshes(project);
@@ -443,8 +442,6 @@ void ProjectRepository::save(bool makeCopy) {
     } catch (const std::exception &e) {
         throw DatabaseException(e.what());
     }
-
-    project->setDirty(false);
 }
 
 void ProjectRepository::saveMeshes(Project *project) {
