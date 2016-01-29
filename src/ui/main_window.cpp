@@ -344,10 +344,14 @@ void MainWindow::closeEvent(QCloseEvent *closeEvent) {
     
     if (project) {
         QMessageBox::StandardButton button = QMessageBox::question(this, tr("IPH-ECO"), "Do you want to save the project before exiting the application?", QMessageBox::Cancel | QMessageBox::No | QMessageBox::Yes, QMessageBox::Yes);
-        if (button == QMessageBox::Yes) {
-            ProjectService projectService;
-            projectService.save(project);
-        }
+        
+		if (button == QMessageBox::Yes) {
+			ProjectService projectService;
+			projectService.save(project);
+		} else if (button == QMessageBox::Cancel) {
+			closeEvent->ignore();
+			return;
+		}
         
         ProjectRepository projectRepository(project->getFilename());
         projectRepository.close();
