@@ -442,8 +442,6 @@ void ProjectRepository::save(bool makeCopy) {
     } catch (const std::exception &e) {
         throw DatabaseException(e.what());
     }
-
-    project->setDirty(false);
 }
 
 void ProjectRepository::saveMeshes(Project *project) {

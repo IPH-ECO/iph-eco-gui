@@ -12,6 +12,7 @@ private:
     QList<MeteorologicalStation*> stations;
 public:
     MeteorologicalConfiguration();
+    ~MeteorologicalConfiguration();
     uint getId() const;
     void setId(uint id);
     bool isPersisted() const;

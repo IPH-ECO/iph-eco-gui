@@ -24,6 +24,7 @@ private:
     vtkSmartPointer<vtkCaptionActor2D> captionActor;
 public:
     MeteorologicalStation();
+    ~MeteorologicalStation();
     MeteorologicalStation(const QString &name);
     uint getId() const;
     void setId(uint id);

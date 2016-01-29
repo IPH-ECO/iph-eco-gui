@@ -157,12 +157,10 @@ void MainWindow::on_actionCloseProject_triggered() {
     Project *project = IPHApplication::getCurrentProject();
 
     if (project) {
-        if (project->isDirty()) {
-            QMessageBox::StandardButton button = QMessageBox::question(this, tr("Project has unsaved changes"), tr("Do you want to save the changes before closing the project?"));
-            if (button == QMessageBox::Yes) {
-                ProjectService projectService;
-                projectService.save(project);
-            }
+        QMessageBox::StandardButton button = QMessageBox::question(this, tr("IPH-ECO"), "Do you want to save the project before closing the it?");
+        if (button == QMessageBox::Yes) {
+            ProjectService projectService;
+            projectService.save(project);
         }
         
         ProjectRepository projectRepository(project->getFilename());
@@ -344,26 +342,18 @@ void MainWindow::openProject(const QString &filename) {
 }
 
 void MainWindow::closeEvent(QCloseEvent *closeEvent) {
-//    Project *project = IPHApplication::getCurrentProject();
-//
-//    if (project != NULL) {
-//        if (project->isDirty()) {
-//            QMessageBox::StandardButton button =
-//                    QMessageBox::question(this, tr("IPH-ECO"), tr("The project has unsaved changes. Would you like to save these changes?"), QMessageBox::Cancel | QMessageBox::No | QMessageBox::Yes, QMessageBox::Yes);
-//
-//            if (button == QMessageBox::Yes) {
-//                //TODO: Save project changes
-//            } else {
-//                if (button == QMessageBox::Cancel) {
-//                    closeEvent->ignore();
-//                    return;
-//                }
-//            }
-//
-//            writeSettings();
-//            closeEvent->accept();
-//        }
-//    }
+    Project *project = IPHApplication::getCurrentProject();
+    
+    if (project) {
+        QMessageBox::StandardButton button = QMessageBox::question(this, tr("IPH-ECO"), "Do you want to save the project before exiting the application?", QMessageBox::Cancel | QMessageBox::No | QMessageBox::Yes, QMessageBox::Yes);
+        if (button == QMessageBox::Yes) {
+            ProjectService projectService;
+            projectService.save(project);
+        }
+        
+        ProjectRepository projectRepository(project->getFilename());
+        projectRepository.close();
+    }
 }
 
 void MainWindow::updateRecentFilesList(const QString &filePath) {

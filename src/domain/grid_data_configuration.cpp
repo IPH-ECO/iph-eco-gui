@@ -97,8 +97,8 @@ QList<GridData*> GridDataConfiguration::getGridData(const GridDataType &gridData
 }
 
 void GridDataConfiguration::clearGridDataVector() {
-    for (int i = 0; i < gridDataVector.size(); i++) {
-        delete gridDataVector.at(i);
+    for (GridData *gridData : gridDataVector) {
+        delete gridData;
     }
     gridDataVector.clear();
 }

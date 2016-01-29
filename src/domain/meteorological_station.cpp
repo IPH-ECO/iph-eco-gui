@@ -4,6 +4,12 @@ MeteorologicalStation::MeteorologicalStation() : id(0) {}
 
 MeteorologicalStation::MeteorologicalStation(const QString &name) : id(0), name(name), useLatitudeLongitude(false), latitude(0), longitude(0) {}
 
+MeteorologicalStation::~MeteorologicalStation() {
+    for (MeteorologicalParameter *parameter : parameters) {
+        delete parameter;
+    }
+}
+
 uint MeteorologicalStation::getId() const {
     return id;
 }

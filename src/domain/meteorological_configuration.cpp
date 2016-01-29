@@ -2,6 +2,12 @@
 
 MeteorologicalConfiguration::MeteorologicalConfiguration() : id(0) {}
 
+MeteorologicalConfiguration::~MeteorologicalConfiguration() {
+    for (MeteorologicalStation *station : stations) {
+        delete station;
+    }
+}
+
 uint MeteorologicalConfiguration::getId() const {
     return id;
 }
