@@ -92,6 +92,7 @@ void SimulationDataType::Simulation::destroy() {
     delete outputDirectory;
     delete outputParameters;
 
+    // Intel Fortran deallocates automatically
     #if !defined(_WIN32) && !defined(_WIN64)
     recoveryVariables->destroy();
     delete recoveryVariables;

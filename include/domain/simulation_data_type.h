@@ -165,7 +165,7 @@ namespace SimulationDataType {
             int autosaveTimeInterval;
             int outputParametersLength;
             SimulationDataType::OutputParameter *outputParameters;
-            SimulationDataType::RecoveryVariables *recoveryVariables; // Intel Fortran deallocates automatically
+            SimulationDataType::RecoveryVariables *recoveryVariables;
             int statusCode;
             int progress;
             
