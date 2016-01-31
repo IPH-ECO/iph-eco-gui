@@ -46,7 +46,7 @@
               <string/>
              </property>
              <property name="icon">
-              <iconset resource="../../icons.qrc">
+              <iconset resource="../../resources/resources.qrc">
                <normaloff>:/icons/list-add.png</normaloff>:/icons/list-add.png</iconset>
              </property>
             </widget>
@@ -57,7 +57,7 @@
               <string/>
              </property>
              <property name="icon">
-              <iconset resource="../../icons.qrc">
+              <iconset resource="../../resources/resources.qrc">
                <normaloff>:/icons/list-delete.png</normaloff>:/icons/list-delete.png</iconset>
              </property>
             </widget>
@@ -441,7 +441,7 @@
   <tabstop>txtObservations</tabstop>
  </tabstops>
  <resources>
-  <include location="../../icons.qrc"/>
+  <include location="../../resources/resources.qrc"/>
  </resources>
  <connections>
   <connection>

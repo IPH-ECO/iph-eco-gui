@@ -113,7 +113,7 @@
             <string/>
            </property>
            <property name="icon">
-            <iconset resource="../../icons.qrc">
+            <iconset resource="../../resources/resources.qrc">
              <normaloff>:/icons/archive-insert.png</normaloff>:/icons/archive-insert.png</iconset>
            </property>
           </widget>
@@ -127,7 +127,7 @@
             <string/>
            </property>
            <property name="icon">
-            <iconset resource="../../icons.qrc">
+            <iconset resource="../../resources/resources.qrc">
              <normaloff>:/icons/archive-apply.png</normaloff>:/icons/archive-apply.png</iconset>
            </property>
           </widget>
@@ -141,7 +141,7 @@
             <string/>
            </property>
            <property name="icon">
-            <iconset resource="../../icons.qrc">
+            <iconset resource="../../resources/resources.qrc">
              <normaloff>:/icons/archive-remove.png</normaloff>:/icons/archive-remove.png</iconset>
            </property>
           </widget>
@@ -282,7 +282,7 @@
               <string/>
              </property>
              <property name="icon">
-              <iconset resource="../../icons.qrc">
+              <iconset resource="../../resources/resources.qrc">
                <normaloff>:/icons/list-add.png</normaloff>:/icons/list-add.png</iconset>
              </property>
             </widget>
@@ -299,7 +299,7 @@
               <string/>
              </property>
              <property name="icon">
-              <iconset resource="../../icons.qrc">
+              <iconset resource="../../resources/resources.qrc">
                <normaloff>:/icons/list-delete.png</normaloff>:/icons/list-delete.png</iconset>
              </property>
             </widget>
@@ -356,7 +356,7 @@
            <string>Close</string>
           </property>
           <property name="icon">
-           <iconset resource="../../icons.qrc">
+           <iconset resource="../../resources/resources.qrc">
             <normaloff>:/icons/dialog-close.png</normaloff>:/icons/dialog-close.png</iconset>
           </property>
           <property name="shortcut">
@@ -416,7 +416,7 @@
   <tabstop>lstIslands</tabstop>
  </tabstops>
  <resources>
-  <include location="../../icons.qrc"/>
+  <include location="../../resources/resources.qrc"/>
  </resources>
  <connections>
   <connection>

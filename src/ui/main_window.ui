@@ -132,7 +132,7 @@
   </widget>
   <action name="actionNewProject">
    <property name="icon">
-    <iconset resource="../../icons.qrc">
+    <iconset resource="../../resources/resources.qrc">
      <normaloff>:/icons/document-properties.png</normaloff>:/icons/document-properties.png</iconset>
    </property>
    <property name="text">
@@ -150,7 +150,7 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="../../icons.qrc">
+    <iconset resource="../../resources/resources.qrc">
      <normaloff>:/icons/document-open.png</normaloff>:/icons/document-open.png</iconset>
    </property>
    <property name="text">
@@ -165,7 +165,7 @@
     <bool>false</bool>
    </property>
    <property name="icon">
-    <iconset resource="../../icons.qrc">
+    <iconset resource="../../resources/resources.qrc">
      <normaloff>:/icons/document-save.png</normaloff>:/icons/document-save.png</iconset>
    </property>
    <property name="text">
@@ -180,7 +180,7 @@
     <bool>false</bool>
    </property>
    <property name="icon">
-    <iconset resource="../../icons.qrc">
+    <iconset resource="../../resources/resources.qrc">
      <normaloff>:/icons/document-save-as.png</normaloff>:/icons/document-save-as.png</iconset>
    </property>
    <property name="text">
@@ -195,7 +195,7 @@
     <bool>false</bool>
    </property>
    <property name="icon">
-    <iconset resource="../../icons.qrc">
+    <iconset resource="../../resources/resources.qrc">
      <normaloff>:/icons/document-properties.png</normaloff>:/icons/document-properties.png</iconset>
    </property>
    <property name="text">
@@ -268,7 +268,7 @@
     <bool>false</bool>
    </property>
    <property name="icon">
-    <iconset resource="../../icons.qrc">
+    <iconset resource="../../resources/resources.qrc">
      <normaloff>:/icons/document-close.png</normaloff>:/icons/document-close.png</iconset>
    </property>
    <property name="text">
@@ -294,7 +294,7 @@
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources>
-  <include location="../../icons.qrc"/>
+  <include location="../../resources/resources.qrc"/>
  </resources>
  <connections>
   <connection>
