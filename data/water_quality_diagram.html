@@ -19,10 +19,6 @@
 			$("v\\:cp[v\\:lbl='" + process + "']").closest('g').hide();
 		}
 
-		function findVariable(variableName) {
-			return $('g:not([v\\:index="1"]):has(v\\:cp[v\\:lbl="variable"][v\\:val="VT4(' + variableName + ')"])');
-		}
-
 		function decodeValue(value) {
 			return value.replace(/VT4\(|\)$/g, '');
 		}
@@ -31,42 +27,46 @@
 			return 'VT4(' + value + ')';
 		}
 
-		function getProcesses(variableName, filterOutputProcess, enabled) {
-			var variableFilter = '[v\\:val' + (filterOutputProcess ? '^="VT4(' : '*=",') + variableName + '"]';
-			var enabledFilter = enabled ? ':not(.disabled)' : '.disabled';
-			
+		function getVariable(variableName) {
+			return $('g:not([v\\:index="1"]):has(v\\:cp[v\\:lbl="variable"][v\\:val="' + encodeValue(variableName) + '"])');
+		}
+
+		function getProcesses(variableName, enabled) {
+			// var variableFilter = '[v\\:val' + (filterOutputProcess ? '^="VT4(' : '*=",') + variableName + '"]';
+			var variableFilter = '[v\\:val*="' + variableName + '"]';
+			var enabledFilter = '';
+
+			if (enabled != undefined) {
+				enabledFilter = enabled ? ':not(.disabled)' : '.disabled';
+			}
+
 			return $('g:not([v\\:index="1"]):has(v\\:cp[v\\:lbl="process"]' + variableFilter + ')' + enabledFilter);
 		}
 
-		function enableVariable(variable) {
-			if (variable.match(/POM/g)) {
-				console.log('POM');
-			}
-
-			var variableElement = $('g:not([v\\:index="1"]):has(v\\:cp[v\\:lbl="variable"][v\\:val="' + encodeValue(variable) + '"])');
+		function enableVariable(variableName) {
+			var variableElement = getVariable(variableName);
 
 			if (!variableElement.hasClass('disabled')) {
 				return;
 			}
 
-			// var processes = $('g:not([v\\:index="1"]):has(v\\:cp[v\\:lbl="process"][v\\:val*="' + variable + '"])');
-			var processes = getProcesses(variable, true, false);
+			var processes = getProcesses(variableName);
 
 			variableElement.css('opacity', 1).removeClass('disabled');
 
 			processes.each(function() {
-				// if ($(this).hasClass('disabled')) {
-					enableProcess($(this));
-				// }
+				enableProcess($(this));
 			});
 		}
 
-		function disableVariable(variable) {
-			var variableElement = $('g:not([v\\:index="1"]):has(v\\:cp[v\\:lbl="variable"][v\\:val="' + encodeValue(variable) + '"])');
+		function disableVariable(variableName) {
+			var variableElement = getVariable(variableName);
 
-			variableElement.css('opacity', opacity).addClass('disabled');
+			if (variableElement.find('v\\:cp[v\\:lbl="blocked"]').length == 0) {
+				variableElement.css('opacity', opacity).addClass('disabled');
+			}
 
-			var processes = $('g:not([v\\:index="1"]):has(v\\:cp[v\\:lbl="process"][v\\:val*="' + variable + '"])');
+			var processes = getProcesses(variableName);
 
 			processes.each(function() {
 				if (!$(this).hasClass('disabled')) {
@@ -77,32 +77,27 @@
 
 		function enableProcess(process) {
 			var variables = decodeValue(process.find('v\\:cp[v\\:lbl="process"]').attr('v:val')).split(',');
-			var disabledOutputProcesses = getProcesses(variables[0], true, false).length;
-			var disabledInputProcesses = getProcesses(variables[1], false, false).length;
+			var disabledOutputProcesses = getProcesses(variables[0], false).length;
+			var disabledInputProcesses = getProcesses(variables[1], false).length;
 
 			process.css('opacity', 1).removeClass('disabled');
 
-			// if (disabledOutputProcesses == 0) {
-				enableVariable(variables[0]);
-			// }
-
-			// if (disabledInputProcesses == 0) {
-				enableVariable(variables[1]);
-			// }
+			enableVariable(variables[0]);
+			enableVariable(variables[1]);
 		}
 
 		function disableProcess(process) {
 			process.css('opacity', opacity).addClass('disabled');
 
 			var variables = decodeValue(process.find('v\\:cp[v\\:lbl="process"]').attr('v:val')).split(',');
-			var enabledOutputProcesses = getProcesses(variables[0], true, true).length;
-			var enabledInputProcesses = getProcesses(variables[1], false, true).length;
+			var fromHasProcessesEnabled = getProcesses(variables[0], true).length > 0;
+			var toHasProcessesEnabled = getProcesses(variables[1], true).length > 0;
 
-			if (enabledOutputProcesses == 0) {
+			if (!fromHasProcessesEnabled) {
 				disableVariable(variables[0]);
 			}
 
-			if (enabledInputProcesses == 0) {
+			if (!toHasProcessesEnabled) {
 				disableVariable(variables[1]);
 			}
 		}
@@ -124,12 +119,12 @@
 				}
 			});
 
-			var variableWrapper = $("v\\:cp[v\\:lbl='variable']").closest('g');
-			variableWrapper.css('cursor', 'pointer').on('click', function() {
-				if ($(this).find('v\\:cp[v\\:lbl="blocked"]').length) {
-					return;
-				}
+			var staticVariables = $('g:has(v\\:cp[v\\:lbl="blocked"])');
+			staticVariables.css('cursor', 'default');
 
+			var variables = $('g:has(v\\:cp[v\\:lbl="variable"])').not(staticVariables);
+			variables.css('cursor', 'pointer');
+			variables.on('click', function() {
 				var variableName = decodeValue($(this).find('v\\:cp[v\\:lbl="variable"]').attr('v:val'));
 
 				if ($(this).hasClass('disabled')) {
@@ -147,7 +142,7 @@
 <!-- Generated by Microsoft Visio, SVG Export inputDiagram.svg Standard -->
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:ev="http://www.w3.org/2001/xml-events"
 		xmlns:v="http://schemas.microsoft.com/visio/2003/SVGExtensions/" width="11in" height="8.5in" viewBox="0 0 792 612"
-		xml:space="preserve" color-interpolation-filters="sRGB" class="st31">
+		xml:space="preserve" color-interpolation-filters="sRGB" class="st30">
 	<v:documentProperties v:langID="1033" v:viewMarkup="false">
 		<v:userDefs>
 			<v:ud v:nameU="msvConvertTheme"/>
@@ -174,19 +169,18 @@
 		.st16 {marker-end:url(#mrkr4-100);stroke:#333333;stroke-linecap:round;stroke-linejoin:round;stroke-width:0.9}
 		.st17 {fill:#333333;fill-opacity:1;stroke:#333333;stroke-opacity:1;stroke-width:0.26315789473684}
 		.st18 {marker-end:url(#mrkr4-100);marker-start:url(#mrkr4-109);stroke:#333333;stroke-linecap:round;stroke-linejoin:round;stroke-width:0.9}
-		.st19 {fill:#ffffff;stroke:none;stroke-linecap:butt}
-		.st20 {marker-end:url(#mrkr4-100);marker-start:url(#mrkr16-222);stroke:#333333;stroke-linecap:round;stroke-linejoin:round;stroke-width:0.9}
-		.st21 {marker-start:url(#mrkr4-109);stroke:#333333;stroke-linecap:round;stroke-linejoin:round;stroke-width:0.9}
-		.st22 {fill:#99d2f2}
-		.st23 {fill:#7aa8c2}
-		.st24 {marker-start:url(#mrkr4-283);stroke:#83bbe5;stroke-dasharray:6.3,4.5;stroke-linecap:round;stroke-linejoin:round;stroke-width:0.9}
-		.st25 {fill:#83bbe5;fill-opacity:1;stroke:#83bbe5;stroke-opacity:1;stroke-width:0.26315789473684}
-		.st26 {marker-end:url(#mrkr16-291);stroke:#83bbe5;stroke-dasharray:6.3,4.5;stroke-linecap:round;stroke-linejoin:round;stroke-width:0.9}
-		.st27 {marker-end:url(#mrkr16-299);stroke:#83bbe5;stroke-dasharray:6.3,4.5;stroke-linecap:round;stroke-linejoin:round;stroke-width:0.9}
-		.st28 {marker-end:url(#mrkr16-291);marker-start:url(#mrkr20-358);stroke:#83bbe5;stroke-dasharray:6.3,4.5;stroke-linecap:round;stroke-linejoin:round;stroke-width:0.9}
-		.st29 {fill:#ffffff;stroke:#666666;stroke-linecap:round;stroke-linejoin:round;stroke-width:0.9}
-		.st30 {stroke:#333333;stroke-dasharray:0,4.5;stroke-linecap:round;stroke-linejoin:round;stroke-width:0.9}
-		.st31 {fill:none;fill-rule:evenodd;font-size:12px;overflow:visible;stroke-linecap:square;stroke-miterlimit:3}
+		.st19 {marker-end:url(#mrkr4-100);marker-start:url(#mrkr16-222);stroke:#333333;stroke-linecap:round;stroke-linejoin:round;stroke-width:0.9}
+		.st20 {marker-start:url(#mrkr4-109);stroke:#333333;stroke-linecap:round;stroke-linejoin:round;stroke-width:0.9}
+		.st21 {fill:#99d2f2}
+		.st22 {fill:#7aa8c2}
+		.st23 {marker-start:url(#mrkr4-283);stroke:#83bbe5;stroke-dasharray:6.3,4.5;stroke-linecap:round;stroke-linejoin:round;stroke-width:0.9}
+		.st24 {fill:#83bbe5;fill-opacity:1;stroke:#83bbe5;stroke-opacity:1;stroke-width:0.26315789473684}
+		.st25 {marker-end:url(#mrkr16-291);stroke:#83bbe5;stroke-dasharray:6.3,4.5;stroke-linecap:round;stroke-linejoin:round;stroke-width:0.9}
+		.st26 {marker-end:url(#mrkr16-299);stroke:#83bbe5;stroke-dasharray:6.3,4.5;stroke-linecap:round;stroke-linejoin:round;stroke-width:0.9}
+		.st27 {marker-end:url(#mrkr16-291);marker-start:url(#mrkr20-358);stroke:#83bbe5;stroke-dasharray:6.3,4.5;stroke-linecap:round;stroke-linejoin:round;stroke-width:0.9}
+		.st28 {fill:#ffffff;stroke:#666666;stroke-linecap:round;stroke-linejoin:round;stroke-width:0.9}
+		.st29 {stroke:#333333;stroke-dasharray:0,4.5;stroke-linecap:round;stroke-linejoin:round;stroke-width:0.9}
+		.st30 {fill:none;fill-rule:evenodd;font-size:12px;overflow:visible;stroke-linecap:square;stroke-miterlimit:3}
 	]]>
 	</style>
 
@@ -223,15 +217,15 @@
 				markerUnits="strokeWidth" overflow="visible">
 			<use xlink:href="#lend16" transform="scale(3.8) "/>
 		</marker>
-		<marker id="mrkr4-283" class="st25" v:arrowType="4" v:arrowSize="2" v:setback="7.2" refX="7.2" orient="auto"
+		<marker id="mrkr4-283" class="st24" v:arrowType="4" v:arrowSize="2" v:setback="7.2" refX="7.2" orient="auto"
 				markerUnits="strokeWidth" overflow="visible">
 			<use xlink:href="#lend4" transform="scale(3.8) "/>
 		</marker>
-		<marker id="mrkr16-291" class="st25" v:arrowType="16" v:arrowSize="2" v:setback="7.6" refX="-7.6" orient="auto"
+		<marker id="mrkr16-291" class="st24" v:arrowType="16" v:arrowSize="2" v:setback="7.6" refX="-7.6" orient="auto"
 				markerUnits="strokeWidth" overflow="visible">
 			<use xlink:href="#lend16" transform="scale(-3.8,-3.8) "/>
 		</marker>
-		<marker id="mrkr16-299" class="st25" v:arrowType="16" v:arrowSize="2" v:setback="0" refX="-0" orient="auto"
+		<marker id="mrkr16-299" class="st24" v:arrowType="16" v:arrowSize="2" v:setback="0" refX="-0" orient="auto"
 				markerUnits="strokeWidth" overflow="visible">
 			<use xlink:href="#lend16" transform="scale(-3.8,-3.8) "/>
 		</marker>
@@ -240,7 +234,7 @@
 					d="M 0 0.75 C -0.414214 0.75 -0.75 0.414214 -0.75 0 -0.75 -0.414214 -0.414214 -0.75 0 -0.75 0.414214 -0.75 0.75 -0.414214 0.75 0 0.75 0.414214 0.414214 0.75 0 0.75 Z "
 					style="stroke-linecap:round;stroke-linejoin:round;fill:none"/>
 		</g>
-		<marker id="mrkr20-358" class="st25" v:arrowType="20" v:arrowSize="2" v:setback="2.45" refX="2.45" orient="auto"
+		<marker id="mrkr20-358" class="st24" v:arrowType="20" v:arrowSize="2" v:setback="2.45" refX="2.45" orient="auto"
 				markerUnits="strokeWidth" overflow="visible">
 			<use xlink:href="#lend20" transform="scale(3.8) "/>
 		</marker>
@@ -252,6 +246,7 @@
 		<g id="group1-1" transform="translate(171,-437.623)" v:mID="1" v:groupContext="group">
 			<v:custProps>
 				<v:cp v:nameU="Row_1" v:lbl="variable" v:type="0" v:langID="1046" v:val="VT4(Dissolved Inorganic Carbon)"/>
+				<v:cp v:nameU="Row_2" v:lbl="blocked" v:type="0" v:langID="1033" v:val="VT4(false)"/>
 			</v:custProps>
 			<title>com.lucidchart.ERDEntityBlock</title>
 			<g id="shape2-2" v:mID="2" v:groupContext="shape">
@@ -599,7 +594,7 @@
 			<v:textRect cx="-250.461" cy="409.95" width="42.7" height="8.00357"/>
 			<path d="M0 612 L0 410.17 a0.225 0.225 -180 0 0 -0.225 -0.225 L-476.78 409.95 a0.225 0.225 -180 0 0 -0.225 0.225 L-477
 						 468.81" class="st16"/>
-			<rect v:rectContext="textBkgnd" x="-270.693" y="405.744" width="40.4648" height="8.20596" class="st19"/>
+			<rect v:rectContext="textBkgnd" x="-270.693" y="405.744" width="40.4648" height="8.20596" class="st14"/>
 			<text x="-270.69" y="411.95" class="st15" v:langID="1033"><v:paragraph v:spLine="-1" v:horizAlign="1"/><v:tabList/>Respiration</text>		</g>
 		<g id="shape58-181" v:mID="58" v:groupContext="shape" transform="translate(421.951,-423.45)">
 			<title>com.lucidchart.Line.58</title>
@@ -616,6 +611,7 @@
 		<g id="group59-188" transform="translate(301.723,-218.477)" v:mID="59" v:groupContext="group">
 			<v:custProps>
 				<v:cp v:nameU="Row_1" v:lbl="variable" v:type="0" v:langID="1046" v:val="VT4(Inorganic Nutrients)"/>
+				<v:cp v:nameU="Row_2" v:lbl="blocked" v:type="0" v:langID="1033" v:val="VT4(true)"/>
 			</v:custProps>
 			<title>ERDEntityBlock.59</title>
 			<g id="shape60-189" v:mID="60" v:groupContext="shape">
@@ -677,7 +673,7 @@
 			</v:custProps>
 			<v:textBlock v:margins="rect(0,0,0,0)"/>
 			<v:textRect cx="155.091" cy="612" width="59.15" height="8.00357"/>
-			<path d="M6.48 612 L6.84 612 L284.17 612 a0.225 0.225 -180 0 0 0.225 -0.225 L284.4 593.05" class="st20"/>
+			<path d="M6.48 612 L6.84 612 L284.17 612 a0.225 0.225 -180 0 0 0.225 -0.225 L284.4 593.05" class="st19"/>
 			<rect v:rectContext="textBkgnd" x="126.63" y="607.794" width="56.9218" height="8.20596" class="st14"/>
 			<text x="126.63" y="614" class="st15" v:langID="1033"><v:paragraph v:spLine="-1" v:horizAlign="1"/><v:tabList/>Uptake/Release</text>		</g>
 		<g id="shape70-226" v:mID="70" v:groupContext="shape" transform="translate(556.877,-319.723)">
@@ -689,7 +685,7 @@
 			<v:textBlock v:margins="rect(0,0,0,0)"/>
 			<v:textRect cx="-113.798" cy="681.229" width="35.58" height="8.00357"/>
 			<path d="M0 612 L-0 681 a0.225 0.225 0 0 1 -0.225 0.225 L-169.56 681.23" class="st16"/>
-			<rect v:rectContext="textBkgnd" x="-130.472" y="677.023" width="33.3476" height="8.20596" class="st19"/>
+			<rect v:rectContext="textBkgnd" x="-130.472" y="677.023" width="33.3476" height="8.20596" class="st14"/>
 			<text x="-130.47" y="683.23" class="st15" v:langID="1033"><v:paragraph v:spLine="-1" v:horizAlign="1"/><v:tabList/>Excretion</text>		</g>
 		<g id="shape71-233" v:mID="71" v:groupContext="shape" transform="translate(448.877,-353.477)">
 			<title>com.lucidchart.Line.71</title>
@@ -733,12 +729,13 @@
 			</v:custProps>
 			<v:textBlock v:margins="rect(0,0,0,0)"/>
 			<v:textRect cx="-9.00377" cy="567.898" width="41.37" height="8.00357"/>
-			<path d="M-8.45 605.52 L-8.46 605.16 L-9.64 523.8" class="st21"/>
+			<path d="M-8.45 605.52 L-8.46 605.16 L-9.64 523.8" class="st20"/>
 			<rect v:rectContext="textBkgnd" x="-28.5722" y="563.692" width="39.1366" height="8.20596" class="st14"/>
 			<text x="-28.57" y="569.9" class="st15" v:langID="1033"><v:paragraph v:spLine="-1" v:horizAlign="1"/><v:tabList/>Reaeration</text>		</g>
 		<g id="group75-261" transform="translate(54,-437.738)" v:mID="75" v:groupContext="group">
 			<v:custProps>
 				<v:cp v:nameU="Row_1" v:lbl="variable" v:type="0" v:langID="1046" v:val="VT4(Dissolved oxygen)"/>
+				<v:cp v:nameU="Row_2" v:lbl="blocked" v:type="0" v:langID="1033" v:val="VT4(true)"/>
 			</v:custProps>
 			<title>ERDEntityBlock.12.75</title>
 			<g id="shape76-262" v:mID="76" v:groupContext="shape">
@@ -746,11 +743,11 @@
 				<path d="M0 582.54 C0 581.29 0.99 580.3 2.25 580.3 L103.5 580.3 A1.125 1.125 0 0 1 103.5 580.3 C104.76 580.3 105.75
 							 581.29 105.75 582.54 L105.75 609.77 A2.25 2.25 0 0 1 105.34 611.07 C104.93 611.64 104.27 612.02 103.5
 							 612.02 L2.25 612.02 A2.25 2.25 -180 0 0 2.25 612.02 C1.49 612.02 0.82 611.64 0.41 611.07 A2.25 2.25
-							 0 0 1 0 609.77 L0 582.54 Z" class="st22"/>
+							 0 0 1 0 609.77 L0 582.54 Z" class="st21"/>
 			</g>
 			<g id="shape77-265" v:mID="77" v:groupContext="shape">
 				<title>Sheet.77</title>
-				<rect x="0" y="580.298" width="105.754" height="18" class="st23"/>
+				<rect x="0" y="580.298" width="105.754" height="18" class="st22"/>
 				<rect x="0" y="580.298" width="105.754" height="18" class="st3"/>
 			</g>
 			<g id="shape78-268" v:mID="78" v:groupContext="shape">
@@ -784,7 +781,7 @@
 			</v:custProps>
 			<v:textBlock v:margins="rect(0,0,0,0)"/>
 			<v:textRect cx="-9.00377" cy="567.897" width="41.37" height="8.00357"/>
-			<path d="M-9 605.52 L-9 605.16 L-9 523.8" class="st24"/>
+			<path d="M-9 605.52 L-9 605.16 L-9 523.8" class="st23"/>
 			<rect v:rectContext="textBkgnd" x="-28.5722" y="563.692" width="39.1366" height="8.20596" class="st14"/>
 			<text x="-28.57" y="569.9" class="st15" v:langID="1033"><v:paragraph v:spLine="-1" v:horizAlign="1"/><v:tabList/>Reaeration</text>		</g>
 		<g id="shape83-286" v:mID="83" v:groupContext="shape" transform="translate(153.691,-408.686)">
@@ -795,7 +792,7 @@
 			</v:custProps>
 			<v:textBlock v:margins="rect(0,0,0,0)"/>
 			<v:textRect cx="57.3552" cy="612" width="42.7" height="8.00357"/>
-			<path d="M0 583.4 L0 611.77 a0.225 0.225 -180 0 0 0.225 0.225 L136.48 612" class="st26"/>
+			<path d="M0 583.4 L0 611.77 a0.225 0.225 -180 0 0 0.225 0.225 L136.48 612" class="st25"/>
 			<rect v:rectContext="textBkgnd" x="37.1226" y="607.794" width="40.4648" height="8.20596" class="st14"/>
 			<text x="37.12" y="614" class="st15" v:langID="1033"><v:paragraph v:spLine="-1" v:horizAlign="1"/><v:tabList/>Respiration</text>		</g>
 		<g id="shape84-294" v:mID="84" v:groupContext="shape" transform="translate(143.937,-437.288)">
@@ -807,7 +804,7 @@
 			<v:textBlock v:margins="rect(0,0,0,0)"/>
 			<v:textRect cx="98.2278" cy="676.602" width="42.7" height="8.00357"/>
 			<path d="M0 612 L-0 612 a0.00707596 0.00707596 -180 0 0 -0.00435876 0.00653346 L-0.01 676.38 a0.225 0.225 -180 0 0 0.225
-						 0.225 L261.05 676.6 a0.0689679 0.0689679 -180 0 0 0.00721989 -0.000378947 L261.06 676.6" class="st27"/>
+						 0.225 L261.05 676.6 a0.0689679 0.0689679 -180 0 0 0.00721989 -0.000378947 L261.06 676.6" class="st26"/>
 			<rect v:rectContext="textBkgnd" x="77.9952" y="672.396" width="40.4648" height="8.20596" class="st14"/>
 			<text x="78" y="678.6" class="st15" v:langID="1033"><v:paragraph v:spLine="-1" v:horizAlign="1"/><v:tabList/>Respiration</text>		</g>
 		<g id="shape85-302" v:mID="85" v:groupContext="shape" transform="translate(131.746,-437.288)">
@@ -818,7 +815,7 @@
 			</v:custProps>
 			<v:textBlock v:margins="rect(0,0,0,0)"/>
 			<v:textRect cx="141.45" cy="710.355" width="42.7" height="8.00357"/>
-			<path d="M0 612 L0 710.13 a0.225 0.225 -180 0 0 0.225 0.225 L374.41 710.35" class="st26"/>
+			<path d="M0 612 L0 710.13 a0.225 0.225 -180 0 0 0.225 0.225 L374.41 710.35" class="st25"/>
 			<rect v:rectContext="textBkgnd" x="121.217" y="706.149" width="40.4648" height="8.20596" class="st14"/>
 			<text x="121.22" y="712.35" class="st15" v:langID="1033"><v:paragraph v:spLine="-1" v:horizAlign="1"/><v:tabList/>Respiration</text>		</g>
 		<g id="shape86-309" v:mID="86" v:groupContext="shape" transform="translate(117.62,-437.288)">
@@ -829,7 +826,7 @@
 			</v:custProps>
 			<v:textBlock v:margins="rect(0,0,0,0)"/>
 			<v:textRect cx="187.2" cy="740.987" width="42.7" height="8.00357"/>
-			<path d="M0 612 L-0 740.76 a0.225 0.225 -180 0 0 0.225 0.225 L496.54 740.99" class="st26"/>
+			<path d="M0 612 L-0 740.76 a0.225 0.225 -180 0 0 0.225 0.225 L496.54 740.99" class="st25"/>
 			<rect v:rectContext="textBkgnd" x="166.967" y="736.782" width="40.4648" height="8.20596" class="st14"/>
 			<text x="166.97" y="742.99" class="st15" v:langID="1033"><v:paragraph v:spLine="-1" v:horizAlign="1"/><v:tabList/>Respiration</text>		</g>
 		<g id="shape87-316" v:mID="87" v:groupContext="shape" transform="translate(98.0626,-437.288)">
@@ -840,8 +837,8 @@
 			</v:custProps>
 			<v:textBlock v:margins="rect(0,0,0,0)"/>
 			<v:textRect cx="90.9617" cy="796.05" width="37.8" height="8.00357"/>
-			<path d="M0 612 L0 795.83 a0.225 0.225 -180 0 0 0.225 0.225 L196.82 796.05" class="st26"/>
-			<rect v:rectContext="textBkgnd" x="73.1784" y="791.844" width="35.5663" height="8.20596" class="st19"/>
+			<path d="M0 612 L0 795.83 a0.225 0.225 -180 0 0 0.225 0.225 L196.82 796.05" class="st25"/>
+			<rect v:rectContext="textBkgnd" x="73.1784" y="791.844" width="35.5663" height="8.20596" class="st14"/>
 			<text x="73.18" y="798.05" class="st15" v:langID="1033"><v:paragraph v:spLine="-1" v:horizAlign="1"/><v:tabList/>Nitrication</text>		</g>
 		<g id="shape88-323" v:mID="88" v:groupContext="shape" transform="translate(301.723,-270.661)">
 			<title>com.lucidchart.Line.88</title>
@@ -897,7 +894,7 @@
 			<desc>Photosynthesis</desc>
 			<v:textBlock v:margins="rect(0,0,0,0)"/>
 			<v:textRect cx="-275.358" cy="612" width="56.48" height="8.00357"/>
-			<path d="M-2.2 612 L-2.57 612 L-465.84 612 a0.225 0.225 -180 0 0 -0.225 0.225 L-466.06 657.25" class="st28"/>
+			<path d="M-2.2 612 L-2.57 612 L-465.84 612 a0.225 0.225 -180 0 0 -0.225 0.225 L-466.06 657.25" class="st27"/>
 			<rect v:rectContext="textBkgnd" x="-302.485" y="607.794" width="54.2538" height="8.20596" class="st14"/>
 			<text x="-302.49" y="614" class="st15" v:langID="1033"><v:paragraph v:spLine="-1" v:horizAlign="1"/><v:tabList/>Photosynthesis</text>		</g>
 		<g id="group97-362" v:mID="97" v:groupContext="group">
@@ -905,7 +902,7 @@
 			<g id="shape98-363" v:mID="98" v:groupContext="shape">
 				<title>Sheet.98</title>
 				<path d="M0 569.25 C-0 567.99 1.03 567 2.25 567 L789.75 567 C791.05 567 792 567.99 792 569.25 L792 609.75 C792 611.01
-							 791.05 612 789.75 612 L2.25 612 C1.03 612 0 611.01 0 609.75 L0 569.25 Z" class="st29"/>
+							 791.05 612 789.75 612 L2.25 612 C1.03 612 0 611.01 0 609.75 L0 569.25 Z" class="st28"/>
 			</g>
 		</g>
 		<g id="shape99-365" v:mID="99" v:groupContext="shape" transform="translate(332.1,-218.477)">
@@ -928,14 +925,14 @@
 			<v:textBlock v:margins="rect(0,0,0,0)"/>
 			<v:textRect cx="-8.57268" cy="736.711" width="67.16" height="8.00357" transform="rotate(-90)"/>
 			<path d="M-9 612 L-9 612 a0.00613976 0.00613976 -180 0 0 -0.00189131 0.00443253 L-9 771.92 L-9 1003.84 a0.000763505 0.000763505
-						 -180 0 0 0.00137091 0.000462606 L-9 1003.84" class="st27"/>
+						 -180 0 0 0.00137091 0.000462606 L-9 1003.84" class="st26"/>
 			<rect v:rectContext="textBkgnd" x="-769.176" y="-12.7785" width="64.9289" height="8.20596" transform="rotate(-90)"
 					class="st14"/>
 			<text x="-769.18" y="-6.57" transform="rotate(-90)" class="st15" v:langID="1033"><v:paragraph v:spLine="-1"
 						v:horizAlign="1"/><v:tabList/>Sediment demand</text>		</g>
 		<g id="shape101-381" v:mID="101" v:groupContext="shape" transform="translate(0,-558)">
 			<title>com.lucidchart.Line.101</title>
-			<path d="M0 612 L792 612" class="st30"/>
+			<path d="M0 612 L792 612" class="st29"/>
 		</g>
 		<g id="group102-384" transform="translate(0,-549)" v:mID="102" v:groupContext="group">
 			<title>DefaultTextBlockNew.9.102</title>
@@ -1172,7 +1169,7 @@
 			<v:textBlock v:margins="rect(0,0,0,0)"/>
 			<v:textRect cx="1.3765" cy="736.265" width="104.05" height="8.00357" transform="rotate(-90)"/>
 			<path d="M0 612 L0 925.46 a0.225 0.225 -180 0 0 0.225 0.225 L249.15 925.69 a0.225 0.225 -180 0 0 0.225 -0.225 L249.37
-						 895.86" class="st26"/>
+						 895.86" class="st25"/>
 			<rect v:rectContext="textBkgnd" x="-787.176" y="-2.82936" width="101.821" height="8.20596" transform="rotate(-90)"
 					class="st14"/>
 			<text x="-787.18" y="3.38" transform="rotate(-90)" class="st15" v:langID="1033"><v:paragraph v:spLine="-1"
@@ -1243,7 +1240,7 @@
 			<desc>Production</desc>
 			<v:textBlock v:margins="rect(0,0,0,0)"/>
 			<v:textRect cx="8.99631" cy="527.623" width="40.48" height="8.00357"/>
-			<path d="M9 605.52 L9 605.16 L9 443.25" class="st21"/>
+			<path d="M9 605.52 L9 605.16 L9 443.25" class="st20"/>
 			<rect v:rectContext="textBkgnd" x="-10.1268" y="523.417" width="38.2459" height="8.20596" class="st14"/>
 			<text x="-10.13" y="529.62" class="st15" v:langID="1046"><v:paragraph v:spLine="-1" v:horizAlign="1"/><v:tabList/>Production</text>		</g>
 		<g id="shape146-553" v:mID="146" v:groupContext="shape" transform="translate(71.7617,-437.288)">
@@ -1254,7 +1251,7 @@
 			</v:custProps>
 			<v:textBlock v:margins="rect(0,0,0,0)"/>
 			<v:textRect cx="0.238282" cy="736.265" width="117.84" height="8.00357" transform="rotate(-90)"/>
-			<path d="M0 612 L0 833.06 a0.225 0.225 -180 0 0 0.225 0.225 L136.5 833.29" class="st26"/>
+			<path d="M0 612 L0 833.06 a0.225 0.225 -180 0 0 0.225 0.225 L136.5 833.29" class="st25"/>
 			<rect v:rectContext="textBkgnd" x="-794.07" y="-3.96757" width="115.609" height="8.20596" transform="rotate(-90)"
 					class="st14"/>
 			<text x="-794.07" y="2.24" transform="rotate(-90)" class="st15" v:langID="1033"><v:paragraph v:spLine="-1"

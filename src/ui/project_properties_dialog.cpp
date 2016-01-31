@@ -2,7 +2,6 @@
 #include "ui_project_properties_dialog.h"
 
 #include <application/iph_application.h>
-#include <services/project_service.h>
 
 #include <QDialogButtonBox>
 #include <QMessageBox>

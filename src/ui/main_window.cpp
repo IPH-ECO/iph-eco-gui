@@ -4,7 +4,6 @@
 #include <application/iph_application.h>
 #include <domain/simulation.h>
 #include <exceptions/database_exception.h>
-#include <services/project_service.h>
 #include <repository/project_repository.h>
 #include <ui/structured_mesh_dialog.h>
 #include <ui/grid_data_dialog.h>
@@ -155,13 +154,13 @@ void MainWindow::on_actionCloseProject_triggered() {
     Project *project = IPHApplication::getCurrentProject();
 
     if (project) {
+        ProjectRepository projectRepository(project->getFilename());
         QMessageBox::StandardButton button = QMessageBox::question(this, tr("IPH-ECO"), "Do you want to save the project before closing the it?");
+        
         if (button == QMessageBox::Yes) {
-            ProjectService projectService;
-            projectService.save(project);
+            projectRepository.save();
         }
         
-        ProjectRepository projectRepository(project->getFilename());
         projectRepository.close();
     }
     
@@ -343,17 +342,16 @@ void MainWindow::closeEvent(QCloseEvent *closeEvent) {
     Project *project = IPHApplication::getCurrentProject();
     
     if (project) {
+        ProjectRepository projectRepository(project->getFilename());
         QMessageBox::StandardButton button = QMessageBox::question(this, tr("IPH-ECO"), "Do you want to save the project before exiting the application?", QMessageBox::Cancel | QMessageBox::No | QMessageBox::Yes, QMessageBox::Yes);
         
 		if (button == QMessageBox::Yes) {
-			ProjectService projectService;
-			projectService.save(project);
+			projectRepository.save();
 		} else if (button == QMessageBox::Cancel) {
 			closeEvent->ignore();
 			return;
 		}
         
-        ProjectRepository projectRepository(project->getFilename());
         projectRepository.close();
     }
 }
