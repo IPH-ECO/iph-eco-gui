@@ -243,7 +243,7 @@
             <string/>
            </property>
            <property name="icon">
-            <iconset resource="../../icons.qrc">
+            <iconset resource="../../resources/resources.qrc">
              <normaloff>:/icons/individual-object-picker.png</normaloff>:/icons/individual-object-picker.png</iconset>
            </property>
            <property name="checkable">
@@ -260,7 +260,7 @@
             <string/>
            </property>
            <property name="icon">
-            <iconset resource="../../icons.qrc">
+            <iconset resource="../../resources/resources.qrc">
              <normaloff>:/icons/edit-clear-2.png</normaloff>:/icons/edit-clear-2.png</iconset>
            </property>
           </widget>
@@ -328,7 +328,7 @@
   <tabstop>btnBrowsePointsFile</tabstop>
  </tabstops>
  <resources>
-  <include location="../../icons.qrc"/>
+  <include location="../../resources/resources.qrc"/>
  </resources>
  <connections>
   <connection>

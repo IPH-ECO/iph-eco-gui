@@ -87,7 +87,7 @@
             <string/>
            </property>
            <property name="icon">
-            <iconset resource="../../icons.qrc">
+            <iconset resource="../../resources/resources.qrc">
              <normaloff>:/icons/archive-insert.png</normaloff>:/icons/archive-insert.png</iconset>
            </property>
           </widget>
@@ -101,7 +101,7 @@
             <string/>
            </property>
            <property name="icon">
-            <iconset resource="../../icons.qrc">
+            <iconset resource="../../resources/resources.qrc">
              <normaloff>:/icons/archive-apply.png</normaloff>:/icons/archive-apply.png</iconset>
            </property>
           </widget>
@@ -115,7 +115,7 @@
             <string/>
            </property>
            <property name="icon">
-            <iconset resource="../../icons.qrc">
+            <iconset resource="../../resources/resources.qrc">
              <normaloff>:/icons/archive-remove.png</normaloff>:/icons/archive-remove.png</iconset>
            </property>
           </widget>
@@ -267,7 +267,7 @@
               <string/>
              </property>
              <property name="icon">
-              <iconset resource="../../icons.qrc">
+              <iconset resource="../../resources/resources.qrc">
                <normaloff>:/icons/document-new.png</normaloff>:/icons/document-new.png</iconset>
              </property>
              <property name="iconSize">
@@ -287,7 +287,7 @@
               <string/>
              </property>
              <property name="icon">
-              <iconset resource="../../icons.qrc">
+              <iconset resource="../../resources/resources.qrc">
                <normaloff>:/icons/document-properties.png</normaloff>:/icons/document-properties.png</iconset>
              </property>
              <property name="iconSize">
@@ -307,7 +307,7 @@
               <string/>
              </property>
              <property name="icon">
-              <iconset resource="../../icons.qrc">
+              <iconset resource="../../resources/resources.qrc">
                <normaloff>:/icons/document-close.png</normaloff>:/icons/document-close.png</iconset>
              </property>
              <property name="iconSize">
@@ -358,7 +358,7 @@
           <string>Close</string>
          </property>
          <property name="icon">
-          <iconset resource="../../icons.qrc">
+          <iconset resource="../../resources/resources.qrc">
            <normaloff>:/icons/dialog-close.png</normaloff>:/icons/dialog-close.png</iconset>
          </property>
          <property name="shortcut">
@@ -426,7 +426,7 @@
   <tabstop>btnClose</tabstop>
  </tabstops>
  <resources>
-  <include location="../../icons.qrc"/>
+  <include location="../../resources/resources.qrc"/>
  </resources>
  <connections>
   <connection>

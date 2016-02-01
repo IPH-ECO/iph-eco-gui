@@ -26,7 +26,7 @@ endif()
 include(${VTK_USE_FILE})
 include(${CGAL_USE_FILE})
 
-file(GLOB_RECURSE SOURCES src/main.cpp src/*.cpp include/*.h icons.qrc iph-eco.rc)
+file(GLOB_RECURSE SOURCES src/main.cpp src/*.cpp include/*.h resources/resources.qrc resources/iph-eco.rc)
 
 add_executable(iph-eco MACOSX_BUNDLE ${SOURCES})
 target_include_directories(iph-eco PUBLIC include)
