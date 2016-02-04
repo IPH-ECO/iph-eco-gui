@@ -4,6 +4,7 @@
 #include "mesh.h"
 #include "grid_data_configuration.h"
 #include "hydrodynamic_configuration.h"
+#include "water_quality_configuration.h"
 #include "meteorological_configuration.h"
 #include "simulation.h"
 
@@ -19,6 +20,7 @@ private:
     QSet<Mesh*> meshes;
     QSet<GridDataConfiguration*> gridDataConfigurations;
     QSet<HydrodynamicConfiguration*> hydrodynamicConfigurations;
+    QSet<WaterQualityConfiguration*> waterQualityConfigurations;
     QSet<MeteorologicalConfiguration*> meteorologicalConfigurations;
     QList<Simulation*> simulations;
 
@@ -58,6 +60,12 @@ public:
     HydrodynamicConfiguration* getHydrodynamicConfiguration(const QString &configurationName);
     HydrodynamicConfiguration* getHydrodynamicConfiguration(uint id) const;
     QSet<HydrodynamicConfiguration*> getHydrodynamicConfigurations() const;
+
+    bool addWaterQualityConfiguration(WaterQualityConfiguration *waterQualityConfiguration);
+    void removeWaterQualityConfiguration(const QString &configurationName);
+    WaterQualityConfiguration* getWaterQualityConfiguration(const QString &configurationName);
+    WaterQualityConfiguration* getWaterQualityConfiguration(uint id) const;
+    QSet<WaterQualityConfiguration*> getWaterQualityConfigurations() const;
     
     bool addMeteorologicalConfiguration(MeteorologicalConfiguration *meteorologicalConfiguration);
     void removeMeteorologicalConfiguration(const QString &configurationName);

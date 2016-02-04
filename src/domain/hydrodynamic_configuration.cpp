@@ -87,9 +87,9 @@ QList<HydrodynamicParameter*> HydrodynamicConfiguration::getParameters() const {
 }
 
 HydrodynamicParameter* HydrodynamicConfiguration::getParameter(const QString &name) const {
-	for (int i = 0; i < parameters.size(); i++) {
-		if (parameters[i]->getName() == name) {
-			return parameters[i];
+	for (HydrodynamicParameter *parameter : parameters) {
+		if (parameter->getName() == name) {
+			return parameter;
 		}
 	}
 

@@ -1,0 +1,39 @@
+[
+	{
+		"label": "Heat Budget Modeling",
+		"name": "iTemp",
+		"checkable": true,
+		"checked": true
+	},
+	{
+		"label": "Limnology Modeling",
+		"name": "iLimn",
+		"checkable": true,
+		"checked": true
+	},
+	{
+		"label": "Bacterioplankton Modeling",
+		"name": "iBac",
+		"checkable": true,
+		"checked": true,
+		"inputType": "tabular",
+		"parentName": "iLimn"
+	},
+	{
+		"label": "Anaerobic Heterotrophic Bacteria",
+		"name": "anaerobic",
+		"inputType": "inline",
+		"rangeMaximum": 0,
+		"rangeMinimum": 0,
+		"defaultValue": 1,
+		"parentName": "iBac"
+	},
+	{
+		"label": "Aerobic Heterotrophic Bacteria",
+		"name": "aerobic",
+		"rangeMaximum": 0,
+		"rangeMinimum": 0,
+		"defaultValue": 1,
+		"parentName": "iBac"
+	}
+]

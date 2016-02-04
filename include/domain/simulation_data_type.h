@@ -121,6 +121,10 @@ namespace SimulationDataType {
             void destroy();
         };
 
+        struct WaterQualityParameter {
+            int a;
+        };
+
         struct OutputParameter {
             int nameLength;
             char *name;

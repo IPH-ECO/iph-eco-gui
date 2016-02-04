@@ -29,11 +29,10 @@ HydrodynamicDataDialog::HydrodynamicDataDialog(QWidget *parent) :
     this->vtkWidget = ui->vtkWidget;
     
     Project *project = IPHApplication::getCurrentProject();
-    QSet<HydrodynamicConfiguration*> configurations = project->getHydrodynamicConfigurations();
     
     ui->cbxConfiguration->blockSignals(true);
-    for (QSet<HydrodynamicConfiguration*>::const_iterator it = configurations.begin(); it != configurations.end(); ++it) {
-        ui->cbxConfiguration->addItem((*it)->getName());
+    for (HydrodynamicConfiguration *configuration : project->getHydrodynamicConfigurations()) {
+        ui->cbxConfiguration->addItem(configuration->getName());
     }
     ui->cbxConfiguration->setCurrentIndex(-1);
     ui->cbxConfiguration->blockSignals(false);
@@ -81,8 +80,8 @@ void HydrodynamicDataDialog::addParameterItemWidget(HydrodynamicParameter *param
         ui->trwParameters->setItemWidget(item, 1, lineEdit);
     }
     
-    for (int i = 0; i < parameter->getChildren().size(); i++) {
-        addParameterItemWidget(parameter->getChild(i));
+    for (HydrodynamicParameter *child : parameter->getChildren()) {
+        addParameterItemWidget(child);
     }
 }
 
