@@ -27,7 +27,7 @@ QString HydrodynamicParameter::getName() const {
     return name;
 }
 
-void HydrodynamicParameter:: setName(const QString& name) {
+void HydrodynamicParameter::setName(const QString& name) {
     this->name = name;
 }
 
@@ -166,7 +166,7 @@ QList<HydrodynamicParameter*> HydrodynamicParameter::getSiblings() const {
 void HydrodynamicParameter::toggleSubTreeVisibility(bool hide) {
     this->itemWidget->setHidden(hide);
     
-    for (HydrodynamicParameter *child : parent->children) {
+    for (HydrodynamicParameter *child : children) {
         child->toggleSubTreeVisibility(hide);
     }
 }
