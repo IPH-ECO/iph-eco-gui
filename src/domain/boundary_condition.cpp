@@ -85,6 +85,8 @@ void BoundaryCondition::setObjectIds(vtkIdTypeArray* objectIds) {
             this->objectIds.insert(objectId);
         }
     }
+    
+    emit objectIdsChanged();
 }
 
 void BoundaryCondition::setObjectIds(const QString &objectIdsStr) {
@@ -93,6 +95,8 @@ void BoundaryCondition::setObjectIds(const QString &objectIdsStr) {
     for (QString objectId : objectIdsStrList) {
         this->objectIds.insert(objectId.toLongLong());
 	}
+    
+    emit objectIdsChanged();
 }
 
 void BoundaryCondition::addObjectId(const vtkIdType &objectId) {
@@ -101,14 +105,18 @@ void BoundaryCondition::addObjectId(const vtkIdType &objectId) {
     } else {
         objectIds.insert(objectId);
     }
+    
+    emit objectIdsChanged();
 }
 
 void BoundaryCondition::removeObjectId(const vtkIdType &objectId) {
     objectIds.remove(objectId);
+    emit objectIdsChanged();
 }
 
 void BoundaryCondition::clearObjectIds() {
     objectIds.clear();
+    emit objectIdsChanged();
 }
 
 BoundaryConditionFunction BoundaryCondition::getFunction() const {
