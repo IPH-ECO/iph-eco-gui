@@ -142,13 +142,13 @@ void HydrodynamicDataDialog::setupItems() {
     this->expandTrees();
     
     // Initial conditions
-    for (int i = 0; i < parameters.size(); i++) {
-        if (parameters[i]->isInitialCondition()) {
-            HydrodynamicParameter *parameter = parameters[i];
+    for (HydrodynamicParameter *parameter : parameters) {
+        if (parameter->isInitialCondition()) {
             QFormLayout *layout = static_cast<QFormLayout*>(ui->initialConditionsTab->layout());
             QLabel *label = new QLabel(parameter->getLabel(), ui->initialConditionsTab);
             QLineEdit *lineEdit = new QLineEdit(ui->initialConditionsTab);
             
+            lineEdit->setObjectName(parameter->getName());
             lineEdit->setText(QString::number(parameter->getValue()));
             lineEdit->setAlignment(Qt::AlignRight);
             layout->addRow(label, lineEdit);
@@ -276,11 +276,7 @@ void HydrodynamicDataDialog::on_btnApplyConfiguration_clicked() {
         return;
     }
     
-    QList<HydrodynamicParameter*> parameters = currentConfiguration->getParameters();
-    
-    for (int i = 0; i < parameters.size(); i++) {
-        HydrodynamicParameter *parameter = parameters[i];
-        
+    for (HydrodynamicParameter *parameter : currentConfiguration->getParameters()) {
         if (parameter->isProcessInput()) {
             QTreeWidgetItem *item = parameter->getItemWidget();
             QLineEdit *lineEdit = static_cast<QLineEdit*>(ui->trwParameters->itemWidget(item, 1));
@@ -308,7 +304,8 @@ void HydrodynamicDataDialog::on_btnApplyConfiguration_clicked() {
                 }
             }
         } else if (parameter->isInitialCondition()) {
-            
+            QLineEdit *lineEdit = static_cast<QLineEdit*>(ui->initialConditionsTab->findChild<QLineEdit*>(parameter->getName()));
+            parameter->setValue(lineEdit->text().toDouble());
         }
     }
     
