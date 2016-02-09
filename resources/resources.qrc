@@ -56,7 +56,9 @@
     <file>icons/snap-orthogonal.png</file>
     <file>icons/fill-color.png</file>
     <file>icons/iph-eco_64x64.png</file>
+    <file>icons/view-form-table.png</file>
     <file>data/hydrodynamic_data.json</file>
+    <file>data/water_quality_parameters.json</file>
     <file>data/output_variables.json</file>
     <file>data/water_quality_diagram.html</file>
     <file>data/jquery-2.2.0.min.js</file>

@@ -97,7 +97,7 @@ void BoundaryConditionDialog::setHydrodynamicDataDialog(HydrodynamicDataDialog *
     this->currentBoundaryCondition->getLabelsActor()->SetVisibility(hydrodynamicDataDialog->isCellLabelsActionChecked());
     
     connect(hydrodynamicDataDialog->toggleCellLabelsAction, SIGNAL(triggered(bool)), this, SLOT(toggleLabelsActor(bool)));
-    connect(hydrodynamicDataDialog->ui->vtkWidget, SIGNAL(objectSelected()), this, SLOT(showObjectIds()));
+    connect(currentBoundaryCondition, SIGNAL(objectIdsChanged()), this, SLOT(showObjectIds()));
 }
 
 void BoundaryConditionDialog::on_cbxType_currentIndexChanged(const QString &type) {

@@ -16,7 +16,8 @@ enum class BoundaryConditionType { WATER_LEVEL = 1, WATER_FLOW };
 enum class BoundaryConditionFunction { CONSTANT = 1, TIME_SERIES };
 enum class InputModule { HYDRODYNAMIC = 1, WATER_QUALITY };
 
-class BoundaryCondition {
+class BoundaryCondition : public QObject {
+    Q_OBJECT
 private:
 	uint id;
 	BoundaryConditionType type;
@@ -80,6 +81,9 @@ public:
     void setTimeSeriesChanged(bool timeSeriesChanged);
     
     SimulationDataType::BoundaryCondition toSimulationDataType(Mesh *mesh) const;
+
+signals:
+    void objectIdsChanged();
 };
 
 #endif // BOUNDARY_CONDITION_H

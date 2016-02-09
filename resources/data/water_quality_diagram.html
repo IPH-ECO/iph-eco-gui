@@ -106,6 +106,8 @@
 			}
 
 			variable.css('opacity', 1).removeClass('disabled');
+			waterQualityDialog.toggleItem(variableName, true);
+
 			toggleProcessesVisibility(variable, false);
 			
 			var processes = getProcesses(variableName);
@@ -123,6 +125,7 @@
 
 			if (variable.find('v\\:cp[v\\:lbl="blocked"]').length == 0) {
 				variable.css('opacity', opacity).addClass('disabled');
+				waterQualityDialog.toggleItem(variableName, false);
 			}
 
 			var processes = getProcesses(variableName);

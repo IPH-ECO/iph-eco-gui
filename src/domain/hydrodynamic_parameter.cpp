@@ -1,6 +1,15 @@
 #include <domain/hydrodynamic_parameter.h>
 
-HydrodynamicParameter::HydrodynamicParameter() : id(0), selected(false), parent(nullptr), editable(true), hideSiblings(true), rangeMininum(0), rangeMaximum(0), itemWidget(nullptr) {}
+HydrodynamicParameter::HydrodynamicParameter() :
+    id(0),
+    selected(false),
+    parent(nullptr),
+    editable(true),
+    hideSiblings(true),
+    rangeMininum(0),
+    rangeMaximum(0),
+    itemWidget(nullptr)
+{}
 
 uint HydrodynamicParameter::getId() const {
     return id;
@@ -18,7 +27,7 @@ QString HydrodynamicParameter::getName() const {
     return name;
 }
 
-void HydrodynamicParameter:: setName(const QString& name) {
+void HydrodynamicParameter::setName(const QString& name) {
     this->name = name;
 }
 
@@ -132,10 +141,8 @@ void HydrodynamicParameter::setItemWidget(QTreeWidgetItem *itemWidget) {
 
 void HydrodynamicParameter::toggleHierarchyVisibility(bool hide) {
     if (hideSiblings) {
-        QList<HydrodynamicParameter*> siblings = getSiblings();
-        
-        for (int i = 0; i < siblings.size(); i++) {
-            siblings[i]->toggleSubTreeVisibility(hide);
+        for (HydrodynamicParameter *sibling : getSiblings()) {
+            sibling->toggleSubTreeVisibility(hide);
         }
     }
     
@@ -145,10 +152,8 @@ void HydrodynamicParameter::toggleHierarchyVisibility(bool hide) {
 QList<HydrodynamicParameter*> HydrodynamicParameter::getSiblings() const {
     QList<HydrodynamicParameter*> siblings;
     
-    if (parent != nullptr) {
-        for (int i = 0; i < parent->children.size(); i++) {
-            HydrodynamicParameter *sibling = parent->children[i];
-            
+    if (parent) {
+        for (HydrodynamicParameter *sibling : parent->children) {
             if (sibling != this) {
                 siblings.append(sibling);
             }
@@ -161,8 +166,8 @@ QList<HydrodynamicParameter*> HydrodynamicParameter::getSiblings() const {
 void HydrodynamicParameter::toggleSubTreeVisibility(bool hide) {
     this->itemWidget->setHidden(hide);
     
-    for (int i = 0; i < children.size(); i++) {
-        children[i]->toggleSubTreeVisibility(hide);
+    for (HydrodynamicParameter *child : children) {
+        child->toggleSubTreeVisibility(hide);
     }
 }
 

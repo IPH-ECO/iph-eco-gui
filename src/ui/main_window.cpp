@@ -213,8 +213,13 @@ void MainWindow::on_actionHydrodynamicData_triggered() {
 }
 
 void MainWindow::on_actionWaterQuality_triggered() {
-    WaterQualityDialog *dialog = new WaterQualityDialog(this);
-    dialog->exec();
+    this->closeCurrentSubWindow();
+    WaterQualityDialog *waterQualityDialog = new WaterQualityDialog(this);
+    currentSubWindow->setWidget(waterQualityDialog);
+    waterQualityDialog->show();
+#ifdef __APPLE__
+    this->update();
+#endif
 }
 
 void MainWindow::on_actionMeteorologyData_triggered() {

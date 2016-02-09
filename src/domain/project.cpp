@@ -231,7 +231,6 @@ void Project::removeHydrodynamicConfiguration(const QString &configurationName) 
         hydrodynamicConfigurations.remove(hydrodynamicConfiguration);
         delete hydrodynamicConfiguration;
     }
-    
 }
 
 HydrodynamicConfiguration* Project::getHydrodynamicConfiguration(const QString &configurationName) {
@@ -256,6 +255,49 @@ HydrodynamicConfiguration* Project::getHydrodynamicConfiguration(uint id) const 
 
 QSet<HydrodynamicConfiguration*> Project::getHydrodynamicConfigurations() const {
     return hydrodynamicConfigurations;
+}
+
+bool Project::addWaterQualityConfiguration(WaterQualityConfiguration *waterQualityConfiguration) {
+    if (this->waterQualityConfigurations.contains(waterQualityConfiguration)) {
+        return false;
+    }
+    
+    this->waterQualityConfigurations.insert(waterQualityConfiguration);
+    
+    return true;
+}
+
+void Project::removeWaterQualityConfiguration(const QString &configurationName) {
+    WaterQualityConfiguration *waterQualityConfiguration = getWaterQualityConfiguration(configurationName);
+    
+    if (waterQualityConfiguration) {
+        waterQualityConfigurations.remove(waterQualityConfiguration);
+        delete waterQualityConfiguration;
+    }
+}
+
+WaterQualityConfiguration* Project::getWaterQualityConfiguration(const QString &configurationName) {
+    for (WaterQualityConfiguration *waterQualityConfiguration : waterQualityConfigurations) {
+        if (waterQualityConfiguration->getName() == configurationName) {
+            return waterQualityConfiguration;
+        }
+    }
+    
+    return nullptr;
+}
+
+WaterQualityConfiguration* Project::getWaterQualityConfiguration(uint id) const {
+    for (WaterQualityConfiguration *waterQualityConfiguration : waterQualityConfigurations) {
+        if (waterQualityConfiguration->getId() == id) {
+            return waterQualityConfiguration;
+        }
+    }
+    
+    return nullptr;
+}
+
+QSet<WaterQualityConfiguration*> Project::getWaterQualityConfigurations() const {
+    return waterQualityConfigurations;
 }
 
 bool Project::addMeteorologicalConfiguration(MeteorologicalConfiguration *meteorologicalConfiguration) {
