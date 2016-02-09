@@ -3,10 +3,13 @@
 
 #include <application/iph_application.h>
 #include <domain/project.h>
+#include <ui/water_quality_parameter_dialog.h>
 
 #include <QUrl>
 #include <QLineEdit>
+#include <QWebFrame>
 #include <QMessageBox>
+#include <QWebSettings>
 
 WaterQualityDialog::WaterQualityDialog(QWidget *parent) :
 	QDialog(parent),
@@ -15,10 +18,15 @@ WaterQualityDialog::WaterQualityDialog(QWidget *parent) :
     currentConfiguration(unsavedConfiguration),
     waterQualityRepository(WaterQualityRepository::getInstance())
 {
+    QWebSettings::globalSettings()->setAttribute(QWebSettings::DeveloperExtrasEnabled, true);
+    
 	ui->setupUi(this);
     ui->trwParameters->header()->setStretchLastSection(false);
     ui->trwParameters->header()->setSectionResizeMode(0, QHeaderView::Stretch);
-    ui->webView->setUrl(QUrl("qrc:/data/water_quality_diagram.html"));
+    
+    QObject::connect(ui->webView->page()->mainFrame(), SIGNAL(javaScriptWindowObjectCleared()), this, SLOT(addJSObject()));
+    
+    ui->webView->load(QUrl("qrc:/data/water_quality_diagram.html"));
 
     Project *project = IPHApplication::getCurrentProject();
     
@@ -39,7 +47,7 @@ WaterQualityDialog::WaterQualityDialog(QWidget *parent) :
     ui->cbxGridDataConfiguration->blockSignals(false);
 
     for (WaterQualityParameter *rootParameter : waterQualityRepository->getRootParameters()) {
-        this->setupItems(rootParameter);
+        this->buildParametersTree(rootParameter);
     }
 }
 
@@ -48,7 +56,7 @@ WaterQualityDialog::~WaterQualityDialog() {
 	delete ui;
 }
 
-void WaterQualityDialog::setupItems(WaterQualityParameter *parameter) {
+void WaterQualityDialog::buildParametersTree(WaterQualityParameter *parameter) {
     QTreeWidgetItem *parameterItem = nullptr;
     
     if (parameter->getParent()) {
@@ -58,7 +66,10 @@ void WaterQualityDialog::setupItems(WaterQualityParameter *parameter) {
     }
 
     parameter->setItemWidget(parameterItem);
+    parameterItem->setExpanded(true);
+    parameterItem->setToolTip(0, parameter->getDescription());
     parameterItem->setData(0, Qt::UserRole, QVariant(parameter->getName()));
+    parameterItem->setData(1, Qt::UserRole, QVariant(parameter->getDiagramItem()));
     
     if (parameter->isCheckable()) {
         parameterItem->setCheckState(0, parameter->isChecked() ? Qt::Checked : Qt::Unchecked);
@@ -77,10 +88,11 @@ void WaterQualityDialog::setupItems(WaterQualityParameter *parameter) {
         QToolButton *toolButton = new QToolButton(ui->trwParameters);
         
         toolButton->setObjectName(parameter->getName());
-        toolButton->setText("");
         toolButton->setEnabled(parameter->isEnabled());
         toolButton->setIcon(QIcon(":/icons/view-form-table.png"));
         toolButton->setFixedSize(18, 18);
+        
+        QObject::connect(toolButton, SIGNAL(clicked()), this, SLOT(onTabularInputButtonClicked()));
         
         QHBoxLayout *layout = new QHBoxLayout();
         
@@ -96,7 +108,7 @@ void WaterQualityDialog::setupItems(WaterQualityParameter *parameter) {
     }
     
     for (WaterQualityParameter *child : parameter->getChildren()) {
-        setupItems(child);
+        buildParametersTree(child);
     }
 }
 
@@ -107,7 +119,7 @@ void WaterQualityDialog::on_cbxConfiguration_currentIndexChanged(const QString &
         ui->cbxGridDataConfiguration->setCurrentText(currentConfiguration->getGridDataConfiguration()->getName());
     }
     
-//    this->setupItems();
+//    this->buildParametersTree();
 }
 
 void WaterQualityDialog::on_cbxGridDataConfiguration_currentIndexChanged(const QString &gridDataConfigurationName) {
@@ -173,5 +185,35 @@ void WaterQualityDialog::on_btnApplyConfiguration_clicked() {
 }
 
 void WaterQualityDialog::on_trwParameters_itemChanged(QTreeWidgetItem *item, int column) {
+    if (item->checkState(0) == Qt::Unchecked) {
+        ui->webView->page()->mainFrame()->evaluateJavaScript( "disableVariable('" + item->data(1, Qt::UserRole).toString() + "'); null" );
+    } else if (item->checkState(0) == Qt::Checked) {
+        ui->webView->page()->mainFrame()->evaluateJavaScript( "enableVariable('" + item->data(1, Qt::UserRole).toString() + "'); null" );
+    }
+}
+
+void WaterQualityDialog::addJSObject() {
+    ui->webView->page()->mainFrame()->addToJavaScriptWindowObject("waterQualityDialog", this);
+}
+
+void WaterQualityDialog::toggleItem(const QString &itemName, const bool &checked) {
+    QTreeWidgetItemIterator it(ui->trwParameters, QTreeWidgetItemIterator::All);
     
+    ui->trwParameters->blockSignals(true);
+    while (*it) {
+        if ((*it)->data(1, Qt::UserRole).toString() == itemName) {
+            (*it)->setCheckState(0, checked ? Qt::Checked : Qt::Unchecked);
+            break;
+        }
+        it++;
+    }
+    ui->trwParameters->blockSignals(false);
+}
+
+void WaterQualityDialog::onTabularInputButtonClicked() {
+	QToolButton *button = static_cast<QToolButton*>(sender());
+	QString parameterName = button->objectName();
+
+	WaterQualityParameterDialog dialog(this, parameterName, { "1", "2" });
+	dialog.exec();
 }

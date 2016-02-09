@@ -14,26 +14,141 @@
 	{
 		"label": "Bacterioplankton Modeling",
 		"name": "iBac",
+		"diagramItem": "Bacterioplankton",
 		"checkable": true,
 		"checked": true,
-		"inputType": "tabular",
 		"parentName": "iLimn"
 	},
 	{
-		"label": "Anaerobic Heterotrophic Bacteria",
-		"name": "anaerobic",
-		"inputType": "inline",
-		"rangeMaximum": 0,
-		"rangeMinimum": 0,
-		"defaultValue": 1,
+		"label": "Groups",
+		"name": "bacterioplanktonGroups",
 		"parentName": "iBac"
 	},
 	{
-		"label": "Aerobic Heterotrophic Bacteria",
+		"label": "Aerobic",
 		"name": "aerobic",
-		"rangeMaximum": 0,
-		"rangeMinimum": 0,
+		"inputType": "inline",
+		"rangeMinimum": 1,
+		"rangeMaximum": 100,
 		"defaultValue": 1,
+		"parentName": "bacterioplanktonGroups"
+	},
+	{
+		"label": "Anaerobic",
+		"name": "anaerobic",
+		"inputType": "inline",
+		"rangeMinimum": 1,
+		"rangeMaximum": 100,
+		"defaultValue": 1,
+		"parentName": "bacterioplanktonGroups"
+	},
+	{
+		"label": "Assimilation",
+		"name": "iBacAssimilation",
 		"parentName": "iBac"
+	},
+	{
+		"label": "cThetaBac",
+		"name": "cThetaBac",
+		"description": "Expon. bacterioplankton constant of assimilation",
+		"inputType": "tabular",
+		"parentName": "iBacAssimilation"
+	},
+	{
+		"label": "hO2Bac (mg/L)",
+		"name": "hO2Bac",
+		"description": "Half-sat. oxygen conc. for bacterioplankton",
+		"inputType": "tabular",
+		"parentName": "iBacAssimilation"
+	},
+	{
+		"label": "fbacAn",
+		"name": "fbacAn",
+		"description": "Fraction of anaerobic bacterioplankton",
+		"inputType": "tabular",
+		"parentName": "iBacAssimilation"
+	},
+	{
+		"label": "kbacAn (1/day)",
+		"name": "kbacAn",
+		"description": "Anaerobic bacterioplankton constant for oxygen limitation",
+		"inputType": "tabular",
+		"parentName": "iBacAssimilation"
+	},
+	{
+		"label": "MuBac (1/day)",
+		"name": "MuBac",
+		"description": "Maximum growth rate for bacterioplankton",
+		"inputType": "tabular",
+		"parentName": "iBacAssimilation"
+	},
+	{
+		"label": "hAssBac",
+		"name": "hAssBac",
+		"description": "Half-sat. bacterioplankton conc. for assimilation",
+		"inputType": "tabular",
+		"parentName": "iBacAssimilation"
+	},
+	{
+		"label": "Respiration",
+		"name": "iBacRespiration",
+		"parentName": "iBac"
+	},
+	{
+		"label": "kResbBac (1/day)",
+		"name": "kResbBac",
+		"description": "Respiration constant of bacterioplankton",
+		"inputType": "tabular",
+		"parentName": "iBacRespiration"
+	},
+	{
+		"label": "Uptake/Release",
+		"name": "iBacUptakeRelease",
+		"parentName": "iBac"
+	},
+	{
+		"label": "cCDBacRef (gC/gDW)",
+		"name": "cCDBacRef",
+		"description": "C/D reference ratio of bacterioplankton",
+		"inputType": "tabular",
+		"parentName": "iBacUptakeRelease"
+	},
+	{
+		"label": "cNDBacRef (gN/gDW)",
+		"name": "cNDBacRef",
+		"description": "N/D reference ratio of bacterioplankton",
+		"inputType": "tabular",
+		"parentName": "iBacUptakeRelease"
+	},
+	{
+		"label": "cPDBacRef (gP/gDW)",
+		"name": "cPDBacRef",
+		"description": "P/D reference ratio of bacterioplankton",
+		"inputType": "tabular",
+		"parentName": "iBacUptakeRelease"
+	},
+	{
+		"label": "Mortality",
+		"name": "iBacMortality",
+		"parentName": "iBac"
+	},
+	{
+		"label": "kMortBac (1/day)",
+		"name": "kMortBac",
+		"description": "Mortality constant of bacterioplankton",
+		"inputType": "tabular",
+		"parentName": "iBacMortality"
+	},
+	{
+		"label": "Sedimentation",
+		"name": "iBacSedimentation",
+		"parentName": "iBac"
+	},
+	{
+		"label": "hSedBac (mg/L)",
+		"name": "hSedBac",
+		"description": "Half-sat. bacterioplankton conc. for sedimentation",
+		"inputType": "tabular",
+		"parentName": "iBacSedimentation"
 	}
 ]

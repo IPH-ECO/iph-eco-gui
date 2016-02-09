@@ -23,6 +23,8 @@ private:
     
     // Trasient attributes
     QString label;
+    QString description;
+    QString diagramItem;
     WaterQualityParameter *parent;
     bool editable;
     int order;
@@ -53,6 +55,10 @@ public:
 
     QString getLabel() const;
     void setLabel(const QString &label);
+    QString getDescription() const;
+    void setDescription(const QString &description);
+    QString getDiagramItem() const;
+    void setDiagramItem(const QString &diagramItem);
     WaterQualityParameter* getParent() const;
     void setParent(WaterQualityParameter *parent);
     bool isEditable() const;

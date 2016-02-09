@@ -86,6 +86,22 @@ void WaterQualityParameter::setLabel(const QString &label) {
     this->label = label;
 }
 
+QString WaterQualityParameter::getDescription() const {
+    return description;
+}
+
+void WaterQualityParameter::setDescription(const QString &description) {
+    this->description = description;
+}
+
+QString WaterQualityParameter::getDiagramItem() const {
+    return diagramItem;
+}
+
+void WaterQualityParameter::setDiagramItem(const QString &diagramItem) {
+    this->diagramItem = diagramItem;
+}
+
 WaterQualityParameter* WaterQualityParameter::getParent() const {
     return parent;
 }

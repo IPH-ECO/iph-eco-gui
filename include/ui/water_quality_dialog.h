@@ -20,7 +20,7 @@ private:
 	WaterQualityConfiguration *currentConfiguration;
 	WaterQualityRepository *waterQualityRepository;
 
-	void setupItems(WaterQualityParameter *parameter);
+	void buildParametersTree(WaterQualityParameter *parameter);
 private slots:
 	void on_cbxConfiguration_currentIndexChanged(const QString &configurationName);
 	void on_cbxGridDataConfiguration_currentIndexChanged(const QString &gridDataConfigurationName);
@@ -28,9 +28,13 @@ private slots:
 	void on_btnNewConfiguration_clicked();
 	void on_btnApplyConfiguration_clicked();
 	void on_trwParameters_itemChanged(QTreeWidgetItem *item, int column);
+    void addJSObject();
+    void onTabularInputButtonClicked();
 public:
 	explicit WaterQualityDialog(QWidget *parent = 0);
 	~WaterQualityDialog();
+    
+    Q_INVOKABLE void toggleItem(const QString &itemName, const bool &checked);
 };
 
 #endif // WATER_QUALITY_DIALOG_H
