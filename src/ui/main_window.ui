@@ -154,7 +154,7 @@
      <normaloff>:/icons/document-open.png</normaloff>:/icons/document-open.png</iconset>
    </property>
    <property name="text">
-    <string>Open...</string>
+    <string>Open Project...</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+O</string>

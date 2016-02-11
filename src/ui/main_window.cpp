@@ -156,14 +156,14 @@ void MainWindow::on_actionCloseProject_triggered() {
     Project *project = IPHApplication::getCurrentProject();
 
     if (project) {
-        ProjectRepository projectRepository(project->getFilename());
-        QMessageBox::StandardButton button = QMessageBox::question(this, tr("IPH-ECO"), "Do you want to save the project before closing the it?");
+        QString question = "Do you want to save the project before closing the it?";
+        QMessageBox::StandardButton button = QMessageBox::question(this, "IPH-ECO", question, QMessageBox::Cancel | QMessageBox::No | QMessageBox::Yes, QMessageBox::Yes);
         
         if (button == QMessageBox::Yes) {
-            projectRepository.save();
+            on_actionSaveProject_triggered();
+        } else if (button == QMessageBox::Cancel) {
+            return;
         }
-        
-        projectRepository.close();
     }
     
     IPHApplication::setCurrentProject(nullptr);
