@@ -26,20 +26,20 @@
 	},
 	{
 		"label": "Aerobic",
-		"name": "aerobic",
+		"name": "aerobicGroup",
 		"inputType": "inline",
-		"rangeMinimum": 1,
+		"rangeMinimum": 0,
 		"rangeMaximum": 100,
 		"defaultValue": 1,
 		"parentName": "bacterioplanktonGroups"
 	},
 	{
 		"label": "Anaerobic",
-		"name": "anaerobic",
+		"name": "anaerobicGroup",
 		"inputType": "inline",
-		"rangeMinimum": 1,
+		"rangeMinimum": 0,
 		"rangeMaximum": 100,
-		"defaultValue": 1,
+		"defaultValue": 0,
 		"parentName": "bacterioplanktonGroups"
 	},
 	{
@@ -52,6 +52,8 @@
 		"name": "cThetaBac",
 		"description": "Expon. bacterioplankton constant of assimilation",
 		"inputType": "tabular",
+		"groups": [ "aerobicGroup", "anaerobicGroup" ],
+		"groupDefaultValues": [ 1.080, 1.080 ],
 		"parentName": "iBacAssimilation"
 	},
 	{
@@ -59,6 +61,8 @@
 		"name": "hO2Bac",
 		"description": "Half-sat. oxygen conc. for bacterioplankton",
 		"inputType": "tabular",
+		"groups": [ "aerobicGroup", "anaerobicGroup" ],
+		"groupDefaultValues": [ 1.0, 1.0 ],
 		"parentName": "iBacAssimilation"
 	},
 	{
@@ -66,6 +70,8 @@
 		"name": "fbacAn",
 		"description": "Fraction of anaerobic bacterioplankton",
 		"inputType": "tabular",
+		"groups": [ "aerobicGroup", "anaerobicGroup" ],
+		"groupDefaultValues": [ 0.1, 0.1 ],
 		"parentName": "iBacAssimilation"
 	},
 	{
@@ -73,6 +79,8 @@
 		"name": "kbacAn",
 		"description": "Anaerobic bacterioplankton constant for oxygen limitation",
 		"inputType": "tabular",
+		"groups": [ "aerobicGroup", "anaerobicGroup" ],
+		"groupDefaultValues": [ 1.0, 1.0 ],
 		"parentName": "iBacAssimilation"
 	},
 	{
@@ -80,6 +88,8 @@
 		"name": "MuBac",
 		"description": "Maximum growth rate for bacterioplankton",
 		"inputType": "tabular",
+		"groups": [ "aerobicGroup", "anaerobicGroup" ],
+		"groupDefaultValues": [ 4.0, 4.0 ],
 		"parentName": "iBacAssimilation"
 	},
 	{
@@ -87,6 +97,8 @@
 		"name": "hAssBac",
 		"description": "Half-sat. bacterioplankton conc. for assimilation",
 		"inputType": "tabular",
+		"groups": [ "aerobicGroup", "anaerobicGroup" ],
+		"groupDefaultValues": [ 0.0, 0.0 ],
 		"parentName": "iBacAssimilation"
 	},
 	{
@@ -99,6 +111,8 @@
 		"name": "kResbBac",
 		"description": "Respiration constant of bacterioplankton",
 		"inputType": "tabular",
+		"groups": [ "aerobicGroup", "anaerobicGroup" ],
+		"groupDefaultValues": [ 0.1, 0.1 ],
 		"parentName": "iBacRespiration"
 	},
 	{
@@ -111,12 +125,16 @@
 		"name": "cCDBacRef",
 		"description": "C/D reference ratio of bacterioplankton",
 		"inputType": "tabular",
+		"groups": [ "aerobicGroup", "anaerobicGroup" ],
+		"groupDefaultValues": [ 0.45, 0.45 ],
 		"parentName": "iBacUptakeRelease"
 	},
 	{
 		"label": "cNDBacRef (gN/gDW)",
 		"name": "cNDBacRef",
 		"description": "N/D reference ratio of bacterioplankton",
+		"groups": [ "aerobicGroup", "anaerobicGroup" ],
+		"groupDefaultValues": [ 0.08, 0.08 ],
 		"inputType": "tabular",
 		"parentName": "iBacUptakeRelease"
 	},
@@ -124,6 +142,8 @@
 		"label": "cPDBacRef (gP/gDW)",
 		"name": "cPDBacRef",
 		"description": "P/D reference ratio of bacterioplankton",
+		"groups": [ "aerobicGroup", "anaerobicGroup" ],
+		"groupDefaultValues": [ 0.005, 0.005 ],
 		"inputType": "tabular",
 		"parentName": "iBacUptakeRelease"
 	},
@@ -137,6 +157,8 @@
 		"name": "kMortBac",
 		"description": "Mortality constant of bacterioplankton",
 		"inputType": "tabular",
+		"groups": [ "aerobicGroup", "anaerobicGroup" ],
+		"groupDefaultValues": [ 0.05, 0.05 ],
 		"parentName": "iBacMortality"
 	},
 	{
@@ -149,6 +171,8 @@
 		"name": "hSedBac",
 		"description": "Half-sat. bacterioplankton conc. for sedimentation",
 		"inputType": "tabular",
+		"groups": [ "aerobicGroup", "anaerobicGroup" ],
+		"groupDefaultValues": [ 0.3, 0.3 ],
 		"parentName": "iBacSedimentation"
 	}
 ]

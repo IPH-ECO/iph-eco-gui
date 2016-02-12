@@ -38,6 +38,14 @@ void WaterQualityParameter::setValue(double value) {
     this->value = value;
 }
 
+QList<double> WaterQualityParameter::getGroupValues() const {
+    return groupValues;
+}
+
+void WaterQualityParameter::setGroupValues(const QList<double> &groupValues) {
+    this->groupValues = groupValues;
+}
+
 bool WaterQualityParameter::isCheckable() const {
     return checkable;
 }
@@ -100,6 +108,14 @@ QString WaterQualityParameter::getDiagramItem() const {
 
 void WaterQualityParameter::setDiagramItem(const QString &diagramItem) {
     this->diagramItem = diagramItem;
+}
+
+QStringList WaterQualityParameter::getGroups() const {
+    return groups;
+}
+
+void WaterQualityParameter::setGroups(const QStringList &groups) {
+    this->groups = groups;
 }
 
 WaterQualityParameter* WaterQualityParameter::getParent() const {

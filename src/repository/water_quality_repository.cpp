@@ -10,7 +10,7 @@
 WaterQualityRepository* WaterQualityRepository::instance = nullptr;
 
 WaterQualityRepository* WaterQualityRepository::getInstance() {
-    if (instance == nullptr) {
+    if (!instance) {
         instance = new WaterQualityRepository();
     }
     
@@ -39,10 +39,21 @@ WaterQualityRepository::WaterQualityRepository() {
         parameter->setChecked(jsonParameter["checked"].toBool());
         parameter->setEnabled(jsonParameter["enabled"].toBool(true));
         parameter->setInputType(WaterQualityParameter::mapInputTypeFromString(jsonParameter["inputType"].toString()));
+        parameter->setGroups(jsonParameter["groups"].toVariant().toStringList());
         parameter->setRangeMinimum(jsonParameter["rangeMinimum"].toDouble());
         parameter->setRangeMaximum(jsonParameter["rangeMaximum"].toDouble());
         parameter->setValue(jsonParameter["defaultValue"].toDouble());
         
+        if (jsonParameter["groupDefaultValues"].isArray()) {
+            QList<double> groupValues;
+            
+            for (QJsonValue defaultValue : jsonParameter["groupDefaultValues"].toArray()) {
+                groupValues << defaultValue.toDouble();
+            }
+            
+            parameter->setGroupValues(groupValues);
+        }
+
         QString parentName = jsonParameter["parentName"].toString();
         
         for (WaterQualityParameter *parentParameter : parameters) {
@@ -62,6 +73,16 @@ WaterQualityRepository::WaterQualityRepository() {
 
 void WaterQualityRepository::buildParameters(WaterQualityConfiguration *configuration) {
 	
+}
+
+WaterQualityParameter* WaterQualityRepository::findParameterByName(const QString &name) {
+    for (WaterQualityParameter *parameter : parameters) {
+        if (parameter->getName() == name) {
+            return parameter;
+        }
+    }
+    
+    return nullptr;
 }
 
 QList<WaterQualityParameter*> WaterQualityRepository::getParameters() const {
