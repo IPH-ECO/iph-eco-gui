@@ -212,8 +212,21 @@ void WaterQualityDialog::toggleItem(const QString &itemName, const bool &checked
 
 void WaterQualityDialog::onTabularInputButtonClicked() {
 	QToolButton *button = static_cast<QToolButton*>(sender());
-	QString parameterName = button->objectName();
+    WaterQualityParameter *parameter = waterQualityRepository->findParameterByName(button->objectName());
+    QList<int> groupsDistribuition;
+    
+    for (QString groupName : parameter->getGroups()) {
+        WaterQualityParameter *groupParameter = waterQualityRepository->findParameterByName(groupName);
+        int groupValue = ui->trwParameters->findChild<QLineEdit*>(groupName)->text().toInt();
+        
+        if (!groupParameter->isInRange(groupValue)) {
+            QMessageBox::warning(this, "Water Quality", QString("Group %1 must be between %2 and %3.").arg(groupParameter->getLabel()).arg(groupParameter->getRangeMinimum()).arg(groupParameter->getRangeMaximum()));
+            return;
+        }
 
-	WaterQualityParameterDialog dialog(this, parameterName, { "1", "2" });
-	dialog.exec();
+        groupsDistribuition << groupValue;
+    }
+
+    WaterQualityParameterDialog dialog(this, parameter, groupsDistribuition);
+    dialog.exec();
 }

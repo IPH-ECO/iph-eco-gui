@@ -15,6 +15,7 @@ private:
     uint id;
     QString name;
     double value;
+    QList<double> groupValues;
     bool checkable;
     bool checked;
     bool enabled;
@@ -25,6 +26,7 @@ private:
     QString label;
     QString description;
     QString diagramItem;
+    QStringList groups;
     WaterQualityParameter *parent;
     bool editable;
     int order;
@@ -42,6 +44,8 @@ public:
     void setName(const QString& name);
     double getValue() const;
     void setValue(double value);
+    QList<double> getGroupValues() const;
+    void setGroupValues(const QList<double> &groupValues);
     bool isCheckable() const;
     void setCheckable(const bool &checkable);
     bool isChecked() const;
@@ -59,6 +63,8 @@ public:
     void setDescription(const QString &description);
     QString getDiagramItem() const;
     void setDiagramItem(const QString &diagramItem);
+    QStringList getGroups() const;
+    void setGroups(const QStringList &groups);
     WaterQualityParameter* getParent() const;
     void setParent(WaterQualityParameter *parent);
     bool isEditable() const;
