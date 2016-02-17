@@ -305,7 +305,7 @@ void TimeSeriesDialog::on_spxCurrentPage_valueChanged(int page) {
         ui->tblTimeSeries->setItem(row, 0, new QTableWidgetItem(dateTime.toString(DATE_TIME_FORMAT)));
         ui->tblTimeSeries->setItem(row, 1, new QTableWidgetItem(QString::number(timeSeries->getValue1())));
         if (timeSeriesType != TimeSeriesType::DEFAULT) {
-            ui->tblTimeSeries->setItem(row, 2, new QTableWidgetItem(timeSeries->getValue2()));
+            ui->tblTimeSeries->setItem(row, 2, new QTableWidgetItem(QString::number(timeSeries->getValue2())));
         }
     }
     ui->tblTimeSeries->blockSignals(false);
