@@ -15,6 +15,7 @@ namespace SimulationDataType {
             long long int verticeIdsLength;
             long long int *verticeIds;
             
+            StructuredMesh();
             void destroy();
         };
         
@@ -25,6 +26,7 @@ namespace SimulationDataType {
 			long long int verticeIdsLength;
 			long long int *verticeIds;
             
+            UnstructuredMesh();
             void destroy();
         };
         
@@ -33,6 +35,7 @@ namespace SimulationDataType {
             double *weights;
             int typeId;
             
+            GridData();
             void destroy();
         };
         
@@ -43,6 +46,7 @@ namespace SimulationDataType {
             SimulationDataType::StructuredMesh *structuredMesh;
             SimulationDataType::UnstructuredMesh *unstructuredMesh;
             
+            GridDataConfiguration();
             void destroy();
         };
         
@@ -51,6 +55,7 @@ namespace SimulationDataType {
             int length;
             double value;
             
+            HydrodynamicParameter();
             void destroy();
         };
         
@@ -76,6 +81,7 @@ namespace SimulationDataType {
             bool verticalIntegratedOutflow;
             double quota;
             
+            BoundaryCondition();
             void destroy();
         };
         
@@ -91,7 +97,8 @@ namespace SimulationDataType {
             double direction;
             int timeSizeListLength;
             SimulationDataType::TimeSeries *timeSeriesList;
-            
+          
+            MeteorologicalParameter();
             void destroy();
         };
         
@@ -101,6 +108,7 @@ namespace SimulationDataType {
             int parametersLength;
             SimulationDataType::MeteorologicalParameter *parameters;
             
+            MeteorologicalStation();
             void destroy();
         };
         
@@ -108,6 +116,7 @@ namespace SimulationDataType {
             int stationsLength;
             SimulationDataType::MeteorologicalStation *stations;
             
+            MeteorologicalConfiguration();
             void destroy();
         };
 
@@ -118,6 +127,7 @@ namespace SimulationDataType {
             SimulationDataType::BoundaryCondition *boundaryConditions;
             SimulationDataType::GridDataConfiguration *gridDataConfiguration;
             
+            HydrodynamicConfiguration();
             void destroy();
         };
 
@@ -129,6 +139,7 @@ namespace SimulationDataType {
             int nameLength;
             char *name;
             
+            OutputParameter();
             void destroy();
         };
         
@@ -143,6 +154,7 @@ namespace SimulationDataType {
             int simulationTime;
             bool changed;
 
+            RecoveryVariables();
             void destroy();
         };
 
@@ -173,6 +185,7 @@ namespace SimulationDataType {
             int statusCode;
             int progress;
             
+            Simulation();
             void destroy();
         };
     }

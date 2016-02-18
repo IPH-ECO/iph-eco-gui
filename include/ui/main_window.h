@@ -25,7 +25,8 @@ public:
     ~MainWindow();
     
     QToolBar* getToolBar() const;
-    void setCoordinate(double *coordinate);
+	void setCoordinate(double *coordinate);
+	void openProject(const QString &filename);
 
 public slots:
     void on_actionSaveProject_triggered();
@@ -76,7 +77,6 @@ private:
     void writeSettings();
     void updateRecentFilesList(const QString &_filePath);
     void updateRecentFilesActionList();
-    void openProject(const QString &filename);
 };
 
 #endif // MAIN_WINDOW_H
