@@ -146,7 +146,6 @@ void SimulationDataType::RecoveryVariables::destroy() {
 SimulationDataType::Simulation::Simulation() :
     label(nullptr),
     layers(nullptr),
-    hydrodynamic(nullptr),
     meteorologicalConfiguration(nullptr),
     observations(nullptr),
     outputDirectory(nullptr),
