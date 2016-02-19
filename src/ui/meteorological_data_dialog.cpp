@@ -89,8 +89,8 @@ void MeteorologicalDataDialog::on_trStations_itemSelectionChanged() {
             ui->edtConstant->setText(QString::number(parameter->getConstantValue()));
             ui->edtConstant->setVisible(isConstant && !isWindParameter);
             ui->lblValue->setVisible(isConstant && !isWindParameter);
-            ui->lblEntries->setVisible(!isConstant && !isEvaporation);
-            ui->btnShowTimeSeries->setVisible(!isConstant && !isEvaporation);
+            ui->lblEntries->setVisible(!isConstant);
+            ui->btnShowTimeSeries->setVisible(!isConstant);
             ui->lblType->setVisible(isWindParameter);
             ui->cbxType->setVisible(isWindParameter);
             ui->cbxType->setCurrentIndex(!parameter->getUseXYComponent());
