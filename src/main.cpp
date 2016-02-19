@@ -2,8 +2,8 @@
 #include <ui/main_window.h>
 
 #ifdef _WIN32
-int wmain(int argc, wchar_t *argv[], wchar_t *envp[]) {
-	IPHApplication a(argc, (char **)argv);
+int wmain(int argc, wchar_t *argv[]) {
+	IPHApplication a(argc, (char **) argv);
 #else
 int main(int argc, char *argv[]) {
 	IPHApplication a(argc, argv);
