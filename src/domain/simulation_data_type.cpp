@@ -115,8 +115,11 @@ SimulationDataType::HydrodynamicConfiguration::HydrodynamicConfiguration() :
 
 void SimulationDataType::HydrodynamicConfiguration::destroy() {
 	parameters->destroy();
-    boundaryConditions->destroy();
     gridDataConfiguration->destroy();
+    
+    if (this->numberOfBoundaryConditions > 0) {
+        boundaryConditions->destroy();
+    }
     
     delete parameters;
     delete boundaryConditions;
