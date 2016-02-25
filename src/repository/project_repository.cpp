@@ -26,7 +26,7 @@ void ProjectRepository::open() {
     emit updateProgressText("Loading project...");
     updateProgressAndProcessEvents();
     
-    databaseUtility->connect(this->databaseName);
+    databaseUtility->connect(this->databaseName, true);
     
     if (!databaseUtility->isDatabaseValid()) {
         throw DatabaseException("Invalid IPH-ECO Project file.");

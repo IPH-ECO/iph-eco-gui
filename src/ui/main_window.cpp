@@ -265,6 +265,7 @@ void MainWindow::on_actionAbout_triggered() {
 void MainWindow::openRecent() {
     QAction *action = qobject_cast<QAction*>(sender());
     if (action) {
+        on_actionCloseProject_triggered();
         openProject(action->data().toString());
     }
 }
