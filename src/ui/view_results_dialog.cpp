@@ -91,16 +91,6 @@ void ViewResultsDialog::onUpdateSimulationProgress(int progress) {
             break;
         }
     }
-    
-    for (int row = 0; row < ui->tblSimulations->rowCount(); row++) {
-        QTableWidgetItem *labelItem = ui->tblSimulations->item(row, 0);
-        
-        if (labelItem->text() == simulation->getLabel()) {
-            QTableWidgetItem *progressItem = ui->tblSimulations->item(row, 1);
-            progressItem->setText(QString::number(simulation->getProgress()) + "%");
-            break;
-        }
-    }
 }
 
 void ViewResultsDialog::onUpdateSimulationStatus(SimulationStatus status) {
@@ -115,13 +105,6 @@ void ViewResultsDialog::onUpdateSimulationStatus(SimulationStatus status) {
             break;
         }
     }
-
-    int rowCount = ui->tblSimulations->rowCount();
-
-    ui->tblSimulations->insertRow(rowCount);
-    ui->tblSimulations->setItem(rowCount, 0, new QTableWidgetItem(simulation->getLabel()));
-    ui->tblSimulations->setItem(rowCount, 1, new QTableWidgetItem(QString::number(simulation->getProgress()) + "%"));
-    ui->tblSimulations->setItem(rowCount, 2, new QTableWidgetItem(Simulation::getSimulationStatusMap().value(simulation->getStatus())));
 }
 
 void ViewResultsDialog::onSimulationCreated(Simulation *simulation) {
@@ -131,12 +114,6 @@ void ViewResultsDialog::onSimulationCreated(Simulation *simulation) {
     ui->tblSimulations->setItem(rowCount, 0, new QTableWidgetItem(simulation->getLabel()));
     ui->tblSimulations->setItem(rowCount, 1, new QTableWidgetItem(Simulation::getSimulationStatusMap().value(simulation->getStatus())));
     ui->tblSimulations->setItem(rowCount, 2, new QTableWidgetItem(QString::number(simulation->getProgress()) + "%"));
-    
-    rowCount = ui->tblSimulations->rowCount();
-    
-    ui->tblSimulations->insertRow(rowCount);
-    ui->tblSimulations->setItem(rowCount, 0, new QTableWidgetItem(simulation->getLabel()));
-    ui->tblSimulations->setItem(rowCount, 1, new QTableWidgetItem(QString::number(simulation->getProgress()) + "%"));
     
     QObject::connect(simulation, SIGNAL(updateProgress(int)), this, SLOT(onUpdateSimulationProgress(int)));
     QObject::connect(simulation, SIGNAL(updateStatus(SimulationStatus)), this, SLOT(onUpdateSimulationStatus(SimulationStatus)));
