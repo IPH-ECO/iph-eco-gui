@@ -126,10 +126,11 @@ bool CreateSimulationDialog::isValid() {
     
     HydrodynamicConfiguration *hydrodynamicConfiguration = project->getHydrodynamicConfiguration(ui->cbxHydrodynamic->currentText());
     QDateTime time = ui->edtInitialTime->dateTime();
-    uint initialTimeStamp = time.toTime_t();
-    uint minimumTimeStamp = 0;
     
     time.setTimeSpec(Qt::UTC);
+    
+    uint initialTimeStamp = time.toTime_t();
+    uint minimumTimeStamp = 0;
     
     for (BoundaryCondition *boundaryCondition : hydrodynamicConfiguration->getBoundaryConditions()) {
         if (boundaryCondition->getFunction() == BoundaryConditionFunction::TIME_SERIES) {
