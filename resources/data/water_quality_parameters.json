@@ -52,8 +52,8 @@
 		"name": "cThetaBac",
 		"description": "Expon. bacterioplankton constant of assimilation",
 		"inputType": "tabular",
-		"groups": [ "aerobicGroup", "anaerobicGroup" ],
-		"groupDefaultValues": [ 1.080, 1.080 ],
+		"groups": "bacterioplanktonGroups",
+		"groupDefaultValues": 1.08,
 		"parentName": "iBacAssimilation"
 	},
 	{
@@ -61,8 +61,8 @@
 		"name": "hO2Bac",
 		"description": "Half-sat. oxygen conc. for bacterioplankton",
 		"inputType": "tabular",
-		"groups": [ "aerobicGroup", "anaerobicGroup" ],
-		"groupDefaultValues": [ 1.0, 1.0 ],
+		"groups": "bacterioplanktonGroups",
+		"groupDefaultValues": 1.0,
 		"parentName": "iBacAssimilation"
 	},
 	{
@@ -70,8 +70,8 @@
 		"name": "fbacAn",
 		"description": "Fraction of anaerobic bacterioplankton",
 		"inputType": "tabular",
-		"groups": [ "aerobicGroup", "anaerobicGroup" ],
-		"groupDefaultValues": [ 0.1, 0.1 ],
+		"groups": "bacterioplanktonGroups",
+		"groupDefaultValues": 0.1,
 		"parentName": "iBacAssimilation"
 	},
 	{
@@ -79,8 +79,8 @@
 		"name": "kbacAn",
 		"description": "Anaerobic bacterioplankton constant for oxygen limitation",
 		"inputType": "tabular",
-		"groups": [ "aerobicGroup", "anaerobicGroup" ],
-		"groupDefaultValues": [ 1.0, 1.0 ],
+		"groups": "bacterioplanktonGroups",
+		"groupDefaultValues": 1.0,
 		"parentName": "iBacAssimilation"
 	},
 	{
@@ -88,7 +88,7 @@
 		"name": "MuBac",
 		"description": "Maximum growth rate for bacterioplankton",
 		"inputType": "tabular",
-		"groups": [ "aerobicGroup", "anaerobicGroup" ],
+		"groups": "bacterioplanktonGroups",
 		"groupDefaultValues": [ 4.0, 4.0 ],
 		"parentName": "iBacAssimilation"
 	},
@@ -97,7 +97,7 @@
 		"name": "hAssBac",
 		"description": "Half-sat. bacterioplankton conc. for assimilation",
 		"inputType": "tabular",
-		"groups": [ "aerobicGroup", "anaerobicGroup" ],
+		"groups": "bacterioplanktonGroups",
 		"groupDefaultValues": [ 0.0, 0.0 ],
 		"parentName": "iBacAssimilation"
 	},
@@ -111,8 +111,8 @@
 		"name": "kResbBac",
 		"description": "Respiration constant of bacterioplankton",
 		"inputType": "tabular",
-		"groups": [ "aerobicGroup", "anaerobicGroup" ],
-		"groupDefaultValues": [ 0.1, 0.1 ],
+		"groups": "bacterioplanktonGroups",
+		"groupDefaultValues": 0.1,
 		"parentName": "iBacRespiration"
 	},
 	{
@@ -125,16 +125,16 @@
 		"name": "cCDBacRef",
 		"description": "C/D reference ratio of bacterioplankton",
 		"inputType": "tabular",
-		"groups": [ "aerobicGroup", "anaerobicGroup" ],
-		"groupDefaultValues": [ 0.45, 0.45 ],
+		"groups": "bacterioplanktonGroups",
+		"groupDefaultValues": 0.45,
 		"parentName": "iBacUptakeRelease"
 	},
 	{
 		"label": "cNDBacRef (gN/gDW)",
 		"name": "cNDBacRef",
 		"description": "N/D reference ratio of bacterioplankton",
-		"groups": [ "aerobicGroup", "anaerobicGroup" ],
-		"groupDefaultValues": [ 0.08, 0.08 ],
+		"groups": "bacterioplanktonGroups",
+		"groupDefaultValues": 0.08,
 		"inputType": "tabular",
 		"parentName": "iBacUptakeRelease"
 	},
@@ -142,7 +142,7 @@
 		"label": "cPDBacRef (gP/gDW)",
 		"name": "cPDBacRef",
 		"description": "P/D reference ratio of bacterioplankton",
-		"groups": [ "aerobicGroup", "anaerobicGroup" ],
+		"groups": "bacterioplanktonGroups",
 		"groupDefaultValues": [ 0.005, 0.005 ],
 		"inputType": "tabular",
 		"parentName": "iBacUptakeRelease"
@@ -157,8 +157,8 @@
 		"name": "kMortBac",
 		"description": "Mortality constant of bacterioplankton",
 		"inputType": "tabular",
-		"groups": [ "aerobicGroup", "anaerobicGroup" ],
-		"groupDefaultValues": [ 0.05, 0.05 ],
+		"groups": "bacterioplanktonGroups",
+		"groupDefaultValues": 0.05,
 		"parentName": "iBacMortality"
 	},
 	{
@@ -171,8 +171,411 @@
 		"name": "hSedBac",
 		"description": "Half-sat. bacterioplankton conc. for sedimentation",
 		"inputType": "tabular",
-		"groups": [ "aerobicGroup", "anaerobicGroup" ],
-		"groupDefaultValues": [ 0.3, 0.3 ],
+		"groups": "bacterioplanktonGroups",
+		"groupDefaultValues": 0.3,
 		"parentName": "iBacSedimentation"
+	},
+	{
+		"label": "Phytoplankton Modeling",
+		"name": "iPhyto",
+		"diagramItem": "Phytoplankton",
+		"checkable": true,
+		"checked": true,
+		"parentName": "iLimn"
+	},
+	{
+		"label": "Groups",
+		"name": "phytoplanktonGroups",
+		"parentName": "iPhyto"
+	},
+	{
+		"label": "Dinoflagellates",
+		"name": "dinoflagellatesGroup",
+		"inputType": "inline",
+		"rangeMinimum": 0,
+		"rangeMaximum": 100,
+		"defaultValue": 1,
+		"parentName": "phytoplanktonGroups"
+	},
+	{
+		"label": "Freshwater cyanobacteria",
+		"name": "freshwaterCyanobacteriaGroup",
+		"inputType": "inline",
+		"rangeMinimum": 0,
+		"rangeMaximum": 100,
+		"defaultValue": 0,
+		"parentName": "phytoplanktonGroups"
+	},
+	{
+		"label": "Marine/estuarine cyanobacteria",
+		"name": "marineCyanobacteriaGroup",
+		"inputType": "inline",
+		"rangeMinimum": 0,
+		"rangeMaximum": 100,
+		"defaultValue": 0,
+		"parentName": "phytoplanktonGroups"
+	},
+	{
+		"label": "Chlorophytes",
+		"name": "chlorophytesGroup",
+		"inputType": "inline",
+		"rangeMinimum": 0,
+		"rangeMaximum": 100,
+		"defaultValue": 0,
+		"parentName": "phytoplanktonGroups"
+	},
+	{
+		"label": "Cryptophytes",
+		"name": "cryptophytesGroup",
+		"inputType": "inline",
+		"rangeMinimum": 0,
+		"rangeMaximum": 100,
+		"defaultValue": 0,
+		"parentName": "phytoplanktonGroups"
+	},
+	{
+		"label": "Marine/estuarine diatoms",
+		"name": "marineDiatomsGroup",
+		"inputType": "inline",
+		"rangeMinimum": 0,
+		"rangeMaximum": 100,
+		"defaultValue": 0,
+		"parentName": "phytoplanktonGroups"
+	},
+	{
+		"label": "Freshwater diatoms",
+		"name": "freshwaterDiatomsGroup",
+		"inputType": "inline",
+		"rangeMinimum": 0,
+		"rangeMaximum": 100,
+		"defaultValue": 0,
+		"parentName": "phytoplanktonGroups"
+	},
+	{
+		"label": "Primary Production",
+		"name": "iPhytoPrimaryProduction",
+		"parentName": "iPhyto"
+	},
+	{
+		"label": "cExtSpPhyt",
+		"name": "cExtSpPhyt",
+		"description": "Light Attenuation Coefficient due to phytoplankton (1/m)",
+		"inputType": "tabular",
+		"groups": "phytoplanktonGroups",
+		"groupDefaultValues": 0.2,
+		"parentName": "iPhytoPrimaryProduction"
+	},
+	{
+		"label": "hLRefPhyt",
+		"name": "hLRefPhyt",
+		"description": "Half-saturation PAR for algae at 20\u00b0C (W/m\u00b3)",
+		"inputType": "tabular",
+		"groups": "phytoplanktonGroups",
+		"groupDefaultValues": 17000,
+		"parentName": "iPhytoPrimaryProduction"
+	},
+	{
+		"label": "cLOptRefPhyt",
+		"name": "cLOptRefPhyt",
+		"description": "Optimum PAR at 20\u00b0C (Steele function - W/m\u00b3)",
+		"inputType": "tabular",
+		"groups": "phytoplanktonGroups",
+		"groupDefaultValues": 2000,
+		"parentName": "iPhytoPrimaryProduction"
+	},
+	{
+		"label": "cChDPhytMin",
+		"name": "cChDPhytMin",
+		"description": "Min. chlorophyll/C ratio for algae (mgChl/mgDW)",
+		"inputType": "tabular",
+		"groups": "phytoplanktonGroups",
+		"groupDefaultValues": 0.015,
+		"parentName": "iPhytoPrimaryProduction"
+	},
+	{
+		"label": "cChDPhytMax",
+		"name": "cChDPhytMax",
+		"description": "Max. chlorophyll/C ratio for algae (mgChl/mgDW)",
+		"inputType": "tabular",
+		"groups": "phytoplanktonGroups",
+		"groupDefaultValues": 0.005,
+		"parentName": "iPhytoPrimaryProduction"
+	},
+	{
+		"label": "Nutrient Uptake",
+		"name": "phytoplanktonNutrientUptake",
+		"parentName": "iPhyto"
+	},
+	{
+		"label": "cSigTmPhyt",
+		"name": "cSigTmPhyt",
+		"description": "Temperature constant for algae (sigma in Gaussian curve - \u00b0C)",
+		"inputType": "tabular",
+		"groups": "phytoplanktonGroups",
+		"groupDefaultValues": 18000,
+		"parentName": "phytoplanktonNutrientUptake"
+	},
+	{
+		"label": "cTmOptPhyt",
+		"name": "cTmOptPhyt",
+		"description": "Optimum temp. for algae (\u00b0C)",
+		"inputType": "tabular",
+		"groups": "phytoplanktonGroups",
+		"groupDefaultValues": 20000,
+		"parentName": "phytoplanktonNutrientUptake"
+	},
+	{
+		"label": "cVCUptMaxPhyt",
+		"name": "cVCUptMaxPhyt",
+		"description": "Maximum C uptake capacity for algae (mgC/mgDW/day)",
+		"inputType": "tabular",
+		"groups": "phytoplanktonGroups",
+		"groupDefaultValues": 0.45,
+		"parentName": "phytoplanktonNutrientUptake"
+	},
+	{
+		"label": "cVNUptMaxPhyt",
+		"name": "cVNUptMaxPhyt",
+		"description": "Maximum N uptake capacity for algae (mgC/mgDW/day)",
+		"inputType": "tabular",
+		"groups": "phytoplanktonGroups",
+		"groupDefaultValues": 0.08,
+		"parentName": "phytoplanktonNutrientUptake"
+	},
+	{
+		"label": "cVPUptMaxPhyt",
+		"name": "cVPUptMaxPhyt",
+		"description": "Maximum P uptake capacity for algae (mgC/mgDW/day)",
+		"inputType": "tabular",
+		"groups": "phytoplanktonGroups",
+		"groupDefaultValues": 0.01,
+		"parentName": "phytoplanktonNutrientUptake"
+	},
+	{
+		"label": "cVSiUptMaxPhyt",
+		"name": "cVSiUptMaxPhyt",
+		"description": "Maximum Si uptake capacity for algae (mgC/mgDW/day)",
+		"inputType": "tabular",
+		"groups": "phytoplanktonGroups",
+		"groupDefaultValues": 0.2,
+		"parentName": "phytoplanktonNutrientUptake"
+	},
+	{
+		"label": "cCDPhytMax",
+		"name": "cCDPhytMax",
+		"description": "Maximum C/DW ratio for algae (mgC/mgDW)",
+		"inputType": "tabular",
+		"groups": "phytoplanktonGroups",
+		"groupDefaultValues": 0.6,
+		"parentName": "phytoplanktonNutrientUptake"
+	},
+	{
+		"label": "cCDPhytMin",
+		"name": "cCDPhytMin",
+		"description": "Minimum C/DW ratio for algae (mgC/mgDW)",
+		"inputType": "tabular",
+		"groups": "phytoplanktonGroups",
+		"groupDefaultValues": 0.4,
+		"parentName": "phytoplanktonNutrientUptake"
+	},
+	{
+		"label": "cNDPhytMax",
+		"name": "cNDPhytMax",
+		"description": "Maximum N/DW ratio for algae (mgN/mgDW)",
+		"inputType": "tabular",
+		"groups": "phytoplanktonGroups",
+		"groupDefaultValues": 0.07,
+		"parentName": "phytoplanktonNutrientUptake"
+	},
+	{
+		"label": "cNDPhytMin",
+		"name": "cNDPhytMin",
+		"description": "Minimum N/DW ratio for algae (mgN/mgDW)",
+		"inputType": "tabular",
+		"groups": "phytoplanktonGroups",
+		"groupDefaultValues": 0.02,
+		"parentName": "phytoplanktonNutrientUptake"
+	},
+	{
+		"label": "cPDPhytMax",
+		"name": "cPDPhytMax",
+		"description": "Maximum P/DW ratio for algae (mgP/mgDW)",
+		"inputType": "tabular",
+		"groups": "phytoplanktonGroups",
+		"groupDefaultValues": 0.005,
+		"parentName": "phytoplanktonNutrientUptake"
+	},
+	{
+		"label": "cPDPhytMin",
+		"name": "cPDPhytMin",
+		"description": "Minimum P/DW ratio for algae (mgP/mgDW)",
+		"inputType": "tabular",
+		"groups": "phytoplanktonGroups",
+		"groupDefaultValues": 0.0005,
+		"parentName": "phytoplanktonNutrientUptake"
+	},
+	{
+		"label": "cSiDPhytMax",
+		"name": "cSiDPhytMax",
+		"description": "Maximum Si/DW ratio for algae (mgSi/mgDW)",
+		"inputType": "tabular",
+		"groups": "phytoplanktonGroups",
+		"groupDefaultValues": 0.2,
+		"parentName": "phytoplanktonNutrientUptake"
+	},
+	{
+		"label": "cSiDPhytMin",
+		"name": "cSiDPhytMin",
+		"description": "Minimum Si/DW ratio for algae (mgSi/mgDW)",
+		"inputType": "tabular",
+		"groups": "phytoplanktonGroups",
+		"groupDefaultValues": 0.04,
+		"parentName": "phytoplanktonNutrientUptake"
+	},
+	{
+		"label": "cAffCUptPhyt",
+		"name": "cAffCUptPhyt",
+		"description": "Initial C uptake affinity for algae (L/mgDW/day)",
+		"inputType": "tabular",
+		"groups": "phytoplanktonGroups",
+		"groupDefaultValues": 0.0,
+		"parentName": "phytoplanktonNutrientUptake"
+	},
+	{
+		"label": "cAffNUptPhyt",
+		"name": "cAffNUptPhyt",
+		"description": "Initial N uptake affinity for algae (L/mgDW/day)",
+		"inputType": "tabular",
+		"groups": "phytoplanktonGroups",
+		"groupDefaultValues": 0.08,
+		"parentName": "phytoplanktonNutrientUptake"
+	},
+	{
+		"label": "cAffPUptPhyt",
+		"name": "cAffPUptPhyt",
+		"description": "Initial P uptake affinity for algae (L/mgDW/day)",
+		"inputType": "tabular",
+		"groups": "phytoplanktonGroups",
+		"groupDefaultValues": 0.2,
+		"parentName": "phytoplanktonNutrientUptake"
+	},
+	{
+		"label": "cAffSiUptPhyt",
+		"name": "cAffSiUptPhyt",
+		"description": "Initial Si uptake affinity for algae (L/mgDW/day)",
+		"inputType": "tabular",
+		"groups": "phytoplanktonGroups",
+		"groupDefaultValues": 0.0,
+		"parentName": "phytoplanktonNutrientUptake"
+	},
+	{
+		"label": "Respiration/Excretion",
+		"name": "phytoplanktonRespirationExcretion",
+		"parentName": "iPhyto"
+	},
+	{
+		"label": "kDRespbPhyt",
+		"name": "kDRespbPhyt",
+		"description": "Total respiration constant for algae (1/day)",
+		"inputType": "tabular",
+		"groups": "phytoplanktonGroups",
+		"groupDefaultValues": 0.08,
+		"parentName": "phytoplanktonRespirationExcretion"
+	},
+	{
+		"label": "alfap",
+		"name": "alfap",
+		"description": "Fraction of photorespiration for algae due to primary production",
+		"inputType": "tabular",
+		"groups": "phytoplanktonGroups",
+		"groupDefaultValues": 0.0,
+		"parentName": "phytoplanktonRespirationExcretion"
+	},
+	{
+		"label": "Mortality",
+		"name": "phytoplanktonMortality",
+		"parentName": "iPhyto"
+	},
+	{
+		"label": "cLisPhytW",
+		"name": "cLisPhytW",
+		"description": "Mortality constant of algae (1/day)",
+		"inputType": "tabular",
+		"groups": "phytoplanktonGroups",
+		"groupDefaultValues": 0.02,
+		"parentName": "phytoplanktonRespirationExcretion"
+	},
+	{
+		"label": "fDLisDomPhyt",
+		"name": "fDLisDomPhyt",
+		"description": "Labile fractions of died Algae (Autoctone Organic Matter)",
+		"inputType": "tabular",
+		"groups": "phytoplanktonGroups",
+		"groupDefaultValues": 0.2,
+		"parentName": "phytoplanktonRespirationExcretion"
+	},
+	{
+		"label": "Sedimentation",
+		"name": "phytoplanktonSedimentation",
+		"parentName": "iPhyto"
+	},
+	{
+		"label": "cVSetPhyt (SetMethodFlag = 0)",
+		"name": "cVSetPhyt",
+		"description": "Sedimentation velocity algae (m/day)",
+		"inputType": "tabular",
+		"groups": "phytoplanktonGroups",
+		"groupDefaultValues": 0.02,
+		"parentName": "phytoplanktonSedimentation"
+	},
+	{
+		"label": "ppPhyt (SetMethodFlag = 1)",
+		"name": "ppPhyt",
+		"description": "Phytoplankton density (kg/m3)",
+		"inputType": "tabular",
+		"groups": "phytoplanktonGroups",
+		"groupDefaultValues": 1300,
+		"parentName": "phytoplanktonSedimentation"
+	},
+	{
+		"label": "diPhyt (SetMethodFlag = 1)",
+		"name": "diPhyt",
+		"description": "Phytoplankton diameter (m)",
+		"inputType": "tabular",
+		"groups": "phytoplanktonGroups",
+		"groupDefaultValues": 0.000005,
+		"parentName": "phytoplanktonSedimentation"
+	},
+	{
+		"label": "Schecci Disk",
+		"name": "phytoplanktonSchecciDisk",
+		"parentName": "iPhyto"
+	},
+	{
+		"label": "cPACoefMin",
+		"name": "cPACoefMin",
+		"description": "Minimum Poole-Atkins coefficient",
+		"inputType": "tabular",
+		"groups": "phytoplanktonGroups",
+		"groupDefaultValues": 1.5,
+		"parentName": "phytoplanktonSchecciDisk"
+	},
+	{
+		"label": "cPACoefMax",
+		"name": "cPACoefMax",
+		"description": "Maximum Poole-Atkins coefficient",
+		"inputType": "tabular",
+		"groups": "phytoplanktonGroups",
+		"groupDefaultValues": 2.5,
+		"parentName": "phytoplanktonSchecciDisk"
+	},
+	{
+		"label": "hPACoef",
+		"name": "hPACoef",
+		"description": "decrease constant for P.A. coeff. with DOMW (g/m\u00b3)",
+		"inputType": "tabular",
+		"groups": "phytoplanktonGroups",
+		"groupDefaultValues": 3,
+		"parentName": "phytoplanktonSchecciDisk"
 	}
 ]
