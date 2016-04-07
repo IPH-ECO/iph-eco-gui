@@ -577,5 +577,192 @@
 		"groups": "phytoplanktonGroups",
 		"groupDefaultValues": 3,
 		"parentName": "phytoplanktonSchecciDisk"
+	},
+	{
+		"label": "Zooplankton Modeling",
+		"name": "iZoo",
+		"diagramItem": "Zooplankton",
+		"checkable": true,
+		"checked": true,
+		"parentName": "iLimn"
+	},
+	{
+		"label": "Groups",
+		"name": "zooplanktonGroups",
+		"parentName": "iZoo"
+	},
+	{
+		"label": "Micro",
+		"name": "microZooGroup",
+		"inputType": "inline",
+		"rangeMinimum": 0,
+		"rangeMaximum": 100,
+		"defaultValue": 1,
+		"parentName": "zooplanktonGroups"
+	},
+	{
+		"label": "Meso",
+		"name": "mesoZooGroup",
+		"inputType": "inline",
+		"rangeMinimum": 0,
+		"rangeMaximum": 100,
+		"defaultValue": 0,
+		"parentName": "zooplanktonGroups"
+	},
+	{
+		"label": "Macro",
+		"name": "macroZooGroup",
+		"inputType": "inline",
+		"rangeMinimum": 0,
+		"rangeMaximum": 100,
+		"defaultValue": 0,
+		"parentName": "zooplanktonGroups"
+	},
+	{
+		"label": "Grazing",
+		"name": "iZooGrazing",
+		"parentName": "iZoo"
+	},
+	{
+		"label": "fDAssZoo",
+		"name": "fDAssZoo",
+		"description": "Assimilation efficiency of herb. zooplankton",
+		"inputType": "tabular",
+		"groups": "zooplanktonGroups",
+		"groupDefaultValues": 0.35,
+		"parentName": "iZooGrazing"
+	},
+	{
+		"label": "cSigTmZoo",
+		"name": "cSigTmZoo",
+		"description": "Temperature constant zooplankton (sigma in Gaussian curve - \u00b0C)",
+		"inputType": "tabular",
+		"groups": "zooplanktonGroups",
+		"groupDefaultValues": 13,
+		"parentName": "iZooGrazing"
+	},
+	{
+		"label": "cTmOptZoo",
+		"name": "cTmOptZoo",
+		"description": "Optimum temp. zooplankton (\u00b0C)",
+		"inputType": "tabular",
+		"groups": "zooplanktonGroups",
+		"groupDefaultValues": 20,
+		"parentName": "iZooGrazing"
+	},
+	{
+		"label": "cDCarrZoo",
+		"name": "cDCarrZoo",
+		"description": "Carrying capacity of zooplankton (mg/L)",
+		"inputType": "tabular",
+		"groups": "zooplanktonGroups",
+		"groupDefaultValues": 25,
+		"parentName": "iZooGrazing"
+	},
+	{
+		"label": "hFilt",
+		"name": "hFilt",
+		"description": "Half-sat. food conc. for filtering (mg/L)",
+		"inputType": "tabular",
+		"groups": "zooplanktonGroups",
+		"groupDefaultValues": 1,
+		"parentName": "iZooGrazing"
+	},
+	{
+		"label": "cFiltMax",
+		"name": "cFiltMax",
+		"description": "Maximum filtering rate (L/mgDW/day)",
+		"inputType": "tabular",
+		"groups": "zooplanktonGroups",
+		"groupDefaultValues": 4.5,
+		"parentName": "iZooGrazing"
+	},
+	{
+		"label": "Egestion/Pellets",
+		"name": "iZooEgestion",
+		"parentName": "iZoo"
+	},
+	{
+		"label": "kPelZoo",
+		"name": "kPelZoo",
+		"description": "Egestion/Pellets rate for herb. zooplankton (1/day)",
+		"inputType": "tabular",
+		"groups": "zooplanktonGroups",
+		"groupDefaultValues": 0.01,
+		"parentName": "iZooEgestion"
+	},
+	{
+		"label": "Respiration/Excretion",
+		"name": "iZooRespiration",
+		"parentName": "iZoo"
+	},
+	{
+		"label": "kDRespZoo",
+		"name": "kDRespZoo",
+		"description": "Maintenance respiration constant herb.zooplankton (1/day)",
+		"inputType": "tabular",
+		"groups": "zooplanktonGroups",
+		"groupDefaultValues": 0.15,
+		"parentName": "iZooRespiration"
+	},
+	{
+		"label": "Mortality",
+		"name": "iZooMortality",
+		"parentName": "iZoo"
+	},
+	{
+		"label": "kMortZoo",
+		"name": "kMortZoo",
+		"description": "Mortality constant herb. zooplankton (1/day)",
+		"inputType": "tabular",
+		"groups": "zooplanktonGroups",
+		"groupDefaultValues": 0.04,
+		"parentName": "iZooMortality"
+	},
+	{
+		"label": "Messy Fedding",
+		"name": "iZooMessyFedding",
+		"parentName": "iZoo"
+	},
+	{
+		"label": "fDMessyZoo",
+		"name": "fDMessyZoo",
+		"description": "Fraction of messy fedding",
+		"inputType": "tabular",
+		"groups": "zooplanktonGroups",
+		"groupDefaultValues": 0.2,
+		"parentName": "iZooMessyFedding"
+	},
+	{
+		"label": "Ratios",
+		"name": "iZooRatios",
+		"parentName": "iZoo"
+	},
+	{
+		"label": "cCDZooRef",
+		"name": "cCDZooRef",
+		"description": "reference C/D-ratio herb. zooplankton",
+		"inputType": "tabular",
+		"groups": "zooplanktonGroups",
+		"groupDefaultValues": 0.1,
+		"parentName": "iZooRatios"
+	},
+	{
+		"label": "cNDZooRef",
+		"name": "cNDZooRef",
+		"description": "reference N/D-ratio herb. zooplankton",
+		"inputType": "tabular",
+		"groups": "zooplanktonGroups",
+		"groupDefaultValues": 0.07,
+		"parentName": "iZooRatios"
+	},
+	{
+		"label": "cPDZooRef",
+		"name": "cPDZooRef",
+		"description": "reference P/D-ratio herb. zooplankton",
+		"inputType": "tabular",
+		"groups": "zooplanktonGroups",
+		"groupDefaultValues": 0.01,
+		"parentName": "iZooRatios"
 	}
 ]
