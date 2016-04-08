@@ -144,6 +144,7 @@ void ViewResultsDialog::on_btnPreviousFrame_clicked() {
 void ViewResultsDialog::on_btnStartReproduction_clicked() {
     ui->btnStartReproduction->setEnabled(false);
     ui->btnPauseReproduction->setEnabled(true);
+    ui->spxFrame->setEnabled(false);
     frameTimer.start(500);
 }
 
@@ -151,6 +152,7 @@ void ViewResultsDialog::on_btnPauseReproduction_clicked() {
     frameTimer.stop();
     ui->btnPauseReproduction->setEnabled(false);
     ui->btnStartReproduction->setEnabled(true);
+    ui->spxFrame->setEnabled(true);
 }
 
 void ViewResultsDialog::on_btnNextFrame_clicked() {
