@@ -412,7 +412,7 @@ void MainWindow::setCoordinate(double *coordinate) {
     QString xStr = QString::number(coordinate[0], 'f', 6);
     QString yStr = QString::number(coordinate[1], 'f', 6);
     
-    ui->statusBar->showMessage(QString("UTM-X: %1, UTM-Y: %2").arg(xStr).arg(yStr), 500);
+    ui->statusBar->showMessage(QString("UTM-X: %1, UTM-Y: %2").arg(xStr).arg(yStr), 5000);
 }
 
 void MainWindow::closeCurrentSubWindow() {

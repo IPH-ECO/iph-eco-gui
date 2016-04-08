@@ -125,12 +125,16 @@ bool CreateSimulationDialog::isValid() {
     }
     
     HydrodynamicConfiguration *hydrodynamicConfiguration = project->getHydrodynamicConfiguration(ui->cbxHydrodynamic->currentText());
-    QDateTime time = ui->edtInitialTime->dateTime();
+    QDateTime initialTime = ui->edtInitialTime->dateTime();
+    QDateTime endTime = initialTime.addDays(ui->edtPeriod->text().toInt());
     
-    time.setTimeSpec(Qt::UTC);
+    initialTime.setTimeSpec(Qt::UTC);
+    endTime.setTimeSpec(Qt::UTC);
     
-    uint initialTimeStamp = time.toTime_t();
+    uint initialTimeStamp = initialTime.toTime_t();
+    uint endTimeStamp = endTime.toTime_t();
     uint minimumTimeStamp = 0;
+    uint maximumTimeStamp = 0;
     
     for (BoundaryCondition *boundaryCondition : hydrodynamicConfiguration->getBoundaryConditions()) {
         if (boundaryCondition->getFunction() == BoundaryConditionFunction::TIME_SERIES) {
@@ -138,17 +142,32 @@ bool CreateSimulationDialog::isValid() {
             
             if (minimumTimeStamp == 0) {
                 minimumTimeStamp = firstEntry->getTimeStamp();
+                maximumTimeStamp = firstEntry->getTimeStamp();
             }
             
-            if (minimumTimeStamp > (uint) firstEntry->getTimeStamp()) {
-                minimumTimeStamp = firstEntry->getTimeStamp();
+            for (TimeSeries *timeSeries : boundaryCondition->getTimeSeriesList()) {
+                uint timeStamp = (uint) timeSeries->getTimeStamp();
+                
+                if (minimumTimeStamp > timeStamp) {
+                    minimumTimeStamp = timeStamp;
+                }
+                
+                if (maximumTimeStamp < timeStamp) {
+                    maximumTimeStamp = timeStamp;
+                }
             }
         }
     }
     
     if (minimumTimeStamp != 0 && initialTimeStamp < minimumTimeStamp) {
-        time = QDateTime::fromTime_t(minimumTimeStamp, Qt::UTC);
-        QMessageBox::warning(this, tr("Create Simulation"), QString("Initial time must be the same or greater than %1.").arg(time.toString("yyyy-MM-dd HH:mm:ss")));
+        initialTime = QDateTime::fromTime_t(minimumTimeStamp, Qt::UTC);
+        QMessageBox::warning(this, tr("Create Simulation"), QString("Initial time must be the same or greater than %1.").arg(initialTime.toString("yyyy-MM-dd HH:mm:ss")));
+        return false;
+    }
+    
+    if (maximumTimeStamp != 0 && endTimeStamp > maximumTimeStamp) {
+        endTime = QDateTime::fromTime_t(maximumTimeStamp, Qt::UTC);
+        QMessageBox::warning(this, tr("Create Simulation"), QString("Total simulation time must be the same or lesser than %1.").arg(endTime.toString("yyyy-MM-dd HH:mm:ss")));
         return false;
     }
 

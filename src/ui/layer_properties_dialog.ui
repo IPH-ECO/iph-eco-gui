@@ -345,9 +345,6 @@
             </item>
             <item row="0" column="0">
              <widget class="QCheckBox" name="chkVectorsMinimum">
-              <property name="enabled">
-               <bool>false</bool>
-              </property>
               <property name="text">
                <string>Minimum</string>
               </property>
@@ -355,9 +352,6 @@
             </item>
             <item row="0" column="2">
              <widget class="QCheckBox" name="chkVectorsMaximum">
-              <property name="enabled">
-               <bool>false</bool>
-              </property>
               <property name="text">
                <string>Maximum</string>
               </property>

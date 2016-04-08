@@ -24,6 +24,8 @@ WaterQualityRepository::WaterQualityRepository() {
     
     QJsonDocument jsonDocument = QJsonDocument::fromJson(dataFile.readAll());
     QJsonArray jsonParameters = jsonDocument.array();
+    WaterQualityParameter *lastGroupParameter = nullptr;
+    QStringList lastGroups;
     
     dataFile.close();
     
@@ -39,22 +41,32 @@ WaterQualityRepository::WaterQualityRepository() {
         parameter->setChecked(jsonParameter["checked"].toBool());
         parameter->setEnabled(jsonParameter["enabled"].toBool(true));
         parameter->setInputType(WaterQualityParameter::mapInputTypeFromString(jsonParameter["inputType"].toString()));
-        parameter->setGroups(jsonParameter["groups"].toVariant().toStringList());
         parameter->setRangeMinimum(jsonParameter["rangeMinimum"].toDouble());
         parameter->setRangeMaximum(jsonParameter["rangeMaximum"].toDouble());
         parameter->setValue(jsonParameter["defaultValue"].toDouble());
         
-        if (jsonParameter["groupDefaultValues"].isArray()) {
-            QList<double> groupValues;
-            
-            for (QJsonValue defaultValue : jsonParameter["groupDefaultValues"].toArray()) {
-                groupValues << defaultValue.toDouble();
-            }
-            
-            parameter->setGroupValues(groupValues);
+        if (parameter->getLabel() == "Groups") {
+            lastGroupParameter = parameter;
+            lastGroups.clear();
         }
-
+        
         QString parentName = jsonParameter["parentName"].toString();
+        
+        if (lastGroupParameter) {
+            if (lastGroupParameter->getName() == parentName) {
+                lastGroups.append(parameter->getName());
+            } else {
+                QString group = jsonParameter["groups"].toString();
+                
+                if (lastGroupParameter->getName() == group) {
+                    parameter->setGroups(lastGroups);
+                }
+            }
+        }
+        
+        if (!jsonParameter["groupDefaultValues"].isUndefined()) {
+            parameter->setGroupValues(QVector<double>(lastGroups.size(), jsonParameter["groupDefaultValues"].toDouble()).toList());
+        }
         
         for (WaterQualityParameter *parentParameter : parameters) {
             if (parentParameter->getName() == parentName) {

@@ -367,7 +367,7 @@ bool LayerPropertiesDialog::isValid() {
             return false;
         }
         if (!ui->chkVectorsMinimum->isChecked() && !ui->chkVectorsMaximum->isChecked() && ui->edtVectorsMinimum->text().toDouble() > ui->edtVectorsMaximum->text().toDouble()) {
-            QMessageBox::warning(this, tr("Layer Properties"), tr("Invalid range on Points tab."));
+            QMessageBox::warning(this, tr("Layer Properties"), tr("Invalid range on Vectors tab."));
             return false;
         }
         if (ui->edtVectorsScale->text().toDouble() <= 0) {

@@ -12,6 +12,7 @@ private:
     QString databaseName;
     int currentProgress;
     bool operationCanceled;
+    bool makeCopy;
     
     void updateProgressAndProcessEvents();
     

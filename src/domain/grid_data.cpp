@@ -220,7 +220,7 @@ void GridData::interpolate() {
             vtkSmartPointer<vtkIdList> inscribedPointsIds = vtkSmartPointer<vtkIdList>::New();
             pointLocator->FindPointsWithinRadius(radius, cellCenter, inscribedPointsIds);
 
-            if (inscribedPointsIds->GetNumberOfIds() == 1) {
+            if (inscribedPointsIds->GetNumberOfIds() == 0) {
                 vtkIdType nearestPointId = pointLocator->FindClosestPoint(cellCenter);
                 weight = inputPolyData->GetPointData()->GetScalars()->GetTuple1(nearestPointId);
             } else {
@@ -265,7 +265,7 @@ double GridData::inverseOfDistance(vtkSmartPointer<vtkIdList> inscribedPointsIds
         denominator += 1.0 / distancePow;
     }
     
-    return denominator == 0 ? 0 : numerator / denominator;
+    return denominator == 0.0 ? 0.0 : numerator / denominator;
 }
 
 void GridData::cancelInterpolation(bool value) {
