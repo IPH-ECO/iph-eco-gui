@@ -65,7 +65,18 @@ WaterQualityRepository::WaterQualityRepository() {
         }
         
         if (!jsonParameter["groupDefaultValues"].isUndefined()) {
-            parameter->setGroupValues(QVector<double>(lastGroups.size(), jsonParameter["groupDefaultValues"].toDouble()).toList());
+            if (jsonParameter["groupDefaultValues"].isArray()) {
+                QJsonArray defaultValuesArray = jsonParameter["groupDefaultValues"].toArray();
+                QList<double> values;
+
+                for (QJsonValue value : defaultValuesArray) {
+                    values.append(value.toDouble());
+                }
+
+                parameter->setGroupValues(values);
+            } else {
+                parameter->setGroupValues(QVector<double>(lastGroups.size(), jsonParameter["groupDefaultValues"].toDouble()).toList());
+            }
         }
         
         for (WaterQualityParameter *parentParameter : parameters) {
