@@ -1,0 +1,97 @@
+<mockup version="1.0" skin="sketch" fontFace="Balsamiq Sans" measuredW="964" measuredH="489" mockupW="940" mockupH="475">
+  <controls>
+    <control controlID="1" controlTypeID="com.balsamiq.mockups::TitleWindow" x="24" y="50" w="571" h="439" measuredW="450" measuredH="400" zOrder="0" locked="false" isInGroup="-1">
+      <controlProperties>
+        <bottomheight>0</bottomheight>
+        <text>Meteorology%20Data</text>
+      </controlProperties>
+    </control>
+    <control controlID="4" controlTypeID="com.balsamiq.mockups::Label" x="39" y="98" w="-1" h="-1" measuredW="117" measuredH="21" zOrder="1" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Configuration%20Name</text>
+      </controlProperties>
+    </control>
+    <control controlID="5" controlTypeID="com.balsamiq.mockups::ComboBox" x="171" y="96" w="-1" h="-1" measuredW="149" measuredH="62" zOrder="2" locked="false" isInGroup="-1">
+      <controlProperties>
+        <state>up</state>
+        <text>Data%20Configuration%201%0AData%20Configuration%202%0AData%20Configuration%203</text>
+      </controlProperties>
+    </control>
+    <control controlID="8" controlTypeID="com.balsamiq.mockups::Button" x="335" y="95" w="-1" h="-1" measuredW="70" measuredH="27" zOrder="3" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Remove</text>
+      </controlProperties>
+    </control>
+    <control controlID="26" controlTypeID="com.balsamiq.mockups::FieldSet" x="39" y="173" w="541" h="266" measuredW="200" measuredH="170" zOrder="4" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Metheorological%20Stations</text>
+      </controlProperties>
+    </control>
+    <control controlID="27" controlTypeID="com.balsamiq.mockups::DataGrid" x="51" y="195" w="516" h="195" measuredW="409" measuredH="111" zOrder="5" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Type%2C%20Latitude%2C%20Longitude%2C%20Function%2C%20Value%2C%20Options%0AHumidity%2C%201023.0%2C%20192.0%2C%20Constant%2C%2010%2C%20Edit%20%7C%20Delete%0AWind%2C%2098.0%2C%20570.0%2C%20Time%20Series%2C%20...%2C%20Edit%20%7C%20Delete%0A...</text>
+      </controlProperties>
+    </control>
+    <control controlID="28" controlTypeID="__group__" x="660" y="133" w="304" h="159" measuredW="304" measuredH="159" zOrder="6" locked="false" isInGroup="-1">
+      <groupChildrenDescriptors>
+        <control controlID="0" controlTypeID="com.balsamiq.mockups::TitleWindow" x="0" y="0" w="304" h="159" measuredW="450" measuredH="400" zOrder="0" locked="false" isInGroup="28">
+          <controlProperties>
+            <bottomheight>0</bottomheight>
+            <text>Time%20Series%20Definition</text>
+          </controlProperties>
+        </control>
+        <control controlID="1" controlTypeID="com.balsamiq.mockups::DataGrid" x="15" y="30" w="274" h="82" measuredW="179" measuredH="81" zOrder="1" locked="false" isInGroup="28">
+          <controlProperties>
+            <text>Time%2C%20Value%0A13/02/2015%2009%3A21%2C%205%0A14/02/2015%2010%3A01%2C%209</text>
+            <verticalScrollbar>true</verticalScrollbar>
+          </controlProperties>
+        </control>
+        <control controlID="2" controlTypeID="com.balsamiq.mockups::Button" x="115" y="117" w="-1" h="-1" measuredW="123" measuredH="27" zOrder="2" locked="false" isInGroup="28">
+          <controlProperties>
+            <text>Import%20CSV%20File...</text>
+          </controlProperties>
+        </control>
+        <control controlID="3" controlTypeID="com.balsamiq.mockups::Button" x="15" y="117" w="-1" h="-1" measuredW="94" measuredH="27" zOrder="3" locked="false" isInGroup="28">
+          <controlProperties>
+            <text>ClearValues</text>
+          </controlProperties>
+        </control>
+        <control controlID="4" controlTypeID="com.balsamiq.mockups::Button" x="248" y="117" w="-1" h="-1" measuredW="41" measuredH="27" zOrder="4" locked="false" isInGroup="28">
+          <controlProperties>
+            <text>OK</text>
+          </controlProperties>
+        </control>
+      </groupChildrenDescriptors>
+    </control>
+    <control controlID="29" controlTypeID="com.balsamiq.mockups::Arrow" x="420" y="148" w="236" h="108" measuredW="150" measuredH="100" zOrder="7" locked="false" isInGroup="-1">
+      <controlProperties>
+        <direction>bottom</direction>
+      </controlProperties>
+    </control>
+    <control controlID="31" controlTypeID="com.balsamiq.mockups::Button" x="474" y="397" w="-1" h="-1" measuredW="93" measuredH="27" zOrder="8" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>New%20Station</text>
+      </controlProperties>
+    </control>
+    <control controlID="32" controlTypeID="com.balsamiq.mockups::Label" x="24" y="14" w="-1" h="-1" measuredW="151" measuredH="21" zOrder="9" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Input%20%3E%20Meteorology%20Data</text>
+      </controlProperties>
+    </control>
+    <control controlID="33" controlTypeID="com.balsamiq.mockups::Button" x="339" y="447" w="-1" h="-1" measuredW="64" measuredH="27" zOrder="10" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Cancel</text>
+      </controlProperties>
+    </control>
+    <control controlID="34" controlTypeID="com.balsamiq.mockups::Button" x="412" y="447" w="107" h="27" measuredW="106" measuredH="27" zOrder="11" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Save%20as%20New...</text>
+      </controlProperties>
+    </control>
+    <control controlID="35" controlTypeID="com.balsamiq.mockups::Button" x="528" y="447" w="-1" h="-1" measuredW="52" measuredH="27" zOrder="12" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Save</text>
+      </controlProperties>
+    </control>
+  </controls>
+</mockup>

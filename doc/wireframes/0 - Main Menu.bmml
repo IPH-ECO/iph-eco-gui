@@ -1,0 +1,52 @@
+<mockup version="1.0" skin="sketch" fontFace="Balsamiq Sans" measuredW="438" measuredH="550" mockupW="420" mockupH="521">
+  <controls>
+    <control controlID="0" controlTypeID="com.balsamiq.mockups::MenuBar" x="24" y="29" w="-1" h="-1" measuredW="414" measuredH="29" zOrder="0" locked="false" isInGroup="-1">
+      <controlProperties>
+        <selectedIndex>0</selectedIndex>
+        <text>Project%2C%20Preprocessing%2C%20Input%2C%20Simulations%2C%20Gleon%2C%20Help</text>
+      </controlProperties>
+    </control>
+    <control controlID="2" controlTypeID="com.balsamiq.mockups::MenuBar" x="24" y="214" w="-1" h="-1" measuredW="414" measuredH="29" zOrder="1" locked="false" isInGroup="-1">
+      <controlProperties>
+        <selectedIndex>1</selectedIndex>
+        <text>Project%2C%20Preprocessing%2C%20Input%2C%20Simulations%2C%20Gleon%2C%20Help</text>
+      </controlProperties>
+    </control>
+    <control controlID="3" controlTypeID="com.balsamiq.mockups::Menu" x="94" y="243" w="213" h="-1" measuredW="150" measuredH="52" zOrder="2" locked="false" isInGroup="-1">
+      <controlProperties>
+        <selectedIndex>-1</selectedIndex>
+        <text>Structured%20Grid%20Generation%0AUnstructured%20Grid%20Generation</text>
+      </controlProperties>
+    </control>
+    <control controlID="4" controlTypeID="com.balsamiq.mockups::Menu" x="33" y="58" w="213" h="-1" measuredW="150" measuredH="141" zOrder="3" locked="false" isInGroup="-1">
+      <controlProperties>
+        <selectedIndex>-1</selectedIndex>
+        <text>New%2C%20CTRL+N%0AOpen...%2C%20CTRL+O%0ASave%2C%20CTRL+S%0ASave%20as...%2C%20CTRL+Shift+S%0AProperties%2C%20CTRL+%3B%0A---%0AExit%2C%20CTRL+Q</text>
+      </controlProperties>
+    </control>
+    <control controlID="5" controlTypeID="com.balsamiq.mockups::MenuBar" x="24" y="310" w="-1" h="-1" measuredW="414" measuredH="29" zOrder="4" locked="false" isInGroup="-1">
+      <controlProperties>
+        <selectedIndex>2</selectedIndex>
+        <text>Project%2C%20Preprocessing%2C%20Input%2C%20Simulations%2C%20Gleon%2C%20Help</text>
+      </controlProperties>
+    </control>
+    <control controlID="6" controlTypeID="com.balsamiq.mockups::Menu" x="198" y="339" w="200" h="-1" measuredW="150" measuredH="115" zOrder="5" locked="false" isInGroup="-1">
+      <controlProperties>
+        <selectedIndex>-1</selectedIndex>
+        <text>Grid%20Data%0AHydrodynamic%20Data%0AWater%20Quality%20Data%0ASediment%20Data%0AMeteorology%20Data</text>
+      </controlProperties>
+    </control>
+    <control controlID="7" controlTypeID="com.balsamiq.mockups::MenuBar" x="18" y="469" w="-1" h="-1" measuredW="414" measuredH="29" zOrder="6" locked="false" isInGroup="-1">
+      <controlProperties>
+        <selectedIndex>3</selectedIndex>
+        <text>Project%2C%20Preprocessing%2C%20Input%2C%20Simulations%2C%20Gleon%2C%20Help</text>
+      </controlProperties>
+    </control>
+    <control controlID="8" controlTypeID="com.balsamiq.mockups::Menu" x="242" y="498" w="98" h="-1" measuredW="150" measuredH="52" zOrder="7" locked="false" isInGroup="-1">
+      <controlProperties>
+        <selectedIndex>-1</selectedIndex>
+        <text>Create...%0AManage</text>
+      </controlProperties>
+    </control>
+  </controls>
+</mockup>

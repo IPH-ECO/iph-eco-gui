@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>TimeSeriesDialog</class>
+ <widget class="QDialog" name="TimeSeriesDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>681</width>
+    <height>565</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Time Series</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QPushButton" name="btnImportCSV">
+       <property name="text">
+        <string>Import CSV...</string>
+       </property>
+       <property name="icon">
+        <iconset resource="../../resources/resources.qrc">
+         <normaloff>:/icons/application-x-applix-spreadsheet.png</normaloff>:/icons/application-x-applix-spreadsheet.png</iconset>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btnClear">
+       <property name="text">
+        <string>Clear</string>
+       </property>
+       <property name="icon">
+        <iconset resource="../../resources/resources.qrc">
+         <normaloff>:/icons/edit-clear-list.png</normaloff>:/icons/edit-clear-list.png</iconset>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QTableWidget" name="tblTimeSeries">
+     <column>
+      <property name="text">
+       <string>Time</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Value</string>
+      </property>
+     </column>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <item>
+      <spacer name="horizontalSpacer_2">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QToolButton" name="btnFirstPage">
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="../../resources/resources.qrc">
+         <normaloff>:/icons/first-frame.png</normaloff>:/icons/first-frame.png</iconset>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QToolButton" name="btnPreviousPage">
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="../../resources/resources.qrc">
+         <normaloff>:/icons/previous-frame.png</normaloff>:/icons/previous-frame.png</iconset>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QSpinBox" name="spxCurrentPage">
+       <property name="minimum">
+        <number>1</number>
+       </property>
+       <property name="maximum">
+        <number>1</number>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="lblPagesTotal">
+       <property name="text">
+        <string>of 1</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QToolButton" name="btnNextPage">
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="../../resources/resources.qrc">
+         <normaloff>:/icons/next-frame.png</normaloff>:/icons/next-frame.png</iconset>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QToolButton" name="btnLastPage">
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="../../resources/resources.qrc">
+         <normaloff>:/icons/last-frame.png</normaloff>:/icons/last-frame.png</iconset>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer_3">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <tabstops>
+  <tabstop>btnFirstPage</tabstop>
+  <tabstop>btnPreviousPage</tabstop>
+  <tabstop>spxCurrentPage</tabstop>
+  <tabstop>btnNextPage</tabstop>
+  <tabstop>btnLastPage</tabstop>
+  <tabstop>btnImportCSV</tabstop>
+  <tabstop>btnClear</tabstop>
+  <tabstop>tblTimeSeries</tabstop>
+ </tabstops>
+ <resources>
+  <include location="../../resources/resources.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>TimeSeriesDialog</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>248</x>
+     <y>254</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>157</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>TimeSeriesDialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>316</x>
+     <y>260</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>286</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

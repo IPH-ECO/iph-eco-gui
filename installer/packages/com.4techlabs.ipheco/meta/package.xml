@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package>
+  <DisplayName>IPH-ECO Application</DisplayName>
+  <Version>0.1</Version>
+  <ReleaseDate>2016-01-25</ReleaseDate>
+  <Name>com.4techlabs.ipheco</Name>
+  <Licenses>
+    <License name="License Agreement" file="license.txt" />
+  </Licenses>
+  <Virtual>false</Virtual>
+  <ForcedInstallation>true</ForcedInstallation>
+  <Script>installscript.qs</Script>
+</Package>

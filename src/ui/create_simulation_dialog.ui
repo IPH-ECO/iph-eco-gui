@@ -1,0 +1,480 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>CreateSimulationDialog</class>
+ <widget class="QDialog" name="CreateSimulationDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>486</width>
+    <height>665</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Create Simulation</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QTabWidget" name="tabWidget">
+     <property name="currentIndex">
+      <number>0</number>
+     </property>
+     <widget class="QWidget" name="tab">
+      <attribute name="title">
+       <string>Settings</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout">
+       <item row="10" column="1" colspan="3">
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <property name="spacing">
+          <number>2</number>
+         </property>
+         <item>
+          <widget class="QTableWidget" name="tblLayers">
+           <column>
+            <property name="text">
+             <string>Depth (m)</string>
+            </property>
+           </column>
+          </widget>
+         </item>
+         <item>
+          <layout class="QVBoxLayout" name="verticalLayout_2">
+           <item>
+            <widget class="QToolButton" name="btnAddLayer">
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../../resources/resources.qrc">
+               <normaloff>:/icons/list-add.png</normaloff>:/icons/list-add.png</iconset>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QToolButton" name="btnRemoveLayer">
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../../resources/resources.qrc">
+               <normaloff>:/icons/list-delete.png</normaloff>:/icons/list-delete.png</iconset>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="verticalSpacer">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>40</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </item>
+       <item row="8" column="0" colspan="4">
+        <widget class="QGroupBox" name="groupBox">
+         <property name="title">
+          <string>Scenario Configuration</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_2">
+          <item row="0" column="1">
+           <widget class="QComboBox" name="cbxHydrodynamic"/>
+          </item>
+          <item row="1" column="1">
+           <widget class="QComboBox" name="cbxWaterQuality"/>
+          </item>
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_7">
+            <property name="text">
+             <string>Hydrodynamic Data</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QComboBox" name="cbxSediment"/>
+          </item>
+          <item row="3" column="1">
+           <widget class="QComboBox" name="cbxMeteorological"/>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_10">
+            <property name="text">
+             <string>Water Quality Data</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="label_11">
+            <property name="text">
+             <string>Sediment Data</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0">
+           <widget class="QLabel" name="label_12">
+            <property name="text">
+             <string>Meteorological Data</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="2" column="1" colspan="3">
+        <widget class="QComboBox" name="cbxType">
+         <item>
+          <property name="text">
+           <string>Default</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Parameter calibration</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Sensibility analysis</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="1" column="1" colspan="3">
+        <widget class="QLineEdit" name="edtLabel">
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="3">
+        <widget class="QLineEdit" name="edtStepTime">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>70</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+       <item row="12" column="1" colspan="3">
+        <widget class="QPlainTextEdit" name="txtObservations"/>
+       </item>
+       <item row="10" column="0">
+        <widget class="QLabel" name="label_5">
+         <property name="text">
+          <string>Layers</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="0">
+        <widget class="QLabel" name="label_4">
+         <property name="text">
+          <string>Period (days)</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="QLabel" name="label_3">
+         <property name="text">
+          <string>Initial Time</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="1">
+        <widget class="QLineEdit" name="edtPeriod">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>70</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+       <item row="11" column="0">
+        <widget class="QLabel" name="label_8">
+         <property name="text">
+          <string>Start on Create</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="label">
+         <property name="text">
+          <string>Label</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="label_2">
+         <property name="text">
+          <string>Type</string>
+         </property>
+        </widget>
+       </item>
+       <item row="12" column="0">
+        <widget class="QLabel" name="label_9">
+         <property name="text">
+          <string>Observations</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+         </property>
+        </widget>
+       </item>
+       <item row="11" column="1">
+        <widget class="QCheckBox" name="chkStart">
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="2">
+        <widget class="QLabel" name="label_6">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string>Step Time (sec)</string>
+         </property>
+        </widget>
+       </item>
+       <item row="9" column="0">
+        <widget class="QLabel" name="label_13">
+         <property name="text">
+          <string>Vertical Limits</string>
+         </property>
+        </widget>
+       </item>
+       <item row="9" column="1">
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <item>
+          <widget class="QLineEdit" name="edtMinLimit">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="label_14">
+           <property name="text">
+            <string>-</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="edtMaxLimit"/>
+         </item>
+        </layout>
+       </item>
+       <item row="3" column="1" colspan="2">
+        <widget class="QDateTimeEdit" name="edtInitialTime">
+         <property name="displayFormat">
+          <string>yyyy-MM-dd HH:mm:ss</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1" colspan="3">
+        <widget class="QComboBox" name="cbxTemplate"/>
+       </item>
+       <item row="0" column="0">
+        <widget class="QLabel" name="label_15">
+         <property name="text">
+          <string>Template</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab_2">
+      <attribute name="title">
+       <string>Output</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_3">
+       <item row="2" column="0">
+        <widget class="QLabel" name="label_17">
+         <property name="text">
+          <string>Output Time Inteval (Step Time unit)</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QLineEdit" name="edtOutputTimeInterval">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>100</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>100</string>
+         </property>
+        </widget>
+       </item>
+       <item row="7" column="0" colspan="3">
+        <widget class="QTreeWidget" name="trOutputVariables">
+         <column>
+          <property name="text">
+           <string notr="true">1</string>
+          </property>
+         </column>
+        </widget>
+       </item>
+       <item row="5" column="0">
+        <widget class="QLabel" name="label_18">
+         <property name="text">
+          <string>Auto-save Time Interval (Step Time unit)</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QLineEdit" name="edtOutputDirectory"/>
+       </item>
+       <item row="1" column="2">
+        <widget class="QToolButton" name="btnBrowseOutputDirectory">
+         <property name="text">
+          <string>...</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="label_16">
+         <property name="text">
+          <string>Output Directory</string>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="1">
+        <widget class="QLineEdit" name="edtAutosaveInterval">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>100</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>100</string>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="0">
+        <widget class="QLabel" name="label_19">
+         <property name="text">
+          <string>Variables</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+   <item>
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <tabstops>
+  <tabstop>tabWidget</tabstop>
+  <tabstop>edtLabel</tabstop>
+  <tabstop>cbxType</tabstop>
+  <tabstop>edtInitialTime</tabstop>
+  <tabstop>edtPeriod</tabstop>
+  <tabstop>edtStepTime</tabstop>
+  <tabstop>tblLayers</tabstop>
+  <tabstop>btnAddLayer</tabstop>
+  <tabstop>btnRemoveLayer</tabstop>
+  <tabstop>cbxHydrodynamic</tabstop>
+  <tabstop>cbxWaterQuality</tabstop>
+  <tabstop>cbxSediment</tabstop>
+  <tabstop>cbxMeteorological</tabstop>
+  <tabstop>chkStart</tabstop>
+  <tabstop>txtObservations</tabstop>
+ </tabstops>
+ <resources>
+  <include location="../../resources/resources.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>CreateSimulationDialog</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>248</x>
+     <y>254</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>157</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>CreateSimulationDialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>316</x>
+     <y>260</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>286</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

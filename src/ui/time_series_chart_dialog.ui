@@ -1,0 +1,431 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>TimeSeriesChartDialog</class>
+ <widget class="QDialog" name="TimeSeriesChartDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>824</width>
+    <height>1287</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Time Series Chart</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout" stretch="0,1,1,0">
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <item>
+          <widget class="QLabel" name="label_4">
+           <property name="text">
+            <string>Layer</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="cbxLayer"/>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="chkVerticalProfile">
+           <property name="text">
+            <string>Vertical profile</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_3">
+         <item>
+          <widget class="QLabel" name="label">
+           <property name="text">
+            <string>Initial frame</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="edtInitialFrame">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>70</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>70</width>
+             <height>16777215</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="label_2">
+           <property name="text">
+            <string>Frame step</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="edtFrameStep">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>70</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>70</width>
+             <height>16777215</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="label_3">
+           <property name="text">
+            <string>Final frame</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="edtFinalFrame">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>70</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>70</width>
+             <height>16777215</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_2">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_4">
+         <item>
+          <widget class="QCheckBox" name="chkImportPointsFile">
+           <property name="text">
+            <string>Import points from file</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="edtPointsFile">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>400</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>400</width>
+             <height>16777215</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QToolButton" name="btnBrowsePointsFile">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string>...</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_3">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QVBoxLayout" name="verticalLayout_3">
+       <item>
+        <spacer name="verticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_5">
+         <item>
+          <widget class="QToolButton" name="btnPicker">
+           <property name="toolTip">
+            <string>Toggle cell picker</string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="../../resources/resources.qrc">
+             <normaloff>:/icons/individual-object-picker.png</normaloff>:/icons/individual-object-picker.png</iconset>
+           </property>
+           <property name="checkable">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QToolButton" name="btnClear">
+           <property name="toolTip">
+            <string>Clear picked cells</string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="../../resources/resources.qrc">
+             <normaloff>:/icons/edit-clear-2.png</normaloff>:/icons/edit-clear-2.png</iconset>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QPushButton" name="btnPlot">
+         <property name="text">
+          <string>Plot</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QVTKWidget" name="vtkChartWidget">
+     <property name="minimumSize">
+      <size>
+       <width>800</width>
+       <height>550</height>
+      </size>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QVTKWidget" name="vtkVerticalProfileWidget">
+     <property name="minimumSize">
+      <size>
+       <width>800</width>
+       <height>550</height>
+      </size>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Close</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QVTKWidget</class>
+   <extends>QWidget</extends>
+   <header>QVTKWidget.h</header>
+  </customwidget>
+ </customwidgets>
+ <tabstops>
+  <tabstop>cbxLayer</tabstop>
+  <tabstop>chkVerticalProfile</tabstop>
+  <tabstop>edtInitialFrame</tabstop>
+  <tabstop>edtFrameStep</tabstop>
+  <tabstop>edtFinalFrame</tabstop>
+  <tabstop>chkImportPointsFile</tabstop>
+  <tabstop>edtPointsFile</tabstop>
+  <tabstop>btnBrowsePointsFile</tabstop>
+ </tabstops>
+ <resources>
+  <include location="../../resources/resources.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>chkVerticalProfile</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>cbxLayer</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>221</x>
+     <y>119</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>105</x>
+     <y>119</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>chkImportPointsFile</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>edtPointsFile</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>112</x>
+     <y>100</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>411</x>
+     <y>100</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>chkImportPointsFile</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>btnBrowsePointsFile</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>112</x>
+     <y>100</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>634</x>
+     <y>100</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>chkVerticalProfile</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>chkImportPointsFile</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>221</x>
+     <y>29</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>113</x>
+     <y>115</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>chkVerticalProfile</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>edtPointsFile</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>221</x>
+     <y>29</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>414</x>
+     <y>115</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>chkVerticalProfile</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>btnBrowsePointsFile</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>221</x>
+     <y>29</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>637</x>
+     <y>115</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>
