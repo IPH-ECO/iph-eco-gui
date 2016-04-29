@@ -256,6 +256,8 @@ void GridDataVTKWidget::toggleMap(bool show) {
 void GridDataVTKWidget::clear() {
     currentGridData = nullptr;
     layerProperties = nullptr;
+    renderer->RemoveActor(mapPointsActor);
+    renderer->RemoveActor(mapActor);
     MeshVTKWidget::clear();
 }
 
