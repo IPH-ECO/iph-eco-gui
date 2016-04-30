@@ -1961,5 +1961,178 @@
 		"groups": "inorganicMatterGroups",
 		"groupDefaultValues": 0.000003,
 		"parentName": "inorganicMatterSedimentation"
+	},
+	{
+		"label": "Zoobenthos Modeling",
+		"name": "zoobenthos",
+		"diagramItem": "Zoobenthos",
+		"checkable": true,
+		"checked": true,
+		"parentName": "iLimn"
+	},
+	{
+		"label": "Groups",
+		"name": "zoobenthosGroups",
+		"parentName": "zoobenthos"
+	},
+	{
+		"label": "Micro",
+		"name": "microZoobenthosGroup",
+		"inputType": "inline",
+		"rangeMinimum": 0,
+		"rangeMaximum": 100,
+		"defaultValue": 1,
+		"parentName": "zoobenthosGroups"
+	},
+	{
+		"label": "Meso",
+		"name": "mesoZoobenthosGroup",
+		"inputType": "inline",
+		"rangeMinimum": 0,
+		"rangeMaximum": 100,
+		"defaultValue": 0,
+		"parentName": "zoobenthosGroups"
+	},
+	{
+		"label": "Macro",
+		"name": "macroZoobenthosGroup",
+		"inputType": "inline",
+		"rangeMinimum": 0,
+		"rangeMaximum": 100,
+		"defaultValue": 0,
+		"parentName": "zoobenthosGroups"
+	},
+	{
+		"label": "Grazing",
+		"name": "zoobenthosGrazing",
+		"parentName": "zoobenthos"
+	},
+	{
+		"label": "fDAssBent",
+		"name": "fDAssBent",
+		"description": "Assimilation efficiency of zoobenthos",
+		"inputType": "tabular",
+		"groups": "zoobenthosGroups",
+		"groupDefaultValues": 0.3,
+		"parentName": "zoobenthosGrazing"
+	},
+	{
+		"label": "cSigTmBent",
+		"name": "cSigTmBent",
+		"description": "Temperature constant zoobenthos (sigma in Gaussian curve - \u00b0C)",
+		"inputType": "tabular",
+		"groups": "zoobenthosGroups",
+		"groupDefaultValues": 16,
+		"parentName": "zoobenthosGrazing"
+	},
+	{
+		"label": "cTmOptBen",
+		"name": "cTmOptBen",
+		"description": "Optimum temp. zoobenthos (\u00b0C)",
+		"inputType": "tabular",
+		"groups": "zoobenthosGroups",
+		"groupDefaultValues": 25,
+		"parentName": "zoobenthosGrazing"
+	},
+	{
+		"label": "cDCarrBent",
+		"name": "cDCarrBent",
+		"description": "Carrying capacity of zoobenthos (mg/L)",
+		"inputType": "tabular",
+		"groups": "zoobenthosGroups",
+		"groupDefaultValues": 10,
+		"parentName": "zoobenthosGrazing"
+	},
+	{
+		"label": "kDAssBent",
+		"name": "kDAssBent",
+		"description": "Maximum assimilation rate (1/day)",
+		"inputType": "tabular",
+		"groups": "zoobenthosGroups",
+		"groupDefaultValues": 0.1,
+		"parentName": "zoobenthosGrazing"
+	},
+	{
+		"label": "hDFoodBent",
+		"name": "hDFoodBent",
+		"description": "Half-saturating food for zoobenthos (g/m\u00b2)",
+		"inputType": "tabular",
+		"groups": "zoobenthosGroups",
+		"groupDefaultValues": 200,
+		"parentName": "zoobenthosGrazing"
+	},
+	{
+		"label": "Egestion/Pellets",
+		"name": "zoobenthosEgestion",
+		"parentName": "zoobenthos"
+	},
+	{
+		"label": "kPelBent",
+		"name": "kPelBent",
+		"description": "Egestion/Pellets rate for zoobenthos (1/day)",
+		"inputType": "tabular",
+		"groups": "zoobenthosGroups",
+		"groupDefaultValues": 0.01,
+		"parentName": "zoobenthosEgestion"
+	},
+	{
+		"label": "Respiration/Excretion",
+		"name": "zoobenthosRespiration",
+		"parentName": "zoobenthos"
+	},
+	{
+		"label": "kDRespBent",
+		"name": "kDRespBent",
+		"description": "Maintenance respiration constant for zoobenthos (1/day)",
+		"inputType": "tabular",
+		"groups": "zoobenthosGroups",
+		"groupDefaultValues": 0.005,
+		"parentName": "zoobenthosRespiration"
+	},
+	{
+		"label": "Mortality",
+		"name": "zoobenthosMortality",
+		"parentName": "zoobenthos"
+	},
+	{
+		"label": "kMortBent",
+		"name": "kMortBent",
+		"description": "Mortality constant for zoobenthos (1/day)",
+		"inputType": "tabular",
+		"groups": "zoobenthosGroups",
+		"groupDefaultValues": 0.005,
+		"parentName": "zoobenthosMortality"
+	},
+	{
+		"label": "Ratios",
+		"name": "zoobenthosRatios",
+		"parentName": "zoobenthos"
+	},
+	{
+		"label": "cCDBentRef",
+		"name": "cCDBentRef",
+		"description": "reference C/D-ratio for zoobenthos",
+		"inputType": "tabular",
+		"groups": "zoobenthosGroups",
+		"groupDefaultValues": 0.45,
+		"parentName": "zoobenthosRatios"
+	},
+	{
+		"label": "cNDBentRef",
+		"name": "cNDBentRef",
+		"description": "reference N/D-ratio for zoobenthos",
+		"inputType": "tabular",
+		"groups": "zoobenthosGroups",
+		"groupDefaultValues": 0.08,
+		"parentName": "zoobenthosRatios"
+	},
+	{
+		"label": "cPDBentRef",
+		"name": "cPDBentRef",
+		"description": "reference P/D-ratio for zoobenthos",
+		"inputType": "tabular",
+		"groups": "zoobenthosGroups",
+		"groupDefaultValues": 0.01,
+		"parentName": "zoobenthosRatios"
 	}
 ]
