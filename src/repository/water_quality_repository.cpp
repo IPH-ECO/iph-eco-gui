@@ -37,7 +37,7 @@ WaterQualityRepository::WaterQualityRepository() {
         parameter->setLabel(jsonParameter["label"].toString());
         parameter->setDescription(jsonParameter["description"].toString());
         parameter->setDiagramItem(jsonParameter["diagramItem"].toString());
-        parameter->setCheckable(jsonParameter["checkable"].toBool());
+        parameter->setCheckable(jsonParameter["checkable"].toBool(false));
         parameter->setChecked(jsonParameter["checked"].toBool());
         parameter->setEnabled(jsonParameter["enabled"].toBool(true));
         parameter->setInputType(WaterQualityParameter::mapInputTypeFromString(jsonParameter["inputType"].toString()));

@@ -1,5 +1,89 @@
 [
 	{
+		"label": "General",
+		"name": "general"
+	},
+	{
+		"label": "cCPerDW",
+		"name": "cCPerDW",
+		"description": "C content of organic matter (gC/gDW)",
+		"inputType": "inline",
+		"defaultValue": 0.4,
+		"parentName": "general"
+	},
+	{
+		"label": "O2PerNO3",
+		"name": "O2PerNO3",
+		"description": "mol O2 formed per mol NO3- ammonified",
+		"inputType": "inline",
+		"defaultValue": 1.5,
+		"parentName": "general"
+	},
+	{
+		"label": "molO2molC",
+		"name": "molO2molC",
+		"description": "ratio of mol.weights (gO2/gC)",
+		"inputType": "inline",
+		"defaultValue": 2.667,
+		"parentName": "general"
+	},
+	{
+		"label": "molO2molN",
+		"name": "molO2molN",
+		"description": "ratio of mol.weights (gO2/gN)",
+		"inputType": "inline",
+		"defaultValue": 2.286,
+		"parentName": "general"
+	},
+	{
+		"label": "molNmolC",
+		"name": "molNmolC",
+		"description": "ratio of mol.weights (gN/gC)",
+		"inputType": "inline",
+		"defaultValue": 1.167,
+		"parentName": "general"
+	},
+	{
+		"label": "O2PerNH4",
+		"name": "O2PerNH4",
+		"description": "mol O2 used per mol NH4 nitrified",
+		"inputType": "inline",
+		"defaultValue": 2,
+		"parentName": "general"
+	},
+	{
+		"label": "NO3PerC",
+		"name": "NO3PerC",
+		"description": "mol NO3 denitrified per mol C mineralised",
+		"inputType": "inline",
+		"defaultValue": 0.8,
+		"parentName": "general"
+	},
+	{
+		"label": "pHmax",
+		"name": "pHmax",
+		"description": "Maximum pH",
+		"inputType": "inline",
+		"defaultValue": 9,
+		"parentName": "general"
+	},
+	{
+		"label": "pHmin",
+		"name": "pHmin",
+		"description": "Minimum pH",
+		"inputType": "inline",
+		"defaultValue": 5,
+		"parentName": "general"
+	},
+	{
+		"label": "cExtWat",
+		"name": "cExtWat",
+		"description": "Background light extinction (1/m)",
+		"inputType": "inline",
+		"defaultValue": 0.5,
+		"parentName": "general"
+	},
+	{
 		"label": "Heat Budget Modeling",
 		"name": "iTemp",
 		"checkable": true,
@@ -1655,5 +1739,70 @@
 		"groups": "macrophytesGroups",
 		"groupDefaultValues": 0.5,
 		"parentName": "macrophytesGrazing"
+	},
+	{
+		"label": "Inorganic Matter",
+		"name": "inorganicMatter",
+		"parentName": "iLimn"
+	},
+	{
+		"label": "Groups",
+		"name": "inorganicMatterGroups",
+		"parentName": "inorganicMatter"
+	},
+	{
+		"label": "Aerobic",
+		"name": "inorganicMatterAerobicGroup",
+		"inputType": "inline",
+		"rangeMinimum": 0,
+		"rangeMaximum": 100,
+		"defaultValue": 1,
+		"parentName": "inorganicMatterGroups"
+	},
+	{
+		"label": "Light attenuation",
+		"name": "inorganicMatterLightAttenuation",
+		"parentName": "inorganicMatter"
+	},
+	{
+		"label": "cExtSpIM",
+		"name": "cExtSpIM",
+		"description": "Light Attenuation Coefficient due to Inorganic Matter (1/m)",
+		"inputType": "tabular",
+		"groups": "inorganicMatterGroups",
+		"groupDefaultValues": 0.05,
+		"parentName": "inorganicMatterLightAttenuation"
+	},
+	{
+		"label": "Sedimentation",
+		"name": "inorganicMatterSedimentation",
+		"parentName": "inorganicMatter"
+	},
+	{
+		"label": "cVSetIM",
+		"name": "cVSetIM",
+		"description": "Sedimentation velocity  for Inorganic Matter (m/day)",
+		"inputType": "tabular",
+		"groups": "inorganicMatterGroups",
+		"groupDefaultValues": 0.05,
+		"parentName": "inorganicMatterSedimentation"
+	},
+	{
+		"label": "ppIM",
+		"name": "ppIM",
+		"description": "Inorganic Matter density (kg/m\u00b3)",
+		"inputType": "tabular",
+		"groups": "inorganicMatterGroups",
+		"groupDefaultValues": 2650,
+		"parentName": "inorganicMatterSedimentation"
+	},
+	{
+		"label": "diIM",
+		"name": "diIM",
+		"description": "Inorganic Matter diameter (m)",
+		"inputType": "tabular",
+		"groups": "inorganicMatterGroups",
+		"groupDefaultValues": 0.000003,
+		"parentName": "inorganicMatterSedimentation"
 	}
 ]
