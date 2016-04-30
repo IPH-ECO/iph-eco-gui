@@ -84,6 +84,163 @@
 		"parentName": "general"
 	},
 	{
+		"label": "Nutrients & gases",
+		"name": "nutrientsGases"
+	},
+	{
+		"label": "Nitrification",
+		"name": "nutrientsGasesNitrification",
+		"parentName": "nutrientsGases"
+	},
+	{
+		"label": "cThetaNitr",
+		"name": "cThetaNitr",
+		"description": "Temperature coefficient for nitrification",
+		"inputType": "inline",
+		"defaultValue": 1.07,
+		"parentName": "nutrientsGasesNitrification"
+	},
+	{
+		"label": "kNitrS",
+		"name": "kNitrS",
+		"description": "Nitrification rate constant in sediment",
+		"inputType": "inline",
+		"defaultValue": 1,
+		"parentName": "nutrientsGasesNitrification"
+	},
+	{
+		"label": "kNitrW",
+		"name": "kNitrW",
+		"description": "Nitrification rate constant in water",
+		"inputType": "inline",
+		"defaultValue": 0.1,
+		"parentName": "nutrientsGasesNitrification"
+	},
+	{
+		"label": "hO2Nitr",
+		"name": "hO2Nitr",
+		"description": "Half-sat. oxygen conc. for nitrification (mgO2/L)",
+		"inputType": "inline",
+		"defaultValue": 2,
+		"parentName": "nutrientsGasesNitrification"
+	},
+	{
+		"label": "Denitrification",
+		"name": "nutrientsGasesDenitrification",
+		"parentName": "nutrientsGases"
+	},
+	{
+		"label": "hNO3Denit",
+		"name": "hNO3Denit",
+		"description": "quadratic half-sat. NO3 conc. for denitrification (mgNO3/L)",
+		"inputType": "inline",
+		"defaultValue": 2,
+		"parentName": "nutrientsGasesDenitrification"
+	},
+	{
+		"label": "Absorbed P",
+		"name": "nutrientsGasesAbsorbed",
+		"parentName": "nutrientsGases"
+	},
+	{
+		"label": "cRelPAdsD",
+		"name": "cRelPAdsD",
+		"description": "max. P adsorption per g DW (gP/gD)",
+		"inputType": "inline",
+		"defaultValue": 0.00003,
+		"parentName": "nutrientsGasesAbsorbed"
+	},
+	{
+		"label": "cRelPAdsFe",
+		"name": "cRelPAdsFe",
+		"description": "max. P adsorption per g Fe (gP/gFe)",
+		"inputType": "inline",
+		"defaultValue": 0.065,
+		"parentName": "nutrientsGasesAbsorbed"
+	},
+	{
+		"label": "cRelPAdsAl",
+		"name": "cRelPAdsAl",
+		"description": "max. P adsorption per g Al (gP/gAl)",
+		"inputType": "inline",
+		"defaultValue": 0.134,
+		"parentName": "nutrientsGasesAbsorbed"
+	},
+	{
+		"label": "fFeDIM",
+		"name": "fFeDIM",
+		"description": "Fe content of inorg. matter (gFe/gD)",
+		"inputType": "inline",
+		"defaultValue": 0.01,
+		"parentName": "nutrientsGasesAbsorbed"
+	},
+	{
+		"label": "fAlDIM",
+		"name": "fAlDIM",
+		"description": "Al content of inorg. matter (gAl/gD)",
+		"inputType": "inline",
+		"defaultValue": 0.01,
+		"parentName": "nutrientsGasesAbsorbed"
+	},
+	{
+		"label": "fRedMax",
+		"name": "fRedMax",
+		"description": "max. reduction factor of P adsorption affinity",
+		"inputType": "inline",
+		"defaultValue": 0.9,
+		"parentName": "nutrientsGasesAbsorbed"
+	},
+	{
+		"label": "cKPAdsOx",
+		"name": "cKPAdsOx",
+		"description": "P adsorption affinity at oxidized conditions (m3/gP)",
+		"inputType": "inline",
+		"defaultValue": 0.6,
+		"parentName": "nutrientsGasesAbsorbed"
+	},
+	{
+		"label": "kPSorp",
+		"name": "kPSorp",
+		"description": "P sorption rate constant not too high -> model speed (1/day)",
+		"inputType": "inline",
+		"defaultValue": 0.05,
+		"parentName": "nutrientsGasesAbsorbed"
+	},
+	{
+		"label": "P immobilization",
+		"name": "nutrientsGasesImmobilization",
+		"parentName": "nutrientsGases"
+	},
+	{
+		"label": "kPChemPO4",
+		"name": "kPChemPO4",
+		"description": "chem. PO4 loss rate (1/day)",
+		"inputType": "inline",
+		"defaultValue": 0.03,
+		"parentName": "nutrientsGasesImmobilization"
+	},
+	{
+		"label": "cPO4Max",
+		"name": "cPO4Max",
+		"description": "max. SRP conc. in pore water (mgP/L)",
+		"inputType": "inline",
+		"defaultValue": 2,
+		"parentName": "nutrientsGasesImmobilization"
+	},
+	{
+		"label": "Diffusion in the air-water interface",
+		"name": "nutrientsGasesDiffusion",
+		"parentName": "nutrientsGases"
+	},
+	{
+		"label": "cThetaReaer",
+		"name": "cThetaReaer",
+		"description": "Temperature coefficient for reaeration",
+		"inputType": "inline",
+		"defaultValue": 1.1,
+		"parentName": "nutrientsGasesDiffusion"
+	},
+	{
 		"label": "Heat Budget Modeling",
 		"name": "iTemp",
 		"checkable": true,
