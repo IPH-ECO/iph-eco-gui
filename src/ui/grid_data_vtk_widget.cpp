@@ -98,7 +98,17 @@ void GridDataVTKWidget::render(GridData *gridData) {
     meshActor->GetProperty()->SetLineWidth(layerProperties->getMeshLineWidth());
     meshActor->GetProperty()->SetOpacity(layerProperties->getMeshOpacity() / 100.0);
     
-    vtkPolyData *inputPointsPolyData = currentGridData->getInputPolyData();
+    vtkSmartPointer<vtkPolyData> inputPointsPolyData = vtkSmartPointer<vtkPolyData>::New();
+    inputPointsPolyData->ShallowCopy(currentGridData->getInputPolyData());
+    vtkSmartPointer<vtkPoints> inputPoints = inputPointsPolyData->GetPoints();
+    
+    for (vtkIdType i = 0; i < inputPointsPolyData->GetNumberOfPoints(); i++) {
+        double inputPoint[3];
+        
+        inputPoints->GetPoint(i, inputPoint);
+        inputPoints->SetPoint(i, inputPoint[0], inputPoint[1], 0);
+    }
+    
     vtkColorTransferFunction *pointsColorTransferFunction = buildColorTransferFunction(false);
     vtkSmartPointer<vtkPolyDataMapper> inputPointsMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
     
