@@ -95,7 +95,7 @@ void GridDataDialog::on_cbxMesh_currentIndexChanged(const QString &meshName) {
     
     Mesh *configurationMesh = currentConfiguration->getMesh();
     
-    if (currentMesh != nullptr && configurationMesh != nullptr && currentConfiguration->getMesh()->getName() != meshName && currentConfiguration->getGridDataVector().size() > 0) {
+    if (currentMesh && configurationMesh && currentConfiguration->getMesh()->getName() != meshName && currentConfiguration->getGridDataVector().size() > 0) {
         QString question = tr("Changing the mesh in this configuration will remove all created grid data. Are you sure?");
         QMessageBox::StandardButton button = QMessageBox::question(this, tr("Grid Data"), question);
         
@@ -202,7 +202,7 @@ void GridDataDialog::on_btnEditGridLayer_clicked() {
 }
 
 void GridDataDialog::on_tblGridLayers_currentItemChanged(QTableWidgetItem *current, QTableWidgetItem *previous) {
-    if (current != nullptr && (previous == nullptr || current->row() != previous->row())) {
+    if (current && (!previous || current->row() != previous->row())) {
         QString gridDataName = ui->tblGridLayers->item(current->row(), 0)->text();
         GridData *gridData = currentConfiguration->getGridData(gridDataName);
         

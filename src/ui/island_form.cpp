@@ -30,7 +30,7 @@ bool IslandForm::isValid() {
         return false;
     }
     
-    if (mesh->getMeshPolygon(meshPolygonName, MeshPolygonType::ISLAND) != nullptr) {
+    if (mesh->getMeshPolygon(meshPolygonName, MeshPolygonType::ISLAND)) {
         QMessageBox::warning(this, tr("Mesh Island"), tr("Name already used."));
         return false;
     }

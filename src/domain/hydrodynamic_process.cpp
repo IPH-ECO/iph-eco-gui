@@ -33,7 +33,7 @@ bool HydrodynamicProcess::isChecked() const {
 void HydrodynamicProcess::setChecked(bool checked) {
     this->checked = checked;
 
-    if (this->checkable && this->itemWidget != nullptr) {
+    if (this->checkable && this->itemWidget) {
         Qt::CheckState checkState = this->itemWidget->checkState(0);
         bool changeCheckState = (!checked && checkState == Qt::Checked) || (checked && checkState == Qt::Unchecked);
         
@@ -50,7 +50,7 @@ HydrodynamicProcess* HydrodynamicProcess::getParent() const {
 void HydrodynamicProcess::setParent(HydrodynamicProcess *parent) {
     this->parent = parent;
     
-    if (parent != nullptr) {
+    if (parent) {
         parent->children.append(this);
     }
 }
@@ -87,7 +87,7 @@ QList<HydrodynamicProcess*> HydrodynamicProcess::getChildren() const {
 QList<HydrodynamicProcess*> HydrodynamicProcess::getSiblings() const {
     QList<HydrodynamicProcess*> siblings;
     
-    if (parent != nullptr) {
+    if (parent) {
         for (int i = 0; i < parent->children.size(); i++) {
             HydrodynamicProcess *sibling = parent->children[i];
             

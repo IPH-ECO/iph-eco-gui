@@ -242,7 +242,7 @@ void GridDataVTKWidget::toggleMesh(bool show) {
 void GridDataVTKWidget::toggleMapPoints(bool show) {
     this->showMapPoints = show;
     
-    if (layerProperties == nullptr || mapPointsActor == nullptr || pointsScalarBarWidget == nullptr) {
+    if (!layerProperties || !mapPointsActor || !pointsScalarBarWidget) {
         return;
     }
     
@@ -254,7 +254,7 @@ void GridDataVTKWidget::toggleMapPoints(bool show) {
 void GridDataVTKWidget::toggleMap(bool show) {
     this->showMap = show;
     
-    if (layerProperties == nullptr || mapActor == nullptr || mapScalarBarWidget == nullptr) {
+    if (!layerProperties || !mapActor || !mapScalarBarWidget) {
         return;
     }
     

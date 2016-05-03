@@ -358,7 +358,7 @@ bool Project::addSimulation(Simulation *simulation) {
 void Project::removeSimulation(const QString &simulationLabel) {
     Simulation *simulation = getSimulation(simulationLabel);
     
-    if (simulation != nullptr) {
+    if (simulation) {
         simulations.removeOne(simulation);
         delete simulation;
     }
