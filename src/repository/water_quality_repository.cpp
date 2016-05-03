@@ -37,7 +37,7 @@ WaterQualityRepository::WaterQualityRepository() {
         parameter->setLabel(jsonParameter["label"].toString());
         parameter->setDescription(jsonParameter["description"].toString());
         parameter->setDiagramItem(jsonParameter["diagramItem"].toString());
-        parameter->setCheckable(jsonParameter["checkable"].toBool());
+        parameter->setCheckable(jsonParameter["checkable"].toBool(false));
         parameter->setChecked(jsonParameter["checked"].toBool());
         parameter->setEnabled(jsonParameter["enabled"].toBool(true));
         parameter->setInputType(WaterQualityParameter::mapInputTypeFromString(jsonParameter["inputType"].toString()));
@@ -65,7 +65,18 @@ WaterQualityRepository::WaterQualityRepository() {
         }
         
         if (!jsonParameter["groupDefaultValues"].isUndefined()) {
-            parameter->setGroupValues(QVector<double>(lastGroups.size(), jsonParameter["groupDefaultValues"].toDouble()).toList());
+            if (jsonParameter["groupDefaultValues"].isArray()) {
+                QJsonArray defaultValuesArray = jsonParameter["groupDefaultValues"].toArray();
+                QList<double> values;
+
+                for (QJsonValue value : defaultValuesArray) {
+                    values.append(value.toDouble());
+                }
+
+                parameter->setGroupValues(values);
+            } else {
+                parameter->setGroupValues(QVector<double>(lastGroups.size(), jsonParameter["groupDefaultValues"].toDouble()).toList());
+            }
         }
         
         for (WaterQualityParameter *parentParameter : parameters) {

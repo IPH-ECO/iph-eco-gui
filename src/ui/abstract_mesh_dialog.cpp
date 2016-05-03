@@ -54,7 +54,7 @@ void AbstractMeshDialog::showEvent(QShowEvent *event) {
     QObject::connect(toggleCellLabelsAction, SIGNAL(triggered(bool)), this, SLOT(onToggleLabelsClicked(bool)));
     toolBarActions.append(toggleCellLabelsAction);
 
-    toggleVerticeLabelsAction = new QAction(QIcon(":/icons/show-vertice-labels.png"), "Show/Hide cell ids", mainWindow);
+    toggleVerticeLabelsAction = new QAction(QIcon(":/icons/show-vertice-labels.png"), "Show/Hide vertice ids", mainWindow);
     toggleVerticeLabelsAction->setCheckable(true);
     QObject::connect(toggleVerticeLabelsAction, SIGNAL(triggered(bool)), this, SLOT(onToggleLabelsClicked(bool)));
     toolBarActions.append(toggleVerticeLabelsAction);

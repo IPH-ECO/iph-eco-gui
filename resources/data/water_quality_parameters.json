@@ -1,9 +1,343 @@
 [
 	{
+		"label": "General",
+		"name": "general"
+	},
+	{
+		"label": "cCPerDW",
+		"name": "cCPerDW",
+		"description": "C content of organic matter (gC/gDW)",
+		"inputType": "inline",
+		"defaultValue": 0.4,
+		"parentName": "general"
+	},
+	{
+		"label": "O2PerNO3",
+		"name": "O2PerNO3",
+		"description": "mol O2 formed per mol NO3- ammonified",
+		"inputType": "inline",
+		"defaultValue": 1.5,
+		"parentName": "general"
+	},
+	{
+		"label": "molO2molC",
+		"name": "molO2molC",
+		"description": "ratio of mol.weights (gO2/gC)",
+		"inputType": "inline",
+		"defaultValue": 2.667,
+		"parentName": "general"
+	},
+	{
+		"label": "molO2molN",
+		"name": "molO2molN",
+		"description": "ratio of mol.weights (gO2/gN)",
+		"inputType": "inline",
+		"defaultValue": 2.286,
+		"parentName": "general"
+	},
+	{
+		"label": "molNmolC",
+		"name": "molNmolC",
+		"description": "ratio of mol.weights (gN/gC)",
+		"inputType": "inline",
+		"defaultValue": 1.167,
+		"parentName": "general"
+	},
+	{
+		"label": "O2PerNH4",
+		"name": "O2PerNH4",
+		"description": "mol O2 used per mol NH4 nitrified",
+		"inputType": "inline",
+		"defaultValue": 2,
+		"parentName": "general"
+	},
+	{
+		"label": "NO3PerC",
+		"name": "NO3PerC",
+		"description": "mol NO3 denitrified per mol C mineralised",
+		"inputType": "inline",
+		"defaultValue": 0.8,
+		"parentName": "general"
+	},
+	{
+		"label": "pHmax",
+		"name": "pHmax",
+		"description": "Maximum pH",
+		"inputType": "inline",
+		"defaultValue": 9,
+		"parentName": "general"
+	},
+	{
+		"label": "pHmin",
+		"name": "pHmin",
+		"description": "Minimum pH",
+		"inputType": "inline",
+		"defaultValue": 5,
+		"parentName": "general"
+	},
+	{
+		"label": "cExtWat",
+		"name": "cExtWat",
+		"description": "Background light extinction (1/m)",
+		"inputType": "inline",
+		"defaultValue": 0.5,
+		"parentName": "general"
+	},
+	{
+		"label": "Nutrients & gases",
+		"name": "nutrientsGases"
+	},
+	{
+		"label": "Nitrification",
+		"name": "nutrientsGasesNitrification",
+		"parentName": "nutrientsGases"
+	},
+	{
+		"label": "cThetaNitr",
+		"name": "cThetaNitr",
+		"description": "Temperature coefficient for nitrification",
+		"inputType": "inline",
+		"defaultValue": 1.07,
+		"parentName": "nutrientsGasesNitrification"
+	},
+	{
+		"label": "kNitrS",
+		"name": "kNitrS",
+		"description": "Nitrification rate constant in sediment",
+		"inputType": "inline",
+		"defaultValue": 1,
+		"parentName": "nutrientsGasesNitrification"
+	},
+	{
+		"label": "kNitrW",
+		"name": "kNitrW",
+		"description": "Nitrification rate constant in water",
+		"inputType": "inline",
+		"defaultValue": 0.1,
+		"parentName": "nutrientsGasesNitrification"
+	},
+	{
+		"label": "hO2Nitr",
+		"name": "hO2Nitr",
+		"description": "Half-sat. oxygen conc. for nitrification (mgO2/L)",
+		"inputType": "inline",
+		"defaultValue": 2,
+		"parentName": "nutrientsGasesNitrification"
+	},
+	{
+		"label": "Denitrification",
+		"name": "nutrientsGasesDenitrification",
+		"parentName": "nutrientsGases"
+	},
+	{
+		"label": "hNO3Denit",
+		"name": "hNO3Denit",
+		"description": "quadratic half-sat. NO3 conc. for denitrification (mgNO3/L)",
+		"inputType": "inline",
+		"defaultValue": 2,
+		"parentName": "nutrientsGasesDenitrification"
+	},
+	{
+		"label": "Absorbed P",
+		"name": "nutrientsGasesAbsorbed",
+		"parentName": "nutrientsGases"
+	},
+	{
+		"label": "cRelPAdsD",
+		"name": "cRelPAdsD",
+		"description": "max. P adsorption per g DW (gP/gD)",
+		"inputType": "inline",
+		"defaultValue": 0.00003,
+		"parentName": "nutrientsGasesAbsorbed"
+	},
+	{
+		"label": "cRelPAdsFe",
+		"name": "cRelPAdsFe",
+		"description": "max. P adsorption per g Fe (gP/gFe)",
+		"inputType": "inline",
+		"defaultValue": 0.065,
+		"parentName": "nutrientsGasesAbsorbed"
+	},
+	{
+		"label": "cRelPAdsAl",
+		"name": "cRelPAdsAl",
+		"description": "max. P adsorption per g Al (gP/gAl)",
+		"inputType": "inline",
+		"defaultValue": 0.134,
+		"parentName": "nutrientsGasesAbsorbed"
+	},
+	{
+		"label": "fFeDIM",
+		"name": "fFeDIM",
+		"description": "Fe content of inorg. matter (gFe/gD)",
+		"inputType": "inline",
+		"defaultValue": 0.01,
+		"parentName": "nutrientsGasesAbsorbed"
+	},
+	{
+		"label": "fAlDIM",
+		"name": "fAlDIM",
+		"description": "Al content of inorg. matter (gAl/gD)",
+		"inputType": "inline",
+		"defaultValue": 0.01,
+		"parentName": "nutrientsGasesAbsorbed"
+	},
+	{
+		"label": "fRedMax",
+		"name": "fRedMax",
+		"description": "max. reduction factor of P adsorption affinity",
+		"inputType": "inline",
+		"defaultValue": 0.9,
+		"parentName": "nutrientsGasesAbsorbed"
+	},
+	{
+		"label": "cKPAdsOx",
+		"name": "cKPAdsOx",
+		"description": "P adsorption affinity at oxidized conditions (m3/gP)",
+		"inputType": "inline",
+		"defaultValue": 0.6,
+		"parentName": "nutrientsGasesAbsorbed"
+	},
+	{
+		"label": "kPSorp",
+		"name": "kPSorp",
+		"description": "P sorption rate constant not too high -> model speed (1/day)",
+		"inputType": "inline",
+		"defaultValue": 0.05,
+		"parentName": "nutrientsGasesAbsorbed"
+	},
+	{
+		"label": "P immobilization",
+		"name": "nutrientsGasesImmobilization",
+		"parentName": "nutrientsGases"
+	},
+	{
+		"label": "kPChemPO4",
+		"name": "kPChemPO4",
+		"description": "chem. PO4 loss rate (1/day)",
+		"inputType": "inline",
+		"defaultValue": 0.03,
+		"parentName": "nutrientsGasesImmobilization"
+	},
+	{
+		"label": "cPO4Max",
+		"name": "cPO4Max",
+		"description": "max. SRP conc. in pore water (mgP/L)",
+		"inputType": "inline",
+		"defaultValue": 2,
+		"parentName": "nutrientsGasesImmobilization"
+	},
+	{
+		"label": "Diffusion in the air-water interface",
+		"name": "nutrientsGasesDiffusion",
+		"parentName": "nutrientsGases"
+	},
+	{
+		"label": "cThetaReaer",
+		"name": "cThetaReaer",
+		"description": "Temperature coefficient for reaeration",
+		"inputType": "inline",
+		"defaultValue": 1.1,
+		"parentName": "nutrientsGasesDiffusion"
+	},
+	{
 		"label": "Heat Budget Modeling",
 		"name": "iTemp",
 		"checkable": true,
 		"checked": true
+	},
+	{
+		"label": "Groups",
+		"name": "heatBudgetModelingGroups",
+		"parentName": "iTemp"
+	},
+	{
+		"label": "Aerobic",
+		"name": "aerobicHeatGroup",
+		"inputType": "inline",
+		"rangeMinimum": 0,
+		"rangeMaximum": 100,
+		"defaultValue": 1,
+		"parentName": "heatBudgetModelingGroups"
+	},
+	{
+		"label": "Shortwave solar radiation",
+		"name": "shortwaveSolarRadiation",
+		"parentName": "iTemp"
+	},
+	{
+		"label": "cExtWat",
+		"name": "cExtWat",
+		"description": "Light Attenuation Coefficient in Clear Water (1/m)",
+		"inputType": "tabular",
+		"groups": "heatBudgetModelingGroups",
+		"groupDefaultValues": 0.5,
+		"parentName": "shortwaveSolarRadiation"
+	},
+	{
+		"label": "Longwave atmospheric radiation",
+		"name": "shortwaveSolarRadiation",
+		"parentName": "iTemp"
+	},
+	{
+		"label": "tau_param",
+		"name": "tau_param",
+		"description": "Stefan-Boltzmann Constant (cal/cm\u00b2/d/K)",
+		"inputType": "tabular",
+		"groups": "heatBudgetModelingGroups",
+		"groupDefaultValues": 0.00000117,
+		"parentName": "shortwaveSolarRadiation"
+	},
+	{
+		"label": "a_param",
+		"name": "a_param",
+		"description": "Water Temperature Model Coefficient",
+		"inputType": "tabular",
+		"groups": "heatBudgetModelingGroups",
+		"groupDefaultValues": 0.6,
+		"parentName": "shortwaveSolarRadiation"
+	},
+	{
+		"label": "Blackbody radiation from the water surface",
+		"name": "blackbodyRadiation",
+		"parentName": "iTemp"
+	},
+	{
+		"label": "e_param",
+		"name": "e_param",
+		"description": "Emissivity of the Radiating Body",
+		"inputType": "tabular",
+		"groups": "heatBudgetModelingGroups",
+		"groupDefaultValues": 0.99,
+		"parentName": "blackbodyRadiation"
+	},
+	{
+		"label": "Conductive or convective heat flux",
+		"name": "conductiveHeatFlux",
+		"parentName": "iTemp"
+	},
+	{
+		"label": "c1_param",
+		"name": "c1_param",
+		"description": "Bowen's Coefficient (mmHg/\u00b0C)",
+		"inputType": "tabular",
+		"groups": "heatBudgetModelingGroups",
+		"groupDefaultValues": 0.47,
+		"parentName": "conductiveHeatFlux"
+	},
+	{
+		"label": "Properties of water",
+		"name": "waterProperties",
+		"parentName": "iTemp"
+	},
+	{
+		"label": "Cd",
+		"name": "Cd",
+		"description": "Specific heat capacity of water (cal/g/\u00b0C)",
+		"inputType": "tabular",
+		"groups": "heatBudgetModelingGroups",
+		"groupDefaultValues": 4182,
+		"parentName": "waterProperties"
 	},
 	{
 		"label": "Limnology Modeling",
@@ -764,5 +1098,1041 @@
 		"groups": "zooplanktonGroups",
 		"groupDefaultValues": 0.01,
 		"parentName": "iZooRatios"
+	},
+	{
+		"label": "Fish Modeling",
+		"name": "iFish",
+		"diagramItem": "Fish",
+		"checkable": true,
+		"checked": true,
+		"parentName": "iLimn"
+	},
+	{
+		"label": "Groups",
+		"name": "fishGroups",
+		"parentName": "iFish"
+	},
+	{
+		"label": "Planktivorous",
+		"name": "planktivorousGroup",
+		"inputType": "inline",
+		"rangeMinimum": 0,
+		"rangeMaximum": 100,
+		"defaultValue": 1,
+		"parentName": "fishGroups"
+	},
+	{
+		"label": "Omnivorous",
+		"name": "omnivorousGroup",
+		"inputType": "inline",
+		"rangeMinimum": 0,
+		"rangeMaximum": 100,
+		"defaultValue": 0,
+		"parentName": "fishGroups"
+	},
+	{
+		"label": "Piscivorous",
+		"name": "piscivorousGroup",
+		"inputType": "inline",
+		"rangeMinimum": 0,
+		"rangeMaximum": 100,
+		"defaultValue": 0,
+		"parentName": "fishGroups"
+	},
+	{
+		"label": "Interannual Migration",
+		"name": "iFishGrazing",
+		"parentName": "iFish"
+	},
+	{
+		"label": "kMigrFiAd",
+		"name": "kMigrFiAd",
+		"description": "Adult fish migration rate (1/day)",
+		"inputType": "tabular",
+		"groups": "fishGroups",
+		"groupDefaultValues": [ 0.001, 0.35, 0.35 ],
+		"parentName": "iFishGrazing"
+	},
+	{
+		"label": "cDFiAdIn",
+		"name": "cDFiAdIn",
+		"description": "External adult fish density (gD/m\u00b2)",
+		"inputType": "tabular",
+		"groups": "fishGroups",
+		"groupDefaultValues": 0.005,
+		"parentName": "iFishGrazing"
+	},
+	{
+		"label": "kMigrFiJv",
+		"name": "kMigrFiJv",
+		"description": "Juvenile fish migration rate (1/day)",
+		"inputType": "tabular",
+		"groups": "fishGroups",
+		"groupDefaultValues": [ 0.001, 0.35, 0.35 ],
+		"parentName": "iFishGrazing"
+	},
+	{
+		"label": "cDFiJvIn",
+		"name": "cDFiJvIn",
+		"description": "External juvenile fish density (gD/m\u00b2)",
+		"inputType": "tabular",
+		"groups": "fishGroups",
+		"groupDefaultValues": 0.005,
+		"parentName": "iFishGrazing"
+	},
+	{
+		"label": "Reprodution/Aging",
+		"name": "iFishReprodution",
+		"parentName": "iFish"
+	},
+	{
+		"label": "cDayReprFish",
+		"name": "cDayReprFish",
+		"description": "Reproduction date of fish (Julian day)",
+		"inputType": "tabular",
+		"groups": "fishGroups",
+		"groupDefaultValues": 120,
+		"parentName": "iFishReprodution"
+	},
+	{
+		"label": "fReprFish",
+		"name": "fReprFish",
+		"description": "Yearly reproduction fraction of adult fish",
+		"inputType": "tabular",
+		"groups": "fishGroups",
+		"groupDefaultValues": 0.02,
+		"parentName": "iFishReprodution"
+	},
+	{
+		"label": "fAgeFish",
+		"name": "fAgeFish",
+		"description": "Yearly ageing fraction of young fish",
+		"inputType": "tabular",
+		"groups": "fishGroups",
+		"groupDefaultValues": 0.5,
+		"parentName": "iFishReprodution"
+	},
+	{
+		"label": "Assimilation",
+		"name": "iFishAssimilation",
+		"parentName": "iFish"
+	},
+	{
+		"label": "cRelVegFish",
+		"name": "cRelVegFish",
+		"description": "Decrease of adult fish feeding per % vegetation cover",
+		"inputType": "tabular",
+		"groups": "fishGroups",
+		"groupDefaultValues": 0.009,
+		"parentName": "iFishAssimilation"
+	},
+	{
+		"label": "cSigTmFish",
+		"name": "cSigTmFish",
+		"description": "Temperature constant of fish (\u00b0C)",
+		"inputType": "tabular",
+		"groups": "fishGroups",
+		"groupDefaultValues": 10,
+		"parentName": "iFishAssimilation"
+	},
+	{
+		"label": "cTmOptFish",
+		"name": "cTmOptFish",
+		"description": "Optimum temp. of fish (\u00b0C)",
+		"inputType": "tabular",
+		"groups": "fishGroups",
+		"groupDefaultValues": 25,
+		"parentName": "iFishAssimilation"
+	},
+	{
+		"label": "hDFiAd",
+		"name": "hDFiAd",
+		"description": "Half-saturating for adult Fish predation (g/m\u00b2)",
+		"inputType": "tabular",
+		"groups": "fishGroups",
+		"groupDefaultValues": 1,
+		"parentName": "iFishAssimilation"
+	},
+	{
+		"label": "hDFiJv",
+		"name": "hDFiJv",
+		"description": "Half-saturating for juvenile Fish predation (g/m\u00b2)",
+		"inputType": "tabular",
+		"groups": "fishGroups",
+		"groupDefaultValues": 0.1,
+		"parentName": "iFishAssimilation"
+	},
+	{
+		"label": "kDAssFiAd",
+		"name": "kDAssFiAd",
+		"description": "Maximum assimilation rate of adult fish (1/day)",
+		"inputType": "tabular",
+		"groups": "fishGroups",
+		"groupDefaultValues": 0.06,
+		"parentName": "iFishAssimilation"
+	},
+	{
+		"label": "kDAssFiJv",
+		"name": "kDAssFiJv",
+		"description": "Maximum assimilation rate of young fish (1/day)",
+		"inputType": "tabular",
+		"groups": "fishGroups",
+		"groupDefaultValues": 0.12,
+		"parentName": "iFishAssimilation"
+	},
+	{
+		"label": "fDAssFiAd",
+		"name": "fDAssFiAd",
+		"description": "Assimilation efficiency of adult fish",
+		"inputType": "tabular",
+		"groups": "fishGroups",
+		"groupDefaultValues": 0.4,
+		"parentName": "iFishAssimilation"
+	},
+	{
+		"label": "fDAssFiJv",
+		"name": "fDAssFiJv",
+		"description": "Assimilation efficiency of young fish",
+		"inputType": "tabular",
+		"groups": "fishGroups",
+		"groupDefaultValues": 0.4,
+		"parentName": "iFishAssimilation"
+	},
+	{
+		"label": "cDCarrFish",
+		"name": "cDCarrFish",
+		"description": "Carrying capacity of fish (gDW/m\u00b2)",
+		"inputType": "tabular",
+		"groups": "fishGroups",
+		"groupDefaultValues": 15,
+		"parentName": "iFishAssimilation"
+	},
+	{
+		"label": "Harvest",
+		"name": "iFishHarvest",
+		"parentName": "iFish"
+	},
+	{
+		"label": "kHarvFiAd",
+		"name": "kHarvFiAd",
+		"description": "Aduld fish harvesting fraction",
+		"inputType": "tabular",
+		"groups": "fishGroups",
+		"groupDefaultValues": 0,
+		"parentName": "iFishHarvest"
+	},
+	{
+		"label": "kHarvFiJv",
+		"name": "kHarvFiJv",
+		"description": "Juvenile fish harvesting fraction",
+		"inputType": "tabular",
+		"groups": "fishGroups",
+		"groupDefaultValues": 0,
+		"parentName": "iFishHarvest"
+	},
+	{
+		"label": "Messy Fedding",
+		"name": "iFishMessyFedding",
+		"parentName": "iFish"
+	},
+	{
+		"label": "fDMessyFiAd",
+		"name": "fDMessyFiAd",
+		"description": "Fraction of Aduld fish messy fedding",
+		"inputType": "tabular",
+		"groups": "fishGroups",
+		"groupDefaultValues": 0.1,
+		"parentName": "iFishMessyFedding"
+	},
+	{
+		"label": "fDMessyFiJv",
+		"name": "fDMessyFiJv",
+		"description": "Fraction of Juvenile fish messy fedding",
+		"inputType": "tabular",
+		"groups": "fishGroups",
+		"groupDefaultValues": 0.1,
+		"parentName": "iFishMessyFedding"
+	},
+	{
+		"label": "Respiration/Excretion",
+		"name": "iFishRespiration",
+		"parentName": "iFish"
+	},
+	{
+		"label": "kDRespFiAd",
+		"name": "kDRespFiAd",
+		"description": "Maintenance respiration constant of aduld fish (1/day)",
+		"inputType": "tabular",
+		"groups": "fishGroups",
+		"groupDefaultValues": 0.004,
+		"parentName": "iFishRespiration"
+	},
+	{
+		"label": "kDRespFiJv",
+		"name": "kDRespFiJv",
+		"description": "Maintenance respiration constant of young fish (1/day)",
+		"inputType": "tabular",
+		"groups": "fishGroups",
+		"groupDefaultValues": 0.01,
+		"parentName": "iFishRespiration"
+	},
+	{
+		"label": "Egestion/Pellets",
+		"name": "iFishEgestion",
+		"parentName": "iFish"
+	},
+	{
+		"label": "kPelFiAd",
+		"name": "kPelFiAd",
+		"description": "Egestion/Pellets rate for aduld fish (1/day)",
+		"inputType": "tabular",
+		"groups": "fishGroups",
+		"groupDefaultValues": 0.02,
+		"parentName": "iFishEgestion"
+	},
+	{
+		"label": "kPelFiJv",
+		"name": "kPelFiJv",
+		"description": "Egestion/Pellets rate for young fish (1/day)",
+		"inputType": "tabular",
+		"groups": "fishGroups",
+		"groupDefaultValues": 0.02,
+		"parentName": "iFishEgestion"
+	},
+	{
+		"label": "Mortality",
+		"name": "iFishMortality",
+		"parentName": "iFish"
+	},
+	{
+		"label": "kMortFiAd",
+		"name": "kMortFiAd",
+		"description": "Specific mortality of adult fish (1/day)",
+		"inputType": "tabular",
+		"groups": "fishGroups",
+		"groupDefaultValues": 0.00027,
+		"parentName": "iFishMortality"
+	},
+	{
+		"label": "kMortFiJv",
+		"name": "kMortFiJv",
+		"description": "Specific mortality of young fish (1/day)",
+		"inputType": "tabular",
+		"groups": "fishGroups",
+		"groupDefaultValues": 0.000137,
+		"parentName": "iFishMortality"
+	},
+	{
+		"label": "Ratios",
+		"name": "iFishRatios",
+		"parentName": "iFish"
+	},
+	{
+		"label": "cCDFishRef",
+		"name": "cCDFishRef",
+		"description": "Reference C/D-ratio for fish",
+		"inputType": "tabular",
+		"groups": "fishGroups",
+		"groupDefaultValues": 0.1,
+		"parentName": "iFishRatios"
+	},
+	{
+		"label": "cNDFishRef",
+		"name": "cNDFishRef",
+		"description": "Reference N/D-ratio for fish",
+		"inputType": "tabular",
+		"groups": "fishGroups",
+		"groupDefaultValues": 0.07,
+		"parentName": "iFishRatios"
+	},
+	{
+		"label": "cPDFishRef",
+		"name": "cPDFishRef",
+		"description": "Reference P/D-ratio for fish",
+		"inputType": "tabular",
+		"groups": "fishGroups",
+		"groupDefaultValues": 0.005,
+		"parentName": "iFishRatios"
+	},
+	{
+		"label": "Macrophytes Modeling",
+		"name": "macrophytes",
+		"diagramItem": "Macrophytes",
+		"checkable": true,
+		"checked": true,
+		"parentName": "iLimn"
+	},
+	{
+		"label": "Groups",
+		"name": "macrophytesGroups",
+		"parentName": "macrophytes"
+	},
+	{
+		"label": "Elodeid",
+		"name": "elodeidGroup",
+		"inputType": "inline",
+		"rangeMinimum": 0,
+		"rangeMaximum": 100,
+		"defaultValue": 1,
+		"parentName": "macrophytesGroups"
+	},
+	{
+		"label": "Charophytes",
+		"name": "charophytesGroup",
+		"inputType": "inline",
+		"rangeMinimum": 0,
+		"rangeMaximum": 100,
+		"defaultValue": 0,
+		"parentName": "macrophytesGroups"
+	},
+	{
+		"label": "Ceratophyllum",
+		"name": "ceratophyllumGroup",
+		"inputType": "inline",
+		"rangeMinimum": 0,
+		"rangeMaximum": 100,
+		"defaultValue": 0,
+		"parentName": "macrophytesGroups"
+	},
+	{
+		"label": "Lemnaceae",
+		"name": "lemnaceaeGroup",
+		"inputType": "inline",
+		"rangeMinimum": 0,
+		"rangeMaximum": 100,
+		"defaultValue": 0,
+		"parentName": "macrophytesGroups"
+	},
+	{
+		"label": "Nymphaeas",
+		"name": "nymphaeasGroup",
+		"inputType": "inline",
+		"rangeMinimum": 0,
+		"rangeMaximum": 100,
+		"defaultValue": 0,
+		"parentName": "macrophytesGroups"
+	},
+	{
+		"label": "Helophytes",
+		"name": "helophytesGroup",
+		"inputType": "inline",
+		"rangeMinimum": 0,
+		"rangeMaximum": 100,
+		"defaultValue": 0,
+		"parentName": "macrophytesGroups"
+	},
+	{
+		"label": "General",
+		"name": "generalGroup",
+		"inputType": "inline",
+		"rangeMinimum": 0,
+		"rangeMaximum": 100,
+		"defaultValue": 0,
+		"parentName": "macrophytesGroups"
+	},
+	{
+		"label": "Primary Production",
+		"name": "macrophytesPrimaryProduction",
+		"parentName": "macrophytes"
+	},
+	{
+		"label": "cQ10ProdMac",
+		"name": "cQ10ProdMac",
+		"description": "Temperature quotient of production",
+		"inputType": "tabular",
+		"groups": "macrophytesGroups",
+		"groupDefaultValues": [ 1.2, 1.2, 1.5, 2.5, 1.5, 1.5, 1.2 ],
+		"parentName": "macrophytesPrimaryProduction"
+	},
+	{
+		"label": "hLRefMac",
+		"name": "hLRefMac",
+		"description": "Half-sat. light at 20 oC at 20\u00b0C (W/m\u00b2)",
+		"inputType": "tabular",
+		"groups": "macrophytesGroups",
+		"groupDefaultValues": [ 32, 19, 25, 7.5, 25, 25, 17 ],
+		"parentName": "macrophytesPrimaryProduction"
+	},
+	{
+		"label": "cMuMaxMac",
+		"name": "cMuMaxMac",
+		"description": "Maximum growth rate of vegetation at 20oC (1/day)",
+		"inputType": "tabular",
+		"groups": "macrophytesGroups",
+		"groupDefaultValues": [ 0.32, 0.22, 0.21, 0.3, 0.1, 0.1, 0.2 ],
+		"parentName": "macrophytesPrimaryProduction"
+	},
+	{
+		"label": "cTmInitVeg",
+		"name": "cTmInitVeg",
+		"description": "Temperature for initial growth (\u00b0C)",
+		"inputType": "tabular",
+		"groups": "macrophytesGroups",
+		"groupDefaultValues": [ 10, 10, 10, 10, 10, 10, 9 ],
+		"parentName": "macrophytesPrimaryProduction"
+	},
+	{
+		"label": "fRootVegWin",
+		"name": "fRootVegWin",
+		"description": "Root fraction outside growing season",
+		"inputType": "tabular",
+		"groups": "macrophytesGroups",
+		"groupDefaultValues": [ 0.6, 0.6, 0, 0, 0.95, 0.5, 0.6 ],
+		"parentName": "macrophytesPrimaryProduction"
+	},
+	{
+		"label": "fRootVegSum",
+		"name": "fRootVegSum",
+		"description": "Root fraction inside growing season",
+		"inputType": "tabular",
+		"groups": "macrophytesGroups",
+		"groupDefaultValues": [ 0.1, 0.1, 0.0, 0.0, 0.75, 0.8, 0.1 ],
+		"parentName": "macrophytesPrimaryProduction"
+	},
+	{
+		"label": "fEmergVeg",
+		"name": "fEmergVeg",
+		"description": "Emergent fraction of shoot (g emergent / g shoot)",
+		"inputType": "tabular",
+		"groups": "macrophytesGroups",
+		"groupDefaultValues": [ 0.0, 0.0, 0.0, 0.0, 0.0, 1, 0.0 ],
+		"parentName": "macrophytesPrimaryProduction"
+	},
+	{
+		"label": "fFloatVeg",
+		"name": "fFloatVeg",
+		"description": "Floating fraction of shoot (g floating / g shoot)",
+		"inputType": "tabular",
+		"groups": "macrophytesGroups",
+		"groupDefaultValues": [ 0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0 ],
+		"parentName": "macrophytesPrimaryProduction"
+	},
+	{
+		"label": "cDLayerVeg",
+		"name": "cDLayerVeg",
+		"description": "Biomass of a single layer floating leaves (gD/m\u00b2)",
+		"inputType": "tabular",
+		"groups": "macrophytesGroups",
+		"groupDefaultValues": [ 0.0, 0.0, 0.0, 0.0, 100, 100, 0.0 ],
+		"parentName": "macrophytesPrimaryProduction"
+	},
+	{
+		"label": "cDCarrMac",
+		"name": "cDCarrMac",
+		"description": "Max. vegetation standing crop (gD/m\u00b2)",
+		"inputType": "tabular",
+		"groups": "macrophytesGroups",
+		"groupDefaultValues": [ 500, 500, 500, 575, 500, 2000, 400 ],
+		"parentName": "macrophytesPrimaryProduction"
+	},
+	{
+		"label": "cCovSpVeg",
+		"name": "cCovSpVeg",
+		"description": "Self-cover fraction per gD/m\u00b2",
+		"inputType": "tabular",
+		"groups": "macrophytesGroups",
+		"groupDefaultValues": [ 0.5, 0.5, 0.5, 1.0, 0.5, 0.05, 0.5 ],
+		"parentName": "macrophytesPrimaryProduction"
+	},
+	{
+		"label": "cCDMacMax",
+		"name": "cCDMacMax",
+		"description": "Maximum C/D ratio vegetation (mgC/mgDW)",
+		"inputType": "tabular",
+		"groups": "macrophytesGroups",
+		"groupDefaultValues": 0.5,
+		"parentName": "macrophytesPrimaryProduction"
+	},
+	{
+		"label": "cCDMacMin",
+		"name": "cCDMacMin",
+		"description": "Minimum C/D ratio vegetation (mgC/mgDW)",
+		"inputType": "tabular",
+		"groups": "macrophytesGroups",
+		"groupDefaultValues": 0.3,
+		"parentName": "macrophytesPrimaryProduction"
+	},
+	{
+		"label": "cNDMacMax",
+		"name": "cNDMacMax",
+		"description": "Maximum N/D ratio vegetation (mgN/mgDW)",
+		"inputType": "tabular",
+		"groups": "macrophytesGroups",
+		"groupDefaultValues": [ 0.035, 0.035, 0.035, 0.1, 0.03, 0.03, 0.035 ],
+		"parentName": "macrophytesPrimaryProduction"
+	},
+	{
+		"label": "cNDMacMin",
+		"name": "cNDMacMin",
+		"description": "Minimum N/D ratio vegetation (mgN/mgDW)",
+		"inputType": "tabular",
+		"groups": "macrophytesGroups",
+		"groupDefaultValues": [ 0.01, 0.01, 0.01, 0.04, 0.01, 0.01, 0.01 ],
+		"parentName": "macrophytesPrimaryProduction"
+	},
+	{
+		"label": "cPDMacMax",
+		"name": "cPDMacMax",
+		"description": "Maximum P/D ratio vegetation (mgP/mgDW)",
+		"inputType": "tabular",
+		"groups": "macrophytesGroups",
+		"groupDefaultValues": [ 0.0035, 0.0035, 0.0035, 0.026, 0.0075, 0.0075, 0.0035 ],
+		"parentName": "macrophytesPrimaryProduction"
+	},
+	{
+		"label": "cPDMacMin",
+		"name": "cPDMacMin",
+		"description": "Minimum P/D ratio vegetation (mgP/mgDW)",
+		"inputType": "tabular",
+		"groups": "macrophytesGroups",
+		"groupDefaultValues": [ 0.0008, 0.0012, 0.0012, 0.004, 0.001, 0.001, 0.0008 ],
+		"parentName": "macrophytesPrimaryProduction"
+	},
+	{
+		"label": "Nutrient Uptake",
+		"name": "macrophytesNutrientUptake",
+		"parentName": "macrophytes"
+	},
+	{
+		"label": "cVCUptMaxMac",
+		"name": "cVCUptMaxMac",
+		"description": "Maximum C uptake capacity for vegetation (mgC/mgDW/day)",
+		"inputType": "tabular",
+		"groups": "macrophytesGroups",
+		"groupDefaultValues": 0.25,
+		"parentName": "macrophytesNutrientUptake"
+	},
+	{
+		"label": "cVNUptMaxMac",
+		"name": "cVNUptMaxMac",
+		"description": "Maximum N uptake capacity for vegetation (mgN/mgDW/day)",
+		"inputType": "tabular",
+		"groups": "macrophytesGroups",
+		"groupDefaultValues": [ 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.1 ],
+		"parentName": "macrophytesNutrientUptake"
+	},
+	{
+		"label": "cVPUptMaxMac",
+		"name": "cVPUptMaxMac",
+		"description": "Maximum P uptake capacity for vegetation (mgP/mgDW/day)",
+		"inputType": "tabular",
+		"groups": "macrophytesGroups",
+		"groupDefaultValues": [ 0.005, 0.005, 0.005, 0.005, 0.005, 0.005, 0.01 ],
+		"parentName": "macrophytesNutrientUptake"
+	},
+	{
+		"label": "cCDMacMax",
+		"name": "cCDMacMax",
+		"description": "Maximum C/D ratio vegetation (mgC/mgDW)",
+		"inputType": "tabular",
+		"groups": "macrophytesGroups",
+		"groupDefaultValues": 0.5,
+		"parentName": "macrophytesNutrientUptake"
+	},
+	{
+		"label": "cCDMacMin",
+		"name": "cCDMacMin",
+		"description": "Minimum C/D ratio vegetation (mgC/mgDW)",
+		"inputType": "tabular",
+		"groups": "macrophytesGroups",
+		"groupDefaultValues": 0.3,
+		"parentName": "macrophytesNutrientUptake"
+	},
+	{
+		"label": "cNDMacMax",
+		"name": "cNDMacMax",
+		"description": "Maximum N/D ratio vegetation (mgN/mgDW)",
+		"inputType": "tabular",
+		"groups": "macrophytesGroups",
+		"groupDefaultValues": [ 0.035, 0.035, 0.035, 0.1, 0.03, 0.03, 0.035 ],
+		"parentName": "macrophytesNutrientUptake"
+	},
+	{
+		"label": "cNDMacMin",
+		"name": "cNDMacMin",
+		"description": "Minimum N/D ratio vegetation (mgN/mgDW)",
+		"inputType": "tabular",
+		"groups": "macrophytesGroups",
+		"groupDefaultValues": [ 0.01, 0.01, 0.01, 0.04, 0.1, 0.1, 0.1 ],
+		"parentName": "macrophytesNutrientUptake"
+	},
+	{
+		"label": "cPDMacMax",
+		"name": "cPDMacMax",
+		"description": "Maximum P/D ratio vegetation (mgP/mgDW)",
+		"inputType": "tabular",
+		"groups": "macrophytesGroups",
+		"groupDefaultValues": [ 0.0035, 0.0035, 0.0035, 0.026, 0.0075, 0.0075, 0.0035 ],
+		"parentName": "macrophytesNutrientUptake"
+	},
+	{
+		"label": "cPDMacMin",
+		"name": "cPDMacMin",
+		"description": "Minimum P/D ratio vegetation (mgP/mgDW)",
+		"inputType": "tabular",
+		"groups": "macrophytesGroups",
+		"groupDefaultValues": [ 0.0008, 0.0012, 0.0012, 0.004, 0.001, 0.001, 0.0008 ],
+		"parentName": "macrophytesNutrientUptake"
+	},
+	{
+		"label": "cAffCUptMac",
+		"name": "cAffCUptMac",
+		"description": "Initial C uptake affinity for vegetation (L/mgDW/day)",
+		"inputType": "tabular",
+		"groups": "macrophytesGroups",
+		"groupDefaultValues": [ 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.02 ],
+		"parentName": "macrophytesNutrientUptake"
+	},
+	{
+		"label": "cAffNUptMac",
+		"name": "cAffNUptMac",
+		"description": "Initial N uptake affinity for vegetation (L/mgDW/day)",
+		"inputType": "tabular",
+		"groups": "macrophytesGroups",
+		"groupDefaultValues": [ 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.2 ],
+		"parentName": "macrophytesNutrientUptake"
+	},
+	{
+		"label": "cAffPUptMac",
+		"name": "cAffPUptMac",
+		"description": "Initial P uptake affinity for vegetation (L/mgDW/day)",
+		"inputType": "tabular",
+		"groups": "macrophytesGroups",
+		"groupDefaultValues": [ 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.2 ],
+		"parentName": "macrophytesNutrientUptake"
+	},
+	{
+		"label": "fSedUptVegMax",
+		"name": "fSedUptVegMax",
+		"description": "Maximum sediment fraction of nutrient uptake",
+		"inputType": "tabular",
+		"groups": "macrophytesGroups",
+		"groupDefaultValues": 0.998,
+		"parentName": "macrophytesNutrientUptake"
+	},
+	{
+		"label": "fSedUptVegCoef",
+		"name": "fSedUptVegCoef",
+		"description": "Sigm. regr. coeff. For sediment fraction of nutrient uptake",
+		"inputType": "tabular",
+		"groups": "macrophytesGroups",
+		"groupDefaultValues": 2.66,
+		"parentName": "macrophytesNutrientUptake"
+	},
+	{
+		"label": "fSedUptVegExp",
+		"name": "fSedUptVegExp",
+		"description": "Exponent in sigm. regr. for sediment fraction of nutrient uptake",
+		"inputType": "tabular",
+		"groups": "macrophytesGroups",
+		"groupDefaultValues": -0.83,
+		"parentName": "macrophytesNutrientUptake"
+	},
+	{
+		"label": "Respiration/Excretion",
+		"name": "macrophytesRespiration",
+		"parentName": "macrophytes"
+	},
+	{
+		"label": "cQ10RespMac",
+		"name": "cQ10RespMac",
+		"description": "Temperature quotient of respiration",
+		"inputType": "tabular",
+		"groups": "macrophytesGroups",
+		"groupDefaultValues": [ 1.5, 1.2, 2, 3, 2, 2, 2 ],
+		"parentName": "macrophytesRespiration"
+	},
+	{
+		"label": "kDRespMac",
+		"name": "kDRespMac",
+		"description": "Dark respiration rate of vegetation (1/day)",
+		"inputType": "tabular",
+		"groups": "macrophytesGroups",
+		"groupDefaultValues": [ 0.024, 0.025, 0.024, 0.03, 0.01, 0.01, 0.02 ],
+		"parentName": "macrophytesRespiration"
+	},
+	{
+		"label": "Mortality",
+		"name": "macrophytesMortality",
+		"parentName": "macrophytes"
+	},
+	{
+		"label": "kMortMac",
+		"name": "kMortMac",
+		"description": "Mortality constant of vegetation (1/day)",
+		"inputType": "tabular",
+		"groups": "macrophytesGroups",
+		"groupDefaultValues": 0.005,
+		"parentName": "macrophytesMortality"
+	},
+	{
+		"label": "Grazing by birds",
+		"name": "macrophytesGrazing",
+		"parentName": "macrophytes"
+	},
+	{
+		"label": "hDMacBird",
+		"name": "hDMacBird",
+		"description": "Half-sat. vegetation biomass (gD/m\u00b2)",
+		"inputType": "tabular",
+		"groups": "macrophytesGroups",
+		"groupDefaultValues": 5,
+		"parentName": "macrophytesGrazing"
+	},
+	{
+		"label": "cDGrazPerBird",
+		"name": "cDGrazPerBird",
+		"description": "Daily grazing of birds (gD/coot/day)",
+		"inputType": "tabular",
+		"groups": "macrophytesGroups",
+		"groupDefaultValues": 45,
+		"parentName": "macrophytesGrazing"
+	},
+	{
+		"label": "fDAssBird",
+		"name": "fDAssBird",
+		"description": "Birds assim. efficiency",
+		"inputType": "tabular",
+		"groups": "macrophytesGroups",
+		"groupDefaultValues": 0.5,
+		"parentName": "macrophytesGrazing"
+	},
+	{
+		"label": "Inorganic Matter",
+		"name": "inorganicMatter",
+		"parentName": "iLimn"
+	},
+	{
+		"label": "Groups",
+		"name": "inorganicMatterGroups",
+		"parentName": "inorganicMatter"
+	},
+	{
+		"label": "Aerobic",
+		"name": "inorganicMatterAerobicGroup",
+		"inputType": "inline",
+		"rangeMinimum": 0,
+		"rangeMaximum": 100,
+		"defaultValue": 1,
+		"parentName": "inorganicMatterGroups"
+	},
+	{
+		"label": "Light attenuation",
+		"name": "inorganicMatterLightAttenuation",
+		"parentName": "inorganicMatter"
+	},
+	{
+		"label": "cExtSpIM",
+		"name": "cExtSpIM",
+		"description": "Light Attenuation Coefficient due to Inorganic Matter (1/m)",
+		"inputType": "tabular",
+		"groups": "inorganicMatterGroups",
+		"groupDefaultValues": 0.05,
+		"parentName": "inorganicMatterLightAttenuation"
+	},
+	{
+		"label": "Sedimentation",
+		"name": "inorganicMatterSedimentation",
+		"parentName": "inorganicMatter"
+	},
+	{
+		"label": "cVSetIM",
+		"name": "cVSetIM",
+		"description": "Sedimentation velocity  for Inorganic Matter (m/day)",
+		"inputType": "tabular",
+		"groups": "inorganicMatterGroups",
+		"groupDefaultValues": 0.05,
+		"parentName": "inorganicMatterSedimentation"
+	},
+	{
+		"label": "ppIM",
+		"name": "ppIM",
+		"description": "Inorganic Matter density (kg/m\u00b3)",
+		"inputType": "tabular",
+		"groups": "inorganicMatterGroups",
+		"groupDefaultValues": 2650,
+		"parentName": "inorganicMatterSedimentation"
+	},
+	{
+		"label": "diIM",
+		"name": "diIM",
+		"description": "Inorganic Matter diameter (m)",
+		"inputType": "tabular",
+		"groups": "inorganicMatterGroups",
+		"groupDefaultValues": 0.000003,
+		"parentName": "inorganicMatterSedimentation"
+	},
+	{
+		"label": "Zoobenthos Modeling",
+		"name": "zoobenthos",
+		"diagramItem": "Zoobenthos",
+		"checkable": true,
+		"checked": true,
+		"parentName": "iLimn"
+	},
+	{
+		"label": "Groups",
+		"name": "zoobenthosGroups",
+		"parentName": "zoobenthos"
+	},
+	{
+		"label": "Micro",
+		"name": "microZoobenthosGroup",
+		"inputType": "inline",
+		"rangeMinimum": 0,
+		"rangeMaximum": 100,
+		"defaultValue": 1,
+		"parentName": "zoobenthosGroups"
+	},
+	{
+		"label": "Meso",
+		"name": "mesoZoobenthosGroup",
+		"inputType": "inline",
+		"rangeMinimum": 0,
+		"rangeMaximum": 100,
+		"defaultValue": 0,
+		"parentName": "zoobenthosGroups"
+	},
+	{
+		"label": "Macro",
+		"name": "macroZoobenthosGroup",
+		"inputType": "inline",
+		"rangeMinimum": 0,
+		"rangeMaximum": 100,
+		"defaultValue": 0,
+		"parentName": "zoobenthosGroups"
+	},
+	{
+		"label": "Grazing",
+		"name": "zoobenthosGrazing",
+		"parentName": "zoobenthos"
+	},
+	{
+		"label": "fDAssBent",
+		"name": "fDAssBent",
+		"description": "Assimilation efficiency of zoobenthos",
+		"inputType": "tabular",
+		"groups": "zoobenthosGroups",
+		"groupDefaultValues": 0.3,
+		"parentName": "zoobenthosGrazing"
+	},
+	{
+		"label": "cSigTmBent",
+		"name": "cSigTmBent",
+		"description": "Temperature constant zoobenthos (sigma in Gaussian curve - \u00b0C)",
+		"inputType": "tabular",
+		"groups": "zoobenthosGroups",
+		"groupDefaultValues": 16,
+		"parentName": "zoobenthosGrazing"
+	},
+	{
+		"label": "cTmOptBen",
+		"name": "cTmOptBen",
+		"description": "Optimum temp. zoobenthos (\u00b0C)",
+		"inputType": "tabular",
+		"groups": "zoobenthosGroups",
+		"groupDefaultValues": 25,
+		"parentName": "zoobenthosGrazing"
+	},
+	{
+		"label": "cDCarrBent",
+		"name": "cDCarrBent",
+		"description": "Carrying capacity of zoobenthos (mg/L)",
+		"inputType": "tabular",
+		"groups": "zoobenthosGroups",
+		"groupDefaultValues": 10,
+		"parentName": "zoobenthosGrazing"
+	},
+	{
+		"label": "kDAssBent",
+		"name": "kDAssBent",
+		"description": "Maximum assimilation rate (1/day)",
+		"inputType": "tabular",
+		"groups": "zoobenthosGroups",
+		"groupDefaultValues": 0.1,
+		"parentName": "zoobenthosGrazing"
+	},
+	{
+		"label": "hDFoodBent",
+		"name": "hDFoodBent",
+		"description": "Half-saturating food for zoobenthos (g/m\u00b2)",
+		"inputType": "tabular",
+		"groups": "zoobenthosGroups",
+		"groupDefaultValues": 200,
+		"parentName": "zoobenthosGrazing"
+	},
+	{
+		"label": "Egestion/Pellets",
+		"name": "zoobenthosEgestion",
+		"parentName": "zoobenthos"
+	},
+	{
+		"label": "kPelBent",
+		"name": "kPelBent",
+		"description": "Egestion/Pellets rate for zoobenthos (1/day)",
+		"inputType": "tabular",
+		"groups": "zoobenthosGroups",
+		"groupDefaultValues": 0.01,
+		"parentName": "zoobenthosEgestion"
+	},
+	{
+		"label": "Respiration/Excretion",
+		"name": "zoobenthosRespiration",
+		"parentName": "zoobenthos"
+	},
+	{
+		"label": "kDRespBent",
+		"name": "kDRespBent",
+		"description": "Maintenance respiration constant for zoobenthos (1/day)",
+		"inputType": "tabular",
+		"groups": "zoobenthosGroups",
+		"groupDefaultValues": 0.005,
+		"parentName": "zoobenthosRespiration"
+	},
+	{
+		"label": "Mortality",
+		"name": "zoobenthosMortality",
+		"parentName": "zoobenthos"
+	},
+	{
+		"label": "kMortBent",
+		"name": "kMortBent",
+		"description": "Mortality constant for zoobenthos (1/day)",
+		"inputType": "tabular",
+		"groups": "zoobenthosGroups",
+		"groupDefaultValues": 0.005,
+		"parentName": "zoobenthosMortality"
+	},
+	{
+		"label": "Ratios",
+		"name": "zoobenthosRatios",
+		"parentName": "zoobenthos"
+	},
+	{
+		"label": "cCDBentRef",
+		"name": "cCDBentRef",
+		"description": "reference C/D-ratio for zoobenthos",
+		"inputType": "tabular",
+		"groups": "zoobenthosGroups",
+		"groupDefaultValues": 0.45,
+		"parentName": "zoobenthosRatios"
+	},
+	{
+		"label": "cNDBentRef",
+		"name": "cNDBentRef",
+		"description": "reference N/D-ratio for zoobenthos",
+		"inputType": "tabular",
+		"groups": "zoobenthosGroups",
+		"groupDefaultValues": 0.08,
+		"parentName": "zoobenthosRatios"
+	},
+	{
+		"label": "cPDBentRef",
+		"name": "cPDBentRef",
+		"description": "reference P/D-ratio for zoobenthos",
+		"inputType": "tabular",
+		"groups": "zoobenthosGroups",
+		"groupDefaultValues": 0.01,
+		"parentName": "zoobenthosRatios"
 	}
 ]
