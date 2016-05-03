@@ -176,6 +176,8 @@ void GridData::buildInputPolyData() {
             } catch (const GeographicLib::GeographicErr&) {
                 throw GridDataException(QString("Latitude/longitude out of range at line %1.").arg(i + 1).toStdString());
             }
+        } else if (coordinateSystem == CoordinateSystem::UTM) {
+            inputPoints->SetPoint(i, point[0], point[1], 0.0);
         }
         
         weights->SetTuple1(i, point[2]);
