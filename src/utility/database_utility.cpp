@@ -15,7 +15,7 @@ DatabaseUtility* DatabaseUtility::instance = nullptr;
 DatabaseUtility::DatabaseUtility() : previousDatabase(nullptr) {}
 
 DatabaseUtility* DatabaseUtility::getInstance() {
-    if (instance == nullptr) {
+    if (!instance) {
         instance = new DatabaseUtility();
     }
     

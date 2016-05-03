@@ -10,7 +10,7 @@
 UnstructuredMesh::UnstructuredMesh() {}
 
 void UnstructuredMesh::generate() {
-    if (boundaryPolygon == nullptr) {
+    if (!boundaryPolygon) {
         throw MeshException("No boundary defined.");
     }
 

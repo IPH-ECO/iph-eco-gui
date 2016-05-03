@@ -105,7 +105,7 @@ void HydrodynamicDataDialog::setupItems() {
         HydrodynamicProcess *process = processes[i];
         QTreeWidgetItem *item = nullptr;
         
-        if (process->getParent() == nullptr) {
+        if (!process->getParent()) {
             item = new QTreeWidgetItem(ui->trwProcesses, QStringList(process->getLabel()));
         } else {
             QTreeWidgetItem *parentItem = nullptr;
@@ -288,7 +288,7 @@ void HydrodynamicDataDialog::on_btnApplyConfiguration_clicked() {
                     parameter->getParent()->setValue(parameter->getParentValue());
                 }
                 
-                if (lineEdit != nullptr) {
+                if (lineEdit) {
                     double value = lineEdit->text().toDouble();
                     
                     if (parameter->isInRange(value)) {
@@ -337,7 +337,7 @@ void HydrodynamicDataDialog::on_trwProcesses_itemChanged(QTreeWidgetItem *item, 
     
     process->setChecked(item->checkState(0) == Qt::Checked);
     
-    if (parent != nullptr) {
+    if (parent) {
         if (process->isChecked()) {
             // Unchecks all item siblings
             QList<HydrodynamicProcess*> siblings = process->getSiblings();
@@ -427,7 +427,7 @@ void HydrodynamicDataDialog::on_btnRemoveBoundaryCondition_clicked() {
 }
 
 void HydrodynamicDataDialog::closeEvent(QCloseEvent *event) {
-    if (boundaryConditionDialog != nullptr && boundaryConditionDialog->isVisible()) {
+    if (boundaryConditionDialog && boundaryConditionDialog->isVisible()) {
         event->ignore();
     } else {
         boundaryConditionDialog = nullptr;
@@ -439,7 +439,7 @@ void HydrodynamicDataDialog::toggleWidgets(bool enable) {
     for (int i = 0; i < ui->leftLayout->count(); i++) {
         QWidget *widget = ui->leftLayout->itemAt(i)->widget();
         
-        if (widget != nullptr) {
+        if (widget) {
             widget->setEnabled(enable);
         }
     }
@@ -462,7 +462,7 @@ void HydrodynamicDataDialog::toggleWidgets(bool enable) {
 }
 
 void HydrodynamicDataDialog::on_tblBoundaryConditions_currentItemChanged(QTableWidgetItem *current, QTableWidgetItem *previous) {
-    if (current != nullptr && (previous == nullptr || current->row() != previous->row())) {
+    if (current && (!previous || current->row() != previous->row())) {
         BoundaryCondition *boundaryCondition = currentConfiguration->getBoundaryCondition(current->row());
         
         ui->vtkWidget->getMouseInteractor()->highlightBoundaryCondition(boundaryCondition, true);

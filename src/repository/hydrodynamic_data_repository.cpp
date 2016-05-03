@@ -8,7 +8,7 @@
 HydrodynamicDataRepository* HydrodynamicDataRepository::instance = nullptr;
 
 HydrodynamicDataRepository* HydrodynamicDataRepository::getInstance() {
-    if (instance == nullptr) {
+    if (!instance) {
         instance = new HydrodynamicDataRepository();
     }
     
@@ -105,7 +105,7 @@ QList<HydrodynamicProcess*> HydrodynamicDataRepository::getProcesses(Hydrodynami
 
         process->setTargetParameter(targetParameter);
         
-        if (targetParameter != nullptr) {
+        if (targetParameter) {
             process->setChecked(targetParameter->isSelected());
         }
     }

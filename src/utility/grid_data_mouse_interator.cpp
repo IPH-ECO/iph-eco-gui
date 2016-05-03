@@ -21,7 +21,7 @@ GridDataMouseInteractor::GridDataMouseInteractor() :
 void GridDataMouseInteractor::OnLeftButtonUp() {
     vtkInteractorStyleRubberBandPick::OnLeftButtonUp();
     
-    if (pickerMode == PickerMode::MULTIPLE_CELL && meshPolyData != nullptr) {
+    if (pickerMode == PickerMode::MULTIPLE_CELL && meshPolyData) {
         vtkSmartPointer<vtkExtractSelectedFrustum> extractor = vtkSmartPointer<vtkExtractSelectedFrustum>::New();
         extractor->PreserveTopologyOff();
         extractor->SetInputData(meshPolyData);
@@ -45,7 +45,7 @@ void GridDataMouseInteractor::OnLeftButtonUp() {
 }
 
 void GridDataMouseInteractor::pickCell() {
-    if (lastCellId != -1 && meshPolyData != nullptr && selectionActor != nullptr) {
+    if (lastCellId != -1 && meshPolyData && selectionActor) {
         bool inSelectionArray = false;
         
         for (vtkIdType i = 0; i < cellIdsArray->GetNumberOfTuples(); i++) {

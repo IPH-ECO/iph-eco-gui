@@ -34,7 +34,7 @@ MeshPolygon::MeshPolygon(const QString &name, const QString &filename, const Mes
 
 void MeshPolygon::build(const CoordinateSystem &coordinateSystem) {
     if (this->filename.isEmpty()) {
-        if (originalPolygon == nullptr) {
+        if (!originalPolygon) {
             throw MeshPolygonException("Unexpected behaviour: original mesh polygon not present.");
         }
         
