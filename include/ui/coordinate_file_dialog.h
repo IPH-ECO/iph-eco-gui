@@ -11,16 +11,16 @@ class CoordinateFileDialog : public QFileDialog {
     Q_OBJECT
 private:
     void addCoordinateCheckBoxes() {
-        QRadioButton *rdoLatLong = new QRadioButton("Geographic Coordinate System (Lat/Long)", this);
-        rdoLatLong->setObjectName("rdoLatLong");
-        rdoLatLong->setChecked(true);
-        
         QRadioButton *rdoUtm = new QRadioButton("Projected Coordinate System", this);
         rdoUtm->setObjectName("rdoUtm");
+        rdoUtm->setChecked(true);
+        
+        QRadioButton *rdoLatLong = new QRadioButton("Geographic Coordinate System (Lat/Long)", this);
+        rdoLatLong->setObjectName("rdoLatLong");
         
         QHBoxLayout *horizontalLayout = new QHBoxLayout();
-        horizontalLayout->addWidget(rdoLatLong);
         horizontalLayout->addWidget(rdoUtm);
+        horizontalLayout->addWidget(rdoLatLong);
         
         QGridLayout *gridLayout = this->findChild<QGridLayout*>();
         gridLayout->addLayout(horizontalLayout, gridLayout->rowCount(), 0, 1, 2);
