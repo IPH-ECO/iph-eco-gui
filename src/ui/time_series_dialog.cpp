@@ -297,6 +297,7 @@ void TimeSeriesDialog::on_spxCurrentPage_valueChanged(int page) {
     ui->tblTimeSeries->setRowCount(0);
     
     ui->tblTimeSeries->blockSignals(true);
+    
     for (int i = startIndex; i < endIndex; i++, row++) {
         TimeSeries *timeSeries = &copyTimeSeriesList[i];
         QDateTime dateTime = QDateTime::fromTime_t(timeSeries->getTimeStamp(), Qt::UTC);
@@ -307,6 +308,7 @@ void TimeSeriesDialog::on_spxCurrentPage_valueChanged(int page) {
         if (timeSeriesType != TimeSeriesType::DEFAULT) {
             ui->tblTimeSeries->setItem(row, 2, new QTableWidgetItem(QString::number(timeSeries->getValue2())));
         }
+        ui->tblTimeSeries->setVerticalHeaderItem(row, new QTableWidgetItem(QString::number(i + 1)));
     }
     ui->tblTimeSeries->blockSignals(false);
 }
