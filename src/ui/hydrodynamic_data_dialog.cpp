@@ -194,8 +194,8 @@ void HydrodynamicDataDialog::on_cbxConfiguration_currentIndexChanged(const QStri
         
         for (BoundaryCondition *boundaryCondition : boundaryConditions) {
             ui->tblBoundaryConditions->insertRow(i);
-            ui->tblBoundaryConditions->setItem(i, 0, new QTableWidgetItem(boundaryCondition->getTypeStr()));
-            ui->tblBoundaryConditions->setItem(i, 1, new QTableWidgetItem(boundaryCondition->getFunctionStr()));
+            ui->tblBoundaryConditions->setItem(i, 0, new QTableWidgetItem(boundaryCondition->getTypeLabel()));
+            ui->tblBoundaryConditions->setItem(i, 1, new QTableWidgetItem(boundaryCondition->getFunctionLabel()));
             ui->vtkWidget->getMouseInteractor()->renderBoundaryCondition(boundaryCondition);
             i++;
         }
