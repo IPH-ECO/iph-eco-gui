@@ -84,6 +84,299 @@
 		"parentName": "general"
 	},
 	{
+		"label": "Sediments",
+		"name": "sediments"
+	},
+	{
+		"label": "Number of layers in the sediment",
+		"name": "sedimentsNumberOfLayers",
+		"parentName": "sediments"
+	},
+	{
+		"label": "nsed",
+		"name": "nsed",
+		"description": "Number of layers in the sediment",
+		"inputType": "inline",
+		"defaultValue": 1,
+		"parentName": "sedimentsNumberOfLayers"
+	},
+	{
+		"label": "cDepthS",
+		"name": "cDepthS",
+		"description": "Sediment depth (m)",
+		"inputType": "inline",
+		"defaultValue": 0.1,
+		"parentName": "sedimentsNumberOfLayers"
+	},
+	{
+		"label": "cRhoIM",
+		"name": "cRhoIM",
+		"description": "Density of sediment IM (g/m3 solid)",
+		"inputType": "inline",
+		"defaultValue": 2500000,
+		"parentName": "sedimentsNumberOfLayers"
+	},
+	{
+		"label": "cRhoOM",
+		"name": "cRhoOM",
+		"description": "Density of sediment OM (g/m3 solid)",
+		"inputType": "inline",
+		"defaultValue": 1400000,
+		"parentName": "sedimentsNumberOfLayers"
+	},
+	{
+		"label": "Diffusion in the water-sediment interface",
+		"name": "sedimentsDiffusion",
+		"parentName": "sediments"
+	},
+	{
+		"label": "fDepthDifS",
+		"name": "fDepthDifS",
+		"description": "Diffusion distance as fraction of sediment depth",
+		"inputType": "inline",
+		"defaultValue": 0.5,
+		"parentName": "sedimentsDiffusion"
+	},
+	{
+		"label": "cThetaDif",
+		"name": "cThetaDif",
+		"description": "Temperature coefficient for diffusion",
+		"inputType": "inline",
+		"defaultValue": 1.02,
+		"parentName": "sedimentsDiffusion"
+	},
+	{
+		"label": "kPDifDomR",
+		"name": "kPDifDomR",
+		"description": "Refratory POM diffusion constant (m\u00b2/day)",
+		"inputType": "inline",
+		"defaultValue": 0.000072,
+		"parentName": "sedimentsDiffusion"
+	},
+	{
+		"label": "kPDifDomL",
+		"name": "kPDifDomL",
+		"description": "Labile POM diffusion constant (m\u00b2/day)",
+		"inputType": "inline",
+		"defaultValue": 0.000072,
+		"parentName": "sedimentsDiffusion"
+	},
+	{
+		"label": "kCDifDic",
+		"name": "kCDifDic",
+		"description": "DIC diffusion constant (m\u00b2/day)",
+		"inputType": "inline",
+		"defaultValue": 0.000072,
+		"parentName": "sedimentsDiffusion"
+	},
+	{
+		"label": "kPDifPO4",
+		"name": "kPDifPO4",
+		"description": "PO4 diffusion constant (m\u00b2/day)",
+		"inputType": "inline",
+		"defaultValue": 0.000072,
+		"parentName": "sedimentsDiffusion"
+	},
+	{
+		"label": "kNDifNO3",
+		"name": "kNDifNO3",
+		"description": "NO3 diffusion constant (m\u00b2/day)",
+		"inputType": "inline",
+		"defaultValue": 0.000086,
+		"parentName": "sedimentsDiffusion"
+	},
+	{
+		"label": "kNDifNH4",
+		"name": "kNDifNH4",
+		"description": "NH4 diffusion constant (m\u00b2/day)",
+		"inputType": "inline",
+		"defaultValue": 0.000072,
+		"parentName": "sedimentsDiffusion"
+	},
+	{
+		"label": "kO2Dif",
+		"name": "kO2Dif",
+		"description": "O2 diffusion constant (m\u00b2/day)",
+		"inputType": "inline",
+		"defaultValue": 0.000026,
+		"parentName": "sedimentsDiffusion"
+	},
+	{
+		"label": "cTurbDifNut",
+		"name": "cTurbDifNut",
+		"description": "Bioturbation factor for diffusion for nutrients",
+		"inputType": "inline",
+		"defaultValue": 1,
+		"parentName": "sedimentsDiffusion"
+	},
+	{
+		"label": "cturbDifO2",
+		"name": "cturbDifO2",
+		"description": "Bioturbation factor for diffusion for O2 (m\u00b2/day)",
+		"inputType": "inline",
+		"defaultValue": 1,
+		"parentName": "sedimentsDiffusion"
+	},
+	{
+		"label": "Erosion",
+		"name": "sedimentsErosion",
+		"parentName": "sediments"
+	},
+	{
+		"label": "cDErosTot",
+		"name": "cDErosTot",
+		"description": "Erosion input (g/m\u00b2/day)",
+		"inputType": "inline",
+		"defaultValue": 0.1,
+		"parentName": "sedimentsErosion"
+	},
+	{
+		"label": "fDOrgSoil",
+		"name": "fDOrgSoil",
+		"description": "Fraction soil organic matter",
+		"inputType": "inline",
+		"defaultValue": 0.1,
+		"parentName": "sedimentsErosion"
+	},
+	{
+		"label": "fSedErosIM",
+		"name": "fSedErosIM",
+		"description": "Instantly sedimentating fraction of IM",
+		"inputType": "inline",
+		"defaultValue": 0.95,
+		"parentName": "sedimentsErosion"
+	},
+	{
+		"label": "Resuspension",
+		"name": "sedimentsResuspension",
+		"parentName": "sediments"
+	},
+	{
+		"label": "cSuspRef",
+		"name": "cSuspRef",
+		"description": "Reference suspended matter function",
+		"inputType": "inline",
+		"defaultValue": 0.5,
+		"parentName": "sedimentsResuspension"
+	},
+	{
+		"label": "cSuspMin",
+		"name": "cSuspMin",
+		"description": "Minimum value of logistic function",
+		"inputType": "inline",
+		"defaultValue": 6.1,
+		"parentName": "sedimentsResuspension"
+	},
+	{
+		"label": "cSuspMax",
+		"name": "cSuspMax",
+		"description": "Maximum value of logistic function",
+		"inputType": "inline",
+		"defaultValue": 25.2,
+		"parentName": "sedimentsResuspension"
+	},
+	{
+		"label": "cSuspSlope",
+		"name": "cSuspSlope",
+		"description": "Slope of logistic function",
+		"inputType": "inline",
+		"defaultValue": 2.1,
+		"parentName": "sedimentsResuspension"
+	},
+	{
+		"label": "hDepthSusp",
+		"name": "hDepthSusp",
+		"description": "Half-sat. value of depth in logistic function (m)",
+		"inputType": "inline",
+		"defaultValue": 2,
+		"parentName": "sedimentsResuspension"
+	},
+	{
+		"label": "cFetchRef",
+		"name": "cFetchRef",
+		"description": "Reference fetch (m)",
+		"inputType": "inline",
+		"defaultValue": 1000,
+		"parentName": "sedimentsResuspension"
+	},
+	{
+		"label": "kTurbFish",
+		"name": "kTurbFish",
+		"description": "Relative resuspension by adult fish browsing (g/g fish/day)",
+		"inputType": "inline",
+		"defaultValue": 1,
+		"parentName": "sedimentsResuspension"
+	},
+	{
+		"label": "kVegResus",
+		"name": "kVegResus",
+		"description": "Relative resuspension reduction per g vegetation (m\u00b2/gDW)",
+		"inputType": "inline",
+		"defaultValue": 0.01,
+		"parentName": "sedimentsResuspension"
+	},
+	{
+		"label": "Fractions",
+		"name": "sedimentsFractions",
+		"parentName": "sediments"
+	},
+	{
+		"label": "fDTotS0",
+		"name": "fDTotS0",
+		"description": "Initial dry-weight fraction in sediment (g solid g-1 sediment)",
+		"inputType": "inline",
+		"defaultValue": 0.3,
+		"parentName": "sedimentsFractions"
+	},
+	{
+		"label": "fDOrgS0",
+		"name": "fDOrgS0",
+		"description": "Initial organic fraction of sediment DW (g afDW g-1 solid)",
+		"inputType": "inline",
+		"defaultValue": 0.001,
+		"parentName": "sedimentsFractions"
+	},
+	{
+		"label": "fDLabilS0",
+		"name": "fDLabilS0",
+		"description": "Initial labile fraction in the sediment OM",
+		"inputType": "inline",
+		"defaultValue": 0.3,
+		"parentName": "sedimentsFractions"
+	},
+	{
+		"label": "fPAdsS0",
+		"name": "fPAdsS0",
+		"description": "Initial adsorbed fraction of inorg. P in sed.",
+		"inputType": "inline",
+		"defaultValue": 0.99,
+		"parentName": "sedimentsFractions"
+	},
+	{
+		"label": "fPInorgS0",
+		"name": "fPInorgS0",
+		"description": "initial inorg. P fraction in sed",
+		"inputType": "inline",
+		"defaultValue": 0.000001,
+		"parentName": "sedimentsFractions"
+	},
+	{
+		"label": "fLutum",
+		"name": "fLutum",
+		"description": "Fraction lutum in the inorganic matter (g/g)",
+		"inputType": "inline",
+		"defaultValue": 0.2,
+		"parentName": "sedimentsFractions"
+	},
+	{
+		"label": "fLutumRef",
+		"name": "fLutumRef",
+		"description": "Reference lutum fraction (g/g)",
+		"inputType": "inline",
+		"defaultValue": 0.2,
+		"parentName": "sedimentsFractions"
+	},
+	{
 		"label": "Nutrients & gases",
 		"name": "nutrientsGases"
 	},
@@ -276,7 +569,7 @@
 	},
 	{
 		"label": "Longwave atmospheric radiation",
-		"name": "shortwaveSolarRadiation",
+		"name": "longwaveSolarRadiation",
 		"parentName": "iTemp"
 	},
 	{
@@ -286,7 +579,7 @@
 		"inputType": "tabular",
 		"groups": "heatBudgetModelingGroups",
 		"groupDefaultValues": 0.00000117,
-		"parentName": "shortwaveSolarRadiation"
+		"parentName": "longwaveSolarRadiation"
 	},
 	{
 		"label": "a_param",
@@ -295,7 +588,7 @@
 		"inputType": "tabular",
 		"groups": "heatBudgetModelingGroups",
 		"groupDefaultValues": 0.6,
-		"parentName": "shortwaveSolarRadiation"
+		"parentName": "longwaveSolarRadiation"
 	},
 	{
 		"label": "Blackbody radiation from the water surface",

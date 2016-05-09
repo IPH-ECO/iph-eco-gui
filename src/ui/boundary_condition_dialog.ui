@@ -219,6 +219,11 @@
        <string>Water Flow</string>
       </property>
      </item>
+     <item>
+      <property name="text">
+       <string>Normal Depth</string>
+      </property>
+     </item>
     </widget>
    </item>
   </layout>

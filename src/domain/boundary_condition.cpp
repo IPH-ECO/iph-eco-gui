@@ -39,10 +39,6 @@ BoundaryConditionType BoundaryCondition::getType() const {
 	return type;
 }
 
-QString BoundaryCondition::getTypeStr() const {
-    return type == BoundaryConditionType::WATER_LEVEL ? "Water Level" : "Water Flow";
-}
-
 void BoundaryCondition::setType(const BoundaryConditionType &type) {
 	this->type = type;
 }
@@ -121,10 +117,6 @@ void BoundaryCondition::clearObjectIds() {
 
 BoundaryConditionFunction BoundaryCondition::getFunction() const {
 	return function;
-}
-
-QString BoundaryCondition::getFunctionStr() const {
-    return function == BoundaryConditionFunction::CONSTANT ? "Constant" : "Time Series";
 }
 
 void BoundaryCondition::setFunction(const BoundaryConditionFunction &function) {
@@ -225,6 +217,38 @@ bool BoundaryCondition::isTimeSeriesChanged() const {
 
 void BoundaryCondition::setTimeSeriesChanged(bool timeSeriesChanged) {
     this->timeSeriesChanged = timeSeriesChanged;
+}
+
+QString BoundaryCondition::getObjectTypeLabel() const {
+    if (this->type == BoundaryConditionType::WATER_FLOW || this->type == BoundaryConditionType::NORMAL_DEPTH) {
+        return "Edges";
+    }
+    
+    if (this->type == BoundaryConditionType::WATER_LEVEL) {
+        return "Cells";
+    }
+    
+    return "Undefined";
+}
+
+QString BoundaryCondition::getTypeLabel() const {
+    if (this->type == BoundaryConditionType::WATER_LEVEL) {
+        return "Water Level";
+    }
+    
+    if (this->type == BoundaryConditionType::WATER_FLOW) {
+        return "Water Flow";
+    }
+    
+    if (this->type == BoundaryConditionType::NORMAL_DEPTH) {
+        return "Normal Depth";
+    }
+    
+    return "Undefined";
+}
+
+QString BoundaryCondition::getFunctionLabel() const {
+    return function == BoundaryConditionFunction::CONSTANT ? "Constant" : "Time Series";
 }
 
 SimulationDataType::BoundaryCondition BoundaryCondition::toSimulationDataType(Mesh *mesh) const {

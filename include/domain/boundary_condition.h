@@ -12,7 +12,7 @@
 #include <QString>
 #include <QSet>
 
-enum class BoundaryConditionType { WATER_LEVEL = 1, WATER_FLOW };
+enum class BoundaryConditionType { WATER_LEVEL = 1, WATER_FLOW, NORMAL_DEPTH };
 enum class BoundaryConditionFunction { CONSTANT = 1, TIME_SERIES };
 enum class InputModule { HYDRODYNAMIC = 1, WATER_QUALITY };
 
@@ -43,8 +43,7 @@ public:
 	void setId(uint id);
 	bool isPersisted() const;
 	BoundaryConditionType getType() const;
-    QString getTypeStr() const;
-	void setType(const BoundaryConditionType &type);
+    void setType(const BoundaryConditionType &type);
 	QSet<vtkIdType> getObjectIds() const;
     vtkSmartPointer<vtkIdTypeArray> getVTKObjectIds() const;
     QString getVTKObjectsArrayName() const;
@@ -55,8 +54,7 @@ public:
     void removeObjectId(const vtkIdType &objectId);
     void clearObjectIds();
 	BoundaryConditionFunction getFunction() const;
-    QString getFunctionStr() const;
-	void setFunction(const BoundaryConditionFunction &function);
+    void setFunction(const BoundaryConditionFunction &function);
 	double getConstantValue() const;
 	void setConstantValue(double constantValue);
 	InputModule getInputModule() const;
@@ -72,6 +70,9 @@ public:
     void setVerticalIntegratedOutflow(bool verticalIntegratedOutflow);
     double getQuota() const;
     void setQuota(const double &quota);
+    QString getObjectTypeLabel() const;
+    QString getTypeLabel() const;
+    QString getFunctionLabel() const;
     
     vtkSmartPointer<vtkActor> getSelectionActor() const;
     void setSelectionActor(vtkSmartPointer<vtkActor> selectionActor);
