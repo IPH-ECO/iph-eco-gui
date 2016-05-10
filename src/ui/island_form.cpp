@@ -57,7 +57,7 @@ void IslandForm::accept() {
 }
 
 void IslandForm::on_btnBrowse_clicked() {
-    QString extensions = "Keyhole Markup Language file (*.kml);;Text file (*.txt *xyz)";
+    QString extensions = "Text file (*.txt *xyz);;Keyhole Markup Language file (*.kml)";
     CoordinateFileDialog *dialog = new CoordinateFileDialog(this, tr("Select a island file"), getDefaultDirectory(), extensions);
     int exitCode = dialog->exec();
     
