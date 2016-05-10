@@ -7,19 +7,19 @@
 #include <domain/mesh_polygon.h>
 #include <exceptions/mesh_polygon_exception.h>
 
-#include <QStringList>
-#include <QMultiMap>
 #include <QFile>
+#include <QMultiMap>
 #include <QIODevice>
-#include <QXmlStreamReader>
-#include <GeographicLib/GeoCoords.hpp>
-#include <vtkXMLPolyDataWriter.h>
-#include <vtkXMLPolyDataReader.h>
+#include <QFileInfo>
+#include <pugixml.hpp>
+#include <QStringList>
+#include <vtkPoints.h>
 #include <vtkPolyData.h>
 #include <vtkCellArray.h>
-#include <vtkPoints.h>
-#include <QFileInfo>
+#include <vtkXMLPolyDataWriter.h>
+#include <vtkXMLPolyDataReader.h>
 #include <vtkSimplePointsReader.h>
+#include <GeographicLib/GeoCoords.hpp>
 
 const QString MeshPolygon::BOUNDARY_POLYGON_NAME = "Boundary";
 
@@ -52,69 +52,66 @@ void MeshPolygon::build(const CoordinateSystem &coordinateSystem) {
     }
 }
 
+bool kmlCoordinates(const pugi::xml_node &node) {
+    return strcmp(node.name(), "coordinates") == 0 && strcmp(node.parent().parent().name(), "outerBoundaryIs") == 0;
+}
+
 void MeshPolygon::readFromKMLFile(const CoordinateSystem &coordinateSystem) {
-    QFile kmlFile(this->filename);
+    QByteArray filenameByteArray = this->filename.toLocal8Bit();
+    const char *xmlFilename = filenameByteArray.constData();
     
-    if (!kmlFile.open(QIODevice::ReadOnly | QIODevice::Text) || kmlFile.size() == 0) {
-        throw MeshPolygonException(QString("Unable to open KML file. Error: %1.").arg(kmlFile.errorString()).toStdString());
+    pugi::xml_document xmlDocument;
+    pugi::xml_parse_result xmlParseResult = xmlDocument.load_file(xmlFilename);
+    
+    if (xmlParseResult.status == pugi::xml_parse_status::status_file_not_found) {
+        throw MeshPolygonException("Boundary file not found.");
     }
     
-    QXmlStreamReader kmlReader(&kmlFile);
+    if (xmlParseResult.status != pugi::xml_parse_status::status_ok) {
+        throw MeshPolygonException("Unable to parse KML file.");
+    }
+    
+    pugi::xml_node coordinatesNode = xmlDocument.find_node(kmlCoordinates);
+    
+    if (coordinatesNode.empty()) {
+        throw MeshPolygonException("No coordinates information found in KML file.");
+    }
+    
+    QStringList coordinates = QString(coordinatesNode.text().as_string()).trimmed().split(" ");
+    const int coordinatesCount = coordinates.size() - 1; // KML repeats the first coordinate at the end of the list
     
     originalPolygon = vtkSmartPointer<vtkPolygon>::New();
+    originalPolygon->GetPoints()->SetNumberOfPoints(coordinatesCount);
+    originalPolygon->GetPointIds()->SetNumberOfIds(coordinatesCount);
+    
     this->latitudeAverage = 0.0;
     
-    while (!kmlReader.atEnd()) {
-        kmlReader.readNext();
+    for (int i = 0; i < coordinatesCount; i++) {
+        QStringList coordinateStr = coordinates.at(i).split(",");
+        double latitude = coordinateStr.at(1).toDouble();
+        double point[3] = { 0.0 };
         
-        if (kmlReader.name() == "outerBoundaryIs" && kmlReader.isStartElement()) {
-            do {
-                kmlReader.readNext();
-            } while (kmlReader.name() != "coordinates" && !kmlReader.atEnd());
-            
-            if (kmlReader.atEnd()) {
-                throw MeshPolygonException("No coordinates found in KML file.");
+        if (coordinateSystem == CoordinateSystem::LATITUDE_LONGITUDE) {
+            try {
+                GeographicLib::GeoCoords utmCoordinate(latitude, coordinateStr.at(0).toDouble());
+                point[0] = utmCoordinate.Easting();
+                point[1] = utmCoordinate.Northing();
+            } catch (const GeographicLib::GeographicErr&) {
+                throw MeshPolygonException(QString("Latitude/longitude out of range at line %1").arg(i + 1).toStdString());
             }
-            
-            QString coordinatesText = kmlReader.readElementText();
-            QStringList coordinates = coordinatesText.trimmed().split(" ");
-            int coordinatesCount = coordinates.size() - 1; // KML repeats the first coordinate at the end of the list
-            
-            originalPolygon->GetPoints()->SetNumberOfPoints(coordinatesCount);
-            originalPolygon->GetPointIds()->SetNumberOfIds(coordinatesCount);
-            
-            for (int i = 0; i < coordinatesCount; i++) {
-                QStringList coordinateStr = coordinates.at(i).split(",");
-                double latitude = coordinateStr.at(1).toDouble();
-                double point[3] = { 0.0 };
-                
-                if (coordinateSystem == CoordinateSystem::LATITUDE_LONGITUDE) {
-                    try {
-                        GeographicLib::GeoCoords utmCoordinate(latitude, coordinateStr.at(0).toDouble());
-                        point[0] = utmCoordinate.Easting();
-                        point[1] = utmCoordinate.Northing();
-                    } catch (const GeographicLib::GeographicErr&) {
-                        throw MeshPolygonException(QString("Latitude/longitude out of range at line %1").arg(i + 1).toStdString());
-                    }
-                } else if (coordinateSystem == CoordinateSystem::UTM) { // No conversion needed
-                    point[0] = coordinateStr.at(0).toDouble();
-                    point[1] = latitude;
-                } else {
-                    throw MeshPolygonException("Undefined coordinate system.");
-                }
-                
-                originalPolygon->GetPoints()->SetPoint(i, point);
-                originalPolygon->GetPointIds()->SetId(i, i);
-                latitudeAverage += latitude;
-            }
-            
-            latitudeAverage /= (double) coordinatesCount;
-            
-            break;
+        } else if (coordinateSystem == CoordinateSystem::UTM) { // No conversion needed
+            point[0] = coordinateStr.at(0).toDouble();
+            point[1] = latitude;
+        } else {
+            throw MeshPolygonException("Undefined coordinate system.");
         }
+        
+        originalPolygon->GetPoints()->SetPoint(i, point);
+        originalPolygon->GetPointIds()->SetId(i, i);
+        latitudeAverage += latitude;
     }
     
-    kmlFile.close();
+    latitudeAverage /= (double) coordinatesCount;
 }
 
 void MeshPolygon::readFromTextFile(const CoordinateSystem &coordinateSystem) {
