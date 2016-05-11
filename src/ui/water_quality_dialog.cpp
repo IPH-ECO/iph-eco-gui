@@ -66,7 +66,6 @@ void WaterQualityDialog::buildParametersTree(WaterQualityParameter *parameter) {
     }
 
     parameter->setItemWidget(parameterItem);
-    parameterItem->setExpanded(true);
     parameterItem->setToolTip(0, parameter->getDescription());
     parameterItem->setData(0, Qt::UserRole, QVariant(parameter->getName()));
     parameterItem->setData(1, Qt::UserRole, QVariant(parameter->getDiagramItem()));

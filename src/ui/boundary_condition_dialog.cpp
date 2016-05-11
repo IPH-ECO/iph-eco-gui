@@ -143,7 +143,6 @@ void BoundaryConditionDialog::on_cbxType_currentIndexChanged(const QString &type
         
         ui->rdoConstant->setChecked(isNormalDepth);
         ui->rdoTimeSeries->setDisabled(isNormalDepth);
-        ui->btnTimeSeries->setDisabled(isNormalDepth);
         ui->lblConstant->setText(isNormalDepth ? "Friction slope" : "Value");
         ui->chkVIO->setDisabled(isNormalDepth);
         ui->edtMinimumElevation->setDisabled(true);
@@ -254,6 +253,7 @@ void BoundaryConditionDialog::accept() {
     
     btnIndividualObjectPicker_clicked(false);
     btnMultipleObjectPicker_clicked(false);
+    hydrodynamicDataDialog->toggleZoomAreaAction(true);
     hydrodynamicDataDialog->toggleWidgets(true);
     
     QDialog::accept();
