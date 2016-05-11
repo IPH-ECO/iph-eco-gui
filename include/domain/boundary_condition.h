@@ -28,7 +28,8 @@ private:
 	QList<TimeSeries*> timeSeriesList;
     QString cellColor;
     bool verticalIntegratedOutflow;
-    double quota;
+    double minimumElevation;
+    double maximumElevation;
     
     // Transient attributes
     vtkSmartPointer<vtkActor> selectionActor;
@@ -68,8 +69,10 @@ public:
     void setCellColor(const QString &cellColor);
     bool useVerticalIntegratedOutflow() const;
     void setVerticalIntegratedOutflow(bool verticalIntegratedOutflow);
-    double getQuota() const;
-    void setQuota(const double &quota);
+    double getMinimumElevation() const;
+    void setMinimumElevation(const double &minimumElevation);
+    double getMaximumElevation() const;
+    void setMaximumElevation(const double &maximumElevation);
     QString getObjectTypeLabel() const;
     QString getTypeLabel() const;
     QString getFunctionLabel() const;
