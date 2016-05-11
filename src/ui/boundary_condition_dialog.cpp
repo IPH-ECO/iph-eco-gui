@@ -334,13 +334,13 @@ bool BoundaryConditionDialog::isValid() {
         }
         
         double minimumElevation = ui->edtMinimumElevation->text().toDouble();
-        double minimumWeight = __DBL_MIN__;
+        double minimumWeight = std::numeric_limits<double>::min();
         
         for (vtkIdType cellId : boundaryCells) {
             QByteArray arrayName = bathymetryGridData->getName().toLocal8Bit();
             double weight = mesh->getMeshPolyData()->GetCellData()->GetScalars(arrayName.constData())->GetTuple1(cellId);
             
-            if (minimumWeight == __DBL_MIN__) {
+			if (minimumWeight == std::numeric_limits<double>::min()) {
                 minimumWeight = weight;
             } else if (weight < minimumWeight) {
                 minimumWeight = weight;
