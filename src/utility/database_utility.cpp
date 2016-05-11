@@ -135,7 +135,8 @@ void DatabaseUtility::createApplicationTables() {
         "input_module integer not null, " \
         "cell_color varchar(7) default '#FFFFFF', " \
         "vertical_integrated_outflow boolean default true, " \
-        "quota float default null, " \
+        "minimum_elevation float default null, " \
+        "maximum_elevation float default null, " \
         "configuration_id integer not null" \
     ")";
     

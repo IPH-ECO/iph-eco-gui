@@ -187,12 +187,20 @@ void BoundaryCondition::setVerticalIntegratedOutflow(bool verticalIntegratedOutf
     this->verticalIntegratedOutflow = verticalIntegratedOutflow;
 }
 
-double BoundaryCondition::getQuota() const {
-    return quota;
+double BoundaryCondition::getMinimumElevation() const {
+    return minimumElevation;
 }
 
-void BoundaryCondition::setQuota(const double &quota) {
-    this->quota = quota;
+void BoundaryCondition::setMinimumElevation(const double &minimumElevation) {
+    this->minimumElevation = minimumElevation;
+}
+
+double BoundaryCondition::getMaximumElevation() const {
+    return maximumElevation;
+}
+
+void BoundaryCondition::setMaximumElevation(const double &maximumElevation) {
+    this->maximumElevation = maximumElevation;
 }
 
 vtkSmartPointer<vtkActor> BoundaryCondition::getSelectionActor() const {
@@ -313,7 +321,8 @@ SimulationDataType::BoundaryCondition BoundaryCondition::toSimulationDataType(Me
     }
     
     boundaryCondition.verticalIntegratedOutflow = this->verticalIntegratedOutflow;
-    boundaryCondition.quota = this->quota;
+    boundaryCondition.minimumElevation = this->minimumElevation;
+    boundaryCondition.maximumElevation = this->maximumElevation;
     
     return boundaryCondition;
 }

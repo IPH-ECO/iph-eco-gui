@@ -228,7 +228,8 @@ void ProjectRepository::loadBoundaryConditions(HydrodynamicConfiguration *config
         boundaryCondition->setInputModule((InputModule) query.value("input_module").toInt());
         boundaryCondition->setCellColor(query.value("cell_color").toString());
         boundaryCondition->setVerticalIntegratedOutflow(query.value("vertical_integrated_outflow").toBool());
-        boundaryCondition->setQuota(query.value("quota").toDouble());
+        boundaryCondition->setMinimumElevation(query.value("minimum_elevation").toDouble());
+        boundaryCondition->setMaximumElevation(query.value("maximum_elevation").toDouble());
         
         configuration->addBoundaryCondition(boundaryCondition);
         
@@ -776,10 +777,10 @@ void ProjectRepository::saveBoundaryConditions(HydrodynamicConfiguration *config
         }
 
         if (!this->makeCopy && boundaryCondition->isPersisted()) {
-            query.prepare("update boundary_condition set type = :t, object_ids = :o, function = :f, constant_value = :c, cell_color = :cc, vertical_integrated_outflow = :v, quota = :q where id = :i");
+            query.prepare("update boundary_condition set type = :t, object_ids = :o, function = :f, constant_value = :c, cell_color = :cc, vertical_integrated_outflow = :v, minimum_elevation = :m1, maximum_elevation = :m2 where id = :i");
             query.bindValue(":i", boundaryCondition->getId());
         } else {
-            query.prepare("insert into boundary_condition (type, object_ids, function, constant_value, input_module, cell_color, vertical_integrated_outflow, quota, configuration_id) values (:t, :o, :f, :c, :i, :cc, :v, :q, :ci)");
+            query.prepare("insert into boundary_condition (type, object_ids, function, constant_value, input_module, cell_color, vertical_integrated_outflow, minimum_elevation, maximum_elevation, configuration_id) values (:t, :o, :f, :c, :i, :cc, :v, :m1, :m2, :ci)");
             query.bindValue(":i", (int) boundaryCondition->getInputModule());
             query.bindValue(":ci", configuration->getId());
         }
@@ -790,7 +791,8 @@ void ProjectRepository::saveBoundaryConditions(HydrodynamicConfiguration *config
         query.bindValue(":c", boundaryCondition->getConstantValue());
         query.bindValue(":cc", boundaryCondition->getCellColor());
         query.bindValue(":v", boundaryCondition->useVerticalIntegratedOutflow());
-        query.bindValue(":q", boundaryCondition->getQuota());
+        query.bindValue(":m1", boundaryCondition->getMinimumElevation());
+        query.bindValue(":m2", boundaryCondition->getMaximumElevation());
 
         if (!query.exec()) {
             throw DatabaseException(QString("Unable to save hydrodynamic boundary conditions. Error: %1.").arg(query.lastError().text()).toStdString());

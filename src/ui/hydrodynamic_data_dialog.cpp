@@ -139,7 +139,7 @@ void HydrodynamicDataDialog::setupItems() {
         }
     }
     
-    this->expandTrees();
+    this->expandParameterTree();
     
     // Initial conditions
     for (HydrodynamicParameter *parameter : parameters) {
@@ -156,15 +156,8 @@ void HydrodynamicDataDialog::setupItems() {
     }
 }
 
-void HydrodynamicDataDialog::expandTrees() {
-    QTreeWidgetItemIterator it(ui->trwProcesses, QTreeWidgetItemIterator::All);
-    
-    while (*it) {
-        (*it)->setExpanded(true);
-        it++;
-    }
-    
-    it = QTreeWidgetItemIterator(ui->trwParameters, QTreeWidgetItemIterator::All);
+void HydrodynamicDataDialog::expandParameterTree() {
+    QTreeWidgetItemIterator it(ui->trwParameters, QTreeWidgetItemIterator::All);
     
     while (*it) {
         QTreeWidgetItem *item = *it;

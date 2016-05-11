@@ -79,7 +79,8 @@ namespace SimulationDataType {
             int timeSeriesListSize;
             SimulationDataType::TimeSeries *timeSeriesList;
             bool verticalIntegratedOutflow;
-            double quota;
+            double minimumElevation;
+            double maximumElevation;
             
             BoundaryCondition();
             void destroy();

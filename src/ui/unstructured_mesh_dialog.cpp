@@ -44,7 +44,7 @@ UnstructuredMeshDialog::~UnstructuredMeshDialog() {
 }
 
 void UnstructuredMeshDialog::on_btnBoundaryFileBrowser_clicked() {
-    QString extensions = "Keyhole Markup Language file (*.kml);;Text file (*.txt *xyz)";
+    QString extensions = "Text file (*.txt *xyz);;Keyhole Markup Language file (*.kml)";
     CoordinateFileDialog *dialog = new CoordinateFileDialog(this, tr("Select a boundary file"), getDefaultDirectory(), extensions);
     int exitCode = dialog->exec();
     
@@ -110,7 +110,7 @@ void UnstructuredMeshDialog::on_lstRefinementAreas_itemSelectionChanged() {
 }
 
 void UnstructuredMeshDialog::on_btnAddCoordinatesFile_clicked() {
-    QString extensions = "Keyhole Markup Language file (*.kml);;Text file (*.txt *xyz)";
+    QString extensions = "Text file (*.txt *xyz);;Keyhole Markup Language file (*.kml)";
     CoordinateFileDialog *dialog = new CoordinateFileDialog(this, tr("Select a boundary file"), getDefaultDirectory(), extensions);
     int exitCode = dialog->exec();
     

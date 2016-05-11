@@ -97,7 +97,7 @@ TimeSeriesChartDialog::~TimeSeriesChartDialog() {
 }
 
 void TimeSeriesChartDialog::on_btnBrowsePointsFile_clicked() {
-    QString extensions = "Keyhole Markup Language file (*.kml);;Text file (*.txt *xyz)";
+    QString extensions = "Text file (*.txt *xyz);;Keyhole Markup Language file (*.kml)";
     CoordinateFileDialog *dialog = new CoordinateFileDialog(this, tr("Select a coordinate file"), getDefaultDirectory(), extensions);
     int exitCode = dialog->exec();
     

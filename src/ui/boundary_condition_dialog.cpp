@@ -70,9 +70,11 @@ BoundaryConditionDialog::BoundaryConditionDialog(HydrodynamicConfiguration *conf
         
         ui->chkVIO->setEnabled(boundaryCondition->getType() == BoundaryConditionType::WATER_FLOW);
         ui->chkVIO->setChecked(useVerticalIntegratedOutflow);
-        ui->edtQuota->setEnabled(!useVerticalIntegratedOutflow);
+        ui->edtMinimumElevation->setEnabled(!useVerticalIntegratedOutflow);
+        ui->edtMaximumElevation->setEnabled(!useVerticalIntegratedOutflow);
         if (!useVerticalIntegratedOutflow) {
-            ui->edtQuota->setText(QString::number(boundaryCondition->getQuota()));
+            ui->edtMinimumElevation->setText(QString::number(boundaryCondition->getMinimumElevation()));
+            ui->edtMaximumElevation->setText(QString::number(boundaryCondition->getMaximumElevation()));
         }
         btnIndividualObjectPicker->setEnabled(ui->cbxType->currentText() == "Water Level");
     } else {
@@ -140,15 +142,15 @@ void BoundaryConditionDialog::on_cbxType_currentIndexChanged(const QString &type
         bool isNormalDepth = type == "Normal Depth";
         
         ui->rdoConstant->setChecked(isNormalDepth);
-        ui->edtConstant->setEnabled(isNormalDepth);
         ui->rdoTimeSeries->setDisabled(isNormalDepth);
-        ui->btnTimeSeries->setDisabled(isNormalDepth);
         ui->lblConstant->setText(isNormalDepth ? "Friction slope" : "Value");
         ui->chkVIO->setDisabled(isNormalDepth);
-        ui->edtQuota->setDisabled(true);
+        ui->edtMinimumElevation->setDisabled(true);
+        ui->edtMaximumElevation->setDisabled(true);
     } else {
         ui->chkVIO->setDisabled(true);
-        ui->edtQuota->setDisabled(isWaterLevel || ui->chkVIO->isChecked());
+        ui->edtMinimumElevation->setDisabled(isWaterLevel || ui->chkVIO->isChecked());
+        ui->edtMaximumElevation->setDisabled(isWaterLevel || ui->chkVIO->isChecked());
     }
 }
 
@@ -226,7 +228,8 @@ void BoundaryConditionDialog::accept() {
     currentBoundaryCondition->setFunction(ui->rdoConstant->isChecked() ? BoundaryConditionFunction::CONSTANT : BoundaryConditionFunction::TIME_SERIES);
     currentBoundaryCondition->setConstantValue(ui->edtConstant->text().toDouble());
     currentBoundaryCondition->setVerticalIntegratedOutflow(ui->chkVIO->isChecked());
-    currentBoundaryCondition->setQuota(ui->edtQuota->text().toDouble());
+    currentBoundaryCondition->setMinimumElevation(ui->edtMinimumElevation->text().toDouble());
+    currentBoundaryCondition->setMaximumElevation(ui->edtMaximumElevation->text().toDouble());
     currentBoundaryCondition->setInputModule(InputModule::HYDRODYNAMIC);
     
     if (ui->rdoTimeSeries->isChecked()) {
@@ -250,6 +253,7 @@ void BoundaryConditionDialog::accept() {
     
     btnIndividualObjectPicker_clicked(false);
     btnMultipleObjectPicker_clicked(false);
+    hydrodynamicDataDialog->toggleZoomAreaAction(true);
     hydrodynamicDataDialog->toggleWidgets(true);
     
     QDialog::accept();
@@ -267,7 +271,7 @@ void BoundaryConditionDialog::closeEvent(QCloseEvent *event) {
 
 void BoundaryConditionDialog::btnClearSelection_clicked() {
     QString question = tr("Are you sure you want to clear the current selection?");
-    QMessageBox::StandardButton button = QMessageBox::question(this, tr("Hydrodynamic Data"), question);
+    QMessageBox::StandardButton button = QMessageBox::question(this, tr("Boundary Condition"), question);
     
     if (button == QMessageBox::Yes) {
         hydrodynamicDataDialog->ui->vtkWidget->getMouseInteractor()->clearSelection();
@@ -308,9 +312,12 @@ bool BoundaryConditionDialog::isValid() {
         return false;
     }
     
-    if (ui->edtQuota->isEnabled()) {
-        if (ui->edtQuota->text().isEmpty()) {
-            QMessageBox::warning(this, tr("Boundary Condition"), tr("Please input a valid quota value."));
+    if (ui->edtMinimumElevation->isEnabled()) {
+        if (ui->edtMinimumElevation->text().isEmpty() || ui->edtMaximumElevation->text().isEmpty()) {
+            QMessageBox::warning(this, tr("Boundary Condition"), tr("Elevation interval can't be blank."));
+            return false;
+        } else if (ui->edtMinimumElevation->text().toDouble() > ui->edtMaximumElevation->text().toDouble()) {
+            QMessageBox::warning(this, tr("Boundary Condition"), tr("Invalid elevation interval."));
             return false;
         }
         
@@ -326,20 +333,22 @@ bool BoundaryConditionDialog::isValid() {
             }
         }
         
-        double quota = ui->edtQuota->text().toDouble();
-        double maxWeight = quota;
+        double minimumElevation = ui->edtMinimumElevation->text().toDouble();
+        double minimumWeight = std::numeric_limits<double>::min();
         
         for (vtkIdType cellId : boundaryCells) {
             QByteArray arrayName = bathymetryGridData->getName().toLocal8Bit();
             double weight = mesh->getMeshPolyData()->GetCellData()->GetScalars(arrayName.constData())->GetTuple1(cellId);
             
-            if (weight > maxWeight) {
-                maxWeight = weight;
+			if (minimumWeight == std::numeric_limits<double>::min()) {
+                minimumWeight = weight;
+            } else if (weight < minimumWeight) {
+                minimumWeight = weight;
             }
         }
         
-        if (maxWeight > quota) {
-            QMessageBox::warning(this, tr("Boundary Condition"), tr("Quota must be greater than or equal to %1.").arg(maxWeight));
+        if (minimumElevation < minimumWeight) {
+            QMessageBox::warning(this, tr("Boundary Condition"), tr("Minimum elevation must be greater than or equal to %1.").arg(minimumWeight));
             return false;
         }
     }

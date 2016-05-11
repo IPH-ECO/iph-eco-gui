@@ -124,7 +124,7 @@ void StructuredMeshDialog::on_btnRemoveMesh_clicked() {
 }
 
 void StructuredMeshDialog::on_btnBoundaryFileBrowser_clicked() {
-    QString extensions = "Keyhole Markup Language file (*.kml);;Text file (*.txt *xyz)";
+    QString extensions = "Text file (*.txt *xyz);;Keyhole Markup Language file (*.kml)";
     CoordinateFileDialog *dialog = new CoordinateFileDialog(this, tr("Select a boundary file"), getDefaultDirectory(), extensions);
     int exitCode = dialog->exec();
     
