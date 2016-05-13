@@ -44,8 +44,8 @@ UnstructuredMeshDialog::~UnstructuredMeshDialog() {
 }
 
 void UnstructuredMeshDialog::on_btnBoundaryFileBrowser_clicked() {
-    QString extensions = "Text file (*.txt *xyz);;Keyhole Markup Language file (*.kml)";
-    CoordinateFileDialog *dialog = new CoordinateFileDialog(this, tr("Select a boundary file"), getDefaultDirectory(), extensions);
+    CoordinateFileDialog::CoordinateFileDialogFilter filters = static_cast<CoordinateFileDialog::CoordinateFileDialogFilter>(CoordinateFileDialog::FILTER_TEXT | CoordinateFileDialog::FILTER_KML);
+    CoordinateFileDialog *dialog = new CoordinateFileDialog(this, tr("Select a boundary file"), getDefaultDirectory(), filters);
     int exitCode = dialog->exec();
     
     if (exitCode == QDialog::Accepted) {
@@ -110,8 +110,8 @@ void UnstructuredMeshDialog::on_lstRefinementAreas_itemSelectionChanged() {
 }
 
 void UnstructuredMeshDialog::on_btnAddCoordinatesFile_clicked() {
-    QString extensions = "Text file (*.txt *xyz);;Keyhole Markup Language file (*.kml)";
-    CoordinateFileDialog *dialog = new CoordinateFileDialog(this, tr("Select a boundary file"), getDefaultDirectory(), extensions);
+    CoordinateFileDialog::CoordinateFileDialogFilter filters = static_cast<CoordinateFileDialog::CoordinateFileDialogFilter>(CoordinateFileDialog::FILTER_TEXT | CoordinateFileDialog::FILTER_KML);
+    CoordinateFileDialog *dialog = new CoordinateFileDialog(this, tr("Select a boundary file"), getDefaultDirectory(), filters);
     int exitCode = dialog->exec();
     
     if (exitCode == QDialog::Accepted) {

@@ -21,6 +21,20 @@
 #include <vtkSimplePointsReader.h>
 #include <GeographicLib/GeoCoords.hpp>
 
+struct OuterBoundaryIsTagTreeWalker : public pugi::xml_tree_walker {
+    int outerBoundaryIsCount;
+
+    OuterBoundaryIsTagTreeWalker() : outerBoundaryIsCount(0) {}
+    
+    virtual bool for_each(pugi::xml_node &node) {
+        if (strcmp(node.name(), "outerBoundaryIs") == 0) {
+            outerBoundaryIsCount++;
+        }
+        
+        return true;
+    }
+};
+
 const QString MeshPolygon::BOUNDARY_POLYGON_NAME = "Boundary";
 
 const double MeshPolygon::DEFAULT_MINIMUM_ANGLE = 20.7;
@@ -69,6 +83,18 @@ void MeshPolygon::readFromKMLFile(const CoordinateSystem &coordinateSystem) {
     
     if (xmlParseResult.status != pugi::xml_parse_status::status_ok) {
         throw MeshPolygonException("Unable to parse KML file.");
+    }
+    
+    OuterBoundaryIsTagTreeWalker treeWalker;
+    
+    xmlDocument.traverse(treeWalker);
+    
+    if (treeWalker.outerBoundaryIsCount == 0) {
+        throw MeshPolygonException("No outerBoundaryIs tags founds in KML file.");
+    }
+    
+    if (treeWalker.outerBoundaryIsCount > 1) {
+        throw MeshPolygonException("Only one outerBoundaryIs tag is allowed in KML file.");
     }
     
     pugi::xml_node coordinatesNode = xmlDocument.find_node(kmlCoordinates);

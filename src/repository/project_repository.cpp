@@ -814,14 +814,14 @@ void ProjectRepository::saveBoundaryConditions(HydrodynamicConfiguration *config
 }
 
 void ProjectRepository::saveTimeSeries(BoundaryCondition *boundaryCondition) {
-    if (!this->makeCopy && boundaryCondition->isTimeSeriesChanged()) {
+    if (boundaryCondition->isTimeSeriesChanged()) {
         saveTimeSeries(boundaryCondition->getId(), "BoundaryCondition", boundaryCondition->getTimeSeriesList());
 		boundaryCondition->setTimeSeriesChanged(false);
     }
 }
 
 void ProjectRepository::saveTimeSeries(MeteorologicalParameter *parameter) {
-    if (!this->makeCopy && parameter->isTimeSeriesChanged()) {
+    if (parameter->isTimeSeriesChanged()) {
         saveTimeSeries(parameter->getId(), "MeteorologicalParameter", parameter->getTimeSeriesList());
 		parameter->setTimeSeriesChanged(false);
     }
