@@ -63,7 +63,7 @@ void GridLayerDialog::on_rdoPolygon_toggled(bool checked) {
 }
 
 void GridLayerDialog::on_btnBrowseInputFile_clicked() {
-    CoordinateFileDialog *dialog = new CoordinateFileDialog(this, tr("Select a boundary file"), getDefaultDirectory(), tr("Text files (*.xyz *.txt)"));
+    CoordinateFileDialog *dialog = new CoordinateFileDialog(this, tr("Select a boundary file"), getDefaultDirectory(), CoordinateFileDialog::FILTER_TEXT);
     int exitCode = dialog->exec();
     
     if (exitCode == QDialog::Accepted) {
