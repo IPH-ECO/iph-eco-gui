@@ -14,8 +14,8 @@ uint MeteorologicalStation::getId() const {
     return id;
 }
 
-void MeteorologicalStation::setId(uint id) {
-    if (!isPersisted()) {
+void MeteorologicalStation::setId(const uint &id, const bool &force) {
+    if (!isPersisted() || force) {
         this->id = id;
     }
 }

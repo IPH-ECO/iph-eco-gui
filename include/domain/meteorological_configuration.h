@@ -14,7 +14,7 @@ public:
     MeteorologicalConfiguration();
     ~MeteorologicalConfiguration();
     uint getId() const;
-    void setId(uint id);
+    void setId(const uint &id, const bool &force = false);
     bool isPersisted() const;
     QString getName() const;
     void setName(const QString &name);

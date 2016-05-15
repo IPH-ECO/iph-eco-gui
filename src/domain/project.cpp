@@ -3,11 +3,11 @@
 #include <QSetIterator>
 
 Project::Project(const QString &name, const QString &description, const bool &hydrodynamic, const bool &waterQuality) :
-        id(0),
-		name(name),
-		description(description),
-		hydrodynamic(hydrodynamic),
-		waterQuality(waterQuality)
+    id(0),
+    name(name),
+    description(description),
+    hydrodynamic(hydrodynamic),
+    waterQuality(waterQuality)
 {}
 
 Project::~Project() {

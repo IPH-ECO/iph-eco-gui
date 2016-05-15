@@ -23,7 +23,7 @@ public:
     ~GridDataConfiguration();
 
     uint getId() const;
-    void setId(const uint &id);
+    void setId(const uint &id, const bool &force = false);
     bool isPersisted() const;
     QString getName() const;
     void setName(const QString &name);

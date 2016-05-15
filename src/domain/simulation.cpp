@@ -41,8 +41,8 @@ uint Simulation::getId() const {
 	return id;
 }
 
-void Simulation::setId(uint id) {
-	if (!isPersisted()) {
+void Simulation::setId(const uint &id, const bool &force) {
+	if (!isPersisted() || force) {
         this->id = id;
     }
 }

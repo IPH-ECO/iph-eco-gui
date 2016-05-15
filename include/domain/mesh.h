@@ -38,7 +38,7 @@ public:
     Mesh();
     virtual ~Mesh();
 
-    void setId(const uint &id);
+    void setId(const uint &id, const bool &force = false);
     uint getId() const;
     bool isPersisted() const;
     void setName(const QString &name);

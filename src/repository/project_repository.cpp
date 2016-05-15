@@ -288,7 +288,7 @@ void ProjectRepository::loadMeteorologicalConfigurations(Project *project) {
     
     while (query.next() && !operationCanceled) {
         MeteorologicalConfiguration *configuration = new MeteorologicalConfiguration();
-        configuration->setId(query.value("id").toUInt());
+        configuration->setId(query.value("id").toUInt(), makeCopy);
         configuration->setName(query.value("name").toString());
         configuration->setGridDataConfiguration(project->getGridDataConfiguration(query.value("grid_data_configuration_id").toUInt()));
         
@@ -394,7 +394,7 @@ void ProjectRepository::loadSimulations(Project *project) {
     }
 }
 
-void ProjectRepository::save(bool makeCopy) {
+void ProjectRepository::save(const bool &makeCopy) {
     currentProgress = 0;
     emit updateProgressText("Saving project...");
     updateProgressAndProcessEvents();
@@ -493,7 +493,7 @@ void ProjectRepository::saveMeshes(Project *project) {
         
         updateProgressAndProcessEvents();
         
-        mesh->setId(query.lastInsertId().toUInt());
+        mesh->setId(query.lastInsertId().toUInt(), makeCopy);
         meshIds.append(QString::number(mesh->getId()));
         saveMeshPolygons(mesh);
     }
@@ -563,7 +563,7 @@ void ProjectRepository::saveMeshPolygons(Mesh *mesh) {
         
         updateProgressAndProcessEvents();
         
-        meshPolygon->setId(query.lastInsertId().toUInt());
+        meshPolygon->setId(query.lastInsertId().toUInt(), makeCopy);
         meshPolygonIds.append(QString::number(meshPolygon->getId()));
     }
     
@@ -601,7 +601,7 @@ void ProjectRepository::saveGridDataConfigurations(Project *project) {
         
         updateProgressAndProcessEvents();
         
-        configuration->setId(query.lastInsertId().toUInt());
+        configuration->setId(query.lastInsertId().toUInt(), makeCopy);
         configurationIds.append(QString::number(configuration->getId()));
         saveGridData(configuration);
     }
@@ -665,7 +665,7 @@ void ProjectRepository::saveGridData(GridDataConfiguration *gridDataConfiguratio
         
         updateProgressAndProcessEvents();
         
-        gridData->setId(query.lastInsertId().toUInt());
+        gridData->setId(query.lastInsertId().toUInt(), makeCopy);
         gridDataIds.append(QString::number(gridData->getId()));
     }
     
@@ -704,7 +704,7 @@ void ProjectRepository::saveHydrodynamicConfigurations(Project *project) {
         
         updateProgressAndProcessEvents();
         
-        configuration->setId(query.lastInsertId().toUInt());
+        configuration->setId(query.lastInsertId().toUInt(), makeCopy);
         configurationIds.append(QString::number(configuration->getId()));
         saveHydrodynamicParameters(configuration);
         saveBoundaryConditions(configuration);
@@ -762,7 +762,7 @@ void ProjectRepository::saveHydrodynamicParameters(HydrodynamicConfiguration *co
 
         updateProgressAndProcessEvents();
 
-        parameter->setId(query.lastInsertId().toUInt());
+        parameter->setId(query.lastInsertId().toUInt(), makeCopy);
         parameterIds.append(QString::number(parameter->getId()));
     }
 }
@@ -800,7 +800,7 @@ void ProjectRepository::saveBoundaryConditions(HydrodynamicConfiguration *config
 
         updateProgressAndProcessEvents();
 
-        boundaryCondition->setId(query.lastInsertId().toUInt());
+        boundaryCondition->setId(query.lastInsertId().toUInt(), makeCopy);
         boundaryConditionIds.append(QString::number(boundaryCondition->getId()));
 
         saveTimeSeries(boundaryCondition);
@@ -895,7 +895,7 @@ void ProjectRepository::saveMeteorologicalConfigurations(Project *project) {
         
         updateProgressAndProcessEvents();
         
-        configuration->setId(query.lastInsertId().toUInt());
+        configuration->setId(query.lastInsertId().toUInt(), makeCopy);
         configurationIds.append(QString::number(configuration->getId()));
         saveMeteorologicalStations(configuration);
     }
@@ -949,7 +949,7 @@ void ProjectRepository::saveMeteorologicalStations(MeteorologicalConfiguration *
         
         updateProgressAndProcessEvents();
         
-        station->setId(query.lastInsertId().toUInt());
+        station->setId(query.lastInsertId().toUInt(), makeCopy);
         stationIds.append(QString::number(station->getId()));
         saveMeteorologicalParameters(station);
     }
@@ -1005,7 +1005,7 @@ void ProjectRepository::saveMeteorologicalParameters(MeteorologicalStation *stat
         
         updateProgressAndProcessEvents();
         
-        parameter->setId(query.lastInsertId().toUInt());
+        parameter->setId(query.lastInsertId().toUInt(), makeCopy);
         parameterIds.append(QString::number(parameter->getId()));
         saveTimeSeries(parameter);
     }
@@ -1094,7 +1094,7 @@ void ProjectRepository::saveSimulation(Simulation *simulation) {
     
     updateProgressAndProcessEvents();
     
-    simulation->setId(query.lastInsertId().toUInt());
+    simulation->setId(query.lastInsertId().toUInt(), makeCopy);
 }
 
 int ProjectRepository::getMaximumSaveProgress() {

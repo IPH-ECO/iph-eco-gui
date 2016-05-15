@@ -234,8 +234,8 @@ bool MeshPolygon::pointInPolygon(double *point) {
     return vtkPolygon::PointInPolygon(point, numberOfPoints, dataPointer, bounds, normal);
 }
 
-void MeshPolygon::setId(const uint &id) {
-    if (!isPersisted()) {
+void MeshPolygon::setId(const uint &id, const bool &force) {
+    if (!this->isPersisted() || force) {
         this->id = id;
     }
 }

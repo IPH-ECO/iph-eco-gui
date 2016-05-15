@@ -54,7 +54,7 @@ public:
 
     void open();
     void close();
-    void save(bool makeCopy = false);
+    void save(const bool &makeCopy = false);
     void saveSimulation(Simulation *simulation);
     
     int getMaximumSaveProgress();
