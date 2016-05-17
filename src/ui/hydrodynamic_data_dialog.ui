@@ -81,7 +81,7 @@
          <item>
           <widget class="QToolButton" name="btnNewConfiguration">
            <property name="toolTip">
-            <string>Add new mesh</string>
+            <string>Add new configuration</string>
            </property>
            <property name="text">
             <string/>
@@ -95,7 +95,7 @@
          <item>
           <widget class="QToolButton" name="btnApplyConfiguration">
            <property name="toolTip">
-            <string>Apply changes</string>
+            <string>Apply configuration changes</string>
            </property>
            <property name="text">
             <string/>
@@ -109,7 +109,7 @@
          <item>
           <widget class="QToolButton" name="btnRemoveConfiguration">
            <property name="toolTip">
-            <string>Remove selected mesh</string>
+            <string>Remove selected configuration</string>
            </property>
            <property name="text">
             <string/>
@@ -410,20 +410,20 @@
   </customwidget>
  </customwidgets>
  <tabstops>
-  <tabstop>cbxConfiguration</tabstop>
-  <tabstop>btnNewConfiguration</tabstop>
-  <tabstop>btnApplyConfiguration</tabstop>
-  <tabstop>btnRemoveConfiguration</tabstop>
   <tabstop>edtConfigurationName</tabstop>
   <tabstop>cbxGridDataConfiguration</tabstop>
   <tabstop>tabWidget</tabstop>
   <tabstop>trwProcesses</tabstop>
-  <tabstop>trwParameters</tabstop>
+  <tabstop>cbxConfiguration</tabstop>
+  <tabstop>btnNewConfiguration</tabstop>
+  <tabstop>btnApplyConfiguration</tabstop>
+  <tabstop>btnRemoveConfiguration</tabstop>
+  <tabstop>btnClose</tabstop>
   <tabstop>tblBoundaryConditions</tabstop>
   <tabstop>btnAddBoundaryCondition</tabstop>
   <tabstop>btnEditBoundaryCondition</tabstop>
   <tabstop>btnRemoveBoundaryCondition</tabstop>
-  <tabstop>btnClose</tabstop>
+  <tabstop>trwParameters</tabstop>
  </tabstops>
  <resources>
   <include location="../../resources/resources.qrc"/>

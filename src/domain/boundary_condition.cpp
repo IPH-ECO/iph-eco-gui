@@ -25,10 +25,8 @@ uint BoundaryCondition::getId() const {
 	return id;
 }
 
-void BoundaryCondition::setId(const uint &id, const bool &force) {
-	if (!isPersisted() || force) {
-		this->id = id;
-	}
+void BoundaryCondition::setId(const uint &id) {
+    this->id = id;
 }
 
 bool BoundaryCondition::isPersisted() const {

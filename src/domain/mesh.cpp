@@ -20,10 +20,8 @@ Mesh::~Mesh() {
     this->clear();
 }
 
-void Mesh::setId(const uint &id, const bool &force) {
-    if (!this->isPersisted() || force) {
-        this->id = id;
-    }
+void Mesh::setId(const uint &id) {
+    this->id = id;
 }
 
 uint Mesh::getId() const {

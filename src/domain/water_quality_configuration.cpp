@@ -15,10 +15,8 @@ uint WaterQualityConfiguration::getId() const {
 	return id;
 }
 
-void WaterQualityConfiguration::setId(uint id) {
-	if (!isPersisted()) {
-		this->id = id;
-	}
+void WaterQualityConfiguration::setId(const uint &id) {
+	this->id = id;
 }
 
 bool WaterQualityConfiguration::isPersisted() const {

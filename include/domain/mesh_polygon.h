@@ -35,7 +35,7 @@ public:
     MeshPolygon();
     MeshPolygon(const QString &name, const QString &filename, const MeshPolygonType &meshPolygonType);
 
-    void setId(const uint &id, const bool &force = false);
+    void setId(const uint &id);
     uint getId() const;
     void setName(const QString &name);
     QString getName() const;

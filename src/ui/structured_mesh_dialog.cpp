@@ -86,6 +86,11 @@ void StructuredMeshDialog::on_btnApplyMesh_clicked() {
         return;
     }
     
+    if (!currentMesh->getBoundaryPolygon()) {
+        QMessageBox::warning(this, tr("Structured Mesh Generation"), tr("Before apply changes, you must generate the mesh."));
+        return;
+    }
+    
     if (oldMeshName.isEmpty()) { // new mesh
         Project *project = IPHApplication::getCurrentProject();
         

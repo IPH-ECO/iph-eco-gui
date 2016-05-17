@@ -38,10 +38,10 @@ public:
     WaterQualityParameter();
 
     uint getId() const;
-    void setId(uint id);
+    void setId(const uint &id);
     bool isPersisted() const;
     QString getName() const;
-    void setName(const QString& name);
+    void setName(const QString &name);
     double getValue() const;
     void setValue(double value);
     QList<double> getGroupValues() const;

@@ -16,10 +16,8 @@ uint HydrodynamicConfiguration::getId() const {
 	return id;
 }
 
-void HydrodynamicConfiguration::setId(const uint &id, const bool &force) {
-    if (!isPersisted() || force) {
-        this->id = id;
-    }
+void HydrodynamicConfiguration::setId(const uint &id) {
+    this->id = id;
 }
 
 bool HydrodynamicConfiguration::isPersisted() const {

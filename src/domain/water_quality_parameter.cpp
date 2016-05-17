@@ -14,7 +14,7 @@ uint WaterQualityParameter::getId() const {
     return id;
 }
 
-void WaterQualityParameter::setId(uint id) {
+void WaterQualityParameter::setId(const uint &id) {
     this->id = id;
 }
 

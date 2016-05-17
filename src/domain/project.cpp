@@ -33,9 +33,7 @@ Project::~Project() {
 }
 
 void Project::setId(const uint &id) {
-    if (!isPersisted()) {
-        this->id = id;
-    }
+    this->id = id;
 }
 
 uint Project::getId() const {

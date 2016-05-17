@@ -31,7 +31,7 @@ public:
     MeteorologicalParameter(const QString &name, const QString &unit, double defaultConstantValue);
     ~MeteorologicalParameter();
     uint getId() const;
-    void setId(const uint &id, const bool &force = false);
+    void setId(const uint &id);
     bool isPersisted() const;
     QString getName() const;
     void setName(const QString &name);

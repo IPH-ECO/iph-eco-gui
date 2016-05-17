@@ -12,10 +12,8 @@ uint MeteorologicalConfiguration::getId() const {
     return id;
 }
 
-void MeteorologicalConfiguration::setId(const uint &id, const bool &force) {
-    if (!isPersisted() || force) {
-        this->id = id;
-    }
+void MeteorologicalConfiguration::setId(const uint &id) {
+    this->id = id;
 }
 
 bool MeteorologicalConfiguration::isPersisted() const {

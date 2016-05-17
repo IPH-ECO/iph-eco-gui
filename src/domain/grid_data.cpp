@@ -39,10 +39,8 @@ uint GridData::getId() const {
     return id;
 }
 
-void GridData::setId(const uint &id, const bool &force) {
-    if (!isPersisted() || force) {
-        this->id = id;
-    }
+void GridData::setId(const uint &id) {
+    this->id = id;
 }
 
 QString GridData::getName() const {

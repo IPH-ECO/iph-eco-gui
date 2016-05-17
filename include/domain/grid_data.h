@@ -43,7 +43,7 @@ public:
     ~GridData();
 
     uint getId() const;
-    void setId(const uint &id, const bool &force = false);
+    void setId(const uint &id);
     QString getName() const;
     void setName(const QString &name);
     GridDataType getGridDataType() const;
