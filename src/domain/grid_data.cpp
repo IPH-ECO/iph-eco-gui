@@ -32,7 +32,8 @@ QMap<GridDataType, QString> GridData::gridTypesMap = {
     std::pair<GridDataType, QString>(GridDataType::WETLAND_AREA, "Wetland areas"),
     std::pair<GridDataType, QString>(GridDataType::D50_GRAIN_SIZE, "D50 grain size"),
     std::pair<GridDataType, QString>(GridDataType::FRACTION_OF_ORGANIC_MATTER, "Fraction of organic matter in the sediment"),
-    std::pair<GridDataType, QString>(GridDataType::IMPERVIOUS_BEDROCK_LEVEL, "Impervious bedrock level")
+    std::pair<GridDataType, QString>(GridDataType::IMPERVIOUS_BEDROCK_LEVEL, "Impervious bedrock level"),
+    std::pair<GridDataType, QString>(GridDataType::FREE_SURFACE_ELEVATION, "Free-surface elevation")
 };
 
 uint GridData::getId() const {
