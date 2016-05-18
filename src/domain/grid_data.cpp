@@ -257,7 +257,7 @@ double GridData::inverseOfDistance(vtkSmartPointer<vtkIdList> inscribedPointsIds
         double distance = vtkMath::Distance2BetweenPoints(cellCenter, inputPolyData->GetPoints()->GetPoint(pointId));
         
         if (distance == 0) {
-            continue;
+            distance = 1e-14;
         }
         
         double distancePow = pow(distance, exponent);
