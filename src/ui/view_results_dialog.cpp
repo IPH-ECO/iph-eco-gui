@@ -68,7 +68,7 @@ void ViewResultsDialog::on_tblSimulations_cellClicked(int row, int column) {
             QMutexLocker locker(&mutex);
             
             this->currentSimulation = simulation;
-            ui->vtkWidget->render(this->currentSimulation, "", "", 0); // Only renders the mesh
+            ui->vtkWidget->render(this->currentSimulation, 0); // Only renders the mesh
             this->fillLayersComboBox(simulation);
         } catch (const SimulationException &e) {
             ui->cbxLayers->clear();
@@ -266,9 +266,15 @@ void ViewResultsDialog::fillLayersComboBox(Simulation *simulation) {
 }
 
 void ViewResultsDialog::showTimeSeriesChart() {
+    QString layerKey = getLayerKeyFromButton(static_cast<QToolButton*>(QObject::sender()));
+    QStringList layerAndComponent = layerKey.split("-");
+    
     frameTimer.stop();
     
-    TimeSeriesChartDialog *dialog = new TimeSeriesChartDialog(this, ui->vtkWidget);
+    ui->vtkWidget->setLayer(layerAndComponent.first());
+    ui->vtkWidget->setComponent(layerAndComponent.last());
+    
+    TimeSeriesChartDialog *dialog = new TimeSeriesChartDialog(this, ui->vtkWidget, layerKey);
     QObject::connect(dialog, SIGNAL(rejected()), this, SLOT(disableLeftWidgets()));
     dialog->show();
     
@@ -315,7 +321,9 @@ void ViewResultsDialog::toggleLayerVisibility(bool show) {
             }
         }
         
-        ui->vtkWidget->render(this->currentSimulation, layerAndComponent.first(), layerAndComponent.last(), ui->spxFrame->value() - 1);
+        ui->vtkWidget->setLayer(layerAndComponent.first());
+        ui->vtkWidget->setComponent(layerAndComponent.last());
+        ui->vtkWidget->render(this->currentSimulation, ui->spxFrame->value() - 1);
     } else {
         ui->vtkWidget->hideLayer(layerKey);
     }
@@ -344,7 +352,9 @@ void ViewResultsDialog::on_spxFrame_valueChanged(int frame) {
                 QStringList layerAndComponent = getLayerKeyFromButton(button).split("-");
                 QMutexLocker locker(&mutex);
                 
-                ui->vtkWidget->render(this->currentSimulation, layerAndComponent.first(), layerAndComponent.last(), ui->spxFrame->value() - 1);
+                ui->vtkWidget->setLayer(layerAndComponent.first());
+                ui->vtkWidget->setComponent(layerAndComponent.last());
+                ui->vtkWidget->render(this->currentSimulation, ui->spxFrame->value() - 1);
             }
         }
     }
