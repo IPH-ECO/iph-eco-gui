@@ -3,6 +3,7 @@
 WaterQualityParameter::WaterQualityParameter() :
 	id(0),
     checked(false),
+    enabled(true),
     parent(nullptr),
     editable(true),
     rangeMininum(0),
@@ -108,6 +109,22 @@ QString WaterQualityParameter::getDiagramItem() const {
 
 void WaterQualityParameter::setDiagramItem(const QString &diagramItem) {
     this->diagramItem = diagramItem;
+}
+
+WaterQualityParameterSection WaterQualityParameter::getSection() const {
+    return section;
+}
+
+void WaterQualityParameter::setSection(const WaterQualityParameterSection &section) {
+    this->section = section;
+}
+
+QString WaterQualityParameter::getTarget() const {
+    return target;
+}
+
+void WaterQualityParameter::setTarget(const QString &target) {
+    this->target = target;
 }
 
 QStringList WaterQualityParameter::getGroups() const {

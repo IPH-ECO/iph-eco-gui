@@ -18,16 +18,54 @@ WaterQualityRepository* WaterQualityRepository::getInstance() {
 }
 
 WaterQualityRepository::WaterQualityRepository() {
-    QFile dataFile(":/data/water_quality_parameters.json");
-    
-    dataFile.open(QFile::ReadOnly);
-    
-    QJsonDocument jsonDocument = QJsonDocument::fromJson(dataFile.readAll());
+    QFile structureFile(":/data/water_quality_structure.json");
+
+    structureFile.open(QFile::ReadOnly);
+
+    QJsonDocument jsonDocument = QJsonDocument::fromJson(structureFile.readAll());
     QJsonArray jsonParameters = jsonDocument.array();
+    
+    structureFile.close();
+
+    for (int i = 0; i < jsonParameters.size(); i++) {
+        QJsonObject jsonParameter = jsonParameters[i].toObject();
+        WaterQualityParameter *parameter = new WaterQualityParameter();
+        
+        parameter->setName(jsonParameter["name"].toString());
+        parameter->setLabel(jsonParameter["label"].toString());
+        parameter->setDescription(jsonParameter["label"].toString());
+        parameter->setSection(WaterQualityParameterSection::STRUCTURE);
+        parameter->setTarget(jsonParameter["target"].toString());
+        parameter->setDiagramItem(jsonParameter["diagramItem"].toString());
+        parameter->setCheckable(jsonParameter["checkable"].toBool(false));
+        parameter->setChecked(jsonParameter["checked"].toBool());
+        
+        parameters.append(parameter);
+        
+        QString parentName = jsonParameter["parentName"].toString();
+        
+        for (WaterQualityParameter *parent : parameters) {
+            if (parent->getName() == parentName) {
+                parameter->setParent(parent);
+                break;
+            }
+        }
+        
+        if (!parameter->getParent()) {
+            rootParameters.append(parameter);
+        }
+    }
+    
+    QFile parametersFile(":/data/water_quality_parameters.json");
+    
+    parametersFile.open(QFile::ReadOnly);
+    
+    jsonDocument = QJsonDocument::fromJson(parametersFile.readAll());
+    jsonParameters = jsonDocument.array();
     WaterQualityParameter *lastGroupParameter = nullptr;
     QStringList lastGroups;
     
-    dataFile.close();
+    parametersFile.close();
     
     for (int i = 0; i < jsonParameters.size(); i++) {
         QJsonObject jsonParameter = jsonParameters[i].toObject();
@@ -35,10 +73,9 @@ WaterQualityRepository::WaterQualityRepository() {
         
         parameter->setName(jsonParameter["name"].toString());
         parameter->setLabel(jsonParameter["label"].toString());
+        parameter->setSection(WaterQualityParameterSection::PARAMETER);
+        parameter->setTarget(jsonParameter["target"].toString());
         parameter->setDescription(jsonParameter["description"].toString());
-        parameter->setDiagramItem(jsonParameter["diagramItem"].toString());
-        parameter->setCheckable(jsonParameter["checkable"].toBool(false));
-        parameter->setChecked(jsonParameter["checked"].toBool());
         parameter->setEnabled(jsonParameter["enabled"].toBool(true));
         parameter->setInputType(WaterQualityParameter::mapInputTypeFromString(jsonParameter["inputType"].toString()));
         parameter->setRangeMinimum(jsonParameter["rangeMinimum"].toDouble());
@@ -98,9 +135,9 @@ void WaterQualityRepository::buildParameters(WaterQualityConfiguration *configur
 	
 }
 
-WaterQualityParameter* WaterQualityRepository::findParameterByName(const QString &name) {
+WaterQualityParameter* WaterQualityRepository::findParameterByName(const QString &name, const WaterQualityParameterSection &section) {
     for (WaterQualityParameter *parameter : parameters) {
-        if (parameter->getName() == name) {
+        if (parameter->getName() == name && parameter->getSection() == section) {
             return parameter;
         }
     }

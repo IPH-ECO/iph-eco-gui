@@ -9,6 +9,7 @@
 
 enum class WaterQualityParameterType { PROCESS_INPUT = 1, INITIAL_CONDITION };
 enum class WaterQualityParameterInputType { NO_INPUT = 0, INLINE, TABULAR };
+enum class WaterQualityParameterSection { STRUCTURE = 1, PARAMETER };
 
 class WaterQualityParameter {
 private:
@@ -26,6 +27,8 @@ private:
     QString label;
     QString description;
     QString diagramItem;
+    WaterQualityParameterSection section;
+    QString target;
     QStringList groups;
     WaterQualityParameter *parent;
     bool editable;
@@ -63,6 +66,10 @@ public:
     void setDescription(const QString &description);
     QString getDiagramItem() const;
     void setDiagramItem(const QString &diagramItem);
+    WaterQualityParameterSection getSection() const;
+    void setSection(const WaterQualityParameterSection &section);
+    QString getTarget() const;
+    void setTarget(const QString &target);
     QStringList getGroups() const;
     void setGroups(const QStringList &groups);
     WaterQualityParameter* getParent() const;

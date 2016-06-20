@@ -18,7 +18,7 @@ public:
     ~WaterQualityRepository();
 
     void buildParameters(WaterQualityConfiguration *configuration);
-    WaterQualityParameter* findParameterByName(const QString &name);
+    WaterQualityParameter* findParameterByName(const QString &name, const WaterQualityParameterSection &section);
     QList<WaterQualityParameter*> getParameters() const;
     QList<WaterQualityParameter*> getRootParameters() const;
 };

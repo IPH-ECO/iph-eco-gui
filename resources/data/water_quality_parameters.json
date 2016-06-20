@@ -1,7 +1,87 @@
 [
 	{
+		"label": "Heat Budget Modeling",
+		"name": "iTemp",
+		"section": "parameter",
+		"enabled": false
+	},
+	{
+		"label": "Shortwave solar radiation",
+		"name": "shortwaveSolarRadiation",
+		"parentName": "iTemp"
+	},
+	{
+		"label": "cExtWat",
+		"name": "cExtWat",
+		"description": "Light Attenuation Coefficient in Clear Water (1/m)",
+		"inputType": "inline",
+		"defaultValue": 0.5,
+		"parentName": "shortwaveSolarRadiation"
+	},
+	{
+		"label": "Longwave atmospheric radiation",
+		"name": "longwaveSolarRadiation",
+		"parentName": "iTemp"
+	},
+	{
+		"label": "tau_param",
+		"name": "tau_param",
+		"description": "Stefan-Boltzmann Constant (cal/cm\u00b2/d/K)",
+		"inputType": "inline",
+		"defaultValue": 11.7e-8,
+		"parentName": "longwaveSolarRadiation"
+	},
+	{
+		"label": "a_param",
+		"name": "a_param",
+		"description": "Water Temperature Model Coefficient",
+		"inputType": "inline",
+		"defaultValue": 0.6,
+		"parentName": "longwaveSolarRadiation"
+	},
+	{
+		"label": "Blackbody radiation from the water surface",
+		"name": "blackbodyRadiation",
+		"parentName": "iTemp"
+	},
+	{
+		"label": "e_param",
+		"name": "e_param",
+		"description": "Emissivity of the Radiating Body",
+		"inputType": "inline",
+		"defaultValue": 0.99,
+		"parentName": "blackbodyRadiation"
+	},
+	{
+		"label": "Conductive or convective heat flux",
+		"name": "conductiveHeatFlux",
+		"parentName": "iTemp"
+	},
+	{
+		"label": "c1_param",
+		"name": "c1_param",
+		"description": "Bowen's Coefficient (mmHg/\u00b0C)",
+		"inputType": "inline",
+		"defaultValue": 0.47,
+		"parentName": "conductiveHeatFlux"
+	},
+	{
+		"label": "Properties of water",
+		"name": "waterProperties",
+		"parentName": "iTemp"
+	},
+	{
+		"label": "Cd",
+		"name": "Cd",
+		"description": "Specific heat capacity of water (cal/g/\u00b0C)",
+		"inputType": "inline",
+		"defaultValue": 4182,
+		"parentName": "waterProperties"
+	},
+	{
 		"label": "General",
-		"name": "general"
+		"name": "general",
+		"section": "parameter"
 	},
 	{
 		"label": "cCPerDW",
@@ -85,12 +165,12 @@
 	},
 	{
 		"label": "Sediments",
-		"name": "sediments"
+		"name": "iSed"
 	},
 	{
 		"label": "Number of layers in the sediment",
 		"name": "sedimentsNumberOfLayers",
-		"parentName": "sediments"
+		"parentName": "iSed"
 	},
 	{
 		"label": "nsed",
@@ -127,7 +207,7 @@
 	{
 		"label": "Diffusion in the water-sediment interface",
 		"name": "sedimentsDiffusion",
-		"parentName": "sediments"
+		"parentName": "iSed"
 	},
 	{
 		"label": "fDepthDifS",
@@ -220,7 +300,7 @@
 	{
 		"label": "Erosion",
 		"name": "sedimentsErosion",
-		"parentName": "sediments"
+		"parentName": "iSed"
 	},
 	{
 		"label": "cDErosTot",
@@ -249,7 +329,7 @@
 	{
 		"label": "Resuspension",
 		"name": "sedimentsResuspension",
-		"parentName": "sediments"
+		"parentName": "iSed"
 	},
 	{
 		"label": "cSuspRef",
@@ -318,7 +398,7 @@
 	{
 		"label": "Fractions",
 		"name": "sedimentsFractions",
-		"parentName": "sediments"
+		"parentName": "iSed"
 	},
 	{
 		"label": "fDTotS0",
@@ -534,109 +614,8 @@
 		"parentName": "nutrientsGasesDiffusion"
 	},
 	{
-		"label": "Heat Budget Modeling",
-		"name": "iTemp",
-		"checkable": true,
-		"checked": true
-	},
-	{
-		"label": "Groups",
-		"name": "heatBudgetModelingGroups",
-		"parentName": "iTemp"
-	},
-	{
-		"label": "Aerobic",
-		"name": "aerobicHeatGroup",
-		"inputType": "inline",
-		"rangeMinimum": 0,
-		"rangeMaximum": 100,
-		"defaultValue": 1,
-		"parentName": "heatBudgetModelingGroups"
-	},
-	{
-		"label": "Shortwave solar radiation",
-		"name": "shortwaveSolarRadiation",
-		"parentName": "iTemp"
-	},
-	{
-		"label": "cExtWat",
-		"name": "cExtWat",
-		"description": "Light Attenuation Coefficient in Clear Water (1/m)",
-		"inputType": "tabular",
-		"groups": "heatBudgetModelingGroups",
-		"groupDefaultValues": 0.5,
-		"parentName": "shortwaveSolarRadiation"
-	},
-	{
-		"label": "Longwave atmospheric radiation",
-		"name": "longwaveSolarRadiation",
-		"parentName": "iTemp"
-	},
-	{
-		"label": "tau_param",
-		"name": "tau_param",
-		"description": "Stefan-Boltzmann Constant (cal/cm\u00b2/d/K)",
-		"inputType": "tabular",
-		"groups": "heatBudgetModelingGroups",
-		"groupDefaultValues": 0.00000117,
-		"parentName": "longwaveSolarRadiation"
-	},
-	{
-		"label": "a_param",
-		"name": "a_param",
-		"description": "Water Temperature Model Coefficient",
-		"inputType": "tabular",
-		"groups": "heatBudgetModelingGroups",
-		"groupDefaultValues": 0.6,
-		"parentName": "longwaveSolarRadiation"
-	},
-	{
-		"label": "Blackbody radiation from the water surface",
-		"name": "blackbodyRadiation",
-		"parentName": "iTemp"
-	},
-	{
-		"label": "e_param",
-		"name": "e_param",
-		"description": "Emissivity of the Radiating Body",
-		"inputType": "tabular",
-		"groups": "heatBudgetModelingGroups",
-		"groupDefaultValues": 0.99,
-		"parentName": "blackbodyRadiation"
-	},
-	{
-		"label": "Conductive or convective heat flux",
-		"name": "conductiveHeatFlux",
-		"parentName": "iTemp"
-	},
-	{
-		"label": "c1_param",
-		"name": "c1_param",
-		"description": "Bowen's Coefficient (mmHg/\u00b0C)",
-		"inputType": "tabular",
-		"groups": "heatBudgetModelingGroups",
-		"groupDefaultValues": 0.47,
-		"parentName": "conductiveHeatFlux"
-	},
-	{
-		"label": "Properties of water",
-		"name": "waterProperties",
-		"parentName": "iTemp"
-	},
-	{
-		"label": "Cd",
-		"name": "Cd",
-		"description": "Specific heat capacity of water (cal/g/\u00b0C)",
-		"inputType": "tabular",
-		"groups": "heatBudgetModelingGroups",
-		"groupDefaultValues": 4182,
-		"parentName": "waterProperties"
-	},
-	{
 		"label": "Limnology Modeling",
-		"name": "iLimn",
-		"checkable": true,
-		"checked": true
+		"name": "iLimn"
 	},
 	{
 		"label": "Bacterioplankton Modeling",

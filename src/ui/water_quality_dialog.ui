@@ -129,13 +129,16 @@
        <property name="currentIndex">
         <number>0</number>
        </property>
-       <widget class="QWidget" name="tab">
+       <property name="usesScrollButtons">
+        <bool>true</bool>
+       </property>
+       <widget class="QWidget" name="structureTab">
         <attribute name="title">
-         <string>Parameters</string>
+         <string>Structure</string>
         </attribute>
         <layout class="QGridLayout" name="gridLayout">
          <item row="0" column="0">
-          <widget class="QTreeWidget" name="trwParameters">
+          <widget class="QTreeWidget" name="trwStructure">
            <property name="alternatingRowColors">
             <bool>true</bool>
            </property>
@@ -162,9 +165,52 @@
          </item>
         </layout>
        </widget>
-       <widget class="QWidget" name="tab_2">
+       <widget class="QWidget" name="parametersTab">
+        <attribute name="title">
+         <string>Parameters</string>
+        </attribute>
+        <layout class="QGridLayout" name="gridLayout_2">
+         <item row="0" column="0">
+          <widget class="QTreeWidget" name="trwParameter">
+           <property name="alternatingRowColors">
+            <bool>true</bool>
+           </property>
+           <property name="indentation">
+            <number>15</number>
+           </property>
+           <property name="columnCount">
+            <number>2</number>
+           </property>
+           <attribute name="headerVisible">
+            <bool>false</bool>
+           </attribute>
+           <column>
+            <property name="text">
+             <string notr="true">1</string>
+            </property>
+           </column>
+           <column>
+            <property name="text">
+             <string>2</string>
+            </property>
+           </column>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="foodMatrixTab">
+        <attribute name="title">
+         <string>Food Matrix</string>
+        </attribute>
+       </widget>
+       <widget class="QWidget" name="initialConditionsTab">
         <attribute name="title">
          <string>Initial Conditions</string>
+        </attribute>
+       </widget>
+       <widget class="QWidget" name="tab">
+        <attribute name="title">
+         <string>Boundary Conditions</string>
         </attribute>
        </widget>
       </widget>
