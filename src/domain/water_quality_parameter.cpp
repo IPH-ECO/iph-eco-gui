@@ -155,6 +155,14 @@ void WaterQualityParameter::setEditable(bool editable) {
     this->editable = editable;
 }
 
+bool WaterQualityParameter::isRadio() const {
+    return radio;
+}
+
+void WaterQualityParameter::setRadio(const bool &radio) {
+    this->radio = radio;
+}
+
 int WaterQualityParameter::getOrder() const {
     return order;
 }

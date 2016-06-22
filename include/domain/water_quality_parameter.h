@@ -32,6 +32,7 @@ private:
     QStringList groups;
     WaterQualityParameter *parent;
     bool editable;
+    bool radio;
     int order;
     double rangeMininum;
     double rangeMaximum;
@@ -76,6 +77,8 @@ public:
     void setParent(WaterQualityParameter *parent);
     bool isEditable() const;
     void setEditable(bool editable);
+    bool isRadio() const;
+    void setRadio(const bool &radio);
     int getOrder() const;
     void setOrder(int order);
     double getRangeMinimum() const;

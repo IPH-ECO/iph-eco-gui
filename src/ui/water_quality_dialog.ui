@@ -146,7 +146,7 @@
             <number>15</number>
            </property>
            <property name="columnCount">
-            <number>2</number>
+            <number>1</number>
            </property>
            <attribute name="headerVisible">
             <bool>false</bool>
@@ -154,11 +154,6 @@
            <column>
             <property name="text">
              <string notr="true">1</string>
-            </property>
-           </column>
-           <column>
-            <property name="text">
-             <string>2</string>
             </property>
            </column>
           </widget>

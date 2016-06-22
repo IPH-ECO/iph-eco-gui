@@ -39,12 +39,14 @@ WaterQualityRepository::WaterQualityRepository() {
         parameter->setDiagramItem(jsonParameter["diagramItem"].toString());
         parameter->setCheckable(jsonParameter["checkable"].toBool(false));
         parameter->setChecked(jsonParameter["checked"].toBool());
+        parameter->setEnabled(jsonParameter["enabled"].toBool(true));
+        parameter->setRadio(jsonParameter["radio"].toBool(false));
         
-        parameters.append(parameter);
+        structure.append(parameter);
         
         QString parentName = jsonParameter["parentName"].toString();
         
-        for (WaterQualityParameter *parent : parameters) {
+        for (WaterQualityParameter *parent : structure) {
             if (parent->getName() == parentName) {
                 parameter->setParent(parent);
                 break;
@@ -52,7 +54,7 @@ WaterQualityRepository::WaterQualityRepository() {
         }
         
         if (!parameter->getParent()) {
-            rootParameters.append(parameter);
+            rootStructure.append(parameter);
         }
     }
     
@@ -136,7 +138,9 @@ void WaterQualityRepository::buildParameters(WaterQualityConfiguration *configur
 }
 
 WaterQualityParameter* WaterQualityRepository::findParameterByName(const QString &name, const WaterQualityParameterSection &section) {
-    for (WaterQualityParameter *parameter : parameters) {
+    QList<WaterQualityParameter*> *list = section == WaterQualityParameterSection::STRUCTURE ? &structure : &parameters;
+    
+    for (WaterQualityParameter *parameter : *list) {
         if (parameter->getName() == name && parameter->getSection() == section) {
             return parameter;
         }
@@ -145,10 +149,10 @@ WaterQualityParameter* WaterQualityRepository::findParameterByName(const QString
     return nullptr;
 }
 
-QList<WaterQualityParameter*> WaterQualityRepository::getParameters() const {
-    return parameters;
+QList<WaterQualityParameter*> WaterQualityRepository::getParameters(const WaterQualityParameterSection &section) const {
+    return section == WaterQualityParameterSection::STRUCTURE ? structure : parameters;
 }
 
-QList<WaterQualityParameter*> WaterQualityRepository::getRootParameters() const {
-    return rootParameters;
+QList<WaterQualityParameter*> WaterQualityRepository::getRootParameters(const WaterQualityParameterSection &section) const {
+    return section == WaterQualityParameterSection::STRUCTURE ? rootStructure : rootParameters;
 }

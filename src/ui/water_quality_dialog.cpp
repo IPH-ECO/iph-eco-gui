@@ -16,7 +16,8 @@ WaterQualityDialog::WaterQualityDialog(QWidget *parent) :
     ui(new Ui::WaterQualityDialog),
     unsavedConfiguration(new WaterQualityConfiguration),
     currentConfiguration(unsavedConfiguration),
-    waterQualityRepository(WaterQualityRepository::getInstance())
+    waterQualityRepository(WaterQualityRepository::getInstance()),
+    isWebViewLoaded(false)
 {
     ui->setupUi(this);
     ui->trwParameter->header()->setStretchLastSection(false);
@@ -48,9 +49,15 @@ WaterQualityDialog::WaterQualityDialog(QWidget *parent) :
 }
 
 void WaterQualityDialog::on_webView_loadFinished(bool ok) {
-    for (WaterQualityParameter *rootParameter : waterQualityRepository->getRootParameters()) {
+    for (WaterQualityParameter *rootParameter : waterQualityRepository->getRootParameters(WaterQualityParameterSection::PARAMETER)) {
         this->buildParameterTree(rootParameter);
     }
+    
+    for (WaterQualityParameter *rootParameter : waterQualityRepository->getRootParameters(WaterQualityParameterSection::STRUCTURE)) {
+        this->buildParameterTree(rootParameter);
+    }
+    
+    isWebViewLoaded = true;
 }
 
 WaterQualityDialog::~WaterQualityDialog() {
@@ -61,6 +68,7 @@ WaterQualityDialog::~WaterQualityDialog() {
 void WaterQualityDialog::buildParameterTree(WaterQualityParameter *parameter) {
     QTreeWidget *treeWidget = parameter->getSection() == WaterQualityParameterSection::STRUCTURE ? ui->trwStructure : ui->trwParameter;
     QTreeWidgetItem *parameterItem = nullptr;
+    bool isDisabled = !parameter->isEnabled();
     
     if (parameter->getParent()) {
         parameterItem = new QTreeWidgetItem(parameter->getParent()->getItemWidget(), QStringList(parameter->getLabel()));
@@ -70,12 +78,16 @@ void WaterQualityDialog::buildParameterTree(WaterQualityParameter *parameter) {
 
     parameter->setItemWidget(parameterItem);
     
-    ui->trwStructure->blockSignals(true);
+    treeWidget->blockSignals(true);
+    if (parameter->getSection() == WaterQualityParameterSection::STRUCTURE) {
+        parameterItem->setDisabled(isDisabled);
+    } else {
+        parameterItem->setHidden(isDisabled);
+    }
     parameterItem->setToolTip(0, parameter->getDescription());
-    parameterItem->setHidden(!parameter->isEnabled());
     parameterItem->setData(0, Qt::UserRole, QVariant(parameter->getName()));
     parameterItem->setData(1, Qt::UserRole, QVariant(parameter->getDiagramItem()));
-    ui->trwStructure->blockSignals(false);
+    treeWidget->blockSignals(false);
     
     if (parameter->isCheckable()) {
         parameterItem->setCheckState(0, parameter->isChecked() ? Qt::Checked : Qt::Unchecked);
@@ -198,21 +210,32 @@ void WaterQualityDialog::on_trwStructure_itemChanged(QTreeWidgetItem *item, int 
         QString jsFunction = isSourceChecked ? "enableVariable" : "disableVariable";
         
         ui->webView->page()->mainFrame()->evaluateJavaScript(jsFunction + "('" + sourceParameter->getDiagramItem() + "'); null");
-    
+        
         WaterQualityParameter *targetParameter = waterQualityRepository->findParameterByName(sourceParameter->getTarget(), WaterQualityParameterSection::PARAMETER);
     
         if (targetParameter && targetParameter->getItemWidget()) {
             targetParameter->getItemWidget()->setHidden(!isSourceChecked);
         }
         
+        WaterQualityParameter *parent = sourceParameter->getParent();
+        
         if (isSourceChecked) {
-            WaterQualityParameter *parent = sourceParameter->getParent();
-            
-            if (parent && parent->isCheckable()) {
-                QTreeWidgetItem *parentItem = parent->getItemWidget();
+            if (parent) {
+                if (parent->isCheckable()) {
+                    QTreeWidgetItem *parentItem = parent->getItemWidget();
+                    
+                    if (parentItem->checkState(0) == Qt::Unchecked) {
+                        parentItem->setCheckState(0, Qt::Checked);
+                    }
+                }
                 
-                if (parentItem->checkState(0) == Qt::Unchecked) {
-                    parentItem->setCheckState(0, Qt::Checked);
+                if (isWebViewLoaded && parent->isRadio()) {
+                    for (WaterQualityParameter *child : parent->getChildren()) {
+                        if (child != sourceParameter) {
+                            QTreeWidgetItem *childItem = child->getItemWidget();
+                            childItem->setCheckState(0, Qt::Unchecked);
+                        }
+                    }
                 }
             }
         } else {
@@ -221,6 +244,22 @@ void WaterQualityDialog::on_trwStructure_itemChanged(QTreeWidgetItem *item, int 
                 
                 if (childItem && childItem->checkState(0) == Qt::Checked) {
                     childItem->setCheckState(0, Qt::Unchecked);
+                }
+            }
+            
+            if (isWebViewLoaded && parent && parent->isRadio()) {
+                bool checkChild = true;
+                
+                for (WaterQualityParameter *child : parent->getChildren()) {
+                    QTreeWidgetItem *childItem = child->getItemWidget();
+                    
+                    if (childItem && childItem != item && childItem->checkState(0) == Qt::Checked) {
+                        checkChild = false;
+                    }
+                }
+                
+                if (checkChild) {
+                    item->setCheckState(0, Qt::Checked);
                 }
             }
         }

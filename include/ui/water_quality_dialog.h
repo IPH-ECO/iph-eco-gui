@@ -19,6 +19,7 @@ private:
 	WaterQualityConfiguration *unsavedConfiguration;
 	WaterQualityConfiguration *currentConfiguration;
 	WaterQualityRepository *waterQualityRepository;
+    bool isWebViewLoaded;
 
 	void buildParameterTree(WaterQualityParameter *parameter);
 private slots:

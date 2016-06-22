@@ -2175,20 +2175,6 @@
 		"parentName": "iLimn"
 	},
 	{
-		"label": "Groups",
-		"name": "inorganicMatterGroups",
-		"parentName": "inorganicMatter"
-	},
-	{
-		"label": "Aerobic",
-		"name": "inorganicMatterAerobicGroup",
-		"inputType": "inline",
-		"rangeMinimum": 0,
-		"rangeMaximum": 100,
-		"defaultValue": 1,
-		"parentName": "inorganicMatterGroups"
-	},
-	{
 		"label": "Light attenuation",
 		"name": "inorganicMatterLightAttenuation",
 		"parentName": "inorganicMatter"
@@ -2197,9 +2183,8 @@
 		"label": "cExtSpIM",
 		"name": "cExtSpIM",
 		"description": "Light Attenuation Coefficient due to Inorganic Matter (1/m)",
-		"inputType": "tabular",
-		"groups": "inorganicMatterGroups",
-		"groupDefaultValues": 0.05,
+		"inputType": "inline",
+		"defaultValue": 0.05,
 		"parentName": "inorganicMatterLightAttenuation"
 	},
 	{
@@ -2211,27 +2196,24 @@
 		"label": "cVSetIM",
 		"name": "cVSetIM",
 		"description": "Sedimentation velocity  for Inorganic Matter (m/day)",
-		"inputType": "tabular",
-		"groups": "inorganicMatterGroups",
-		"groupDefaultValues": 0.05,
+		"inputType": "inline",
+		"defaultValue": 0.05,
 		"parentName": "inorganicMatterSedimentation"
 	},
 	{
 		"label": "ppIM",
 		"name": "ppIM",
 		"description": "Inorganic Matter density (kg/m\u00b3)",
-		"inputType": "tabular",
-		"groups": "inorganicMatterGroups",
-		"groupDefaultValues": 2650,
+		"inputType": "inline",
+		"defaultValue": 2650,
 		"parentName": "inorganicMatterSedimentation"
 	},
 	{
 		"label": "diIM",
 		"name": "diIM",
 		"description": "Inorganic Matter diameter (m)",
-		"inputType": "tabular",
-		"groups": "inorganicMatterGroups",
-		"groupDefaultValues": 0.000003,
+		"inputType": "inline",
+		"defaultValue": 0.000003,
 		"parentName": "inorganicMatterSedimentation"
 	},
 	{

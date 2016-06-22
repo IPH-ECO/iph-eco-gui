@@ -65,6 +65,7 @@
 		"label": "Inorganic Matter Modeling",
 		"name": "iMatInorg",
 		"parentName": "limnologyModeling",
+		"target": "inorganicMatter",
 		"checkable": true
 	},
 	{
@@ -74,9 +75,15 @@
 		"checkable": true
 	},
 	{
+		"label": "Organic Matter Modeling",
+		"name": "organicMatterModeling",
+		"parentName": "limnologyModeling",
+		"checkable": true
+	},
+	{
 		"label": "Split Dissolved and Particulated Organic Matter",
 		"name": "iMatOrgSplit",
-		"parentName": "limnologyModeling",
+		"parentName": "organicMatterModeling",
 		"diagramItem": "Dissolved Organic Matter (DOM)",
 		"checkable": true
 	},
@@ -103,9 +110,22 @@
 		"checkable": true
 	},
 	{
-		"label": "Light limitation function (0 = without photoinhibition, Chalker (1980) model, 1 = Klepper et al. (1988) / Ebenhoh et al. (1997) model)",
+		"label": "Light limitation function",
 		"name": "LightMethodPhyt",
 		"parentName": "phytoplanktonModeling",
+		"radio": true
+	},
+	{
+		"label": "Without photoinhibition, Chalker (1980) model",
+		"name": "chalker",
+		"parentName": "LightMethodPhyt",
+		"checkable": true,
+		"checked": true
+	},
+	{
+		"label": "Klepper et al. (1988) / Ebenhoh et al. (1997) model",
+		"name": "klepper",
+		"parentName": "LightMethodPhyt",
 		"checkable": true
 	},
 	{
@@ -113,6 +133,7 @@
 		"name": "iMac",
 		"parentName": "limnologyModeling",
 		"diagramItem": "Macrophytes",
+		"target": "macrophytes",
 		"checkable": true
 	},
 	{
@@ -128,6 +149,7 @@
 		"name": "iBen",
 		"parentName": "limnologyModeling",
 		"diagramItem": "Zoobenthos",
+		"target": "zoobenthos",
 		"checkable": true
 	},
 	{
@@ -163,69 +185,116 @@
 		"checkable": true
 	},
 	{
-		"label": "Resuspension Method (0 = no resuspension, 1 = PCLake Method, 2 = Garcia & Parker)",
+		"label": "Resuspension Method",
 		"name": "ResuspMethodFlag",
 		"parentName": "iSed",
+		"radio": true
+	},
+	{
+		"label": "No resuspension",
+		"name": "noResuspension",
+		"parentName": "ResuspMethodFlag",
+		"checkable": true,
+		"checked": true
+	},
+	{
+		"label": "PCLake Method",
+		"name": "pcLake1",
+		"parentName": "ResuspMethodFlag",
 		"checkable": true
 	},
 	{
-		"label": "Sedimentation Method (0 = no sedimentation, 1 = PCLake Method, 2 = Stokes' Equation)",
+		"label": "Garcia & Parker",
+		"name": "garciaParker",
+		"parentName": "ResuspMethodFlag",
+		"checkable": true
+	},
+	{
+		"label": "Sedimentation Method",
 		"name": "SetMethodFlag",
 		"parentName": "iSed",
+		"radio": true
+	},
+	{
+		"label": "No sedimentation",
+		"name": "noSedimentation",
+		"parentName": "SetMethodFlag",
+		"checkable": true,
+		"checked": true
+	},
+	{
+		"label": "PCLake Method",
+		"name": "pcLake2",
+		"parentName": "SetMethodFlag",
+		"checkable": true
+	},
+	{
+		"label": "Stokes' Equation",
+		"name": "stokes",
+		"parentName": "SetMethodFlag",
 		"checkable": true
 	},
 	{
 		"label": "Pathogens Modeling",
 		"name": "iPatho",
 		"parentName": "limnologyModeling",
-		"checkable": true
+		"checkable": true,
+		"enabled": false
 	},
 	{
 		"label": "Coli-Bacteria Modeling",
 		"name": "iColi",
 		"parentName": "iPatho",
-		"checkable": true
+		"checkable": true,
+		"enabled": false
 	},
 	{
 		"label": "Giardia Modeling",
 		"name": "iGiardia",
 		"parentName": "iPatho",
-		"checkable": true
+		"checkable": true,
+		"enabled": false
 	},
 	{
 		"label": "Cryptosporidium Modeling",
 		"name": "iCrypto",
 		"parentName": "iPatho",
-		"checkable": true
+		"checkable": true,
+		"enabled": false
 	},
 	{
 		"label": "Lavaes Modeling",
 		"name": "iLavaes",
 		"parentName": "iPatho",
-		"checkable": true
+		"checkable": true,
+		"enabled": false
 	},
 	{
 		"label": "Metal Modeling",
 		"name": "iMetal",
 		"parentName": "limnologyModeling",
-		"checkable": true
+		"checkable": true,
+		"enabled": false
 	},
 	{
 		"label": "Aluminum Modeling",
 		"name": "iAlum",
 		"parentName": "iMetal",
-		"checkable": true
+		"checkable": true,
+		"enabled": false
 	},
 	{
 		"label": "Iron Modeling",
 		"name": "iIron",
 		"parentName": "iMetal",
-		"checkable": true
+		"checkable": true,
+		"enabled": false
 	},
 	{
 		"label": "Manganese Modeling",
 		"name": "iManganese",
 		"parentName": "iMetal",
-		"checkable": true
+		"checkable": true,
+		"enabled": false
 	}
 ]
