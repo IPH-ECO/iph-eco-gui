@@ -9,7 +9,6 @@
 	{
 		"label": "Salinity Modeling",
 		"name": "salinityModeling",
-		"target": "iSal",
 		"checkable": true,
 		"checked": false
 	},
@@ -180,14 +179,14 @@
 	},
 	{
 		"label": "Sediment Modeling",
-		"name": "iSed",
-		"parentName": "limnologyModeling",
+		"name": "sedimentation",
+		"target": "iSed",
 		"checkable": true
 	},
 	{
 		"label": "Resuspension Method",
 		"name": "ResuspMethodFlag",
-		"parentName": "iSed",
+		"parentName": "sedimentation",
 		"radio": true
 	},
 	{
@@ -212,7 +211,7 @@
 	{
 		"label": "Sedimentation Method",
 		"name": "SetMethodFlag",
-		"parentName": "iSed",
+		"parentName": "sedimentation",
 		"radio": true
 	},
 	{
@@ -237,7 +236,6 @@
 	{
 		"label": "Pathogens Modeling",
 		"name": "iPatho",
-		"parentName": "limnologyModeling",
 		"checkable": true,
 		"enabled": false
 	},
@@ -272,7 +270,6 @@
 	{
 		"label": "Metal Modeling",
 		"name": "iMetal",
-		"parentName": "limnologyModeling",
 		"checkable": true,
 		"enabled": false
 	},

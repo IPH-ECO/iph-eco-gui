@@ -165,7 +165,8 @@
 	},
 	{
 		"label": "Sediments",
-		"name": "iSed"
+		"name": "iSed",
+		"parentName": "iLimn"
 	},
 	{
 		"label": "Number of layers in the sediment",

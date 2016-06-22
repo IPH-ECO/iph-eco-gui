@@ -207,9 +207,11 @@ void WaterQualityDialog::on_trwStructure_itemChanged(QTreeWidgetItem *item, int 
     
     if (sourceParameter && (item->checkState(0) == Qt::Checked || item->checkState(0) == Qt::Unchecked)) {
         bool isSourceChecked = item->checkState(0) == Qt::Checked;
-        QString jsFunction = isSourceChecked ? "enableVariable" : "disableVariable";
         
-        ui->webView->page()->mainFrame()->evaluateJavaScript(jsFunction + "('" + sourceParameter->getDiagramItem() + "'); null");
+        if (!sourceParameter->getDiagramItem().isEmpty()) {
+            QString jsFunction = isSourceChecked ? "enableVariable" : "disableVariable";
+            ui->webView->page()->mainFrame()->evaluateJavaScript(jsFunction + "('" + sourceParameter->getDiagramItem() + "'); null");
+        }
         
         WaterQualityParameter *targetParameter = waterQualityRepository->findParameterByName(sourceParameter->getTarget(), WaterQualityParameterSection::PARAMETER);
     
