@@ -39,6 +39,7 @@ WaterQualityParameterDialog::WaterQualityParameterDialog(QWidget *parent, WaterQ
             
             if (i + 1 > distribuition[j]) {
                 tableItem->setFlags(Qt::NoItemFlags);
+                tableItem->setBackgroundColor(QColor(Qt::lightGray));
             } else {
                 tableItem->setTextAlignment(Qt::AlignVCenter | Qt::AlignHCenter);
                 tableItem->setText(QString::number(parameter->getGroupValues().at(j)));
