@@ -30,7 +30,7 @@
 
 vtkStandardNewMacro(TimeSeriesChart2DInteractorStyle);
 
-TimeSeriesChartDialog::TimeSeriesChartDialog(QWidget *parent, SimulationVTKWidget *simulationVTKWidget) :
+TimeSeriesChartDialog::TimeSeriesChartDialog(QWidget *parent, SimulationVTKWidget *simulationVTKWidget, const QString &layerKey) :
 	QDialog(parent),
     TIME_SERIES_CHART_DIR_KEY("time_series_chart_dir"),
 	ui(new Ui::TimeSeriesChartDialog),
@@ -39,7 +39,8 @@ TimeSeriesChartDialog::TimeSeriesChartDialog(QWidget *parent, SimulationVTKWidge
     view(vtkSmartPointer<vtkContextView>::New()),
     chart(vtkSmartPointer<vtkChartXY>::New()),
     layerProperties(new LayerProperties()),
-    appSettings(new QSettings(QApplication::organizationName(), QApplication::applicationName(), this))
+    appSettings(new QSettings(QApplication::organizationName(), QApplication::applicationName(), this)),
+    layerKey(layerKey)
 {
     this->timeSeriesInteractor = TimeSeriesChartMouseInteractor::SafeDownCast(simulationVTKWidget->GetInteractor()->GetInteractorStyle());
     Simulation *simulation = simulationVTKWidget->getCurrentSimulation();
@@ -118,7 +119,7 @@ void TimeSeriesChartDialog::on_btnClear_clicked() {
     QMessageBox::StandardButton button = QMessageBox::question(this, "Time series chart", "Are you sure?");
     
     if (button == QMessageBox::Yes) {
-        timeSeriesInteractor->removePickedCells(simulationVTKWidget->getLayerKey());
+        timeSeriesInteractor->removePickedCells(this->layerKey);
         chart->ClearPlots();
     }
 }
@@ -135,8 +136,6 @@ void TimeSeriesChartDialog::on_btnPlot_clicked() {
         return;
     }
     
-    QByteArray layerNameByteArray = simulationVTKWidget->getLayerKey().split("-").first().toLocal8Bit();
-    const char *layerName = layerNameByteArray.data();
     bool verticalProfile = ui->chkVerticalProfile->isChecked();
     
     int initialFrame = ui->edtInitialFrame->text().toInt();
@@ -186,7 +185,7 @@ void TimeSeriesChartDialog::on_btnPlot_clicked() {
         reader->Update();
         
         vtkSmartPointer<vtkUnstructuredGrid> unstructuredGrid = reader->GetUnstructuredGridOutput();
-        vtkSmartPointer<vtkDoubleArray> cellDataArray = getGridArray(unstructuredGrid, layerName);
+        vtkSmartPointer<vtkDoubleArray> cellDataArray = getGridArray(unstructuredGrid);
         
         std::string headerWithLineBreak = reader->GetHeader();
         const char *header = headerWithLineBreak.erase(headerWithLineBreak.length() - 1).c_str(); // removes new line character
@@ -239,7 +238,7 @@ void TimeSeriesChartDialog::on_btnPlot_clicked() {
     
     if (verticalProfile) {
         renderer->RemoveAllViewProps();
-        renderVerticalProfileGrid(layerName, xCoordinates, yCoordinates, verticalProfileScalars);
+        renderVerticalProfileGrid(xCoordinates, yCoordinates, verticalProfileScalars);
         renderVerticalProfileAxes(xCoordinates->GetRange(), yCoordinates->GetRange(), timeStampStrings);
         renderer->ResetCamera();
         ui->vtkChartWidget->hide();
@@ -274,8 +273,8 @@ void TimeSeriesChartDialog::on_btnPlot_clicked() {
         bottomAxis->SetTitle(timeStamps->GetName());
         bottomAxis->SetCustomTickPositions(labelPositions, xLabels);
         
-        QString component = simulationVTKWidget->getLayerKey().split("-").last();
-        QByteArray axisLabelByteArray = (QString(layerName) + (component.isEmpty() ? "" : QString(" (%1)").arg(component))).toLocal8Bit();
+        QStringList layerInfo = this->layerKey.split("-");
+        QByteArray axisLabelByteArray = (layerInfo.first() + (layerInfo.last().isEmpty() ? "" : QString(" (%1)").arg(layerInfo.last()))).toLocal8Bit();
         const char *axisLabel = axisLabelByteArray.data();
         vtkSmartPointer<vtkAxis> leftAxis = chart->GetAxis(vtkAxis::LEFT);
         leftAxis->SetTitle(axisLabel);
@@ -383,7 +382,7 @@ void TimeSeriesChartDialog::btnExportToCSV_clicked() {
 }
 
 void TimeSeriesChartDialog::reject() {
-    timeSeriesInteractor->removePickedCells(simulationVTKWidget->getLayerKey());
+    timeSeriesInteractor->removePickedCells(this->layerKey);
     timeSeriesInteractor->deactivatePicker();
     QDialog::reject();
 }
@@ -440,22 +439,23 @@ vtkSmartPointer<vtkIdTypeArray> TimeSeriesChartDialog::getCellsIds() const {
         
         vtkSmartPointer<vtkUnstructuredGrid> firstFrameGrid = genericObjectReader->GetUnstructuredGridOutput();
         vtkSmartPointer<vtkPoints> points = pointsReader->GetOutput()->GetPoints();
-        double pcoords[3] = {0, 0, 0};
-        double weights[8];
+        vtkSmartPointer<vtkPolyData> meshPolyData = simulationVTKWidget->getMesh()->getMeshPolyData();
+        double pcoords[3];
+        double weights[4];
         int subId;
         
         for (vtkIdType i = 0; i < points->GetNumberOfPoints(); i++) {
-            vtkIdType cellId = firstFrameGrid->FindCell(points->GetPoint(i), nullptr, 0, 0.001, subId, pcoords, weights);
+            vtkIdType cellId = meshPolyData->FindCell(points->GetPoint(i), nullptr, 0, 0.001, subId, pcoords, weights);
 
             if (cellId != -1) {
                 cellsIds->InsertNextTuple1(cellId);
             }
         }
         
-        timeSeriesInteractor->renderCellsIds(simulationVTKWidget->getLayerKey(), firstFrameGrid, cellsIds);
+        timeSeriesInteractor->renderCellsIds(this->layerKey, firstFrameGrid, cellsIds);
     }
     
-    return timeSeriesInteractor->getCellIdArray(simulationVTKWidget->getLayerKey());
+    return timeSeriesInteractor->getCellIdArray(this->layerKey);
 }
 
 void TimeSeriesChartDialog::btnExportToPNG_clicked() {
@@ -512,7 +512,7 @@ void TimeSeriesChartDialog::on_chkVerticalProfile_toggled(bool checked) {
         
         if (proceed) {
             chart->ClearPlots();
-            timeSeriesInteractor->removePickedCells(simulationVTKWidget->getLayerKey());
+            timeSeriesInteractor->removePickedCells(this->layerKey);
             timeSeriesInteractor->activatePicker(checked ? PickerMode::ONE_CELL : PickerMode::EACH_CELL);
         } else {
             ui->chkVerticalProfile->setChecked(false);
@@ -525,7 +525,7 @@ void TimeSeriesChartDialog::on_chkVerticalProfile_toggled(bool checked) {
     }
 }
 
-void TimeSeriesChartDialog::renderVerticalProfileGrid(const char *layerName, vtkSmartPointer<vtkDoubleArray> x, vtkSmartPointer<vtkDoubleArray> y, vtkSmartPointer<vtkDoubleArray> scalars) {
+void TimeSeriesChartDialog::renderVerticalProfileGrid(vtkSmartPointer<vtkDoubleArray> x, vtkSmartPointer<vtkDoubleArray> y, vtkSmartPointer<vtkDoubleArray> scalars) {
     
     vtkSmartPointer<vtkDoubleArray> zCoordinates = vtkSmartPointer<vtkDoubleArray>::New();
     zCoordinates->InsertNextValue(0.0);
@@ -609,17 +609,21 @@ vtkSmartPointer<vtkColorTransferFunction> TimeSeriesChartDialog::buildColorTrans
     return colorTransferFunction;
 }
 
-vtkSmartPointer<vtkDoubleArray> TimeSeriesChartDialog::getGridArray(vtkSmartPointer<vtkUnstructuredGrid> sourceGrid, const char *layerName) const {
-    if (sourceGrid->GetCellData()->GetArray(layerName)->GetNumberOfComponents() == 1) {
-        return vtkDoubleArray::SafeDownCast(sourceGrid->GetCellData()->GetArray(layerName));
+vtkSmartPointer<vtkDoubleArray> TimeSeriesChartDialog::getGridArray(vtkSmartPointer<vtkUnstructuredGrid> sourceGrid) const {
+    QString layerName = this->layerKey.split("-").first();
+    QByteArray layerNameByteArray = layerName.toLocal8Bit();
+    const char *cLayerName = layerNameByteArray.data();
+    
+    if (sourceGrid->GetCellData()->GetArray(cLayerName)->GetNumberOfComponents() == 1) {
+        return vtkDoubleArray::SafeDownCast(sourceGrid->GetCellData()->GetArray(cLayerName));
     }
     
     vtkSmartPointer<vtkArrayCalculator> magnitudeFunction = vtkSmartPointer<vtkArrayCalculator>::New();
     const char *magnitudeArrayName = "magnitude";
     
-    magnitudeFunction->AddScalarVariable("x", layerName, 0);
-    magnitudeFunction->AddScalarVariable("y", layerName, 1);
-    magnitudeFunction->AddScalarVariable("z", layerName, 2);
+    magnitudeFunction->AddScalarVariable("x", cLayerName, 0);
+    magnitudeFunction->AddScalarVariable("y", cLayerName, 1);
+    magnitudeFunction->AddScalarVariable("z", cLayerName, 2);
     magnitudeFunction->SetResultArrayName(magnitudeArrayName);
     magnitudeFunction->SetFunction("sqrt(x^2 + y^2 + z^2)");
     magnitudeFunction->SetAttributeModeToUseCellData();

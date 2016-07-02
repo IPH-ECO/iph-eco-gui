@@ -1,6 +1,5 @@
 #include <domain/structured_mesh.h>
 
-#include <utility/cgal_definitions.h>
 #include <domain/boundary_condition.h>
 
 #include <vtkQuad.h>
@@ -11,7 +10,6 @@
 #include <vtkCellData.h>
 #include <vtkCellArray.h>
 #include <vtkDoubleArray.h>
-#include <vtkCellCenters.h>
 
 StructuredMesh::StructuredMesh() : resolution(100) {}
 
@@ -39,7 +37,7 @@ void StructuredMesh::generate() {
     double x = bounds[0];
     double y = bounds[2];
     int count = 0, currentStep = 0;
-    QMap<Point, vtkIdType> pointsMap;
+    QMap<std::pair<double, double>, vtkIdType> pointsMap;
     
     for (int i = 0; i < rows && !generationCanceled; i++) {
         for (int j = 0; j < columns && !generationCanceled; j++) {
@@ -51,21 +49,21 @@ void StructuredMesh::generate() {
             
             if (includeQuad) {
                 vtkSmartPointer<vtkQuad> quad = vtkSmartPointer<vtkQuad>::New();
-                Point quadCoordinates[4] = {
-                    Point(x, y),
-                    Point(x + this->resolution, y),
-                    Point(x + this->resolution, y + this->resolution),
-                    Point(x, y + this->resolution)
+                std::pair<double, double> quadCoordinates[4] = {
+                    std::pair<double, double>(x, y),
+                    std::pair<double, double>(x + this->resolution, y),
+                    std::pair<double, double>(x + this->resolution, y + this->resolution),
+                    std::pair<double, double>(x, y + this->resolution)
                 };
                 
                 quad->GetPointIds()->SetNumberOfIds(4);
                 
                 for (int k = 0; k < 4; k++) {
-                    Point point = quadCoordinates[k];
+                    std::pair<double, double> point = quadCoordinates[k];
                     
                     if (!pointsMap.contains(point)) {
                         pointsMap.insert(point, count++);
-                        points->InsertNextPoint(point.x(), point.y(), 0.0);
+                        points->InsertNextPoint(point.first, point.second, 0.0);
                     }
                     
                     quad->GetPointIds()->SetId(k, pointsMap.value(point));
@@ -117,23 +115,6 @@ bool StructuredMesh::pointInMesh(double *point) {
 SimulationDataType::StructuredMesh* StructuredMesh::toSimulationDataType(const HydrodynamicConfiguration *hydrodynamicConfiguration) const {
     SimulationDataType::StructuredMesh *structuredMesh = new SimulationDataType::StructuredMesh();
     enum class EdgeDirection { SOUTH = 0, EAST, NORTH, WEST };
-    vtkIdType numberOfCells = this->meshPolyData->GetNumberOfCells();
-    
-    vtkSmartPointer<vtkCellCenters> cellCentersFilter = vtkSmartPointer<vtkCellCenters>::New();
-    cellCentersFilter->SetInputData(this->meshPolyData);
-    cellCentersFilter->Update();
-    
-    structuredMesh->numberOfElements = numberOfCells;
-    structuredMesh->resolution = this->resolution;
-    structuredMesh->xCoordinates = new double[numberOfCells];
-    structuredMesh->yCoordinates = new double[numberOfCells];
-    
-    for (vtkIdType i = 0; i < cellCentersFilter->GetOutput()->GetNumberOfPoints(); i++) {
-        double center[3];
-        cellCentersFilter->GetOutput()->GetPoint(i, center);
-        structuredMesh->xCoordinates[i] = center[0];
-        structuredMesh->yCoordinates[i] = center[1];
-    }
     
     BoundaryCondition *waterFlowBoundaryCondition = nullptr;
     
@@ -151,12 +132,24 @@ SimulationDataType::StructuredMesh* StructuredMesh::toSimulationDataType(const H
         boundaryCellIds = this->getBoundaryCellIds(waterFlowBoundaryCondition->getVTKObjectIds());
     }
     
+    vtkIdType numberOfCells = this->meshPolyData->GetNumberOfCells();
+    
+    structuredMesh->numberOfElements = numberOfCells;
+    structuredMesh->resolution = this->resolution;
+    structuredMesh->xCoordinates = new double[numberOfCells];
+    structuredMesh->yCoordinates = new double[numberOfCells];
 	structuredMesh->northNeighbors = new long long int[numberOfCells];
 	structuredMesh->westNeighbors = new long long int[numberOfCells];
 	structuredMesh->southNeighbors = new long long int[numberOfCells];
 	structuredMesh->eastNeighbors = new long long int[numberOfCells];
     
     for (vtkIdType cellId = 0; cellId < numberOfCells; cellId++) {
+        double cellBounds[6] = { 0 };
+        
+        this->meshPolyData->GetCell(cellId)->GetBounds(cellBounds);
+        structuredMesh->xCoordinates[cellId] = cellBounds[0] + (cellBounds[1] - cellBounds[0]) / 2.0;
+        structuredMesh->yCoordinates[cellId] = cellBounds[2] + (cellBounds[3] - cellBounds[2]) / 2.0;
+        
         vtkSmartPointer<vtkIdList> cellNeighbors = vtkSmartPointer<vtkIdList>::New();
         vtkSmartPointer<vtkIdList> cellPointIds = vtkSmartPointer<vtkIdList>::New();
         vtkIdType directionIndex = 0;

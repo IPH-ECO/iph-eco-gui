@@ -32,7 +32,8 @@ QMap<GridDataType, QString> GridData::gridTypesMap = {
     std::pair<GridDataType, QString>(GridDataType::WETLAND_AREA, "Wetland areas"),
     std::pair<GridDataType, QString>(GridDataType::D50_GRAIN_SIZE, "D50 grain size"),
     std::pair<GridDataType, QString>(GridDataType::FRACTION_OF_ORGANIC_MATTER, "Fraction of organic matter in the sediment"),
-    std::pair<GridDataType, QString>(GridDataType::IMPERVIOUS_BEDROCK_LEVEL, "Impervious bedrock level")
+    std::pair<GridDataType, QString>(GridDataType::IMPERVIOUS_BEDROCK_LEVEL, "Impervious bedrock level"),
+    std::pair<GridDataType, QString>(GridDataType::FREE_SURFACE_ELEVATION, "Free-surface elevation")
 };
 
 uint GridData::getId() const {
@@ -40,9 +41,7 @@ uint GridData::getId() const {
 }
 
 void GridData::setId(const uint &id) {
-    if (!isPersisted()) {
-        this->id = id;
-    }
+    this->id = id;
 }
 
 QString GridData::getName() const {
@@ -259,7 +258,7 @@ double GridData::inverseOfDistance(vtkSmartPointer<vtkIdList> inscribedPointsIds
         double distance = vtkMath::Distance2BetweenPoints(cellCenter, inputPolyData->GetPoints()->GetPoint(pointId));
         
         if (distance == 0) {
-            continue;
+            distance = 1e-14;
         }
         
         double distancePow = pow(distance, exponent);

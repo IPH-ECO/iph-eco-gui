@@ -41,7 +41,7 @@ public:
     ~BoundaryCondition();
 
 	uint getId() const;
-	void setId(uint id);
+	void setId(const uint &id);
 	bool isPersisted() const;
 	BoundaryConditionType getType() const;
     void setType(const BoundaryConditionType &type);

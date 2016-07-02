@@ -75,7 +75,7 @@
          <item>
           <widget class="QToolButton" name="btnNewConfiguration">
            <property name="toolTip">
-            <string>Add new mesh</string>
+            <string>Add new configuration</string>
            </property>
            <property name="text">
             <string/>
@@ -89,7 +89,7 @@
          <item>
           <widget class="QToolButton" name="btnApplyConfiguration">
            <property name="toolTip">
-            <string>Apply changes</string>
+            <string>Apply configuration changes</string>
            </property>
            <property name="text">
             <string/>
@@ -103,7 +103,7 @@
          <item>
           <widget class="QToolButton" name="btnRemoveConfiguration">
            <property name="toolTip">
-            <string>Remove selected mesh</string>
+            <string>Remove selected configuration</string>
            </property>
            <property name="text">
             <string/>
@@ -607,14 +607,14 @@
   <tabstop>edtStationName</tabstop>
   <tabstop>edtX</tabstop>
   <tabstop>edtY</tabstop>
-  <tabstop>rdoUtm</tabstop>
   <tabstop>rdoLatLong</tabstop>
+  <tabstop>rdoUtm</tabstop>
   <tabstop>btnApplyStation</tabstop>
   <tabstop>btnClose</tabstop>
+  <tabstop>cbxConfiguration</tabstop>
+  <tabstop>btnNewConfiguration</tabstop>
   <tabstop>btnApplyConfiguration</tabstop>
   <tabstop>btnRemoveConfiguration</tabstop>
-  <tabstop>btnNewConfiguration</tabstop>
-  <tabstop>cbxConfiguration</tabstop>
  </tabstops>
  <resources>
   <include location="../../resources/resources.qrc"/>

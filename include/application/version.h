@@ -16,6 +16,6 @@
 #define VER_ORIGINALFILENAME_STR    "iph-eco.exe"
 #define VER_PRODUCTNAME_STR         "IPH-ECO"
 
-#define VER_COMPANYDOMAIN_STR       "https://sites.google.com/site/iphecomodel"
+#define VER_COMPANYDOMAIN_STR       "ipheco.org"
 
 #endif // VERSION_H

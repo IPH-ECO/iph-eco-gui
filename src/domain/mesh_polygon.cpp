@@ -235,9 +235,7 @@ bool MeshPolygon::pointInPolygon(double *point) {
 }
 
 void MeshPolygon::setId(const uint &id) {
-    if (!isPersisted()) {
         this->id = id;
-    }
 }
 
 uint MeshPolygon::getId() const {

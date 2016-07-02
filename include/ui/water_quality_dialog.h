@@ -19,15 +19,18 @@ private:
 	WaterQualityConfiguration *unsavedConfiguration;
 	WaterQualityConfiguration *currentConfiguration;
 	WaterQualityRepository *waterQualityRepository;
+    bool isWebViewLoaded;
 
-	void buildParametersTree(WaterQualityParameter *parameter);
+	void buildParameterTree(WaterQualityParameter *parameter);
 private slots:
-	void on_cbxConfiguration_currentIndexChanged(const QString &configurationName);
+    void on_cbxConfiguration_currentIndexChanged(const QString &configurationName);
 	void on_cbxGridDataConfiguration_currentIndexChanged(const QString &gridDataConfigurationName);
 	void on_btnRemoveConfiguration_clicked();
 	void on_btnNewConfiguration_clicked();
 	void on_btnApplyConfiguration_clicked();
-	void on_trwParameters_itemChanged(QTreeWidgetItem *item, int column);
+	void on_trwStructure_itemChanged(QTreeWidgetItem *item, int column);
+    void on_tabWidget_currentChanged(int index);
+    void on_webView_loadFinished(bool ok);
     void addJSObject();
     void onTabularInputButtonClicked();
 public:

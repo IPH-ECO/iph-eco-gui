@@ -3,11 +3,11 @@
 #include <QSetIterator>
 
 Project::Project(const QString &name, const QString &description, const bool &hydrodynamic, const bool &waterQuality) :
-        id(0),
-		name(name),
-		description(description),
-		hydrodynamic(hydrodynamic),
-		waterQuality(waterQuality)
+    id(0),
+    name(name),
+    description(description),
+    hydrodynamic(hydrodynamic),
+    waterQuality(waterQuality)
 {}
 
 Project::~Project() {
@@ -33,9 +33,7 @@ Project::~Project() {
 }
 
 void Project::setId(const uint &id) {
-    if (!isPersisted()) {
-        this->id = id;
-    }
+    this->id = id;
 }
 
 uint Project::getId() const {

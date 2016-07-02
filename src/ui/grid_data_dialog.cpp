@@ -257,7 +257,7 @@ bool GridDataDialog::isConfigurationValid(const QString &configurationName) {
     }
 
     if (ui->cbxMesh->currentIndex() == -1) {
-        QMessageBox::warning(this, tr("Grid Data"), tr("Associate a mesh to this configuration."));
+        QMessageBox::warning(this, tr("Grid Data"), tr("Please associate a mesh to this configuration."));
         return false;
     }
 

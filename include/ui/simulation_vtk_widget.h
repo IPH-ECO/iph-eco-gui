@@ -54,7 +54,9 @@ public:
         return layerGrid->GetNumberOfCells() / currentSimulation->getMesh()->getMeshPolyData()->GetNumberOfCells();
     }
     
-	void render(Simulation *simulation, const QString &layer, const QString &component, int frame);
+    void setLayer(const QString &layer);
+    void setComponent(const QString &component);
+	void render(Simulation *simulation, const int &frame);
     void removeLayer(const QString &layerKey);
     void setAxesScale(const QString &axesScale);
     void updateOutputFileList();

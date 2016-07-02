@@ -38,18 +38,19 @@ private:
     vtkSmartPointer<vtkChartXY> chart;
     LayerProperties *layerProperties;
     QSettings *appSettings;
+    QString layerKey;
     
     bool isValid();
     QString getDefaultDirectory();
     vtkSmartPointer<vtkIdTypeArray> getCellsIds() const;
     vtkIdType getCorrespondingCell(const vtkIdType &sourceCellId, const int &layer) const;
-    void renderVerticalProfileGrid(const char *layerName,  vtkSmartPointer<vtkDoubleArray> x, vtkSmartPointer<vtkDoubleArray> y, vtkSmartPointer<vtkDoubleArray> scalars);
+    void renderVerticalProfileGrid(vtkSmartPointer<vtkDoubleArray> x, vtkSmartPointer<vtkDoubleArray> y, vtkSmartPointer<vtkDoubleArray> scalars);
     void renderVerticalProfileAxes(double *xRange, double *yRange, vtkSmartPointer<vtkStringArray> timeStamps);
     vtkSmartPointer<vtkColorTransferFunction> buildColorTransferFunction(double *scalarBarRange);
-    vtkSmartPointer<vtkDoubleArray> getGridArray(vtkSmartPointer<vtkUnstructuredGrid> sourceGrid, const char *layerName) const;
+    vtkSmartPointer<vtkDoubleArray> getGridArray(vtkSmartPointer<vtkUnstructuredGrid> sourceGrid) const;
     virtual void reject();
 public:
-	explicit TimeSeriesChartDialog(QWidget *parent, SimulationVTKWidget *simulationVTKWidget);
+	explicit TimeSeriesChartDialog(QWidget *parent, SimulationVTKWidget *simulationVTKWidget, const QString &layerKey);
     ~TimeSeriesChartDialog();
 private slots:
     void on_btnBrowsePointsFile_clicked();

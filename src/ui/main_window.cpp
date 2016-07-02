@@ -118,7 +118,7 @@ void MainWindow::on_actionSaveAsProject_triggered() {
             try {
                 projectRepository.save(true);
             } catch (DatabaseException &ex) {
-                QFile::remove(projectFileName);
+                progressDialog->cancel();
                 QMessageBox::critical(this, "Save As Project", ex.what());
             }
             

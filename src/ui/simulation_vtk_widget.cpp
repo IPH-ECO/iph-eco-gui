@@ -44,7 +44,15 @@ SimulationVTKWidget::SimulationVTKWidget(QWidget *parent) :
     QObject::connect(this, SIGNAL(mouseEvent(QMouseEvent*)), this, SLOT(handleMouseEvent(QMouseEvent*)));
 }
 
-void SimulationVTKWidget::render(Simulation *simulation, const QString &layer, const QString &component, int frame) {
+void SimulationVTKWidget::setLayer(const QString &layer) {
+    this->currentLayer = layer;
+}
+
+void SimulationVTKWidget::setComponent(const QString &component) {
+    this->currentComponent = component;
+}
+
+void SimulationVTKWidget::render(Simulation *simulation, const int &frame) {
     if (currentSimulation != simulation) {
         currentSimulation = simulation;
         currentMesh = simulation->getMesh();
@@ -68,7 +76,7 @@ void SimulationVTKWidget::render(Simulation *simulation, const QString &layer, c
         layerActor->SetMapper(layerDataSetMapper);
     }
     
-    if (layer.isEmpty()) {
+    if (currentLayer.isEmpty()) {
         return;
     }
     
@@ -76,14 +84,12 @@ void SimulationVTKWidget::render(Simulation *simulation, const QString &layer, c
         throw SimulationException("Frame out of range.");
     }
     
-    currentLayer = layer;
-    currentComponent = component;
     currentFrame = frame;
     layerProperties = simulation->getSelectedLayers().value(getLayerKey());
     
     
     QByteArray timeStamp = readFrame(frame).toLocal8Bit();
-    QByteArray layerArrayName = layer.toLocal8Bit();
+    QByteArray layerArrayName = currentLayer.toLocal8Bit();
     double layerRange[2];
     
     if (!layerGrid->GetCellData()->HasArray(layerArrayName.constData())) {
@@ -98,17 +104,17 @@ void SimulationVTKWidget::render(Simulation *simulation, const QString &layer, c
     
     renderer->AddActor2D(timeStampActor);
     
-    if (component == "Magnitude") {
+    if (currentComponent == "Magnitude") {
         vtkSmartPointer<vtkDoubleArray> layerArray = this->buildMagnitudeArray();
         layerArray->GetRange(layerRange);
         layerGrid->GetCellData()->AddArray(layerArray);
-    } else if (component == "Vector") {
+    } else if (currentComponent == "Vector") {
         layerArrayName = MAGNITUDE_ARRAY_NAME;
     } else { // Arbritary layer
         layerGrid->GetCellData()->GetArray(layerArrayName.constData())->GetRange(layerRange);
     }
     
-    if (component == "Vector") {
+    if (currentComponent == "Vector") {
         vtkSmartPointer<vtkPolyData> vectorsPolyData = renderVectors();
         vtkSmartPointer<vtkActor> vectorsActor = vtkSmartPointer<vtkActor>::New();
         
@@ -363,7 +369,7 @@ void SimulationVTKWidget::hideLayer(const QString &layerKey) {
 }
 
 void SimulationVTKWidget::updateLayer() {
-    this->render(currentSimulation, currentLayer, currentComponent, currentFrame);
+    this->render(currentSimulation, currentFrame);
 }
 
 void SimulationVTKWidget::removeLayer(const QString &layerKey) {
@@ -468,7 +474,7 @@ void SimulationVTKWidget::exportVideo(int initialFrame, int finalFrame, int fram
     int frame = initialFrame - 1;
     
     while (frame < finalFrame && !cancelExportVideoOperation) {
-        render(currentSimulation, currentLayer, currentComponent, frame);
+        render(currentSimulation, frame);
         
         windowToImageFilter->Modified();
         windowToImageFilter->Update();

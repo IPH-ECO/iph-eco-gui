@@ -394,7 +394,7 @@ void ProjectRepository::loadSimulations(Project *project) {
     }
 }
 
-void ProjectRepository::save(bool makeCopy) {
+void ProjectRepository::save(const bool &makeCopy) {
     currentProgress = 0;
     emit updateProgressText("Saving project...");
     updateProgressAndProcessEvents();
@@ -465,8 +465,9 @@ void ProjectRepository::saveMeshes(Project *project) {
         }
         
         QString sql;
+        bool update = !this->makeCopy && mesh->isPersisted();
         
-        if (!this->makeCopy && mesh->isPersisted()) {
+        if (update) {
             query.prepare("update mesh set name = :n, type = :t, mesh_poly_data = :mp, boundary_poly_data = :bp, coordinates_distance = :c, resolution = :r where id = :m");
             query.bindValue(":m", mesh->getId());
         } else {
@@ -493,7 +494,10 @@ void ProjectRepository::saveMeshes(Project *project) {
         
         updateProgressAndProcessEvents();
         
-        mesh->setId(query.lastInsertId().toUInt());
+        if (!update) {
+            mesh->setId(query.lastInsertId().toUInt());
+        }
+        
         meshIds.append(QString::number(mesh->getId()));
         saveMeshPolygons(mesh);
     }
@@ -530,7 +534,9 @@ void ProjectRepository::saveMeshPolygons(Mesh *mesh) {
             return;
         }
         
-        if (!this->makeCopy && meshPolygon->isPersisted()) {
+        bool update = !this->makeCopy && meshPolygon->isPersisted();
+        
+        if (update) {
             QString sql = "update mesh_polygon set name = :n, type = :t, original_poly_data = :p, filtered_poly_data = :f, minimum_angle = :mi, maximum_edge_length = :ma %1 where id = :i";
             
             if (meshPolygon->getLatitudeAverage() != 0) {
@@ -563,7 +569,10 @@ void ProjectRepository::saveMeshPolygons(Mesh *mesh) {
         
         updateProgressAndProcessEvents();
         
-        meshPolygon->setId(query.lastInsertId().toUInt());
+        if (!update) {
+            meshPolygon->setId(query.lastInsertId().toUInt());
+        }
+        
         meshPolygonIds.append(QString::number(meshPolygon->getId()));
     }
     
@@ -586,7 +595,9 @@ void ProjectRepository::saveGridDataConfigurations(Project *project) {
             return;
         }
         
-        if (!this->makeCopy && configuration->isPersisted()) {
+        bool update = !this->makeCopy && configuration->isPersisted();
+
+        if (update) {
             query.prepare("update grid_data_configuration set name = :n where id = :i");
             query.bindValue(":i", configuration->getId());
         } else {
@@ -601,7 +612,10 @@ void ProjectRepository::saveGridDataConfigurations(Project *project) {
         
         updateProgressAndProcessEvents();
         
-        configuration->setId(query.lastInsertId().toUInt());
+        if (!update) {
+            configuration->setId(query.lastInsertId().toUInt());
+        }
+        
         configurationIds.append(QString::number(configuration->getId()));
         saveGridData(configuration);
     }
@@ -636,7 +650,9 @@ void ProjectRepository::saveGridData(GridDataConfiguration *gridDataConfiguratio
             return;
         }
         
-        if (!this->makeCopy && gridData->isPersisted()) {
+        bool update = !this->makeCopy && gridData->isPersisted();
+
+        if (update) {
             query.prepare("update grid_data set name = :n, input_type = :it, grid_type = :gt, input_poly_data = :ipd, exponent = :e, radius = :r where id = :i");
             query.bindValue(":i", gridData->getId());
         } else {
@@ -665,7 +681,10 @@ void ProjectRepository::saveGridData(GridDataConfiguration *gridDataConfiguratio
         
         updateProgressAndProcessEvents();
         
-        gridData->setId(query.lastInsertId().toUInt());
+        if (!update) {
+            gridData->setId(query.lastInsertId().toUInt());
+        }
+        
         gridDataIds.append(QString::number(gridData->getId()));
     }
     
@@ -688,7 +707,9 @@ void ProjectRepository::saveHydrodynamicConfigurations(Project *project) {
             return;
         }
     
-        if (!this->makeCopy && configuration->isPersisted()) {
+        bool update = !this->makeCopy && configuration->isPersisted();
+
+        if (update) {
             query.prepare("update hydrodynamic_configuration set name = :n, grid_data_configuration_id = :g where id = :i");
             query.bindValue(":i", configuration->getId());
         } else {
@@ -704,7 +725,10 @@ void ProjectRepository::saveHydrodynamicConfigurations(Project *project) {
         
         updateProgressAndProcessEvents();
         
-        configuration->setId(query.lastInsertId().toUInt());
+        if (!update) {
+            configuration->setId(query.lastInsertId().toUInt());
+        }
+        
         configurationIds.append(QString::number(configuration->getId()));
         saveHydrodynamicParameters(configuration);
         saveBoundaryConditions(configuration);
@@ -742,7 +766,9 @@ void ProjectRepository::saveHydrodynamicParameters(HydrodynamicConfiguration *co
             return;
         }
         
-        if (!this->makeCopy && parameter->isPersisted()) {
+        bool update = !this->makeCopy && parameter->isPersisted();
+        
+        if (update) {
             query.prepare("update hydrodynamic_parameter set value = :v, selected = :s where id = :i");
             query.bindValue(":i", parameter->getId());
         } else {
@@ -762,7 +788,12 @@ void ProjectRepository::saveHydrodynamicParameters(HydrodynamicConfiguration *co
 
         updateProgressAndProcessEvents();
 
-        parameter->setId(query.lastInsertId().toUInt());
+        QVariant lastInsertId = query.lastInsertId();
+        
+        if (!update) {
+            parameter->setId(query.lastInsertId().toUInt());
+        }
+        
         parameterIds.append(QString::number(parameter->getId()));
     }
 }
@@ -776,7 +807,9 @@ void ProjectRepository::saveBoundaryConditions(HydrodynamicConfiguration *config
             return;
         }
 
-        if (!this->makeCopy && boundaryCondition->isPersisted()) {
+        bool update = !this->makeCopy && boundaryCondition->isPersisted();
+        
+        if (update) {
             query.prepare("update boundary_condition set type = :t, object_ids = :o, function = :f, constant_value = :c, cell_color = :cc, vertical_integrated_outflow = :v, minimum_elevation = :m1, maximum_elevation = :m2 where id = :i");
             query.bindValue(":i", boundaryCondition->getId());
         } else {
@@ -800,7 +833,10 @@ void ProjectRepository::saveBoundaryConditions(HydrodynamicConfiguration *config
 
         updateProgressAndProcessEvents();
 
-        boundaryCondition->setId(query.lastInsertId().toUInt());
+        if (!update) {
+            boundaryCondition->setId(query.lastInsertId().toUInt());
+        }
+        
         boundaryConditionIds.append(QString::number(boundaryCondition->getId()));
 
         saveTimeSeries(boundaryCondition);
@@ -814,14 +850,14 @@ void ProjectRepository::saveBoundaryConditions(HydrodynamicConfiguration *config
 }
 
 void ProjectRepository::saveTimeSeries(BoundaryCondition *boundaryCondition) {
-    if (boundaryCondition->isTimeSeriesChanged()) {
+    if (boundaryCondition->getFunction() == BoundaryConditionFunction::TIME_SERIES && (makeCopy || boundaryCondition->isTimeSeriesChanged())) {
         saveTimeSeries(boundaryCondition->getId(), "BoundaryCondition", boundaryCondition->getTimeSeriesList());
 		boundaryCondition->setTimeSeriesChanged(false);
     }
 }
 
 void ProjectRepository::saveTimeSeries(MeteorologicalParameter *parameter) {
-    if (parameter->isTimeSeriesChanged()) {
+    if (parameter->getFunction() == MeteorologicalParameterFunction::TIME_SERIES && (makeCopy || parameter->isTimeSeriesChanged())) {
         saveTimeSeries(parameter->getId(), "MeteorologicalParameter", parameter->getTimeSeriesList());
 		parameter->setTimeSeriesChanged(false);
     }
@@ -879,7 +915,9 @@ void ProjectRepository::saveMeteorologicalConfigurations(Project *project) {
             return;
         }
         
-        if (!this->makeCopy && configuration->isPersisted()) {
+        bool update = !this->makeCopy && configuration->isPersisted();
+
+        if (update) {
             query.prepare("update meteorological_configuration set name = :n, grid_data_configuration_id = :g where id = :i");
             query.bindValue(":i", configuration->getId());
         } else {
@@ -895,7 +933,10 @@ void ProjectRepository::saveMeteorologicalConfigurations(Project *project) {
         
         updateProgressAndProcessEvents();
         
-        configuration->setId(query.lastInsertId().toUInt());
+        if (!update) {
+            configuration->setId(query.lastInsertId().toUInt());
+        }
+        
         configurationIds.append(QString::number(configuration->getId()));
         saveMeteorologicalStations(configuration);
     }
@@ -928,7 +969,9 @@ void ProjectRepository::saveMeteorologicalStations(MeteorologicalConfiguration *
             return;
         }
         
-        if (!this->makeCopy && station->isPersisted()) {
+        bool update = !this->makeCopy && station->isPersisted();
+        
+        if (update) {
             query.prepare("update meteorological_station set name = :n, use_latitude_longitude = :u, utm_x = :x, utm_y = :y, latitude = :la, longitude = :lo where id = :i");
             query.bindValue(":i", station->getId());
         } else {
@@ -949,7 +992,10 @@ void ProjectRepository::saveMeteorologicalStations(MeteorologicalConfiguration *
         
         updateProgressAndProcessEvents();
         
-        station->setId(query.lastInsertId().toUInt());
+        if (!update) {
+            station->setId(query.lastInsertId().toUInt());
+        }
+        
         stationIds.append(QString::number(station->getId()));
         saveMeteorologicalParameters(station);
     }
@@ -981,7 +1027,9 @@ void ProjectRepository::saveMeteorologicalParameters(MeteorologicalStation *stat
             return;
         }
         
-        if (!this->makeCopy && parameter->isPersisted()) {
+        bool update = !this->makeCopy && parameter->isPersisted();
+        
+        if (update) {
             query.prepare("update meteorological_parameter set function = :f, constant_value = :c, use_xy_component = :uxy, x_component = :x, y_component = :y, intensity = :in, direction = :d where id = :i");
             query.bindValue(":i", parameter->getId());
         } else {
@@ -1005,7 +1053,10 @@ void ProjectRepository::saveMeteorologicalParameters(MeteorologicalStation *stat
         
         updateProgressAndProcessEvents();
         
-        parameter->setId(query.lastInsertId().toUInt());
+        if (!update) {
+            parameter->setId(query.lastInsertId().toUInt());
+        }
+        
         parameterIds.append(QString::number(parameter->getId()));
         saveTimeSeries(parameter);
     }
@@ -1062,7 +1113,9 @@ void ProjectRepository::saveSimulation(Simulation *simulation) {
     QSqlQuery query(databaseUtility->getDatabase());
     QString sql;
     
-    if (!this->makeCopy && simulation->isPersisted()) {
+    bool update = !this->makeCopy && simulation->isPersisted();
+    
+    if (update) {
         query.prepare("update simulation set label = :l, observations = :o where id = :i");
         query.bindValue(":i", simulation->getId());
     } else {
@@ -1094,13 +1147,15 @@ void ProjectRepository::saveSimulation(Simulation *simulation) {
     
     updateProgressAndProcessEvents();
     
-    simulation->setId(query.lastInsertId().toUInt());
+    if (!update) {
+        simulation->setId(query.lastInsertId().toUInt());
+    }
 }
 
 int ProjectRepository::getMaximumSaveProgress() {
-    int saveSteps = 0;
     Project *project = IPHApplication::getCurrentProject();
     QSet<Mesh*> meshes = project->getMeshes();
+    int saveSteps = 1; // Project
     
     saveSteps += meshes.size();
     
@@ -1109,10 +1164,6 @@ int ProjectRepository::getMaximumSaveProgress() {
     }
     
     QSet<GridDataConfiguration*> gridDataConfigurations = project->getGridDataConfigurations();
-    
-    for (GridDataConfiguration *configuration : gridDataConfigurations) {
-        saveSteps += configuration->getGridDataVector().size();
-    }
     
     saveSteps += gridDataConfigurations.size();
     
@@ -1129,7 +1180,7 @@ int ProjectRepository::getMaximumSaveProgress() {
         saveSteps += configuration->getBoundaryConditions().size();
         
         for (BoundaryCondition *boundaryCondition : configuration->getBoundaryConditions()) {
-            if (boundaryCondition->isTimeSeriesChanged()) {
+            if (boundaryCondition->getFunction() == BoundaryConditionFunction::TIME_SERIES && (makeCopy || boundaryCondition->isTimeSeriesChanged())) {
                 saveSteps += boundaryCondition->getTimeSeriesListPointer()->size();
             }
         }
@@ -1150,7 +1201,7 @@ int ProjectRepository::getMaximumSaveProgress() {
             saveSteps += parameters.size();
             
             for (MeteorologicalParameter *parameter : parameters) {
-                if (parameter->isTimeSeriesChanged()) {
+                if (parameter->getFunction() == MeteorologicalParameterFunction::TIME_SERIES && (makeCopy || parameter->isTimeSeriesChanged())) {
                     saveSteps += parameter->getTimeSeriesListPointer()->size();
                 }
             }

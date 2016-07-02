@@ -17,9 +17,7 @@ uint GridDataConfiguration::getId() const {
 }
 
 void GridDataConfiguration::setId(const uint &id) {
-    if (!isPersisted()) {
-        this->id = id;
-    }
+    this->id = id;
 }
 
 bool GridDataConfiguration::isPersisted() const {
