@@ -15,6 +15,7 @@ endif()
 find_package(VTK REQUIRED)
 find_package(CGAL REQUIRED COMPONENTS Core)
 find_package(GeographicLib REQUIRED)
+find_package(Pugixml REQUIRED)
 
 find_library(IPH_ECO_MODEL_LIBRARY NAMES iph-eco-model PATHS ${IPH_ECO_MODEL_DIR} NO_DEFAULT_PATH)
 
@@ -30,7 +31,7 @@ file(GLOB_RECURSE SOURCES src/main.cpp src/*.cpp include/*.h resources/resources
 
 add_executable(iph-eco MACOSX_BUNDLE ${SOURCES})
 target_include_directories(iph-eco PUBLIC include)
-target_link_libraries(iph-eco ${IPH_ECO_MODEL_LIBRARY} ${VTK_LIBRARIES} ${CGAL_LIBRARIES} ${GeographicLib_LIBRARIES} Qt5::Widgets Qt5::Sql Qt5::WebKitWidgets)
+target_link_libraries(iph-eco ${IPH_ECO_MODEL_LIBRARY} ${VTK_LIBRARIES} ${CGAL_LIBRARIES} ${GeographicLib_LIBRARIES} pugixml Qt5::Widgets Qt5::Sql Qt5::WebKitWidgets)
 
 if(MSVC)
 	set_target_properties(iph-eco PROPERTIES LINK_FLAGS_RELEASE "/SUBSYSTEM:WINDOWS /ENTRY:wmainCRTStartup")

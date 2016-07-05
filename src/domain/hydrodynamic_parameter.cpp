@@ -15,7 +15,7 @@ uint HydrodynamicParameter::getId() const {
     return id;
 }
 
-void HydrodynamicParameter::setId(uint id) {
+void HydrodynamicParameter::setId(const uint &id) {
     this->id = id;
 }
 

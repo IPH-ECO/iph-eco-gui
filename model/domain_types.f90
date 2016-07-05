@@ -56,7 +56,8 @@ module domain_types
         integer(c_int) :: timeSeriesListSize
         type(c_ptr) :: timeSeriesList
         logical(c_bool) :: verticalIntegratedOutflow
-        real(c_double) :: quota
+        real(c_double) :: minimumElevation
+        real(c_double) :: maximumElevation
     end type
 
     type, bind(C) :: TimeSeries

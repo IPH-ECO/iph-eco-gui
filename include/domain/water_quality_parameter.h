@@ -9,6 +9,7 @@
 
 enum class WaterQualityParameterType { PROCESS_INPUT = 1, INITIAL_CONDITION };
 enum class WaterQualityParameterInputType { NO_INPUT = 0, INLINE, TABULAR };
+enum class WaterQualityParameterSection { STRUCTURE = 1, PARAMETER };
 
 class WaterQualityParameter {
 private:
@@ -26,9 +27,12 @@ private:
     QString label;
     QString description;
     QString diagramItem;
+    WaterQualityParameterSection section;
+    QString target;
     QStringList groups;
     WaterQualityParameter *parent;
     bool editable;
+    bool radio;
     int order;
     double rangeMininum;
     double rangeMaximum;
@@ -38,10 +42,10 @@ public:
     WaterQualityParameter();
 
     uint getId() const;
-    void setId(uint id);
+    void setId(const uint &id);
     bool isPersisted() const;
     QString getName() const;
-    void setName(const QString& name);
+    void setName(const QString &name);
     double getValue() const;
     void setValue(double value);
     QList<double> getGroupValues() const;
@@ -63,12 +67,18 @@ public:
     void setDescription(const QString &description);
     QString getDiagramItem() const;
     void setDiagramItem(const QString &diagramItem);
+    WaterQualityParameterSection getSection() const;
+    void setSection(const WaterQualityParameterSection &section);
+    QString getTarget() const;
+    void setTarget(const QString &target);
     QStringList getGroups() const;
     void setGroups(const QStringList &groups);
     WaterQualityParameter* getParent() const;
     void setParent(WaterQualityParameter *parent);
     bool isEditable() const;
     void setEditable(bool editable);
+    bool isRadio() const;
+    void setRadio(const bool &radio);
     int getOrder() const;
     void setOrder(int order);
     double getRangeMinimum() const;

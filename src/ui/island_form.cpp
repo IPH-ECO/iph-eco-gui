@@ -30,7 +30,7 @@ bool IslandForm::isValid() {
         return false;
     }
     
-    if (mesh->getMeshPolygon(meshPolygonName, MeshPolygonType::ISLAND) != nullptr) {
+    if (mesh->getMeshPolygon(meshPolygonName, MeshPolygonType::ISLAND)) {
         QMessageBox::warning(this, tr("Mesh Island"), tr("Name already used."));
         return false;
     }
@@ -57,8 +57,8 @@ void IslandForm::accept() {
 }
 
 void IslandForm::on_btnBrowse_clicked() {
-    QString extensions = "Keyhole Markup Language file (*.kml);;Text file (*.txt *xyz)";
-    CoordinateFileDialog *dialog = new CoordinateFileDialog(this, tr("Select a island file"), getDefaultDirectory(), extensions);
+    CoordinateFileDialog::CoordinateFileDialogFilter filters = static_cast<CoordinateFileDialog::CoordinateFileDialogFilter>(CoordinateFileDialog::FILTER_TEXT | CoordinateFileDialog::FILTER_KML);
+    CoordinateFileDialog *dialog = new CoordinateFileDialog(this, tr("Select a island file"), getDefaultDirectory(), filters);
     int exitCode = dialog->exec();
     
     if (exitCode == QDialog::Accepted) {

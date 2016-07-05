@@ -33,7 +33,7 @@ private:
     
     void addParameterItemWidget(HydrodynamicParameter *parameter);
     void setupItems();
-    void expandTrees();
+    void expandParameterTree();
     void closeEvent(QCloseEvent *event);
     void toggleWidgets(bool enable);
     void clearLayout(QLayout *layout);

@@ -16,7 +16,7 @@ GridLayerDialog::GridLayerDialog(QDialog *parent, GridDataConfiguration *gridCon
 
     appSettings = new QSettings(QApplication::organizationName(), QApplication::applicationName(), this);
 
-    if (gridData != nullptr) {
+    if (gridData) {
         mesh = gridData->getMesh();
         ui->edtName->setText(gridData->getName());
     	ui->edtInputFile->setText(gridData->getInputFile());
@@ -63,7 +63,7 @@ void GridLayerDialog::on_rdoPolygon_toggled(bool checked) {
 }
 
 void GridLayerDialog::on_btnBrowseInputFile_clicked() {
-    CoordinateFileDialog *dialog = new CoordinateFileDialog(this, tr("Select a boundary file"), getDefaultDirectory(), tr("Text files (*.xyz *.txt)"));
+    CoordinateFileDialog *dialog = new CoordinateFileDialog(this, tr("Select a boundary file"), getDefaultDirectory(), CoordinateFileDialog::FILTER_TEXT);
     int exitCode = dialog->exec();
     
     if (exitCode == QDialog::Accepted) {
@@ -87,12 +87,12 @@ bool GridLayerDialog::isValid() {
         return false;
     }
     
-    if (gridConfiguration->getGridData(gridDataName) != nullptr && gridData != nullptr && gridDataName != gridData->getName()) {
+    if (gridConfiguration->getGridData(gridDataName) && gridData && gridDataName != gridData->getName()) {
         QMessageBox::warning(this, tr("Grid Data"), tr("Name already used in this configuration."));
         return false;
     }
     
-    if (gridConfiguration->getMesh() != nullptr && gridConfiguration->getMesh()->hasArray(gridDataName)) {
+    if (gridConfiguration->getMesh() && gridConfiguration->getMesh()->hasArray(gridDataName)) {
         QMessageBox::warning(this, tr("Grid Data"), tr("Name already used in the selected mesh."));
         return false;
     }
@@ -114,7 +114,7 @@ bool GridLayerDialog::isValid() {
         return false;
     }
     
-    if (ui->edtInputFile->text().isEmpty() && (gridData == nullptr || !gridData->isPersisted())) {
+    if (ui->edtInputFile->text().isEmpty() && (!gridData || !gridData->isPersisted())) {
         QMessageBox::warning(this, tr("Grid Data"), tr("Please select a input file."));
         return false;
     }
@@ -132,7 +132,7 @@ void GridLayerDialog::accept() {
         return;
     }
     
-    if (gridData == nullptr) {
+    if (!gridData) {
         gridData = new GridData(mesh);
     }
     

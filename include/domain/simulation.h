@@ -63,7 +63,7 @@ public:
     Simulation();
     ~Simulation();
 	uint getId() const;
-	void setId(uint id);
+	void setId(const uint &id);
 	bool isPersisted() const;
 	QString getLabel() const;
 	void setLabel(const QString &label);

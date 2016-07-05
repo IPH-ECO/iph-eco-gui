@@ -7,19 +7,19 @@
     <x>0</x>
     <y>0</y>
     <width>510</width>
-    <height>366</height>
+    <height>412</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
     <width>510</width>
-    <height>366</height>
+    <height>412</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
     <width>510</width>
-    <height>366</height>
+    <height>412</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -106,7 +106,7 @@
      <item row="0" column="0">
       <widget class="QLabel" name="label_4">
        <property name="text">
-        <string>Ecotechnology Research Group</string>
+        <string>Ecotechnology Research Group - www.ipheco.org</string>
        </property>
       </widget>
      </item>
@@ -123,7 +123,9 @@ Walter Collischonn (collischonn@iph.ufrgs.br)
 Software Team:
 João Roberto dos Santos Júnior (Technical Leader, joaorobertojr88@gmail.com)
 Carlos Ruberto Fragoso Jr. (GUI)
-José Rafael de Albuquerque Cavalcanti (GUI)</string>
+José Rafael de Albuquerque Cavalcanti (GUI)
+
+Bug Report: http://ipheco.org/mantisbt/</string>
        </property>
       </widget>
      </item>

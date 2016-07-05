@@ -86,6 +86,11 @@ void StructuredMeshDialog::on_btnApplyMesh_clicked() {
         return;
     }
     
+    if (!currentMesh->getBoundaryPolygon()) {
+        QMessageBox::warning(this, tr("Structured Mesh Generation"), tr("Before apply changes, you must generate the mesh."));
+        return;
+    }
+    
     if (oldMeshName.isEmpty()) { // new mesh
         Project *project = IPHApplication::getCurrentProject();
         
@@ -124,8 +129,8 @@ void StructuredMeshDialog::on_btnRemoveMesh_clicked() {
 }
 
 void StructuredMeshDialog::on_btnBoundaryFileBrowser_clicked() {
-    QString extensions = "Keyhole Markup Language file (*.kml);;Text file (*.txt *xyz)";
-    CoordinateFileDialog *dialog = new CoordinateFileDialog(this, tr("Select a boundary file"), getDefaultDirectory(), extensions);
+    CoordinateFileDialog::CoordinateFileDialogFilter filters = static_cast<CoordinateFileDialog::CoordinateFileDialogFilter>(CoordinateFileDialog::FILTER_TEXT | CoordinateFileDialog::FILTER_KML);
+    CoordinateFileDialog *dialog = new CoordinateFileDialog(this, tr("Select a boundary file"), getDefaultDirectory(), filters);
     int exitCode = dialog->exec();
     
     if (exitCode == QDialog::Accepted) {

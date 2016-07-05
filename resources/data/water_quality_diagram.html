@@ -175,12 +175,16 @@
 
 		function enableProcess(process) {
 			var variables = decodeValue(process.find('v\\:cp[v\\:lbl="process"]').attr('v:val')).split(',');
+			var sourceVariable = getVariable(variables[0]);
+			var targetVariable = getVariable(variables[1]);
 
-			process.css('opacity', 1).removeClass('disabled');
+			if (!sourceVariable.hasClass('disabled') && !targetVariable.hasClass('disabled')) {
+				process.css('opacity', 1).removeClass('disabled');
 
-			toggleProcessSiblings(process, true);
-			enableVariable(variables[0]);
-			enableVariable(variables[1]);
+				toggleProcessSiblings(process, true);
+				enableVariable(variables[0]);
+				enableVariable(variables[1]);
+			}
 		}
 
 		function disableProcess(process) {

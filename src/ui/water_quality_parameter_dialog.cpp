@@ -21,7 +21,7 @@ WaterQualityParameterDialog::WaterQualityParameterDialog(QWidget *parent, WaterQ
     for (int i = 0; i < groups.size(); i++) {
         int rows = distribuition[i];
         
-        WaterQualityParameter *groupParameter = waterQualityRepository->findParameterByName(groups[i]);
+        WaterQualityParameter *groupParameter = waterQualityRepository->findParameterByName(groups[i], WaterQualityParameterSection::PARAMETER);
         
         horizontalLabels << QString("%1 (%2)").arg(groupParameter->getLabel()).arg(distribuition[i]);
         ui->trwParameters->insertColumn(i);
@@ -39,6 +39,7 @@ WaterQualityParameterDialog::WaterQualityParameterDialog(QWidget *parent, WaterQ
             
             if (i + 1 > distribuition[j]) {
                 tableItem->setFlags(Qt::NoItemFlags);
+                tableItem->setBackgroundColor(QColor(Qt::lightGray));
             } else {
                 tableItem->setTextAlignment(Qt::AlignVCenter | Qt::AlignHCenter);
                 tableItem->setText(QString::number(parameter->getGroupValues().at(j)));

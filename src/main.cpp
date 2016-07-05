@@ -1,4 +1,5 @@
 #include <application/iph_application.h>
+#include <application/version.h>
 #include <ui/main_window.h>
 
 #ifdef _WIN32
@@ -9,23 +10,21 @@ int main(int argc, char *argv[]) {
 	IPHApplication a(argc, argv);
 #endif
 
-    QApplication::setOrganizationDomain("4techlabs.com.br");
-    QApplication::setOrganizationName("4techlabs");
-    QApplication::setApplicationName("IPH-ECO");
-    QApplication::setApplicationVersion("1.0.0");
+    QApplication::setOrganizationDomain(VER_COMPANYDOMAIN_STR);
+    QApplication::setOrganizationName(VER_COMPANYNAME_STR);
+    QApplication::setApplicationName(VER_PRODUCTNAME_STR);
+    QApplication::setApplicationVersion(VER_FILEVERSION_STR);
 
     MainWindow *mainWindow = new MainWindow();
     mainWindow->showMaximized();
     IPHApplication::setMainWindow(mainWindow);
 
-	if (argc > 1) {
 #ifdef _WIN32
+	if (argc > 1) {
 		QString filename = QString::fromWCharArray(argv[1]);
-#else
-		QString filename = argv[1];
-#endif
-		mainWindow->openProject(filename);
+        mainWindow->openProject(filename);
 	}
+#endif
 
     return a.exec();
 }

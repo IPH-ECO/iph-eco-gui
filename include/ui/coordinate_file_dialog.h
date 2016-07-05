@@ -3,44 +3,30 @@
 
 #include <QWidget>
 #include <QFileDialog>
-#include <QGridLayout>
 #include <QRadioButton>
-#include <QHBoxLayout>
 
 class CoordinateFileDialog : public QFileDialog {
     Q_OBJECT
 private:
-    void addCoordinateCheckBoxes() {
-        QRadioButton *rdoLatLong = new QRadioButton("Geographic Coordinate System (Lat/Long)", this);
-        rdoLatLong->setObjectName("rdoLatLong");
-        rdoLatLong->setChecked(true);
-        
-        QRadioButton *rdoUtm = new QRadioButton("Projected Coordinate System", this);
-        rdoUtm->setObjectName("rdoUtm");
-        
-        QHBoxLayout *horizontalLayout = new QHBoxLayout();
-        horizontalLayout->addWidget(rdoLatLong);
-        horizontalLayout->addWidget(rdoUtm);
-        
-        QGridLayout *gridLayout = this->findChild<QGridLayout*>();
-        gridLayout->addLayout(horizontalLayout, gridLayout->rowCount(), 0, 1, 2);
-    }
+    QRadioButton *rdoUtm;
+    QRadioButton *rdoLatLong;
+    
+    void addCoordinateCheckBoxes();
     
 public:
-    CoordinateFileDialog(QWidget *parent, const QString &caption, const QString &directory, const QString &filter) :
-        QFileDialog(parent, caption, directory, filter) {}
+    enum CoordinateFileDialogFilter {
+        FILTER_TEXT = (1 << 0),
+        FILTER_KML = (1 << 1)
+    };
     
-    bool isLatitudeLongitudeChecked() const {
-        QRadioButton *rdoLatLong = this->findChild<QRadioButton*>("rdoLatLong");
-        return rdoLatLong->isChecked();
-    }
+    CoordinateFileDialog(QWidget *parent, const QString &caption, const QString &directory, const CoordinateFileDialogFilter &filter);
     
-    virtual int exec() {
-        setOption(QFileDialog::DontUseNativeDialog);
-        addCoordinateCheckBoxes();
-        
-        return QFileDialog::exec();
-    }
+    bool isLatitudeLongitudeChecked() const;
+    
+    virtual int exec();
+
+private slots:
+    void on_fileTypeCombo_currentIndexChanged(const QString &type);
 };
 
 #endif // COORDINATE_FILE_DIALOG_H

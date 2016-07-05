@@ -8,7 +8,7 @@
 HydrodynamicDataRepository* HydrodynamicDataRepository::instance = nullptr;
 
 HydrodynamicDataRepository* HydrodynamicDataRepository::getInstance() {
-    if (instance == nullptr) {
+    if (!instance) {
         instance = new HydrodynamicDataRepository();
     }
     
@@ -64,17 +64,17 @@ void HydrodynamicDataRepository::buildParameters(HydrodynamicConfiguration *conf
         QString parameterName = jsonParameter["name"].toString();
         HydrodynamicParameter *parameter = configuration->getParameter(parameterName);
 
-        if (parameter == nullptr) {
+        if (!parameter) {
             parameter = new HydrodynamicParameter();
+            parameter->setName(parameterName);
+            parameter->setType(HydrodynamicParameter::mapTypeFromString(jsonParameter["type"].toString()));
             parameter->setValue(jsonParameter["defaultValue"].toDouble());
             parameter->setSelected(jsonParameter["selected"].toBool());
-            parameter->setType(HydrodynamicParameter::mapTypeFromString(jsonParameter["type"].toString()));
+            parameter->setEnabled(jsonParameter["enabled"].toBool(true));
         }
         
-        parameter->setName(parameterName);
         parameter->setLabel(jsonParameter["label"].toString());
         parameter->setEditable(jsonParameter["editable"].toBool());
-        parameter->setEnabled(jsonParameter["enabled"].toBool(true));
         parameter->setSiblingsHidden(jsonParameter["hideSiblings"].toBool());
         parameter->setParentValue(jsonParameter["parentValue"].toInt(-1));
         parameter->setOrder(jsonParameter["order"].toInt(-1));
@@ -105,7 +105,7 @@ QList<HydrodynamicProcess*> HydrodynamicDataRepository::getProcesses(Hydrodynami
 
         process->setTargetParameter(targetParameter);
         
-        if (targetParameter != nullptr) {
+        if (targetParameter) {
             process->setChecked(targetParameter->isSelected());
         }
     }

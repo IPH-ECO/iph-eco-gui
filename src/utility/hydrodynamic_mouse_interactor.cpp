@@ -166,8 +166,8 @@ void HydrodynamicMouseInteractor::clearSelection() {
 }
 
 void HydrodynamicMouseInteractor::setHydrodynamicConfiguration(HydrodynamicConfiguration *hydrodynamicConfiguration) {
-    if (hydrodynamicConfiguration == nullptr) {
-        if (this->hydrodynamicConfiguration != nullptr) {
+    if (!hydrodynamicConfiguration) {
+        if (this->hydrodynamicConfiguration) {
             for (BoundaryCondition *boundaryCondition : this->hydrodynamicConfiguration->getBoundaryConditions()) {
                 removeBoundaryCondition(boundaryCondition);
             }

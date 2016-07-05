@@ -105,7 +105,7 @@ void HydrodynamicDataDialog::setupItems() {
         HydrodynamicProcess *process = processes[i];
         QTreeWidgetItem *item = nullptr;
         
-        if (process->getParent() == nullptr) {
+        if (!process->getParent()) {
             item = new QTreeWidgetItem(ui->trwProcesses, QStringList(process->getLabel()));
         } else {
             QTreeWidgetItem *parentItem = nullptr;
@@ -139,7 +139,7 @@ void HydrodynamicDataDialog::setupItems() {
         }
     }
     
-    this->expandTrees();
+    this->expandParameterTree();
     
     // Initial conditions
     for (HydrodynamicParameter *parameter : parameters) {
@@ -156,15 +156,8 @@ void HydrodynamicDataDialog::setupItems() {
     }
 }
 
-void HydrodynamicDataDialog::expandTrees() {
-    QTreeWidgetItemIterator it(ui->trwProcesses, QTreeWidgetItemIterator::All);
-    
-    while (*it) {
-        (*it)->setExpanded(true);
-        it++;
-    }
-    
-    it = QTreeWidgetItemIterator(ui->trwParameters, QTreeWidgetItemIterator::All);
+void HydrodynamicDataDialog::expandParameterTree() {
+    QTreeWidgetItemIterator it(ui->trwParameters, QTreeWidgetItemIterator::All);
     
     while (*it) {
         QTreeWidgetItem *item = *it;
@@ -194,8 +187,8 @@ void HydrodynamicDataDialog::on_cbxConfiguration_currentIndexChanged(const QStri
         
         for (BoundaryCondition *boundaryCondition : boundaryConditions) {
             ui->tblBoundaryConditions->insertRow(i);
-            ui->tblBoundaryConditions->setItem(i, 0, new QTableWidgetItem(boundaryCondition->getTypeStr()));
-            ui->tblBoundaryConditions->setItem(i, 1, new QTableWidgetItem(boundaryCondition->getFunctionStr()));
+            ui->tblBoundaryConditions->setItem(i, 0, new QTableWidgetItem(boundaryCondition->getTypeLabel()));
+            ui->tblBoundaryConditions->setItem(i, 1, new QTableWidgetItem(boundaryCondition->getFunctionLabel()));
             ui->vtkWidget->getMouseInteractor()->renderBoundaryCondition(boundaryCondition);
             i++;
         }
@@ -288,7 +281,7 @@ void HydrodynamicDataDialog::on_btnApplyConfiguration_clicked() {
                     parameter->getParent()->setValue(parameter->getParentValue());
                 }
                 
-                if (lineEdit != nullptr) {
+                if (lineEdit) {
                     double value = lineEdit->text().toDouble();
                     
                     if (parameter->isInRange(value)) {
@@ -337,7 +330,7 @@ void HydrodynamicDataDialog::on_trwProcesses_itemChanged(QTreeWidgetItem *item, 
     
     process->setChecked(item->checkState(0) == Qt::Checked);
     
-    if (parent != nullptr) {
+    if (parent) {
         if (process->isChecked()) {
             // Unchecks all item siblings
             QList<HydrodynamicProcess*> siblings = process->getSiblings();
@@ -427,7 +420,7 @@ void HydrodynamicDataDialog::on_btnRemoveBoundaryCondition_clicked() {
 }
 
 void HydrodynamicDataDialog::closeEvent(QCloseEvent *event) {
-    if (boundaryConditionDialog != nullptr && boundaryConditionDialog->isVisible()) {
+    if (boundaryConditionDialog && boundaryConditionDialog->isVisible()) {
         event->ignore();
     } else {
         boundaryConditionDialog = nullptr;
@@ -439,7 +432,7 @@ void HydrodynamicDataDialog::toggleWidgets(bool enable) {
     for (int i = 0; i < ui->leftLayout->count(); i++) {
         QWidget *widget = ui->leftLayout->itemAt(i)->widget();
         
-        if (widget != nullptr) {
+        if (widget) {
             widget->setEnabled(enable);
         }
     }
@@ -462,7 +455,7 @@ void HydrodynamicDataDialog::toggleWidgets(bool enable) {
 }
 
 void HydrodynamicDataDialog::on_tblBoundaryConditions_currentItemChanged(QTableWidgetItem *current, QTableWidgetItem *previous) {
-    if (current != nullptr && (previous == nullptr || current->row() != previous->row())) {
+    if (current && (!previous || current->row() != previous->row())) {
         BoundaryCondition *boundaryCondition = currentConfiguration->getBoundaryCondition(current->row());
         
         ui->vtkWidget->getMouseInteractor()->highlightBoundaryCondition(boundaryCondition, true);

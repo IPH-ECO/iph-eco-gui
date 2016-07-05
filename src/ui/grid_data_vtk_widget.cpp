@@ -98,7 +98,17 @@ void GridDataVTKWidget::render(GridData *gridData) {
     meshActor->GetProperty()->SetLineWidth(layerProperties->getMeshLineWidth());
     meshActor->GetProperty()->SetOpacity(layerProperties->getMeshOpacity() / 100.0);
     
-    vtkPolyData *inputPointsPolyData = currentGridData->getInputPolyData();
+    vtkSmartPointer<vtkPolyData> inputPointsPolyData = vtkSmartPointer<vtkPolyData>::New();
+    inputPointsPolyData->ShallowCopy(currentGridData->getInputPolyData());
+    vtkSmartPointer<vtkPoints> inputPoints = inputPointsPolyData->GetPoints();
+    
+    for (vtkIdType i = 0; i < inputPointsPolyData->GetNumberOfPoints(); i++) {
+        double inputPoint[3];
+        
+        inputPoints->GetPoint(i, inputPoint);
+        inputPoints->SetPoint(i, inputPoint[0], inputPoint[1], 0);
+    }
+    
     vtkColorTransferFunction *pointsColorTransferFunction = buildColorTransferFunction(false);
     vtkSmartPointer<vtkPolyDataMapper> inputPointsMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
     
@@ -232,7 +242,7 @@ void GridDataVTKWidget::toggleMesh(bool show) {
 void GridDataVTKWidget::toggleMapPoints(bool show) {
     this->showMapPoints = show;
     
-    if (layerProperties == nullptr || mapPointsActor == nullptr || pointsScalarBarWidget == nullptr) {
+    if (!layerProperties || !mapPointsActor || !pointsScalarBarWidget) {
         return;
     }
     
@@ -244,7 +254,7 @@ void GridDataVTKWidget::toggleMapPoints(bool show) {
 void GridDataVTKWidget::toggleMap(bool show) {
     this->showMap = show;
     
-    if (layerProperties == nullptr || mapActor == nullptr || mapScalarBarWidget == nullptr) {
+    if (!layerProperties || !mapActor || !mapScalarBarWidget) {
         return;
     }
     
@@ -256,6 +266,8 @@ void GridDataVTKWidget::toggleMap(bool show) {
 void GridDataVTKWidget::clear() {
     currentGridData = nullptr;
     layerProperties = nullptr;
+    renderer->RemoveActor(mapPointsActor);
+    renderer->RemoveActor(mapActor);
     MeshVTKWidget::clear();
 }
 

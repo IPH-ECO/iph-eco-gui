@@ -13,7 +13,16 @@
 class GridDataConfiguration;
 
 enum class GridDataInputType { POINT = 1, POLYGON };
-enum class GridDataType { BATHYMETRY = 1, ROUGHNESS, WIND_REDUCTION, WETLAND_AREA, D50_GRAIN_SIZE, FRACTION_OF_ORGANIC_MATTER, IMPERVIOUS_BEDROCK_LEVEL };
+enum class GridDataType {
+    BATHYMETRY = 1,
+    ROUGHNESS,
+    WIND_REDUCTION,
+    WETLAND_AREA,
+    D50_GRAIN_SIZE,
+    FRACTION_OF_ORGANIC_MATTER,
+    IMPERVIOUS_BEDROCK_LEVEL,
+    FREE_SURFACE_ELEVATION
+};
 
 class GridData : public QObject {
     Q_OBJECT

@@ -21,9 +21,7 @@ Mesh::~Mesh() {
 }
 
 void Mesh::setId(const uint &id) {
-    if (!isPersisted()) {
-        this->id = id;
-    }
+    this->id = id;
 }
 
 uint Mesh::getId() const {

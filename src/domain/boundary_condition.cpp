@@ -25,10 +25,8 @@ uint BoundaryCondition::getId() const {
 	return id;
 }
 
-void BoundaryCondition::setId(uint id) {
-	if (!isPersisted()) {
-		this->id = id;
-	}
+void BoundaryCondition::setId(const uint &id) {
+    this->id = id;
 }
 
 bool BoundaryCondition::isPersisted() const {
@@ -37,10 +35,6 @@ bool BoundaryCondition::isPersisted() const {
 
 BoundaryConditionType BoundaryCondition::getType() const {
 	return type;
-}
-
-QString BoundaryCondition::getTypeStr() const {
-    return type == BoundaryConditionType::WATER_LEVEL ? "Water Level" : "Water Flow";
 }
 
 void BoundaryCondition::setType(const BoundaryConditionType &type) {
@@ -123,10 +117,6 @@ BoundaryConditionFunction BoundaryCondition::getFunction() const {
 	return function;
 }
 
-QString BoundaryCondition::getFunctionStr() const {
-    return function == BoundaryConditionFunction::CONSTANT ? "Constant" : "Time Series";
-}
-
 void BoundaryCondition::setFunction(const BoundaryConditionFunction &function) {
 	this->function = function;
 }
@@ -195,12 +185,20 @@ void BoundaryCondition::setVerticalIntegratedOutflow(bool verticalIntegratedOutf
     this->verticalIntegratedOutflow = verticalIntegratedOutflow;
 }
 
-double BoundaryCondition::getQuota() const {
-    return quota;
+double BoundaryCondition::getMinimumElevation() const {
+    return minimumElevation;
 }
 
-void BoundaryCondition::setQuota(const double &quota) {
-    this->quota = quota;
+void BoundaryCondition::setMinimumElevation(const double &minimumElevation) {
+    this->minimumElevation = minimumElevation;
+}
+
+double BoundaryCondition::getMaximumElevation() const {
+    return maximumElevation;
+}
+
+void BoundaryCondition::setMaximumElevation(const double &maximumElevation) {
+    this->maximumElevation = maximumElevation;
 }
 
 vtkSmartPointer<vtkActor> BoundaryCondition::getSelectionActor() const {
@@ -225,6 +223,38 @@ bool BoundaryCondition::isTimeSeriesChanged() const {
 
 void BoundaryCondition::setTimeSeriesChanged(bool timeSeriesChanged) {
     this->timeSeriesChanged = timeSeriesChanged;
+}
+
+QString BoundaryCondition::getObjectTypeLabel() const {
+    if (this->type == BoundaryConditionType::WATER_FLOW || this->type == BoundaryConditionType::NORMAL_DEPTH) {
+        return "Edges";
+    }
+    
+    if (this->type == BoundaryConditionType::WATER_LEVEL) {
+        return "Cells";
+    }
+    
+    return "Undefined";
+}
+
+QString BoundaryCondition::getTypeLabel() const {
+    if (this->type == BoundaryConditionType::WATER_LEVEL) {
+        return "Water Level";
+    }
+    
+    if (this->type == BoundaryConditionType::WATER_FLOW) {
+        return "Water Flow";
+    }
+    
+    if (this->type == BoundaryConditionType::NORMAL_DEPTH) {
+        return "Normal Depth";
+    }
+    
+    return "Undefined";
+}
+
+QString BoundaryCondition::getFunctionLabel() const {
+    return function == BoundaryConditionFunction::CONSTANT ? "Constant" : "Time Series";
 }
 
 SimulationDataType::BoundaryCondition BoundaryCondition::toSimulationDataType(Mesh *mesh) const {
@@ -289,7 +319,8 @@ SimulationDataType::BoundaryCondition BoundaryCondition::toSimulationDataType(Me
     }
     
     boundaryCondition.verticalIntegratedOutflow = this->verticalIntegratedOutflow;
-    boundaryCondition.quota = this->quota;
+    boundaryCondition.minimumElevation = this->minimumElevation;
+    boundaryCondition.maximumElevation = this->maximumElevation;
     
     return boundaryCondition;
 }
