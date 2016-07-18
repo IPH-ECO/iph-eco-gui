@@ -71,7 +71,7 @@ void MeshVTKWidget::render(Mesh *mesh) {
     
     meshActor = vtkSmartPointer<vtkActor>::New();
     meshActor->SetMapper(meshMapper);
-    meshActor->GetProperty()->EdgeVisibilityOn();
+    meshActor->GetProperty()->SetColor(meshColor.redF(), meshColor.greenF(), meshColor.blueF());
     meshActor->SetVisibility(showMesh);
     this->changeMeshProperties(mesh);
     
@@ -238,7 +238,7 @@ void MeshVTKWidget::changeMeshProperties(Mesh *mesh) {
     if (meshActor) {
         QColor meshColor(mesh->getColor());
         
-        meshActor->GetProperty()->SetEdgeColor(meshColor.redF(), meshColor.greenF(), meshColor.blueF());
+        meshActor->GetProperty()->SetColor(meshColor.redF(), meshColor.greenF(), meshColor.blueF());
         meshActor->GetProperty()->SetLineStipplePattern(mesh->getLineStyle());
         meshActor->GetProperty()->SetLineWidth(mesh->getLineWidth());
         meshActor->GetProperty()->SetOpacity(mesh->getOpacity() / 100.0);
