@@ -1179,7 +1179,7 @@
 	{
 		"label": "hPACoef",
 		"name": "hPACoef",
-		"description": "decrease constant for P.A. coeff. with DOMW (g/m\u00b3)",
+		"description": "decrease constant for P.A. coefficient with DOMW (g/m\u00b3)",
 		"inputType": "tabular",
 		"groups": "phytoplanktonGroups",
 		"groupDefaultValues": 3,
@@ -2086,7 +2086,7 @@
 	{
 		"label": "fSedUptVegCoef",
 		"name": "fSedUptVegCoef",
-		"description": "Sigm. regr. coeff. For sediment fraction of nutrient uptake",
+		"description": "Sigm. regr. coefficient For sediment fraction of nutrient uptake",
 		"inputType": "tabular",
 		"groups": "macrophytesGroups",
 		"groupDefaultValues": 2.66,
@@ -2196,7 +2196,7 @@
 	{
 		"label": "cVSetIM",
 		"name": "cVSetIM",
-		"description": "Sedimentation velocity  for Inorganic Matter (m/day)",
+		"description": "Sedimentation velocity for Inorganic Matter (m/day)",
 		"inputType": "inline",
 		"defaultValue": 0.05,
 		"parentName": "inorganicMatterSedimentation"
@@ -2216,6 +2216,871 @@
 		"inputType": "inline",
 		"defaultValue": 0.000003,
 		"parentName": "inorganicMatterSedimentation"
+	},
+	{
+		"label": "Organic Matter",
+		"name": "organicMatter1",
+		"parentName": "iLimn"
+	},
+	{
+		"label": "Light attenuation",
+		"name": "organicMatterLightAttenuation1",
+		"parentName": "organicMatter1"
+	},
+	{
+		"label": "cExtSpOM",
+		"name": "cExtSpOM",
+		"description": "Light Attenuation Coefficient due to Organic Matter (1/m)",
+		"inputType": "inline",
+		"defaultValue": 1.2,
+		"parentName": "organicMatterLightAttenuation1"
+	},
+	{
+		"label": "Ratios",
+		"name": "organicMatterRatio1",
+		"parentName": "organicMatter1"
+	},
+	{
+		"label": "cCDOMRef",
+		"name": "cCDOMRef",
+		"description": "Reference C/D-ratio for Organic Matter",
+		"inputType": "inline",
+		"defaultValue": 0.45,
+		"parentName": "organicMatterRatio1"
+	},
+	{
+		"label": "cNDOMRef",
+		"name": "cNDOMRef",
+		"description": "Reference N/D-ratio for Organic Matter",
+		"inputType": "inline",
+		"defaultValue": 0.1,
+		"parentName": "organicMatterRatio1"
+	},
+	{
+		"label": "cPDOMRef",
+		"name": "cPDOMRef",
+		"description": "Reference P/D-ratio for Organic Matter",
+		"inputType": "inline",
+		"defaultValue": 0.01,
+		"parentName": "organicMatterRatio1"
+	},
+	{
+		"label": "Infiltration",
+		"name": "organicMatterInfiltration1",
+		"parentName": "organicMatter1"
+	},
+	{
+		"label": "cOMGround",
+		"name": "cOMGround",
+		"description": "Organic Matter cone in groundwater (mg/L)",
+		"inputType": "inline",
+		"defaultValue": 0,
+		"parentName": "organicMatterInfiltration1"
+	},
+	{
+		"label": "Sedimentation",
+		"name": "organicMatterSedimentation1",
+		"parentName": "organicMatter1"
+	},
+	{
+		"label": "cVSetOM",
+		"name": "cVSetOM",
+		"description": "Organic Matter cone in groundwater (m/day)",
+		"inputType": "inline",
+		"defaultValue": 0.5,
+		"parentName": "organicMatterSedimentation1"
+	},
+	{
+		"label": "ppOM",
+		"name": "ppOM",
+		"description": "Density of Organic Matter (kg/m\u00b3)",
+		"inputType": "inline",
+		"defaultValue": 1030,
+		"parentName": "organicMatterSedimentation1"
+	},
+	{
+		"label": "diOM",
+		"name": "diOM",
+		"description": "Average diameter of Organic Matter (m)",
+		"inputType": "inline",
+		"defaultValue": 0.000005,
+		"parentName": "organicMatterSedimentation1"
+	},
+	{
+		"label": "Mineralization",
+		"name": "organicMatterMineralization1",
+		"parentName": "organicMatter1"
+	},
+	{
+		"label": "cThetaMinAerW",
+		"name": "cThetaMinAerW1",
+		"description": "Temperature coefficient for aerobic mineralization in the water",
+		"inputType": "inline",
+		"defaultValue": 1.07,
+		"parentName": "organicMatterMineralization1"
+	},
+	{
+		"label": "cThetaMinAerS",
+		"name": "cThetaMinAerS1",
+		"description": "Temperature coefficient for aerobic mineralization in the sediment",
+		"inputType": "inline",
+		"defaultValue": 1.07,
+		"parentName": "organicMatterMineralization1"
+	},
+	{
+		"label": "cThetaMinAnaerW",
+		"name": "cThetaMinAnaerW1",
+		"description": "Temperature coefficient for anaerobic mineralization in the water",
+		"inputType": "inline",
+		"defaultValue": 1.07,
+		"parentName": "organicMatterMineralization1"
+	},
+	{
+		"label": "cThetaMinAnaerS",
+		"name": "cThetaMinAnaerS1",
+		"description": "Temperature coefficient for anaerobic mineralization in the sediment",
+		"inputType": "inline",
+		"defaultValue": 1.07,
+		"parentName": "organicMatterMineralization1"
+	},
+	{
+		"label": "kMinAerOMW",
+		"name": "kMinAerOMW1",
+		"description": "Constant aerobic mineralization rate in the water for Organic Matter (1/day)",
+		"inputType": "inline",
+		"defaultValue": 0.1,
+		"parentName": "organicMatterMineralization1"
+	},
+	{
+		"label": "kMinAerOMS",
+		"name": "kMinAerOMS1",
+		"description": "Constant aerobic mineralization rate in the sediment for Organic Matter (1/day)",
+		"inputType": "inline",
+		"defaultValue": 0.01,
+		"parentName": "organicMatterMineralization1"
+	},
+	{
+		"label": "kMinAnaerOMW",
+		"name": "kMinAnaerOMW1",
+		"description": "Constant anaerobic mineralization rate in the water for Organic Matter (1/day)",
+		"inputType": "inline",
+		"defaultValue": 0.1,
+		"parentName": "organicMatterMineralization1"
+	},
+	{
+		"label": "kMinAnaerOMS",
+		"name": "kMinAnaerOMS1",
+		"description": "Constant anaerobic mineralization rate in the sediment for Organic Matter (1/day)",
+		"inputType": "inline",
+		"defaultValue": 0.01,
+		"parentName": "organicMatterMineralization1"
+	},
+	{
+		"label": "Split Dissolved and Particulated Organic Matter",
+		"name": "organicMatter2",
+		"parentName": "iLimn"
+	},
+	{
+		"label": "Light attenuation",
+		"name": "organicMatterLightAttenuation2",
+		"parentName": "organicMatter2"
+	},
+	{
+		"label": "cExtSpPom",
+		"name": "cExtSpPom",
+		"description": "Light Attenuation Coefficient due to Particulated Organic Matter (1/m)",
+		"inputType": "inline",
+		"defaultValue": 0.12,
+		"parentName": "organicMatterLightAttenuation2"
+	},
+	{
+		"label": "cExtSpDom",
+		"name": "cExtSpDom",
+		"description": "Light Attenuation Coefficient due to Dissolved Organic Matter (1/m)",
+		"inputType": "inline",
+		"defaultValue": 0.025,
+		"parentName": "organicMatterLightAttenuation2"
+	},
+	{
+		"label": "Ratios",
+		"name": "organicMatterRatio2",
+		"parentName": "organicMatter2"
+	},
+	{
+		"label": "cCDPomRef",
+		"name": "cCDPomRef",
+		"description": "Reference C/D-ratio for Particulated Organic Matter",
+		"inputType": "inline",
+		"defaultValue": 0.45,
+		"parentName": "organicMatterRatio2"
+	},
+	{
+		"label": "cNDPomRef",
+		"name": "cNDPomRef",
+		"description": "Reference N/D-ratio for Particulated Organic Matter",
+		"inputType": "inline",
+		"defaultValue": 0.1,
+		"parentName": "organicMatterRatio2"
+	},
+	{
+		"label": "cPDPomRef",
+		"name": "cPDPomRef",
+		"description": "Reference P/D-ratio for Particulated Organic Matter",
+		"inputType": "inline",
+		"defaultValue": 0.01,
+		"parentName": "organicMatterRatio2"
+	},
+	{
+		"label": "cCDDomRef",
+		"name": "cCDDomRef",
+		"description": "Reference C/D-ratio for Dissolved Organic Matter",
+		"inputType": "inline",
+		"defaultValue": 0.45,
+		"parentName": "organicMatterRatio2"
+	},
+	{
+		"label": "cNDDomRef",
+		"name": "cNDDomRef",
+		"description": "Reference N/D-ratio for Dissolved Organic Matter",
+		"inputType": "inline",
+		"defaultValue": 0.08,
+		"parentName": "organicMatterRatio2"
+	},
+	{
+		"label": "cPDDomRef",
+		"name": "cPDDomRef",
+		"description": "Reference P/D-ratio for Dissolved Organic Matter",
+		"inputType": "inline",
+		"defaultValue": 0.01,
+		"parentName": "organicMatterRatio2"
+	},
+	{
+		"label": "Infiltration",
+		"name": "organicMatterInfiltration2",
+		"parentName": "organicMatter2"
+	},
+	{
+		"label": "cDomGround",
+		"name": "cDomGround",
+		"description": "Dissolved Organic Matter cone in groundwater (mg/L)",
+		"inputType": "inline",
+		"defaultValue": 0,
+		"parentName": "organicMatterInfiltration2"
+	},
+	{
+		"label": "Sedimentation",
+		"name": "organicMatterSedimentation2",
+		"parentName": "organicMatter2"
+	},
+	{
+		"label": "cVSetPom",
+		"name": "cVSetPom1",
+		"description": "Maximum sedimentation velocity of Particulated Organic Matter (m/day)",
+		"inputType": "inline",
+		"defaultValue": 0.5,
+		"parentName": "organicMatterSedimentation2"
+	},
+	{
+		"label": "ppOM",
+		"name": "ppOM2",
+		"description": "Density of Organic Matter (kg/m\u00b3)",
+		"inputType": "inline",
+		"defaultValue": 1030,
+		"parentName": "organicMatterSedimentation2"
+	},
+	{
+		"label": "diOM",
+		"name": "diOM2",
+		"description": "Average diameter of Organic Matter (m)",
+		"inputType": "inline",
+		"defaultValue": 0.000005,
+		"parentName": "organicMatterSedimentation2"
+	},
+	{
+		"label": "Hydrolysis",
+		"name": "organicMatterHydrolysis1",
+		"parentName": "organicMatter2"
+	},
+	{
+		"label": "cThetaHidW",
+		"name": "cThetaHidW1",
+		"description": "Temperature coefficient for hydrolysis in the water",
+		"inputType": "inline",
+		"defaultValue": 1.07,
+		"parentName": "organicMatterHydrolysis1"
+	},
+	{
+		"label": "cThetaHidS",
+		"name": "cThetaHidS1",
+		"description": "Temperature coefficient for hydrolysis in the sediment",
+		"inputType": "inline",
+		"defaultValue": 1.07,
+		"parentName": "organicMatterHydrolysis1"
+	},
+	{
+		"label": "hBacHid",
+		"name": "hBacHid1",
+		"description": "Half-saturation Bacterioplankton for hydrolysis (mg/L)",
+		"inputType": "inline",
+		"defaultValue": 0.02,
+		"parentName": "organicMatterHydrolysis1"
+	},
+	{
+		"label": "kHidPomW",
+		"name": "kHidPomW1",
+		"description": "Constant hydrolysis rate in the water for POM (1/day)",
+		"inputType": "inline",
+		"defaultValue": 0.08,
+		"parentName": "organicMatterHydrolysis1"
+	},
+	{
+		"label": "kHidPomS",
+		"name": "kHidPomS1",
+		"description": "Constant hydrolysis rate in the sediment for POM (1/day)",
+		"inputType": "inline",
+		"defaultValue": 0.0002,
+		"parentName": "organicMatterHydrolysis1"
+	},
+	{
+		"label": "Mineralization",
+		"name": "organicMatterMineralization2",
+		"parentName": "organicMatter2"
+	},
+	{
+		"label": "cThetaMinAerW",
+		"name": "cThetaMinAerW2",
+		"description": "Temperature coefficient for aerobic mineralization in the water",
+		"inputType": "inline",
+		"defaultValue": 1.07,
+		"parentName": "organicMatterMineralization2"
+	},
+	{
+		"label": "cThetaMinAerS",
+		"name": "cThetaMinAerS2",
+		"description": "Temperature coefficient for aerobic mineralization in the sediment",
+		"inputType": "inline",
+		"defaultValue": 1.07,
+		"parentName": "organicMatterMineralization2"
+	},
+	{
+		"label": "cThetaMinAnaerW",
+		"name": "cThetaMinAnaerW2",
+		"description": "Temperature coefficient for anaerobic mineralization in the water",
+		"inputType": "inline",
+		"defaultValue": 1.07,
+		"parentName": "organicMatterMineralization2"
+	},
+	{
+		"label": "cThetaMinAnaerS",
+		"name": "cThetaMinAnaerS2",
+		"description": "Temperature coefficient for anaerobic mineralization in the sediment",
+		"inputType": "inline",
+		"defaultValue": 1.07,
+		"parentName": "organicMatterMineralization2"
+	},
+	{
+		"label": "kMinAerDomW",
+		"name": "kMinAerDomW",
+		"description": "Constant aerobic mineralization rate in the water for Dissolved Organic Matter (1/day)",
+		"inputType": "inline",
+		"defaultValue": 0.1,
+		"parentName": "organicMatterMineralization2"
+	},
+	{
+		"label": "kMinAerDomS",
+		"name": "kMinAerDomS",
+		"description": "Constant aerobic mineralization rate in the sediment for Dissolved Organic Matter (1/day)",
+		"inputType": "inline",
+		"defaultValue": 0.01,
+		"parentName": "organicMatterMineralization2"
+	},
+	{
+		"label": "kMinAnaerDomW",
+		"name": "kMinAnaerDomW",
+		"description": "Constant anaerobic mineralization rate in the water for Dissolved Organic Matter (1/day)",
+		"inputType": "inline",
+		"defaultValue": 0.1,
+		"parentName": "organicMatterMineralization2"
+	},
+	{
+		"label": "kMinAnaerDomS",
+		"name": "kMinAnaerDomS",
+		"description": "Constant anaerobic mineralization rate in the sediment for Dissolved Organic Matter (1/day)",
+		"inputType": "inline",
+		"defaultValue": 0.01,
+		"parentName": "organicMatterMineralization2"
+	},
+	{
+		"label": "Split Labile and Refractory Organic Matter",
+		"name": "organicMatter3",
+		"parentName": "iLimn"
+	},
+	{
+		"label": "Labile fractions",
+		"name": "organicMatterLabileFractions",
+		"parentName": "organicMatter3"
+	},
+	{
+		"label": "fDLisDomPhyt",
+		"name": "fDLisDomPhyt",
+		"description": "Labile fractions of died Algae (Autoctone Organic Matter)",
+		"inputType": "inline",
+		"defaultValue": 0.200,
+		"parentName": "organicMatterLabileFractions"
+	},
+	{
+		"label": "fDLisDomPhyt",
+		"name": "fDLisDomPhyt2",
+		"description": "Labile fractions of died Macrophytes (Autoctone Organic Matter)",
+		"inputType": "inline",
+		"defaultValue": 0.200,
+		"parentName": "organicMatterLabileFractions"
+	},
+	{
+		"label": "fDMessDomZoo",
+		"name": "fDMessDomZoo",
+		"description": "Labile fractions of Messy food by zooplankton (Autoctone Organic Matter)",
+		"inputType": "inline",
+		"defaultValue": 0.010,
+		"parentName": "organicMatterLabileFractions"
+	},
+	{
+		"label": "fDExcDomZoo",
+		"name": "fDExcDomZoo",
+		"description": "Labile fractions of  zooplankton excretion (Autoctone Organic Matter)",
+		"inputType": "inline",
+		"defaultValue": 1.000,
+		"parentName": "organicMatterLabileFractions"
+	},
+	{
+		"label": "fDEgesDomZoo",
+		"name": "fDEgesDomZoo",
+		"description": "Labile fractions of pellets by zooplankton (Autoctone Organic Matter)",
+		"inputType": "inline",
+		"defaultValue": 0.100,
+		"parentName": "organicMatterLabileFractions"
+	},
+	{
+		"label": "fDMortDomZoo",
+		"name": "fDMortDomZoo",
+		"description": "Labile fractions of zooplankton mortality (Autoctone Organic Matter)",
+		"inputType": "inline",
+		"defaultValue": 0.100,
+		"parentName": "organicMatterLabileFractions"
+	},
+	{
+		"label": "fDMessDomBent",
+		"name": "fDMessDomBent",
+		"description": "Labile fractions of Messy food by zoobenthos (Autoctone Organic Matter)",
+		"inputType": "inline",
+		"defaultValue": 0.100,
+		"parentName": "organicMatterLabileFractions"
+	},
+	{
+		"label": "fDEgesDomBent",
+		"name": "fDEgesDomBent",
+		"description": "Labile fractions of pellets by zoobenthos (Autoctone Organic Matter)",
+		"inputType": "inline",
+		"defaultValue": 0.100,
+		"parentName": "organicMatterLabileFractions"
+	},
+	{
+		"label": "fDMortDomBent",
+		"name": "fDMortDomBent",
+		"description": "Labile fractions of zoobenthos mortality (Autoctone Organic Matter)",
+		"inputType": "inline",
+		"defaultValue": 0.100,
+		"parentName": "organicMatterLabileFractions"
+	},
+	{
+		"label": "fDMessDomFish",
+		"name": "fDMessDomFish",
+		"description": "Labile fractions of Messy food by fish (Autoctone Organic Matter)",
+		"inputType": "inline",
+		"defaultValue": 0.010,
+		"parentName": "organicMatterLabileFractions"
+	},
+	{
+		"label": "fDExcDomFish",
+		"name": "fDExcDomFish",
+		"description": "Labile fractions of  zooplankton fish (Autoctone Organic Matter)",
+		"inputType": "inline",
+		"defaultValue": 1.000,
+		"parentName": "organicMatterLabileFractions"
+	},
+	{
+		"label": "fDEgesDomFish",
+		"name": "fDEgesDomFish",
+		"description": "Labile fractions of pellets by fish (Autoctone Organic Matter)",
+		"inputType": "inline",
+		"defaultValue": 0.100,
+		"parentName": "organicMatterLabileFractions"
+	},
+	{
+		"label": "fDMortDomFish",
+		"name": "fDMortDomFish",
+		"description": "Labile fractions of zooplankton fish (Autoctone Organic Matter)",
+		"inputType": "inline",
+		"defaultValue": 0.100,
+		"parentName": "organicMatterLabileFractions"
+	},
+	{
+		"label": "fDEgesDomBird",
+		"name": "fDEgesDomBird",
+		"description": "Labile fractions of pellets by birds (Autoctone Organic Matter)",
+		"inputType": "inline",
+		"defaultValue": 0.200,
+		"parentName": "organicMatterLabileFractions"
+	},
+	{
+		"label": "Light attenuation",
+		"name": "organicMatterLightAttenuation3",
+		"parentName": "organicMatter3"
+	},
+	{
+		"label": "cExtSpPomL",
+		"name": "cExtSpPomL",
+		"description": "Light Attenuation Coefficient due to Labile Particulated Organic Matter (1/m)",
+		"inputType": "inline",
+		"defaultValue": 0.12,
+		"parentName": "organicMatterLightAttenuation3"
+	},
+	{
+		"label": "cExtSpPomR",
+		"name": "cExtSpPomR",
+		"description": "Light Attenuation Coefficient due to Refratory Particulated Organic Matter (1/m)",
+		"inputType": "inline",
+		"defaultValue": 0.12,
+		"parentName": "organicMatterLightAttenuation3"
+	},
+	{
+		"label": "cExtSpDomL",
+		"name": "cExtSpDomL",
+		"description": "Light Attenuation Coefficient due to Labile Dissolved Organic Matter (1/m)",
+		"inputType": "inline",
+		"defaultValue": 0.025,
+		"parentName": "organicMatterLightAttenuation3"
+	},
+	{
+		"label": "cExtSpDomR",
+		"name": "cExtSpDomR",
+		"description": "Light Attenuation Coefficient due to Refratory Dissolved Organic Matter (1/m)",
+		"inputType": "inline",
+		"defaultValue": 0.01,
+		"parentName": "organicMatterLightAttenuation3"
+	},
+	{
+		"label": "Ratios",
+		"name": "organicMatterRatio3",
+		"parentName": "organicMatter3"
+	},
+	{
+		"name": "cCDPomLRef",
+		"label": "cCDPomLRef",
+		"description": "Reference C/D-ratio for Labile POM",
+		"inputType": "inline",
+		"defaultValue": 0.450,
+		"parentName": "organicMatterRatio3"
+	},
+	{
+		"name": "cCDPomRRef",
+		"label": "cCDPomRRef",
+		"description": "Reference C/D-ratio for Refratory POM",
+		"inputType": "inline",
+		"defaultValue": 0.450,
+		"parentName": "organicMatterRatio3"
+	},
+	{
+		"name": "cNDPomLRef",
+		"label": "cNDPomLRef",
+		"description": "Reference N/D-ratio for Labile POM",
+		"inputType": "inline",
+		"defaultValue": 0.100,
+		"parentName": "organicMatterRatio3"
+	},
+	{
+		"name": "cNDPomRRef",
+		"label": "cNDPomRRef",
+		"description": "Reference N/D-ratio for Refratory POM",
+		"inputType": "inline",
+		"defaultValue": 0.100,
+		"parentName": "organicMatterRatio3"
+	},
+	{
+		"name": "cPDPomLRef",
+		"label": "cPDPomLRef",
+		"description": "Reference P/D-ratio for Labile POM",
+		"inputType": "inline",
+		"defaultValue": 0.010,
+		"parentName": "organicMatterRatio3"
+	},
+	{
+		"name": "cPDPomRRef",
+		"label": "cPDPomRRef",
+		"description": "Reference P/D-ratio for Refratory POM",
+		"inputType": "inline",
+		"defaultValue": 0.010,
+		"parentName": "organicMatterRatio3"
+	},
+	{
+		"name": "cCDDomLRef",
+		"label": "cCDDomLRef",
+		"description": "Reference C/D-ratio for Labile DOM",
+		"inputType": "inline",
+		"defaultValue": 0.450,
+		"parentName": "organicMatterRatio3"
+	},
+	{
+		"name": "cCDDomRRef",
+		"label": "cCDDomRRef",
+		"description": "Reference C/D-ratio for Refratory DOM",
+		"inputType": "inline",
+		"defaultValue": 0.450,
+		"parentName": "organicMatterRatio3"
+	},
+	{
+		"name": "cNDDomLRef",
+		"label": "cNDDomLRef",
+		"description": "Reference N/D-ratio for Labile DOM",
+		"inputType": "inline",
+		"defaultValue": 0.080,
+		"parentName": "organicMatterRatio3"
+	},
+	{
+		"name": "cNDDomRRef",
+		"label": "cNDDomRRef",
+		"description": "Reference N/D-ratio for Refratory DOM",
+		"inputType": "inline",
+		"defaultValue": 0.025,
+		"parentName": "organicMatterRatio3"
+	},
+	{
+		"name": "cPDDomLRef",
+		"label": "cPDDomLRef",
+		"description": "Reference P/D-ratio for Labile DOM",
+		"inputType": "inline",
+		"defaultValue": 0.010,
+		"parentName": "organicMatterRatio3"
+	},
+	{
+		"name": "cPDDomRRef",
+		"label": "cPDDomRRef",
+		"description": "Reference P/D-ratio for Refratory DOM",
+		"inputType": "inline",
+		"defaultValue": 0.010,
+		"parentName": "organicMatterRatio3"
+	},
+	{
+		"label": "Infiltration",
+		"name": "organicMatterInfiltration3",
+		"parentName": "organicMatter3"
+	},
+	{
+		"label": "cDomLGround",
+		"name": "cDomLGround",
+		"description": "Labile Dissolved Organic Matter cone in groundwater (mg/L)",
+		"inputType": "inline",
+		"defaultValue": 0,
+		"parentName": "organicMatterInfiltration3"
+	},
+	{
+		"label": "cDomRGround",
+		"name": "cDomRGround",
+		"description": "Refratory Dissolved Organic Matter cone in groundwater (mg/L)",
+		"inputType": "inline",
+		"defaultValue": 0,
+		"parentName": "organicMatterInfiltration3"
+	},
+	{
+		"label": "Sedimentation",
+		"name": "organicMatterSedimentation3",
+		"parentName": "organicMatter1"
+	},
+	{
+		"label": "cVSetPOM",
+		"name": "cVSetPOM2",
+		"description": "Maximum sedimentation velocity of POM (m/day)",
+		"inputType": "inline",
+		"defaultValue": 0.5,
+		"parentName": "organicMatterSedimentation3"
+	},
+	{
+		"label": "ppOM",
+		"name": "ppOM3",
+		"description": "Density of Organic Matter (kg/m\u00b3)",
+		"inputType": "inline",
+		"defaultValue": 1030,
+		"parentName": "organicMatterSedimentation3"
+	},
+	{
+		"label": "diOM",
+		"name": "diOM3",
+		"description": "Average diameter of Organic Matter (m)",
+		"inputType": "inline",
+		"defaultValue": 0.000005,
+		"parentName": "organicMatterSedimentation3"
+	},
+	{
+		"label": "Hydrolysis",
+		"name": "organicMatterHydrolysis2",
+		"parentName": "organicMatter3"
+	},
+	{
+		"label": "cThetaHidW",
+		"name": "cThetaHidW2",
+		"description": "Temperature coefficient for hydrolysis in the water",
+		"inputType": "inline",
+		"defaultValue": 1.07,
+		"parentName": "organicMatterHydrolysis2"
+	},
+	{
+		"label": "cThetaHidS",
+		"name": "cThetaHidS2",
+		"description": "Temperature coefficient for hydrolysis in the sediment",
+		"inputType": "inline",
+		"defaultValue": 1.07,
+		"parentName": "organicMatterHydrolysis2"
+	},
+	{
+		"label": "hBacHid",
+		"name": "hBacHid2",
+		"description": "Half-saturation Bacterioplankton for hydrolysis (mg/L)",
+		"inputType": "inline",
+		"defaultValue": 0.02,
+		"parentName": "organicMatterHydrolysis2"
+	},
+	{
+		"label": "kHidPomLW",
+		"name": "kHidPomLW",
+		"description": "Constant hydrolysis rate in the water for Labile Particulated Organic Matter (1/day)",
+		"inputType": "inline",
+		"defaultValue": 0.08,
+		"parentName": "organicMatterHydrolysis2"
+	},
+	{
+		"label": "kHidPomRW",
+		"name": "kHidPomRW",
+		"description": "Constant hydrolysis rate in the water for Refratory Particulated Organic Matter (1/day)",
+		"inputType": "inline",
+		"defaultValue": 0.0002,
+		"parentName": "organicMatterHydrolysis2"
+	},
+	{
+		"label": "kHidPomLS",
+		"name": "kHidPomLS",
+		"description": "Constant hydrolysis rate in the sediment for Labile Particulated Organic Matter (1/day)",
+		"inputType": "inline",
+		"defaultValue": 0.0002,
+		"parentName": "organicMatterHydrolysis2"
+	},
+	{
+		"label": "kHidPomRS",
+		"name": "kHidPomRS",
+		"description": "Constant hydrolysis rate in the sediment for Refratory Particulated Organic Matter (1/day)",
+		"inputType": "inline",
+		"defaultValue": 0.0002,
+		"parentName": "organicMatterHydrolysis2"
+	},
+	{
+		"label": "Mineralization",
+		"name": "organicMatterMineralization3",
+		"parentName": "organicMatter3"
+	},
+	{
+		"label": "cThetaMinAerW",
+		"name": "cThetaMinAerW3",
+		"description": "Temperature coefficient for aerobic mineralization in the water",
+		"inputType": "inline",
+		"defaultValue": 1.07,
+		"parentName": "organicMatterMineralization3"
+	},
+	{
+		"label": "cThetaMinAerS",
+		"name": "cThetaMinAerS3",
+		"description": "Temperature coefficient for aerobic mineralization in the sediment",
+		"inputType": "inline",
+		"defaultValue": 1.07,
+		"parentName": "organicMatterMineralization3"
+	},
+	{
+		"label": "cThetaMinAnaerW",
+		"name": "cThetaMinAnaerW3",
+		"description": "Temperature coefficient for anaerobic mineralization in the water",
+		"inputType": "inline",
+		"defaultValue": 1.07,
+		"parentName": "organicMatterMineralization3"
+	},
+	{
+		"label": "cThetaMinAnaerS",
+		"name": "cThetaMinAnaerS3",
+		"description": "Temperature coefficient for anaerobic mineralization in the sediment",
+		"inputType": "inline",
+		"defaultValue": 1.07,
+		"parentName": "organicMatterMineralization3"
+	},
+	{
+		"label": "kMinAerDomLW",
+		"name": "kMinAerDomLW",
+		"description": "Constant aerobic mineralization rate in the water for Labile Organic Matter (1/day)",
+		"inputType": "inline",
+		"defaultValue": 0.1,
+		"parentName": "organicMatterMineralization3"
+	},
+	{
+		"label": "kMinAerDomRW",
+		"name": "kMinAerDomRW",
+		"description": "Constant aerobic mineralization rate in the water for Refratory Organic Matter (1/day)",
+		"inputType": "inline",
+		"defaultValue": 0.002,
+		"parentName": "organicMatterMineralization3"
+	},
+	{
+		"label": "kMinAerDomLS",
+		"name": "kMinAerDomLS",
+		"description": "Constant aerobic mineralization rate in the sediment for Labile Organic Matter (1/day)",
+		"inputType": "inline",
+		"defaultValue": 0.01,
+		"parentName": "organicMatterMineralization3"
+	},
+	{
+		"label": "kMinAerDomRS",
+		"name": "kMinAerDomRS",
+		"description": "Constant aerobic mineralization rate in the sediment for Refratory Organic Matter (1/day)",
+		"inputType": "inline",
+		"defaultValue": 0.002,
+		"parentName": "organicMatterMineralization3"
+	},
+	{
+		"label": "kMinAnaerDomLW",
+		"name": "kMinAnaerDomLW",
+		"description": "Constant anaerobic mineralization rate in the water for Labile Organic Matter (1/day)",
+		"inputType": "inline",
+		"defaultValue": 0.1,
+		"parentName": "organicMatterMineralization3"
+	},
+	{
+		"label": "kMinAnaerDomRW",
+		"name": "kMinAnaerDomRW",
+		"description": "Constant anaerobic mineralization rate in the water for Refratory Organic Matter (1/day)",
+		"inputType": "inline",
+		"defaultValue": 0.002,
+		"parentName": "organicMatterMineralization3"
+	},
+	{
+		"label": "kMinAnaerDomLS",
+		"name": "kMinAnaerDomLS",
+		"description": "Constant anaerobic mineralization rate in the sediment for Labile Organic Matter (1/day)",
+		"inputType": "inline",
+		"defaultValue": 0.01,
+		"parentName": "organicMatterMineralization3"
+	},
+	{
+		"label": "kMinAnaerDomRS",
+		"name": "kMinAnaerDomRS",
+		"description": "Constant anaerobic mineralization rate in the sediment for Refratory Organic Matter (1/day)",
+		"inputType": "inline",
+		"defaultValue": 0.002,
+		"parentName": "organicMatterMineralization3"
 	},
 	{
 		"label": "Zoobenthos Modeling",

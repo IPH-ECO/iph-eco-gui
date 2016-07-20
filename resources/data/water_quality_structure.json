@@ -77,12 +77,15 @@
 		"label": "Organic Matter Modeling",
 		"name": "organicMatterModeling",
 		"parentName": "limnologyModeling",
+		"target": "organicMatter1",
+		"diagramItem": "Organic Matter",
 		"checkable": true
 	},
 	{
 		"label": "Split Dissolved and Particulated Organic Matter",
 		"name": "iMatOrgSplit",
 		"parentName": "organicMatterModeling",
+		"target": "organicMatter2",
 		"diagramItem": "Dissolved Organic Matter (DOM)",
 		"checkable": true
 	},
@@ -90,6 +93,7 @@
 		"label": "Split Labile and Refractory Organic Matter",
 		"name": "iPomDomSplit",
 		"parentName": "iMatOrgSplit",
+		"target": "organicMatter3",
 		"checkable": true
 	},
 	{
