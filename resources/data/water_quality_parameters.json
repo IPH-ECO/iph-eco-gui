@@ -2220,6 +2220,7 @@
 	{
 		"label": "Organic Matter",
 		"name": "organicMatter1",
+		"radio": true,
 		"parentName": "iLimn"
 	},
 	{
@@ -2378,6 +2379,7 @@
 	{
 		"label": "Split Dissolved and Particulated Organic Matter",
 		"name": "organicMatter2",
+		"radio": true,
 		"parentName": "iLimn"
 	},
 	{
@@ -2613,6 +2615,7 @@
 	{
 		"label": "Split Labile and Refractory Organic Matter",
 		"name": "organicMatter3",
+		"radio": true,
 		"parentName": "iLimn"
 	},
 	{

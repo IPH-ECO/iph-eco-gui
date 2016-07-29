@@ -64,29 +64,6 @@
 			return result;
 		}
 
-		function toggleProcessesVisibility(variable, visible) {
-			var toggleProcesses = decodeValue(variable.find('v\\:cp[v\\:lbl="toggleProcesses"]').attr('v:val')).split(',');
-
-			if (toggleProcesses.length > 0) {
-				for (var index in toggleProcesses) {
-					var process = getProcess(toggleProcesses[index]);
-					var variableNames = decodeValue(process.find('v\\:cp[v\\:lbl="process"]').attr('v:val')).split(',');
-
-					if (visible) {
-						process.removeClass('hidden');
-					} else {
-						process.addClass('hidden');
-					}
-
-					if (getVariable(variableNames[0]).hasClass('disabled') || getVariable(variableNames[1]).hasClass('disabled')) {
-						process.css('opacity', defaultOpacity).addClass('disabled');
-					} else {
-						process.css('opacity', 1).removeClass('disabled');
-					}
-				}
-			}
-		}
-
 		function enableVariable(variableName, attributes) {
 			var variable = getVariable(variableName);
 
@@ -99,8 +76,6 @@
 			if (typeof waterQualityDialog !== 'undefined') {
 				waterQualityDialog.toggleItem(variableName, true);
 			}
-
-			toggleProcessesVisibility(variable, false);
 
 			if (variable.find('v\\:cp[v\\:lbl="switchVariables"]').length > 0) {
 				var switchVariables = decodeValue(variable.find('v\\:cp[v\\:lbl="switchVariables"]').attr('v:val')).split(',');
@@ -149,7 +124,9 @@
 				var disableProcesses = decodeValue(variable.find('v\\:cp[v\\:lbl="hideProcesses"]').attr('v:val')).split(',');
 
 				for (var index in disableProcesses) {
-					getProcess(disableProcesses[index]).removeClass('hidden');
+					var process = getProcess(disableProcesses[index]);
+					process.removeClass('hidden');
+					enableProcess(process);
 				}
 			}
 
@@ -160,8 +137,6 @@
 					disableProcess($(this));
 				}
 			});
-
-			toggleProcessesVisibility(variable, true);
 		}
 
 		function toggleProcessSiblings(process, enable) {

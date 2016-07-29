@@ -83,6 +83,7 @@ WaterQualityRepository::WaterQualityRepository() {
         parameter->setRangeMinimum(jsonParameter["rangeMinimum"].toDouble());
         parameter->setRangeMaximum(jsonParameter["rangeMaximum"].toDouble());
         parameter->setValue(jsonParameter["defaultValue"].toDouble());
+        parameter->setRadio(jsonParameter["radio"].toBool(false));
         
         if (parameter->getLabel() == "Groups") {
             lastGroupParameter = parameter;
@@ -147,6 +148,14 @@ WaterQualityParameter* WaterQualityRepository::findParameterByName(const QString
     }
     
     return nullptr;
+}
+
+WaterQualityParameter* WaterQualityRepository::findParameterByDiagramItem(const QString &diagramItem) {
+    for (WaterQualityParameter *parameter : structure) {
+        if (parameter->getDiagramItem() == diagramItem) {
+            return parameter;
+        }
+    }
 }
 
 QList<WaterQualityParameter*> WaterQualityRepository::getParameters(const WaterQualityParameterSection &section) const {

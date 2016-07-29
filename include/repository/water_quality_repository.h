@@ -21,6 +21,7 @@ public:
 
     void buildParameters(WaterQualityConfiguration *configuration);
     WaterQualityParameter* findParameterByName(const QString &name, const WaterQualityParameterSection &section);
+    WaterQualityParameter* findParameterByDiagramItem(const QString &diagramItem);
     QList<WaterQualityParameter*> getParameters(const WaterQualityParameterSection &section) const;
     QList<WaterQualityParameter*> getRootParameters(const WaterQualityParameterSection &section) const;
 };
