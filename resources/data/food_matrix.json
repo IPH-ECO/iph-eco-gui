@@ -1,0 +1,904 @@
+[
+	{
+		"name": "domLabile",
+		"label": "DOM Labile",
+		"parameter": "iMatOrgSplit",
+		"predator": false,
+		"prey": true
+	},
+	{
+		"name": "domRefractory",
+		"label": "DOM Refractory",
+		"parameter": "iMatOrgSplit",
+		"predator": false,
+		"prey": true
+	},
+	{
+		"name": "pomLabile",
+		"label": "POM Labile",
+		"parameter": "iMatOrgSplit",
+		"predator": false,
+		"prey": true
+	},
+	{
+		"name": "pomRefractory",
+		"label": "POM Refractory",
+		"parameter": "iMatOrgSplit",
+		"predator": false,
+		"prey": true
+	},
+	{
+		"name": "aerobicBacteria",
+		"label": "Aerobic Bacteria",
+		"parameter": "bacterioplanktonModeling",
+		"group": "aerobicGroup",
+		"predator": true,
+		"prey": true,
+		"values": [
+			{
+				"prey": "domLabile",
+				"value": 1
+			},
+			{
+				"prey": "domRefractory",
+				"value": 0.8
+			},
+			{
+				"prey": "pomLabile",
+				"value": 0.2
+			},
+			{
+				"prey": "pomRefractory",
+				"value": 0.2
+			}
+		]
+	},
+	{
+		"name": "anaerobicBacteria",
+		"label": "Anaerobic Bacteria",
+		"parameter": "bacterioplanktonModeling",
+		"group": "anaerobicGroup",
+		"predator": true,
+		"prey": true,
+		"values": [
+			{
+				"prey": "domLabile",
+				"value": 1
+			},
+			{
+				"prey": "domRefractory",
+				"value": 0.75
+			},
+			{
+				"prey": "pomLabile",
+				"value": 0.0
+			},
+			{
+				"prey": "pomRefractory",
+				"value": 0.0
+			}
+		]
+	},
+	{
+		"name": "dinoflagellates",
+		"label": "Phytoplankton - Dinoflagellates",
+		"parameter": "phytoplanktonModeling",
+		"group": "dinoflagellatesGroup",
+		"predator": false,
+		"prey": true
+	},
+	{
+		"name": "freshwaterCyanobacteria",
+		"label": "Phytoplankton - Freshwater cyanobacteria",
+		"parameter": "phytoplanktonModeling",
+		"group": "freshwaterCyanobacteriaGroup",
+		"predator": false,
+		"prey": true
+	},
+	{
+		"name": "marineCyanobacteria",
+		"label": "Phytoplankton - Marine/estuarine cyanobacteria",
+		"parameter": "phytoplanktonModeling",
+		"group": "marineCyanobacteriaGroup",
+		"predator": false,
+		"prey": true
+	},
+	{
+		"name": "chlorophytes",
+		"label": "Phytoplankton - Chlorophytes",
+		"parameter": "phytoplanktonModeling",
+		"group": "chlorophytesGroup",
+		"predator": false,
+		"prey": true
+	},
+	{
+		"name": "cryptophytes",
+		"label": "Phytoplankton - Cryptophytes",
+		"parameter": "phytoplanktonModeling",
+		"group": "cryptophytesGroup",
+		"predator": false,
+		"prey": true
+	},
+	{
+		"name": "marineDiatoms",
+		"label": "Marine/estuarine diatoms",
+		"parameter": "phytoplanktonModeling",
+		"group": "marineDiatomsGroup",
+		"predator": false,
+		"prey": true
+	},
+	{
+		"name": "freshwaterDiatoms",
+		"label": "Freshwater diatoms",
+		"parameter": "phytoplanktonModeling",
+		"group": "freshwaterDiatomsGroup",
+		"predator": false,
+		"prey": true
+	},
+	{
+		"name": "microZooGroup",
+		"label": "Zooplankton - Micro",
+		"parameter": "zooplanktonModeling",
+		"group": "microZooGroup",
+		"predator": true,
+		"prey": true,
+		"values": [
+			{
+				"prey": "domLabile",
+				"value": 0
+			},
+			{
+				"prey": "domRefractory",
+				"value": 0
+			},
+			{
+				"prey": "pomLabile",
+				"value": 0.2
+			},
+			{
+				"prey": "pomRefractory",
+				"value": 0.1
+			},
+			{
+				"prey": "aerobicBacteria",
+				"value": 0.8
+			},
+			{
+				"prey": "anaerobicBacteria",
+				"value": 0.4
+			},
+			{
+				"prey": "dinoflagellates",
+				"value": 0.4
+			},
+			{
+				"prey": "freshwaterCyanobacteria",
+				"value": 0.4
+			},
+			{
+				"prey": "marineCyanobacteria",
+				"value": 0.4
+			},
+			{
+				"prey": "chlorophytes",
+				"value": 0.4
+			},
+			{
+				"prey": "cryptophytes",
+				"value": 0.4
+			},
+			{
+				"prey": "marineDiatoms",
+				"value": 0.4
+			},
+			{
+				"prey": "freshwaterDiatoms",
+				"value": 0.4
+			}
+		]
+	},
+	{
+		"name": "mesoZooGroup",
+		"label": "Zooplankton - Meso",
+		"parameter": "zooplanktonModeling",
+		"group": "mesoZooGroup",
+		"predator": true,
+		"prey": true,
+		"values": [
+			{
+				"prey": "domLabile",
+				"value": 0
+			},
+			{
+				"prey": "domRefractory",
+				"value": 0
+			},
+			{
+				"prey": "pomLabile",
+				"value": 0.2
+			},
+			{
+				"prey": "pomRefractory",
+				"value": 0.1
+			},
+			{
+				"prey": "aerobicBacteria",
+				"value": 0.4
+			},
+			{
+				"prey": "anaerobicBacteria",
+				"value": 0.4
+			},
+			{
+				"prey": "dinoflagellates",
+				"value": 0.8
+			},
+			{
+				"prey": "freshwaterCyanobacteria",
+				"value": 0.8
+			},
+			{
+				"prey": "marineCyanobacteria",
+				"value": 0.8
+			},
+			{
+				"prey": "chlorophytes",
+				"value": 0.8
+			},
+			{
+				"prey": "cryptophytes",
+				"value": 0.8
+			},
+			{
+				"prey": "marineDiatoms",
+				"value": 0.8
+			},
+			{
+				"prey": "freshwaterDiatoms",
+				"value": 0.8
+			}
+		]
+	},
+	{
+		"name": "macroZooGroup",
+		"label": "Zooplankton - Macro",
+		"parameter": "zooplanktonModeling",
+		"group": "macroZooGroup",
+		"predator": true,
+		"prey": true,
+		"values": [
+			{
+				"prey": "domLabile",
+				"value": 0
+			},
+			{
+				"prey": "domRefractory",
+				"value": 0
+			},
+			{
+				"prey": "pomLabile",
+				"value": 0.2
+			},
+			{
+				"prey": "pomRefractory",
+				"value": 0.1
+			},
+			{
+				"prey": "aerobicBacteria",
+				"value": 0.4
+			},
+			{
+				"prey": "anaerobicBacteria",
+				"value": 0.4
+			},
+			{
+				"prey": "dinoflagellates",
+				"value": 0.4
+			},
+			{
+				"prey": "freshwaterCyanobacteria",
+				"value": 0.4
+			},
+			{
+				"prey": "marineCyanobacteria",
+				"value": 0.4
+			},
+			{
+				"prey": "chlorophytes",
+				"value": 0.4
+			},
+			{
+				"prey": "cryptophytes",
+				"value": 0.4
+			},
+			{
+				"prey": "marineDiatoms",
+				"value": 0.4
+			},
+			{
+				"prey": "freshwaterDiatoms",
+				"value": 0.4
+			},
+			{
+				"prey": "zooplanktonMicro",
+				"value": 0.9
+			},
+			{
+				"prey": "zooplanktonMeso",
+				"value": 0.75
+			}
+		]
+	},
+	{
+		"name": "microZoobenthos",
+		"label": "Zoobenthos - Micro",
+		"parameter": "iBen",
+		"group": "microZoobenthosGroup",
+		"predator": true,
+		"prey": true,
+		"values": [
+			{
+				"prey": "pomLabile",
+				"value": 0.9
+			},
+			{
+				"prey": "pomRefractory",
+				"value": 0.8
+			},
+			{
+				"prey": "aerobicBacteria",
+				"value": 0.4
+			},
+			{
+				"prey": "anaerobicBacteria",
+				"value": 0
+			},
+			{
+				"prey": "dinoflagellates",
+				"value": 0
+			},
+			{
+				"prey": "freshwaterCyanobacteria",
+				"value": 0.5
+			},
+			{
+				"prey": "marineCyanobacteria",
+				"value": 0.25
+			},
+			{
+				"prey": "chlorophytes",
+				"value": 0.25
+			},
+			{
+				"prey": "cryptophytes",
+				"value": 0.25
+			},
+			{
+				"prey": "marineDiatoms",
+				"value": 0.25
+			},
+			{
+				"prey": "freshwaterDiatoms",
+				"value": 0.25
+			}
+		]
+	},
+	{
+		"name": "mesoZoobenthos",
+		"label": "Zoobenthos - Meso",
+		"parameter": "iBen",
+		"group": "mesoZoobenthosGroup",
+		"predator": true,
+		"prey": true,
+		"values": [
+			{
+				"prey": "pomLabile",
+				"value": 0.9
+			},
+			{
+				"prey": "pomRefractory",
+				"value": 0.8
+			},
+			{
+				"prey": "aerobicBacteria",
+				"value": 0.4
+			},
+			{
+				"prey": "anaerobicBacteria",
+				"value": 0
+			},
+			{
+				"prey": "dinoflagellates",
+				"value": 0
+			},
+			{
+				"prey": "freshwaterCyanobacteria",
+				"value": 0.5
+			},
+			{
+				"prey": "marineCyanobacteria",
+				"value": 0.25
+			},
+			{
+				"prey": "chlorophytes",
+				"value": 0.25
+			},
+			{
+				"prey": "cryptophytes",
+				"value": 0.25
+			},
+			{
+				"prey": "marineDiatoms",
+				"value": 0.25
+			},
+			{
+				"prey": "freshwaterDiatoms",
+				"value": 0.25
+			}
+		]
+	},
+	{
+		"name": "macroZoobenthos",
+		"label": "Zoobenthos - Macro",
+		"parameter": "iBen",
+		"group": "macroZoobenthosGroup",
+		"predator": true,
+		"prey": true,
+		"values": [
+			{
+				"prey": "pomLabile",
+				"value": 0.9
+			},
+			{
+				"prey": "pomRefractory",
+				"value": 0.8
+			},
+			{
+				"prey": "aerobicBacteria",
+				"value": 0
+			},
+			{
+				"prey": "anaerobicBacteria",
+				"value": 0
+			},
+			{
+				"prey": "dinoflagellates",
+				"value": 0.5
+			},
+			{
+				"prey": "freshwaterCyanobacteria",
+				"value": 0.25
+			},
+			{
+				"prey": "marineCyanobacteria",
+				"value": 0.25
+			},
+			{
+				"prey": "chlorophytes",
+				"value": 0.25
+			},
+			{
+				"prey": "cryptophytes",
+				"value": 0.25
+			},
+			{
+				"prey": "marineDiatoms",
+				"value": 0.25
+			},
+			{
+				"prey": "freshwaterDiatoms",
+				"value": 0.25
+			}
+		]
+	},
+	{
+		"name": "planktivorousJuvenile",
+		"label": "Planktivorous Fish - Juvenile",
+		"parameter": "fishModeling",
+		"group": "planktivorousGroup",
+		"predator": true,
+		"prey": true,
+		"values": [
+			{
+				"prey": "pomLabile",
+				"value": 0.8
+			},
+			{
+				"prey": "pomRefractory",
+				"value": 0.6
+			},
+			{
+				"prey": "aerobicBacteria",
+				"value": 0
+			},
+			{
+				"prey": "anaerobicBacteria",
+				"value": 0
+			},
+			{
+				"prey": "dinoflagellates",
+				"value": 1
+			},
+			{
+				"prey": "freshwaterCyanobacteria",
+				"value": 1
+			},
+			{
+				"prey": "marineCyanobacteria",
+				"value": 1
+			},
+			{
+				"prey": "chlorophytes",
+				"value": 1
+			},
+			{
+				"prey": "cryptophytes",
+				"value": 1
+			},
+			{
+				"prey": "marineDiatoms",
+				"value": 1
+			},
+			{
+				"prey": "freshwaterDiatoms",
+				"value": 1
+			},
+			{
+				"prey": "zooplanktonMicro",
+				"value": 0.2
+			},
+			{
+				"prey": "zooplanktonMeso",
+				"value": 0.2
+			},
+			{
+				"prey": "zooplanktonMacro",
+				"value": 0.2
+			},
+			{
+				"prey": "microZoobenthos",
+				"value": 0
+			},
+			{
+				"prey": "mesoZoobenthos",
+				"value": 0
+			},
+			{
+				"prey": "macroZoobenthos",
+				"value": 0
+			}
+		]
+	},
+	{
+		"name": "planktivorousAdult",
+		"label": "Planktivorous Fish - Adult",
+		"parameter": "fishModeling",
+		"group": "planktivorousGroup",
+		"predator": true,
+		"prey": true,
+		"values": [
+			{
+				"prey": "pomLabile",
+				"value": 0.8
+			},
+			{
+				"prey": "pomRefractory",
+				"value": 0.6
+			},
+			{
+				"prey": "aerobicBacteria",
+				"value": 0
+			},
+			{
+				"prey": "anaerobicBacteria",
+				"value": 0
+			},
+			{
+				"prey": "dinoflagellates",
+				"value": 0.35
+			},
+			{
+				"prey": "freshwaterCyanobacteria",
+				"value": 0.35
+			},
+			{
+				"prey": "marineCyanobacteria",
+				"value": 0.35
+			},
+			{
+				"prey": "chlorophytes",
+				"value": 0.35
+			},
+			{
+				"prey": "cryptophytes",
+				"value": 0.35
+			},
+			{
+				"prey": "marineDiatoms",
+				"value": 0.35
+			},
+			{
+				"prey": "freshwaterDiatoms",
+				"value": 0.35
+			},
+			{
+				"prey": "zooplanktonMicro",
+				"value": 0.2
+			},
+			{
+				"prey": "zooplanktonMeso",
+				"value": 0.2
+			},
+			{
+				"prey": "zooplanktonMacro",
+				"value": 0.2
+			},
+			{
+				"prey": "microZoobenthos",
+				"value": 0
+			},
+			{
+				"prey": "mesoZoobenthos",
+				"value": 0
+			},
+			{
+				"prey": "macroZoobenthos",
+				"value": 0
+			}
+		]
+	},
+	{
+		"name": "omnivorousJuvenile",
+		"label": "Omnivorous Fish - Juvenile",
+		"parameter": "fishModeling",
+		"group": "planktivorousGroup",
+		"predator": true,
+		"prey": true,
+		"values": [
+			{
+				"prey": "pomLabile",
+				"value": 0.8
+			},
+			{
+				"prey": "pomRefractory",
+				"value": 0.6
+			},
+			{
+				"prey": "aerobicBacteria",
+				"value": 0
+			},
+			{
+				"prey": "anaerobicBacteria",
+				"value": 0
+			},
+			{
+				"prey": "dinoflagellates",
+				"value": 1
+			},
+			{
+				"prey": "freshwaterCyanobacteria",
+				"value": 1
+			},
+			{
+				"prey": "marineCyanobacteria",
+				"value": 1
+			},
+			{
+				"prey": "chlorophytes",
+				"value": 1
+			},
+			{
+				"prey": "cryptophytes",
+				"value": 1
+			},
+			{
+				"prey": "marineDiatoms",
+				"value": 1
+			},
+			{
+				"prey": "freshwaterDiatoms",
+				"value": 1
+			},
+			{
+				"prey": "zooplanktonMicro",
+				"value": 0.2
+			},
+			{
+				"prey": "zooplanktonMeso",
+				"value": 0.2
+			},
+			{
+				"prey": "zooplanktonMacro",
+				"value": 0.2
+			},
+			{
+				"prey": "microZoobenthos",
+				"value": 0.1
+			},
+			{
+				"prey": "mesoZoobenthos",
+				"value": 0
+			},
+			{
+				"prey": "macroZoobenthos",
+				"value": 0
+			}
+		]
+	},
+	{
+		"name": "omnivorousAdult",
+		"label": "Omnivorous Fish - Adult",
+		"parameter": "fishModeling",
+		"group": "planktivorousGroup",
+		"predator": true,
+		"prey": true,
+		"values": [
+			{
+				"prey": "pomLabile",
+				"value": 0
+			},
+			{
+				"prey": "pomRefractory",
+				"value": 0
+			},
+			{
+				"prey": "aerobicBacteria",
+				"value": 0
+			},
+			{
+				"prey": "anaerobicBacteria",
+				"value": 0
+			},
+			{
+				"prey": "dinoflagellates",
+				"value": 0.35
+			},
+			{
+				"prey": "freshwaterCyanobacteria",
+				"value": 0.35
+			},
+			{
+				"prey": "marineCyanobacteria",
+				"value": 0.35
+			},
+			{
+				"prey": "chlorophytes",
+				"value": 0.35
+			},
+			{
+				"prey": "cryptophytes",
+				"value": 0.35
+			},
+			{
+				"prey": "marineDiatoms",
+				"value": 0.35
+			},
+			{
+				"prey": "freshwaterDiatoms",
+				"value": 0.35
+			},
+			{
+				"prey": "zooplanktonMicro",
+				"value": 1
+			},
+			{
+				"prey": "zooplanktonMeso",
+				"value": 1
+			},
+			{
+				"prey": "zooplanktonMacro",
+				"value": 1
+			},
+			{
+				"prey": "microZoobenthos",
+				"value": 1
+			},
+			{
+				"prey": "mesoZoobenthos",
+				"value": 1
+			},
+			{
+				"prey": "macroZoobenthos",
+				"value": 1
+			}
+		]
+	},
+	{
+		"name": "piscivorous",
+		"label": "Piscivorous Fish",
+		"parameter": "fishModeling",
+		"group": "piscivorousGroup",
+		"predator": true,
+		"prey": false,
+		"values": [
+			{
+				"prey": "pomLabile",
+				"value": 0
+			},
+			{
+				"prey": "pomRefractory",
+				"value": 0
+			},
+			{
+				"prey": "aerobicBacteria",
+				"value": 0
+			},
+			{
+				"prey": "anaerobicBacteria",
+				"value": 0
+			},
+			{
+				"prey": "dinoflagellates",
+				"value": 0
+			},
+			{
+				"prey": "freshwaterCyanobacteria",
+				"value": 0
+			},
+			{
+				"prey": "marineCyanobacteria",
+				"value": 0
+			},
+			{
+				"prey": "chlorophytes",
+				"value": 0
+			},
+			{
+				"prey": "cryptophytes",
+				"value": 0
+			},
+			{
+				"prey": "marineDiatoms",
+				"value": 0
+			},
+			{
+				"prey": "freshwaterDiatoms",
+				"value": 0
+			},
+			{
+				"prey": "zooplanktonMicro",
+				"value": 0
+			},
+			{
+				"prey": "zooplanktonMeso",
+				"value": 0
+			},
+			{
+				"prey": "zooplanktonMacro",
+				"value": 0
+			},
+			{
+				"prey": "microZoobenthos",
+				"value": 0
+			},
+			{
+				"prey": "mesoZoobenthos",
+				"value": 0
+			},
+			{
+				"prey": "macroZoobenthos",
+				"value": 0
+			},
+			{
+				"prey": "planktivorousJuvenile",
+				"value": 0.8
+			},
+			{
+				"prey": "omnivorousJuvenile",
+				"value": 0.8
+			},
+			{
+				"prey": "planktivorousAdult",
+				"value": 0.5
+			},
+			{
+				"prey": "omnivorousJuvenile",
+				"value": 0.8
+			},
+			{
+				"prey": "omnivorousAdult",
+				"value": 0.5
+			}
+		]
+	}
+]

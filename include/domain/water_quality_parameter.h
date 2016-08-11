@@ -33,6 +33,7 @@ private:
     WaterQualityParameter *parent;
     bool editable;
     bool radio;
+    bool group;
     int order;
     double rangeMininum;
     double rangeMaximum;
@@ -79,6 +80,8 @@ public:
     void setEditable(bool editable);
     bool isRadio() const;
     void setRadio(const bool &radio);
+    bool isGroup() const;
+    void setGroup(const bool &group);
     int getOrder() const;
     void setOrder(int order);
     double getRangeMinimum() const;

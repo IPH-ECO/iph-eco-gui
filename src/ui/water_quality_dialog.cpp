@@ -10,6 +10,7 @@
 #include <QWebFrame>
 #include <QMessageBox>
 #include <QWebSettings>
+#include <QTableWidgetItem>
 
 WaterQualityDialog::WaterQualityDialog(QWidget *parent) :
 	QDialog(parent),
@@ -284,6 +285,95 @@ void WaterQualityDialog::on_trwStructure_itemChanged(QTreeWidgetItem *item, int 
 
 void WaterQualityDialog::on_tabWidget_currentChanged(int index) {
     ui->webView->setVisible(index == -1 || ui->tabWidget->tabText(index) == "Structure");
+    
+    if (ui->tabWidget->tabText(index) == "Food Matrix") {
+        QStringList predatorsLabels;
+        QStringList preysLabels;
+        QList<FoodMatrixElement*> preys;
+        QList<FoodMatrixElement*> predators;
+        
+        for (FoodMatrixElement *prey : waterQualityRepository->getPreys()) {
+            WaterQualityParameter *parameter = prey->getParameter();
+            
+            if (parameter->isCheckable() && !parameter->isChecked()) {
+                continue;
+            }
+            
+            bool skipThisPrey = true;
+            
+            for (FoodMatrixElement *predator : prey->getPredators()) {
+                if (predator->getParameter()->isCheckable() && predator->getParameter()->isChecked()) {
+                    skipThisPrey = false;
+                    break;
+                }
+            }
+            
+            if (skipThisPrey) {
+                continue;
+            }
+            
+            if (prey->getGroup()) {
+                int groupValue = ui->trwParameter->findChild<QLineEdit*>(prey->getGroup()->getName())->text().toInt();
+                
+                for (int i = 0; i < groupValue; i++) {
+                    preysLabels.append(QString("%1 %2").arg(prey->getLabel()).arg(i + 1));
+                    preys.append(prey);
+                }
+            } else {
+                preysLabels.append(prey->getLabel());
+                preys.append(prey);
+            }
+        }
+        
+        for (FoodMatrixElement *predator : waterQualityRepository->getPredators()) {
+            WaterQualityParameter *parameter = predator->getParameter();
+            
+            if (parameter->isCheckable() && !parameter->isChecked()) {
+                continue;
+            }
+            
+            if (predator->getGroup()) {
+                int groupValue = ui->trwParameter->findChild<QLineEdit*>(predator->getGroup()->getName())->text().toInt();
+                
+                for (int i = 0; i < groupValue; i++) {
+                    predatorsLabels.append(QString("%1 %2").arg(predator->getLabel()).arg(i + 1));
+                    predators.append(predator);
+                }
+            } else {
+                predatorsLabels.append(predator->getLabel());
+                predators.append(predator);
+            }
+        }
+        
+        if (preys.size() > 0 && predators.size() > 0) {
+            ui->tblFoodMatrix->setColumnCount(preys.size());
+            ui->tblFoodMatrix->setRowCount(predators.size());
+            ui->tblFoodMatrix->setHorizontalHeaderLabels(preysLabels);
+            ui->tblFoodMatrix->setVerticalHeaderLabels(predatorsLabels);
+            
+            for (int i = 0; i < predators.size(); i++) {
+                FoodMatrixElement *predator = predators[i];
+                
+                for (int j = 0; j < preys.size(); j++) {
+                    FoodMatrixElement *prey = preys[j];
+                    QTableWidgetItem *tableItem = new QTableWidgetItem();
+                    
+                    if (predator->getPreys().contains(prey)) {
+                        double value = waterQualityRepository->getFoodMatrixValue(predator, prey);
+                        tableItem->setText(QString::number(value));
+                    } else {
+                        tableItem->setFlags(Qt::NoItemFlags);
+                        tableItem->setBackgroundColor(QColor(Qt::lightGray));
+                    }
+                    
+                    ui->tblFoodMatrix->setItem(i, j, tableItem);
+                }
+            }
+        } else {
+            ui->tblFoodMatrix->setColumnCount(0);
+            ui->tblFoodMatrix->setRowCount(0);
+        }
+    }
 }
 
 void WaterQualityDialog::addJSObject() {

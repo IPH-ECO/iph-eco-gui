@@ -6,6 +6,7 @@ WaterQualityParameter::WaterQualityParameter() :
     enabled(true),
     parent(nullptr),
     editable(true),
+    group(false),
     rangeMininum(0),
     rangeMaximum(0),
     itemWidget(nullptr)
@@ -161,6 +162,14 @@ bool WaterQualityParameter::isRadio() const {
 
 void WaterQualityParameter::setRadio(const bool &radio) {
     this->radio = radio;
+}
+
+bool WaterQualityParameter::isGroup() const {
+    return group;
+}
+
+void WaterQualityParameter::setGroup(const bool &group) {
+    this->group = group;
 }
 
 int WaterQualityParameter::getOrder() const {
