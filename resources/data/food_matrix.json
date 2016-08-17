@@ -651,7 +651,7 @@
 		"name": "omnivorousJuvenile",
 		"label": "Omnivorous Fish - Juvenile",
 		"parameter": "fishModeling",
-		"group": "planktivorousGroup",
+		"group": "omnivorousGroup",
 		"predator": true,
 		"prey": true,
 		"values": [
@@ -729,7 +729,7 @@
 		"name": "omnivorousAdult",
 		"label": "Omnivorous Fish - Adult",
 		"parameter": "fishModeling",
-		"group": "planktivorousGroup",
+		"group": "omnivorousGroup",
 		"predator": true,
 		"prey": true,
 		"values": [
