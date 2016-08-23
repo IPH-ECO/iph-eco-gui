@@ -3,12 +3,14 @@
 
 #include "grid_data_configuration.h"
 #include "water_quality_parameter.h"
+#include "food_matrix.h"
 
 class WaterQualityConfiguration {
 private:
     uint id;
     QString name;
     QList<WaterQualityParameter*> parameters;
+    QList<FoodMatrix*> foodMatrix;
     GridDataConfiguration *gridDataConfiguration;
 public:
     WaterQualityConfiguration();
@@ -24,6 +26,8 @@ public:
     bool addWaterQualityParameter(WaterQualityParameter *waterQualityParameter);
     QList<WaterQualityParameter*> getParameters() const;
     WaterQualityParameter* getParameter(const QString &name) const;
+    QList<FoodMatrix*> getFoodMatrix() const;
+    void setFoodMatrix(const QList<FoodMatrix*> &foodMatrix);
 };
 
 #endif // WATER_QUALITY_CONFIGURATION_H

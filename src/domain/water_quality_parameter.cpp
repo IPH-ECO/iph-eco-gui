@@ -48,6 +48,14 @@ void WaterQualityParameter::setGroupValues(const QList<double> &groupValues) {
     this->groupValues = groupValues;
 }
 
+bool WaterQualityParameter::isPersistable() const {
+    return persistable;
+}
+
+void WaterQualityParameter::setPersistable(const bool &persistable) {
+    this->persistable = persistable;
+}
+
 bool WaterQualityParameter::isCheckable() const {
     return checkable;
 }
@@ -126,6 +134,26 @@ QString WaterQualityParameter::getTarget() const {
 
 void WaterQualityParameter::setTarget(const QString &target) {
     this->target = target;
+}
+
+QString WaterQualityParameter::getGroupValuesStr() const {
+    if (groupValues.isEmpty()) {
+        return "";
+    }
+    
+    QStringList jsonGroupValues;
+    
+    for (double groupValue : groupValues) {
+        jsonGroupValues.append(QString::number(groupValue));
+    }
+    
+    return jsonGroupValues.join(",");
+}
+
+void WaterQualityParameter::setGroupValues(const QString &groupValuesStr) {
+    for (QString groupValueStr : groupValuesStr.split(",")) {
+        groupValues.append(groupValueStr.toDouble());
+    }
 }
 
 QStringList WaterQualityParameter::getGroups() const {

@@ -29,6 +29,10 @@ private:
     void loadTimeSeries(BoundaryCondition *boundaryCondition);
     void loadTimeSeries(MeteorologicalParameter *meteorologicalParameter);
     
+    void loadWaterQualityConfigurations(Project *project);
+    void loadWaterQualityParameters(WaterQualityConfiguration *configuration);
+    void loadFoodMatrix(WaterQualityConfiguration *configuration);
+    
     void saveGridDataConfigurations(Project *project);
     void saveGridData(GridDataConfiguration *gridDataConfiguration);
 
@@ -38,6 +42,10 @@ private:
     void saveTimeSeries(const int &objectId, const QString &objectType, const QList<TimeSeries*> &timeSeriesList);
     void saveTimeSeries(BoundaryCondition *boundaryCondition);
     void saveTimeSeries(MeteorologicalParameter *parameter);
+    
+    void saveWaterQualityConfigurations(Project *project);
+    void saveWaterQualityParameters(WaterQualityConfiguration *configuration);
+    void saveFoodMatrix(WaterQualityConfiguration *configuration);
     
     void saveMeteorologicalConfigurations(Project *project);
     void saveMeteorologicalStations(MeteorologicalConfiguration *configuration);

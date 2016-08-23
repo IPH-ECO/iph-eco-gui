@@ -22,6 +22,7 @@ private:
     bool isWebViewLoaded;
 
 	void buildParameterTree(WaterQualityParameter *parameter);
+    bool isItemWidgetVisible(QTreeWidgetItem *item) const;
 private slots:
     void on_cbxConfiguration_currentIndexChanged(const QString &configurationName);
 	void on_cbxGridDataConfiguration_currentIndexChanged(const QString &gridDataConfigurationName);

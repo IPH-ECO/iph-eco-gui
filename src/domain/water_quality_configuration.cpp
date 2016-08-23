@@ -44,6 +44,12 @@ bool WaterQualityConfiguration::addWaterQualityParameter(WaterQualityParameter *
 		return false;
 	}
 
+    for (WaterQualityParameter *parameter : parameters) {
+        if (waterQualityParameter->isPersisted() && parameter->getId() == waterQualityParameter->getId()) {
+            return false;
+        }
+    }
+    
 	parameters.append(waterQualityParameter);
 
 	return true;
@@ -61,4 +67,12 @@ WaterQualityParameter* WaterQualityConfiguration::getParameter(const QString &na
 	}
 
 	return nullptr;
+}
+
+QList<FoodMatrix*> WaterQualityConfiguration::getFoodMatrix() const {
+    return foodMatrix;
+}
+
+void WaterQualityConfiguration::setFoodMatrix(const QList<FoodMatrix*> &foodMatrix) {
+    this->foodMatrix = foodMatrix;
 }

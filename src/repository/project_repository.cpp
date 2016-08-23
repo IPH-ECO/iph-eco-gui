@@ -54,6 +54,7 @@ void ProjectRepository::open() {
     loadMeshes(project);
     loadGridDataConfigurations(project);
     loadHydrodynamicConfigurations(project);
+    loadWaterQualityConfigurations(project);
     loadMeteorologicalConfigurations(project);
     loadSimulations(project);
 }
@@ -277,6 +278,54 @@ void ProjectRepository::loadTimeSeries(MeteorologicalParameter *meteorologicalPa
     }
 }
 
+void ProjectRepository::loadWaterQualityConfigurations(Project *project) {
+    QSqlQuery query(databaseUtility->getDatabase());
+    
+    emit updateProgressText("Loading water quality data...");
+    QApplication::processEvents();
+    
+    query.prepare("select * from water_quality_configuration");
+    query.exec();
+    
+    while (query.next() && !operationCanceled) {
+        WaterQualityConfiguration *configuration = new WaterQualityConfiguration();
+        configuration->setId(query.value("id").toUInt());
+        configuration->setName(query.value("name").toString());
+        configuration->setGridDataConfiguration(project->getGridDataConfiguration(query.value("grid_data_configuration_id").toUInt()));
+        
+        project->addWaterQualityConfiguration(configuration);
+        
+        updateProgressAndProcessEvents();
+        
+        loadWaterQualityParameters(configuration);
+        loadFoodMatrix(configuration);
+    }
+}
+
+void ProjectRepository::loadWaterQualityParameters(WaterQualityConfiguration *configuration) {
+    QSqlQuery query(databaseUtility->getDatabase());
+    
+    query.prepare("select * from water_quality_parameter");
+    query.exec();
+    
+    while (query.next() && !operationCanceled) {
+        WaterQualityParameter *parameter = new WaterQualityParameter();
+        parameter->setId(query.value("id").toUInt());
+        parameter->setName(query.value("name").toString());
+        parameter->setSection((WaterQualityParameterSection) query.value("section").toInt());
+        parameter->setValue(query.value("value").toDouble());
+        parameter->setGroupValues(query.value("group_values").toString());
+        
+        configuration->addWaterQualityParameter(parameter);
+        
+        updateProgressAndProcessEvents();
+    }
+}
+
+void ProjectRepository::loadFoodMatrix(WaterQualityConfiguration *configuration) {
+    
+}
+
 void ProjectRepository::loadMeteorologicalConfigurations(Project *project) {
     QSqlQuery query(databaseUtility->getDatabase());
     
@@ -430,6 +479,7 @@ void ProjectRepository::save(const bool &makeCopy) {
         saveMeshes(project);
         saveGridDataConfigurations(project);
         saveHydrodynamicConfigurations(project);
+        saveWaterQualityConfigurations(project);
         saveMeteorologicalConfigurations(project);
         saveSimulations(project);
         
@@ -900,6 +950,111 @@ void ProjectRepository::saveTimeSeries(const int &objectId, const QString &objec
     }
 }
 
+void ProjectRepository::saveWaterQualityConfigurations(Project *project) {
+    QSet<WaterQualityConfiguration*> configurations = project->getWaterQualityConfigurations();
+    QSqlQuery query(databaseUtility->getDatabase());
+    QStringList configurationIds;
+    
+    if (!configurations.isEmpty()) {
+        emit updateProgressText("Saving water quality data...");
+        QApplication::processEvents();
+    }
+    
+    for (WaterQualityConfiguration *configuration : configurations) {
+        if (operationCanceled) {
+            return;
+        }
+        
+        bool update = !this->makeCopy && configuration->isPersisted();
+        
+        if (update) {
+            query.prepare("update water_quality_configuration set name = :n, grid_data_configuration_id = :g where id = :i");
+            query.bindValue(":i", configuration->getId());
+        } else {
+            query.prepare("insert into water_quality_configuration (name, grid_data_configuration_id) values (:n, :g)");
+        }
+        
+        query.bindValue(":n", configuration->getName());
+        query.bindValue(":g", configuration->getGridDataConfiguration()->getId());
+        
+        if (!query.exec()) {
+            throw DatabaseException(QString("Unable to save water quality data configurations. Error: %1.").arg(query.lastError().text()).toStdString());
+        }
+        
+        updateProgressAndProcessEvents();
+        
+        if (!update) {
+            configuration->setId(query.lastInsertId().toUInt());
+        }
+        
+        configurationIds.append(QString::number(configuration->getId()));
+        saveWaterQualityParameters(configuration);
+    }
+    
+    // Handle exclusions
+    QStringList queries;
+    
+    if (configurationIds.isEmpty()) {
+        queries << "delete from water_quality_configuration";
+        queries << "delete from water_quality_parameter";
+    } else {
+        QString configurationIdsStr = configurationIds.join(",");
+        
+        queries << "delete from water_quality_configuration where id not in (" + configurationIdsStr + ")";
+        queries << "delete from water_quality_parameter where water_quality_configuration_id not in (" + configurationIdsStr + ")";
+    }
+    
+    for (QString sql : queries) {
+        query.prepare(sql);
+        query.exec();
+    }
+}
+
+void ProjectRepository::saveWaterQualityParameters(WaterQualityConfiguration *configuration) {
+    QList<WaterQualityParameter*> parameters = configuration->getParameters();
+    QSqlQuery query(databaseUtility->getDatabase());
+    QStringList parameterIds;
+    
+    for (WaterQualityParameter *parameter : configuration->getParameters()) {
+        if (operationCanceled) {
+            return;
+        }
+        
+        bool update = !this->makeCopy && parameter->isPersisted();
+        
+        if (update) {
+            query.prepare("update water_quality_parameter set value = :v, group_values = :gv where id = :i");
+            query.bindValue(":i", parameter->getId());
+        } else {
+            query.prepare("insert into water_quality_parameter (name, section, value, group_values, grid_data_configuration_id) values (:n, :s, :v, :gv, :gd)");
+            query.bindValue(":n", parameter->getName());
+            query.bindValue(":s", (int) parameter->getSection());
+            query.bindValue(":gd", configuration->getGridDataConfiguration()->getId());
+        }
+        
+        query.bindValue(":v", parameter->getValue());
+        query.bindValue(":gv", parameter->getGroupValuesStr());
+        
+        if (!query.exec()) {
+            throw DatabaseException(QString("Unable to save water quality parameters. Error: %1.").arg(query.lastError().text()).toStdString());
+        }
+        
+        updateProgressAndProcessEvents();
+        
+        QVariant lastInsertId = query.lastInsertId();
+        
+        if (!update) {
+            parameter->setId(query.lastInsertId().toUInt());
+        }
+        
+        parameterIds.append(QString::number(parameter->getId()));
+    }
+}
+
+void ProjectRepository::saveFoodMatrix(WaterQualityConfiguration *configuration) {
+    
+}
+
 void ProjectRepository::saveMeteorologicalConfigurations(Project *project) {
     QSet<MeteorologicalConfiguration*> configurations = project->getMeteorologicalConfigurations();
     QSqlQuery query(databaseUtility->getDatabase());
@@ -1208,6 +1363,14 @@ int ProjectRepository::getMaximumSaveProgress() {
         }
     }
     
+    QSet<WaterQualityConfiguration*> waterQualityConfigurations = project->getWaterQualityConfigurations();
+    
+    saveSteps += waterQualityConfigurations.size();
+    
+    for (WaterQualityConfiguration *configuration : waterQualityConfigurations) {
+        saveSteps += configuration->getParameters().size();
+    }
+    
     saveSteps += project->getSimulations().size();
     
     return saveSteps;
@@ -1220,8 +1383,8 @@ int ProjectRepository::getMaximumLoadProgress() {
     QSqlQuery query(databaseUtility->getDatabase());
     QStringList tables = {
         "mesh", "mesh_polygon", "grid_data_configuration", "grid_data", "hydrodynamic_configuration", "hydrodynamic_parameter",
-        "boundary_condition", "time_series", "meteorological_configuration", "meteorological_station", "meteorological_parameter",
-        "simulation"
+        "boundary_condition", "time_series", "water_quality_configuration", "water_quality_parameter", "meteorological_configuration",
+        "meteorological_station", "meteorological_parameter", "simulation"
     };
     
     for (QString table : tables) {

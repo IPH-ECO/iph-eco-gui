@@ -42,6 +42,7 @@ WaterQualityRepository::WaterQualityRepository() {
         parameter->setEnabled(jsonParameter["enabled"].toBool(true));
         parameter->setRadio(jsonParameter["radio"].toBool(false));
         parameter->setGroup(jsonParameter["group"].toBool(false));
+        parameter->setValue(0);
         
         structure.append(parameter);
         
@@ -86,6 +87,7 @@ WaterQualityRepository::WaterQualityRepository() {
         parameter->setValue(jsonParameter["defaultValue"].toDouble());
         parameter->setRadio(jsonParameter["radio"].toBool(false));
         parameter->setGroup(jsonParameter["group"].toBool(false));
+        parameter->setPersistable(jsonParameter["persistable"].toBool(false));
         
         if (parameter->getLabel() == "Groups") {
             lastGroupParameter = parameter;
@@ -171,6 +173,16 @@ WaterQualityRepository::WaterQualityRepository() {
             
             predators.append(foodMatrixElement);
         }
+    }
+}
+
+WaterQualityRepository::~WaterQualityRepository() {
+    for (WaterQualityParameter *parameter : parameters) {
+        delete parameter;
+    }
+    
+    for (WaterQualityParameter *parameter : structure) {
+        delete parameter;
     }
 }
 

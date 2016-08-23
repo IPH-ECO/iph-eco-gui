@@ -17,6 +17,7 @@ private:
     QString name;
     double value;
     QList<double> groupValues;
+    bool persistable;
     bool checkable;
     bool checked;
     bool enabled;
@@ -49,8 +50,12 @@ public:
     void setName(const QString &name);
     double getValue() const;
     void setValue(double value);
+    QString getGroupValuesStr() const;
+    void setGroupValues(const QString &groupValuesStr);
     QList<double> getGroupValues() const;
     void setGroupValues(const QList<double> &groupValues);
+    bool isPersistable() const;
+    void setPersistable(const bool &persistable);
     bool isCheckable() const;
     void setCheckable(const bool &checkable);
     bool isChecked() const;

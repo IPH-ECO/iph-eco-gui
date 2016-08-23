@@ -149,6 +149,32 @@ void DatabaseUtility::createApplicationTables() {
         "object_type text not null" \
     ")";
     
+    sql << "drop table if exists water_quality_configuration";
+    sql << "create table water_quality_configuration (" \
+        "id integer primary key, " \
+        "name text not null, " \
+        "grid_data_configuration_id integer not null" \
+    ")";
+    
+    sql << "drop table if exists water_quality_parameter";
+    sql << "create table water_quality_parameter (" \
+        "id integer primary key, " \
+        "name text not null, " \
+        "section integer not null, " \
+        "value float default 0, " \
+        "group_values text default null, " \
+        "grid_data_configuration_id integer not null" \
+    ")";
+    
+    sql << "drop table if exists food_matrix";
+    sql << "create table food_matrix (" \
+        "id integer primary key, " \
+        "predator text not null, " \
+        "prey text not null, " \
+        "value double default 0, " \
+        "water_quality_configuration_id integer not null" \
+    ")";
+    
     sql << "drop table if exists meteorological_configuration";
     sql << "create table meteorological_configuration (" \
         "id integer primary key, " \

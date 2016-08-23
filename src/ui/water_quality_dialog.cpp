@@ -136,9 +136,15 @@ void WaterQualityDialog::on_cbxConfiguration_currentIndexChanged(const QString &
         currentConfiguration = IPHApplication::getCurrentProject()->getWaterQualityConfiguration(configurationName);
         ui->edtConfigurationName->setText(currentConfiguration->getName());
         ui->cbxGridDataConfiguration->setCurrentText(currentConfiguration->getGridDataConfiguration()->getName());
+        
+        for (WaterQualityParameter *parameter : currentConfiguration->getParameters()) {
+            if (parameter->getSection() == WaterQualityParameterSection::STRUCTURE) {
+                QTreeWidgetItem *widgetItem = waterQualityRepository->findParameterByName(parameter->getName(), WaterQualityParameterSection::STRUCTURE)->getItemWidget();
+                
+                widgetItem->setCheckState(0, Qt::Checked);
+            }
+        }
     }
-    
-//    this->buildParameterTree();
 }
 
 void WaterQualityDialog::on_cbxGridDataConfiguration_currentIndexChanged(const QString &gridDataConfigurationName) {
@@ -182,10 +188,16 @@ void WaterQualityDialog::on_btnApplyConfiguration_clicked() {
         return;
     }
     
-    QList<WaterQualityParameter*> parameters = currentConfiguration->getParameters();
+    for (WaterQualityParameter *parameter : waterQualityRepository->getParameters(WaterQualityParameterSection::STRUCTURE)) {
+        if (parameter->isCheckable() && parameter->isChecked()) {
+            currentConfiguration->addWaterQualityParameter(parameter);
+        }
+    }
     
-    for (WaterQualityParameter *parameter : parameters) {
-        
+    for (WaterQualityParameter *parameter : waterQualityRepository->getParameters(WaterQualityParameterSection::PARAMETER)) {
+        if (parameter->isPersistable() && this->isItemWidgetVisible(parameter->getItemWidget())) {
+            currentConfiguration->addWaterQualityParameter(parameter);
+        }
     }
     
     currentConfiguration->setName(newConfigurationName);
@@ -386,8 +398,11 @@ void WaterQualityDialog::toggleItem(const QString &itemName, const bool &checked
     }
     
     WaterQualityParameter *parameter = waterQualityRepository->findParameterByDiagramItem(itemName);
-    parameter->setChecked(checked);
-    parameter->getItemWidget()->setCheckState(0, parameter->isChecked() ? Qt::Checked : Qt::Unchecked);
+    
+    if (parameter) {
+        parameter->setChecked(checked);
+        parameter->getItemWidget()->setCheckState(0, parameter->isChecked() ? Qt::Checked : Qt::Unchecked);
+    }
 }
 
 void WaterQualityDialog::onTabularInputButtonClicked() {
@@ -409,4 +424,20 @@ void WaterQualityDialog::onTabularInputButtonClicked() {
 
     WaterQualityParameterDialog dialog(this, parameter, groupsDistribuition);
     dialog.exec();
+}
+
+bool WaterQualityDialog::isItemWidgetVisible(QTreeWidgetItem *item) const {
+    if (!item) {
+        return false;
+    }
+    
+    while (item) {
+        if (item->isHidden()) {
+            return false;
+        }
+        
+        item = item->parent();
+    }
+    
+    return true;
 }
