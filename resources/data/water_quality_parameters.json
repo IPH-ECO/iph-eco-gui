@@ -172,7 +172,7 @@
 	},
 	{
 		"label": "cExtWat",
-		"name": "cExtWat",
+		"name": "cExtWat1",
 		"description": "Background light extinction (1/m)",
 		"inputType": "inline",
 		"persistable": true,
@@ -686,9 +686,6 @@
 	{
 		"label": "Bacterioplankton Modeling",
 		"name": "iBac",
-		"diagramItem": "Bacterioplankton",
-		"checkable": true,
-		"checked": true,
 		"parentName": "iLimn"
 	},
 	{
@@ -854,9 +851,6 @@
 	{
 		"label": "Phytoplankton Modeling",
 		"name": "iPhyto",
-		"diagramItem": "Phytoplankton",
-		"checkable": true,
-		"checked": true,
 		"parentName": "iLimn"
 	},
 	{
@@ -1196,15 +1190,6 @@
 		"parentName": "phytoplanktonRespirationExcretion"
 	},
 	{
-		"label": "fDLisDomPhyt",
-		"name": "fDLisDomPhyt",
-		"description": "Labile fractions of died Algae (Autoctone Organic Matter)",
-		"inputType": "tabular",
-		"groups": "phytoplanktonGroups",
-		"groupDefaultValues": 0.2,
-		"parentName": "phytoplanktonRespirationExcretion"
-	},
-	{
 		"label": "Sedimentation",
 		"name": "phytoplanktonSedimentation",
 		"parentName": "iPhyto"
@@ -1271,9 +1256,6 @@
 	{
 		"label": "Zooplankton Modeling",
 		"name": "iZoo",
-		"diagramItem": "Zooplankton",
-		"checkable": true,
-		"checked": true,
 		"parentName": "iLimn"
 	},
 	{
@@ -1464,9 +1446,6 @@
 	{
 		"label": "Fish Modeling",
 		"name": "iFish",
-		"diagramItem": "Fish",
-		"checkable": true,
-		"checked": true,
 		"parentName": "iLimn"
 	},
 	{
@@ -1825,9 +1804,6 @@
 	{
 		"label": "Macrophytes Modeling",
 		"name": "macrophytes",
-		"diagramItem": "Macrophytes",
-		"checkable": true,
-		"checked": true,
 		"parentName": "iLimn"
 	},
 	{
@@ -2017,60 +1993,6 @@
 		"parentName": "macrophytesPrimaryProduction"
 	},
 	{
-		"label": "cCDMacMax",
-		"name": "cCDMacMax",
-		"description": "Maximum C/D ratio vegetation (mgC/mgDW)",
-		"inputType": "tabular",
-		"groups": "macrophytesGroups",
-		"groupDefaultValues": 0.5,
-		"parentName": "macrophytesPrimaryProduction"
-	},
-	{
-		"label": "cCDMacMin",
-		"name": "cCDMacMin",
-		"description": "Minimum C/D ratio vegetation (mgC/mgDW)",
-		"inputType": "tabular",
-		"groups": "macrophytesGroups",
-		"groupDefaultValues": 0.3,
-		"parentName": "macrophytesPrimaryProduction"
-	},
-	{
-		"label": "cNDMacMax",
-		"name": "cNDMacMax",
-		"description": "Maximum N/D ratio vegetation (mgN/mgDW)",
-		"inputType": "tabular",
-		"groups": "macrophytesGroups",
-		"groupDefaultValues": [ 0.035, 0.035, 0.035, 0.1, 0.03, 0.03, 0.035 ],
-		"parentName": "macrophytesPrimaryProduction"
-	},
-	{
-		"label": "cNDMacMin",
-		"name": "cNDMacMin",
-		"description": "Minimum N/D ratio vegetation (mgN/mgDW)",
-		"inputType": "tabular",
-		"groups": "macrophytesGroups",
-		"groupDefaultValues": [ 0.01, 0.01, 0.01, 0.04, 0.01, 0.01, 0.01 ],
-		"parentName": "macrophytesPrimaryProduction"
-	},
-	{
-		"label": "cPDMacMax",
-		"name": "cPDMacMax",
-		"description": "Maximum P/D ratio vegetation (mgP/mgDW)",
-		"inputType": "tabular",
-		"groups": "macrophytesGroups",
-		"groupDefaultValues": [ 0.0035, 0.0035, 0.0035, 0.026, 0.0075, 0.0075, 0.0035 ],
-		"parentName": "macrophytesPrimaryProduction"
-	},
-	{
-		"label": "cPDMacMin",
-		"name": "cPDMacMin",
-		"description": "Minimum P/D ratio vegetation (mgP/mgDW)",
-		"inputType": "tabular",
-		"groups": "macrophytesGroups",
-		"groupDefaultValues": [ 0.0008, 0.0012, 0.0012, 0.004, 0.001, 0.001, 0.0008 ],
-		"parentName": "macrophytesPrimaryProduction"
-	},
-	{
 		"label": "Nutrient Uptake",
 		"name": "macrophytesNutrientUptake",
 		"parentName": "macrophytes"
@@ -2117,7 +2039,16 @@
 		"description": "Minimum C/D ratio vegetation (mgC/mgDW)",
 		"inputType": "tabular",
 		"groups": "macrophytesGroups",
-		"groupDefaultValues": 0.3,
+		"groupDefaultValues": 0.005,
+		"parentName": "macrophytesNutrientUptake"
+	},
+	{
+		"label": "cNDMacMin",
+		"name": "cNDMacMin",
+		"description": "Minimum N/D ratio vegetation (mgN/mgDW)",
+		"inputType": "tabular",
+		"groups": "macrophytesGroups",
+		"groupDefaultValues": [ 0.01, 0.01, 0.01, 0.04, 0.01, 0.01, 0.01 ],
 		"parentName": "macrophytesNutrientUptake"
 	},
 	{
@@ -2130,30 +2061,22 @@
 		"parentName": "macrophytesNutrientUptake"
 	},
 	{
-		"label": "cNDMacMin",
-		"name": "cNDMacMin",
-		"description": "Minimum N/D ratio vegetation (mgN/mgDW)",
-		"inputType": "tabular",
-		"groups": "macrophytesGroups",
-		"groupDefaultValues": [ 0.01, 0.01, 0.01, 0.04, 0.1, 0.1, 0.1 ],
-		"parentName": "macrophytesNutrientUptake"
-	},
-	{
-		"label": "cPDMacMax",
-		"name": "cPDMacMax",
-		"description": "Maximum P/D ratio vegetation (mgP/mgDW)",
-		"inputType": "tabular",
-		"groups": "macrophytesGroups",
-		"groupDefaultValues": [ 0.0035, 0.0035, 0.0035, 0.026, 0.0075, 0.0075, 0.0035 ],
-		"parentName": "macrophytesNutrientUptake"
-	},
-	{
 		"label": "cPDMacMin",
 		"name": "cPDMacMin",
 		"description": "Minimum P/D ratio vegetation (mgP/mgDW)",
 		"inputType": "tabular",
 		"groups": "macrophytesGroups",
 		"groupDefaultValues": [ 0.0008, 0.0012, 0.0012, 0.004, 0.001, 0.001, 0.0008 ],
+		"parentName": "macrophytesNutrientUptake"
+	},
+	{
+
+		"label": "cPDMacMax",
+		"name": "cPDMacMax",
+		"description": "Maximum P/D ratio vegetation (mgP/mgDW)",
+		"inputType": "tabular",
+		"groups": "macrophytesGroups",
+		"groupDefaultValues": [ 0.0035, 0.0035, 0.0035, 0.026, 0.0075, 0.0075, 0.0035 ],
 		"parentName": "macrophytesNutrientUptake"
 	},
 	{
@@ -3296,9 +3219,6 @@
 	{
 		"label": "Zoobenthos Modeling",
 		"name": "zoobenthos",
-		"diagramItem": "Zoobenthos",
-		"checkable": true,
-		"checked": true,
 		"parentName": "iLimn"
 	},
 	{

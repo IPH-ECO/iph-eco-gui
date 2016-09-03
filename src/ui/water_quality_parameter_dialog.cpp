@@ -1,11 +1,11 @@
 #include <ui/water_quality_parameter_dialog.h>
 #include <ui_water_quality_parameter_dialog.h>
 
-WaterQualityParameterDialog::WaterQualityParameterDialog(QWidget *parent, WaterQualityParameter *parameter, const QList<int> &distribuition) :
+WaterQualityParameterDialog::WaterQualityParameterDialog(QWidget *parent, WaterQualityConfiguration *configuration, WaterQualityParameter *parameter, const QList<int> &distribuition) :
 	QDialog(parent),
 	ui(new Ui::WaterQualityParameterDialog()),
-    parameter(parameter),
-    waterQualityRepository(WaterQualityRepository::getInstance())
+    configuration(configuration),
+    parameter(parameter)
 {
 	ui->setupUi(this);
 
@@ -21,7 +21,7 @@ WaterQualityParameterDialog::WaterQualityParameterDialog(QWidget *parent, WaterQ
     for (int i = 0; i < groups.size(); i++) {
         int rows = distribuition[i];
         
-        WaterQualityParameter *groupParameter = waterQualityRepository->findParameterByName(groups[i], WaterQualityParameterSection::PARAMETER);
+        WaterQualityParameter *groupParameter = configuration->getParameter(groups[i], WaterQualityParameterSection::PARAMETER);
         
         horizontalLabels << QString("%1 (%2)").arg(groupParameter->getLabel()).arg(distribuition[i]);
         ui->trwParameters->insertColumn(i);

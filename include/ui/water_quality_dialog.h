@@ -21,8 +21,9 @@ private:
 	WaterQualityRepository *waterQualityRepository;
     bool isWebViewLoaded;
 
-	void buildParameterTree(WaterQualityParameter *parameter);
+	void buildTreeWidgets(WaterQualityParameter *parameter);
     bool isItemWidgetVisible(QTreeWidgetItem *item) const;
+    void bindCurrentConfigurationToTreeWidgets();
 private slots:
     void on_cbxConfiguration_currentIndexChanged(const QString &configurationName);
 	void on_cbxGridDataConfiguration_currentIndexChanged(const QString &gridDataConfigurationName);

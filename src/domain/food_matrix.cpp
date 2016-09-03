@@ -7,6 +7,11 @@ FoodMatrix::FoodMatrix(FoodMatrixElement *predator, FoodMatrixElement *prey, con
     value(value)
 {}
 
+FoodMatrix::~FoodMatrix() {
+    delete predator;
+    delete prey;
+}
+
 uint FoodMatrix::getId() const {
     return id;
 }

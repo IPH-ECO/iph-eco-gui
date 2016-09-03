@@ -23,6 +23,7 @@
 		"label": "Nutrients & Gases",
 		"name": "nutrientsAndGases",
 		"parentName": "limnologyModeling",
+		"persistable": false,
 		"checkable": false
 	},
 	{
@@ -116,6 +117,7 @@
 		"label": "Light limitation function",
 		"name": "LightMethodPhyt",
 		"parentName": "phytoplanktonModeling",
+		"persistable": false,
 		"radio": true
 	},
 	{
@@ -191,6 +193,7 @@
 		"label": "Resuspension Method",
 		"name": "ResuspMethodFlag",
 		"parentName": "sedimentation",
+		"persistable": false,
 		"radio": true
 	},
 	{
@@ -241,6 +244,7 @@
 		"label": "Pathogens Modeling",
 		"name": "iPatho",
 		"checkable": true,
+		"persistable": true,
 		"enabled": false
 	},
 	{

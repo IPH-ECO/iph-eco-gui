@@ -6,14 +6,15 @@
 #include <domain/water_quality_configuration.h>
 #include <domain/food_matrix.h>
 
+#include <QJsonArray>
+
 class WaterQualityRepository {
 private:
     static WaterQualityRepository *instance;
     
-    QList<WaterQualityParameter*> parameters;
-    QList<WaterQualityParameter*> structure;
-    QList<WaterQualityParameter*> rootParameters;
-    QList<WaterQualityParameter*> rootStructure;
+    QJsonArray jsonStructure;
+    QJsonArray jsonParameters;
+    QJsonArray jsonFoodMatrix;
     QList<FoodMatrixElement*> predators;
     QList<FoodMatrixElement*> preys;
     QList<FoodMatrix> foodMatrix;
@@ -23,12 +24,8 @@ private:
     FoodMatrixElement* findPreyByName(const QString &name);
 public:
     static WaterQualityRepository* getInstance();
-    ~WaterQualityRepository();
-
-    WaterQualityParameter* findParameterByName(const QString &name, const WaterQualityParameterSection &section);
-    WaterQualityParameter* findParameterByDiagramItem(const QString &diagramItem);
-    QList<WaterQualityParameter*> getParameters(const WaterQualityParameterSection &section) const;
-    QList<WaterQualityParameter*> getRootParameters(const WaterQualityParameterSection &section) const;
+    
+    void loadParameters(WaterQualityConfiguration *configuration);
     QList<FoodMatrixElement*> getPredators() const;
     QList<FoodMatrixElement*> getPreys() const;
     double getFoodMatrixValue(FoodMatrixElement *predator, FoodMatrixElement *prey) const;

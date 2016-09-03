@@ -1015,7 +1015,7 @@ void ProjectRepository::saveWaterQualityParameters(WaterQualityConfiguration *co
     QSqlQuery query(databaseUtility->getDatabase());
     QStringList parameterIds;
     
-    for (WaterQualityParameter *parameter : configuration->getParameters()) {
+    for (WaterQualityParameter *parameter : configuration->getParameters(true)) {
         if (operationCanceled) {
             return;
         }
@@ -1368,7 +1368,7 @@ int ProjectRepository::getMaximumSaveProgress() {
     saveSteps += waterQualityConfigurations.size();
     
     for (WaterQualityConfiguration *configuration : waterQualityConfigurations) {
-        saveSteps += configuration->getParameters().size();
+        saveSteps += configuration->getParameters(true).size();
     }
     
     saveSteps += project->getSimulations().size();

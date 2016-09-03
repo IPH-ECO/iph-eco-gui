@@ -1,8 +1,7 @@
 #ifndef WATER_QUALITY_PARAMETER_DIALOG_H
 #define WATER_QUALITY_PARAMETER_DIALOG_H
 
-#include <domain/water_quality_parameter.h>
-#include <repository/water_quality_repository.h>
+#include <domain/water_quality_configuration.h>
 
 #include <QDialog>
 #include <QWidget>
@@ -16,10 +15,10 @@ class WaterQualityParameterDialog : public QDialog {
     Q_OBJECT
 private:
 	Ui::WaterQualityParameterDialog *ui;
+    WaterQualityConfiguration *configuration;
     WaterQualityParameter *parameter;
-    WaterQualityRepository *waterQualityRepository;
 public:
-	WaterQualityParameterDialog(QWidget *parent, WaterQualityParameter *parameter, const QList<int> &distribuition);
+	WaterQualityParameterDialog(QWidget *parent, WaterQualityConfiguration *configuration, WaterQualityParameter *parameter, const QList<int> &distribuition);
     ~WaterQualityParameterDialog();
     
     virtual void accept();

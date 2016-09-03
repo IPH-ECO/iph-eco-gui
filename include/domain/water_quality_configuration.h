@@ -10,8 +10,12 @@ private:
     uint id;
     QString name;
     QList<WaterQualityParameter*> parameters;
-    QList<FoodMatrix*> foodMatrix;
+    QList<FoodMatrix*> foodMatrixItems;
     GridDataConfiguration *gridDataConfiguration;
+    
+    // Transient
+    bool loaded;
+    
 public:
     WaterQualityConfiguration();
     ~WaterQualityConfiguration();
@@ -24,10 +28,15 @@ public:
     GridDataConfiguration* getGridDataConfiguration() const;
     void setGridDataConfiguration(GridDataConfiguration *gridDataConfiguration);
     bool addWaterQualityParameter(WaterQualityParameter *waterQualityParameter);
-    QList<WaterQualityParameter*> getParameters() const;
-    WaterQualityParameter* getParameter(const QString &name) const;
-    QList<FoodMatrix*> getFoodMatrix() const;
-    void setFoodMatrix(const QList<FoodMatrix*> &foodMatrix);
+    QList<WaterQualityParameter*> getParameters(const bool &persistable = false) const;
+    WaterQualityParameter* getParameter(const QString &name, const WaterQualityParameterSection &section) const;
+    WaterQualityParameter* getParameterByDiagramItem(const QString &itemName) const;
+    QList<WaterQualityParameter*> getRootParameters(const WaterQualityParameterSection &section) const;
+    QList<FoodMatrix*> getFoodMatrixItems() const;
+    void setFoodMatrixItems(const QList<FoodMatrix*> &foodMatrix);
+    bool addFoodMatrixItem(FoodMatrix *foodMatrixItem);
+    void setLoaded(const bool &loaded);
+    bool isLoaded() const;
 };
 
 #endif // WATER_QUALITY_CONFIGURATION_H

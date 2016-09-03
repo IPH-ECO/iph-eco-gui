@@ -11,6 +11,7 @@ private:
     double value;
 public:
     FoodMatrix(FoodMatrixElement *predator, FoodMatrixElement *prey, const double &value);
+    ~FoodMatrix();
     uint getId() const;
     void setId(const uint &id);
     FoodMatrixElement* getPredator() const;

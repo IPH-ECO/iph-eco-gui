@@ -42,6 +42,7 @@ private:
     QTreeWidgetItem* itemWidget;
 public:
     WaterQualityParameter();
+    WaterQualityParameter(WaterQualityParameter *parameter);
 
     uint getId() const;
     void setId(const uint &id);

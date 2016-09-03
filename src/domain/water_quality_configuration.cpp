@@ -2,12 +2,17 @@
 
 WaterQualityConfiguration::WaterQualityConfiguration() :
     id(0),
-    gridDataConfiguration(nullptr)
+    gridDataConfiguration(nullptr),
+    loaded(false)
 {}
 
 WaterQualityConfiguration::~WaterQualityConfiguration() {
     for (WaterQualityParameter *parameter : parameters) {
         delete parameter;
+    }
+    
+    for (FoodMatrix *foodMatrixItem : foodMatrixItems) {
+        delete foodMatrixItem;
     }
 }
 
@@ -44,24 +49,30 @@ bool WaterQualityConfiguration::addWaterQualityParameter(WaterQualityParameter *
 		return false;
 	}
 
-    for (WaterQualityParameter *parameter : parameters) {
-        if (waterQualityParameter->isPersisted() && parameter->getId() == waterQualityParameter->getId()) {
-            return false;
-        }
-    }
-    
 	parameters.append(waterQualityParameter);
 
 	return true;
 }
 
-QList<WaterQualityParameter*> WaterQualityConfiguration::getParameters() const {
+QList<WaterQualityParameter*> WaterQualityConfiguration::getParameters(const bool &persistable) const {
+    if (persistable) {
+        QList<WaterQualityParameter*> persistableParameters;
+        
+        for (WaterQualityParameter *parameter : parameters) {
+            if (parameter->isPersistable()) {
+                persistableParameters.append(parameter);
+            }
+        }
+        
+        return persistableParameters;
+    }
+    
 	return parameters;
 }
 
-WaterQualityParameter* WaterQualityConfiguration::getParameter(const QString &name) const {
+WaterQualityParameter* WaterQualityConfiguration::getParameter(const QString &name, const WaterQualityParameterSection &section) const {
 	for (WaterQualityParameter *parameter : parameters) {
-		if (parameter->getName() == name) {
+		if (parameter->getName() == name && parameter->getSection() == section) {
 			return parameter;
 		}
 	}
@@ -69,10 +80,50 @@ WaterQualityParameter* WaterQualityConfiguration::getParameter(const QString &na
 	return nullptr;
 }
 
-QList<FoodMatrix*> WaterQualityConfiguration::getFoodMatrix() const {
-    return foodMatrix;
+WaterQualityParameter* WaterQualityConfiguration::getParameterByDiagramItem(const QString &itemName) const {
+    for (WaterQualityParameter *parameter : parameters) {
+        if (parameter->getSection() == WaterQualityParameterSection::STRUCTURE && parameter->getDiagramItem() == itemName) {
+            return parameter;
+        }
+    }
+    
+    return nullptr;
 }
 
-void WaterQualityConfiguration::setFoodMatrix(const QList<FoodMatrix*> &foodMatrix) {
-    this->foodMatrix = foodMatrix;
+QList<WaterQualityParameter*> WaterQualityConfiguration::getRootParameters(const WaterQualityParameterSection &section) const {
+    QList<WaterQualityParameter*> rootParameters;
+    
+    for (WaterQualityParameter *parameter : parameters) {
+        if (parameter->getSection() == section && !parameter->getParent()) {
+            rootParameters.append(parameter);
+        }
+    }
+    
+    return rootParameters;
+}
+
+QList<FoodMatrix*> WaterQualityConfiguration::getFoodMatrixItems() const {
+    return foodMatrixItems;
+}
+
+void WaterQualityConfiguration::setFoodMatrixItems(const QList<FoodMatrix*> &foodMatrixItems) {
+    this->foodMatrixItems = foodMatrixItems;
+}
+
+bool WaterQualityConfiguration::addFoodMatrixItem(FoodMatrix *foodMatrixItem) {
+    if (foodMatrixItems.contains(foodMatrixItem)) {
+        return false;
+    }
+    
+    foodMatrixItems.append(foodMatrixItem);
+    
+    return true;
+}
+
+void WaterQualityConfiguration::setLoaded(const bool &loaded) {
+    this->loaded = loaded;
+}
+
+bool WaterQualityConfiguration::isLoaded() const {
+    return loaded;
 }

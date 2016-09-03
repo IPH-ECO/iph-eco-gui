@@ -2,6 +2,7 @@
 
 WaterQualityParameter::WaterQualityParameter() :
 	id(0),
+    checkable(false),
     checked(false),
     enabled(true),
     parent(nullptr),
@@ -10,6 +11,13 @@ WaterQualityParameter::WaterQualityParameter() :
     rangeMininum(0),
     rangeMaximum(0),
     itemWidget(nullptr)
+{}
+
+WaterQualityParameter::WaterQualityParameter(WaterQualityParameter *parameter) :
+    id(0),
+    name(parameter->getName()),
+    value(parameter->getValue()),
+    groupValues(parameter->getGroupValues())
 {}
 
 uint WaterQualityParameter::getId() const {
