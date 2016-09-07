@@ -163,12 +163,11 @@ void DatabaseUtility::createApplicationTables() {
         "section integer not null, " \
         "value float default 0, " \
         "group_values text default null, " \
-        "grid_data_configuration_id integer not null" \
+        "water_quality_configuration_id integer not null" \
     ")";
     
     sql << "drop table if exists food_matrix";
     sql << "create table food_matrix (" \
-        "id integer primary key, " \
         "predator text not null, " \
         "prey text not null, " \
         "value double default 0, " \
