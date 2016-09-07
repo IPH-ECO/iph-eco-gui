@@ -311,10 +311,10 @@ void CreateSimulationDialog::on_cbxTemplate_currentTextChanged(const QString &si
     ui->edtPeriod->setText(QString::number(simulation->getPeriod()));
     ui->edtStepTime->setText(QString::number(simulation->getStepTime()));
     ui->cbxHydrodynamic->setCurrentText(simulation->getHydrodynamicConfiguration()->getName());
-//    ui->cbxWaterQuality->setCurrentText(simulation->getWaterQualityConfiguration()->getName());
     ui->cbxMeteorological->setCurrentText(simulation->getMeteorologicalConfiguration()->getName());
     ui->edtMinLimit->setText(QString::number(simulation->getMinimumVerticalLimit()));
     ui->edtMaxLimit->setText(QString::number(simulation->getMaximumVerticalLimit()));
+    ui->tblLayers->clear();
     
     for (double layer : simulation->getLayers()) {
         int row = ui->tblLayers->rowCount();
