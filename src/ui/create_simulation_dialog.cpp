@@ -15,6 +15,7 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QRegExpValidator>
+#include <QItemSelectionModel>
 
 CreateSimulationDialog::CreateSimulationDialog(QWidget *parent) :
 	QDialog(parent), ui(new Ui::CreateSimulationDialog)
@@ -275,10 +276,13 @@ void CreateSimulationDialog::on_btnAddLayer_clicked() {
 }
 
 void CreateSimulationDialog::on_btnRemoveLayer_clicked() {
-    int row = ui->tblLayers->currentRow();
+    QItemSelectionModel *selection = ui->tblLayers->selectionModel();
+    QModelIndexList rows = selection->selectedRows();
     
-    if (row != -1 && QMessageBox::question(this, tr("Create Simulation"), tr("Are you sure?")) == QMessageBox::Yes) {
-        ui->tblLayers->removeRow(row);
+    if (!rows.isEmpty() && QMessageBox::question(this, tr("Create Simulation"), tr("Are you sure?")) == QMessageBox::Yes) {
+        for (int i = 0; i < rows.size(); i++) {
+            ui->tblLayers->removeRow(0);
+        }
     }
 }
 

@@ -26,6 +26,7 @@ SimulationManagerDialog::SimulationManagerDialog(QWidget *parent) :
     
     for (Simulation *simulation : project->getSimulations()) {
 		int row = ui->tblAll->rowCount();
+        QTableWidgetItem *checkboxItem = new QTableWidgetItem();
         QTableWidgetItem *labelItem = new QTableWidgetItem(simulation->getLabel());
         QTableWidgetItem *statusItem = new QTableWidgetItem(simulation->getSimulationStatusMap().value(simulation->getStatus()));
         QTableWidgetItem *progressItem = new QTableWidgetItem(QString::number(simulation->getProgress()) + "%");
@@ -33,31 +34,38 @@ SimulationManagerDialog::SimulationManagerDialog(QWidget *parent) :
         QObject::connect(simulation, SIGNAL(updateProgress(int)), this, SLOT(onUpdateSimulationProgress(int)));
         QObject::connect(simulation, SIGNAL(updateStatus(SimulationStatus)), this, SLOT(onUpdateSimulationStatus(SimulationStatus)));
         
+        checkboxItem->setCheckState(Qt::Unchecked);
+        
 		ui->tblAll->insertRow(row);
-		ui->tblAll->setItem(row, 0, labelItem);
-        ui->tblAll->setItem(row, 1, statusItem);
-		ui->tblAll->setItem(row, 2, progressItem);
+        ui->tblAll->setItem(row, 0, checkboxItem);
+		ui->tblAll->setItem(row, 1, labelItem);
+        ui->tblAll->setItem(row, 2, statusItem);
+		ui->tblAll->setItem(row, 3, progressItem);
         
         if (simulation->getStatus() == SimulationStatus::IDLE) {
             row = ui->tblIdle->rowCount();
             ui->tblIdle->insertRow(row);
-            ui->tblIdle->setItem(row, 0, labelItem->clone());
-            ui->tblIdle->setItem(row, 1, progressItem->clone());
+            ui->tblIdle->setItem(row, 0, checkboxItem->clone());
+            ui->tblIdle->setItem(row, 1, labelItem->clone());
+            ui->tblIdle->setItem(row, 2, progressItem->clone());
         } else if (simulation->getStatus() == SimulationStatus::RUNNING) {
             row = ui->tblRunning->rowCount();
             ui->tblRunning->insertRow(row);
-            ui->tblRunning->setItem(row, 0, labelItem->clone());
-            ui->tblRunning->setItem(row, 1, progressItem->clone());
+            ui->tblRunning->setItem(row, 0, checkboxItem->clone());
+            ui->tblRunning->setItem(row, 1, labelItem->clone());
+            ui->tblRunning->setItem(row, 2, progressItem->clone());
         } else if (simulation->getStatus() == SimulationStatus::PAUSED) {
             row = ui->tblPaused->rowCount();
             ui->tblPaused->insertRow(row);
-            ui->tblPaused->setItem(row, 0, labelItem->clone());
-            ui->tblPaused->setItem(row, 1, progressItem->clone());
+            ui->tblPaused->setItem(row, 0, checkboxItem->clone());
+            ui->tblPaused->setItem(row, 1, labelItem->clone());
+            ui->tblPaused->setItem(row, 2, progressItem->clone());
         } else if (simulation->getStatus() == SimulationStatus::FINISHED) {
             row = ui->tblFinished->rowCount();
             ui->tblFinished->insertRow(row);
-            ui->tblFinished->setItem(row, 0, labelItem->clone());
-            ui->tblFinished->setItem(row, 1, progressItem->clone());
+            ui->tblFinished->setItem(row, 0, checkboxItem->clone());
+            ui->tblFinished->setItem(row, 1, labelItem->clone());
+            ui->tblFinished->setItem(row, 2, progressItem->clone());
         }
 	}
 }
@@ -106,15 +114,11 @@ void SimulationManagerDialog::on_tblAll_currentItemChanged(QTableWidgetItem *cur
     if (current) {
         QTableWidgetItem *statusItem = ui->tblAll->item(current->row(), 1);
         SimulationStatus status = Simulation::getSimulationStatusMap().key(statusItem->text());
-        Simulation *simulation = this->getCurrentSimulation();
-        QFileInfoList outputFiles = simulation->getOutputFiles();
         
         ui->btnResume->setEnabled(status == SimulationStatus::IDLE || status == SimulationStatus::PAUSED);
         ui->btnPause->setEnabled(status == SimulationStatus::RUNNING);
-        ui->btnRemove->setEnabled(true);
         ui->btnFinish->setEnabled(status != SimulationStatus::IDLE && status != SimulationStatus::FINISHED);
     } else {
-        ui->btnRemove->setEnabled(false);
         ui->btnFinish->setEnabled(false);
     }
 }
@@ -122,28 +126,24 @@ void SimulationManagerDialog::on_tblAll_currentItemChanged(QTableWidgetItem *cur
 void SimulationManagerDialog::on_tblIdle_currentItemChanged(QTableWidgetItem *current, QTableWidgetItem *previous) {
     ui->btnResume->setEnabled(true);
     ui->btnPause->setEnabled(false);
-    ui->btnRemove->setEnabled(true);
     ui->btnFinish->setEnabled(true);
 }
 
 void SimulationManagerDialog::on_tblRunning_currentItemChanged(QTableWidgetItem *current, QTableWidgetItem *previous) {
     ui->btnResume->setEnabled(false);
     ui->btnPause->setEnabled(true);
-    ui->btnRemove->setEnabled(true);
     ui->btnFinish->setEnabled(true);
 }
 
 void SimulationManagerDialog::on_tblPaused_currentItemChanged(QTableWidgetItem *current, QTableWidgetItem *previous) {
     ui->btnResume->setEnabled(true);
     ui->btnPause->setEnabled(false);
-    ui->btnRemove->setEnabled(true);
     ui->btnFinish->setEnabled(true);
 }
 
 void SimulationManagerDialog::on_tblFinished_currentItemChanged(QTableWidgetItem *current, QTableWidgetItem *previous) {
     ui->btnResume->setEnabled(false);
     ui->btnPause->setEnabled(false);
-    ui->btnRemove->setEnabled(true);
     ui->btnFinish->setEnabled(false);
 }
 
@@ -151,10 +151,10 @@ void SimulationManagerDialog::onUpdateSimulationProgress(int progress) {
     Simulation *simulation = qobject_cast<Simulation*>(sender());
     
     for (int row = 0; row < ui->tblAll->rowCount(); row++) {
-        QTableWidgetItem *labelItem = ui->tblAll->item(row, 0);
+        QTableWidgetItem *labelItem = ui->tblAll->item(row, 1);
         
         if (labelItem->text() == simulation->getLabel()) {
-            QTableWidgetItem *progressItem = ui->tblAll->item(row, 2);
+            QTableWidgetItem *progressItem = ui->tblAll->item(row, 3);
             progressItem->setText(QString::number(simulation->getProgress()) + "%");
             break;
         }
@@ -164,10 +164,10 @@ void SimulationManagerDialog::onUpdateSimulationProgress(int progress) {
     
     if (currentTabWidget && currentTabWidget != ui->tblFinished) {
         for (int row = 0; row < currentTabWidget->rowCount(); row++) {
-            QTableWidgetItem *labelItem = currentTabWidget->item(row, 0);
+            QTableWidgetItem *labelItem = currentTabWidget->item(row, 1);
             
             if (labelItem->text() == simulation->getLabel()) {
-                QTableWidgetItem *progressItem = currentTabWidget->item(row, 1);
+                QTableWidgetItem *progressItem = currentTabWidget->item(row, 2);
                 progressItem->setText(QString::number(simulation->getProgress()) + "%");
                 break;
             }
@@ -179,10 +179,10 @@ void SimulationManagerDialog::onUpdateSimulationStatus(SimulationStatus status) 
     Simulation *simulation = qobject_cast<Simulation*>(sender());
     
     for (int row = 0; row < ui->tblAll->rowCount(); row++) {
-        QTableWidgetItem *labelItem = ui->tblAll->item(row, 0);
+        QTableWidgetItem *labelItem = ui->tblAll->item(row, 1);
         
         if (labelItem->text() == simulation->getLabel()) {
-            QTableWidgetItem *statusItem = ui->tblAll->item(row, 1);
+            QTableWidgetItem *statusItem = ui->tblAll->item(row, 2);
             statusItem->setText(Simulation::getSimulationStatusMap().value(simulation->getStatus()));
             ui->btnResume->setEnabled(simulation->getStatus() == SimulationStatus::IDLE || simulation->getStatus() == SimulationStatus::PAUSED);
             ui->btnPause->setEnabled(simulation->getStatus() == SimulationStatus::RUNNING);
@@ -195,7 +195,7 @@ void SimulationManagerDialog::onUpdateSimulationStatus(SimulationStatus status) 
     
     if (previousTableWidget) {
         for (int row = 0; row < previousTableWidget->rowCount(); row++) {
-            QTableWidgetItem *labelItem = previousTableWidget->item(row, 0);
+            QTableWidgetItem *labelItem = previousTableWidget->item(row, 1);
             
             if (labelItem->text() == simulation->getLabel()) {
                 previousTableWidget->removeRow(row);
@@ -210,11 +210,11 @@ void SimulationManagerDialog::onUpdateSimulationStatus(SimulationStatus status) 
         int rowCount = currentTabWidget->rowCount();
 
         currentTabWidget->insertRow(rowCount);
-        currentTabWidget->setItem(rowCount, 0, new QTableWidgetItem(simulation->getLabel()));
+        currentTabWidget->setItem(rowCount, 1, new QTableWidgetItem(simulation->getLabel()));
         
         if (currentTabWidget != ui->tblFinished) {
-            currentTabWidget->setItem(rowCount, 1, new QTableWidgetItem(QString::number(simulation->getProgress()) + "%"));
-            currentTabWidget->setItem(rowCount, 2, new QTableWidgetItem(Simulation::getSimulationStatusMap().value(simulation->getStatus())));
+            currentTabWidget->setItem(rowCount, 2, new QTableWidgetItem(QString::number(simulation->getProgress()) + "%"));
+            currentTabWidget->setItem(rowCount, 3, new QTableWidgetItem(Simulation::getSimulationStatusMap().value(simulation->getStatus())));
         }
     }
 }
@@ -223,16 +223,16 @@ void SimulationManagerDialog::onSimulationCreated(Simulation *simulation) {
     int rowCount = ui->tblAll->rowCount();
     
     ui->tblAll->insertRow(rowCount);
-    ui->tblAll->setItem(rowCount, 0, new QTableWidgetItem(simulation->getLabel()));
-    ui->tblAll->setItem(rowCount, 1, new QTableWidgetItem(Simulation::getSimulationStatusMap().value(simulation->getStatus())));
-    ui->tblAll->setItem(rowCount, 2, new QTableWidgetItem(QString::number(simulation->getProgress()) + "%"));
+    ui->tblAll->setItem(rowCount, 1, new QTableWidgetItem(simulation->getLabel()));
+    ui->tblAll->setItem(rowCount, 2, new QTableWidgetItem(Simulation::getSimulationStatusMap().value(simulation->getStatus())));
+    ui->tblAll->setItem(rowCount, 3, new QTableWidgetItem(QString::number(simulation->getProgress()) + "%"));
     
     QTableWidget *tableWidget = this->getTableWidgetBySimulationStatus(simulation->getStatus());
     rowCount = tableWidget->rowCount();
     
     tableWidget->insertRow(rowCount);
-    tableWidget->setItem(rowCount, 0, new QTableWidgetItem(simulation->getLabel()));
-    tableWidget->setItem(rowCount, 1, new QTableWidgetItem(QString::number(simulation->getProgress()) + "%"));
+    tableWidget->setItem(rowCount, 1, new QTableWidgetItem(simulation->getLabel()));
+    tableWidget->setItem(rowCount, 2, new QTableWidgetItem(QString::number(simulation->getProgress()) + "%"));
     
     QObject::connect(simulation, SIGNAL(updateProgress(int)), this, SLOT(onUpdateSimulationProgress(int)));
     QObject::connect(simulation, SIGNAL(updateStatus(SimulationStatus)), this, SLOT(onUpdateSimulationStatus(SimulationStatus)));
@@ -271,35 +271,47 @@ void SimulationManagerDialog::on_btnPause_clicked() {
 }
 
 void SimulationManagerDialog::on_btnRemove_clicked() {
-    Simulation *simulation = this->getCurrentSimulation();
+    QTableWidget *currentTableWidget = static_cast<QWidget*>(ui->tabWidget->currentWidget())->findChild<QTableWidget*>();
+    QList<Simulation*> simulations;
     
-    if (simulation) {
-        QString question = tr("Are you sure you want to remove the selected simulation?");
+    for (int row = 0; row < currentTableWidget->rowCount(); row++) {
+        QTableWidgetItem *tableItem = currentTableWidget->item(row, 0);
+        
+        if (tableItem->checkState() == Qt::Checked) {
+            simulations.append(IPHApplication::getCurrentProject()->getSimulation(currentTableWidget->item(row, 1)->text()));
+        }
+    }
+    
+    if (!simulations.isEmpty()) {
+        QString question = tr("Are you sure you want to remove the selected simulations?");
         QMessageBox::StandardButton button = QMessageBox::question(this, tr("Simulation Manager"), question);
         
         if (button == QMessageBox::Yes) {
-            SimulationManager *simulationManager = SimulationManager::getInstance();
-            QTableWidget *tableWidget = this->getTableWidgetBySimulationStatus(simulation->getStatus());
-            
-            for (int row = 0; row < ui->tblAll->rowCount(); row++) {
-                QTableWidgetItem *labelItem = ui->tblAll->item(row, 0);
-                
-                if (labelItem->text() == simulation->getLabel()) {
-                    ui->tblAll->removeRow(row);
-                    break;
+            for (Simulation *simulation : simulations) {
+                for (int row = 0; row < ui->tblAll->rowCount(); row++) {
+                    QTableWidgetItem *labelItem = ui->tblAll->item(row, 1);
+                    
+                    if (labelItem->text() == simulation->getLabel()) {
+                        ui->tblAll->removeRow(row);
+                        break;
+                    }
                 }
-            }
-            
-            for (int row = 0; row < tableWidget->rowCount(); row++) {
-                QTableWidgetItem *labelItem = tableWidget->item(row, 0);
                 
-                if (labelItem->text() == simulation->getLabel()) {
-                    tableWidget->removeRow(row);
-                    break;
+                if (currentTableWidget == ui->tblAll) {
+                    currentTableWidget = this->getTableWidgetBySimulationStatus(simulation->getStatus());
                 }
+                
+                for (int row = 0; row < currentTableWidget->rowCount(); row++) {
+                    QTableWidgetItem *labelItem = currentTableWidget->item(row, 1);
+                    
+                    if (labelItem->text() == simulation->getLabel()) {
+                        currentTableWidget->removeRow(row);
+                        break;
+                    }
+                }
+                
+                SimulationManager::getInstance()->remove(simulation);
             }
-            
-            simulationManager->remove(simulation);
         }
     }
 }
