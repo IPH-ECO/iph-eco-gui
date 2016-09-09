@@ -280,8 +280,16 @@ void CreateSimulationDialog::on_btnRemoveLayer_clicked() {
     QModelIndexList rows = selection->selectedRows();
     
     if (!rows.isEmpty() && QMessageBox::question(this, tr("Create Simulation"), tr("Are you sure?")) == QMessageBox::Yes) {
-        for (int i = 0; i < rows.size(); i++) {
-            ui->tblLayers->removeRow(0);
+        QList<int> rowIndexes;
+    
+        for (QModelIndex rowIndex : rows) {
+            rowIndexes.append(rowIndex.row());
+        }
+        
+        qSort(rowIndexes);
+        
+        for (int i = rowIndexes.count() - 1; i >= 0; i--) {
+            ui->tblLayers->removeRow(rowIndexes[i]);
         }
     }
 }
@@ -318,7 +326,7 @@ void CreateSimulationDialog::on_cbxTemplate_currentTextChanged(const QString &si
     ui->cbxMeteorological->setCurrentText(simulation->getMeteorologicalConfiguration()->getName());
     ui->edtMinLimit->setText(QString::number(simulation->getMinimumVerticalLimit()));
     ui->edtMaxLimit->setText(QString::number(simulation->getMaximumVerticalLimit()));
-    ui->tblLayers->clear();
+    ui->tblLayers->clearContents();
     
     for (double layer : simulation->getLayers()) {
         int row = ui->tblLayers->rowCount();
