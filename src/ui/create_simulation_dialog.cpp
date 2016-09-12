@@ -326,7 +326,7 @@ void CreateSimulationDialog::on_cbxTemplate_currentTextChanged(const QString &si
     ui->cbxMeteorological->setCurrentText(simulation->getMeteorologicalConfiguration()->getName());
     ui->edtMinLimit->setText(QString::number(simulation->getMinimumVerticalLimit()));
     ui->edtMaxLimit->setText(QString::number(simulation->getMaximumVerticalLimit()));
-    ui->tblLayers->clearContents();
+    ui->tblLayers->setRowCount(0);
     
     for (double layer : simulation->getLayers()) {
         int row = ui->tblLayers->rowCount();
