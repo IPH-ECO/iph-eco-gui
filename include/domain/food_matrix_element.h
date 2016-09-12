@@ -6,7 +6,6 @@
 
 class FoodMatrixElement {
 private:
-    uint id;
     QString name;
     QString label;
     WaterQualityParameter *group;
@@ -16,8 +15,6 @@ private:
 
 public:
     FoodMatrixElement();
-    uint getId() const;
-    void setId(const uint &id);
     QString getName() const;
     void setName(const QString &name);
     QString getLabel() const;

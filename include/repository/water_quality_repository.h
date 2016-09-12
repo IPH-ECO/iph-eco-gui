@@ -4,7 +4,7 @@
 #include <utility/database_utility.h>
 #include <domain/water_quality_parameter.h>
 #include <domain/water_quality_configuration.h>
-#include <domain/food_matrix.h>
+#include <domain/food_matrix_item.h>
 
 #include <QJsonArray>
 
@@ -17,7 +17,7 @@ private:
     QJsonArray jsonFoodMatrix;
     QList<FoodMatrixElement*> predators;
     QList<FoodMatrixElement*> preys;
-    QList<FoodMatrix> foodMatrix;
+    QList<FoodMatrixItem> defaultFoodMatrix;
     
     WaterQualityRepository();
 

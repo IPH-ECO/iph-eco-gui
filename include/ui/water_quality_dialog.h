@@ -24,6 +24,7 @@ private:
 	void buildTreeWidgets(WaterQualityParameter *parameter);
     bool isItemWidgetVisible(QTreeWidgetItem *item) const;
     void bindCurrentConfigurationToTreeWidgets();
+    void loadFoodMatrix();
 private slots:
     void on_cbxConfiguration_currentIndexChanged(const QString &configurationName);
 	void on_cbxGridDataConfiguration_currentIndexChanged(const QString &gridDataConfigurationName);

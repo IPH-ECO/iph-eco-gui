@@ -10,10 +10,6 @@ WaterQualityConfiguration::~WaterQualityConfiguration() {
     for (WaterQualityParameter *parameter : parameters) {
         delete parameter;
     }
-    
-    for (FoodMatrix *foodMatrixItem : foodMatrixItems) {
-        delete foodMatrixItem;
-    }
 }
 
 uint WaterQualityConfiguration::getId() const {
@@ -102,22 +98,20 @@ QList<WaterQualityParameter*> WaterQualityConfiguration::getRootParameters(const
     return rootParameters;
 }
 
-QList<FoodMatrix*> WaterQualityConfiguration::getFoodMatrixItems() const {
-    return foodMatrixItems;
+double WaterQualityConfiguration::getFoodMatrixValue(const QString &predator, const QString &prey) const {
+    return foodMatrix.value(QPair<QString, QString>(predator, prey), std::numeric_limits<double>::max());
 }
 
-void WaterQualityConfiguration::setFoodMatrixItems(const QList<FoodMatrix*> &foodMatrixItems) {
-    this->foodMatrixItems = foodMatrixItems;
+void WaterQualityConfiguration::setFoodMatrixItem(const QString &predator, const QString &prey, const double &value) {
+    foodMatrix.insert(QPair<QString, QString>(predator, prey), value);
 }
 
-bool WaterQualityConfiguration::addFoodMatrixItem(FoodMatrix *foodMatrixItem) {
-    if (foodMatrixItems.contains(foodMatrixItem)) {
-        return false;
-    }
-    
-    foodMatrixItems.append(foodMatrixItem);
-    
-    return true;
+void WaterQualityConfiguration::clearFoodMatrix() {
+    foodMatrix.clear();
+}
+
+QHash<QPair<QString, QString>, double> WaterQualityConfiguration::getFoodMatrix() const {
+    return foodMatrix;
 }
 
 void WaterQualityConfiguration::setLoaded(const bool &loaded) {

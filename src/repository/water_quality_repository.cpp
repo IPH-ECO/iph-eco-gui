@@ -36,6 +36,34 @@ WaterQualityRepository::WaterQualityRepository() {
     foodMatrixFile.open(QFile::ReadOnly);
     jsonDocument = QJsonDocument::fromJson(foodMatrixFile.readAll());
     this->jsonFoodMatrix = jsonDocument.array();
+    foodMatrixFile.close();
+    
+    for (int i = 0; i < jsonFoodMatrix.size(); i++) {
+        QJsonObject jsonFood = jsonFoodMatrix[i].toObject();
+        FoodMatrixElement *foodMatrixElement = new FoodMatrixElement();
+        
+        foodMatrixElement->setName(jsonFood["name"].toString());
+        foodMatrixElement->setLabel(jsonFood["label"].toString());
+        
+        if (jsonFood["prey"].toBool()) {
+            preys.append(foodMatrixElement);
+        }
+        
+        if (jsonFood["predator"].toBool()) {
+            QJsonArray jsonPredatorValues = jsonFood["values"].toArray();
+            
+            for (int j = 0; j < jsonPredatorValues.size(); j++) {
+                QJsonObject jsonPreyValuePair = jsonPredatorValues[j].toObject();
+                FoodMatrixElement *prey = this->findPreyByName(jsonPreyValuePair["prey"].toString());
+                FoodMatrixElement *predator = foodMatrixElement;
+                
+                predator->addPrey(prey);
+                defaultFoodMatrix.append(FoodMatrixItem(predator, prey, jsonPreyValuePair["value"].toDouble()));
+            }
+            
+            predators.append(foodMatrixElement);
+        }
+    }
 }
 
 void WaterQualityRepository::loadParameters(WaterQualityConfiguration *configuration) {
@@ -143,33 +171,30 @@ void WaterQualityRepository::loadParameters(WaterQualityConfiguration *configura
     
     for (int i = 0; i < jsonFoodMatrix.size(); i++) {
         QJsonObject jsonFood = jsonFoodMatrix[i].toObject();
+        QString elementName = jsonFood["name"].toString();
+        FoodMatrixElement *foodMatrixElement = nullptr;
+        
+        for (FoodMatrixElement *predator : predators) {
+            if (predator->getName() == elementName) {
+                foodMatrixElement = predator;
+                break;
+            }
+        }
+        
+        if (!foodMatrixElement) {
+            for (FoodMatrixElement *prey : preys) {
+                if (prey->getName() == elementName) {
+                    foodMatrixElement = prey;
+                    break;
+                }
+            }
+        }
+        
         WaterQualityParameter *parameter = configuration->getParameter(jsonFood["parameter"].toString(), WaterQualityParameterSection::STRUCTURE);
         WaterQualityParameter *group = configuration->getParameter(jsonFood["group"].toString(), WaterQualityParameterSection::PARAMETER);
-        FoodMatrixElement *foodMatrixElement = new FoodMatrixElement();
         
-        foodMatrixElement->setName(jsonFood["name"].toString());
-        foodMatrixElement->setLabel(jsonFood["label"].toString());
         foodMatrixElement->setGroup(group);
         foodMatrixElement->setParameter(parameter);
-        
-        if (jsonFood["prey"].toBool()) {
-            preys.append(foodMatrixElement);
-        }
-        
-        if (jsonFood["predator"].toBool()) {
-            QJsonArray jsonPredatorValues = jsonFood["values"].toArray();
-            
-            for (int j = 0; j < jsonPredatorValues.size(); j++) {
-                QJsonObject jsonPreyValuePair = jsonPredatorValues[j].toObject();
-                FoodMatrixElement *prey = this->findPreyByName(jsonPreyValuePair["prey"].toString());
-                FoodMatrixElement *predator = foodMatrixElement;
-                
-                predator->addPrey(prey);
-                configuration->addFoodMatrixItem(new FoodMatrix(predator, prey, jsonPreyValuePair["value"].toDouble()));
-            }
-            
-            predators.append(foodMatrixElement);
-        }
     }
     
     configuration->setLoaded(true);
@@ -194,11 +219,11 @@ QList<FoodMatrixElement*> WaterQualityRepository::getPreys() const {
 }
 
 double WaterQualityRepository::getFoodMatrixValue(FoodMatrixElement *predator, FoodMatrixElement *prey) const {
-    for (FoodMatrix fm : foodMatrix) {
+    for (FoodMatrixItem fm : defaultFoodMatrix) {
         if (fm.getPredator() == predator && fm.getPrey() == prey) {
             return fm.getValue();
         }
     }
     
-    return 0.0;
+    return std::numeric_limits<double>::max();
 }

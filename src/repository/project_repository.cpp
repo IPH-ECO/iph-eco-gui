@@ -305,7 +305,7 @@ void ProjectRepository::loadWaterQualityConfigurations(Project *project) {
 void ProjectRepository::loadWaterQualityParameters(WaterQualityConfiguration *configuration) {
     QSqlQuery query(databaseUtility->getDatabase());
     
-    query.prepare("select * from water_quality_parameter");
+    query.prepare("select * from water_quality_parameter where water_quality_configuration_id = " + QString::number(configuration->getId()));
     query.exec();
     
     while (query.next() && !operationCanceled) {
@@ -323,7 +323,20 @@ void ProjectRepository::loadWaterQualityParameters(WaterQualityConfiguration *co
 }
 
 void ProjectRepository::loadFoodMatrix(WaterQualityConfiguration *configuration) {
+    QSqlQuery query(databaseUtility->getDatabase());
     
+    query.prepare("select * from food_matrix where water_quality_configuration_id = " + QString::number(configuration->getId()));
+    query.exec();
+    
+    while (query.next() && !operationCanceled) {
+        QString predator = query.value("predator").toString();
+        QString prey = query.value("prey").toString();
+        double value = query.value("value").toDouble();
+        
+        configuration->setFoodMatrixItem(predator, prey, value);
+        
+        updateProgressAndProcessEvents();
+    }
 }
 
 void ProjectRepository::loadMeteorologicalConfigurations(Project *project) {
@@ -989,6 +1002,7 @@ void ProjectRepository::saveWaterQualityConfigurations(Project *project) {
         
         configurationIds.append(QString::number(configuration->getId()));
         saveWaterQualityParameters(configuration);
+        saveFoodMatrix(configuration);
     }
     
     // Handle exclusions
@@ -997,11 +1011,13 @@ void ProjectRepository::saveWaterQualityConfigurations(Project *project) {
     if (configurationIds.isEmpty()) {
         queries << "delete from water_quality_configuration";
         queries << "delete from water_quality_parameter";
+        queries << "delete from food_matrix";
     } else {
         QString configurationIdsStr = configurationIds.join(",");
         
         queries << "delete from water_quality_configuration where id not in (" + configurationIdsStr + ")";
         queries << "delete from water_quality_parameter where water_quality_configuration_id not in (" + configurationIdsStr + ")";
+        queries << "delete from food_matrix where water_quality_configuration_id not in (" + configurationIdsStr + ")";
     }
     
     for (QString sql : queries) {
@@ -1026,10 +1042,10 @@ void ProjectRepository::saveWaterQualityParameters(WaterQualityConfiguration *co
             query.prepare("update water_quality_parameter set value = :v, group_values = :gv where id = :i");
             query.bindValue(":i", parameter->getId());
         } else {
-            query.prepare("insert into water_quality_parameter (name, section, value, group_values, grid_data_configuration_id) values (:n, :s, :v, :gv, :gd)");
+            query.prepare("insert into water_quality_parameter (name, section, value, group_values, water_quality_configuration_id) values (:n, :s, :v, :gv, :c)");
             query.bindValue(":n", parameter->getName());
             query.bindValue(":s", (int) parameter->getSection());
-            query.bindValue(":gd", configuration->getGridDataConfiguration()->getId());
+            query.bindValue(":c", configuration->getId());
         }
         
         query.bindValue(":v", parameter->getValue());
@@ -1052,7 +1068,22 @@ void ProjectRepository::saveWaterQualityParameters(WaterQualityConfiguration *co
 }
 
 void ProjectRepository::saveFoodMatrix(WaterQualityConfiguration *configuration) {
+    QHash<QPair<QString, QString>, double> foodMatrix = configuration->getFoodMatrix();
+    QSqlQuery query(databaseUtility->getDatabase());
     
+    for (QHash<QPair<QString, QString>, double>::const_iterator it = foodMatrix.constBegin(); it != foodMatrix.constEnd(); it++) {
+        QPair<QString, QString> predatorAndPrey = it.key();
+        
+        query.prepare("insert into food_matrix (predator, prey, value, water_quality_configuration_id) values (:pd, :pe, :v, :w)");
+        query.bindValue(":pd", predatorAndPrey.first);
+        query.bindValue(":pe", predatorAndPrey.second);
+        query.bindValue(":v", it.value());
+        query.bindValue(":w", configuration->getId());
+        
+        if (!query.exec()) {
+            throw DatabaseException(QString("Unable to save food matrix values. Error: %1.").arg(query.lastError().text()).toStdString());
+        }
+    }
 }
 
 void ProjectRepository::saveMeteorologicalConfigurations(Project *project) {
@@ -1369,6 +1400,7 @@ int ProjectRepository::getMaximumSaveProgress() {
     
     for (WaterQualityConfiguration *configuration : waterQualityConfigurations) {
         saveSteps += configuration->getParameters(true).size();
+        saveSteps += configuration->getFoodMatrix().size();
     }
     
     saveSteps += project->getSimulations().size();
@@ -1383,7 +1415,7 @@ int ProjectRepository::getMaximumLoadProgress() {
     QSqlQuery query(databaseUtility->getDatabase());
     QStringList tables = {
         "mesh", "mesh_polygon", "grid_data_configuration", "grid_data", "hydrodynamic_configuration", "hydrodynamic_parameter",
-        "boundary_condition", "time_series", "water_quality_configuration", "water_quality_parameter", "meteorological_configuration",
+        "boundary_condition", "time_series", "water_quality_configuration", "water_quality_parameter", "food_matrix", "meteorological_configuration",
         "meteorological_station", "meteorological_parameter", "simulation"
     };
     

@@ -25,7 +25,6 @@ WaterQualityDialog::WaterQualityDialog(QWidget *parent) :
     ui->trwParameter->header()->setSectionResizeMode(0, QHeaderView::Stretch);
     ui->trwStructure->header()->setStretchLastSection(false);
     ui->trwStructure->header()->setSectionResizeMode(0, QHeaderView::Stretch);
-    ui->tblFoodMatrix->horizontalHeader()->setStretchLastSection(QHeaderView::Stretch);
     
     QObject::connect(ui->webView->page()->mainFrame(), SIGNAL(javaScriptWindowObjectCleared()), this, SLOT(addJSObject()));
     
@@ -153,6 +152,104 @@ void WaterQualityDialog::buildTreeWidgets(WaterQualityParameter *parameter) {
     }
 }
 
+void WaterQualityDialog::loadFoodMatrix() {
+    QStringList predatorsLabels;
+    QStringList preysLabels;
+    QList<FoodMatrixElement*> preys;
+    QList<FoodMatrixElement*> predators;
+    
+    ui->tblFoodMatrix->clear();
+    
+    for (FoodMatrixElement *prey : waterQualityRepository->getPreys()) {
+        WaterQualityParameter *parameter = prey->getParameter();
+        
+        if (parameter->isCheckable() && !parameter->isChecked()) {
+            continue;
+        }
+        
+        bool skipThisPrey = true;
+        
+        for (FoodMatrixElement *predator : prey->getPredators()) {
+            if (predator->getParameter()->isCheckable() && predator->getParameter()->isChecked()) {
+                skipThisPrey = false;
+                break;
+            }
+        }
+        
+        if (skipThisPrey) {
+            continue;
+        }
+        
+        if (prey->getGroup()) {
+            int groupValue = ui->trwParameter->findChild<QLineEdit*>(prey->getGroup()->getName())->text().toInt();
+            
+            for (int i = 0; i < groupValue; i++) {
+                preysLabels.append(QString("%1 %2").arg(prey->getLabel()).arg(i + 1));
+                preys.append(prey);
+            }
+        } else {
+            preysLabels.append(prey->getLabel());
+            preys.append(prey);
+        }
+    }
+    
+    for (FoodMatrixElement *predator : waterQualityRepository->getPredators()) {
+        WaterQualityParameter *parameter = predator->getParameter();
+        
+        if (parameter->isCheckable() && !parameter->isChecked()) {
+            continue;
+        }
+        
+        if (predator->getGroup()) {
+            int groupValue = static_cast<QLineEdit*>(ui->trwParameter->itemWidget(predator->getGroup()->getItemWidget(), 1))->text().toInt();
+            
+            for (int i = 0; i < groupValue; i++) {
+                predatorsLabels.append(QString("%1 %2").arg(predator->getLabel()).arg(i + 1));
+                predators.append(predator);
+            }
+        } else {
+            predatorsLabels.append(predator->getLabel());
+            predators.append(predator);
+        }
+    }
+    
+    if (preys.size() > 0 && predators.size() > 0) {
+        ui->tblFoodMatrix->setColumnCount(preys.size());
+        ui->tblFoodMatrix->setRowCount(predators.size());
+        ui->tblFoodMatrix->setHorizontalHeaderLabels(preysLabels);
+        ui->tblFoodMatrix->setVerticalHeaderLabels(predatorsLabels);
+        ui->tblFoodMatrix->resizeColumnsToContents();
+        
+        for (int i = 0; i < predators.size(); i++) {
+            FoodMatrixElement *predator = predators[i];
+            
+            for (int j = 0; j < preys.size(); j++) {
+                FoodMatrixElement *prey = preys[j];
+                QTableWidgetItem *tableItem = new QTableWidgetItem();
+                
+                if (predator->getPreys().contains(prey)) {
+                    double value = currentConfiguration->getFoodMatrixValue(predator->getName(), prey->getName());
+                    
+                    if (value == std::numeric_limits<double>::max()) {
+                        value = waterQualityRepository->getFoodMatrixValue(predator, prey);
+                    }
+                    
+                    tableItem->setText(QString::number(value));
+                } else {
+                    tableItem->setFlags(Qt::NoItemFlags);
+                    tableItem->setBackgroundColor(QColor(Qt::lightGray));
+                }
+                
+                tableItem->setData(Qt::UserRole, QString(predator->getName()).append("-").append(prey->getName()));
+                ui->tblFoodMatrix->setItem(i, j, tableItem);
+            }
+        }
+    } else {
+        ui->tblFoodMatrix->setColumnCount(0);
+        ui->tblFoodMatrix->setRowCount(0);
+    }
+}
+
 void WaterQualityDialog::on_cbxConfiguration_currentIndexChanged(const QString &configurationName) {
     if (!configurationName.isEmpty()) {
         currentConfiguration = IPHApplication::getCurrentProject()->getWaterQualityConfiguration(configurationName);
@@ -161,6 +258,7 @@ void WaterQualityDialog::on_cbxConfiguration_currentIndexChanged(const QString &
         ui->cbxGridDataConfiguration->setCurrentText(currentConfiguration->getGridDataConfiguration()->getName());
     }
     this->bindCurrentConfigurationToTreeWidgets();
+    this->loadFoodMatrix();
 }
 
 void WaterQualityDialog::on_cbxGridDataConfiguration_currentIndexChanged(const QString &gridDataConfigurationName) {
@@ -176,8 +274,8 @@ void WaterQualityDialog::on_btnRemoveConfiguration_clicked() {
     QMessageBox::StandardButton question = QMessageBox::question(this, tr("Water Quality"), tr("Are you sure you want to remove the selected configuration?"));
     
     if (question == QMessageBox::Yes) {
-        IPHApplication::getCurrentProject()->removeWaterQualityConfiguration(ui->cbxConfiguration->currentText());
         ui->cbxConfiguration->removeItem(ui->cbxConfiguration->currentIndex());
+        IPHApplication::getCurrentProject()->removeWaterQualityConfiguration(ui->cbxConfiguration->currentText());
         this->on_btnNewConfiguration_clicked();
     }
 }
@@ -210,6 +308,18 @@ void WaterQualityDialog::on_btnApplyConfiguration_clicked() {
         if (parameter->getInputType() == WaterQualityParameterInputType::INLINE) {
             QLineEdit *lineEdit = static_cast<QLineEdit*>(ui->trwParameter->itemWidget(parameter->getItemWidget(), 1));
             parameter->setValue(lineEdit->text().toDouble());
+        }
+    }
+    
+    currentConfiguration->clearFoodMatrix();
+    
+    for (int i = 0; i < ui->tblFoodMatrix->rowCount(); i++) {
+        for (int j = 0; j < ui->tblFoodMatrix->columnCount(); j++) {
+            QTableWidgetItem *item = ui->tblFoodMatrix->item(i, j);
+            QStringList predatorAndPrey = item->data(Qt::UserRole).toString().split("-");
+            double value = item->text().toDouble();
+            
+            currentConfiguration->setFoodMatrixItem(predatorAndPrey.first(), predatorAndPrey.last(), value);
         }
     }
 
@@ -316,92 +426,7 @@ void WaterQualityDialog::on_tabWidget_currentChanged(int index) {
     ui->webView->setVisible(index == -1 || ui->tabWidget->tabText(index) == "Structure");
     
     if (ui->tabWidget->tabText(index) == "Food Matrix") {
-        QStringList predatorsLabels;
-        QStringList preysLabels;
-        QList<FoodMatrixElement*> preys;
-        QList<FoodMatrixElement*> predators;
-        
-        for (FoodMatrixElement *prey : waterQualityRepository->getPreys()) {
-            WaterQualityParameter *parameter = prey->getParameter();
-            
-            if (parameter->isCheckable() && !parameter->isChecked()) {
-                continue;
-            }
-            
-            bool skipThisPrey = true;
-            
-            for (FoodMatrixElement *predator : prey->getPredators()) {
-                if (predator->getParameter()->isCheckable() && predator->getParameter()->isChecked()) {
-                    skipThisPrey = false;
-                    break;
-                }
-            }
-            
-            if (skipThisPrey) {
-                continue;
-            }
-            
-            if (prey->getGroup()) {
-                int groupValue = ui->trwParameter->findChild<QLineEdit*>(prey->getGroup()->getName())->text().toInt();
-                
-                for (int i = 0; i < groupValue; i++) {
-                    preysLabels.append(QString("%1 %2").arg(prey->getLabel()).arg(i + 1));
-                    preys.append(prey);
-                }
-            } else {
-                preysLabels.append(prey->getLabel());
-                preys.append(prey);
-            }
-        }
-        
-        for (FoodMatrixElement *predator : waterQualityRepository->getPredators()) {
-            WaterQualityParameter *parameter = predator->getParameter();
-            
-            if (parameter->isCheckable() && !parameter->isChecked()) {
-                continue;
-            }
-            
-            if (predator->getGroup()) {
-                int groupValue = ui->trwParameter->findChild<QLineEdit*>(predator->getGroup()->getName())->text().toInt();
-                
-                for (int i = 0; i < groupValue; i++) {
-                    predatorsLabels.append(QString("%1 %2").arg(predator->getLabel()).arg(i + 1));
-                    predators.append(predator);
-                }
-            } else {
-                predatorsLabels.append(predator->getLabel());
-                predators.append(predator);
-            }
-        }
-        
-        if (preys.size() > 0 && predators.size() > 0) {
-            ui->tblFoodMatrix->setColumnCount(preys.size());
-            ui->tblFoodMatrix->setRowCount(predators.size());
-            ui->tblFoodMatrix->setHorizontalHeaderLabels(preysLabels);
-            ui->tblFoodMatrix->setVerticalHeaderLabels(predatorsLabels);
-            
-            for (int i = 0; i < predators.size(); i++) {
-                FoodMatrixElement *predator = predators[i];
-                
-                for (int j = 0; j < preys.size(); j++) {
-                    FoodMatrixElement *prey = preys[j];
-                    QTableWidgetItem *tableItem = new QTableWidgetItem();
-                    
-                    if (predator->getPreys().contains(prey)) {
-                        double value = waterQualityRepository->getFoodMatrixValue(predator, prey);
-                        tableItem->setText(QString::number(value));
-                    } else {
-                        tableItem->setFlags(Qt::NoItemFlags);
-                        tableItem->setBackgroundColor(QColor(Qt::lightGray));
-                    }
-                    
-                    ui->tblFoodMatrix->setItem(i, j, tableItem);
-                }
-            }
-        } else {
-            ui->tblFoodMatrix->setColumnCount(0);
-            ui->tblFoodMatrix->setRowCount(0);
-        }
+        this->loadFoodMatrix();
     }
 }
 

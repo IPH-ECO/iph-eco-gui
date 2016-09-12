@@ -3,14 +3,15 @@
 
 #include "grid_data_configuration.h"
 #include "water_quality_parameter.h"
-#include "food_matrix.h"
+
+#include <QHash>
 
 class WaterQualityConfiguration {
 private:
     uint id;
     QString name;
     QList<WaterQualityParameter*> parameters;
-    QList<FoodMatrix*> foodMatrixItems;
+    QHash<QPair<QString, QString>, double> foodMatrix;
     GridDataConfiguration *gridDataConfiguration;
     
     // Transient
@@ -32,9 +33,10 @@ public:
     WaterQualityParameter* getParameter(const QString &name, const WaterQualityParameterSection &section) const;
     WaterQualityParameter* getParameterByDiagramItem(const QString &itemName) const;
     QList<WaterQualityParameter*> getRootParameters(const WaterQualityParameterSection &section) const;
-    QList<FoodMatrix*> getFoodMatrixItems() const;
-    void setFoodMatrixItems(const QList<FoodMatrix*> &foodMatrix);
-    bool addFoodMatrixItem(FoodMatrix *foodMatrixItem);
+    double getFoodMatrixValue(const QString &predator, const QString &prey) const;
+    void setFoodMatrixItem(const QString &predator, const QString &prey, const double &value);
+    void clearFoodMatrix();
+    QHash<QPair<QString, QString>, double> getFoodMatrix() const;
     void setLoaded(const bool &loaded);
     bool isLoaded() const;
 };

@@ -1,18 +1,9 @@
 #include <domain/food_matrix_element.h>
 
 FoodMatrixElement::FoodMatrixElement() :
-	id(0),
-	group(nullptr),
-	parameter(nullptr)
+    group(nullptr),
+    parameter(nullptr)
 {}
-
-uint FoodMatrixElement::getId() const {
-    return id;
-}
-
-void FoodMatrixElement::setId(const uint &id) {
-    this->id = id;
-}
 
 QString FoodMatrixElement::getName() const {
     return name;

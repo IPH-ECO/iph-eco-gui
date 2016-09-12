@@ -1,19 +1,16 @@
-#ifndef FOOD_MATRIX_H
-#define FOOD_MATRIX_H
+#ifndef FOOD_MATRIX_ITEM_H
+#define FOOD_MATRIX_ITEM_H
 
 #include <domain/food_matrix_element.h>
 
-class FoodMatrix {
+class FoodMatrixItem {
 private:
-    uint id;
     FoodMatrixElement *predator;
     FoodMatrixElement *prey;
     double value;
 public:
-    FoodMatrix(FoodMatrixElement *predator, FoodMatrixElement *prey, const double &value);
-    ~FoodMatrix();
-    uint getId() const;
-    void setId(const uint &id);
+    FoodMatrixItem(FoodMatrixElement *predator, FoodMatrixElement *prey, const double &value);
+    FoodMatrixItem();
     FoodMatrixElement* getPredator() const;
     void setPredator(FoodMatrixElement *predator);
     FoodMatrixElement* getPrey() const;
@@ -22,4 +19,4 @@ public:
     void setValue(const double &value);
 };
 
-#endif // FOOD_MATRIX_H
+#endif // FOOD_MATRIX_ITEM_H
