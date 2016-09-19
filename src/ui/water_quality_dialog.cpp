@@ -162,15 +162,18 @@ void WaterQualityDialog::loadFoodMatrix() {
     
     for (FoodMatrixElement *prey : waterQualityRepository->getPreys()) {
         WaterQualityParameter *parameter = prey->getParameter();
+        QTreeWidgetItem *preyItem = parameter->getItemWidget();
         
-        if (parameter->isCheckable() && !parameter->isChecked()) {
+        if (preyItem->isHidden()) {
             continue;
         }
         
         bool skipThisPrey = true;
         
         for (FoodMatrixElement *predator : prey->getPredators()) {
-            if (predator->getParameter()->isCheckable() && predator->getParameter()->isChecked()) {
+            QTreeWidgetItem *predatorItem = predator->getParameter()->getItemWidget();
+            
+            if (!predatorItem->isHidden()) {
                 skipThisPrey = false;
                 break;
             }
@@ -194,9 +197,9 @@ void WaterQualityDialog::loadFoodMatrix() {
     }
     
     for (FoodMatrixElement *predator : waterQualityRepository->getPredators()) {
-        WaterQualityParameter *parameter = predator->getParameter();
+        QTreeWidgetItem *predatorItem = predator->getParameter()->getItemWidget();
         
-        if (parameter->isCheckable() && !parameter->isChecked()) {
+        if (predatorItem->isHidden()) {
             continue;
         }
         
@@ -221,17 +224,14 @@ void WaterQualityDialog::loadFoodMatrix() {
         ui->tblFoodMatrix->resizeColumnsToContents();
         
         for (int i = 0; i < predators.size(); i++) {
-            FoodMatrixElement *predator = predators[i];
-            
             for (int j = 0; j < preys.size(); j++) {
-                FoodMatrixElement *prey = preys[j];
                 QTableWidgetItem *tableItem = new QTableWidgetItem();
                 
-                if (predator->getPreys().contains(prey)) {
-                    double value = currentConfiguration->getFoodMatrixValue(predator->getName(), prey->getName());
+                if (predators[i]->getPreys().contains(preys[j])) {
+                    double value = currentConfiguration->getFoodMatrixValue(predators[i]->getName(), preys[j]->getName());
                     
                     if (value == std::numeric_limits<double>::max()) {
-                        value = waterQualityRepository->getFoodMatrixValue(predator, prey);
+                        value = waterQualityRepository->getFoodMatrixValue(predators[i], preys[j]);
                     }
                     
                     tableItem->setText(QString::number(value));
@@ -240,7 +240,7 @@ void WaterQualityDialog::loadFoodMatrix() {
                     tableItem->setBackgroundColor(QColor(Qt::lightGray));
                 }
                 
-                tableItem->setData(Qt::UserRole, QString(predator->getName()).append("-").append(prey->getName()));
+                tableItem->setData(Qt::UserRole, QString(predators[i]->getName()).append("-").append(preys[j]->getName()));
                 ui->tblFoodMatrix->setItem(i, j, tableItem);
             }
         }

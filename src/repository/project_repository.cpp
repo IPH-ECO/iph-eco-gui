@@ -1415,8 +1415,8 @@ int ProjectRepository::getMaximumLoadProgress() {
     QSqlQuery query(databaseUtility->getDatabase());
     QStringList tables = {
         "mesh", "mesh_polygon", "grid_data_configuration", "grid_data", "hydrodynamic_configuration", "hydrodynamic_parameter",
-        "boundary_condition", "time_series", "water_quality_configuration", "water_quality_parameter", "food_matrix", "meteorological_configuration",
-        "meteorological_station", "meteorological_parameter", "simulation"
+        "boundary_condition", "time_series", "water_quality_configuration", "water_quality_parameter", "food_matrix",
+        "meteorological_configuration", "meteorological_station", "meteorological_parameter", "simulation"
     };
     
     for (QString table : tables) {

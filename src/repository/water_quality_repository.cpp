@@ -190,7 +190,7 @@ void WaterQualityRepository::loadParameters(WaterQualityConfiguration *configura
             }
         }
         
-        WaterQualityParameter *parameter = configuration->getParameter(jsonFood["parameter"].toString(), WaterQualityParameterSection::STRUCTURE);
+        WaterQualityParameter *parameter = configuration->getParameter(jsonFood["parameter"].toString(), WaterQualityParameterSection::PARAMETER);
         WaterQualityParameter *group = configuration->getParameter(jsonFood["group"].toString(), WaterQualityParameterSection::PARAMETER);
         
         foodMatrixElement->setGroup(group);

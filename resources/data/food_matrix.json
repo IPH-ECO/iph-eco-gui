@@ -1,40 +1,73 @@
 [
 	{
+		"name": "om",
+		"label": "OM",
+		"parameter": "organicMatter1",
+		"predator": false,
+		"prey": true
+	},
+	{
+		"name": "dom",
+		"label": "DOM",
+		"parameter": "organicMatter2",
+		"predator": false,
+		"prey": true
+	},
+	{
+		"name": "pom",
+		"label": "POM",
+		"parameter": "organicMatter2",
+		"predator": false,
+		"prey": true
+	},
+	{
 		"name": "domLabile",
 		"label": "DOM Labile",
-		"parameter": "iMatOrgSplit",
+		"parameter": "organicMatter3",
 		"predator": false,
 		"prey": true
 	},
 	{
 		"name": "domRefractory",
 		"label": "DOM Refractory",
-		"parameter": "iMatOrgSplit",
+		"parameter": "organicMatter3",
 		"predator": false,
 		"prey": true
 	},
 	{
 		"name": "pomLabile",
 		"label": "POM Labile",
-		"parameter": "iMatOrgSplit",
+		"parameter": "organicMatter3",
 		"predator": false,
 		"prey": true
 	},
 	{
 		"name": "pomRefractory",
 		"label": "POM Refractory",
-		"parameter": "iMatOrgSplit",
+		"parameter": "organicMatter3",
 		"predator": false,
 		"prey": true
 	},
 	{
 		"name": "aerobicBacteria",
 		"label": "Aerobic Bacteria",
-		"parameter": "bacterioplanktonModeling",
+		"parameter": "iBac",
 		"group": "aerobicGroup",
 		"predator": true,
 		"prey": true,
 		"values": [
+			{
+				"prey": "om",
+				"value": 0
+			},
+			{
+				"prey": "dom",
+				"value": 1
+			},
+			{
+				"prey": "pom",
+				"value": 0.8
+			},
 			{
 				"prey": "domLabile",
 				"value": 1
@@ -56,11 +89,23 @@
 	{
 		"name": "anaerobicBacteria",
 		"label": "Anaerobic Bacteria",
-		"parameter": "bacterioplanktonModeling",
+		"parameter": "iBac",
 		"group": "anaerobicGroup",
 		"predator": true,
 		"prey": true,
 		"values": [
+			{
+				"prey": "om",
+				"value": 0
+			},
+			{
+				"prey": "dom",
+				"value": 1
+			},
+			{
+				"prey": "pom",
+				"value": 0.8
+			},
 			{
 				"prey": "domLabile",
 				"value": 1
@@ -82,7 +127,7 @@
 	{
 		"name": "dinoflagellates",
 		"label": "Phytoplankton - Dinoflagellates",
-		"parameter": "phytoplanktonModeling",
+		"parameter": "iPhyto",
 		"group": "dinoflagellatesGroup",
 		"predator": false,
 		"prey": true
@@ -90,7 +135,7 @@
 	{
 		"name": "freshwaterCyanobacteria",
 		"label": "Phytoplankton - Freshwater cyanobacteria",
-		"parameter": "phytoplanktonModeling",
+		"parameter": "iPhyto",
 		"group": "freshwaterCyanobacteriaGroup",
 		"predator": false,
 		"prey": true
@@ -98,7 +143,7 @@
 	{
 		"name": "marineCyanobacteria",
 		"label": "Phytoplankton - Marine/estuarine cyanobacteria",
-		"parameter": "phytoplanktonModeling",
+		"parameter": "iPhyto",
 		"group": "marineCyanobacteriaGroup",
 		"predator": false,
 		"prey": true
@@ -106,7 +151,7 @@
 	{
 		"name": "chlorophytes",
 		"label": "Phytoplankton - Chlorophytes",
-		"parameter": "phytoplanktonModeling",
+		"parameter": "iPhyto",
 		"group": "chlorophytesGroup",
 		"predator": false,
 		"prey": true
@@ -114,7 +159,7 @@
 	{
 		"name": "cryptophytes",
 		"label": "Phytoplankton - Cryptophytes",
-		"parameter": "phytoplanktonModeling",
+		"parameter": "iPhyto",
 		"group": "cryptophytesGroup",
 		"predator": false,
 		"prey": true
@@ -122,7 +167,7 @@
 	{
 		"name": "marineDiatoms",
 		"label": "Marine/estuarine diatoms",
-		"parameter": "phytoplanktonModeling",
+		"parameter": "iPhyto",
 		"group": "marineDiatomsGroup",
 		"predator": false,
 		"prey": true
@@ -130,7 +175,7 @@
 	{
 		"name": "freshwaterDiatoms",
 		"label": "Freshwater diatoms",
-		"parameter": "phytoplanktonModeling",
+		"parameter": "iPhyto",
 		"group": "freshwaterDiatomsGroup",
 		"predator": false,
 		"prey": true
@@ -138,7 +183,7 @@
 	{
 		"name": "microZooGroup",
 		"label": "Zooplankton - Micro",
-		"parameter": "zooplanktonModeling",
+		"parameter": "iZoo",
 		"group": "microZooGroup",
 		"predator": true,
 		"prey": true,
@@ -200,7 +245,7 @@
 	{
 		"name": "mesoZooGroup",
 		"label": "Zooplankton - Meso",
-		"parameter": "zooplanktonModeling",
+		"parameter": "iZoo",
 		"group": "mesoZooGroup",
 		"predator": true,
 		"prey": true,
@@ -262,7 +307,7 @@
 	{
 		"name": "macroZooGroup",
 		"label": "Zooplankton - Macro",
-		"parameter": "zooplanktonModeling",
+		"parameter": "iZoo",
 		"group": "macroZooGroup",
 		"predator": true,
 		"prey": true,
@@ -332,7 +377,7 @@
 	{
 		"name": "microZoobenthos",
 		"label": "Zoobenthos - Micro",
-		"parameter": "iBen",
+		"parameter": "zoobenthos",
 		"group": "microZoobenthosGroup",
 		"predator": true,
 		"prey": true,
@@ -386,7 +431,7 @@
 	{
 		"name": "mesoZoobenthos",
 		"label": "Zoobenthos - Meso",
-		"parameter": "iBen",
+		"parameter": "zoobenthos",
 		"group": "mesoZoobenthosGroup",
 		"predator": true,
 		"prey": true,
@@ -440,7 +485,7 @@
 	{
 		"name": "macroZoobenthos",
 		"label": "Zoobenthos - Macro",
-		"parameter": "iBen",
+		"parameter": "zoobenthos",
 		"group": "macroZoobenthosGroup",
 		"predator": true,
 		"prey": true,
@@ -494,7 +539,7 @@
 	{
 		"name": "planktivorousJuvenile",
 		"label": "Planktivorous Fish - Juvenile",
-		"parameter": "fishModeling",
+		"parameter": "iFish",
 		"group": "planktivorousGroup",
 		"predator": true,
 		"prey": true,
@@ -572,7 +617,7 @@
 	{
 		"name": "planktivorousAdult",
 		"label": "Planktivorous Fish - Adult",
-		"parameter": "fishModeling",
+		"parameter": "iFish",
 		"group": "planktivorousGroup",
 		"predator": true,
 		"prey": true,
@@ -650,7 +695,7 @@
 	{
 		"name": "omnivorousJuvenile",
 		"label": "Omnivorous Fish - Juvenile",
-		"parameter": "fishModeling",
+		"parameter": "iFish",
 		"group": "omnivorousGroup",
 		"predator": true,
 		"prey": true,
@@ -728,7 +773,7 @@
 	{
 		"name": "omnivorousAdult",
 		"label": "Omnivorous Fish - Adult",
-		"parameter": "fishModeling",
+		"parameter": "iFish",
 		"group": "omnivorousGroup",
 		"predator": true,
 		"prey": true,
@@ -806,7 +851,7 @@
 	{
 		"name": "piscivorous",
 		"label": "Piscivorous Fish",
-		"parameter": "fishModeling",
+		"parameter": "iFish",
 		"group": "piscivorousGroup",
 		"predator": true,
 		"prey": false,
