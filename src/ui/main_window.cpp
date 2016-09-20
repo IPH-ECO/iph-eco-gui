@@ -171,6 +171,10 @@ void MainWindow::on_actionCloseProject_triggered() {
 }
 
 void MainWindow::on_actionStructuredMeshGeneration_triggered() {
+    if (dynamic_cast<StructuredMeshDialog*>(currentSubWindow->widget())) {
+        return;
+    }
+    
     this->closeCurrentSubWindow();
     StructuredMeshDialog *structuredMeshDialog = new StructuredMeshDialog(this);
     currentSubWindow->setWidget(structuredMeshDialog);
@@ -181,6 +185,10 @@ void MainWindow::on_actionStructuredMeshGeneration_triggered() {
 }
 
 void MainWindow::on_actionUnstructuredMeshGeneration_triggered() {
+    if (dynamic_cast<UnstructuredMeshDialog*>(currentSubWindow->widget())) {
+        return;
+    }
+    
     this->closeCurrentSubWindow();
     UnstructuredMeshDialog *unstructuredMeshDialog = new UnstructuredMeshDialog(this);
     currentSubWindow->setWidget(unstructuredMeshDialog);
@@ -191,6 +199,10 @@ void MainWindow::on_actionUnstructuredMeshGeneration_triggered() {
 }
 
 void MainWindow::on_actionGridData_triggered() {
+    if (dynamic_cast<GridDataDialog*>(currentSubWindow->widget())) {
+        return;
+    }
+    
     this->closeCurrentSubWindow();
     GridDataDialog *gridDataDialog = new GridDataDialog(this);
     currentSubWindow->setWidget(gridDataDialog);
@@ -201,6 +213,10 @@ void MainWindow::on_actionGridData_triggered() {
 }
 
 void MainWindow::on_actionHydrodynamicData_triggered() {
+    if (dynamic_cast<HydrodynamicDataDialog*>(currentSubWindow->widget())) {
+        return;
+    }
+    
     this->closeCurrentSubWindow();
     HydrodynamicDataDialog *hydrodynamicDataDialog = new HydrodynamicDataDialog(this);
     currentSubWindow->setWidget(hydrodynamicDataDialog);
@@ -211,6 +227,10 @@ void MainWindow::on_actionHydrodynamicData_triggered() {
 }
 
 void MainWindow::on_actionWaterQuality_triggered() {
+    if (dynamic_cast<WaterQualityDialog*>(currentSubWindow->widget())) {
+        return;
+    }
+    
     this->closeCurrentSubWindow();
     WaterQualityDialog *waterQualityDialog = new WaterQualityDialog(this);
     currentSubWindow->setWidget(waterQualityDialog);
@@ -236,6 +256,10 @@ void MainWindow::on_actionCreateSimulation_triggered() {
 }
 
 void MainWindow::on_actionManageSimulation_triggered() {
+    if (dynamic_cast<SimulationManagerDialog*>(currentSubWindow->widget())) {
+        return;
+    }
+    
     this->closeCurrentSubWindow();
     SimulationManagerDialog *simulationManagerDialog = new SimulationManagerDialog(this);
     currentSubWindow->setWidget(simulationManagerDialog);
@@ -246,6 +270,10 @@ void MainWindow::on_actionManageSimulation_triggered() {
 }
 
 void MainWindow::on_actionViewResults_triggered() {
+    if (dynamic_cast<ViewResultsDialog*>(currentSubWindow->widget())) {
+        return;
+    }
+    
     this->closeCurrentSubWindow();
     ViewResultsDialog *viewResultsDialog = new ViewResultsDialog(this);
     currentSubWindow->setWidget(viewResultsDialog);
