@@ -31,6 +31,9 @@ WaterQualityParameterDialog::WaterQualityParameterDialog(QWidget *parent, WaterQ
         }
     }
     
+    QList<double> groupValues = parameter->getGroupValues();
+    bool useDefaultValues = groupValues.size() != ui->trwParameters->rowCount() * ui->trwParameters->columnCount();
+    
     for (int i = 0; i < ui->trwParameters->rowCount(); i++) {
         verticalLabels << QString("Group %1").arg(i + 1);
         
@@ -42,7 +45,7 @@ WaterQualityParameterDialog::WaterQualityParameterDialog(QWidget *parent, WaterQ
                 tableItem->setBackgroundColor(QColor(Qt::lightGray));
             } else {
                 tableItem->setTextAlignment(Qt::AlignVCenter | Qt::AlignHCenter);
-                tableItem->setText(QString::number(parameter->getGroupValues().at(j)));
+                tableItem->setText(QString::number(groupValues[useDefaultValues ? j : i * ui->trwParameters->columnCount() + j]));
             }
             
             ui->trwParameters->setItem(i, j, tableItem);
@@ -66,10 +69,10 @@ void WaterQualityParameterDialog::accept() {
             QTableWidgetItem *tableItem = ui->trwParameters->item(i, j);
             
             if (tableItem->flags() == Qt::NoItemFlags) {
-                continue;
+                groupValues << std::numeric_limits<double>::max();
+            } else {
+                groupValues << tableItem->text().toDouble();
             }
-
-            groupValues << tableItem->text().toDouble();
         }
     }
     

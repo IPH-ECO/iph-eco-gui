@@ -15,6 +15,7 @@ private:
     QJsonArray jsonStructure;
     QJsonArray jsonParameters;
     QJsonArray jsonFoodMatrix;
+    QJsonArray jsonInitialConditions;
     QList<FoodMatrixElement*> predators;
     QList<FoodMatrixElement*> preys;
     QList<FoodMatrixItem> defaultFoodMatrix;
@@ -22,6 +23,7 @@ private:
     WaterQualityRepository();
 
     FoodMatrixElement* findPreyByName(const QString &name);
+    QStringList findGroups(WaterQualityConfiguration *configuration, const QString &parentGroupName) const;
 public:
     static WaterQualityRepository* getInstance();
     

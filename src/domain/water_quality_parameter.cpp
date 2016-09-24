@@ -88,14 +88,6 @@ bool WaterQualityParameter::isEnabled() const {
     return enabled;
 }
 
-WaterQualityParameterType WaterQualityParameter::getType() const {
-    return type;
-}
-
-void WaterQualityParameter::setType(const WaterQualityParameterType &type) {
-    this->type = type;
-}
-
 WaterQualityParameterInputType WaterQualityParameter::getInputType() const {
     return inputType;
 }
@@ -276,22 +268,6 @@ SimulationDataType::WaterQualityParameter WaterQualityParameter::toSimulationDat
     SimulationDataType::WaterQualityParameter parameter;
     
     return parameter;
-}
-
-WaterQualityParameterType WaterQualityParameter::mapTypeFromString(const QString &typeStr) {
-    if (typeStr == "initialCondition") {
-        return WaterQualityParameterType::INITIAL_CONDITION;
-    }
-    
-    return WaterQualityParameterType::PROCESS_INPUT;
-}
-
-QString WaterQualityParameter::mapStringFromType(const WaterQualityParameterType &type) {
-    if (type == WaterQualityParameterType::INITIAL_CONDITION) {
-        return "initialCondition";
-    }
-    
-    return "processInput";
 }
 
 WaterQualityParameterInputType WaterQualityParameter::mapInputTypeFromString(const QString &inputTypeStr) {

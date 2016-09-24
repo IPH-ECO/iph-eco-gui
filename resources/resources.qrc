@@ -60,6 +60,7 @@
     <file>data/hydrodynamic_data.json</file>
     <file>data/water_quality_parameters.json</file>
     <file>data/water_quality_structure.json</file>
+    <file>data/water_quality_initial_conditions.json</file>
     <file>data/food_matrix.json</file>
     <file>data/output_variables.json</file>
     <file>data/water_quality_diagram.html</file>

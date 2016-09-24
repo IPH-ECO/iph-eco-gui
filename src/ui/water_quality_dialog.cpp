@@ -25,6 +25,8 @@ WaterQualityDialog::WaterQualityDialog(QWidget *parent) :
     ui->trwParameter->header()->setSectionResizeMode(0, QHeaderView::Stretch);
     ui->trwStructure->header()->setStretchLastSection(false);
     ui->trwStructure->header()->setSectionResizeMode(0, QHeaderView::Stretch);
+    ui->trwInitialConditions->header()->setStretchLastSection(false);
+    ui->trwInitialConditions->header()->setSectionResizeMode(0, QHeaderView::Stretch);
     
     QObject::connect(ui->webView->page()->mainFrame(), SIGNAL(javaScriptWindowObjectCleared()), this, SLOT(addJSObject()));
     
@@ -60,6 +62,10 @@ void WaterQualityDialog::on_webView_loadFinished(bool ok) {
         this->buildTreeWidgets(rootParameter);
     }
     
+    for (WaterQualityParameter *rootParameter : currentConfiguration->getRootParameters(WaterQualityParameterSection::INITIAL_CONDITION)) {
+        this->buildTreeWidgets(rootParameter);
+    }
+    
     this->bindCurrentConfigurationToTreeWidgets();
     
     isWebViewLoaded = true;
@@ -72,7 +78,16 @@ WaterQualityDialog::~WaterQualityDialog() {
 
 void WaterQualityDialog::bindCurrentConfigurationToTreeWidgets() {
     for (WaterQualityParameter *parameter : currentConfiguration->getParameters()) {
-        QTreeWidget *treeWidget = parameter->getSection() == WaterQualityParameterSection::STRUCTURE ? ui->trwStructure : ui->trwParameter;
+        QTreeWidget *treeWidget = nullptr;
+        
+        if (parameter->getSection() == WaterQualityParameterSection::STRUCTURE) {
+            treeWidget = ui->trwStructure;
+        } else if (parameter->getSection() == WaterQualityParameterSection::PARAMETER) {
+            treeWidget = ui->trwParameter;
+        } else {
+            treeWidget = ui->trwInitialConditions;
+        }
+        
         QList<QTreeWidgetItem*> widgetItems = treeWidget->findItems(parameter->getLabel(), Qt::MatchExactly | Qt::MatchRecursive);
         
         for (QTreeWidgetItem *widgetItem : widgetItems) {
@@ -87,15 +102,24 @@ void WaterQualityDialog::bindCurrentConfigurationToTreeWidgets() {
         if (parameter->isCheckable()) {
             parameter->getItemWidget()->setCheckState(0, parameter->isChecked() ? Qt::Checked : Qt::Unchecked);
         } else if (parameter->getInputType() == WaterQualityParameterInputType::INLINE) {
-            QLineEdit *lineEdit = ui->trwParameter->findChild<QLineEdit*>(parameter->getName());
+            QTreeWidget *treeWidget = parameter->getSection() == WaterQualityParameterSection::PARAMETER ? ui->trwParameter : ui->trwInitialConditions;
+            QLineEdit *lineEdit = treeWidget->findChild<QLineEdit*>(parameter->getName());
             lineEdit->setText(QString::number(parameter->getValue()));
         }
     }
 }
 
 void WaterQualityDialog::buildTreeWidgets(WaterQualityParameter *parameter) {
-    QTreeWidget *treeWidget = parameter->getSection() == WaterQualityParameterSection::STRUCTURE ? ui->trwStructure : ui->trwParameter;
+    QTreeWidget *treeWidget = nullptr;
     QTreeWidgetItem *parameterItem = nullptr;
+    
+    if (parameter->getSection() == WaterQualityParameterSection::STRUCTURE) {
+        treeWidget = ui->trwStructure;
+    } else if (parameter->getSection() == WaterQualityParameterSection::PARAMETER) {
+        treeWidget = ui->trwParameter;
+    } else {
+        treeWidget = ui->trwInitialConditions;
+    }
     
     if (parameter->getParent()) {
         parameterItem = new QTreeWidgetItem(parameter->getParent()->getItemWidget(), QStringList(parameter->getLabel()));
@@ -109,7 +133,9 @@ void WaterQualityDialog::buildTreeWidgets(WaterQualityParameter *parameter) {
     if (parameter->getSection() == WaterQualityParameterSection::STRUCTURE) {
         parameterItem->setDisabled(!parameter->isEnabled());
     } else {
-        parameterItem->setHidden(!parameter->isEnabled());
+        if (parameter->getSection() == WaterQualityParameterSection::PARAMETER) {
+            parameterItem->setHidden(!parameter->isEnabled());
+        }
     }
     parameterItem->setToolTip(0, parameter->getDescription());
     parameterItem->setData(0, Qt::UserRole, QVariant(parameter->getName()));
@@ -127,7 +153,7 @@ void WaterQualityDialog::buildTreeWidgets(WaterQualityParameter *parameter) {
     } else if (parameter->getInputType() == WaterQualityParameterInputType::TABULAR) {
         QToolButton *toolButton = new QToolButton(treeWidget);
         
-        toolButton->setObjectName(parameter->getName());
+        toolButton->setObjectName(QString("%1-%2").arg(parameter->getName()).arg((int) parameter->getSection()));
         toolButton->setEnabled(parameter->isEnabled());
         toolButton->setIcon(QIcon(":/icons/view-form-table.png"));
         toolButton->setFixedSize(18, 18);
@@ -448,8 +474,8 @@ void WaterQualityDialog::toggleItem(const QString &itemName, const bool &checked
 }
 
 void WaterQualityDialog::onTabularInputButtonClicked() {
-	QToolButton *button = static_cast<QToolButton*>(sender());
-    WaterQualityParameter *parameter = currentConfiguration->getParameter(button->objectName(), WaterQualityParameterSection::PARAMETER);
+	QStringList parameterNameAndSection = static_cast<QToolButton*>(sender())->objectName().split("-");
+    WaterQualityParameter *parameter = currentConfiguration->getParameter(parameterNameAndSection.first(), (WaterQualityParameterSection) parameterNameAndSection.last().toInt());
     QList<int> groupsDistribuition;
     
     for (QString groupName : parameter->getGroups()) {

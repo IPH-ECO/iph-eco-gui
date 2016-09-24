@@ -207,6 +207,31 @@
         <attribute name="title">
          <string>Initial Conditions</string>
         </attribute>
+        <layout class="QGridLayout" name="gridLayout_4">
+         <item row="0" column="0">
+          <widget class="QTreeWidget" name="trwInitialConditions">
+           <property name="alternatingRowColors">
+            <bool>true</bool>
+           </property>
+           <property name="indentation">
+            <number>15</number>
+           </property>
+           <attribute name="headerVisible">
+            <bool>false</bool>
+           </attribute>
+           <column>
+            <property name="text">
+             <string notr="true">1</string>
+            </property>
+           </column>
+           <column>
+            <property name="text">
+             <string>2</string>
+            </property>
+           </column>
+          </widget>
+         </item>
+        </layout>
        </widget>
        <widget class="QWidget" name="tab">
         <attribute name="title">

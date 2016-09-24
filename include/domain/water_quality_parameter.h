@@ -7,9 +7,8 @@
 #include <QString>
 #include <QList>
 
-enum class WaterQualityParameterType { PROCESS_INPUT = 1, INITIAL_CONDITION };
 enum class WaterQualityParameterInputType { NO_INPUT = 0, INLINE, TABULAR };
-enum class WaterQualityParameterSection { STRUCTURE = 1, PARAMETER };
+enum class WaterQualityParameterSection { STRUCTURE = 1, PARAMETER, INITIAL_CONDITION };
 
 class WaterQualityParameter {
 private:
@@ -21,7 +20,6 @@ private:
     bool checkable;
     bool checked;
     bool enabled;
-    WaterQualityParameterType type;
     WaterQualityParameterInputType inputType;
     
     // Trasient attributes
@@ -63,8 +61,6 @@ public:
     void setChecked(bool checked);
     void setEnabled(bool enabled);
     bool isEnabled() const;
-    WaterQualityParameterType getType() const;
-    void setType(const WaterQualityParameterType &type);
     WaterQualityParameterInputType getInputType() const;
     void setInputType(const WaterQualityParameterInputType &inputType);
 
@@ -103,19 +99,9 @@ public:
     WaterQualityParameter* getChild(int i) const;
     SimulationDataType::WaterQualityParameter toSimulationDataType() const;
     
-    static WaterQualityParameterType mapTypeFromString(const QString &typeStr);
-    static QString mapStringFromType(const WaterQualityParameterType &type);
     static WaterQualityParameterInputType mapInputTypeFromString(const QString &inputTypeStr);
     static QString mapStringFromInputType(const WaterQualityParameterInputType &inputType);
     static bool sort(WaterQualityParameter *p1, WaterQualityParameter *p2);
-    
-    inline bool isProcessInput() const {
-        return type == WaterQualityParameterType::PROCESS_INPUT;
-    }
-    
-    inline bool isInitialCondition() const {
-        return type == WaterQualityParameterType::INITIAL_CONDITION;
-    }
     
     inline bool isInRange(double value) const {
         return (rangeMininum == 0 && rangeMaximum == 0) || (value >= rangeMininum && value <= rangeMaximum);

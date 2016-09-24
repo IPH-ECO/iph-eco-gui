@@ -38,6 +38,12 @@ WaterQualityRepository::WaterQualityRepository() {
     this->jsonFoodMatrix = jsonDocument.array();
     foodMatrixFile.close();
     
+    QFile initialConditionsFile(":/data/water_quality_initial_conditions.json");
+    initialConditionsFile.open(QFile::ReadOnly);
+    jsonDocument = QJsonDocument::fromJson(initialConditionsFile.readAll());
+    this->jsonInitialConditions = jsonDocument.array();
+    initialConditionsFile.close();
+    
     for (int i = 0; i < jsonFoodMatrix.size(); i++) {
         QJsonObject jsonFood = jsonFoodMatrix[i].toObject();
         FoodMatrixElement *foodMatrixElement = new FoodMatrixElement();
@@ -197,6 +203,47 @@ void WaterQualityRepository::loadParameters(WaterQualityConfiguration *configura
         foodMatrixElement->setParameter(parameter);
     }
     
+    for (int i = 0; i < this->jsonInitialConditions.size(); i++) {
+        QJsonObject jsonParameter = this->jsonInitialConditions[i].toObject();
+        QString parameterName = jsonParameter["name"].toString();
+        QStringList groups = this->findGroups(configuration, jsonParameter["groups"].toString());
+        WaterQualityParameter *parameter = configuration->getParameter(parameterName, WaterQualityParameterSection::INITIAL_CONDITION);
+        
+        if (!parameter) {
+            parameter = new WaterQualityParameter();
+            parameter->setValue(jsonParameter["defaultValue"].toDouble());
+        }
+        
+        parameter->setName(jsonParameter["name"].toString());
+        parameter->setLabel(jsonParameter["label"].toString());
+        parameter->setSection(WaterQualityParameterSection::INITIAL_CONDITION);
+        parameter->setTarget(jsonParameter["target"].toString());
+        parameter->setDescription(jsonParameter["description"].toString());
+        parameter->setInputType(WaterQualityParameter::mapInputTypeFromString(jsonParameter["inputType"].toString()));
+        parameter->setPersistable(true);
+        parameter->setGroups(groups);
+        
+        if (!jsonParameter["groupDefaultValues"].isUndefined()) {
+            if (jsonParameter["groupDefaultValues"].isArray()) {
+                QJsonArray defaultValuesArray = jsonParameter["groupDefaultValues"].toArray();
+                QList<double> values;
+                
+                for (QJsonValue value : defaultValuesArray) {
+                    values.append(value.toDouble());
+                }
+                
+                parameter->setGroupValues(values);
+            } else {
+                parameter->setGroupValues(QVector<double>(groups.size(), jsonParameter["groupDefaultValues"].toDouble()).toList());
+            }
+        }
+        
+        WaterQualityParameter *parentParameter = configuration->getParameter(jsonParameter["parentName"].toString(), WaterQualityParameterSection::INITIAL_CONDITION);
+        
+        parameter->setParent(parentParameter);
+        configuration->addWaterQualityParameter(parameter);
+    }
+    
     configuration->setLoaded(true);
 }
 
@@ -208,6 +255,26 @@ FoodMatrixElement* WaterQualityRepository::findPreyByName(const QString &name) {
     }
 
     return nullptr;
+}
+
+QStringList WaterQualityRepository::findGroups(WaterQualityConfiguration *configuration, const QString &parentGroupName) const {
+    WaterQualityParameter *parentGroupItem = nullptr;
+    QStringList groups;
+    
+    for (WaterQualityParameter *parameter : configuration->getParameters()) {
+        if (parameter->getName() == parentGroupName && parameter->getSection() == WaterQualityParameterSection::PARAMETER) {
+            parentGroupItem = parameter;
+            break;
+        }
+    }
+    
+    if (parentGroupItem) {
+        for (WaterQualityParameter *child : parentGroupItem->getChildren()) {
+            groups.append(child->getName());
+        }
+    }
+    
+    return groups;
 }
 
 QList<FoodMatrixElement*> WaterQualityRepository::getPredators() const {

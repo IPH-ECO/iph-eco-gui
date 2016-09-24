@@ -1,0 +1,335 @@
+[
+	{
+		"label": "Heat Budget Modeling",
+		"name": "iTemp",
+		"target": "iTemp"
+	},
+	{
+		"label": "sDTempW",
+		"name": "sDTempW",
+		"description": "Water Temperature (\u00b0C)",
+		"inputType": "inline",
+		"defaultValue": 20,
+		"parentName": "iTemp"
+	},
+	{
+		"label": "Salinity",
+		"name": "salinity",
+		"target": "salinityModeling"
+	},
+	{
+		"label": "sDSal",
+		"name": "sDSal",
+		"description": "Water Salinity (mg/L)",
+		"inputType": "inline",
+		"defaultValue": 0,
+		"parentName": "salinity"
+	},
+	{
+		"label": "Nutrients & Gases",
+		"name": "nutrientsAndGases"
+	},
+	{
+		"label": "Oxygen/BOD Modeling",
+		"name": "oxygenModeling",
+		"parentName": "nutrientsAndGases"
+	},
+	{
+		"label": "sO2W",
+		"name": "sO2W",
+		"description": "Oxygen concentration (mg/L)",
+		"inputType": "inline",
+		"defaultValue": 10,
+		"parentName": "oxygenModeling"
+	},
+	{
+		"label": "Carbon Modeling",
+		"name": "carbonModeling",
+		"parentName": "nutrientsAndGases"
+	},
+	{
+		"label": "spHW",
+		"name": "spHW",
+		"description": "Potential of hydrogen (pH) in the water",
+		"inputType": "inline",
+		"defaultValue": 7,
+		"parentName": "carbonModeling"
+	},
+	{
+		"label": "spHS",
+		"name": "spHS",
+		"description": "Potential of hydrogen (pH) in the sediment",
+		"inputType": "inline",
+		"defaultValue": 7,
+		"parentName": "carbonModeling"
+	},
+	{
+		"label": "sAlkW",
+		"name": "sAlkW",
+		"description": "Alkaline in the water",
+		"inputType": "inline",
+		"defaultValue": 100,
+		"parentName": "carbonModeling"
+	},
+	{
+		"label": "sAlkS",
+		"name": "sAlkS",
+		"description": "Alkaline in the sediment",
+		"inputType": "inline",
+		"defaultValue": 100,
+		"parentName": "carbonModeling"
+	},
+	{
+		"label": "sDicW",
+		"name": "sDicW",
+		"description": "Dissolved Inorganic Carbon in the water (mg/L)",
+		"inputType": "inline",
+		"defaultValue": 0.005,
+		"parentName": "carbonModeling"
+	},
+	{
+		"label": "sDicS",
+		"name": "sDicS",
+		"description": "Dissolved Inorganic Carbon in the sediment (mg/L)",
+		"inputType": "inline",
+		"defaultValue": 0.005,
+		"parentName": "carbonModeling"
+	},
+	{
+		"label": "sCH4W",
+		"name": "sCH4W",
+		"description": "Methane in the water (mg/L)",
+		"inputType": "inline",
+		"defaultValue": 0,
+		"parentName": "carbonModeling"
+	},
+	{
+		"label": "sCH4S",
+		"name": "sCH4S",
+		"description": "Methane in the sediment (mg/L)",
+		"inputType": "inline",
+		"defaultValue": 0,
+		"parentName": "carbonModeling"
+	},
+	{
+		"label": "Nutrient Modeling",
+		"name": "nutrientModeling",
+		"parentName": "nutrientsAndGases"
+	},
+	{
+		"label": "sPO4W",
+		"name": "sPO4W",
+		"description": "Orthophosphate in water PO4 (mg/L)",
+		"inputType": "inline",
+		"defaultValue": 0.005,
+		"parentName": "nutrientModeling"
+	},
+	{
+		"label": "sPAIMW",
+		"name": "sPAIMW",
+		"description": "Particulate Adsorbed Inorganic Phosphorus in the water PAIM (mg/L)",
+		"inputType": "inline",
+		"defaultValue": 0,
+		"parentName": "nutrientModeling"
+	},
+	{
+		"label": "sNO3W",
+		"name": "sNO3W",
+		"description": "Nitrate in water NO3 (mg/L)",
+		"inputType": "inline",
+		"defaultValue": 0.5,
+		"parentName": "nutrientModeling"
+	},
+	{
+		"label": "sNO3S",
+		"name": "sNO3S",
+		"description": "Nitrate in sediment NO3 (mg/L)",
+		"inputType": "inline",
+		"defaultValue": 0.002,
+		"parentName": "nutrientModeling"
+	},
+	{
+		"label": "sNH4W",
+		"name": "sNH4W",
+		"description": "Ammonium in water NH4 (mg/L)",
+		"inputType": "inline",
+		"defaultValue": 0.001,
+		"parentName": "nutrientModeling"
+	},
+	{
+		"label": "sNH4S",
+		"name": "sNH4S",
+		"description": "Ammonium in sediment NH4 (mg/L)",
+		"inputType": "inline",
+		"defaultValue": 0.02,
+		"parentName": "nutrientModeling"
+	},
+	{
+		"label": "sSiO2W",
+		"name": "sSiO2W",
+		"description": "Silicate in water SiO2 (mg/L)",
+		"inputType": "inline",
+		"defaultValue": 1,
+		"parentName": "nutrientModeling"
+	},
+	{
+		"label": "Inorganic Matter Modeling",
+		"name": "inorganicMatterModeling",
+		"parentName": "nutrientsAndGases"
+	},
+	{
+		"label": "sDIMW",
+		"name": "sDIMW",
+		"description": "Inorganic matter (IM) in water (mg/L)",
+		"inputType": "inline",
+		"defaultValue": 1,
+		"parentName": "inorganicMatterModeling"
+	},
+	{
+		"label": "Organic Matter Modeling",
+		"name": "organicMatterModeling",
+		"parentName": "nutrientsAndGases"
+	},
+	{
+		"label": "Organic Matter",
+		"name": "organicMatter1",
+		"parentName": "organicMatterModeling"
+	},
+	{
+		"label": "sOMW",
+		"name": "sOMW",
+		"description": "Organic matter (OM) in the water (mg/L)",
+		"inputType": "inline",
+		"defaultValue": 0.1,
+		"parentName": "organicMatter1"
+	},
+	{
+		"label": "Split Dissolved and Particulated Organic Matter",
+		"name": "organicMatter2",
+		"parentName": "organicMatterModeling"
+	},
+	{
+		"label": "sDPomW",
+		"name": "sDPomW",
+		"description": "Particulated organic matter (OM) in the water (mg/L)",
+		"inputType": "inline",
+		"defaultValue": 0.1,
+		"parentName": "organicMatter2"
+	},
+	{
+		"label": "sDPomS",
+		"name": "sDPomS",
+		"description": "Particulated organic matter (OM) in the sediment (mg/L)",
+		"inputType": "inline",
+		"defaultValue": 0.5,
+		"parentName": "organicMatter2"
+	},
+	{
+		"label": "sDDomW",
+		"name": "sDDomW",
+		"description": "Dissolved organic matter (OM) in the water (mg/L)",
+		"inputType": "inline",
+		"defaultValue": 0.1,
+		"parentName": "organicMatter2"
+	},
+	{
+		"label": "sDDomS",
+		"name": "sDDomS",
+		"description": "Dissolved organic matter (OM) in the sediment (mg/L)",
+		"inputType": "inline",
+		"defaultValue": 0.5,
+		"parentName": "organicMatter2"
+	},
+	{
+		"label": "Split Labile and Refractory Organic Matter",
+		"name": "organicMatter3",
+		"parentName": "organicMatterModeling"
+	},
+	{
+		"label": "sDPomLW",
+		"name": "sDPomLW",
+		"description": "Labile Particulated organic matter (OM) in the water (mg/L)",
+		"inputType": "inline",
+		"defaultValue": 0.1,
+		"parentName": "organicMatter3"
+	},
+	{
+		"label": "sDPomRW",
+		"name": "sDPomRW",
+		"description": "Refractory Particulated organic matter (OM) in the water (mg/L)",
+		"inputType": "inline",
+		"defaultValue": 0,
+		"parentName": "organicMatter3"
+	},
+	{
+		"label": "sDPomLS",
+		"name": "sDPomLS",
+		"description": "Labile Particulated organic matter (OM) in the sediment (mg/L)",
+		"inputType": "inline",
+		"defaultValue": 0.5,
+		"parentName": "organicMatter3"
+	},
+	{
+		"label": "sDPomRS",
+		"name": "sDPomRS",
+		"description": "Refractory Particulated organic matter (OM) in the sediment (mg/L)",
+		"inputType": "inline",
+		"defaultValue": 0,
+		"parentName": "organicMatter3"
+	},
+	{
+		"label": "sDDomLW",
+		"name": "sDDomLW",
+		"description": "Labile Dissolved organic matter (OM) in the water (mg/L)",
+		"inputType": "inline",
+		"defaultValue": 0.1,
+		"parentName": "organicMatter3"
+	},
+	{
+		"label": "sDDomRW",
+		"name": "sDDomRW",
+		"description": "Refractory Dissolved organic matter (OM) in the water (mg/L)",
+		"inputType": "inline",
+		"defaultValue": 0.5,
+		"parentName": "organicMatter3"
+	},
+	{
+		"label": "sDDomLS",
+		"name": "sDDomLS",
+		"description": "Labile Dissolved organic matter (OM) in the sediment (mg/L)",
+		"inputType": "inline",
+		"defaultValue": 0,
+		"parentName": "organicMatter3"
+	},
+	{
+		"label": "sDDomRS",
+		"name": "sDDomRS",
+		"description": "Refractory Dissolved organic matter (OM) in the sediment (mg/L)",
+		"inputType": "inline",
+		"defaultValue": 0,
+		"parentName": "organicMatter3"
+	},
+	{
+		"label": "Bacterioplankton Modeling",
+		"name": "bacterioplanktonModeling",
+		"parentName": "nutrientsAndGases"
+	},
+	{
+		"label": "sDBacW",
+		"name": "sDBacW",
+		"description": "Bacterioplankton in water - Dry Weight Biomass (g/m\u00b3)",
+		"inputType": "tabular",
+		"groups": "bacterioplanktonGroups",
+		"groupDefaultValues": [ 0.01, 0 ],
+		"parentName": "bacterioplanktonModeling"
+	},
+	{
+		"label": "sDBacS",
+		"name": "sDBacS",
+		"description": "Bacterioplankton in sediment - Dry Weight Biomass (g/m\u00b3)",
+		"inputType": "tabular",
+		"groups": "bacterioplanktonGroups",
+		"groupDefaultValues": [ 0, 0.01 ],
+		"parentName": "bacterioplanktonModeling"
+	}
+]
