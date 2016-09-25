@@ -291,7 +291,7 @@ void ProjectRepository::loadWaterQualityConfigurations(Project *project) {
         WaterQualityConfiguration *configuration = new WaterQualityConfiguration();
         configuration->setId(query.value("id").toUInt());
         configuration->setName(query.value("name").toString());
-        configuration->setGridDataConfiguration(project->getGridDataConfiguration(query.value("grid_data_configuration_id").toUInt()));
+        configuration->setHydrodynamicConfiguration(project->getHydrodynamicConfiguration(query.value("hydrodynamic_configuration_id").toUInt()));
         
         project->addWaterQualityConfiguration(configuration);
         
@@ -981,14 +981,14 @@ void ProjectRepository::saveWaterQualityConfigurations(Project *project) {
         bool update = !this->makeCopy && configuration->isPersisted();
         
         if (update) {
-            query.prepare("update water_quality_configuration set name = :n, grid_data_configuration_id = :g where id = :i");
+            query.prepare("update water_quality_configuration set name = :n, hydrodynamic_configuration_id = :h where id = :i");
             query.bindValue(":i", configuration->getId());
         } else {
-            query.prepare("insert into water_quality_configuration (name, grid_data_configuration_id) values (:n, :g)");
+            query.prepare("insert into water_quality_configuration (name, hydrodynamic_configuration_id) values (:n, :h)");
         }
         
         query.bindValue(":n", configuration->getName());
-        query.bindValue(":g", configuration->getGridDataConfiguration()->getId());
+        query.bindValue(":h", configuration->getHydrodynamicConfiguration()->getId());
         
         if (!query.exec()) {
             throw DatabaseException(QString("Unable to save water quality data configurations. Error: %1.").arg(query.lastError().text()).toStdString());

@@ -5,6 +5,7 @@ WaterQualityParameter::WaterQualityParameter() :
     checkable(false),
     checked(false),
     enabled(true),
+    target(nullptr),
     parent(nullptr),
     editable(true),
     group(false),

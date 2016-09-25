@@ -2,7 +2,7 @@
 
 WaterQualityConfiguration::WaterQualityConfiguration() :
     id(0),
-    gridDataConfiguration(nullptr),
+    hydrodynamicConfiguration(nullptr),
     loaded(false)
 {}
 
@@ -32,12 +32,12 @@ void WaterQualityConfiguration::setName(const QString &name) {
 	this->name = name;
 }
 
-GridDataConfiguration* WaterQualityConfiguration::getGridDataConfiguration() const {
-	return gridDataConfiguration;
+HydrodynamicConfiguration* WaterQualityConfiguration::getHydrodynamicConfiguration() const {
+	return hydrodynamicConfiguration;
 }
 
-void WaterQualityConfiguration::setGridDataConfiguration(GridDataConfiguration *gridDataConfiguration) {
-	this->gridDataConfiguration = gridDataConfiguration;
+void WaterQualityConfiguration::setHydrodynamicConfiguration(HydrodynamicConfiguration *hydrodynamicConfiguration) {
+	this->hydrodynamicConfiguration = hydrodynamicConfiguration;
 }
 
 bool WaterQualityConfiguration::addWaterQualityParameter(WaterQualityParameter *waterQualityParameter) {

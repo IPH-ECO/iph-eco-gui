@@ -153,7 +153,7 @@ void DatabaseUtility::createApplicationTables() {
     sql << "create table water_quality_configuration (" \
         "id integer primary key, " \
         "name text not null, " \
-        "grid_data_configuration_id integer not null" \
+        "hydrodynamic_configuration_id integer not null" \
     ")";
     
     sql << "drop table if exists water_quality_parameter";

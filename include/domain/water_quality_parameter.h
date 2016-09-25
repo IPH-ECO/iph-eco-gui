@@ -27,7 +27,6 @@ private:
     QString description;
     QString diagramItem;
     WaterQualityParameterSection section;
-    WaterQualityParameterSection targetSection;
     WaterQualityParameter *target;
     QStringList groups;
     WaterQualityParameter *parent;

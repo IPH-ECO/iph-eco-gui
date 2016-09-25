@@ -41,14 +41,12 @@ WaterQualityDialog::WaterQualityDialog(QWidget *parent) :
     ui->cbxConfiguration->setCurrentIndex(-1);
     ui->cbxConfiguration->blockSignals(false);
 
-    QSet<GridDataConfiguration*> gridDataConfigurations = project->getGridDataConfigurations();
-
-    ui->cbxGridDataConfiguration->blockSignals(true);
-    for (GridDataConfiguration *configuration : project->getGridDataConfigurations()) {
-        ui->cbxGridDataConfiguration->addItem(configuration->getName());
+    ui->cbxHydrodynamicConfiguration->blockSignals(true);
+    for (HydrodynamicConfiguration *configuration : project->getHydrodynamicConfigurations()) {
+        ui->cbxHydrodynamicConfiguration->addItem(configuration->getName());
     }
-    ui->cbxGridDataConfiguration->setCurrentIndex(-1);
-    ui->cbxGridDataConfiguration->blockSignals(false);
+    ui->cbxHydrodynamicConfiguration->setCurrentIndex(-1);
+    ui->cbxHydrodynamicConfiguration->blockSignals(false);
 }
 
 void WaterQualityDialog::on_webView_loadFinished(bool ok) {
@@ -297,20 +295,20 @@ void WaterQualityDialog::on_cbxConfiguration_currentIndexChanged(const QString &
         currentConfiguration = IPHApplication::getCurrentProject()->getWaterQualityConfiguration(configurationName);
         waterQualityRepository->loadParameters(currentConfiguration);
         ui->edtConfigurationName->setText(currentConfiguration->getName());
-        ui->cbxGridDataConfiguration->setCurrentText(currentConfiguration->getGridDataConfiguration()->getName());
+        ui->cbxHydrodynamicConfiguration->setCurrentText(currentConfiguration->getHydrodynamicConfiguration()->getName());
     }
     this->bindCurrentConfigurationToTreeWidgets();
     this->loadFoodMatrix();
     this->loadInitialConditions();
 }
 
-void WaterQualityDialog::on_cbxGridDataConfiguration_currentIndexChanged(const QString &gridDataConfigurationName) {
-    if (gridDataConfigurationName.isEmpty()) {
+void WaterQualityDialog::on_cbxHydrodynamicConfiguration_currentIndexChanged(const QString &hydrodynamicConfigurationName) {
+    if (hydrodynamicConfigurationName.isEmpty()) {
         return;
     }
     
-    GridDataConfiguration *gridDataConfiguration = IPHApplication::getCurrentProject()->getGridDataConfiguration(gridDataConfigurationName);
-    currentConfiguration->setGridDataConfiguration(gridDataConfiguration);
+    HydrodynamicConfiguration *hydrodynamicConfiguration = IPHApplication::getCurrentProject()->getHydrodynamicConfiguration(hydrodynamicConfigurationName);
+    currentConfiguration->setHydrodynamicConfiguration(hydrodynamicConfiguration);
 }
 
 void WaterQualityDialog::on_btnRemoveConfiguration_clicked() {
@@ -326,7 +324,7 @@ void WaterQualityDialog::on_btnRemoveConfiguration_clicked() {
 void WaterQualityDialog::on_btnNewConfiguration_clicked() {
     currentConfiguration = unsavedConfiguration;
     ui->cbxConfiguration->setCurrentIndex(-1);
-    ui->cbxGridDataConfiguration->setCurrentIndex(-1);
+    ui->cbxHydrodynamicConfiguration->setCurrentIndex(-1);
     ui->edtConfigurationName->setText("");
     ui->edtConfigurationName->setFocus();
 }
@@ -340,8 +338,8 @@ void WaterQualityDialog::on_btnApplyConfiguration_clicked() {
         return;
     }
     
-    if (ui->cbxGridDataConfiguration->currentIndex() == -1) {
-        QMessageBox::warning(this, tr("Water Quality"), tr("Grid data configuration can't be empty."));
+    if (ui->cbxHydrodynamicConfiguration->currentIndex() == -1) {
+        QMessageBox::warning(this, tr("Water Quality"), tr("Hydrodynamic configuration can't be empty."));
         return;
     }
     
