@@ -77,38 +77,6 @@ void WaterQualityRepository::loadParameters(WaterQualityConfiguration *configura
         return;
     }
     
-    for (int i = 0; i < this->jsonStructure.size(); i++) {
-        QJsonObject jsonParameter = jsonStructure[i].toObject();
-        QString parameterName = jsonParameter["name"].toString();
-        WaterQualityParameter *parameter = configuration->getParameter(parameterName, WaterQualityParameterSection::STRUCTURE);
-        
-        if (parameter) {
-            parameter->setChecked(parameter->getValue());
-        } else {
-            parameter = new WaterQualityParameter();
-            parameter->setChecked(jsonParameter["checked"].toBool());
-            parameter->setValue(parameter->isChecked());
-        }
-        
-        parameter->setName(jsonParameter["name"].toString());
-        parameter->setLabel(jsonParameter["label"].toString());
-        parameter->setDescription(jsonParameter["label"].toString());
-        parameter->setSection(WaterQualityParameterSection::STRUCTURE);
-        parameter->setTarget(jsonParameter["target"].toString());
-        parameter->setDiagramItem(jsonParameter["diagramItem"].toString());
-        parameter->setCheckable(jsonParameter["checkable"].toBool(false));
-        parameter->setEnabled(jsonParameter["enabled"].toBool(true));
-        parameter->setRadio(jsonParameter["radio"].toBool(false));
-        parameter->setGroup(jsonParameter["group"].toBool(false));
-        parameter->setPersistable(jsonParameter["persistable"].toBool(true));
-        parameter->setInputType(WaterQualityParameterInputType::NO_INPUT);
-        
-        WaterQualityParameter *parentParameter = configuration->getParameter(jsonParameter["parentName"].toString(), WaterQualityParameterSection::STRUCTURE);
-        
-        parameter->setParent(parentParameter);
-        configuration->addWaterQualityParameter(parameter);
-    }
-    
     WaterQualityParameter *lastGroupParameter = nullptr;
     QStringList lastGroups;
     
@@ -125,7 +93,6 @@ void WaterQualityRepository::loadParameters(WaterQualityConfiguration *configura
         parameter->setName(jsonParameter["name"].toString());
         parameter->setLabel(jsonParameter["label"].toString());
         parameter->setSection(WaterQualityParameterSection::PARAMETER);
-        parameter->setTarget(jsonParameter["target"].toString());
         parameter->setDescription(jsonParameter["description"].toString());
         parameter->setEnabled(jsonParameter["enabled"].toBool(true));
         parameter->setInputType(WaterQualityParameter::mapInputTypeFromString(jsonParameter["inputType"].toString()));
@@ -175,6 +142,39 @@ void WaterQualityRepository::loadParameters(WaterQualityConfiguration *configura
         configuration->addWaterQualityParameter(parameter);
     }
     
+    for (int i = 0; i < this->jsonStructure.size(); i++) {
+        QJsonObject jsonParameter = jsonStructure[i].toObject();
+        QString parameterName = jsonParameter["name"].toString();
+        WaterQualityParameter *parameter = configuration->getParameter(parameterName, WaterQualityParameterSection::STRUCTURE);
+        WaterQualityParameter *targetParameter = configuration->getParameter(jsonParameter["target"].toString(), WaterQualityParameterSection::PARAMETER);
+        
+        if (parameter) {
+            parameter->setChecked(parameter->getValue());
+        } else {
+            parameter = new WaterQualityParameter();
+            parameter->setChecked(jsonParameter["checked"].toBool());
+            parameter->setValue(parameter->isChecked());
+        }
+        
+        parameter->setName(jsonParameter["name"].toString());
+        parameter->setLabel(jsonParameter["label"].toString());
+        parameter->setDescription(jsonParameter["label"].toString());
+        parameter->setSection(WaterQualityParameterSection::STRUCTURE);
+        parameter->setTarget(targetParameter);
+        parameter->setDiagramItem(jsonParameter["diagramItem"].toString());
+        parameter->setCheckable(jsonParameter["checkable"].toBool(false));
+        parameter->setEnabled(jsonParameter["enabled"].toBool(true));
+        parameter->setRadio(jsonParameter["radio"].toBool(false));
+        parameter->setGroup(jsonParameter["group"].toBool(false));
+        parameter->setPersistable(jsonParameter["persistable"].toBool(true));
+        parameter->setInputType(WaterQualityParameterInputType::NO_INPUT);
+        
+        WaterQualityParameter *parentParameter = configuration->getParameter(jsonParameter["parentName"].toString(), WaterQualityParameterSection::STRUCTURE);
+        
+        parameter->setParent(parentParameter);
+        configuration->addWaterQualityParameter(parameter);
+    }
+    
     for (int i = 0; i < jsonFoodMatrix.size(); i++) {
         QJsonObject jsonFood = jsonFoodMatrix[i].toObject();
         QString elementName = jsonFood["name"].toString();
@@ -208,6 +208,8 @@ void WaterQualityRepository::loadParameters(WaterQualityConfiguration *configura
         QString parameterName = jsonParameter["name"].toString();
         QStringList groups = this->findGroups(configuration, jsonParameter["groups"].toString());
         WaterQualityParameter *parameter = configuration->getParameter(parameterName, WaterQualityParameterSection::INITIAL_CONDITION);
+        WaterQualityParameterSection targetParameterSection = jsonParameter["section"].toString() == "parameter" ? WaterQualityParameterSection::PARAMETER : WaterQualityParameterSection::STRUCTURE;
+        WaterQualityParameter *targetParameter = configuration->getParameter(jsonParameter["target"].toString(), targetParameterSection);
         
         if (!parameter) {
             parameter = new WaterQualityParameter();
@@ -217,7 +219,7 @@ void WaterQualityRepository::loadParameters(WaterQualityConfiguration *configura
         parameter->setName(jsonParameter["name"].toString());
         parameter->setLabel(jsonParameter["label"].toString());
         parameter->setSection(WaterQualityParameterSection::INITIAL_CONDITION);
-        parameter->setTarget(jsonParameter["target"].toString());
+        parameter->setTarget(targetParameter);
         parameter->setDescription(jsonParameter["description"].toString());
         parameter->setInputType(WaterQualityParameter::mapInputTypeFromString(jsonParameter["inputType"].toString()));
         parameter->setPersistable(true);

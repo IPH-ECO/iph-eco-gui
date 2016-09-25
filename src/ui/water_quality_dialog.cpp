@@ -276,6 +276,22 @@ void WaterQualityDialog::loadFoodMatrix() {
     }
 }
 
+void WaterQualityDialog::loadInitialConditions() {
+    for (WaterQualityParameter *parameter : currentConfiguration->getParameters()) {
+        if (parameter->getSection() == WaterQualityParameterSection::INITIAL_CONDITION && parameter->getTarget()) {
+            bool hidden;
+            
+            if (parameter->getTarget()->getSection() == WaterQualityParameterSection::STRUCTURE) {
+                hidden = !parameter->getTarget()->isChecked();
+            } else {
+                hidden = parameter->getTarget()->getItemWidget()->isHidden();
+            }
+            
+            parameter->getItemWidget()->setHidden(hidden);
+        }
+    }
+}
+
 void WaterQualityDialog::on_cbxConfiguration_currentIndexChanged(const QString &configurationName) {
     if (!configurationName.isEmpty()) {
         currentConfiguration = IPHApplication::getCurrentProject()->getWaterQualityConfiguration(configurationName);
@@ -285,6 +301,7 @@ void WaterQualityDialog::on_cbxConfiguration_currentIndexChanged(const QString &
     }
     this->bindCurrentConfigurationToTreeWidgets();
     this->loadFoodMatrix();
+    this->loadInitialConditions();
 }
 
 void WaterQualityDialog::on_cbxGridDataConfiguration_currentIndexChanged(const QString &gridDataConfigurationName) {
@@ -424,26 +441,24 @@ void WaterQualityDialog::on_trwStructure_itemChanged(QTreeWidgetItem *item, int 
             }
         }
         
-        WaterQualityParameter *targetParameter = currentConfiguration->getParameter(sourceParameter->getTarget(), WaterQualityParameterSection::PARAMETER);
-        
-        if (targetParameter && targetParameter->getItemWidget()) {
-            if (targetParameter->isRadio()) {
+        if (sourceParameter->getTarget() && sourceParameter->getTarget()->getItemWidget()) {
+            if (sourceParameter->getTarget()->isRadio()) {
                 if (sourceParameter->isChecked()) {
-                    for (WaterQualityParameter *sibling : targetParameter->getSiblings()) {
+                    for (WaterQualityParameter *sibling : sourceParameter->getTarget()->getSiblings()) {
                         if (sibling->isRadio()) {
                             sibling->getItemWidget()->setHidden(true);
                         }
                     }
                 } else {
                     if (sourceParameter->getParent() && sourceParameter->getParent()->isChecked()) {
-                        WaterQualityParameter *sourceParentParameter = currentConfiguration->getParameter(sourceParameter->getParent()->getTarget(), WaterQualityParameterSection::PARAMETER);
+                        WaterQualityParameter *sourceParentParameter = sourceParameter->getParent()->getTarget();
                         
                         sourceParentParameter->getItemWidget()->setHidden(false);
                     }
                 }
             }
             
-            targetParameter->getItemWidget()->setHidden(!sourceParameter->isChecked());
+            sourceParameter->getTarget()->getItemWidget()->setHidden(!sourceParameter->isChecked());
         }
     }
 }
@@ -453,6 +468,8 @@ void WaterQualityDialog::on_tabWidget_currentChanged(int index) {
     
     if (ui->tabWidget->tabText(index) == "Food Matrix") {
         this->loadFoodMatrix();
+    } else if (ui->tabWidget->tabText(index) == "Initial Conditions") {
+        this->loadInitialConditions();
     }
 }
 

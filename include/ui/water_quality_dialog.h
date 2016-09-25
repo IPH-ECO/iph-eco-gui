@@ -25,6 +25,7 @@ private:
     bool isItemWidgetVisible(QTreeWidgetItem *item) const;
     void bindCurrentConfigurationToTreeWidgets();
     void loadFoodMatrix();
+    void loadInitialConditions();
 private slots:
     void on_cbxConfiguration_currentIndexChanged(const QString &configurationName);
 	void on_cbxGridDataConfiguration_currentIndexChanged(const QString &gridDataConfigurationName);

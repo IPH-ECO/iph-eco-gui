@@ -1,8 +1,8 @@
 [
 	{
 		"label": "Heat Budget Modeling",
-		"name": "iTemp",
-		"target": "iTemp"
+		"name": "heatBudgetModeling",
+		"target": "heatBudgetModeling"
 	},
 	{
 		"label": "sDTempW",
@@ -10,7 +10,7 @@
 		"description": "Water Temperature (\u00b0C)",
 		"inputType": "inline",
 		"defaultValue": 20,
-		"parentName": "iTemp"
+		"parentName": "heatBudgetModeling"
 	},
 	{
 		"label": "Salinity",
@@ -32,6 +32,7 @@
 	{
 		"label": "Oxygen/BOD Modeling",
 		"name": "oxygenModeling",
+		"target": "iOxyBOD",
 		"parentName": "nutrientsAndGases"
 	},
 	{
@@ -45,6 +46,7 @@
 	{
 		"label": "Carbon Modeling",
 		"name": "carbonModeling",
+		"target": "iCarbon",
 		"parentName": "nutrientsAndGases"
 	},
 	{
@@ -175,6 +177,7 @@
 	{
 		"label": "Inorganic Matter Modeling",
 		"name": "inorganicMatterModeling",
+		"target": "iMatInorg",
 		"parentName": "nutrientsAndGases"
 	},
 	{
@@ -193,6 +196,8 @@
 	{
 		"label": "Organic Matter",
 		"name": "organicMatter1",
+		"section": "parameter",
+		"target": "organicMatter1",
 		"parentName": "organicMatterModeling"
 	},
 	{
@@ -206,6 +211,8 @@
 	{
 		"label": "Split Dissolved and Particulated Organic Matter",
 		"name": "organicMatter2",
+		"section": "parameter",
+		"target": "organicMatter2",
 		"parentName": "organicMatterModeling"
 	},
 	{
@@ -243,6 +250,8 @@
 	{
 		"label": "Split Labile and Refractory Organic Matter",
 		"name": "organicMatter3",
+		"section": "parameter",
+		"target": "organicMatter3",
 		"parentName": "organicMatterModeling"
 	},
 	{
@@ -312,6 +321,7 @@
 	{
 		"label": "Bacterioplankton Modeling",
 		"name": "bacterioplanktonModeling",
+		"target": "bacterioplanktonModeling",
 		"parentName": "nutrientsAndGases"
 	},
 	{

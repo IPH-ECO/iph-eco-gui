@@ -27,7 +27,8 @@ private:
     QString description;
     QString diagramItem;
     WaterQualityParameterSection section;
-    QString target;
+    WaterQualityParameterSection targetSection;
+    WaterQualityParameter *target;
     QStringList groups;
     WaterQualityParameter *parent;
     bool editable;
@@ -63,7 +64,7 @@ public:
     bool isEnabled() const;
     WaterQualityParameterInputType getInputType() const;
     void setInputType(const WaterQualityParameterInputType &inputType);
-
+    
     QString getLabel() const;
     void setLabel(const QString &label);
     QString getDescription() const;
@@ -72,8 +73,8 @@ public:
     void setDiagramItem(const QString &diagramItem);
     WaterQualityParameterSection getSection() const;
     void setSection(const WaterQualityParameterSection &section);
-    QString getTarget() const;
-    void setTarget(const QString &target);
+    WaterQualityParameter* getTarget() const;
+    void setTarget(WaterQualityParameter *target);
     QStringList getGroups() const;
     void setGroups(const QStringList &groups);
     WaterQualityParameter* getParent() const;

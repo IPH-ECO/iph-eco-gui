@@ -128,11 +128,11 @@ void WaterQualityParameter::setSection(const WaterQualityParameterSection &secti
     this->section = section;
 }
 
-QString WaterQualityParameter::getTarget() const {
+WaterQualityParameter* WaterQualityParameter::getTarget() const {
     return target;
 }
 
-void WaterQualityParameter::setTarget(const QString &target) {
+void WaterQualityParameter::setTarget(WaterQualityParameter *target) {
     this->target = target;
 }
 

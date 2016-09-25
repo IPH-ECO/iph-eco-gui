@@ -69,7 +69,7 @@ void WaterQualityParameterDialog::accept() {
             QTableWidgetItem *tableItem = ui->trwParameters->item(i, j);
             
             if (tableItem->flags() == Qt::NoItemFlags) {
-                groupValues << std::numeric_limits<double>::max();
+                groupValues << 0.0;
             } else {
                 groupValues << tableItem->text().toDouble();
             }
