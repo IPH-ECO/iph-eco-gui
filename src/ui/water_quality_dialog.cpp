@@ -91,18 +91,16 @@ void WaterQualityDialog::bindCurrentConfigurationToTreeWidgets() {
         for (QTreeWidgetItem *widgetItem : widgetItems) {
             if (widgetItem->data(0, Qt::UserRole).toString() == parameter->getName()) {
                 parameter->setItemWidget(widgetItem);
+                
+                if (parameter->isCheckable()) {
+                    widgetItem->setCheckState(0, parameter->isChecked() ? Qt::Checked : Qt::Unchecked);
+                } else if (parameter->getInputType() == WaterQualityParameterInputType::INLINE) {
+                    QLineEdit *lineEdit = treeWidget->findChild<QLineEdit*>(parameter->getName());
+                    lineEdit->setText(QString::number(parameter->getValue()));
+                }
+                
                 break;
             }
-        }
-    }
-    
-    for (WaterQualityParameter *parameter : currentConfiguration->getParameters()) {
-        if (parameter->isCheckable()) {
-            parameter->getItemWidget()->setCheckState(0, parameter->isChecked() ? Qt::Checked : Qt::Unchecked);
-        } else if (parameter->getInputType() == WaterQualityParameterInputType::INLINE) {
-            QTreeWidget *treeWidget = parameter->getSection() == WaterQualityParameterSection::PARAMETER ? ui->trwParameter : ui->trwInitialConditions;
-            QLineEdit *lineEdit = treeWidget->findChild<QLineEdit*>(parameter->getName());
-            lineEdit->setText(QString::number(parameter->getValue()));
         }
     }
 }
@@ -167,7 +165,6 @@ void WaterQualityDialog::buildTreeWidgets(WaterQualityParameter *parameter) {
         QWidget *buttonWidget = new QWidget(treeWidget);
         
         buttonWidget->setLayout(layout);
-        
         treeWidget->setItemWidget(parameterItem, 1, buttonWidget);
     }
     
@@ -297,6 +294,7 @@ void WaterQualityDialog::on_cbxConfiguration_currentIndexChanged(const QString &
         ui->edtConfigurationName->setText(currentConfiguration->getName());
         ui->cbxHydrodynamicConfiguration->setCurrentText(currentConfiguration->getHydrodynamicConfiguration()->getName());
     }
+    
     this->bindCurrentConfigurationToTreeWidgets();
     this->loadFoodMatrix();
     this->loadInitialConditions();
@@ -347,7 +345,8 @@ void WaterQualityDialog::on_btnApplyConfiguration_clicked() {
     
     for (WaterQualityParameter *parameter : currentConfiguration->getParameters(true)) {
         if (parameter->getInputType() == WaterQualityParameterInputType::INLINE) {
-            QLineEdit *lineEdit = static_cast<QLineEdit*>(ui->trwParameter->itemWidget(parameter->getItemWidget(), 1));
+            QTreeWidget *treeWidget = parameter->getSection() == WaterQualityParameterSection::PARAMETER ? ui->trwParameter : ui->trwInitialConditions;
+            QLineEdit *lineEdit = static_cast<QLineEdit*>(treeWidget->itemWidget(parameter->getItemWidget(), 1));
             parameter->setValue(lineEdit->text().toDouble());
         }
     }

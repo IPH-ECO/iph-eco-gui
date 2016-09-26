@@ -28,7 +28,7 @@ private:
     void loadInitialConditions();
 private slots:
     void on_cbxConfiguration_currentIndexChanged(const QString &configurationName);
-	void on_cbxHydrodynamicConfiguration_currentIndexChanged(const QString &gridDataConfigurationName);
+	void on_cbxHydrodynamicConfiguration_currentIndexChanged(const QString &hydrodynamicConfigurationName);
 	void on_btnRemoveConfiguration_clicked();
 	void on_btnNewConfiguration_clicked();
 	void on_btnApplyConfiguration_clicked();

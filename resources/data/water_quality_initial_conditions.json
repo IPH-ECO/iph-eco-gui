@@ -191,6 +191,7 @@
 	{
 		"label": "Organic Matter Modeling",
 		"name": "organicMatterModeling",
+		"target": "organicMatterModeling",
 		"parentName": "nutrientsAndGases"
 	},
 	{
@@ -341,5 +342,98 @@
 		"groups": "bacterioplanktonGroups",
 		"groupDefaultValues": [ 0, 0.01 ],
 		"parentName": "bacterioplanktonModeling"
+	},
+	{
+		"label": "Phytoplankton Modeling",
+		"name": "phytoplanktonModeling",
+		"target": "phytoplanktonModeling",
+		"parentName": "nutrientsAndGases"
+	},
+	{
+		"label": "sDPhytW",
+		"name": "sDPhytW",
+		"description": "Phytoplankton in water - Dry Weight Biomass (g/m\u00b3)",
+		"inputType": "tabular",
+		"groups": "phytoplanktonGroups",
+		"groupDefaultValues": 0.1,
+		"parentName": "phytoplanktonModeling"
+	},
+	{
+		"label": "sDPhytS",
+		"name": "sDPhytS",
+		"description": "Phytoplankton in sediment - Dry Weight Biomass (g/m\u00b3)",
+		"inputType": "tabular",
+		"groups": "phytoplanktonGroups",
+		"groupDefaultValues": 0.01,
+		"parentName": "phytoplanktonModeling"
+	},
+	{
+		"label": "Macrophytes Modeling",
+		"name": "macrophytesModeling",
+		"target": "iMac",
+		"parentName": "nutrientsAndGases"
+	},
+	{
+		"label": "sDMac",
+		"name": "sDMac",
+		"description": "Macrophytes - Dry Weight Biomass (g/m\u00b2)",
+		"inputType": "tabular",
+		"groups": "macrophytesGroups",
+		"groupDefaultValues": 0.1,
+		"parentName": "macrophytesModeling"
+	},
+	{
+		"label": "Zooplankton Modeling",
+		"name": "zooplanktonModeling",
+		"target": "zooplanktonModeling",
+		"parentName": "nutrientsAndGases"
+	},
+	{
+		"label": "sDZoo",
+		"name": "sDZoo",
+		"description": "Zooplankton in water - Dry Weight Biomass (g/m\u00b3)",
+		"inputType": "tabular",
+		"groups": "zooplanktonGroups",
+		"groupDefaultValues": 0.01,
+		"parentName": "zooplanktonModeling"
+	},
+	{
+		"label": "Zoobenthos Modeling",
+		"name": "zoobenthosModeling",
+		"target": "iBen",
+		"parentName": "nutrientsAndGases"
+	},
+	{
+		"label": "sDBent",
+		"name": "sDBent",
+		"description": "Zoobenthos in water - Dry Weight Biomass (g/m\u00b2)",
+		"inputType": "tabular",
+		"groups": "zoobenthosGroups",
+		"groupDefaultValues": 0.1,
+		"parentName": "zoobenthosModeling"
+	},
+	{
+		"label": "Fish Modeling",
+		"name": "fishModeling",
+		"target": "fishModeling",
+		"parentName": "nutrientsAndGases"
+	},
+	{
+		"label": "sDFiAd",
+		"name": "sDFiAd",
+		"description": "Adult Fish - Dry Weight Biomass (g/m\u00b3)",
+		"inputType": "tabular",
+		"groups": "fishGroups",
+		"groupDefaultValues": [ 2, 0.1, 3 ],
+		"parentName": "fishModeling"
+	},
+	{
+		"label": "sDFiJv",
+		"name": "sDFiJv",
+		"description": "Juveline Fish - Dry Weight Biomass (g/m\u00b3)",
+		"inputType": "tabular",
+		"groups": "fishGroups",
+		"groupDefaultValues": [ 0.1, 0 ],
+		"parentName": "fishModeling"
 	}
 ]
