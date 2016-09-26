@@ -91,16 +91,15 @@ void WaterQualityDialog::bindCurrentConfigurationToTreeWidgets() {
         for (QTreeWidgetItem *widgetItem : widgetItems) {
             if (widgetItem->data(0, Qt::UserRole).toString() == parameter->getName()) {
                 parameter->setItemWidget(widgetItem);
-                
-                if (parameter->isCheckable()) {
-                    widgetItem->setCheckState(0, parameter->isChecked() ? Qt::Checked : Qt::Unchecked);
-                } else if (parameter->getInputType() == WaterQualityParameterInputType::INLINE) {
-                    QLineEdit *lineEdit = treeWidget->findChild<QLineEdit*>(parameter->getName());
-                    lineEdit->setText(QString::number(parameter->getValue()));
-                }
-                
-                break;
             }
+        }
+        
+        if (parameter->isCheckable()) {
+            parameter->getItemWidget()->setCheckState(0, parameter->isChecked() ? Qt::Checked : Qt::Unchecked);
+        } else if (parameter->getInputType() == WaterQualityParameterInputType::INLINE) {
+            QTreeWidget *treeWidget = parameter->getSection() == WaterQualityParameterSection::PARAMETER ? ui->trwParameter : ui->trwInitialConditions;
+            QLineEdit *lineEdit = treeWidget->findChild<QLineEdit*>(parameter->getName());
+            lineEdit->setText(QString::number(parameter->getValue()));
         }
     }
 }
