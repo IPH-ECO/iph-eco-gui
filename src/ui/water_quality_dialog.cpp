@@ -93,7 +93,9 @@ void WaterQualityDialog::bindCurrentConfigurationToTreeWidgets() {
                 parameter->setItemWidget(widgetItem);
             }
         }
-        
+    }
+    
+    for (WaterQualityParameter *parameter : currentConfiguration->getParameters()) {
         if (parameter->isCheckable()) {
             parameter->getItemWidget()->setCheckState(0, parameter->isChecked() ? Qt::Checked : Qt::Unchecked);
         } else if (parameter->getInputType() == WaterQualityParameterInputType::INLINE) {
