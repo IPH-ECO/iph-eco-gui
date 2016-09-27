@@ -121,3 +121,17 @@ void WaterQualityConfiguration::setLoaded(const bool &loaded) {
 bool WaterQualityConfiguration::isLoaded() const {
     return loaded;
 }
+
+SimulationDataType::WaterQualityConfiguration* WaterQualityConfiguration::toSimulationDataType() const {
+    SimulationDataType::WaterQualityConfiguration *configuration = new SimulationDataType::WaterQualityConfiguration();
+    QList<WaterQualityParameter*> persistableParameters = this->getParameters(true);
+    
+    configuration->numberOfParameters = persistableParameters.size();
+    configuration->parameters = new SimulationDataType::WaterQualityParameter[configuration->numberOfParameters];
+    
+    for (int i = 0; i < configuration->numberOfParameters; i++) {
+        configuration->parameters[i] = persistableParameters[i]->toSimulationDataType();
+    }
+    
+    return configuration;
+}

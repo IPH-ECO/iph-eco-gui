@@ -66,6 +66,34 @@ module domain_types
         real(c_double) :: value2
     end type
 
+    type, bind(C) :: HydrodynamicConfiguration
+        integer(c_int) :: numberOfParameters
+        type(c_ptr) :: parameters
+        integer(c_int) :: numberOfBoundaryConditions
+        type(c_ptr) :: boundaryConditions
+        type(c_ptr) :: gridDataConfiguration
+    end type
+
+    type, bind(C) :: WaterQualityGroup
+        integer(c_int) :: nameLength
+        type(c_ptr) :: name
+    end type
+
+    type, bind(C) :: WaterQualityParameter
+        integer(c_int) :: nameLength
+        type(c_ptr) :: name
+        integer(c_int) :: parameterType
+        integer(c_int) :: numberOfGroups
+        type(c_ptr) :: groups
+        integer(c_int) :: numberOfValues
+        type(c_ptr) :: values
+    end type
+
+    type, bind(C) :: WaterQualityConfiguration
+        integer(c_int) :: numberOfParameters
+        type(c_ptr) :: parameters
+    end type
+
     type, bind(C) :: MeteorologicalParameter
         integer(c_int) :: nameLength
         type(c_ptr) :: name
@@ -92,14 +120,6 @@ module domain_types
         type(c_ptr) :: stations
     end type
 
-    type, bind(C) :: HydrodynamicConfiguration
-        integer(c_int) :: numberOfParameters
-        type(c_ptr) :: parameters
-        integer(c_int) :: numberOfBoundaryConditions
-        type(c_ptr) :: boundaryConditions
-        type(c_ptr) :: gridDataConfiguration
-    end type
-
     type, bind(C) :: OutputParameter
         integer(c_int) :: nameLength
         type(c_ptr) :: name
@@ -121,6 +141,7 @@ module domain_types
         integer(c_int) :: layersLength
         type(c_ptr) :: layers
         type(c_ptr) :: hydrodynamicConfiguration
+        type(c_ptr) :: waterQualityConfiguration
         type(c_ptr) :: meteorologicalConfiguration
         real(c_double) :: minimumVerticalLimit
         real(c_double) :: maximumVerticalLimit

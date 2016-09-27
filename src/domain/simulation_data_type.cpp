@@ -79,6 +79,53 @@ void SimulationDataType::BoundaryCondition::destroy() {
     delete timeSeriesList;
 }
 
+SimulationDataType::HydrodynamicConfiguration::HydrodynamicConfiguration() :
+    parameters(nullptr),
+    boundaryConditions(nullptr),
+    gridDataConfiguration(nullptr)
+{}
+
+void SimulationDataType::HydrodynamicConfiguration::destroy() {
+    parameters->destroy();
+    gridDataConfiguration->destroy();
+    
+    if (this->numberOfBoundaryConditions > 0) {
+        boundaryConditions->destroy();
+    }
+    
+    delete parameters;
+    delete boundaryConditions;
+    delete gridDataConfiguration;
+}
+
+SimulationDataType::WaterQualityGroup::WaterQualityGroup() :
+    name(nullptr)
+{}
+
+void SimulationDataType::WaterQualityGroup::destroy() {
+    delete name;
+}
+
+SimulationDataType::WaterQualityParameter::WaterQualityParameter() :
+    name(nullptr),
+    groups(nullptr),
+    values(nullptr)
+{}
+
+void SimulationDataType::WaterQualityParameter::destroy() {
+    delete name;
+    delete groups;
+    delete values;
+}
+
+SimulationDataType::WaterQualityConfiguration::WaterQualityConfiguration() :
+    parameters(nullptr)
+{}
+
+void SimulationDataType::WaterQualityConfiguration::destroy() {
+    delete parameters;
+}
+
 SimulationDataType::MeteorologicalParameter::MeteorologicalParameter() :
     name(nullptr),
     timeSeriesList(nullptr)
@@ -107,25 +154,6 @@ void SimulationDataType::MeteorologicalConfiguration::destroy() {
     delete stations;
 }
 
-SimulationDataType::HydrodynamicConfiguration::HydrodynamicConfiguration() :
-    parameters(nullptr),
-    boundaryConditions(nullptr),
-    gridDataConfiguration(nullptr)
-{}
-
-void SimulationDataType::HydrodynamicConfiguration::destroy() {
-	parameters->destroy();
-    gridDataConfiguration->destroy();
-    
-    if (this->numberOfBoundaryConditions > 0) {
-        boundaryConditions->destroy();
-    }
-    
-    delete parameters;
-    delete boundaryConditions;
-    delete gridDataConfiguration;
-}
-
 SimulationDataType::OutputParameter::OutputParameter() :
     name(nullptr)
 {}
@@ -149,6 +177,8 @@ void SimulationDataType::RecoveryVariables::destroy() {
 SimulationDataType::Simulation::Simulation() :
     label(nullptr),
     layers(nullptr),
+    hydrodynamicConfiguration(nullptr),
+    waterQualityConfiguration(nullptr),
     meteorologicalConfiguration(nullptr),
     observations(nullptr),
     outputDirectory(nullptr),
@@ -158,12 +188,14 @@ SimulationDataType::Simulation::Simulation() :
 
 void SimulationDataType::Simulation::destroy() {
 	hydrodynamicConfiguration->destroy();
+    waterQualityConfiguration->destroy();
     meteorologicalConfiguration->destroy();
     outputParameters->destroy();
     
     delete label;
     delete layers;
     delete hydrodynamicConfiguration;
+    delete waterQualityConfiguration;
     delete meteorologicalConfiguration;
     delete observations;
     delete outputDirectory;

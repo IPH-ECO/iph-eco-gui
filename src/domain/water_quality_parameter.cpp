@@ -265,12 +265,6 @@ WaterQualityParameter* WaterQualityParameter::getChild(int i) const {
     return children[i];
 }
 
-SimulationDataType::WaterQualityParameter WaterQualityParameter::toSimulationDataType() const {
-    SimulationDataType::WaterQualityParameter parameter;
-    
-    return parameter;
-}
-
 WaterQualityParameterInputType WaterQualityParameter::mapInputTypeFromString(const QString &inputTypeStr) {
     if (inputTypeStr == "inline") {
         return WaterQualityParameterInputType::INLINE;
@@ -297,4 +291,50 @@ QString WaterQualityParameter::mapStringFromInputType(const WaterQualityParamete
 
 bool WaterQualityParameter::sort(WaterQualityParameter *p1, WaterQualityParameter *p2) {
     return p1->order < p2->order;
+}
+
+SimulationDataType::WaterQualityParameter WaterQualityParameter::toSimulationDataType() const {
+    SimulationDataType::WaterQualityParameter parameter;
+    QByteArray nameByteArray = this->name.toLocal8Bit();
+    
+    parameter.nameLength = (int) nameByteArray.size();
+    parameter.name = new char[nameByteArray.size()];
+    strncpy(parameter.name, nameByteArray.constData(), name.size());
+    
+    parameter.parameterType = (int) section;
+    
+    if (section == WaterQualityParameterSection::STRUCTURE) {
+        parameter.values = new double(this->checked ? 1 : 0);
+    } else {
+        if (groups.isEmpty()) {
+            parameter.numberOfGroups = 0;
+            parameter.numberOfValues = 1;
+            parameter.values = new double[parameter.numberOfValues];
+        } else {
+            int j = 0;
+            
+            parameter.numberOfGroups = groups.size();
+            parameter.groups = new SimulationDataType::WaterQualityGroup[parameter.numberOfGroups];
+            
+            for (QString groupName : groups) {
+                QByteArray localGroupName = groupName.toLocal8Bit();
+                
+                parameter.groups[j].nameLength = (int) localGroupName.size();
+                parameter.groups[j].name = new char[localGroupName.size()];
+                strncpy(parameter.groups[j].name, localGroupName.constData(), localGroupName.size());
+                
+                j++;
+            }
+            
+            parameter.numberOfValues = groupValues.size();
+            parameter.values = new double[parameter.numberOfValues];
+            j = 0;
+            
+            for (double groupValue : groupValues) {
+                parameter.values[j++] = groupValue;
+            }
+        }
+    }
+    
+    return parameter;
 }

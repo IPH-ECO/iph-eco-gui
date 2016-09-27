@@ -9,7 +9,13 @@
 #include <QRegularExpression>
 
 Simulation::Simulation() :
-    id(0), hydrodynamicConfiguration(nullptr), status(SimulationStatus::IDLE), progress(0), simulationStruct(nullptr), previousStatus(SimulationStatus::UNDEFINED)
+    id(0),
+    hydrodynamicConfiguration(nullptr),
+    waterQualityConfiguration(nullptr),
+    status(SimulationStatus::IDLE),
+    progress(0),
+    simulationStruct(nullptr),
+    previousStatus(SimulationStatus::UNDEFINED)
 {
     qRegisterMetaType<SimulationStatus>("SimulationStatus");
 }
@@ -151,6 +157,14 @@ HydrodynamicConfiguration* Simulation::getHydrodynamicConfiguration() const {
 
 void Simulation::setHydrodynamicConfiguration(HydrodynamicConfiguration *configuration) {
 	this->hydrodynamicConfiguration = configuration;
+}
+
+WaterQualityConfiguration* Simulation::getWaterQualityConfiguration() const {
+    return waterQualityConfiguration;
+}
+
+void Simulation::setWaterQualityConfiguration(WaterQualityConfiguration *configuration) {
+    this->waterQualityConfiguration = configuration;
 }
 
 MeteorologicalConfiguration* Simulation::getMeteorologicalConfiguration() const {
@@ -421,6 +435,7 @@ SimulationDataType::Simulation* Simulation::toSimulationDataType() {
 		}
 
 		simulationStruct->hydrodynamicConfiguration = this->hydrodynamicConfiguration->toSimulationDataType();
+        simulationStruct->waterQualityConfiguration = this->waterQualityConfiguration->toSimulationDataType();
 	    simulationStruct->meteorologicalConfiguration = this->meteorologicalConfiguration->toSimulationDataType();
 	    simulationStruct->minimumVerticalLimit = this->minimumVerticalLimit;
 	    simulationStruct->maximumVerticalLimit = this->maximumVerticalLimit;

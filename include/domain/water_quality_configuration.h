@@ -39,6 +39,7 @@ public:
     QHash<QPair<QString, QString>, double> getFoodMatrix() const;
     void setLoaded(const bool &loaded);
     bool isLoaded() const;
+    SimulationDataType::WaterQualityConfiguration* toSimulationDataType() const;
 };
 
 #endif // WATER_QUALITY_CONFIGURATION_H

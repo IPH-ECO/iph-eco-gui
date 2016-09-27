@@ -315,6 +315,7 @@ void ProjectRepository::loadWaterQualityParameters(WaterQualityConfiguration *co
         parameter->setSection((WaterQualityParameterSection) query.value("section").toInt());
         parameter->setValue(query.value("value").toDouble());
         parameter->setGroupValues(query.value("group_values").toString());
+        parameter->setPersistable(true);
         
         configuration->addWaterQualityParameter(parameter);
         

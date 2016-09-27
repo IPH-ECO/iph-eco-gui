@@ -31,6 +31,10 @@ CreateSimulationDialog::CreateSimulationDialog(QWidget *parent) :
         ui->cbxHydrodynamic->addItem(configuration->getName());
     }
     
+    for (WaterQualityConfiguration *configuration : project->getWaterQualityConfigurations()) {
+        ui->cbxWaterQuality->addItem(configuration->getName());
+    }
+    
     for (MeteorologicalConfiguration *configuration : project->getMeteorologicalConfigurations()) {
         ui->cbxMeteorological->addItem(configuration->getName());
     }
@@ -110,10 +114,10 @@ bool CreateSimulationDialog::isValid() {
 		return false;
 	}
 
-//	if (ui->cbxWaterQuality->currentIndex() == -1) {
-//		QMessageBox::warning(this, tr("Create Simulation"), tr("Water quality data can't be blank."));
-//		return false;
-//	}
+	if (ui->cbxWaterQuality->currentIndex() == -1) {
+		QMessageBox::warning(this, tr("Create Simulation"), tr("Water quality data can't be blank."));
+		return false;
+	}
 
 	if (ui->cbxMeteorological->currentIndex() == -1) {
 		QMessageBox::warning(this, tr("Create Simulation"), tr("Meteorological data can't be blank."));
@@ -206,6 +210,7 @@ void CreateSimulationDialog::accept() {
     bool startOnCreate = ui->chkStart->isChecked();
     Project *project = IPHApplication::getCurrentProject();
     HydrodynamicConfiguration *hydrodynamicConfiguration = project->getHydrodynamicConfiguration(ui->cbxHydrodynamic->currentText());
+    WaterQualityConfiguration *waterQualityConfiguration = project->getWaterQualityConfiguration(ui->cbxWaterQuality->currentText());
     MeteorologicalConfiguration *meteorologicalConfiguration = project->getMeteorologicalConfiguration(ui->cbxMeteorological->currentText());
     QDateTime time = ui->edtInitialTime->dateTime();
     
@@ -226,6 +231,7 @@ void CreateSimulationDialog::accept() {
     
     simulation->setLayers(layers);
     simulation->setHydrodynamicConfiguration(hydrodynamicConfiguration);
+    simulation->setWaterQualityConfiguration(waterQualityConfiguration);
     simulation->setMeteorologicalConfiguration(meteorologicalConfiguration);
     simulation->setObservation(ui->txtObservations->toPlainText());
     simulation->setStartOnCreate(startOnCreate);

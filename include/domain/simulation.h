@@ -2,6 +2,7 @@
 #define SIMULATION_H
 
 #include "hydrodynamic_configuration.h"
+#include "water_quality_configuration.h"
 #include "meteorological_configuration.h"
 #include "simulation_data_type.h"
 #include "layer_properties.h"
@@ -36,7 +37,7 @@ private:
 	int stepTime;
 	QList<double> layers;
 	HydrodynamicConfiguration *hydrodynamicConfiguration;
-	// WaterQualityConfiguration *waterQualityConfiguration;
+    WaterQualityConfiguration *waterQualityConfiguration;
     MeteorologicalConfiguration *meteorologicalConfiguration;
     double minimumVerticalLimit;
     double maximumVerticalLimit;
@@ -87,6 +88,8 @@ public:
 	void removeLayer(int index);
 	HydrodynamicConfiguration* getHydrodynamicConfiguration() const;
 	void setHydrodynamicConfiguration(HydrodynamicConfiguration *configuration);
+    WaterQualityConfiguration* getWaterQualityConfiguration() const;
+    void setWaterQualityConfiguration(WaterQualityConfiguration *configuration);
     MeteorologicalConfiguration* getMeteorologicalConfiguration() const;
     void setMeteorologicalConfiguration(MeteorologicalConfiguration *configuration);
     double getMinimumVerticalLimit() const;

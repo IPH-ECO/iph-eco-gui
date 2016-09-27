@@ -86,6 +86,46 @@ namespace SimulationDataType {
             void destroy();
         };
         
+        struct HydrodynamicConfiguration {
+            int numberOfParameters;
+            SimulationDataType::HydrodynamicParameter *parameters;
+            int numberOfBoundaryConditions;
+            SimulationDataType::BoundaryCondition *boundaryConditions;
+            SimulationDataType::GridDataConfiguration *gridDataConfiguration;
+            
+            HydrodynamicConfiguration();
+            void destroy();
+        };
+        
+        struct WaterQualityGroup {
+            int nameLength;
+            char *name;
+            
+            WaterQualityGroup();
+            void destroy();
+        };
+        
+        struct WaterQualityParameter {
+            int nameLength;
+            char *name;
+            int parameterType;
+            int numberOfGroups;
+            WaterQualityGroup *groups;
+            int numberOfValues;
+            double *values;
+            
+            WaterQualityParameter();
+            void destroy();
+        };
+        
+        struct WaterQualityConfiguration {
+            int numberOfParameters;
+            SimulationDataType::WaterQualityParameter *parameters;
+            
+            WaterQualityConfiguration();
+            void destroy();
+        };
+        
         struct MeteorologicalParameter {
             int nameLength;
             char *name;
@@ -119,21 +159,6 @@ namespace SimulationDataType {
             
             MeteorologicalConfiguration();
             void destroy();
-        };
-
-        struct HydrodynamicConfiguration {
-            int numberOfParameters;
-            SimulationDataType::HydrodynamicParameter *parameters;
-            int numberOfBoundaryConditions;
-            SimulationDataType::BoundaryCondition *boundaryConditions;
-            SimulationDataType::GridDataConfiguration *gridDataConfiguration;
-            
-            HydrodynamicConfiguration();
-            void destroy();
-        };
-
-        struct WaterQualityParameter {
-            int a;
         };
 
         struct OutputParameter {
@@ -171,6 +196,7 @@ namespace SimulationDataType {
             int layersLength;
             double *layers;
             SimulationDataType::HydrodynamicConfiguration *hydrodynamicConfiguration;
+            SimulationDataType::WaterQualityConfiguration *waterQualityConfiguration;
             SimulationDataType::MeteorologicalConfiguration *meteorologicalConfiguration;
             double minimumVerticalLimit;
             double maximumVerticalLimit;
