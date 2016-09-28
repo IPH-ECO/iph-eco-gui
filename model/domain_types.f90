@@ -75,23 +75,29 @@ module domain_types
     end type
 
     type, bind(C) :: WaterQualityGroup
-        integer(c_int) :: nameLength
-        type(c_ptr) :: name
+        character(kind = c_char, len = 255) :: name
+        integer(c_int) :: numberOfValues
+        type(c_ptr) :: values
     end type
 
     type, bind(C) :: WaterQualityParameter
-        integer(c_int) :: nameLength
-        type(c_ptr) :: name
-        integer(c_int) :: parameterType
+        character(kind = c_char, len = 255) :: name
+        integer(c_int) :: parameterType ! STRUCTURE = 1, PARAMETER = 2, INITIAL_CONDITION = 3
+        real(c_double) :: value
         integer(c_int) :: numberOfGroups
         type(c_ptr) :: groups
-        integer(c_int) :: numberOfValues
-        type(c_ptr) :: values
+    end type
+
+    type, bind(C) :: FoodMatrixItem
+        character(kind = c_char, len = 255) :: predator
+        character(kind = c_char, len = 255) :: prey
+        real(c_double) :: value
     end type
 
     type, bind(C) :: WaterQualityConfiguration
         integer(c_int) :: numberOfParameters
         type(c_ptr) :: parameters
+        type(c_ptr) :: foodMatrix
     end type
 
     type, bind(C) :: MeteorologicalParameter

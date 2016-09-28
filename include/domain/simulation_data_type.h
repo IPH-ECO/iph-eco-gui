@@ -3,6 +3,8 @@
 
 namespace SimulationDataType {
     extern "C" {
+        const int DEFAULT_STRING_LEN = 255;
+        
         struct StructuredMesh {
             long long int numberOfElements;
 			double resolution;
@@ -98,29 +100,37 @@ namespace SimulationDataType {
         };
         
         struct WaterQualityGroup {
-            int nameLength;
-            char *name;
+            char name[DEFAULT_STRING_LEN];
+            int numberOfValues;
+            double *values;
             
             WaterQualityGroup();
             void destroy();
         };
         
         struct WaterQualityParameter {
-            int nameLength;
-            char *name;
+            char name[DEFAULT_STRING_LEN];
             int parameterType;
+            double value;
             int numberOfGroups;
             WaterQualityGroup *groups;
-            int numberOfValues;
-            double *values;
             
             WaterQualityParameter();
             void destroy();
         };
         
+        struct FoodMatrixItem {
+            char predator[DEFAULT_STRING_LEN];
+            char prey[DEFAULT_STRING_LEN];
+            double value;
+            
+            FoodMatrixItem();
+        };
+        
         struct WaterQualityConfiguration {
             int numberOfParameters;
             SimulationDataType::WaterQualityParameter *parameters;
+            SimulationDataType::FoodMatrixItem *foodMatrix;
             
             WaterQualityConfiguration();
             void destroy();

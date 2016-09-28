@@ -1,4 +1,5 @@
 #include <domain/simulation_data_type.h>
+#include <cstring>
 
 SimulationDataType::StructuredMesh::StructuredMesh() :
     xCoordinates(nullptr),
@@ -47,8 +48,10 @@ SimulationDataType::GridDataConfiguration::GridDataConfiguration() :
 {}
 
 void SimulationDataType::GridDataConfiguration::destroy() {
-	layers->destroy();
-    delete layers;
+    if (layers) {
+        layers->destroy();
+        delete layers;
+    }
 
     if (structuredMesh) {
         structuredMesh->destroy();
@@ -86,44 +89,55 @@ SimulationDataType::HydrodynamicConfiguration::HydrodynamicConfiguration() :
 {}
 
 void SimulationDataType::HydrodynamicConfiguration::destroy() {
-    parameters->destroy();
-    gridDataConfiguration->destroy();
-    
-    if (this->numberOfBoundaryConditions > 0) {
-        boundaryConditions->destroy();
+    if (parameters) {
+        parameters->destroy();
+        delete parameters;
     }
     
-    delete parameters;
-    delete boundaryConditions;
-    delete gridDataConfiguration;
+    if (gridDataConfiguration) {
+        gridDataConfiguration->destroy();
+        delete gridDataConfiguration;
+    }
+    
+    if (boundaryConditions) {
+        boundaryConditions->destroy();
+        delete boundaryConditions;
+    }
 }
 
 SimulationDataType::WaterQualityGroup::WaterQualityGroup() :
-    name(nullptr)
-{}
-
-void SimulationDataType::WaterQualityGroup::destroy() {
-    delete name;
+    values(nullptr)
+{
+    memset(name, ' ', sizeof(name));
 }
 
-SimulationDataType::WaterQualityParameter::WaterQualityParameter() :
-    name(nullptr),
-    groups(nullptr),
-    values(nullptr)
-{}
-
-void SimulationDataType::WaterQualityParameter::destroy() {
-    delete name;
-    delete groups;
+void SimulationDataType::WaterQualityGroup::destroy() {
     delete values;
 }
 
+SimulationDataType::WaterQualityParameter::WaterQualityParameter() :
+    groups(nullptr)
+{
+    memset(name, ' ', sizeof(name));
+}
+
+void SimulationDataType::WaterQualityParameter::destroy() {
+    delete groups;
+}
+
+SimulationDataType::FoodMatrixItem::FoodMatrixItem() {
+    memset(predator, ' ', sizeof(predator));
+    memset(prey, ' ', sizeof(prey));
+}
+
 SimulationDataType::WaterQualityConfiguration::WaterQualityConfiguration() :
-    parameters(nullptr)
+    parameters(nullptr),
+    foodMatrix(nullptr)
 {}
 
 void SimulationDataType::WaterQualityConfiguration::destroy() {
     delete parameters;
+    delete foodMatrix;
 }
 
 SimulationDataType::MeteorologicalParameter::MeteorologicalParameter() :
@@ -141,8 +155,10 @@ SimulationDataType::MeteorologicalStation::MeteorologicalStation() :
 {}
 
 void SimulationDataType::MeteorologicalStation::destroy() {
-	parameters->destroy();
-    delete parameters;
+    if (parameters) {
+        parameters->destroy();
+        delete parameters;
+    }
 }
 
 SimulationDataType::MeteorologicalConfiguration::MeteorologicalConfiguration() :
@@ -150,8 +166,10 @@ SimulationDataType::MeteorologicalConfiguration::MeteorologicalConfiguration() :
 {}
 
 void SimulationDataType::MeteorologicalConfiguration::destroy() {
-	stations->destroy();
-    delete stations;
+    if (stations) {
+        stations->destroy();
+        delete stations;
+    }
 }
 
 SimulationDataType::OutputParameter::OutputParameter() :
@@ -187,23 +205,34 @@ SimulationDataType::Simulation::Simulation() :
 {}
 
 void SimulationDataType::Simulation::destroy() {
-	hydrodynamicConfiguration->destroy();
-    waterQualityConfiguration->destroy();
-    meteorologicalConfiguration->destroy();
-    outputParameters->destroy();
+    if (hydrodynamicConfiguration) {
+        hydrodynamicConfiguration->destroy();
+        delete hydrodynamicConfiguration;
+    }
+    
+    if (waterQualityConfiguration) {
+        waterQualityConfiguration->destroy();
+        delete waterQualityConfiguration;
+    }
+    
+    if (meteorologicalConfiguration) {
+        meteorologicalConfiguration->destroy();
+        delete meteorologicalConfiguration;
+    }
+    
+    if (outputParameters) {
+        outputParameters->destroy();
+        delete outputParameters;
+    }
+    
+    if (recoveryVariables) {
+        recoveryVariables->destroy();
+        delete recoveryVariables;
+        recoveryVariables = nullptr;
+    }
     
     delete label;
     delete layers;
-    delete hydrodynamicConfiguration;
-    delete waterQualityConfiguration;
-    delete meteorologicalConfiguration;
     delete observations;
     delete outputDirectory;
-    delete outputParameters;
-
-    // Intel Fortran deallocates automatically
-    #if !defined(_WIN32) && !defined(_WIN64)
-    recoveryVariables->destroy();
-    delete recoveryVariables;
-    #endif
 }
