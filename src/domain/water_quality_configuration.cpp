@@ -133,5 +133,21 @@ SimulationDataType::WaterQualityConfiguration* WaterQualityConfiguration::toSimu
         configuration->parameters[i] = persistableParameters[i]->toSimulationDataType();
     }
     
+    int i = 0;
+    
+    configuration->foodMatrix = new SimulationDataType::FoodMatrixItem[this->foodMatrix.size()];
+                                                                       
+    for (QHash<QPair<QString, QString>, double>::const_iterator it = foodMatrix.constBegin(); it != foodMatrix.constEnd(); it++) {
+        QByteArray predator = it.key().first.toLocal8Bit();
+        QByteArray prey = it.key().second.toLocal8Bit();
+        
+        configuration->foodMatrix[i] = SimulationDataType::FoodMatrixItem();
+        
+        strncpy(configuration->foodMatrix[i].predator, predator.constData(), predator.size());
+        strncpy(configuration->foodMatrix[i].prey, prey.constData(), prey.size());
+        
+        configuration->foodMatrix[i].value = it.value();
+    }
+    
     return configuration;
 }

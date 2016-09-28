@@ -1,4 +1,7 @@
 #include <domain/water_quality_parameter.h>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
 
 WaterQualityParameter::WaterQualityParameter() :
 	id(0),
@@ -49,11 +52,11 @@ void WaterQualityParameter::setValue(double value) {
     this->value = value;
 }
 
-QList<double> WaterQualityParameter::getGroupValues() const {
+QMap<QString, QList<double> > WaterQualityParameter::getGroupValues() const {
     return groupValues;
 }
 
-void WaterQualityParameter::setGroupValues(const QList<double> &groupValues) {
+void WaterQualityParameter::setGroupValues(const QMap<QString, QList<double> > &groupValues) {
     this->groupValues = groupValues;
 }
 
@@ -138,22 +141,35 @@ void WaterQualityParameter::setTarget(WaterQualityParameter *target) {
 }
 
 QString WaterQualityParameter::getGroupValuesStr() const {
-    if (groupValues.isEmpty()) {
-        return "";
+    QJsonDocument jsonDocument;
+    QJsonObject jsonObject;
+    
+    for (QMap<QString, QList<double> >::const_iterator it = groupValues.begin(); it != groupValues.end(); it++) {
+        QJsonArray jsonArray;
+        
+        for (double value : it.value()) {
+            jsonArray.append(value);
+        }
+        
+        jsonObject.insert(it.key(), jsonArray);
     }
     
-    QStringList jsonGroupValues;
-    
-    for (double groupValue : groupValues) {
-        jsonGroupValues.append(QString::number(groupValue));
-    }
-    
-    return jsonGroupValues.join(",");
+    return QJsonDocument(jsonObject).toJson(QJsonDocument::Compact);
 }
 
 void WaterQualityParameter::setGroupValues(const QString &groupValuesStr) {
-    for (QString groupValueStr : groupValuesStr.split(",")) {
-        groupValues.append(groupValueStr.toDouble());
+    QJsonDocument jsonDocument = QJsonDocument::fromJson(groupValuesStr.toLocal8Bit());
+    QJsonObject jsonObject(jsonDocument.object());
+    
+    for (QJsonObject::const_iterator it = jsonObject.begin(); it != jsonObject.end(); it++) {
+        QJsonArray jsonArray = it.value().toArray();
+        QList<double> values;
+        
+        for (int i = 0; i < jsonArray.size(); i++) {
+            values.append(jsonArray.at(i).toDouble());
+        }
+        
+        groupValues.insert(it.key(), values);
     }
 }
 
@@ -175,6 +191,14 @@ void WaterQualityParameter::setParent(WaterQualityParameter *parent) {
     if (parent) {
         parent->children.append(this);
     }
+}
+
+QMap<QString, double> WaterQualityParameter::getDefaultGroupValues() const {
+    return defaultGroupValues;
+}
+
+void WaterQualityParameter::setDefaultGroupValues(const QMap<QString, double> &defaultGroupValues) {
+    this->defaultGroupValues = defaultGroupValues;
 }
 
 bool WaterQualityParameter::isEditable() const {
@@ -297,42 +321,32 @@ SimulationDataType::WaterQualityParameter WaterQualityParameter::toSimulationDat
     SimulationDataType::WaterQualityParameter parameter;
     QByteArray nameByteArray = this->name.toLocal8Bit();
     
-    parameter.nameLength = (int) nameByteArray.size();
-    parameter.name = new char[nameByteArray.size()];
-    strncpy(parameter.name, nameByteArray.constData(), name.size());
+    strncpy(parameter.name, nameByteArray.constData(), nameByteArray.size());
     
     parameter.parameterType = (int) section;
     
-    if (section == WaterQualityParameterSection::STRUCTURE) {
-        parameter.values = new double(this->checked ? 1 : 0);
-    } else {
-        if (groups.isEmpty()) {
-            parameter.numberOfGroups = 0;
-            parameter.numberOfValues = 1;
-            parameter.values = new double[parameter.numberOfValues];
-        } else {
-            int j = 0;
+    if (section == WaterQualityParameterSection::STRUCTURE || inputType == WaterQualityParameterInputType::INLINE) {
+        parameter.numberOfGroups = 0;
+        parameter.value = this->value;
+    } else { // WaterQualityParameterInputType::TABULAR
+        int i = 0;
+        
+        parameter.value = std::numeric_limits<double>::min();
+        parameter.numberOfGroups = groupValues.size();
+        parameter.groups = new SimulationDataType::WaterQualityGroup[parameter.numberOfGroups];
+        
+        for (QMap<QString, QList<double> >::const_iterator it = groupValues.begin(); it != groupValues.end(); it++) {
+            QByteArray nameByteArray = it.key().toLocal8Bit();
             
-            parameter.numberOfGroups = groups.size();
-            parameter.groups = new SimulationDataType::WaterQualityGroup[parameter.numberOfGroups];
+            strncpy(parameter.groups[i].name, nameByteArray.constData(), nameByteArray.size());
+            parameter.groups[i].numberOfValues = it.value().size();
+            parameter.groups[i].values = new double[parameter.groups[i].numberOfValues];
             
-            for (QString groupName : groups) {
-                QByteArray localGroupName = groupName.toLocal8Bit();
-                
-                parameter.groups[j].nameLength = (int) localGroupName.size();
-                parameter.groups[j].name = new char[localGroupName.size()];
-                strncpy(parameter.groups[j].name, localGroupName.constData(), localGroupName.size());
-                
-                j++;
+            for (int j = 0; j < it.value().size(); j++) {
+                parameter.groups[i].values[j] = it.value().at(j);
             }
             
-            parameter.numberOfValues = groupValues.size();
-            parameter.values = new double[parameter.numberOfValues];
-            j = 0;
-            
-            for (double groupValue : groupValues) {
-                parameter.values[j++] = groupValue;
-            }
+            i++;
         }
     }
     

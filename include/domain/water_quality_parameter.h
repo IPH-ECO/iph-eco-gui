@@ -6,6 +6,7 @@
 #include <QTreeWidgetItem>
 #include <QString>
 #include <QList>
+#include <QMap>
 
 enum class WaterQualityParameterInputType { NO_INPUT = 0, INLINE, TABULAR };
 enum class WaterQualityParameterSection { STRUCTURE = 1, PARAMETER, INITIAL_CONDITION };
@@ -15,7 +16,7 @@ private:
     uint id;
     QString name;
     double value;
-    QList<double> groupValues;
+    QMap<QString, QList<double> > groupValues;
     bool persistable;
     bool checkable;
     bool checked;
@@ -30,6 +31,7 @@ private:
     WaterQualityParameter *target;
     QStringList groups;
     WaterQualityParameter *parent;
+    QMap<QString, double> defaultGroupValues;
     bool editable;
     bool radio;
     bool group;
@@ -51,8 +53,8 @@ public:
     void setValue(double value);
     QString getGroupValuesStr() const;
     void setGroupValues(const QString &groupValuesStr);
-    QList<double> getGroupValues() const;
-    void setGroupValues(const QList<double> &groupValues);
+    QMap<QString, QList<double> > getGroupValues() const;
+    void setGroupValues(const QMap<QString, QList<double> > &groupValues);
     bool isPersistable() const;
     void setPersistable(const bool &persistable);
     bool isCheckable() const;
@@ -78,6 +80,8 @@ public:
     void setGroups(const QStringList &groups);
     WaterQualityParameter* getParent() const;
     void setParent(WaterQualityParameter *parent);
+    QMap<QString, double> getDefaultGroupValues() const;
+    void setDefaultGroupValues(const QMap<QString, double> &defaultGroupValues);
     bool isEditable() const;
     void setEditable(bool editable);
     bool isRadio() const;

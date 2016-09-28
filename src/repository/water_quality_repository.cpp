@@ -100,7 +100,7 @@ void WaterQualityRepository::loadParameters(WaterQualityConfiguration *configura
         parameter->setRangeMaximum(jsonParameter["rangeMaximum"].toDouble());
         parameter->setRadio(jsonParameter["radio"].toBool(false));
         parameter->setGroup(jsonParameter["group"].toBool(false));
-        parameter->setPersistable(jsonParameter["persistable"].toBool(false));
+        parameter->setPersistable(jsonParameter["persistable"].toBool(true));
         
         if (parameter->getLabel() == "Groups") {
             lastGroupParameter = parameter;
@@ -121,19 +121,22 @@ void WaterQualityRepository::loadParameters(WaterQualityConfiguration *configura
             }
         }
         
-        if (!jsonParameter["groupDefaultValues"].isUndefined()) {
+        if (!jsonParameter["groupDefaultValues"].isNull()) {
+            QMap<QString, double> defaultGroupValues;
+            
             if (jsonParameter["groupDefaultValues"].isArray()) {
                 QJsonArray defaultValuesArray = jsonParameter["groupDefaultValues"].toArray();
-                QList<double> values;
                 
-                for (QJsonValue value : defaultValuesArray) {
-                    values.append(value.toDouble());
+                for (int i = 0; i < lastGroups.size(); i++) {
+                    defaultGroupValues.insert(lastGroups.at(i), defaultValuesArray.at(i).toDouble());
                 }
-                
-                parameter->setGroupValues(values);
             } else {
-                parameter->setGroupValues(QVector<double>(lastGroups.size(), jsonParameter["groupDefaultValues"].toDouble()).toList());
+                for (int i = 0; i < lastGroups.size(); i++) {
+                    defaultGroupValues.insert(lastGroups.at(i), jsonParameter["groupDefaultValues"].toDouble());
+                }
             }
+            
+            parameter->setDefaultGroupValues(defaultGroupValues);
         }
         
         WaterQualityParameter *parentParameter = configuration->getParameter(parentName, WaterQualityParameterSection::PARAMETER);
@@ -225,19 +228,22 @@ void WaterQualityRepository::loadParameters(WaterQualityConfiguration *configura
         parameter->setPersistable(true);
         parameter->setGroups(groups);
         
-        if (!jsonParameter["groupDefaultValues"].isUndefined()) {
+        if (!jsonParameter["groupDefaultValues"].isNull() && parameter->getGroupValues().isEmpty()) {
+            QMap<QString, double> defaultGroupValues;
+            
             if (jsonParameter["groupDefaultValues"].isArray()) {
                 QJsonArray defaultValuesArray = jsonParameter["groupDefaultValues"].toArray();
-                QList<double> values;
                 
-                for (QJsonValue value : defaultValuesArray) {
-                    values.append(value.toDouble());
+                for (int i = 0; i < lastGroups.size(); i++) {
+                    defaultGroupValues.insert(lastGroups.at(i), defaultValuesArray.at(i).toDouble());
                 }
-                
-                parameter->setGroupValues(values);
             } else {
-                parameter->setGroupValues(QVector<double>(groups.size(), jsonParameter["groupDefaultValues"].toDouble()).toList());
+                for (int i = 0; i < lastGroups.size(); i++) {
+                    defaultGroupValues.insert(lastGroups.at(i), jsonParameter["groupDefaultValues"].toDouble());
+                }
             }
+            
+            parameter->setDefaultGroupValues(defaultGroupValues);
         }
         
         WaterQualityParameter *parentParameter = configuration->getParameter(jsonParameter["parentName"].toString(), WaterQualityParameterSection::INITIAL_CONDITION);

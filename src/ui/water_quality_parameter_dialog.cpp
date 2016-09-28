@@ -19,9 +19,8 @@ WaterQualityParameterDialog::WaterQualityParameterDialog(QWidget *parent, WaterQ
     QStringList groups = parameter->getGroups();
     
     for (int i = 0; i < groups.size(); i++) {
-        int rows = distribuition[i];
-        
         WaterQualityParameter *groupParameter = configuration->getParameter(groups[i], WaterQualityParameterSection::PARAMETER);
+        int rows = distribuition[i];
         
         horizontalLabels << QString("%1 (%2)").arg(groupParameter->getLabel()).arg(distribuition[i]);
         ui->trwParameters->insertColumn(i);
@@ -31,8 +30,7 @@ WaterQualityParameterDialog::WaterQualityParameterDialog(QWidget *parent, WaterQ
         }
     }
     
-    QList<double> groupValues = parameter->getGroupValues();
-    bool useDefaultValues = groupValues.size() != ui->trwParameters->rowCount() * ui->trwParameters->columnCount();
+    QMap<QString, QList<double> > groupValues = parameter->getGroupValues();
     
     for (int i = 0; i < ui->trwParameters->rowCount(); i++) {
         verticalLabels << QString("Group %1").arg(i + 1);
@@ -44,8 +42,10 @@ WaterQualityParameterDialog::WaterQualityParameterDialog(QWidget *parent, WaterQ
                 tableItem->setFlags(Qt::NoItemFlags);
                 tableItem->setBackgroundColor(QColor(Qt::lightGray));
             } else {
+                QList<double> values = groupValues.value(groups.at(j));
+                
+                tableItem->setText(QString::number(i < values.size() ? values.at(i) : parameter->getDefaultGroupValues().value(groups.at(j))));
                 tableItem->setTextAlignment(Qt::AlignVCenter | Qt::AlignHCenter);
-                tableItem->setText(QString::number(groupValues[useDefaultValues ? j : i * ui->trwParameters->columnCount() + j]));
             }
             
             ui->trwParameters->setItem(i, j, tableItem);
@@ -62,18 +62,20 @@ WaterQualityParameterDialog::~WaterQualityParameterDialog() {
 }
 
 void WaterQualityParameterDialog::accept() {
-    QList<double> groupValues;
+    QMap<QString, QList<double> > groupValues;
     
     for (int i = 0; i < ui->trwParameters->rowCount(); i++) {
+        QList<double> values;
+        
         for (int j = 0; j < ui->trwParameters->columnCount(); j++) {
             QTableWidgetItem *tableItem = ui->trwParameters->item(i, j);
             
-            if (tableItem->flags() == Qt::NoItemFlags) {
-                groupValues << 0.0;
-            } else {
-                groupValues << tableItem->text().toDouble();
+            if (tableItem->flags() != Qt::NoItemFlags) {
+                values << tableItem->text().toDouble();
             }
         }
+        
+        groupValues.insert(parameter->getGroups().at(i), values);
     }
     
     parameter->setGroupValues(groupValues);
