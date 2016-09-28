@@ -171,7 +171,7 @@ void MainWindow::on_actionCloseProject_triggered() {
 }
 
 void MainWindow::on_actionStructuredMeshGeneration_triggered() {
-    if (dynamic_cast<StructuredMeshDialog*>(currentSubWindow->widget())) {
+    if (dynamic_cast<StructuredMeshDialog*>(currentSubWindow->widget()) && currentSubWindow->isVisible()) {
         return;
     }
     
@@ -185,7 +185,7 @@ void MainWindow::on_actionStructuredMeshGeneration_triggered() {
 }
 
 void MainWindow::on_actionUnstructuredMeshGeneration_triggered() {
-    if (dynamic_cast<UnstructuredMeshDialog*>(currentSubWindow->widget())) {
+    if (dynamic_cast<UnstructuredMeshDialog*>(currentSubWindow->widget()) && currentSubWindow->isVisible()) {
         return;
     }
     
@@ -199,7 +199,7 @@ void MainWindow::on_actionUnstructuredMeshGeneration_triggered() {
 }
 
 void MainWindow::on_actionGridData_triggered() {
-    if (dynamic_cast<GridDataDialog*>(currentSubWindow->widget())) {
+    if (dynamic_cast<GridDataDialog*>(currentSubWindow->widget()) && currentSubWindow->isVisible()) {
         return;
     }
     
@@ -213,7 +213,7 @@ void MainWindow::on_actionGridData_triggered() {
 }
 
 void MainWindow::on_actionHydrodynamicData_triggered() {
-    if (dynamic_cast<HydrodynamicDataDialog*>(currentSubWindow->widget())) {
+    if (dynamic_cast<HydrodynamicDataDialog*>(currentSubWindow->widget()) && currentSubWindow->isVisible()) {
         return;
     }
     
@@ -227,7 +227,7 @@ void MainWindow::on_actionHydrodynamicData_triggered() {
 }
 
 void MainWindow::on_actionWaterQuality_triggered() {
-    if (dynamic_cast<WaterQualityDialog*>(currentSubWindow->widget())) {
+    if (dynamic_cast<WaterQualityDialog*>(currentSubWindow->widget()) && currentSubWindow->isVisible()) {
         return;
     }
     
@@ -256,7 +256,7 @@ void MainWindow::on_actionCreateSimulation_triggered() {
 }
 
 void MainWindow::on_actionManageSimulation_triggered() {
-    if (dynamic_cast<SimulationManagerDialog*>(currentSubWindow->widget())) {
+    if (dynamic_cast<SimulationManagerDialog*>(currentSubWindow->widget()) && currentSubWindow->isVisible()) {
         return;
     }
     
@@ -270,7 +270,7 @@ void MainWindow::on_actionManageSimulation_triggered() {
 }
 
 void MainWindow::on_actionViewResults_triggered() {
-    if (dynamic_cast<ViewResultsDialog*>(currentSubWindow->widget())) {
+    if (dynamic_cast<ViewResultsDialog*>(currentSubWindow->widget()) && currentSubWindow->isVisible()) {
         return;
     }
     
@@ -457,5 +457,6 @@ void MainWindow::closeCurrentSubWindow() {
         }
     }
     
+    currentSubWindow->setWidget(nullptr);
     mdiArea->closeActiveSubWindow();
 }
