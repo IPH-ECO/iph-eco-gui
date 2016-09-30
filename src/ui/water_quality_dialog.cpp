@@ -226,11 +226,15 @@ void WaterQualityDialog::loadFoodMatrix() {
         }
         
         if (predator->getGroup()) {
-            int groupValue = static_cast<QLineEdit*>(ui->trwParameter->itemWidget(predator->getGroup()->getItemWidget(), 1))->text().toInt();
+            QLineEdit *lineEdit = static_cast<QLineEdit*>(ui->trwParameter->itemWidget(predator->getGroup()->getItemWidget(), 1));
             
-            for (int i = 0; i < groupValue; i++) {
-                predatorsLabels.append(QString("%1 %2").arg(predator->getLabel()).arg(i + 1));
-                predators.append(predator);
+            if (lineEdit) {
+                int groupValue = lineEdit->text().toInt();
+                
+                for (int i = 0; i < groupValue; i++) {
+                    predatorsLabels.append(QString("%1 %2").arg(predator->getLabel()).arg(i + 1));
+                    predators.append(predator);
+                }
             }
         } else {
             predatorsLabels.append(predator->getLabel());
@@ -314,8 +318,10 @@ void WaterQualityDialog::on_btnRemoveConfiguration_clicked() {
     QMessageBox::StandardButton question = QMessageBox::question(this, tr("Water Quality"), tr("Are you sure you want to remove the selected configuration?"));
     
     if (question == QMessageBox::Yes) {
-        ui->cbxConfiguration->removeItem(ui->cbxConfiguration->currentIndex());
         IPHApplication::getCurrentProject()->removeWaterQualityConfiguration(ui->cbxConfiguration->currentText());
+        ui->cbxConfiguration->blockSignals(true);
+        ui->cbxConfiguration->removeItem(ui->cbxConfiguration->currentIndex());
+        ui->cbxConfiguration->blockSignals(false);
         this->on_btnNewConfiguration_clicked();
     }
 }
