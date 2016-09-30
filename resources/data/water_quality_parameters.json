@@ -163,14 +163,6 @@
 		"parentName": "general"
 	},
 	{
-		"label": "cExtWat",
-		"name": "cExtWat1",
-		"description": "Background light extinction (1/m)",
-		"inputType": "inline",
-		"defaultValue": 0.5,
-		"parentName": "general"
-	},
-	{
 		"label": "Sediments",
 		"name": "iSed",
 		"persistable": false,
@@ -718,7 +710,7 @@
 		"description": "Maximum growth rate for bacterioplankton",
 		"inputType": "tabular",
 		"groups": "bacterioplanktonGroups",
-		"groupDefaultValues": [ 4.0, 4.0 ],
+		"groupDefaultValues": 4.0,
 		"parentName": "iBacAssimilation"
 	},
 	{
@@ -727,7 +719,7 @@
 		"description": "Half-sat. bacterioplankton conc. for assimilation",
 		"inputType": "tabular",
 		"groups": "bacterioplanktonGroups",
-		"groupDefaultValues": [ 0.0, 0.0 ],
+		"groupDefaultValues": 0.0,
 		"parentName": "iBacAssimilation"
 	},
 	{
@@ -774,7 +766,7 @@
 		"name": "cPDBacRef",
 		"description": "P/D reference ratio of bacterioplankton",
 		"groups": "bacterioplanktonGroups",
-		"groupDefaultValues": [ 0.005, 0.005 ],
+		"groupDefaultValues": 0.005,
 		"inputType": "tabular",
 		"parentName": "iBacUptakeRelease"
 	},
