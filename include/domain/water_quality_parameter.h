@@ -64,6 +64,7 @@ public:
     void setEnabled(bool enabled);
     bool isEnabled() const;
     WaterQualityParameterInputType getInputType() const;
+    void setInputTypeStr(const QString &inputType);
     void setInputType(const WaterQualityParameterInputType &inputType);
     
     QString getLabel() const;
@@ -103,8 +104,6 @@ public:
     WaterQualityParameter* getChild(int i) const;
     SimulationDataType::WaterQualityParameter toSimulationDataType() const;
     
-    static WaterQualityParameterInputType mapInputTypeFromString(const QString &inputTypeStr);
-    static QString mapStringFromInputType(const WaterQualityParameterInputType &inputType);
     static bool sort(WaterQualityParameter *p1, WaterQualityParameter *p2);
     
     inline bool isInRange(double value) const {

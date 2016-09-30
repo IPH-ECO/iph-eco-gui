@@ -34,14 +34,3 @@ subroutine startSimulation(sim) bind(C, name="startSimulation")
         end if
     end do
 end subroutine
-
-! subroutine getGroupValues(parameters, groupName)
-!     type(WaterQualityParameter), dimension(:), pointer :: parameters
-!     type(WaterQualityGroup), dimension(:), pointer :: groups
-!     character, dimension(:), pointer :: groupName
-
-!     do i = 1, parameters%numberOfGroups
-!         call c_f_pointer(groups(i)%name, name, [groups(i)%nameLength])
-!         print *, name
-!     end do
-! end subroutine

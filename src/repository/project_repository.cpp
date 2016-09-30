@@ -313,6 +313,7 @@ void ProjectRepository::loadWaterQualityParameters(WaterQualityConfiguration *co
         parameter->setId(query.value("id").toUInt());
         parameter->setName(query.value("name").toString());
         parameter->setSection((WaterQualityParameterSection) query.value("section").toInt());
+        parameter->setInputType((WaterQualityParameterInputType) query.value("input_type").toInt());
         parameter->setValue(query.value("value").toDouble());
         parameter->setGroupValues(query.value("group_values").toString());
         parameter->setPersistable(true);
@@ -1043,9 +1044,10 @@ void ProjectRepository::saveWaterQualityParameters(WaterQualityConfiguration *co
             query.prepare("update water_quality_parameter set value = :v, group_values = :gv where id = :i");
             query.bindValue(":i", parameter->getId());
         } else {
-            query.prepare("insert into water_quality_parameter (name, section, value, group_values, water_quality_configuration_id) values (:n, :s, :v, :gv, :c)");
+            query.prepare("insert into water_quality_parameter (name, section, input_type, value, group_values, water_quality_configuration_id) values (:n, :s, :i, :v, :gv, :c)");
             query.bindValue(":n", parameter->getName());
             query.bindValue(":s", (int) parameter->getSection());
+            query.bindValue(":i", (int) parameter->getInputType());
             query.bindValue(":c", configuration->getId());
         }
         

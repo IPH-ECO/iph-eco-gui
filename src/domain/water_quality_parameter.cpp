@@ -96,6 +96,16 @@ WaterQualityParameterInputType WaterQualityParameter::getInputType() const {
     return inputType;
 }
 
+void WaterQualityParameter::setInputTypeStr(const QString &inputTypeStr) {
+    if (inputTypeStr.toLower() == "inline") {
+        this->inputType = WaterQualityParameterInputType::INLINE;
+    } else if (inputTypeStr.toLower() == "tabular") {
+        this->inputType = WaterQualityParameterInputType::TABULAR;
+    } else {
+        this->inputType = WaterQualityParameterInputType::NO_INPUT;
+    }
+}
+
 void WaterQualityParameter::setInputType(const WaterQualityParameterInputType &inputType) {
     this->inputType = inputType;
 }
@@ -287,30 +297,6 @@ QList<WaterQualityParameter*> WaterQualityParameter::getChildren() const {
 
 WaterQualityParameter* WaterQualityParameter::getChild(int i) const {
     return children[i];
-}
-
-WaterQualityParameterInputType WaterQualityParameter::mapInputTypeFromString(const QString &inputTypeStr) {
-    if (inputTypeStr == "inline") {
-        return WaterQualityParameterInputType::INLINE;
-    }
-    
-    if (inputTypeStr == "tabular") {
-        return WaterQualityParameterInputType::TABULAR;
-    }
-    
-    return WaterQualityParameterInputType::NO_INPUT;
-}
-
-QString WaterQualityParameter::mapStringFromInputType(const WaterQualityParameterInputType &inputType) {
-    if (inputType == WaterQualityParameterInputType::INLINE) {
-        return "inline";
-    }
-    
-    if (inputType == WaterQualityParameterInputType::TABULAR) {
-        return "tabular";
-    }
-    
-    return "";
 }
 
 bool WaterQualityParameter::sort(WaterQualityParameter *p1, WaterQualityParameter *p2) {

@@ -317,7 +317,7 @@ void WaterQualityDialog::on_cbxHydrodynamicConfiguration_currentIndexChanged(con
 void WaterQualityDialog::on_btnRemoveConfiguration_clicked() {
     QMessageBox::StandardButton question = QMessageBox::question(this, tr("Water Quality"), tr("Are you sure you want to remove the selected configuration?"));
     
-    if (question == QMessageBox::Yes) {
+    if (ui->cbxConfiguration->currentIndex() != -1 && question == QMessageBox::Yes) {
         IPHApplication::getCurrentProject()->removeWaterQualityConfiguration(ui->cbxConfiguration->currentText());
         ui->cbxConfiguration->blockSignals(true);
         ui->cbxConfiguration->removeItem(ui->cbxConfiguration->currentIndex());

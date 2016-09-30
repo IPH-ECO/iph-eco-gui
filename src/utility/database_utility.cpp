@@ -161,6 +161,7 @@ void DatabaseUtility::createApplicationTables() {
         "id integer primary key, " \
         "name text not null, " \
         "section integer not null, " \
+        "input_type integer not null, " \
         "value float default 0, " \
         "group_values text default null, " \
         "water_quality_configuration_id integer not null" \

@@ -84,10 +84,12 @@ void WaterQualityRepository::loadParameters(WaterQualityConfiguration *configura
         QJsonObject jsonParameter = jsonParameters[i].toObject();
         QString parameterName = jsonParameter["name"].toString();
         WaterQualityParameter *parameter = configuration->getParameter(parameterName, WaterQualityParameterSection::PARAMETER);
+        bool overrideGroupDefaultValues = false;
         
         if (!parameter) {
             parameter = new WaterQualityParameter();
             parameter->setValue(jsonParameter["defaultValue"].toDouble());
+            overrideGroupDefaultValues = true;
         }
         
         parameter->setName(jsonParameter["name"].toString());
@@ -95,7 +97,7 @@ void WaterQualityRepository::loadParameters(WaterQualityConfiguration *configura
         parameter->setSection(WaterQualityParameterSection::PARAMETER);
         parameter->setDescription(jsonParameter["description"].toString());
         parameter->setEnabled(jsonParameter["enabled"].toBool(true));
-        parameter->setInputType(WaterQualityParameter::mapInputTypeFromString(jsonParameter["inputType"].toString()));
+        parameter->setInputTypeStr(jsonParameter["inputType"].toString());
         parameter->setRangeMinimum(jsonParameter["rangeMinimum"].toDouble());
         parameter->setRangeMaximum(jsonParameter["rangeMaximum"].toDouble());
         parameter->setRadio(jsonParameter["radio"].toBool(false));
@@ -137,6 +139,21 @@ void WaterQualityRepository::loadParameters(WaterQualityConfiguration *configura
             }
             
             parameter->setDefaultGroupValues(defaultGroupValues);
+            
+            if (overrideGroupDefaultValues) {
+                QMap<QString, QList<double> > groupValues;
+                
+                for (QMap<QString, double>::const_iterator it = defaultGroupValues.begin(); it != defaultGroupValues.end(); it++) {
+                    WaterQualityParameter *groupParameter = configuration->getParameter(it.key(), WaterQualityParameterSection::PARAMETER);
+                    int groupCount = groupParameter->getValue();
+                    
+                    if (groupCount > 0) {
+                        groupValues.insert(it.key(), QVector<double>(groupCount, it.value()).toList());
+                    }
+                }
+                
+                parameter->setGroupValues(groupValues);
+            }
         }
         
         WaterQualityParameter *parentParameter = configuration->getParameter(parentName, WaterQualityParameterSection::PARAMETER);
@@ -213,10 +230,12 @@ void WaterQualityRepository::loadParameters(WaterQualityConfiguration *configura
         WaterQualityParameter *parameter = configuration->getParameter(parameterName, WaterQualityParameterSection::INITIAL_CONDITION);
         WaterQualityParameterSection targetParameterSection = jsonParameter["section"].toString() == "parameter" ? WaterQualityParameterSection::PARAMETER : WaterQualityParameterSection::STRUCTURE;
         WaterQualityParameter *targetParameter = configuration->getParameter(jsonParameter["target"].toString(), targetParameterSection);
+        bool overrideGroupDefaultValues = false;
         
         if (!parameter) {
             parameter = new WaterQualityParameter();
             parameter->setValue(jsonParameter["defaultValue"].toDouble());
+            overrideGroupDefaultValues = true;
         }
         
         parameter->setName(jsonParameter["name"].toString());
@@ -224,26 +243,41 @@ void WaterQualityRepository::loadParameters(WaterQualityConfiguration *configura
         parameter->setSection(WaterQualityParameterSection::INITIAL_CONDITION);
         parameter->setTarget(targetParameter);
         parameter->setDescription(jsonParameter["description"].toString());
-        parameter->setInputType(WaterQualityParameter::mapInputTypeFromString(jsonParameter["inputType"].toString()));
-        parameter->setPersistable(true);
+        parameter->setInputTypeStr(jsonParameter["inputType"].toString());
+        parameter->setPersistable(parameter->getInputType() != WaterQualityParameterInputType::NO_INPUT);
         parameter->setGroups(groups);
         
-        if (!jsonParameter["groupDefaultValues"].isNull() && parameter->getGroupValues().isEmpty()) {
+        if (!jsonParameter["groupDefaultValues"].isNull()) {
             QMap<QString, double> defaultGroupValues;
             
             if (jsonParameter["groupDefaultValues"].isArray()) {
                 QJsonArray defaultValuesArray = jsonParameter["groupDefaultValues"].toArray();
                 
-                for (int i = 0; i < lastGroups.size(); i++) {
-                    defaultGroupValues.insert(lastGroups.at(i), defaultValuesArray.at(i).toDouble());
+                for (int i = 0; i < groups.size(); i++) {
+                    defaultGroupValues.insert(groups.at(i), defaultValuesArray.at(i).toDouble());
                 }
             } else {
-                for (int i = 0; i < lastGroups.size(); i++) {
-                    defaultGroupValues.insert(lastGroups.at(i), jsonParameter["groupDefaultValues"].toDouble());
+                for (int i = 0; i < groups.size(); i++) {
+                    defaultGroupValues.insert(groups.at(i), jsonParameter["groupDefaultValues"].toDouble());
                 }
             }
             
             parameter->setDefaultGroupValues(defaultGroupValues);
+            
+            if (overrideGroupDefaultValues) {
+                QMap<QString, QList<double> > groupValues;
+                
+                for (QMap<QString, double>::const_iterator it = defaultGroupValues.begin(); it != defaultGroupValues.end(); it++) {
+                    WaterQualityParameter *groupParameter = configuration->getParameter(it.key(), WaterQualityParameterSection::PARAMETER);
+                    int groupCount = groupParameter->getValue();
+                    
+                    if (groupCount > 0) {
+                        groupValues.insert(it.key(), QVector<double>(groupCount, it.value()).toList());
+                    }
+                }
+                
+                parameter->setGroupValues(groupValues);
+            }
         }
         
         WaterQualityParameter *parentParameter = configuration->getParameter(jsonParameter["parentName"].toString(), WaterQualityParameterSection::INITIAL_CONDITION);
