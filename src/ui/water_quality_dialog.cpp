@@ -360,14 +360,25 @@ void WaterQualityDialog::on_btnApplyConfiguration_clicked() {
             
             for (QString group : parameter->getGroups()) {
                 WaterQualityParameter *groupParameter = currentConfiguration->getParameter(group, WaterQualityParameterSection::PARAMETER);
+                int userDefinedValuesCount = parameter->getGroupValues().value(group).size();
+                int groupCount = (int) groupParameter->getValue();
                 
-                
-                if (groupParameter->getGroupValues().values(group).size() != groupParameter->getValue()) {
+                if (userDefinedValuesCount != groupCount) {
                     if (groupParameter->getValue() > 0) {
-                        QList<double> values;
-                
-                        for (int i = 0; i < groupParameter->getValue(); i++) {
-                            values.append(parameter->getDefaultGroupValues().value(group));
+                        QList<double> values = groupValues.value(group);
+                        
+                        if (groupCount > userDefinedValuesCount) {
+                            double defaultGroupValue = parameter->getDefaultGroupValues().value(group);
+                            
+                            for (int i = userDefinedValuesCount; i <= groupCount - userDefinedValuesCount; i++) {
+                                values.append(defaultGroupValue);
+                            }
+                        } else {
+                            int valuesCount = values.size();
+                            
+                            for (int i = groupCount; i < valuesCount; i++) {
+                                values.pop_back();
+                            }
                         }
                         
                         groupValues.insert(group, values);
