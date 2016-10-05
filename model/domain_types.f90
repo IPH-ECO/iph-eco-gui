@@ -75,13 +75,13 @@ module domain_types
     end type
 
     type, bind(C) :: WaterQualityGroup
-        character(kind = c_char), dimension(255) :: name
+        character(kind = c_char, len = 255) :: name
         integer(c_int) :: numberOfValues
         type(c_ptr) :: values
     end type
 
     type, bind(C) :: WaterQualityParameter
-        character(kind = c_char), dimension(255) :: name
+        character(kind = c_char, len = 255) :: name
         integer(c_int) :: parameterType ! STRUCTURE = 1, PARAMETER = 2, INITIAL_CONDITION = 3
         real(c_double) :: value
         integer(c_int) :: numberOfGroups
@@ -89,8 +89,8 @@ module domain_types
     end type
 
     type, bind(C) :: FoodMatrixItem
-        character(kind = c_char), dimension(255) :: predator
-        character(kind = c_char), dimension(255) :: prey
+        character(kind = c_char, len = 255) :: predator
+        character(kind = c_char, len = 255) :: prey
         real(c_double) :: value
     end type
 

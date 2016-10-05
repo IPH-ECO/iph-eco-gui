@@ -355,6 +355,29 @@ void WaterQualityDialog::on_btnApplyConfiguration_clicked() {
             QTreeWidget *treeWidget = parameter->getSection() == WaterQualityParameterSection::PARAMETER ? ui->trwParameter : ui->trwInitialConditions;
             QLineEdit *lineEdit = static_cast<QLineEdit*>(treeWidget->itemWidget(parameter->getItemWidget(), 1));
             parameter->setValue(lineEdit->text().toDouble());
+        } else if (parameter->getInputType() == WaterQualityParameterInputType::TABULAR) {
+            QMap<QString, QList<double> > groupValues = parameter->getGroupValues();
+            
+            for (QString group : parameter->getGroups()) {
+                WaterQualityParameter *groupParameter = currentConfiguration->getParameter(group, WaterQualityParameterSection::PARAMETER);
+                
+                
+                if (groupParameter->getGroupValues().values(group).size() != groupParameter->getValue()) {
+                    if (groupParameter->getValue() > 0) {
+                        QList<double> values;
+                
+                        for (int i = 0; i < groupParameter->getValue(); i++) {
+                            values.append(parameter->getDefaultGroupValues().value(group));
+                        }
+                        
+                        groupValues.insert(group, values);
+                    } else {
+                        groupValues.remove(group);
+                    }
+                }
+            }
+            
+            parameter->setGroupValues(groupValues);
         }
     }
     

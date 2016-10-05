@@ -307,7 +307,7 @@ SimulationDataType::WaterQualityParameter WaterQualityParameter::toSimulationDat
     SimulationDataType::WaterQualityParameter parameter;
     QByteArray nameByteArray = this->name.toLocal8Bit();
     
-    strncpy(parameter.name, nameByteArray.constData(), nameByteArray.size());
+    strncpy(parameter.name, nameByteArray.constData(), nameByteArray.length());
     
     parameter.parameterType = (int) section;
     
@@ -324,11 +324,11 @@ SimulationDataType::WaterQualityParameter WaterQualityParameter::toSimulationDat
         for (QMap<QString, QList<double> >::const_iterator it = groupValues.begin(); it != groupValues.end(); it++) {
             QByteArray nameByteArray = it.key().toLocal8Bit();
             
-            strncpy(parameter.groups[i].name, nameByteArray.constData(), nameByteArray.size());
+            strncpy(parameter.groups[i].name, nameByteArray.constData(), nameByteArray.length());
             parameter.groups[i].numberOfValues = it.value().size();
             parameter.groups[i].values = new double[parameter.groups[i].numberOfValues];
             
-            for (int j = 0; j < it.value().size(); j++) {
+            for (int j = 0; j < parameter.groups[i].numberOfValues; j++) {
                 parameter.groups[i].values[j] = it.value().at(j);
             }
             

@@ -64,10 +64,10 @@ WaterQualityParameterDialog::~WaterQualityParameterDialog() {
 void WaterQualityParameterDialog::accept() {
     QMap<QString, QList<double> > groupValues;
     
-    for (int i = 0; i < ui->trwParameters->rowCount(); i++) {
+    for (int j = 0; j < ui->trwParameters->columnCount(); j++) {
         QList<double> values;
         
-        for (int j = 0; j < ui->trwParameters->columnCount(); j++) {
+        for (int i = 0; i < ui->trwParameters->rowCount(); i++) {
             QTableWidgetItem *tableItem = ui->trwParameters->item(i, j);
             
             if (tableItem->flags() != Qt::NoItemFlags) {
@@ -75,7 +75,7 @@ void WaterQualityParameterDialog::accept() {
             }
         }
         
-        groupValues.insert(parameter->getGroups().at(i), values);
+        groupValues.insert(parameter->getGroups().at(j), values);
     }
     
     parameter->setGroupValues(groupValues);
