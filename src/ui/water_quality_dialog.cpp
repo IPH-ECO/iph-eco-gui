@@ -370,7 +370,7 @@ void WaterQualityDialog::on_btnApplyConfiguration_clicked() {
                         if (groupCount > userDefinedValuesCount) {
                             double defaultGroupValue = parameter->getDefaultGroupValues().value(group);
                             
-                            for (int i = userDefinedValuesCount; i <= groupCount - userDefinedValuesCount; i++) {
+                            for (int i = 0; i < groupCount - userDefinedValuesCount; i++) {
                                 values.append(defaultGroupValue);
                             }
                         } else {
