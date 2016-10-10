@@ -225,14 +225,15 @@ void SimulationDataType::Simulation::destroy() {
         delete outputParameters;
     }
     
-    if (recoveryVariables) {
-        recoveryVariables->destroy();
-        delete recoveryVariables;
-        recoveryVariables = nullptr;
-    }
     
     delete label;
     delete layers;
     delete observations;
     delete outputDirectory;
+    
+    // Intel Fortran deallocates automatically
+    #if !defined(_WIN32) && !defined(_WIN64)
+    recoveryVariables->destroy();
+    delete recoveryVariables;
+    #endif
 }
