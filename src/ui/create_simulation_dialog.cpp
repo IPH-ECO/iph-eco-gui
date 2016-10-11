@@ -34,6 +34,7 @@ CreateSimulationDialog::CreateSimulationDialog(QWidget *parent) :
     for (WaterQualityConfiguration *configuration : project->getWaterQualityConfigurations()) {
         ui->cbxWaterQuality->addItem(configuration->getName());
     }
+    ui->cbxWaterQuality->setCurrentIndex(-1);
     
     for (MeteorologicalConfiguration *configuration : project->getMeteorologicalConfigurations()) {
         ui->cbxMeteorological->addItem(configuration->getName());
@@ -114,10 +115,10 @@ bool CreateSimulationDialog::isValid() {
 		return false;
 	}
 
-	if (ui->cbxWaterQuality->currentIndex() == -1) {
-		QMessageBox::warning(this, tr("Create Simulation"), tr("Water quality data can't be blank."));
-		return false;
-	}
+//	if (ui->cbxWaterQuality->currentIndex() == -1) {
+//		QMessageBox::warning(this, tr("Create Simulation"), tr("Water quality data can't be blank."));
+//		return false;
+//	}
 
 	if (ui->cbxMeteorological->currentIndex() == -1) {
 		QMessageBox::warning(this, tr("Create Simulation"), tr("Meteorological data can't be blank."));
