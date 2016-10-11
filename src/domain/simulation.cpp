@@ -435,7 +435,11 @@ SimulationDataType::Simulation* Simulation::toSimulationDataType() {
 		}
 
 		simulationStruct->hydrodynamicConfiguration = this->hydrodynamicConfiguration->toSimulationDataType();
-        simulationStruct->waterQualityConfiguration = this->waterQualityConfiguration->toSimulationDataType();
+        
+        if (this->waterQualityConfiguration) {
+            simulationStruct->waterQualityConfiguration = this->waterQualityConfiguration->toSimulationDataType();
+        }
+        
 	    simulationStruct->meteorologicalConfiguration = this->meteorologicalConfiguration->toSimulationDataType();
 	    simulationStruct->minimumVerticalLimit = this->minimumVerticalLimit;
 	    simulationStruct->maximumVerticalLimit = this->maximumVerticalLimit;
