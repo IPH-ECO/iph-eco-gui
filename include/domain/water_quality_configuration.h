@@ -33,7 +33,7 @@ public:
     WaterQualityParameter* getParameter(const QString &name, const WaterQualityParameterSection &section) const;
     WaterQualityParameter* getParameterByDiagramItem(const QString &itemName) const;
     QList<WaterQualityParameter*> getRootParameters(const WaterQualityParameterSection &section) const;
-    double getFoodMatrixValue(const QString &predator, const QString &prey) const;
+    QList<double> getFoodMatrixValues(const QString &predator, const QString &prey) const;
     void setFoodMatrixItem(const QString &predator, const QString &prey, const double &value);
     void clearFoodMatrix();
     QHash<QPair<QString, QString>, double> getFoodMatrix() const;

@@ -175,27 +175,21 @@ void WaterQualityDialog::buildTreeWidgets(WaterQualityParameter *parameter) {
 }
 
 void WaterQualityDialog::loadFoodMatrix() {
-    QStringList predatorsLabels;
-    QStringList preysLabels;
-    QList<FoodMatrixElement*> preys;
-    QList<FoodMatrixElement*> predators;
-    
     ui->tblFoodMatrix->clear();
+    ui->tblFoodMatrix->setRowCount(0);
+    ui->tblFoodMatrix->setColumnCount(0);
     
     for (FoodMatrixElement *prey : waterQualityRepository->getPreys()) {
         WaterQualityParameter *parameter = prey->getParameter();
-        QTreeWidgetItem *preyItem = parameter->getItemWidget();
         
-        if (preyItem->isHidden()) {
+        if (parameter->getItemWidget()->isHidden()) {
             continue;
         }
         
         bool skipThisPrey = true;
         
         for (FoodMatrixElement *predator : prey->getPredators()) {
-            QTreeWidgetItem *predatorItem = predator->getParameter()->getItemWidget();
-            
-            if (!predatorItem->isHidden()) {
+            if (!predator->getParameter()->getItemWidget()->isHidden()) {
                 skipThisPrey = false;
                 break;
             }
@@ -205,16 +199,27 @@ void WaterQualityDialog::loadFoodMatrix() {
             continue;
         }
         
+        int columnCount = ui->tblFoodMatrix->columnCount();
+        
         if (prey->getGroup()) {
             int groupValue = ui->trwParameter->findChild<QLineEdit*>(prey->getGroup()->getName())->text().toInt();
             
+            ui->tblFoodMatrix->setColumnCount(columnCount + groupValue);
+            
             for (int i = 0; i < groupValue; i++) {
-                preysLabels.append(QString("%1 %2").arg(prey->getLabel()).arg(i + 1));
-                preys.append(prey);
+                QTableWidgetItem *headerItem = new QTableWidgetItem();
+                
+                headerItem->setText(QString("%1 %2").arg(prey->getLabel()).arg(i + 1));
+                headerItem->setData(Qt::UserRole, qVariantFromValue((void*) prey));
+                ui->tblFoodMatrix->setHorizontalHeaderItem(columnCount + i, headerItem);
             }
         } else {
-            preysLabels.append(prey->getLabel());
-            preys.append(prey);
+            QTableWidgetItem *headerItem = new QTableWidgetItem();
+            
+            headerItem->setText(prey->getLabel());
+            headerItem->setData(Qt::UserRole, qVariantFromValue((void*) prey));
+            ui->tblFoodMatrix->setColumnCount(columnCount + 1);
+            ui->tblFoodMatrix->setHorizontalHeaderItem(columnCount, headerItem);
         }
     }
     
@@ -225,48 +230,91 @@ void WaterQualityDialog::loadFoodMatrix() {
             continue;
         }
         
+        int rowCount = ui->tblFoodMatrix->rowCount();
+        
         if (predator->getGroup()) {
             QLineEdit *lineEdit = static_cast<QLineEdit*>(ui->trwParameter->itemWidget(predator->getGroup()->getItemWidget(), 1));
             
             if (lineEdit) {
                 int groupValue = lineEdit->text().toInt();
                 
+                ui->tblFoodMatrix->setRowCount(rowCount + groupValue);
+                
                 for (int i = 0; i < groupValue; i++) {
-                    predatorsLabels.append(QString("%1 %2").arg(predator->getLabel()).arg(i + 1));
-                    predators.append(predator);
+                    QTableWidgetItem *headerItem = new QTableWidgetItem();
+                    
+                    headerItem->setText(QString("%1 %2").arg(predator->getLabel()).arg(i + 1));
+                    headerItem->setData(Qt::UserRole, qVariantFromValue((void*) predator));
+                    ui->tblFoodMatrix->setVerticalHeaderItem(rowCount + i, headerItem);
                 }
             }
         } else {
-            predatorsLabels.append(predator->getLabel());
-            predators.append(predator);
+            QTableWidgetItem *headerItem = new QTableWidgetItem();
+            
+            headerItem->setText(predator->getLabel());
+            headerItem->setData(Qt::UserRole, qVariantFromValue((void*) predator));
+            ui->tblFoodMatrix->setRowCount(rowCount + 1);
+            ui->tblFoodMatrix->setVerticalHeaderItem(rowCount, headerItem);
         }
     }
     
-    if (preys.size() > 0 && predators.size() > 0) {
-        ui->tblFoodMatrix->setColumnCount(preys.size());
-        ui->tblFoodMatrix->setRowCount(predators.size());
-        ui->tblFoodMatrix->setHorizontalHeaderLabels(preysLabels);
-        ui->tblFoodMatrix->setVerticalHeaderLabels(predatorsLabels);
+    if (ui->tblFoodMatrix->rowCount() > 0 && ui->tblFoodMatrix->columnCount() > 0) {
+        FoodMatrixElement *previousPredator = nullptr;
+        FoodMatrixElement *previousPrey = nullptr;
+        int k, l;
+        
         ui->tblFoodMatrix->resizeColumnsToContents();
         
-        for (int i = 0; i < predators.size(); i++) {
-            for (int j = 0; j < preys.size(); j++) {
+        for (int i = 0; i < ui->tblFoodMatrix->rowCount(); i++, k++) {
+            FoodMatrixElement *predator = (FoodMatrixElement*) ui->tblFoodMatrix->verticalHeaderItem(i)->data(Qt::UserRole).value<void*>();
+            
+            if (previousPredator != predator) {
+                previousPredator = predator;
+                k = 0;
+                l = 0;
+            }
+            
+            for (int j = 0; j < ui->tblFoodMatrix->columnCount(); j++) {
+                FoodMatrixElement *prey =(FoodMatrixElement*) ui->tblFoodMatrix->horizontalHeaderItem(j)->data(Qt::UserRole).value<void*>();
                 QTableWidgetItem *tableItem = new QTableWidgetItem();
+                int preyGroupCount = 0;
                 
-                if (predators[i]->getPreys().contains(preys[j])) {
-                    double value = currentConfiguration->getFoodMatrixValue(predators[i]->getName(), preys[j]->getName());
-                    
-                    if (value == std::numeric_limits<double>::max()) {
-                        value = waterQualityRepository->getFoodMatrixValue(predators[i], preys[j]);
+                if (predator->getPreys().contains(prey)) {
+                    if (previousPrey != prey) {
+                        previousPrey = prey;
+                        l = 0;
+                        
+                        if (prey->getGroup()) {
+                            preyGroupCount = ui->trwParameter->findChild<QLineEdit*>(prey->getGroup()->getName())->text().toInt();
+                        } else {
+                            preyGroupCount = 1;
+                        }
                     }
                     
-                    tableItem->setText(QString::number(value));
+                    QList<double> values = currentConfiguration->getFoodMatrixValues(predator->getName(), prey->getName());
+                    
+                    if (values.isEmpty()) {
+                        tableItem->setText(QString::number(waterQualityRepository->getDefaultFoodMatrixValue(predator, prey)));
+                    } else {
+                        int valueIndex = k * preyGroupCount + l;
+                        double value;
+                        
+                        if (valueIndex < values.size()) {
+                            value = values.at(valueIndex);
+                        } else {
+                            value = waterQualityRepository->getDefaultFoodMatrixValue(predator, prey);
+                        }
+                        
+                        tableItem->setText(QString::number(value));
+                    }
+                    
+                    l++;
                 } else {
                     tableItem->setFlags(Qt::NoItemFlags);
                     tableItem->setBackgroundColor(QColor(Qt::lightGray));
                 }
                 
-                tableItem->setData(Qt::UserRole, QString(predators[i]->getName()).append("-").append(preys[j]->getName()));
+                tableItem->setData(Qt::UserRole, QString(predator->getName()).append("-").append(prey->getName()));
                 ui->tblFoodMatrix->setItem(i, j, tableItem);
             }
         }

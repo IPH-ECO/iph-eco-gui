@@ -98,12 +98,16 @@ QList<WaterQualityParameter*> WaterQualityConfiguration::getRootParameters(const
     return rootParameters;
 }
 
-double WaterQualityConfiguration::getFoodMatrixValue(const QString &predator, const QString &prey) const {
-    return foodMatrix.value(QPair<QString, QString>(predator, prey), std::numeric_limits<double>::max());
+QList<double> WaterQualityConfiguration::getFoodMatrixValues(const QString &predator, const QString &prey) const {
+    QList<double> values = foodMatrix.values(QPair<QString, QString>(predator, prey));
+    
+    std::reverse(values.begin(), values.end());
+    
+    return values;
 }
 
 void WaterQualityConfiguration::setFoodMatrixItem(const QString &predator, const QString &prey, const double &value) {
-    foodMatrix.insert(QPair<QString, QString>(predator, prey), value);
+    foodMatrix.insertMulti(QPair<QString, QString>(predator, prey), value);
 }
 
 void WaterQualityConfiguration::clearFoodMatrix() {
@@ -146,7 +150,7 @@ SimulationDataType::WaterQualityConfiguration* WaterQualityConfiguration::toSimu
         strncpy(configuration->foodMatrix[i].predator, predator.constData(), predator.length());
         strncpy(configuration->foodMatrix[i].prey, prey.constData(), prey.length());
         
-        configuration->foodMatrix[i].value = it.value();
+//        configuration->foodMatrix[i].value = it.value();
     }
     
     return configuration;

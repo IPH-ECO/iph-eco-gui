@@ -327,7 +327,7 @@ QList<FoodMatrixElement*> WaterQualityRepository::getPreys() const {
     return preys;
 }
 
-double WaterQualityRepository::getFoodMatrixValue(FoodMatrixElement *predator, FoodMatrixElement *prey) const {
+double WaterQualityRepository::getDefaultFoodMatrixValue(FoodMatrixElement *predator, FoodMatrixElement *prey) const {
     for (FoodMatrixItem fm : defaultFoodMatrix) {
         if (fm.getPredator() == predator && fm.getPrey() == prey) {
             return fm.getValue();

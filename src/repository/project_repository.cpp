@@ -1074,6 +1074,8 @@ void ProjectRepository::saveFoodMatrix(WaterQualityConfiguration *configuration)
     QHash<QPair<QString, QString>, double> foodMatrix = configuration->getFoodMatrix();
     QSqlQuery query(databaseUtility->getDatabase());
     
+    query.exec("delete from food_matrix where water_quality_configuration_id = " + QString::number(configuration->getId()));
+    
     for (QHash<QPair<QString, QString>, double>::const_iterator it = foodMatrix.constBegin(); it != foodMatrix.constEnd(); it++) {
         QPair<QString, QString> predatorAndPrey = it.key();
         

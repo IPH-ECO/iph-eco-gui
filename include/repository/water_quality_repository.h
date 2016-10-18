@@ -30,7 +30,7 @@ public:
     void loadParameters(WaterQualityConfiguration *configuration);
     QList<FoodMatrixElement*> getPredators() const;
     QList<FoodMatrixElement*> getPreys() const;
-    double getFoodMatrixValue(FoodMatrixElement *predator, FoodMatrixElement *prey) const;
+    double getDefaultFoodMatrixValue(FoodMatrixElement *predator, FoodMatrixElement *prey) const;
 };
 
 #endif // WATER_QUALITY_REPOSITORY_H
