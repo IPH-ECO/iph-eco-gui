@@ -150,7 +150,7 @@ SimulationDataType::WaterQualityConfiguration* WaterQualityConfiguration::toSimu
         strncpy(configuration->foodMatrix[i].predator, predator.constData(), predator.length());
         strncpy(configuration->foodMatrix[i].prey, prey.constData(), prey.length());
         
-//        configuration->foodMatrix[i].value = it.value();
+        configuration->foodMatrix[i].value = it.value();
     }
     
     return configuration;
