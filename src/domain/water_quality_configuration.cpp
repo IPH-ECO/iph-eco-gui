@@ -137,20 +137,29 @@ SimulationDataType::WaterQualityConfiguration* WaterQualityConfiguration::toSimu
         configuration->parameters[i] = persistableParameters[i]->toSimulationDataType();
     }
     
+    QList<QPair<QString, QString> > uniqueKeys = this->foodMatrix.uniqueKeys();
     int i = 0;
     
-    configuration->foodMatrix = new SimulationDataType::FoodMatrixItem[this->foodMatrix.size()];
-                                                                       
-    for (QHash<QPair<QString, QString>, double>::const_iterator it = foodMatrix.constBegin(); it != foodMatrix.constEnd(); it++) {
-        QByteArray predator = it.key().first.toLocal8Bit();
-        QByteArray prey = it.key().second.toLocal8Bit();
-        
-        configuration->foodMatrix[i] = SimulationDataType::FoodMatrixItem();
+    configuration->numberOfFoodMatrixItems = uniqueKeys.size();
+    configuration->foodMatrix = new SimulationDataType::FoodMatrixItem[uniqueKeys.size()];
+    
+    for (QPair<QString, QString> key : uniqueKeys) {
+        QByteArray predator = key.first.toLocal8Bit();
+        QByteArray prey = key.second.toLocal8Bit();
+        QList<double> values = this->foodMatrix.values(key);
         
         strncpy(configuration->foodMatrix[i].predator, predator.constData(), predator.length());
         strncpy(configuration->foodMatrix[i].prey, prey.constData(), prey.length());
         
-        configuration->foodMatrix[i].value = it.value();
+        configuration->foodMatrix[i] = SimulationDataType::FoodMatrixItem();
+        configuration->foodMatrix[i].numberOfValues = values.size();
+        configuration->foodMatrix[i].values = new double[values.size()];
+        
+        for (int j = 0; j < values.size(); j++) {
+            configuration->foodMatrix[i].values[j] = values.at(j);
+        }
+        
+        i++;
     }
     
     return configuration;

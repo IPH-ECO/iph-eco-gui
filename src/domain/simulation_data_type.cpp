@@ -125,7 +125,9 @@ void SimulationDataType::WaterQualityParameter::destroy() {
     delete groups;
 }
 
-SimulationDataType::FoodMatrixItem::FoodMatrixItem() {
+SimulationDataType::FoodMatrixItem::FoodMatrixItem() :
+    values(nullptr)
+{
     memset(predator, ' ', sizeof(predator));
     memset(prey, ' ', sizeof(prey));
 }

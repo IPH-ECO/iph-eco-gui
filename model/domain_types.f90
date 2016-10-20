@@ -91,12 +91,14 @@ module domain_types
     type, bind(C) :: FoodMatrixItem
         character(kind = c_char, len = 255) :: predator
         character(kind = c_char, len = 255) :: prey
-        real(c_double) :: value
+        integer(c_int) :: numberOfValues
+        type(c_ptr) :: values
     end type
 
     type, bind(C) :: WaterQualityConfiguration
         integer(c_int) :: numberOfParameters
         type(c_ptr) :: parameters
+        integer(c_int) :: numberOfFoodMatrixItems
         type(c_ptr) :: foodMatrix
     end type
 

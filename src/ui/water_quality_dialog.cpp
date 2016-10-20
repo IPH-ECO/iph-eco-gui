@@ -445,10 +445,13 @@ void WaterQualityDialog::on_btnApplyConfiguration_clicked() {
     for (int i = 0; i < ui->tblFoodMatrix->rowCount(); i++) {
         for (int j = 0; j < ui->tblFoodMatrix->columnCount(); j++) {
             QTableWidgetItem *item = ui->tblFoodMatrix->item(i, j);
-            QStringList predatorAndPrey = item->data(Qt::UserRole).toString().split("-");
-            double value = item->text().toDouble();
             
-            currentConfiguration->setFoodMatrixItem(predatorAndPrey.first(), predatorAndPrey.last(), value);
+            if (item->flags() != Qt::NoItemFlags) {
+                QStringList predatorAndPrey = item->data(Qt::UserRole).toString().split("-");
+                double value = item->text().toDouble();
+                
+                currentConfiguration->setFoodMatrixItem(predatorAndPrey.first(), predatorAndPrey.last(), value);
+            }
         }
     }
 
