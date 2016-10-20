@@ -148,10 +148,11 @@ SimulationDataType::WaterQualityConfiguration* WaterQualityConfiguration::toSimu
         QByteArray prey = key.second.toLocal8Bit();
         QList<double> values = this->foodMatrix.values(key);
         
+        configuration->foodMatrix[i] = SimulationDataType::FoodMatrixItem();
+        
         strncpy(configuration->foodMatrix[i].predator, predator.constData(), predator.length());
         strncpy(configuration->foodMatrix[i].prey, prey.constData(), prey.length());
         
-        configuration->foodMatrix[i] = SimulationDataType::FoodMatrixItem();
         configuration->foodMatrix[i].numberOfValues = values.size();
         configuration->foodMatrix[i].values = new double[values.size()];
         
