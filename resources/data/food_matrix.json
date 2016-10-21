@@ -189,6 +189,18 @@
 		"prey": true,
 		"values": [
 			{
+				"prey": "om",
+				"value": 0.2
+			},
+			{
+				"prey": "dom",
+				"value": 0
+			},
+			{
+				"prey": "pom",
+				"value": 0.2
+			},
+			{
 				"prey": "domLabile",
 				"value": 0
 			},
@@ -251,6 +263,18 @@
 		"prey": true,
 		"values": [
 			{
+				"prey": "om",
+				"value": 0.2
+			},
+			{
+				"prey": "dom",
+				"value": 0
+			},
+			{
+				"prey": "pom",
+				"value": 0.2
+			},
+			{
 				"prey": "domLabile",
 				"value": 0
 			},
@@ -312,6 +336,18 @@
 		"predator": true,
 		"prey": true,
 		"values": [
+			{
+				"prey": "om",
+				"value": 0.2
+			},
+			{
+				"prey": "dom",
+				"value": 0
+			},
+			{
+				"prey": "pom",
+				"value": 0.2
+			},
 			{
 				"prey": "domLabile",
 				"value": 0
