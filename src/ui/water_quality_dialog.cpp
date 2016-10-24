@@ -211,6 +211,7 @@ void WaterQualityDialog::loadFoodMatrix() {
                 
                 headerItem->setText(QString("%1 %2").arg(prey->getLabel()).arg(i + 1));
                 headerItem->setData(Qt::UserRole, qVariantFromValue((void*) prey));
+                headerItem->setData(Qt::UserRole + 1, i + 1);
                 ui->tblFoodMatrix->setHorizontalHeaderItem(columnCount + i, headerItem);
             }
         } else {
@@ -218,6 +219,7 @@ void WaterQualityDialog::loadFoodMatrix() {
             
             headerItem->setText(prey->getLabel());
             headerItem->setData(Qt::UserRole, qVariantFromValue((void*) prey));
+            headerItem->setData(Qt::UserRole + 1, 0);
             ui->tblFoodMatrix->setColumnCount(columnCount + 1);
             ui->tblFoodMatrix->setHorizontalHeaderItem(columnCount, headerItem);
         }
@@ -245,6 +247,7 @@ void WaterQualityDialog::loadFoodMatrix() {
                     
                     headerItem->setText(QString("%1 %2").arg(predator->getLabel()).arg(i + 1));
                     headerItem->setData(Qt::UserRole, qVariantFromValue((void*) predator));
+                    headerItem->setData(Qt::UserRole + 1, i + 1);
                     ui->tblFoodMatrix->setVerticalHeaderItem(rowCount + i, headerItem);
                 }
             }
@@ -253,68 +256,39 @@ void WaterQualityDialog::loadFoodMatrix() {
             
             headerItem->setText(predator->getLabel());
             headerItem->setData(Qt::UserRole, qVariantFromValue((void*) predator));
+            headerItem->setData(Qt::UserRole + 1, 0);
             ui->tblFoodMatrix->setRowCount(rowCount + 1);
             ui->tblFoodMatrix->setVerticalHeaderItem(rowCount, headerItem);
         }
     }
     
     if (ui->tblFoodMatrix->rowCount() > 0 && ui->tblFoodMatrix->columnCount() > 0) {
-        FoodMatrixElement *previousPredator = nullptr;
-        FoodMatrixElement *previousPrey = nullptr;
-        int k, l;
-        
         ui->tblFoodMatrix->resizeColumnsToContents();
         
-        for (int i = 0; i < ui->tblFoodMatrix->rowCount(); i++, k++) {
+        for (int i = 0; i < ui->tblFoodMatrix->rowCount(); i++) {
             FoodMatrixElement *predator = (FoodMatrixElement*) ui->tblFoodMatrix->verticalHeaderItem(i)->data(Qt::UserRole).value<void*>();
-            
-            if (previousPredator != predator) {
-                previousPredator = predator;
-                k = 0;
-                l = 0;
-            }
+            int predatorGroup = ui->tblFoodMatrix->verticalHeaderItem(i)->data(Qt::UserRole + 1).toInt();
             
             for (int j = 0; j < ui->tblFoodMatrix->columnCount(); j++) {
                 FoodMatrixElement *prey =(FoodMatrixElement*) ui->tblFoodMatrix->horizontalHeaderItem(j)->data(Qt::UserRole).value<void*>();
+                int preyGroup = ui->tblFoodMatrix->horizontalHeaderItem(j)->data(Qt::UserRole + 1).toInt();
                 QTableWidgetItem *tableItem = new QTableWidgetItem();
-                int preyGroupCount = 0;
+                FoodMatrixValue *foodMatrixValue = nullptr;
                 
                 if (predator->getPreys().contains(prey)) {
-                    if (previousPrey != prey) {
-                        previousPrey = prey;
-                        l = 0;
-                        
-                        if (prey->getGroup()) {
-                            preyGroupCount = ui->trwParameter->findChild<QLineEdit*>(prey->getGroup()->getName())->text().toInt();
-                        } else {
-                            preyGroupCount = 1;
-                        }
-                    }
+                    foodMatrixValue = currentConfiguration->getFoodMatrixValue(predator->getName(), predatorGroup, prey->getName(), preyGroup);
                     
-                    QList<double> values = currentConfiguration->getFoodMatrixValues(predator->getName(), prey->getName());
-                    
-                    if (values.isEmpty()) {
-                        tableItem->setText(QString::number(waterQualityRepository->getDefaultFoodMatrixValue(predator, prey)));
+                    if (foodMatrixValue) {
+                        tableItem->setText(QString::number(foodMatrixValue->value));
                     } else {
-                        int valueIndex = k * preyGroupCount + l;
-                        double value;
-                        
-                        if (valueIndex < values.size()) {
-                            value = values.at(valueIndex);
-                        } else {
-                            value = waterQualityRepository->getDefaultFoodMatrixValue(predator, prey);
-                        }
-                        
-                        tableItem->setText(QString::number(value));
+                        tableItem->setText(QString::number(waterQualityRepository->getDefaultFoodMatrixValue(predator, prey)));
                     }
-                    
-                    l++;
                 } else {
                     tableItem->setFlags(Qt::NoItemFlags);
                     tableItem->setBackgroundColor(QColor(Qt::lightGray));
                 }
                 
-                tableItem->setData(Qt::UserRole, QString(predator->getName()).append("-").append(prey->getName()));
+                tableItem->setData(Qt::UserRole, qVariantFromValue((void*) foodMatrixValue));
                 ui->tblFoodMatrix->setItem(i, j, tableItem);
             }
         }
@@ -447,10 +421,22 @@ void WaterQualityDialog::on_btnApplyConfiguration_clicked() {
             QTableWidgetItem *item = ui->tblFoodMatrix->item(i, j);
             
             if (item->flags() != Qt::NoItemFlags) {
-                QStringList predatorAndPrey = item->data(Qt::UserRole).toString().split("-");
-                double value = item->text().toDouble();
+                FoodMatrixValue *foodMatrixValue = (FoodMatrixValue*) item->data(Qt::UserRole).value<void*>();
                 
-                currentConfiguration->setFoodMatrixItem(predatorAndPrey.first(), predatorAndPrey.last(), value);
+                if (!foodMatrixValue) {
+                    FoodMatrixElement *predator = (FoodMatrixElement*) ui->tblFoodMatrix->verticalHeaderItem(i)->data(Qt::UserRole).value<void*>();
+                    FoodMatrixElement *prey =(FoodMatrixElement*) ui->tblFoodMatrix->horizontalHeaderItem(j)->data(Qt::UserRole).value<void*>();
+                    
+                    foodMatrixValue = new FoodMatrixValue();
+                    foodMatrixValue->predator = predator->getName();
+                    foodMatrixValue->predatorGroup = ui->tblFoodMatrix->verticalHeaderItem(i)->data(Qt::UserRole + 1).toInt();
+                    foodMatrixValue->prey = prey->getName();
+                    foodMatrixValue->preyGroup = ui->tblFoodMatrix->horizontalHeaderItem(j)->data(Qt::UserRole + 1).toInt();
+                }
+                
+                foodMatrixValue->value = item->text().toDouble();
+                
+                currentConfiguration->addFoodMatrixValue(foodMatrixValue);
             }
         }
     }

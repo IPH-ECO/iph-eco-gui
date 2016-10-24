@@ -170,7 +170,9 @@ void DatabaseUtility::createApplicationTables() {
     sql << "drop table if exists food_matrix";
     sql << "create table food_matrix (" \
         "predator text not null, " \
+        "predator_group integer not null, " \
         "prey text not null, " \
+        "prey_group integer not null, " \
         "value double default 0, " \
         "water_quality_configuration_id integer not null" \
     ")";

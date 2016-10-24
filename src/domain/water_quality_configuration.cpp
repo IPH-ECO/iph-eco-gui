@@ -10,6 +10,10 @@ WaterQualityConfiguration::~WaterQualityConfiguration() {
     for (WaterQualityParameter *parameter : parameters) {
         delete parameter;
     }
+    
+    for (FoodMatrixValue *foodMatrixValue : foodMatrix) {
+        delete foodMatrixValue;
+    }
 }
 
 uint WaterQualityConfiguration::getId() const {
@@ -98,23 +102,25 @@ QList<WaterQualityParameter*> WaterQualityConfiguration::getRootParameters(const
     return rootParameters;
 }
 
-QList<double> WaterQualityConfiguration::getFoodMatrixValues(const QString &predator, const QString &prey) const {
-    QList<double> values = foodMatrix.values(QPair<QString, QString>(predator, prey));
+FoodMatrixValue* WaterQualityConfiguration::getFoodMatrixValue(const QString &predator, const int &predatorGroup, const QString &prey, const int &preyGroup) const {
+    for (FoodMatrixValue *foodMatrixValue : foodMatrix) {
+        if (predator == foodMatrixValue->predator && predatorGroup == foodMatrixValue->predatorGroup && prey == foodMatrixValue->prey && preyGroup == foodMatrixValue->preyGroup) {
+            return foodMatrixValue;
+        }
+    }
     
-    std::reverse(values.begin(), values.end());
-    
-    return values;
+    return nullptr;
 }
 
-void WaterQualityConfiguration::setFoodMatrixItem(const QString &predator, const QString &prey, const double &value) {
-    foodMatrix.insertMulti(QPair<QString, QString>(predator, prey), value);
+void WaterQualityConfiguration::addFoodMatrixValue(FoodMatrixValue *foodMatrixValue) {
+    foodMatrix.insert(foodMatrixValue);
 }
 
 void WaterQualityConfiguration::clearFoodMatrix() {
     foodMatrix.clear();
 }
 
-QHash<QPair<QString, QString>, double> WaterQualityConfiguration::getFoodMatrix() const {
+QSet<FoodMatrixValue*> WaterQualityConfiguration::getFoodMatrix() const {
     return foodMatrix;
 }
 
@@ -129,36 +135,29 @@ bool WaterQualityConfiguration::isLoaded() const {
 SimulationDataType::WaterQualityConfiguration* WaterQualityConfiguration::toSimulationDataType() const {
     SimulationDataType::WaterQualityConfiguration *configuration = new SimulationDataType::WaterQualityConfiguration();
     QList<WaterQualityParameter*> persistableParameters = this->getParameters(true);
+    int i = 0;
     
     configuration->numberOfParameters = persistableParameters.size();
     configuration->parameters = new SimulationDataType::WaterQualityParameter[configuration->numberOfParameters];
     
-    for (int i = 0; i < configuration->numberOfParameters; i++) {
+    while (i < configuration->numberOfParameters) {
         configuration->parameters[i] = persistableParameters[i]->toSimulationDataType();
+        i++;
     }
     
-    QList<QPair<QString, QString> > uniqueKeys = this->foodMatrix.uniqueKeys();
-    int i = 0;
+    configuration->foodMatrixSize = this->foodMatrix.size();
+    configuration->foodMatrix = new SimulationDataType::FoodMatrixValue[configuration->foodMatrixSize];
+    i = 0;
     
-    configuration->numberOfFoodMatrixItems = uniqueKeys.size();
-    configuration->foodMatrix = new SimulationDataType::FoodMatrixItem[uniqueKeys.size()];
-    
-    for (QPair<QString, QString> key : uniqueKeys) {
-        QByteArray predator = key.first.toLocal8Bit();
-        QByteArray prey = key.second.toLocal8Bit();
-        QList<double> values = this->foodMatrix.values(key);
-        
-        configuration->foodMatrix[i] = SimulationDataType::FoodMatrixItem();
+    for (FoodMatrixValue *foodMatrixValue : foodMatrix)  {
+        QByteArray predator = foodMatrixValue->predator.toLocal8Bit();
+        QByteArray prey = foodMatrixValue->prey.toLocal8Bit();
         
         strncpy(configuration->foodMatrix[i].predator, predator.constData(), predator.length());
+        configuration->foodMatrix[i].predatorGroup = foodMatrixValue->predatorGroup;
         strncpy(configuration->foodMatrix[i].prey, prey.constData(), prey.length());
-        
-        configuration->foodMatrix[i].numberOfValues = values.size();
-        configuration->foodMatrix[i].values = new double[values.size()];
-        
-        for (int j = 0; j < values.size(); j++) {
-            configuration->foodMatrix[i].values[j] = values.at(j);
-        }
+        configuration->foodMatrix[i].preyGroup = foodMatrixValue->preyGroup;
+        configuration->foodMatrix[i].value = foodMatrixValue->value;
         
         i++;
     }

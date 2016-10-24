@@ -331,11 +331,15 @@ void ProjectRepository::loadFoodMatrix(WaterQualityConfiguration *configuration)
     query.exec();
     
     while (query.next() && !operationCanceled) {
-        QString predator = query.value("predator").toString();
-        QString prey = query.value("prey").toString();
-        double value = query.value("value").toDouble();
+        FoodMatrixValue *foodMatrixValue = new FoodMatrixValue();
         
-        configuration->setFoodMatrixItem(predator, prey, value);
+        foodMatrixValue->predator = query.value("predator").toString();
+        foodMatrixValue->predatorGroup = query.value("predator_group").toInt();
+        foodMatrixValue->prey = query.value("prey").toString();
+        foodMatrixValue->preyGroup = query.value("prey_group").toInt();
+        foodMatrixValue->value = query.value("value").toDouble();
+        
+        configuration->addFoodMatrixValue(foodMatrixValue);
         
         updateProgressAndProcessEvents();
     }
@@ -1071,18 +1075,17 @@ void ProjectRepository::saveWaterQualityParameters(WaterQualityConfiguration *co
 }
 
 void ProjectRepository::saveFoodMatrix(WaterQualityConfiguration *configuration) {
-    QHash<QPair<QString, QString>, double> foodMatrix = configuration->getFoodMatrix();
     QSqlQuery query(databaseUtility->getDatabase());
     
     query.exec("delete from food_matrix where water_quality_configuration_id = " + QString::number(configuration->getId()));
     
-    for (QHash<QPair<QString, QString>, double>::const_iterator it = foodMatrix.constBegin(); it != foodMatrix.constEnd(); it++) {
-        QPair<QString, QString> predatorAndPrey = it.key();
-        
-        query.prepare("insert into food_matrix (predator, prey, value, water_quality_configuration_id) values (:pd, :pe, :v, :w)");
-        query.bindValue(":pd", predatorAndPrey.first);
-        query.bindValue(":pe", predatorAndPrey.second);
-        query.bindValue(":v", it.value());
+    for (FoodMatrixValue *foodMatrixValue : configuration->getFoodMatrix()) {
+        query.prepare("insert into food_matrix (predator, predator_group, prey, prey_group, value, water_quality_configuration_id) values (:p1, :p2, :p3, :p4, :v, :w)");
+        query.bindValue(":p1", foodMatrixValue->predator);
+        query.bindValue(":p2", foodMatrixValue->predatorGroup);
+        query.bindValue(":p3", foodMatrixValue->prey);
+        query.bindValue(":p4", foodMatrixValue->preyGroup);
+        query.bindValue(":v", foodMatrixValue->value);
         query.bindValue(":w", configuration->getId());
         
         if (!query.exec()) {

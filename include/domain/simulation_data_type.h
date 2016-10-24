@@ -119,20 +119,21 @@ namespace SimulationDataType {
             void destroy();
         };
         
-        struct FoodMatrixItem {
+        struct FoodMatrixValue {
             char predator[DEFAULT_STRING_LEN];
+            int predatorGroup;
             char prey[DEFAULT_STRING_LEN];
-            int numberOfValues;
-            double *values;
+            int preyGroup;
+            double value;
             
-            FoodMatrixItem();
+            FoodMatrixValue();
         };
         
         struct WaterQualityConfiguration {
             int numberOfParameters;
             SimulationDataType::WaterQualityParameter *parameters;
-            int numberOfFoodMatrixItems;
-            SimulationDataType::FoodMatrixItem *foodMatrix;
+            int foodMatrixSize;
+            SimulationDataType::FoodMatrixValue *foodMatrix;
             
             WaterQualityConfiguration();
             void destroy();
