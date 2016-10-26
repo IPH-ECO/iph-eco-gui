@@ -47,8 +47,6 @@ public:
     
     bool isTimeSeriesChanged() const;
     void setTimeSeriesChanged(bool timeSeriesChanged);
-    
-    virtual SimulationDataType::BoundaryCondition toSimulationDataType(Mesh *mesh) const = 0;
 };
 
 #endif // BOUNDARY_CONDITION_H

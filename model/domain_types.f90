@@ -42,12 +42,12 @@ module domain_types
         real(c_double) :: value
     end type
 
-    type, bind(C) :: BoundaryConditionCell
+    type, bind(C) :: HydrodynamicBoundaryConditionCell
         integer(c_long_long) :: cellId;
         integer(c_long_long) :: verticeIds(2);
     end type
 
-    type, bind(C) :: BoundaryCondition
+    type, bind(C) :: HydrodynamicBoundaryCondition
         integer(c_int) :: conditionType
         integer(c_int) :: cellsLength
         type(c_ptr) :: cells

@@ -72,12 +72,12 @@ void SimulationDataType::HydrodynamicParameter::destroy() {
     delete name;
 }
 
-SimulationDataType::BoundaryCondition::BoundaryCondition() :
+SimulationDataType::HydrodynamicBoundaryCondition::HydrodynamicBoundaryCondition() :
     cells(nullptr),
     timeSeriesList(nullptr)
 {}
 
-void SimulationDataType::BoundaryCondition::destroy() {
+void SimulationDataType::HydrodynamicBoundaryCondition::destroy() {
 	delete cells;
     delete timeSeriesList;
 }

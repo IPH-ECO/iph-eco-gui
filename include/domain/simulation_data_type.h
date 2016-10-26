@@ -67,15 +67,15 @@ namespace SimulationDataType {
             double value2;
         };
         
-        struct BoundaryConditionCell {
+        struct HydrodynamicBoundaryConditionCell {
             long long int cellId;
             long long int verticeIds[2];
         };
         
-        struct BoundaryCondition {
+        struct HydrodynamicBoundaryCondition {
             int conditionType;
             int cellsLength;
-            SimulationDataType::BoundaryConditionCell *cells;
+            SimulationDataType::HydrodynamicBoundaryConditionCell *cells;
             int conditionFunction;
             double constantValue;
             int timeSeriesListSize;
@@ -84,7 +84,7 @@ namespace SimulationDataType {
             double minimumElevation;
             double maximumElevation;
             
-            BoundaryCondition();
+            HydrodynamicBoundaryCondition();
             void destroy();
         };
         
@@ -92,7 +92,7 @@ namespace SimulationDataType {
             int numberOfParameters;
             SimulationDataType::HydrodynamicParameter *parameters;
             int numberOfBoundaryConditions;
-            SimulationDataType::BoundaryCondition *boundaryConditions;
+            SimulationDataType::HydrodynamicBoundaryCondition *boundaryConditions;
             SimulationDataType::GridDataConfiguration *gridDataConfiguration;
             
             HydrodynamicConfiguration();

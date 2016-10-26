@@ -48,7 +48,7 @@ public:
     vtkSmartPointer<vtkActor2D> getLabelsActor() const;
     void setLabelsActor(vtkSmartPointer<vtkActor2D> labelsActor);
 
-    SimulationDataType::BoundaryCondition toSimulationDataType(Mesh *mesh) const;
+    SimulationDataType::HydrodynamicBoundaryCondition toSimulationDataType(Mesh *mesh) const;
 
 signals:
     void objectIdsChanged();

@@ -140,18 +140,18 @@ void HydrodynamicBoundaryCondition::setLabelsActor(vtkSmartPointer<vtkActor2D> l
     this->labelsActor = labelsActor;
 }
 
-SimulationDataType::BoundaryCondition HydrodynamicBoundaryCondition::toSimulationDataType(Mesh *mesh) const {
-    SimulationDataType::BoundaryCondition boundaryCondition;
+SimulationDataType::HydrodynamicBoundaryCondition HydrodynamicBoundaryCondition::toSimulationDataType(Mesh *mesh) const {
+    SimulationDataType::HydrodynamicBoundaryCondition boundaryCondition;
     vtkSmartPointer<vtkPolyData> meshPolyData = mesh->getMeshPolyData();
     int cellCount = 0;
     
     boundaryCondition.conditionType = (int) this->type;
     boundaryCondition.cellsLength = this->objectIds.size();
-    boundaryCondition.cells = new SimulationDataType::BoundaryConditionCell[boundaryCondition.cellsLength];
+    boundaryCondition.cells = new SimulationDataType::HydrodynamicBoundaryConditionCell[boundaryCondition.cellsLength];
     
     if (this->type == BoundaryConditionType::WATER_LEVEL) {
         for (vtkIdType objectId : objectIds) {
-            boundaryCondition.cells[cellCount] = SimulationDataType::BoundaryConditionCell();
+            boundaryCondition.cells[cellCount] = SimulationDataType::HydrodynamicBoundaryConditionCell();
             boundaryCondition.cells[cellCount].cellId = objectId;
             cellCount++;
         }
@@ -183,7 +183,7 @@ SimulationDataType::BoundaryCondition HydrodynamicBoundaryCondition::toSimulatio
                 }
             }
             
-            boundaryCondition.cells[cellCount] = SimulationDataType::BoundaryConditionCell();
+            boundaryCondition.cells[cellCount] = SimulationDataType::HydrodynamicBoundaryConditionCell();
             boundaryCondition.cells[cellCount].cellId = cellsPointA->GetId(foundCellId);
             boundaryCondition.cells[cellCount].verticeIds[0] = meshPolyData->FindPoint(edgeA);
             boundaryCondition.cells[cellCount].verticeIds[1] = meshPolyData->FindPoint(edgeB);

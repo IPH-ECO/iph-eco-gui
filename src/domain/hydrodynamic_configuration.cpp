@@ -132,11 +132,11 @@ SimulationDataType::HydrodynamicConfiguration* HydrodynamicConfiguration::toSimu
         i++;
     }
     
-    configuration->boundaryConditions = new SimulationDataType::BoundaryCondition[this->boundaryConditions.size()];
+    configuration->boundaryConditions = new SimulationDataType::HydrodynamicBoundaryCondition[this->boundaryConditions.size()];
     configuration->numberOfBoundaryConditions = this->boundaryConditions.size();
     i = 0;
     
-    for (BoundaryCondition *boundaryCondition : this->boundaryConditions) {
+    for (HydrodynamicBoundaryCondition *boundaryCondition : this->boundaryConditions) {
         configuration->boundaryConditions[i++] = boundaryCondition->toSimulationDataType(this->gridDataConfiguration->getMesh());
     }
     
