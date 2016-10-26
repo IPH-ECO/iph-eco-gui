@@ -7,7 +7,7 @@ HydrodynamicConfiguration::~HydrodynamicConfiguration() {
         delete parameters[i];
     }
     
-    for (BoundaryCondition *boundaryCondition : boundaryConditions) {
+    for (HydrodynamicBoundaryCondition *boundaryCondition : boundaryConditions) {
         delete boundaryCondition;
     }
 }
@@ -40,7 +40,7 @@ void HydrodynamicConfiguration::setGridDataConfiguration(GridDataConfiguration *
 	this->gridDataConfiguration = gridDataConfiguration;
 }
 
-bool HydrodynamicConfiguration::addBoundaryCondition(BoundaryCondition *boundaryCondition) {
+bool HydrodynamicConfiguration::addBoundaryCondition(HydrodynamicBoundaryCondition *boundaryCondition) {
 	if (boundaryConditions.contains(boundaryCondition)) {
 		return false;
 	}
@@ -50,11 +50,11 @@ bool HydrodynamicConfiguration::addBoundaryCondition(BoundaryCondition *boundary
 	return true;
 }
 
-QList<BoundaryCondition*> HydrodynamicConfiguration::getBoundaryConditions() const {
+QList<HydrodynamicBoundaryCondition*> HydrodynamicConfiguration::getBoundaryConditions() const {
 	return boundaryConditions;
 }
 
-BoundaryCondition* HydrodynamicConfiguration::getBoundaryCondition(int i) const {
+HydrodynamicBoundaryCondition* HydrodynamicConfiguration::getBoundaryCondition(int i) const {
     if (i >= boundaryConditions.size()) {
         return nullptr;
     }
@@ -62,7 +62,7 @@ BoundaryCondition* HydrodynamicConfiguration::getBoundaryCondition(int i) const 
     return boundaryConditions[i];
 }
 
-void HydrodynamicConfiguration::setBoundaryConditions(const QList<BoundaryCondition*> &boundaryConditions) {
+void HydrodynamicConfiguration::setBoundaryConditions(const QList<HydrodynamicBoundaryCondition*> &boundaryConditions) {
 	this->boundaryConditions = boundaryConditions;
 }
 

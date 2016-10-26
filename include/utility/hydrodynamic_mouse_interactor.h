@@ -14,7 +14,7 @@ private:
     vtkSmartPointer<vtkPolyData> boundaryPolyData;
     vtkSmartPointer<vtkActor> boundaryEdgesActor;
     HydrodynamicConfiguration *hydrodynamicConfiguration;
-    BoundaryCondition *currentBoundaryCondition;
+    HydrodynamicBoundaryCondition *currentBoundaryCondition;
     
     vtkSmartPointer<vtkPolyData> getTargetPolyData(BoundaryCondition *boundaryCondition) const;
 public:
@@ -24,12 +24,12 @@ public:
     HydrodynamicMouseInteractor();
     
     bool pickCell();
-    bool renderBoundaryCondition(BoundaryCondition *boundaryCondition);
-    void removeBoundaryCondition(BoundaryCondition *boundaryCondition);
-    void highlightBoundaryCondition(BoundaryCondition *boundaryCondition, bool hightlight);
+    bool renderBoundaryCondition(HydrodynamicBoundaryCondition *boundaryCondition);
+    void removeBoundaryCondition(HydrodynamicBoundaryCondition *boundaryCondition);
+    void highlightBoundaryCondition(HydrodynamicBoundaryCondition *boundaryCondition, bool hightlight);
     void clearSelection();
     void setHydrodynamicConfiguration(HydrodynamicConfiguration *hydrodynamicConfiguration);
-    void setBoundaryCondition(BoundaryCondition *boundaryCondition);
+    void setBoundaryCondition(HydrodynamicBoundaryCondition *boundaryCondition);
     
     virtual void OnLeftButtonUp();
     virtual void activatePicker(const PickerMode &pickerMode);

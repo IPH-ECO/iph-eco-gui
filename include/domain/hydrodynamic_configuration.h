@@ -3,7 +3,7 @@
 
 #include "simulation_data_type.h"
 #include "grid_data_configuration.h"
-#include "boundary_condition.h"
+#include "hydrodynamic_boundary_condition.h"
 #include "hydrodynamic_process.h"
 
 #include <QString>
@@ -17,7 +17,7 @@ private:
 	QString name;
 	QList<HydrodynamicParameter*> parameters;
     GridDataConfiguration *gridDataConfiguration;
-	QList<BoundaryCondition*> boundaryConditions;
+	QList<HydrodynamicBoundaryCondition*> boundaryConditions;
 public:
     HydrodynamicConfiguration();
     ~HydrodynamicConfiguration();
@@ -30,10 +30,10 @@ public:
 	GridDataConfiguration* getGridDataConfiguration() const;
 	void setGridDataConfiguration(GridDataConfiguration *gridDataConfiguration);
 	
-    bool addBoundaryCondition(BoundaryCondition *boundaryCondition);
-	QList<BoundaryCondition*> getBoundaryConditions() const;
-    BoundaryCondition* getBoundaryCondition(int i) const;
-	void setBoundaryConditions(const QList<BoundaryCondition*> &boundaryConditions);
+    bool addBoundaryCondition(HydrodynamicBoundaryCondition *boundaryCondition);
+	QList<HydrodynamicBoundaryCondition*> getBoundaryConditions() const;
+    HydrodynamicBoundaryCondition* getBoundaryCondition(int i) const;
+	void setBoundaryConditions(const QList<HydrodynamicBoundaryCondition*> &boundaryConditions);
     void removeBoundaryCondition(int i);
     void clearBoundaryConditions();
 

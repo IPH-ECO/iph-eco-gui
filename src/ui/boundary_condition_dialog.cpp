@@ -14,7 +14,7 @@
 #include <ui/hydrodynamic_vtk_widget.h>
 #include <ui/time_series_dialog.h>
 
-BoundaryConditionDialog::BoundaryConditionDialog(HydrodynamicConfiguration *configuration, BoundaryCondition *boundaryCondition) :
+BoundaryConditionDialog::BoundaryConditionDialog(HydrodynamicConfiguration *configuration, HydrodynamicBoundaryCondition *boundaryCondition) :
     QDialog(nullptr), ui(new Ui::BoundaryConditionDialog),
     configuration(configuration), currentBoundaryCondition(boundaryCondition), isNewBoundaryCondition(boundaryCondition == nullptr)
 {
@@ -78,7 +78,7 @@ BoundaryConditionDialog::BoundaryConditionDialog(HydrodynamicConfiguration *conf
         }
         btnIndividualObjectPicker->setEnabled(ui->cbxType->currentText() == "Water Level");
     } else {
-        this->currentBoundaryCondition = new BoundaryCondition();
+        this->currentBoundaryCondition = new HydrodynamicBoundaryCondition();
     }
     
     QColor color = QColor(this->currentBoundaryCondition->getCellColor());

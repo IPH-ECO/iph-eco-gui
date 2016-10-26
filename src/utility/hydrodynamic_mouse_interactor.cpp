@@ -37,7 +37,7 @@ void HydrodynamicMouseInteractor::OnLeftButtonUp() {
         if (selectionPolyData->GetCellData()->HasArray("vtkOriginalCellIds")) {
             vtkIdTypeArray *selectedCellsArray = vtkIdTypeArray::SafeDownCast(selectionPolyData->GetCellData()->GetScalars("vtkOriginalCellIds"));
             
-            for (BoundaryCondition *boundaryCondition : hydrodynamicConfiguration->getBoundaryConditions()) {
+            for (HydrodynamicBoundaryCondition *boundaryCondition : hydrodynamicConfiguration->getBoundaryConditions()) {
                 if (boundaryCondition == currentBoundaryCondition) { // Excludes current boundary condition
                     continue;
                 }
@@ -67,7 +67,7 @@ bool HydrodynamicMouseInteractor::pickCell() {
     return false;
 }
 
-bool HydrodynamicMouseInteractor::renderBoundaryCondition(BoundaryCondition *boundaryCondition) {
+bool HydrodynamicMouseInteractor::renderBoundaryCondition(HydrodynamicBoundaryCondition *boundaryCondition) {
     vtkSmartPointer<vtkIdTypeArray> objectIds = boundaryCondition->getVTKObjectIds();
     vtkSmartPointer<vtkSelectionNode> selectionNode = vtkSmartPointer<vtkSelectionNode>::New();
     selectionNode->SetFieldType(vtkSelectionNode::CELL);
@@ -119,14 +119,14 @@ bool HydrodynamicMouseInteractor::renderBoundaryCondition(BoundaryCondition *bou
     return pickerMode != PickerMode::NO_PICKER;
 }
 
-void HydrodynamicMouseInteractor::removeBoundaryCondition(BoundaryCondition *boundaryCondition) {
+void HydrodynamicMouseInteractor::removeBoundaryCondition(HydrodynamicBoundaryCondition *boundaryCondition) {
     this->highlightBoundaryCondition(boundaryCondition, false);
     this->GetDefaultRenderer()->RemoveActor(boundaryCondition->getSelectionActor());
     this->GetDefaultRenderer()->RemoveActor(boundaryCondition->getLabelsActor());
     this->GetDefaultRenderer()->GetRenderWindow()->Render();
 }
 
-void HydrodynamicMouseInteractor::highlightBoundaryCondition(BoundaryCondition *boundaryCondition, bool highlight) {
+void HydrodynamicMouseInteractor::highlightBoundaryCondition(HydrodynamicBoundaryCondition *boundaryCondition, bool highlight) {
     vtkSmartPointer<vtkActor> selectionActor = boundaryCondition->getSelectionActor();
     
     if (selectionActor) {
@@ -168,7 +168,7 @@ void HydrodynamicMouseInteractor::clearSelection() {
 void HydrodynamicMouseInteractor::setHydrodynamicConfiguration(HydrodynamicConfiguration *hydrodynamicConfiguration) {
     if (!hydrodynamicConfiguration) {
         if (this->hydrodynamicConfiguration) {
-            for (BoundaryCondition *boundaryCondition : this->hydrodynamicConfiguration->getBoundaryConditions()) {
+            for (HydrodynamicBoundaryCondition *boundaryCondition : this->hydrodynamicConfiguration->getBoundaryConditions()) {
                 removeBoundaryCondition(boundaryCondition);
             }
             this->GetDefaultRenderer()->RemoveActor(this->boundaryEdgesActor);
@@ -183,7 +183,7 @@ void HydrodynamicMouseInteractor::setHydrodynamicConfiguration(HydrodynamicConfi
     }
 }
 
-void HydrodynamicMouseInteractor::setBoundaryCondition(BoundaryCondition *boundaryCondition) {
+void HydrodynamicMouseInteractor::setBoundaryCondition(HydrodynamicBoundaryCondition *boundaryCondition) {
     currentBoundaryCondition = boundaryCondition;
 }
 

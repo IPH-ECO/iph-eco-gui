@@ -1,6 +1,6 @@
 #include <domain/structured_mesh.h>
 
-#include <domain/boundary_condition.h>
+#include <domain/hydrodynamic_boundary_condition.h>
 
 #include <vtkQuad.h>
 #include <vtkIdList.h>
@@ -116,10 +116,9 @@ SimulationDataType::StructuredMesh* StructuredMesh::toSimulationDataType(const H
     SimulationDataType::StructuredMesh *structuredMesh = new SimulationDataType::StructuredMesh();
     enum class EdgeDirection { SOUTH = 0, EAST, NORTH, WEST };
     
-    BoundaryCondition *waterFlowBoundaryCondition = nullptr;
+    HydrodynamicBoundaryCondition *waterFlowBoundaryCondition = nullptr;
     
-    // TODO: search all water flow conditions
-    for (BoundaryCondition *boundaryCondition : hydrodynamicConfiguration->getBoundaryConditions()) {
+    for (HydrodynamicBoundaryCondition *boundaryCondition : hydrodynamicConfiguration->getBoundaryConditions()) {
         if (boundaryCondition->getType() == BoundaryConditionType::WATER_FLOW) {
             waterFlowBoundaryCondition = boundaryCondition;
             break;

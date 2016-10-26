@@ -220,7 +220,7 @@ void ProjectRepository::loadBoundaryConditions(HydrodynamicConfiguration *config
     query.exec();
     
     while (query.next() && !operationCanceled) {
-        BoundaryCondition *boundaryCondition = new BoundaryCondition();
+        HydrodynamicBoundaryCondition *boundaryCondition = new HydrodynamicBoundaryCondition();
         boundaryCondition->setId(query.value("id").toUInt());
         boundaryCondition->setType((BoundaryConditionType) query.value("type").toInt());
         boundaryCondition->setObjectIds(query.value("object_ids").toString());
@@ -871,7 +871,7 @@ void ProjectRepository::saveBoundaryConditions(HydrodynamicConfiguration *config
     QSqlQuery query(databaseUtility->getDatabase());
     QStringList boundaryConditionIds;
 
-    for (BoundaryCondition *boundaryCondition : configuration->getBoundaryConditions()) {
+    for (HydrodynamicBoundaryCondition *boundaryCondition : configuration->getBoundaryConditions()) {
         if (operationCanceled) {
             return;
         }

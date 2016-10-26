@@ -182,10 +182,10 @@ void HydrodynamicDataDialog::on_cbxConfiguration_currentIndexChanged(const QStri
         ui->edtConfigurationName->setText(currentConfiguration->getName());
         ui->cbxGridDataConfiguration->setCurrentText(currentConfiguration->getGridDataConfiguration()->getName());
         
-        QList<BoundaryCondition*> boundaryConditions = currentConfiguration->getBoundaryConditions();
+        QList<HydrodynamicBoundaryCondition*> boundaryConditions = currentConfiguration->getBoundaryConditions();
         int i = 0;
         
-        for (BoundaryCondition *boundaryCondition : boundaryConditions) {
+        for (HydrodynamicBoundaryCondition *boundaryCondition : boundaryConditions) {
             ui->tblBoundaryConditions->insertRow(i);
             ui->tblBoundaryConditions->setItem(i, 0, new QTableWidgetItem(boundaryCondition->getTypeLabel()));
             ui->tblBoundaryConditions->setItem(i, 1, new QTableWidgetItem(boundaryCondition->getFunctionLabel()));
@@ -318,7 +318,7 @@ void HydrodynamicDataDialog::on_btnApplyConfiguration_clicked() {
 }
 
 void HydrodynamicDataDialog::onToggleLabelsClicked(bool checked) {
-    for (BoundaryCondition *boundaryCondition : currentConfiguration->getBoundaryConditions()) {
+    for (HydrodynamicBoundaryCondition *boundaryCondition : currentConfiguration->getBoundaryConditions()) {
         boundaryCondition->getLabelsActor()->SetVisibility(checked);
     }
     ui->vtkWidget->update();
@@ -392,7 +392,7 @@ void HydrodynamicDataDialog::on_btnAddBoundaryCondition_clicked() {
 
 void HydrodynamicDataDialog::on_btnEditBoundaryCondition_clicked() {
     int row = ui->tblBoundaryConditions->currentRow();
-    BoundaryCondition *boundaryCondition = currentConfiguration->getBoundaryCondition(row);
+    HydrodynamicBoundaryCondition *boundaryCondition = currentConfiguration->getBoundaryCondition(row);
     boundaryConditionDialog = new BoundaryConditionDialog(currentConfiguration, boundaryCondition);
     
     boundaryConditionDialog->setHydrodynamicDataDialog(this);
@@ -406,7 +406,7 @@ void HydrodynamicDataDialog::on_btnRemoveBoundaryCondition_clicked() {
     QString question = tr("Are you sure you want to remove the selected boundary condtion?");
     
     if (currentRow > -1 && QMessageBox::question(this, tr("Hydrodynamic Data"), question) == QMessageBox::Yes) {
-        BoundaryCondition *boundaryCondition = currentConfiguration->getBoundaryCondition(currentRow);
+        HydrodynamicBoundaryCondition *boundaryCondition = currentConfiguration->getBoundaryCondition(currentRow);
         
         ui->vtkWidget->getMouseInteractor()->removeBoundaryCondition(boundaryCondition);
         ui->tblBoundaryConditions->removeRow(currentRow);
@@ -456,7 +456,7 @@ void HydrodynamicDataDialog::toggleWidgets(bool enable) {
 
 void HydrodynamicDataDialog::on_tblBoundaryConditions_currentItemChanged(QTableWidgetItem *current, QTableWidgetItem *previous) {
     if (current && (!previous || current->row() != previous->row())) {
-        BoundaryCondition *boundaryCondition = currentConfiguration->getBoundaryCondition(current->row());
+        HydrodynamicBoundaryCondition *boundaryCondition = currentConfiguration->getBoundaryCondition(current->row());
         
         ui->vtkWidget->getMouseInteractor()->highlightBoundaryCondition(boundaryCondition, true);
         
