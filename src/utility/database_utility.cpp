@@ -128,6 +128,7 @@ void DatabaseUtility::createApplicationTables() {
     sql << "drop table if exists boundary_condition";
     sql << "create table boundary_condition (" \
         "id integer primary key, " \
+        "name text not null, " \
         "type varchar(255) not null, " \
         "object_ids varchar(255) not null, " \
         "function varchar(255) not null, " \

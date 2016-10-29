@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>WaterQualityBoundaryConditionDialog</class>
+ <widget class="QDialog" name="WaterQualityBoundaryConditionDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>392</width>
+    <height>231</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Water Quality Boundary Condition</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="1" column="1" colspan="2">
+    <widget class="QComboBox" name="cbxVariable"/>
+   </item>
+   <item row="2" column="1">
+    <widget class="QRadioButton" name="rdoConstant">
+     <property name="text">
+      <string>Constant</string>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="2">
+    <widget class="QPushButton" name="btnTimeSeries">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string>...</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="1">
+    <widget class="QLineEdit" name="edtConstant"/>
+   </item>
+   <item row="0" column="1" colspan="2">
+    <widget class="QComboBox" name="cbxHydroBoundaryCondition"/>
+   </item>
+   <item row="1" column="0">
+    <widget class="QLabel" name="label_2">
+     <property name="text">
+      <string>Variable</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="0">
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>Hydro Boundary Condition</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0">
+    <widget class="QLabel" name="label_4">
+     <property name="text">
+      <string>Value</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0">
+    <widget class="QLabel" name="label_3">
+     <property name="text">
+      <string>Function</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="2">
+    <widget class="QRadioButton" name="rdoTimeSeries">
+     <property name="text">
+      <string>Time Series</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="0">
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="5" column="0" colspan="3">
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <tabstops>
+  <tabstop>cbxHydroBoundaryCondition</tabstop>
+  <tabstop>cbxVariable</tabstop>
+  <tabstop>rdoConstant</tabstop>
+  <tabstop>rdoTimeSeries</tabstop>
+  <tabstop>edtConstant</tabstop>
+  <tabstop>btnTimeSeries</tabstop>
+ </tabstops>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>WaterQualityBoundaryConditionDialog</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>248</x>
+     <y>254</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>157</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>WaterQualityBoundaryConditionDialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>316</x>
+     <y>260</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>286</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>rdoConstant</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>edtConstant</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>226</x>
+     <y>80</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>227</x>
+     <y>112</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>rdoConstant</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>btnTimeSeries</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>226</x>
+     <y>80</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>305</x>
+     <y>113</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>rdoTimeSeries</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>btnTimeSeries</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>331</x>
+     <y>80</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>305</x>
+     <y>113</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>rdoTimeSeries</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>edtConstant</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>331</x>
+     <y>80</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>227</x>
+     <y>112</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

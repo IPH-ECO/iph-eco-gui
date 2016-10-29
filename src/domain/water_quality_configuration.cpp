@@ -41,7 +41,12 @@ HydrodynamicConfiguration* WaterQualityConfiguration::getHydrodynamicConfigurati
 }
 
 void WaterQualityConfiguration::setHydrodynamicConfiguration(HydrodynamicConfiguration *hydrodynamicConfiguration) {
+    if (this->hydrodynamicConfiguration && this->hydrodynamicConfiguration != hydrodynamicConfiguration) {
+        this->hydrodynamicConfiguration->removeWaterQualityConfiguration(this);
+    }
+    
 	this->hydrodynamicConfiguration = hydrodynamicConfiguration;
+    this->hydrodynamicConfiguration->addWaterQualityConfiguration(this);
 }
 
 bool WaterQualityConfiguration::addWaterQualityParameter(WaterQualityParameter *waterQualityParameter) {
@@ -100,6 +105,23 @@ QList<WaterQualityParameter*> WaterQualityConfiguration::getRootParameters(const
     }
     
     return rootParameters;
+}
+
+QList<WaterQualityBoundaryCondition*> WaterQualityConfiguration::getBoundaryConditions() const {
+    return boundaryConditions;
+}
+
+void WaterQualityConfiguration::setBoundaryConditions(const QList<WaterQualityBoundaryCondition*> &boundaryConditions) {
+    this->boundaryConditions = boundaryConditions;
+}
+
+void WaterQualityConfiguration::addBoundaryCondition(WaterQualityBoundaryCondition *boundaryCondition) {
+    boundaryConditions.append(boundaryCondition);
+}
+
+void WaterQualityConfiguration::removeBoundaryCondition(WaterQualityBoundaryCondition *boundaryCondition) {
+    boundaryConditions.removeOne(boundaryCondition);
+    delete boundaryCondition;
 }
 
 FoodMatrixValue* WaterQualityConfiguration::getFoodMatrixValue(const QString &predator, const int &predatorGroup, const QString &prey, const int &preyGroup) const {

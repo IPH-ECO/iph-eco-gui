@@ -3,6 +3,7 @@
 
 #include "hydrodynamic_configuration.h"
 #include "water_quality_parameter.h"
+#include "water_quality_boundary_condition.h"
 #include "food_matrix_value.h"
 
 class WaterQualityConfiguration {
@@ -10,6 +11,7 @@ private:
     uint id;
     QString name;
     QList<WaterQualityParameter*> parameters;
+    QList<WaterQualityBoundaryCondition*> boundaryConditions;
     QSet<FoodMatrixValue*> foodMatrix;
     HydrodynamicConfiguration *hydrodynamicConfiguration;
     
@@ -32,6 +34,10 @@ public:
     WaterQualityParameter* getParameter(const QString &name, const WaterQualityParameterSection &section) const;
     WaterQualityParameter* getParameterByDiagramItem(const QString &itemName) const;
     QList<WaterQualityParameter*> getRootParameters(const WaterQualityParameterSection &section) const;
+    QList<WaterQualityBoundaryCondition*> getBoundaryConditions() const;
+    void setBoundaryConditions(const QList<WaterQualityBoundaryCondition*> &boundaryConditions);
+    void addBoundaryCondition(WaterQualityBoundaryCondition *boundaryCondition);
+    void removeBoundaryCondition(WaterQualityBoundaryCondition *boundaryCondition);
     FoodMatrixValue* getFoodMatrixValue(const QString &predator, const int &predatorGroup, const QString &prey, const int &preyGroup) const;
     void addFoodMatrixValue(FoodMatrixValue *foodMatrixValue);
     void clearFoodMatrix();

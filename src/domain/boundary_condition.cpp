@@ -25,6 +25,14 @@ bool BoundaryCondition::isPersisted() const {
     return id != 0;
 }
 
+QString BoundaryCondition::getName() const {
+    return name;
+}
+
+void BoundaryCondition::setName(const QString &name) {
+    this->name = name;
+}
+
 BoundaryConditionType BoundaryCondition::getType() const {
     return type;
 }

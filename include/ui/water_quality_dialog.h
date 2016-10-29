@@ -12,8 +12,12 @@ namespace Ui {
 	class WaterQualityDialog;
 }
 
+class WaterQualityBoundaryConditionDialog;
+
 class WaterQualityDialog : public QDialog {
 	Q_OBJECT
+    
+    friend class WaterQualityBoundaryConditionDialog;
 private:
 	Ui::WaterQualityDialog *ui;
 	WaterQualityConfiguration *unsavedConfiguration;
@@ -26,6 +30,7 @@ private:
     void bindCurrentConfigurationToTreeWidgets();
     void loadFoodMatrix();
     void loadInitialConditions();
+    void loadBoundaryConditions();
 private slots:
     void on_cbxConfiguration_currentIndexChanged(const QString &configurationName);
 	void on_cbxHydrodynamicConfiguration_currentIndexChanged(const QString &hydrodynamicConfigurationName);
@@ -37,6 +42,9 @@ private slots:
     void on_webView_loadFinished(bool ok);
     void addJSObject();
     void onTabularInputButtonClicked();
+    void on_btnAddBoundaryCondition_clicked();
+    void on_btnEditBoundaryCondition_clicked();
+    void on_btnRemoveBoundaryCondition_clicked();
 public:
 	explicit WaterQualityDialog(QWidget *parent = 0);
 	~WaterQualityDialog();

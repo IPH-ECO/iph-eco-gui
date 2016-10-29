@@ -8,8 +8,10 @@
 
 #include <QString>
 #include <QList>
+#include <QSet>
 
 class GridDataConfiguration;
+class WaterQualityConfiguration;
 
 class HydrodynamicConfiguration {
 private:
@@ -18,6 +20,7 @@ private:
 	QList<HydrodynamicParameter*> parameters;
     GridDataConfiguration *gridDataConfiguration;
 	QList<HydrodynamicBoundaryCondition*> boundaryConditions;
+    QSet<WaterQualityConfiguration*> waterQualityConfigurations;
 public:
     HydrodynamicConfiguration();
     ~HydrodynamicConfiguration();
@@ -32,7 +35,7 @@ public:
 	
     bool addBoundaryCondition(HydrodynamicBoundaryCondition *boundaryCondition);
 	QList<HydrodynamicBoundaryCondition*> getBoundaryConditions() const;
-    HydrodynamicBoundaryCondition* getBoundaryCondition(int i) const;
+    HydrodynamicBoundaryCondition* getBoundaryCondition(const QString &boundaryConditionName) const;
 	void setBoundaryConditions(const QList<HydrodynamicBoundaryCondition*> &boundaryConditions);
     void removeBoundaryCondition(int i);
     void clearBoundaryConditions();
@@ -41,6 +44,10 @@ public:
 	QList<HydrodynamicParameter*> getParameters() const;
 	HydrodynamicParameter* getParameter(const QString &name) const;
     QList<HydrodynamicParameter*> getRootParameters() const;
+    QSet<WaterQualityConfiguration*> getWaterQualityConfigurations() const;
+    void addWaterQualityConfiguration(WaterQualityConfiguration *configuration);
+    void removeWaterQualityConfiguration(WaterQualityConfiguration *configuration);
+    
     SimulationDataType::HydrodynamicConfiguration* toSimulationDataType() const;
 };
 

@@ -45,6 +45,7 @@ BoundaryConditionDialog::BoundaryConditionDialog(HydrodynamicConfiguration *conf
         bool isConstantSelected = boundaryCondition->getFunction() == BoundaryConditionFunction::CONSTANT;
         bool useVerticalIntegratedOutflow = boundaryCondition->useVerticalIntegratedOutflow();
         
+        ui->edtName->setText(boundaryCondition->getName());
         ui->cbxType->blockSignals(true);
         ui->cbxType->setCurrentText(boundaryCondition->getTypeLabel());
         ui->cbxType->blockSignals(false);
@@ -223,6 +224,7 @@ void BoundaryConditionDialog::accept() {
         boundaryConditionType = BoundaryConditionType::NORMAL_DEPTH;
     }
     
+    currentBoundaryCondition->setName(ui->edtName->text());
     currentBoundaryCondition->setType(boundaryConditionType);
     currentBoundaryCondition->setObjectIds(ui->lblElementIds->text());
     currentBoundaryCondition->setFunction(ui->rdoConstant->isChecked() ? BoundaryConditionFunction::CONSTANT : BoundaryConditionFunction::TIME_SERIES);
@@ -241,15 +243,20 @@ void BoundaryConditionDialog::accept() {
     int row = -1;
     
     if (isNewBoundaryCondition) {
+        QTableWidgetItem *item = new QTableWidgetItem();
+        
+        item->setData(Qt::UserRole, qVariantFromValue((void*) currentBoundaryCondition));
         row = hydrodynamicDataDialog->ui->tblBoundaryConditions->rowCount();
         hydrodynamicDataDialog->ui->tblBoundaryConditions->insertRow(row);
+        hydrodynamicDataDialog->ui->tblBoundaryConditions->setVerticalHeaderItem(row, item);
     } else {
         row = hydrodynamicDataDialog->ui->tblBoundaryConditions->currentRow();
         hydrodynamicDataDialog->ui->vtkWidget->getMouseInteractor()->highlightBoundaryCondition(currentBoundaryCondition, true);
     }
     
-    hydrodynamicDataDialog->ui->tblBoundaryConditions->setItem(row, 0, new QTableWidgetItem(currentBoundaryCondition->getTypeLabel()));
-    hydrodynamicDataDialog->ui->tblBoundaryConditions->setItem(row, 1, new QTableWidgetItem(currentBoundaryCondition->getFunctionLabel()));
+    hydrodynamicDataDialog->ui->tblBoundaryConditions->setItem(row, 0, new QTableWidgetItem(currentBoundaryCondition->getName()));
+    hydrodynamicDataDialog->ui->tblBoundaryConditions->setItem(row, 1, new QTableWidgetItem(currentBoundaryCondition->getTypeLabel()));
+    hydrodynamicDataDialog->ui->tblBoundaryConditions->setItem(row, 2, new QTableWidgetItem(currentBoundaryCondition->getFunctionLabel()));
     
     btnIndividualObjectPicker_clicked(false);
     btnMultipleObjectPicker_clicked(false);
@@ -296,6 +303,11 @@ void BoundaryConditionDialog::showObjectIds() {
 }
 
 bool BoundaryConditionDialog::isValid() {
+    if (ui->edtName->text().isEmpty()) {
+        QMessageBox::warning(this, tr("Boundary Condition"), tr("Please input boundary condition name."));
+        return false;
+    }
+    
     if (currentBoundaryCondition->getObjectIds().isEmpty()) {
         QString message = tr("Please pick at least one %1 from the grid.").arg(ui->cbxType->currentText() == "Water Level" ? "cell" : "edge");
         QMessageBox::warning(this, tr("Boundary Condition"), message);

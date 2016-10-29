@@ -13,6 +13,7 @@ class BoundaryCondition : public QObject {
     Q_OBJECT
 protected:
     uint id;
+    QString name;
     BoundaryConditionType type;
     BoundaryConditionFunction function;
     double constantValue;
@@ -28,6 +29,8 @@ public:
 
     uint getId() const;
     void setId(const uint &id);
+    QString getName() const;
+    void setName(const QString &name);
     bool isPersisted() const;
     BoundaryConditionType getType() const;
     void setType(const BoundaryConditionType &type);

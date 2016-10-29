@@ -222,6 +222,7 @@ void ProjectRepository::loadBoundaryConditions(HydrodynamicConfiguration *config
     while (query.next() && !operationCanceled) {
         HydrodynamicBoundaryCondition *boundaryCondition = new HydrodynamicBoundaryCondition();
         boundaryCondition->setId(query.value("id").toUInt());
+        boundaryCondition->setName(query.value("name").toString());
         boundaryCondition->setType((BoundaryConditionType) query.value("type").toInt());
         boundaryCondition->setObjectIds(query.value("object_ids").toString());
         boundaryCondition->setFunction((BoundaryConditionFunction) query.value("function").toInt());
@@ -879,14 +880,15 @@ void ProjectRepository::saveBoundaryConditions(HydrodynamicConfiguration *config
         bool update = !this->makeCopy && boundaryCondition->isPersisted();
         
         if (update) {
-            query.prepare("update boundary_condition set type = :t, object_ids = :o, function = :f, constant_value = :c, cell_color = :cc, vertical_integrated_outflow = :v, minimum_elevation = :m1, maximum_elevation = :m2 where id = :i");
+            query.prepare("update boundary_condition set name = :n, type = :t, object_ids = :o, function = :f, constant_value = :c, cell_color = :cc, vertical_integrated_outflow = :v, minimum_elevation = :m1, maximum_elevation = :m2 where id = :i");
             query.bindValue(":i", boundaryCondition->getId());
         } else {
-            query.prepare("insert into boundary_condition (type, object_ids, function, constant_value, input_module, cell_color, vertical_integrated_outflow, minimum_elevation, maximum_elevation, configuration_id) values (:t, :o, :f, :c, :i, :cc, :v, :m1, :m2, :ci)");
+            query.prepare("insert into boundary_condition (name, type, object_ids, function, constant_value, input_module, cell_color, vertical_integrated_outflow, minimum_elevation, maximum_elevation, configuration_id) values (:n, :t, :o, :f, :c, :i, :cc, :v, :m1, :m2, :ci)");
             query.bindValue(":i", (int) boundaryCondition->getInputModule());
             query.bindValue(":ci", configuration->getId());
         }
 
+        query.bindValue(":n", boundaryCondition->getName());
         query.bindValue(":t", (int) boundaryCondition->getType());
         query.bindValue(":o", boundaryCondition->getObjectIdsStr());
         query.bindValue(":f", (int) boundaryCondition->getFunction());

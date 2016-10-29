@@ -54,12 +54,14 @@ QList<HydrodynamicBoundaryCondition*> HydrodynamicConfiguration::getBoundaryCond
 	return boundaryConditions;
 }
 
-HydrodynamicBoundaryCondition* HydrodynamicConfiguration::getBoundaryCondition(int i) const {
-    if (i >= boundaryConditions.size()) {
-        return nullptr;
+HydrodynamicBoundaryCondition* HydrodynamicConfiguration::getBoundaryCondition(const QString &boundaryConditionName) const {
+    for (HydrodynamicBoundaryCondition *boundaryCondition : boundaryConditions) {
+        if (boundaryCondition->getName() == boundaryConditionName) {
+            return boundaryCondition;
+        }
     }
     
-    return boundaryConditions[i];
+    return nullptr;
 }
 
 void HydrodynamicConfiguration::setBoundaryConditions(const QList<HydrodynamicBoundaryCondition*> &boundaryConditions) {
@@ -67,7 +69,10 @@ void HydrodynamicConfiguration::setBoundaryConditions(const QList<HydrodynamicBo
 }
 
 void HydrodynamicConfiguration::removeBoundaryCondition(int i) {
-    this->boundaryConditions.removeAt(i);
+    HydrodynamicBoundaryCondition *boundaryCondition = this->boundaryConditions.at(i);
+    
+    this->boundaryConditions.removeOne(boundaryCondition);
+    delete boundaryCondition;
 }
 
 bool HydrodynamicConfiguration::addHydrodynamicParameter(HydrodynamicParameter *hydrodynamicParameter) {
@@ -113,6 +118,18 @@ void HydrodynamicConfiguration::clearBoundaryConditions() {
         delete boundaryConditions[i];
     }
     boundaryConditions.clear();
+}
+
+QSet<WaterQualityConfiguration*> HydrodynamicConfiguration::getWaterQualityConfigurations() const {
+    return waterQualityConfigurations;
+}
+
+void HydrodynamicConfiguration::addWaterQualityConfiguration(WaterQualityConfiguration *configuration) {
+    waterQualityConfigurations.insert(configuration);
+}
+
+void HydrodynamicConfiguration::removeWaterQualityConfiguration(WaterQualityConfiguration *configuration) {
+    waterQualityConfigurations.remove(configuration);
 }
 
 SimulationDataType::HydrodynamicConfiguration* HydrodynamicConfiguration::toSimulationDataType() const {

@@ -129,6 +129,11 @@ namespace SimulationDataType {
             FoodMatrixValue();
         };
         
+        struct WaterQualityBoundaryCondition {
+            char variable[DEFAULT_STRING_LEN];
+            double value;
+        };
+        
         struct WaterQualityConfiguration {
             int numberOfParameters;
             SimulationDataType::WaterQualityParameter *parameters;
