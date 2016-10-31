@@ -1,0 +1,79 @@
+[
+	{
+		"name": "waterTemperature",
+		"label": "Water Temperature"
+	},
+	{
+		"name": "salinity",
+		"label": "Salinity"
+	},
+	{
+		"name": "inorganicMatter",
+		"label": "Inorganic Matter"
+	},
+	{
+		"name": "organicMatter",
+		"label": "Organic Matter",
+		"target": "organicMatter1"
+	},
+	{
+		"name": "dissolvedOrganicMatter",
+		"label": "Dissolved Organic Matter",
+		"target": "organicMatter2"
+	},
+	{
+		"name": "particulatedOrganicMatter",
+		"label": "Particulated Organic Matter",
+		"target": "organicMatter2"
+	},
+	{
+		"name": "orthophosphate",
+		"label": "Orthophosphate (PO4)"
+	},
+	{
+		"name": "paim",
+		"label": "Particulate Adsorbed Inorganic Phosphorus (PAIM)"
+	},
+	{
+		"name": "NH4",
+		"label": "Ammonium (NH4)"
+	},
+	{
+		"name": "NO3",
+		"label": "Nitrate (NO3)"
+	},
+	{
+		"name": "SiO2",
+		"label": "Silicate (SiO2)"
+	},
+	{
+		"name": "O2",
+		"label": "Dissolved Oxygen (O2)"
+	},
+	{
+		"name": "BOD",
+		"label": "Biological Oxygen Demand (BOD)"
+	},
+	{
+		"name": "DIC",
+		"label": "Dissolved Inorganic Carbon"
+	},
+	{
+		"name": "bacterioplankton",
+		"label": "Bacterioplankton",
+		"target": "bacterioplanktonGroups",
+		"group": true
+	},
+	{
+		"name": "phytoplankton",
+		"label": "Phytoplankton",
+		"target": "phytoplanktonGroups",
+		"group": true
+	},
+	{
+		"name": "zooplankton",
+		"label": "Zooplankton",
+		"target": "zooplanktonGroups",
+		"group": true
+	}
+]

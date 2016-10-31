@@ -3,6 +3,7 @@
 
 #include <ui/water_quality_dialog.h>
 #include <ui/time_series_dialog.h>
+#include <repository/water_quality_repository.h>
 #include "ui_water_quality_dialog.h"
 
 #include <QMessageBox>
@@ -16,8 +17,32 @@ WaterQualityBoundaryConditionDialog::WaterQualityBoundaryConditionDialog(WaterQu
 {
 	ui->setupUi(this);
     
+    WaterQualityRepository *repository = WaterQualityRepository::getInstance();
+    
     for (HydrodynamicBoundaryCondition *boundaryCondition : configuration->getHydrodynamicConfiguration()->getBoundaryConditions()) {
         ui->cbxHydroBoundaryCondition->addItem(boundaryCondition->getName());
+    }
+    
+    QList<WaterQualityParameter*> variables = repository->getBoundaryConditionVariables();
+    
+    for (WaterQualityParameter *variable : variables) {
+        if (variable->getTarget()) {
+            if (!variable->getTarget()->getItemWidget()->isHidden()) {
+                if (variable->isGroup()) {
+                    QList<WaterQualityParameter*> groups = variable->getTarget()->getChildren().first()->getChildren();
+                    
+                    for (WaterQualityParameter *groupParameter : groups) {
+                        for (int i = 1; i <= groupParameter->getValue(); i++) {
+                            ui->cbxVariable->addItem(QString("%1 - %2 %3").arg(variable->getLabel()).arg(groupParameter->getLabel()).arg(i));
+                        }
+                    }
+                } else {
+                    ui->cbxVariable->addItem(variable->getLabel());
+                }
+            }
+        } else {
+            ui->cbxVariable->addItem(variable->getLabel());
+        }
     }
     
     if (!isNewBoundaryCondition) {

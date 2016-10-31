@@ -1,4 +1,5 @@
 #include <application/iph_application.h>
+#include <repository/water_quality_repository.h>
 
 Project* IPHApplication::currentProject = nullptr;
 
@@ -28,5 +29,11 @@ int IPHApplication::getApplicationId() {
 }
 
 IPHApplication::~IPHApplication() {
+    WaterQualityRepository *repository = WaterQualityRepository::getInstance();
+    
+    if (repository) {
+        delete repository;
+    }
+    
     delete currentProject;
 }
