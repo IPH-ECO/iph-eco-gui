@@ -147,7 +147,9 @@ void WaterQualityDialog::buildTreeWidgets(WaterQualityParameter *parameter) {
         lineEdit->setAlignment(Qt::AlignRight);
         lineEdit->setEnabled(parameter->isEnabled());
         lineEdit->setObjectName(parameter->getName());
+        lineEdit->setProperty("section", QVariant((int) parameter->getSection()));
         
+        QObject::connect(lineEdit, SIGNAL(textEdited(const QString&)), this, SLOT(updateInlineValue(const QString&)));
         treeWidget->setItemWidget(parameterItem, 1, lineEdit);
     } else if (parameter->getInputType() == WaterQualityParameterInputType::TABULAR) {
         QToolButton *toolButton = new QToolButton(treeWidget);
@@ -657,4 +659,11 @@ void WaterQualityDialog::on_btnRemoveBoundaryCondition_clicked() {
         currentConfiguration->removeBoundaryCondition(boundaryCondition);
         ui->tblBoundaryConditions->removeRow(currentRow - 1);
     }
+}
+
+void WaterQualityDialog::updateInlineValue(const QString &text) {
+    WaterQualityParameterSection section = (WaterQualityParameterSection) QObject::sender()->property("section").toInt();
+    QString parameterName = QObject::sender()->objectName();
+    
+    currentConfiguration->getParameter(parameterName, section)->setValue(text.toDouble());
 }

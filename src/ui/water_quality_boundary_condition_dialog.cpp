@@ -81,6 +81,10 @@ void WaterQualityBoundaryConditionDialog::accept() {
     
     HydrodynamicConfiguration *hydrodynamicConfiguration = currentConfiguration->getHydrodynamicConfiguration();
     
+    if (isNewBoundaryCondition) {
+        currentBoundaryCondition = new WaterQualityBoundaryCondition();
+    }
+    
     currentBoundaryCondition->setHydrodynamicBoundaryCondition(hydrodynamicConfiguration->getBoundaryCondition(ui->cbxHydroBoundaryCondition->currentText()));
     currentBoundaryCondition->setFunction(ui->rdoConstant->isChecked() ? BoundaryConditionFunction::CONSTANT : BoundaryConditionFunction::TIME_SERIES);
     currentBoundaryCondition->setConstantValue(ui->edtConstant->text().toDouble());
