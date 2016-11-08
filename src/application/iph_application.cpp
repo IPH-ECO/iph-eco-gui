@@ -29,11 +29,11 @@ int IPHApplication::getApplicationId() {
 }
 
 IPHApplication::~IPHApplication() {
-    WaterQualityRepository *repository = WaterQualityRepository::getInstance();
+    /*WaterQualityRepository *repository = WaterQualityRepository::getInstance();
     
     if (repository) {
         delete repository;
-    }
+    }*/
     
     delete currentProject;
 }

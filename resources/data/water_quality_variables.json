@@ -59,19 +59,19 @@
 		"label": "Dissolved Inorganic Carbon"
 	},
 	{
-		"name": "bacterioplankton",
+		"name": "bacterioplanktonModeling",
 		"label": "Bacterioplankton",
 		"target": "bacterioplanktonGroups",
 		"group": true
 	},
 	{
-		"name": "phytoplankton",
+		"name": "phytoplanktonModeling",
 		"label": "Phytoplankton",
 		"target": "phytoplanktonGroups",
 		"group": true
 	},
 	{
-		"name": "zooplankton",
+		"name": "zooplanktonModeling",
 		"label": "Zooplankton",
 		"target": "zooplanktonGroups",
 		"group": true

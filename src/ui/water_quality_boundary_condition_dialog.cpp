@@ -27,18 +27,20 @@ WaterQualityBoundaryConditionDialog::WaterQualityBoundaryConditionDialog(WaterQu
     
     for (WaterQualityParameter *variable : variables) {
         if (variable->getTarget()) {
-            if (!variable->getTarget()->getItemWidget()->isHidden()) {
-                if (variable->isGroup()) {
-                    QList<WaterQualityParameter*> groups = variable->getTarget()->getChildren().first()->getChildren();
+            if (variable->isGroup()) {
+                WaterQualityParameter *structureTarget = currentConfiguration->getParameter(variable->getName(), WaterQualityParameterSection::STRUCTURE);
+                
+                if (structureTarget->isChecked()) {
+                    QList<WaterQualityParameter*> groups = variable->getTarget()->getChildren();
                     
                     for (WaterQualityParameter *groupParameter : groups) {
                         for (int i = 1; i <= groupParameter->getValue(); i++) {
                             ui->cbxVariable->addItem(QString("%1 - %2 %3").arg(variable->getLabel()).arg(groupParameter->getLabel()).arg(i));
                         }
                     }
-                } else {
-                    ui->cbxVariable->addItem(variable->getLabel());
                 }
+            } else if (!variable->getTarget()->getItemWidget()->isHidden()) {
+                ui->cbxVariable->addItem(variable->getLabel());
             }
         } else {
             ui->cbxVariable->addItem(variable->getLabel());
