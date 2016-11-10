@@ -124,6 +124,14 @@ void WaterQualityConfiguration::removeBoundaryCondition(WaterQualityBoundaryCond
     delete boundaryCondition;
 }
 
+void WaterQualityConfiguration::clearBoundaryConditions() {
+    for (BoundaryCondition *boundaryCondition : boundaryConditions) {
+        delete boundaryCondition;
+    }
+    
+    boundaryConditions.clear();
+}
+
 FoodMatrixValue* WaterQualityConfiguration::getFoodMatrixValue(const QString &predator, const int &predatorGroup, const QString &prey, const int &preyGroup) const {
     for (FoodMatrixValue *foodMatrixValue : foodMatrix) {
         if (predator == foodMatrixValue->predator && predatorGroup == foodMatrixValue->predatorGroup && prey == foodMatrixValue->prey && preyGroup == foodMatrixValue->preyGroup) {

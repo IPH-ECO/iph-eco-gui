@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1440</width>
-    <height>851</height>
+    <width>1280</width>
+    <height>751</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -252,6 +252,9 @@
            <property name="selectionBehavior">
             <enum>QAbstractItemView::SelectRows</enum>
            </property>
+           <attribute name="verticalHeaderVisible">
+            <bool>false</bool>
+           </attribute>
            <column>
             <property name="text">
              <string>Hydro Boundary Condition</string>
@@ -290,9 +293,6 @@
            </item>
            <item>
             <widget class="QToolButton" name="btnEditBoundaryCondition">
-             <property name="enabled">
-              <bool>false</bool>
-             </property>
              <property name="text">
               <string/>
              </property>
@@ -310,9 +310,6 @@
            </item>
            <item>
             <widget class="QToolButton" name="btnRemoveBoundaryCondition">
-             <property name="enabled">
-              <bool>false</bool>
-             </property>
              <property name="text">
               <string/>
              </property>

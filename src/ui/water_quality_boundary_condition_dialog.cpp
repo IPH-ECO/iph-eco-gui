@@ -48,8 +48,17 @@ WaterQualityBoundaryConditionDialog::WaterQualityBoundaryConditionDialog(WaterQu
     }
     
     if (!isNewBoundaryCondition) {
+        bool isConstant = currentBoundaryCondition->getFunction() == BoundaryConditionFunction::CONSTANT;
+        
         ui->cbxHydroBoundaryCondition->setCurrentText(currentBoundaryCondition->getName());
         ui->cbxVariable->setCurrentText(currentBoundaryCondition->getVariable());
+        ui->rdoConstant->setChecked(isConstant);
+        ui->rdoTimeSeries->setChecked(!isConstant);
+        ui->btnTimeSeries->setEnabled(!isConstant);
+        
+        if (isConstant) {
+            ui->edtConstant->setText(QString::number(currentBoundaryCondition->getConstantValue()));
+        }
     }
 }
 
@@ -86,6 +95,7 @@ void WaterQualityBoundaryConditionDialog::accept() {
     }
     
     currentBoundaryCondition->setHydrodynamicBoundaryCondition(hydrodynamicConfiguration->getBoundaryCondition(ui->cbxHydroBoundaryCondition->currentText()));
+    currentBoundaryCondition->setVariable(ui->cbxVariable->currentText());
     currentBoundaryCondition->setFunction(ui->rdoConstant->isChecked() ? BoundaryConditionFunction::CONSTANT : BoundaryConditionFunction::TIME_SERIES);
     currentBoundaryCondition->setConstantValue(ui->edtConstant->text().toDouble());
     currentBoundaryCondition->setInputModule(InputModule::WATER_QUALITY);
@@ -97,17 +107,23 @@ void WaterQualityBoundaryConditionDialog::accept() {
     currentConfiguration->addBoundaryCondition(currentBoundaryCondition);
     
     WaterQualityDialog *waterQualityDialog = static_cast<WaterQualityDialog*>(parentWidget());
+    QTableWidget *tableWidget = waterQualityDialog->ui->tblBoundaryConditions;
     int row = -1;
     
     if (isNewBoundaryCondition) {
-        row = waterQualityDialog->ui->tblBoundaryConditions->rowCount();
-        waterQualityDialog->ui->tblBoundaryConditions->insertRow(row);
+        QTableWidgetItem *headerItem = new QTableWidgetItem();
+        
+        row = tableWidget->rowCount();
+        tableWidget->insertRow(row);
+        headerItem->setData(Qt::UserRole, qVariantFromValue((void*) currentBoundaryCondition));
+        tableWidget->setVerticalHeaderItem(row, headerItem);
     } else {
-        row = waterQualityDialog->ui->tblBoundaryConditions->currentRow();
+        row = tableWidget->currentRow();
     }
     
-    waterQualityDialog->ui->tblBoundaryConditions->setItem(row, 0, new QTableWidgetItem(currentBoundaryCondition->getTypeLabel()));
-    waterQualityDialog->ui->tblBoundaryConditions->setItem(row, 1, new QTableWidgetItem(currentBoundaryCondition->getFunctionLabel()));
+    tableWidget->setItem(row, 0, new QTableWidgetItem(currentBoundaryCondition->getHydrodynamicBoundaryCondition()->getName()));
+    tableWidget->setItem(row, 1, new QTableWidgetItem(currentBoundaryCondition->getVariable()));
+    tableWidget->setItem(row, 2, new QTableWidgetItem(currentBoundaryCondition->getFunctionLabel()));
     
     QDialog::accept();
 }

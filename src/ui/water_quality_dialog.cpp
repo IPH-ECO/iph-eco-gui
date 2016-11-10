@@ -353,6 +353,18 @@ void WaterQualityDialog::on_cbxHydrodynamicConfiguration_currentIndexChanged(con
     }
     
     HydrodynamicConfiguration *hydrodynamicConfiguration = IPHApplication::getCurrentProject()->getHydrodynamicConfiguration(hydrodynamicConfigurationName);
+    
+    if (currentConfiguration && currentConfiguration->getHydrodynamicConfiguration() != hydrodynamicConfiguration && !currentConfiguration->getBoundaryConditions().isEmpty()) {
+        QString question = tr("There are boundary conditions associated to this hydrodynamic configuration. Are you sure you want to proceed?");
+        
+        if (QMessageBox::question(this, tr("Water Quality"), question) == QMessageBox::Yes) {
+            currentConfiguration->clearBoundaryConditions();
+        } else {
+            ui->cbxHydrodynamicConfiguration->setCurrentText(currentConfiguration->getHydrodynamicConfiguration()->getName());
+            return;
+        }
+    }
+    
     currentConfiguration->setHydrodynamicConfiguration(hydrodynamicConfiguration);
 }
 
@@ -644,7 +656,7 @@ void WaterQualityDialog::on_btnEditBoundaryCondition_clicked() {
     int currentRow = ui->tblBoundaryConditions->currentRow();
     
     if (currentRow > -1) {
-        WaterQualityBoundaryCondition *boundaryCondition = (WaterQualityBoundaryCondition*) ui->tblBoundaryConditions->verticalHeaderItem(currentRow - 1)->data(Qt::UserRole).value<void*>();
+        WaterQualityBoundaryCondition *boundaryCondition = (WaterQualityBoundaryCondition*) ui->tblBoundaryConditions->verticalHeaderItem(currentRow)->data(Qt::UserRole).value<void*>();
         WaterQualityBoundaryConditionDialog *boundaryConditionDialog = new WaterQualityBoundaryConditionDialog(this, currentConfiguration, boundaryCondition);
         boundaryConditionDialog->exec();
     }
@@ -654,10 +666,10 @@ void WaterQualityDialog::on_btnRemoveBoundaryCondition_clicked() {
     int currentRow = ui->tblBoundaryConditions->currentRow();
     
     if (currentRow > -1 && QMessageBox::question(this, tr("Water Quality"), tr("Are you sure?")) == QMessageBox::Yes) {
-        WaterQualityBoundaryCondition *boundaryCondition = (WaterQualityBoundaryCondition*) ui->tblBoundaryConditions->verticalHeaderItem(currentRow - 1)->data(Qt::UserRole).value<void*>();
+        WaterQualityBoundaryCondition *boundaryCondition = (WaterQualityBoundaryCondition*) ui->tblBoundaryConditions->verticalHeaderItem(currentRow)->data(Qt::UserRole).value<void*>();
         
         currentConfiguration->removeBoundaryCondition(boundaryCondition);
-        ui->tblBoundaryConditions->removeRow(currentRow - 1);
+        ui->tblBoundaryConditions->removeRow(currentRow);
     }
 }
 
