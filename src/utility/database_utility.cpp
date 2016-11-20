@@ -58,7 +58,7 @@ void DatabaseUtility::createApplicationTables() {
     sql << "drop table if exists project";
     sql << "create table project (" \
         "id integer primary key, " \
-        "name varchar(255) not null, " \
+        "name text not null, " \
         "description text, " \
         "hydrodynamic boolean default false," \
         "water_quality boolean default false" \
@@ -67,8 +67,8 @@ void DatabaseUtility::createApplicationTables() {
     sql << "drop table if exists mesh";
     sql << "create table mesh (" \
         "id integer primary key, " \
-        "name varchar(255) not null, " \
-        "type varchar(255) not null, " \
+        "name text not null, " \
+        "type text not null, " \
         "coordinates_distance float default 0, " \
         "mesh_poly_data text not null, " \
         "boundary_poly_data text not null, " \
@@ -78,8 +78,8 @@ void DatabaseUtility::createApplicationTables() {
     sql << "drop table if exists mesh_polygon";
     sql << "create table mesh_polygon (" \
         "id integer primary key, " \
-        "name varchar(255) not null, " \
-        "type varchar(255) not null, " \
+        "name text not null, " \
+        "type text not null, " \
         "original_poly_data text not null, " \
 		"filtered_poly_data text not null, " \
 		"minimum_angle float, " \
@@ -91,13 +91,13 @@ void DatabaseUtility::createApplicationTables() {
     sql << "drop table if exists grid_data_configuration";
     sql << "create table grid_data_configuration (" \
         "id integer primary key, " \
-        "name varchar(255) not null" \
+        "name text not null" \
     ")";
     
     sql << "drop table if exists grid_data";
     sql << "create table grid_data (" \
         "id integer primary key, " \
-        "name varchar(255) not null, " \
+        "name text not null, " \
         "input_type integer not null, " \
         "grid_type integer not null, " \
         "input_poly_data text not null, " \
@@ -110,15 +110,15 @@ void DatabaseUtility::createApplicationTables() {
     sql << "drop table if exists hydrodynamic_configuration";
     sql << "create table hydrodynamic_configuration (" \
         "id integer primary key, " \
-        "name varchar(255) not null, " \
+        "name text not null, " \
         "grid_data_configuration_id integer not null" \
     ")";
     
     sql << "drop table if exists hydrodynamic_parameter";
     sql << "create table hydrodynamic_parameter (" \
         "id integer primary key, " \
-        "name varchar(255) not null, " \
-        "type varchar(255) not null, " \
+        "name text not null, " \
+        "type text not null, " \
         "value float default null, " \
         "selected bool default false, " \
         "enabled bool default true, " \
@@ -129,15 +129,16 @@ void DatabaseUtility::createApplicationTables() {
     sql << "create table boundary_condition (" \
         "id integer primary key, " \
         "name text not null, " \
-        "type varchar(255) not null, " \
-        "object_ids varchar(255) not null, " \
-        "function varchar(255) not null, " \
+        "type text default null, " \
+        "object_ids text default null, " \
+        "function text not null, " \
         "constant_value float default null, " \
         "input_module integer not null, " \
         "cell_color varchar(7) default '#FFFFFF', " \
         "vertical_integrated_outflow boolean default true, " \
         "minimum_elevation float default null, " \
         "maximum_elevation float default null, " \
+        "hydro_boundary_condition_id integer default null, " \
         "configuration_id integer not null" \
     ")";
     
@@ -215,7 +216,7 @@ void DatabaseUtility::createApplicationTables() {
     sql << "drop table if exists simulation";
     sql << "create table simulation (" \
         "id integer primary key, " \
-        "label varchar(255) not null, " \
+        "label text not null, " \
         "simulation_type integer not null, " \
         "start_time integer not null, " \
         "initial_time integer not null, " \
@@ -223,7 +224,7 @@ void DatabaseUtility::createApplicationTables() {
         "step_time integer not null, " \
         "minimum_vertical_limit float, " \
         "maximum_vertical_limit float, " \
-        "layers varchar(255), " \
+        "layers text, " \
         "observations text, " \
         "output_time_interval integer, " \
         "output_directory text, " \

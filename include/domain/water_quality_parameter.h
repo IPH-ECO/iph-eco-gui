@@ -109,6 +109,10 @@ public:
     inline bool isInRange(double value) const {
         return (rangeMininum == 0 && rangeMaximum == 0) || (value >= rangeMininum && value <= rangeMaximum);
     }
+    
+    inline bool operator==(const WaterQualityParameter &parameter) const {
+        return this->name == parameter.getName() && this->section == parameter.getSection();
+    }
 };
 
 #endif // WATER_QUALITY_PARAMETER_H

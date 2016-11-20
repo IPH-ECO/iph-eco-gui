@@ -16,9 +16,11 @@ private:
     QJsonArray jsonParameters;
     QJsonArray jsonFoodMatrix;
     QJsonArray jsonInitialConditions;
+    QJsonArray jsonVariables;
     QList<FoodMatrixElement*> predators;
     QList<FoodMatrixElement*> preys;
     QList<FoodMatrixItem> defaultFoodMatrix;
+    QList<WaterQualityParameter*> boundaryConditionVariables;
     
     WaterQualityRepository();
 
@@ -27,10 +29,13 @@ private:
 public:
     static WaterQualityRepository* getInstance();
     
+    ~WaterQualityRepository();
+    
     void loadParameters(WaterQualityConfiguration *configuration);
     QList<FoodMatrixElement*> getPredators() const;
     QList<FoodMatrixElement*> getPreys() const;
     double getDefaultFoodMatrixValue(FoodMatrixElement *predator, FoodMatrixElement *prey) const;
+    QList<WaterQualityParameter*> getBoundaryConditionVariables() const;
 };
 
 #endif // WATER_QUALITY_REPOSITORY_H

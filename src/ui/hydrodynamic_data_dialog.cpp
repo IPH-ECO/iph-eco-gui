@@ -180,16 +180,23 @@ void HydrodynamicDataDialog::expandParameterTree() {
 
 void HydrodynamicDataDialog::on_cbxConfiguration_currentIndexChanged(const QString &configurationName) {
     clearLayout(ui->initialConditionsTab->layout());
+    ui->tblBoundaryConditions->clearContents();
+    ui->tblBoundaryConditions->setRowCount(0);
+    ui->trwProcesses->clear();
+    ui->trwParameters->clear();
+    
+    for (HydrodynamicBoundaryCondition *boundaryCondition : currentConfiguration->getBoundaryConditions()) {
+        ui->vtkWidget->getMouseInteractor()->removeBoundaryCondition(boundaryCondition);
+    }
     
     if (!configurationName.isEmpty()) {
+        int i = 0;
+        
         currentConfiguration = IPHApplication::getCurrentProject()->getHydrodynamicConfiguration(configurationName);
         ui->edtConfigurationName->setText(currentConfiguration->getName());
         ui->cbxGridDataConfiguration->setCurrentText(currentConfiguration->getGridDataConfiguration()->getName());
         
-        QList<HydrodynamicBoundaryCondition*> boundaryConditions = currentConfiguration->getBoundaryConditions();
-        int i = 0;
-        
-        for (HydrodynamicBoundaryCondition *boundaryCondition : boundaryConditions) {
+        for (HydrodynamicBoundaryCondition *boundaryCondition : currentConfiguration->getBoundaryConditions()) {
             QTableWidgetItem *item = new QTableWidgetItem();
             
             item->setData(Qt::UserRole, qVariantFromValue((void*) boundaryCondition));
@@ -202,9 +209,6 @@ void HydrodynamicDataDialog::on_cbxConfiguration_currentIndexChanged(const QStri
             i++;
         }
     }
-    
-    ui->trwProcesses->clear();
-    ui->trwParameters->clear();
     
     this->setupItems();
 }

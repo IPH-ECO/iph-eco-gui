@@ -62,6 +62,7 @@
     <file>data/water_quality_structure.json</file>
     <file>data/water_quality_initial_conditions.json</file>
     <file>data/food_matrix.json</file>
+    <file>data/water_quality_variables.json</file>
     <file>data/output_variables.json</file>
     <file>data/water_quality_diagram.html</file>
     <file>data/jquery-2.2.0.min.js</file>

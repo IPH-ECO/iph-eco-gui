@@ -38,6 +38,7 @@ public:
     void setBoundaryConditions(const QList<WaterQualityBoundaryCondition*> &boundaryConditions);
     void addBoundaryCondition(WaterQualityBoundaryCondition *boundaryCondition);
     void removeBoundaryCondition(WaterQualityBoundaryCondition *boundaryCondition);
+    void clearBoundaryConditions();
     FoodMatrixValue* getFoodMatrixValue(const QString &predator, const int &predatorGroup, const QString &prey, const int &preyGroup) const;
     void addFoodMatrixValue(FoodMatrixValue *foodMatrixValue);
     void clearFoodMatrix();

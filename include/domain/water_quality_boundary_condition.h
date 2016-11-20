@@ -13,8 +13,6 @@ public:
 
     HydrodynamicBoundaryCondition* getHydrodynamicBoundaryCondition() const;
     void setHydrodynamicBoundaryCondition(HydrodynamicBoundaryCondition *hydrodynamicBoundaryCondition);
-    QString getVariable() const;
-    void setVariable(const QString &variable);
 
     SimulationDataType::WaterQualityBoundaryCondition toSimulationDataType() const;
 };

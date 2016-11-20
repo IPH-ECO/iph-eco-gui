@@ -70,6 +70,26 @@ WaterQualityRepository::WaterQualityRepository() {
             predators.append(foodMatrixElement);
         }
     }
+    
+    QFile variablesFile(":/data/water_quality_variables.json");
+    variablesFile.open(QFile::ReadOnly);
+    jsonDocument = QJsonDocument::fromJson(variablesFile.readAll());
+    this->jsonVariables = jsonDocument.array();
+    variablesFile.close();
+}
+
+WaterQualityRepository::~WaterQualityRepository() {
+    for (FoodMatrixElement *predator : predators) {
+        delete predator;
+    }
+    
+    for (FoodMatrixElement *prey : preys) {
+        delete prey;
+    }
+    
+    for (WaterQualityParameter *variable : boundaryConditionVariables) {
+        delete variable;
+    }
 }
 
 void WaterQualityRepository::loadParameters(WaterQualityConfiguration *configuration) {
@@ -286,6 +306,24 @@ void WaterQualityRepository::loadParameters(WaterQualityConfiguration *configura
         configuration->addWaterQualityParameter(parameter);
     }
     
+    if (boundaryConditionVariables.isEmpty()) {
+        for (int i = 0; i < this->jsonVariables.size(); i++) {
+            QJsonObject jsonParameter = this->jsonVariables[i].toObject();
+            WaterQualityParameter *parameter = new WaterQualityParameter();
+            
+            parameter->setName(jsonParameter["name"].toString());
+            parameter->setLabel(jsonParameter["label"].toString());
+            parameter->setGroup(jsonParameter["group"].toBool(false));
+            
+            if (!jsonParameter["target"].isNull()) {
+                WaterQualityParameter *target = configuration->getParameter(jsonParameter["target"].toString(), WaterQualityParameterSection::STRUCTURE);
+                parameter->setTarget(target);
+            }
+            
+            boundaryConditionVariables.append(parameter);
+        }
+    }
+    
     configuration->setLoaded(true);
 }
 
@@ -335,4 +373,8 @@ double WaterQualityRepository::getDefaultFoodMatrixValue(FoodMatrixElement *pred
     }
     
     return std::numeric_limits<double>::max();
+}
+
+QList<WaterQualityParameter*> WaterQualityRepository::getBoundaryConditionVariables() const {
+    return boundaryConditionVariables;
 }

@@ -6,9 +6,21 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>392</width>
-    <height>231</height>
+    <width>380</width>
+    <height>200</height>
    </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>380</width>
+    <height>200</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>380</width>
+    <height>200</height>
+   </size>
   </property>
   <property name="windowTitle">
    <string>Water Quality Boundary Condition</string>

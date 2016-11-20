@@ -45,6 +45,7 @@ private slots:
     void on_btnAddBoundaryCondition_clicked();
     void on_btnEditBoundaryCondition_clicked();
     void on_btnRemoveBoundaryCondition_clicked();
+    void updateInlineValue(const QString &text);
 public:
 	explicit WaterQualityDialog(QWidget *parent = 0);
 	~WaterQualityDialog();

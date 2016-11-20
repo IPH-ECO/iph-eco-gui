@@ -147,7 +147,9 @@ void WaterQualityDialog::buildTreeWidgets(WaterQualityParameter *parameter) {
         lineEdit->setAlignment(Qt::AlignRight);
         lineEdit->setEnabled(parameter->isEnabled());
         lineEdit->setObjectName(parameter->getName());
+        lineEdit->setProperty("section", QVariant((int) parameter->getSection()));
         
+        QObject::connect(lineEdit, SIGNAL(textEdited(const QString&)), this, SLOT(updateInlineValue(const QString&)));
         treeWidget->setItemWidget(parameterItem, 1, lineEdit);
     } else if (parameter->getInputType() == WaterQualityParameterInputType::TABULAR) {
         QToolButton *toolButton = new QToolButton(treeWidget);
@@ -323,10 +325,12 @@ void WaterQualityDialog::loadBoundaryConditions() {
     
     for (int i = 0; i < boundaryConditions.size(); i++) {
         WaterQualityBoundaryCondition *boundaryCondition = boundaryConditions.at(i);
+        QTableWidgetItem *headerItem = new QTableWidgetItem();
         
-        ui->tblBoundaryConditions->verticalHeaderItem(i)->setData(Qt::UserRole, qVariantFromValue((void *) boundaryCondition));
+        headerItem->setData(Qt::UserRole, qVariantFromValue((void*) boundaryCondition));
+        ui->tblBoundaryConditions->setVerticalHeaderItem(i, headerItem);
         ui->tblBoundaryConditions->setItem(i, 0, new QTableWidgetItem(boundaryCondition->getHydrodynamicBoundaryCondition()->getName()));
-        ui->tblBoundaryConditions->setItem(i, 1, new QTableWidgetItem(boundaryCondition->getVariable()));
+        ui->tblBoundaryConditions->setItem(i, 1, new QTableWidgetItem(boundaryCondition->getName()));
         ui->tblBoundaryConditions->setItem(i, 2, new QTableWidgetItem(boundaryCondition->getFunctionLabel()));
     }
 }
@@ -351,13 +355,25 @@ void WaterQualityDialog::on_cbxHydrodynamicConfiguration_currentIndexChanged(con
     }
     
     HydrodynamicConfiguration *hydrodynamicConfiguration = IPHApplication::getCurrentProject()->getHydrodynamicConfiguration(hydrodynamicConfigurationName);
+    
+    if (currentConfiguration && currentConfiguration->getHydrodynamicConfiguration() != hydrodynamicConfiguration && !currentConfiguration->getBoundaryConditions().isEmpty()) {
+        QString question = tr("There are boundary conditions associated to this hydrodynamic configuration. Are you sure you want to proceed?");
+        
+        if (QMessageBox::question(this, tr("Water Quality"), question) == QMessageBox::Yes) {
+            currentConfiguration->clearBoundaryConditions();
+        } else {
+            ui->cbxHydrodynamicConfiguration->setCurrentText(currentConfiguration->getHydrodynamicConfiguration()->getName());
+            return;
+        }
+    }
+    
     currentConfiguration->setHydrodynamicConfiguration(hydrodynamicConfiguration);
 }
 
 void WaterQualityDialog::on_btnRemoveConfiguration_clicked() {
     QMessageBox::StandardButton question = QMessageBox::question(this, tr("Water Quality"), tr("Are you sure you want to remove the selected configuration?"));
     
-    if (ui->cbxConfiguration->currentIndex() != -1 && question == QMessageBox::Yes) {
+    if (!ui->cbxConfiguration->currentText().isEmpty() && question == QMessageBox::Yes) {
         IPHApplication::getCurrentProject()->removeWaterQualityConfiguration(ui->cbxConfiguration->currentText());
         ui->cbxConfiguration->blockSignals(true);
         ui->cbxConfiguration->removeItem(ui->cbxConfiguration->currentIndex());
@@ -642,7 +658,7 @@ void WaterQualityDialog::on_btnEditBoundaryCondition_clicked() {
     int currentRow = ui->tblBoundaryConditions->currentRow();
     
     if (currentRow > -1) {
-        WaterQualityBoundaryCondition *boundaryCondition = (WaterQualityBoundaryCondition*) ui->tblBoundaryConditions->verticalHeaderItem(currentRow - 1)->data(Qt::UserRole).value<void*>();
+        WaterQualityBoundaryCondition *boundaryCondition = (WaterQualityBoundaryCondition*) ui->tblBoundaryConditions->verticalHeaderItem(currentRow)->data(Qt::UserRole).value<void*>();
         WaterQualityBoundaryConditionDialog *boundaryConditionDialog = new WaterQualityBoundaryConditionDialog(this, currentConfiguration, boundaryCondition);
         boundaryConditionDialog->exec();
     }
@@ -652,9 +668,16 @@ void WaterQualityDialog::on_btnRemoveBoundaryCondition_clicked() {
     int currentRow = ui->tblBoundaryConditions->currentRow();
     
     if (currentRow > -1 && QMessageBox::question(this, tr("Water Quality"), tr("Are you sure?")) == QMessageBox::Yes) {
-        WaterQualityBoundaryCondition *boundaryCondition = (WaterQualityBoundaryCondition*) ui->tblBoundaryConditions->verticalHeaderItem(currentRow - 1)->data(Qt::UserRole).value<void*>();
+        WaterQualityBoundaryCondition *boundaryCondition = (WaterQualityBoundaryCondition*) ui->tblBoundaryConditions->verticalHeaderItem(currentRow)->data(Qt::UserRole).value<void*>();
         
         currentConfiguration->removeBoundaryCondition(boundaryCondition);
-        ui->tblBoundaryConditions->removeRow(currentRow - 1);
+        ui->tblBoundaryConditions->removeRow(currentRow);
     }
+}
+
+void WaterQualityDialog::updateInlineValue(const QString &text) {
+    WaterQualityParameterSection section = (WaterQualityParameterSection) QObject::sender()->property("section").toInt();
+    QString parameterName = QObject::sender()->objectName();
+    
+    currentConfiguration->getParameter(parameterName, section)->setValue(text.toDouble());
 }
