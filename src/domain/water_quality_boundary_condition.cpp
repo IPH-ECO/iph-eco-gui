@@ -12,14 +12,6 @@ void WaterQualityBoundaryCondition::setHydrodynamicBoundaryCondition(Hydrodynami
 	this->hydrodynamicBoundaryCondition = hydrodynamicBoundaryCondition;
 }
 
-QString WaterQualityBoundaryCondition::getVariable() const {
-	return variable;
-}
-
-void WaterQualityBoundaryCondition::setVariable(const QString &variable) {
-	this->variable = variable;
-}
-
 SimulationDataType::WaterQualityBoundaryCondition WaterQualityBoundaryCondition::toSimulationDataType() const {
 
 }

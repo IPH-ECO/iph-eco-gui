@@ -300,6 +300,7 @@ void ProjectRepository::loadWaterQualityConfigurations(Project *project) {
         
         loadWaterQualityParameters(configuration);
         loadFoodMatrix(configuration);
+        loadBoundaryConditions(configuration);
     }
 }
 
@@ -343,6 +344,40 @@ void ProjectRepository::loadFoodMatrix(WaterQualityConfiguration *configuration)
         configuration->addFoodMatrixValue(foodMatrixValue);
         
         updateProgressAndProcessEvents();
+    }
+}
+
+void ProjectRepository::loadBoundaryConditions(WaterQualityConfiguration *configuration) {
+    QSqlQuery query(databaseUtility->getDatabase());
+    QString configurationId = QString::number(configuration->getId());
+    QString inputModule = QString::number((int) InputModule::WATER_QUALITY);
+    HydrodynamicConfiguration *hydrodynamicConfiguration = configuration->getHydrodynamicConfiguration();
+    
+    query.prepare("select * from boundary_condition where configuration_id = " + configurationId + " and input_module = " + inputModule);
+    query.exec();
+    
+    while (query.next() && !operationCanceled) {
+        WaterQualityBoundaryCondition *boundaryCondition = new WaterQualityBoundaryCondition();
+        int hydroBoundaryConditionId = query.value("hydro_boundary_condition_id").toInt();
+        
+        boundaryCondition->setId(query.value("id").toUInt());
+        boundaryCondition->setName(query.value("name").toString());
+        boundaryCondition->setFunction((BoundaryConditionFunction) query.value("function").toInt());
+        boundaryCondition->setConstantValue(query.value("constant_value").toDouble());
+        boundaryCondition->setInputModule((InputModule) query.value("input_module").toInt());
+        
+        for (HydrodynamicBoundaryCondition *hydroBoundaryCondition : hydrodynamicConfiguration->getBoundaryConditions()) {
+            if (hydroBoundaryCondition->getId() == hydroBoundaryConditionId) {
+                boundaryCondition->setHydrodynamicBoundaryCondition(hydroBoundaryCondition);
+                break;
+            }
+        }
+        
+        configuration->addBoundaryCondition(boundaryCondition);
+        
+        updateProgressAndProcessEvents();
+        
+        loadTimeSeries(boundaryCondition);
     }
 }
 
@@ -884,7 +919,7 @@ void ProjectRepository::saveBoundaryConditions(HydrodynamicConfiguration *config
             query.bindValue(":i", boundaryCondition->getId());
         } else {
             query.prepare("insert into boundary_condition (name, type, object_ids, function, constant_value, input_module, cell_color, vertical_integrated_outflow, minimum_elevation, maximum_elevation, configuration_id) values (:n, :t, :o, :f, :c, :i, :cc, :v, :m1, :m2, :ci)");
-            query.bindValue(":i", (int) boundaryCondition->getInputModule());
+            query.bindValue(":i", (int) InputModule::HYDRODYNAMIC);
             query.bindValue(":ci", configuration->getId());
         }
 
@@ -913,10 +948,7 @@ void ProjectRepository::saveBoundaryConditions(HydrodynamicConfiguration *config
         saveTimeSeries(boundaryCondition);
     }
     
-    QString configurationIdStr = QString::number(configuration->getId());
-    QString inputModuleStr = QString::number((int) InputModule::HYDRODYNAMIC);
-
-    query.prepare("delete from boundary_condition where id not in (" + boundaryConditionIds.join(",") + ") and configuration_id = " + configurationIdStr + " and input_module = " + inputModuleStr);
+    query.prepare("delete from boundary_condition where id not in (" + boundaryConditionIds.join(",") + ") and configuration_id = " + QString::number(configuration->getId()) + " and input_module = " + QString::number((int) InputModule::HYDRODYNAMIC));
     query.exec();
 }
 
@@ -1011,6 +1043,7 @@ void ProjectRepository::saveWaterQualityConfigurations(Project *project) {
         configurationIds.append(QString::number(configuration->getId()));
         saveWaterQualityParameters(configuration);
         saveFoodMatrix(configuration);
+        saveBoundaryConditions(configuration);
     }
     
     // Handle exclusions
@@ -1020,12 +1053,14 @@ void ProjectRepository::saveWaterQualityConfigurations(Project *project) {
         queries << "delete from water_quality_configuration";
         queries << "delete from water_quality_parameter";
         queries << "delete from food_matrix";
+        queries << "delete from boundary_condition where input_module = " + QString::number((int) InputModule::WATER_QUALITY);
     } else {
         QString configurationIdsStr = configurationIds.join(",");
         
         queries << "delete from water_quality_configuration where id not in (" + configurationIdsStr + ")";
         queries << "delete from water_quality_parameter where water_quality_configuration_id not in (" + configurationIdsStr + ")";
         queries << "delete from food_matrix where water_quality_configuration_id not in (" + configurationIdsStr + ")";
+        queries << "delete from boundary_condition not in (" + configurationIdsStr + ") and input_module = " + QString::number((int) InputModule::WATER_QUALITY);
     }
     
     for (QString sql : queries) {
@@ -1094,6 +1129,50 @@ void ProjectRepository::saveFoodMatrix(WaterQualityConfiguration *configuration)
             throw DatabaseException(QString("Unable to save food matrix values. Error: %1.").arg(query.lastError().text()).toStdString());
         }
     }
+}
+
+void ProjectRepository::saveBoundaryConditions(WaterQualityConfiguration *configuration) {
+    QSqlQuery query(databaseUtility->getDatabase());
+    QStringList boundaryConditionIds;
+    
+    for (WaterQualityBoundaryCondition *boundaryCondition : configuration->getBoundaryConditions()) {
+        if (operationCanceled) {
+            return;
+        }
+        
+        bool update = !this->makeCopy && boundaryCondition->isPersisted();
+        
+        if (update) {
+            query.prepare("update boundary_condition set name = :n, function = :f, constant_value = :c, hydro_boundary_condition_id = :b where id = :i");
+            query.bindValue(":i", boundaryCondition->getId());
+        } else {
+            query.prepare("insert into boundary_condition (name, function, constant_value, input_module, hydro_boundary_condition_id, configuration_id) values (:n, :f, :c, :i, :b, :ci)");
+            query.bindValue(":i", (int) InputModule::WATER_QUALITY);
+            query.bindValue(":ci", configuration->getId());
+        }
+        
+        query.bindValue(":n", boundaryCondition->getName());
+        query.bindValue(":f", (int) boundaryCondition->getFunction());
+        query.bindValue(":c", boundaryCondition->getConstantValue());
+        query.bindValue(":b", boundaryCondition->getHydrodynamicBoundaryCondition()->getId());
+        
+        if (!query.exec()) {
+            throw DatabaseException(QString("Unable to save water quality boundary conditions. Error: %1.").arg(query.lastError().text()).toStdString());
+        }
+        
+        updateProgressAndProcessEvents();
+        
+        if (!update) {
+            boundaryCondition->setId(query.lastInsertId().toUInt());
+        }
+        
+        boundaryConditionIds.append(QString::number(boundaryCondition->getId()));
+        
+        saveTimeSeries(boundaryCondition);
+    }
+    
+    query.prepare("delete from boundary_condition where id not in (" + boundaryConditionIds.join(",") + ") and configuration_id = " + QString::number(configuration->getId()) + " and input_module = " + QString::number((int) InputModule::WATER_QUALITY));
+    query.exec();
 }
 
 void ProjectRepository::saveMeteorologicalConfigurations(Project *project) {
@@ -1411,6 +1490,7 @@ int ProjectRepository::getMaximumSaveProgress() {
     for (WaterQualityConfiguration *configuration : waterQualityConfigurations) {
         saveSteps += configuration->getParameters(true).size();
         saveSteps += configuration->getFoodMatrix().size();
+        saveSteps += configuration->getBoundaryConditions().size();
     }
     
     saveSteps += project->getSimulations().size();

@@ -325,10 +325,12 @@ void WaterQualityDialog::loadBoundaryConditions() {
     
     for (int i = 0; i < boundaryConditions.size(); i++) {
         WaterQualityBoundaryCondition *boundaryCondition = boundaryConditions.at(i);
+        QTableWidgetItem *headerItem = new QTableWidgetItem();
         
-        ui->tblBoundaryConditions->verticalHeaderItem(i)->setData(Qt::UserRole, qVariantFromValue((void *) boundaryCondition));
+        headerItem->setData(Qt::UserRole, qVariantFromValue((void*) boundaryCondition));
+        ui->tblBoundaryConditions->setVerticalHeaderItem(i, headerItem);
         ui->tblBoundaryConditions->setItem(i, 0, new QTableWidgetItem(boundaryCondition->getHydrodynamicBoundaryCondition()->getName()));
-        ui->tblBoundaryConditions->setItem(i, 1, new QTableWidgetItem(boundaryCondition->getVariable()));
+        ui->tblBoundaryConditions->setItem(i, 1, new QTableWidgetItem(boundaryCondition->getName()));
         ui->tblBoundaryConditions->setItem(i, 2, new QTableWidgetItem(boundaryCondition->getFunctionLabel()));
     }
 }
@@ -371,7 +373,7 @@ void WaterQualityDialog::on_cbxHydrodynamicConfiguration_currentIndexChanged(con
 void WaterQualityDialog::on_btnRemoveConfiguration_clicked() {
     QMessageBox::StandardButton question = QMessageBox::question(this, tr("Water Quality"), tr("Are you sure you want to remove the selected configuration?"));
     
-    if (ui->cbxConfiguration->currentIndex() != -1 && question == QMessageBox::Yes) {
+    if (!ui->cbxConfiguration->currentText().isEmpty() && question == QMessageBox::Yes) {
         IPHApplication::getCurrentProject()->removeWaterQualityConfiguration(ui->cbxConfiguration->currentText());
         ui->cbxConfiguration->blockSignals(true);
         ui->cbxConfiguration->removeItem(ui->cbxConfiguration->currentIndex());

@@ -32,6 +32,7 @@ private:
     void loadWaterQualityConfigurations(Project *project);
     void loadWaterQualityParameters(WaterQualityConfiguration *configuration);
     void loadFoodMatrix(WaterQualityConfiguration *configuration);
+    void loadBoundaryConditions(WaterQualityConfiguration *configuration);
     
     void saveGridDataConfigurations(Project *project);
     void saveGridData(GridDataConfiguration *gridDataConfiguration);
@@ -46,6 +47,7 @@ private:
     void saveWaterQualityConfigurations(Project *project);
     void saveWaterQualityParameters(WaterQualityConfiguration *configuration);
     void saveFoodMatrix(WaterQualityConfiguration *configuration);
+    void saveBoundaryConditions(WaterQualityConfiguration *configuration);
     
     void saveMeteorologicalConfigurations(Project *project);
     void saveMeteorologicalStations(MeteorologicalConfiguration *configuration);

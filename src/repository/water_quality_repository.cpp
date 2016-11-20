@@ -316,7 +316,7 @@ void WaterQualityRepository::loadParameters(WaterQualityConfiguration *configura
             parameter->setGroup(jsonParameter["group"].toBool(false));
             
             if (!jsonParameter["target"].isNull()) {
-                WaterQualityParameter *target = configuration->getParameter(jsonParameter["target"].toString(), WaterQualityParameterSection::PARAMETER);
+                WaterQualityParameter *target = configuration->getParameter(jsonParameter["target"].toString(), WaterQualityParameterSection::STRUCTURE);
                 parameter->setTarget(target);
             }
             

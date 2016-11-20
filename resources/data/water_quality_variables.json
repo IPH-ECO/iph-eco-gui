@@ -14,17 +14,17 @@
 	{
 		"name": "organicMatter",
 		"label": "Organic Matter",
-		"target": "organicMatter1"
+		"target": "organicMatterModeling"
 	},
 	{
 		"name": "dissolvedOrganicMatter",
 		"label": "Dissolved Organic Matter",
-		"target": "organicMatter2"
+		"target": "iMatOrgSplit"
 	},
 	{
 		"name": "particulatedOrganicMatter",
 		"label": "Particulated Organic Matter",
-		"target": "organicMatter2"
+		"target": "iMatOrgSplit"
 	},
 	{
 		"name": "orthophosphate",
@@ -59,21 +59,21 @@
 		"label": "Dissolved Inorganic Carbon"
 	},
 	{
-		"name": "bacterioplanktonModeling",
+		"name": "bacterioplankton",
 		"label": "Bacterioplankton",
-		"target": "bacterioplanktonGroups",
+		"target": "bacterioplanktonModeling",
 		"group": true
 	},
 	{
-		"name": "phytoplanktonModeling",
+		"name": "phytoplankton",
 		"label": "Phytoplankton",
-		"target": "phytoplanktonGroups",
+		"target": "phytoplanktonModeling",
 		"group": true
 	},
 	{
-		"name": "zooplanktonModeling",
+		"name": "zooplankton",
 		"label": "Zooplankton",
-		"target": "zooplanktonGroups",
+		"target": "zooplanktonModeling",
 		"group": true
 	}
 ]
