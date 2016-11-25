@@ -365,6 +365,9 @@ void ProjectRepository::loadBoundaryConditions(WaterQualityConfiguration *config
         boundaryCondition->setFunction((BoundaryConditionFunction) query.value("function").toInt());
         boundaryCondition->setConstantValue(query.value("constant_value").toDouble());
         boundaryCondition->setInputModule((InputModule) query.value("input_module").toInt());
+        boundaryCondition->setVerticalIntegratedOutflow(query.value("vertical_integrated_outflow").toBool());
+        boundaryCondition->setMinimumElevation(query.value("minimum_elevation").toDouble());
+        boundaryCondition->setMaximumElevation(query.value("maximum_elevation").toDouble());
         
         for (HydrodynamicBoundaryCondition *hydroBoundaryCondition : hydrodynamicConfiguration->getBoundaryConditions()) {
             if (hydroBoundaryCondition->getId() == hydroBoundaryConditionId) {
@@ -1143,10 +1146,10 @@ void ProjectRepository::saveBoundaryConditions(WaterQualityConfiguration *config
         bool update = !this->makeCopy && boundaryCondition->isPersisted();
         
         if (update) {
-            query.prepare("update boundary_condition set name = :n, function = :f, constant_value = :c, hydro_boundary_condition_id = :b where id = :i");
+            query.prepare("update boundary_condition set name = :n, function = :f, constant_value = :c, vertical_integrated_outflow = :v, minimum_elevation = :m1, maximum_elevation = :m2, hydro_boundary_condition_id = :b where id = :i");
             query.bindValue(":i", boundaryCondition->getId());
         } else {
-            query.prepare("insert into boundary_condition (name, function, constant_value, input_module, hydro_boundary_condition_id, configuration_id) values (:n, :f, :c, :i, :b, :ci)");
+            query.prepare("insert into boundary_condition (name, function, constant_value, input_module, vertical_integrated_outflow, minimum_elevation, maximum_elevation, hydro_boundary_condition_id, configuration_id) values (:n, :f, :c, :i, :v, :m1, :m2, :b, :ci)");
             query.bindValue(":i", (int) InputModule::WATER_QUALITY);
             query.bindValue(":ci", configuration->getId());
         }
@@ -1154,6 +1157,9 @@ void ProjectRepository::saveBoundaryConditions(WaterQualityConfiguration *config
         query.bindValue(":n", boundaryCondition->getName());
         query.bindValue(":f", (int) boundaryCondition->getFunction());
         query.bindValue(":c", boundaryCondition->getConstantValue());
+        query.bindValue(":v", boundaryCondition->useVerticalIntegratedOutflow());
+        query.bindValue(":m1", boundaryCondition->getMinimumElevation());
+        query.bindValue(":m2", boundaryCondition->getMaximumElevation());
         query.bindValue(":b", boundaryCondition->getHydrodynamicBoundaryCondition()->getId());
         
         if (!query.exec()) {

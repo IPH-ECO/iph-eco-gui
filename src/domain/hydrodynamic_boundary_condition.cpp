@@ -100,30 +100,6 @@ void HydrodynamicBoundaryCondition::setCellColor(const QString &cellColor) {
     this->cellColor = cellColor;
 }
 
-bool HydrodynamicBoundaryCondition::useVerticalIntegratedOutflow() const {
-    return verticalIntegratedOutflow;
-}
-
-void HydrodynamicBoundaryCondition::setVerticalIntegratedOutflow(bool verticalIntegratedOutflow) {
-    this->verticalIntegratedOutflow = verticalIntegratedOutflow;
-}
-
-double HydrodynamicBoundaryCondition::getMinimumElevation() const {
-    return minimumElevation;
-}
-
-void HydrodynamicBoundaryCondition::setMinimumElevation(const double &minimumElevation) {
-    this->minimumElevation = minimumElevation;
-}
-
-double HydrodynamicBoundaryCondition::getMaximumElevation() const {
-    return maximumElevation;
-}
-
-void HydrodynamicBoundaryCondition::setMaximumElevation(const double &maximumElevation) {
-    this->maximumElevation = maximumElevation;
-}
-
 vtkSmartPointer<vtkActor> HydrodynamicBoundaryCondition::getSelectionActor() const {
     return selectionActor;
 }

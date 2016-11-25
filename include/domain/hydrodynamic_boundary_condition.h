@@ -14,9 +14,6 @@ class HydrodynamicBoundaryCondition : public BoundaryCondition {
 private:
     QSet<vtkIdType> objectIds;
     QString cellColor;
-    bool verticalIntegratedOutflow;
-    double minimumElevation;
-    double maximumElevation;
     
     // Transient attributes
     vtkSmartPointer<vtkActor> selectionActor;
@@ -37,12 +34,6 @@ public:
     void clearObjectIds();
     QString getCellColor() const;
     void setCellColor(const QString &cellColor);
-    bool useVerticalIntegratedOutflow() const;
-    void setVerticalIntegratedOutflow(bool verticalIntegratedOutflow);
-    double getMinimumElevation() const;
-    void setMinimumElevation(const double &minimumElevation);
-    double getMaximumElevation() const;
-    void setMaximumElevation(const double &maximumElevation);
     vtkSmartPointer<vtkActor> getSelectionActor() const;
     void setSelectionActor(vtkSmartPointer<vtkActor> selectionActor);
     vtkSmartPointer<vtkActor2D> getLabelsActor() const;
