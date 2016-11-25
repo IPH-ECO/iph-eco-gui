@@ -108,6 +108,24 @@ void WaterQualityDialog::bindCurrentConfigurationToTreeWidgets() {
     }
 }
 
+void WaterQualityDialog::bindCurrentConfigurationToBoundaryConditionsTable() {
+    for (WaterQualityParameter *parameter : waterQualityRepository->getBoundaryConditionVariables()) {
+        WaterQualityParameter *target = parameter->getTarget();
+        
+        if (!target) {
+            continue;
+        }
+        
+        QList<QTreeWidgetItem*> widgetItems = ui->trwStructure->findItems(target->getLabel(), Qt::MatchExactly | Qt::MatchRecursive);
+        
+        for (QTreeWidgetItem *widgetItem : widgetItems) {
+            if (widgetItem->data(0, Qt::UserRole).toString() == target->getName()) {
+                parameter->setItemWidget(widgetItem);
+            }
+        }
+    }
+}
+
 void WaterQualityDialog::buildTreeWidgets(WaterQualityParameter *parameter) {
     QTreeWidget *treeWidget = nullptr;
     QTreeWidgetItem *parameterItem = nullptr;
@@ -344,6 +362,7 @@ void WaterQualityDialog::on_cbxConfiguration_currentIndexChanged(const QString &
     }
     
     this->bindCurrentConfigurationToTreeWidgets();
+    this->bindCurrentConfigurationToBoundaryConditionsTable();
     this->loadFoodMatrix();
     this->loadInitialConditions();
     this->loadBoundaryConditions();
@@ -652,6 +671,7 @@ void WaterQualityDialog::on_btnAddBoundaryCondition_clicked() {
     
     WaterQualityBoundaryConditionDialog *boundaryConditionDialog = new WaterQualityBoundaryConditionDialog(this, currentConfiguration, nullptr);
     boundaryConditionDialog->exec();
+    delete boundaryConditionDialog;
 }
 
 void WaterQualityDialog::on_btnEditBoundaryCondition_clicked() {
@@ -661,6 +681,7 @@ void WaterQualityDialog::on_btnEditBoundaryCondition_clicked() {
         WaterQualityBoundaryCondition *boundaryCondition = (WaterQualityBoundaryCondition*) ui->tblBoundaryConditions->verticalHeaderItem(currentRow)->data(Qt::UserRole).value<void*>();
         WaterQualityBoundaryConditionDialog *boundaryConditionDialog = new WaterQualityBoundaryConditionDialog(this, currentConfiguration, boundaryCondition);
         boundaryConditionDialog->exec();
+        delete boundaryConditionDialog;
     }
 }
 

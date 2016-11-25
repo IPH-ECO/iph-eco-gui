@@ -14,17 +14,20 @@
 	{
 		"name": "organicMatter",
 		"label": "Organic Matter",
-		"target": "organicMatterModeling"
+		"target": "organicMatterModeling",
+		"radio": true
 	},
 	{
 		"name": "dissolvedOrganicMatter",
 		"label": "Dissolved Organic Matter",
-		"target": "iMatOrgSplit"
+		"target": "iMatOrgSplit",
+		"radio": true
 	},
 	{
 		"name": "particulatedOrganicMatter",
 		"label": "Particulated Organic Matter",
-		"target": "iMatOrgSplit"
+		"target": "iMatOrgSplit",
+		"radio": true
 	},
 	{
 		"name": "orthophosphate",

@@ -23,26 +23,50 @@ WaterQualityBoundaryConditionDialog::WaterQualityBoundaryConditionDialog(WaterQu
         ui->cbxHydroBoundaryCondition->addItem(boundaryCondition->getName());
     }
     
-    QList<WaterQualityParameter*> variables = repository->getBoundaryConditionVariables();
-    
-    for (WaterQualityParameter *variable : variables) {
-        if (variable->getTarget()) {
-            if (variable->getTarget()->isChecked()) {
+    for (WaterQualityParameter *variable : repository->getBoundaryConditionVariables()) {
+        WaterQualityParameter *target = variable->getTarget();
+        
+        if (target) {
+            if (target->getItemWidget()->checkState(0) == Qt::Checked) {
                 if (variable->isGroup()) {
                     QString groupParameterName = variable->getName() + "Groups";
                     WaterQualityParameter *groupParameter = currentConfiguration->getParameter(groupParameterName, WaterQualityParameterSection::PARAMETER);
                     
                     for (WaterQualityParameter *group : groupParameter->getChildren()) {
-                        for (int i = 1; i <= group->getValue(); i++) {
-                            ui->cbxVariable->addItem(QString("%1 - %2 %3").arg(variable->getLabel()).arg(group->getLabel()).arg(i));
+                        for (int j = 1; j <= group->getValue(); j++) {
+                            ui->cbxVariable->addItem(QString("%1 - %2 %3").arg(variable->getLabel()).arg(group->getLabel()).arg(j));
                         }
                     }
+                } else if (variable->isRadio()) {
+                    ui->cbxVariable->addItem(variable->getLabel(), qVariantFromValue((void*) variable));
                 } else {
                     ui->cbxVariable->addItem(variable->getLabel());
                 }
             }
         } else {
             ui->cbxVariable->addItem(variable->getLabel());
+        }
+    }
+    
+    int count = ui->cbxVariable->count();
+    
+    for (int i = 0; i < count; i++) {
+        WaterQualityParameter *variable = static_cast<WaterQualityParameter*>(ui->cbxVariable->itemData(i).value<void*>());
+        
+        if (!variable) {
+            continue;
+        }
+        
+        WaterQualityParameter *targetParameter = variable->getTarget();
+        
+        if (targetParameter->isChecked()) {
+            for (WaterQualityParameter *child : targetParameter->getChildren()) {
+                if (child->isChecked()) {
+                    ui->cbxVariable->removeItem(i);
+                    count--;
+                    break;
+                }
+            }
         }
     }
     
@@ -61,6 +85,15 @@ WaterQualityBoundaryConditionDialog::WaterQualityBoundaryConditionDialog(WaterQu
     
     if (isConstant && !isNewBoundaryCondition) {
         ui->edtConstant->setText(QString::number(currentBoundaryCondition->getConstantValue()));
+    }
+    
+    ui->chkVerticalIntegratedFlow->setChecked(currentBoundaryCondition->useVerticalIntegratedOutflow());
+    ui->edtMinimumElevation->setDisabled(currentBoundaryCondition->useVerticalIntegratedOutflow());
+    ui->edtMaximumElevation->setDisabled(currentBoundaryCondition->useVerticalIntegratedOutflow());
+    
+    if (!currentBoundaryCondition->useVerticalIntegratedOutflow()) {
+        ui->edtMinimumElevation->setText(QString::number(currentBoundaryCondition->getMinimumElevation()));
+        ui->edtMaximumElevation->setText(QString::number(currentBoundaryCondition->getMaximumElevation()));
     }
     
     this->originalTimeSeriesList = currentBoundaryCondition->getTimeSeriesList();
@@ -105,6 +138,10 @@ void WaterQualityBoundaryConditionDialog::accept() {
         currentBoundaryCondition->setTimeSeriesList(timeSeriesList);
     }
     
+    currentBoundaryCondition->setVerticalIntegratedOutflow(ui->chkVerticalIntegratedFlow->isChecked());
+    currentBoundaryCondition->setMinimumElevation(ui->edtMinimumElevation->text().toDouble());
+    currentBoundaryCondition->setMaximumElevation(ui->edtMaximumElevation->text().toDouble());
+    
     currentConfiguration->addBoundaryCondition(currentBoundaryCondition);
     
     WaterQualityDialog *waterQualityDialog = static_cast<WaterQualityDialog*>(parentWidget());
@@ -145,9 +182,26 @@ bool WaterQualityBoundaryConditionDialog::isValid() {
         return false;
     }
     
+    for (WaterQualityBoundaryCondition *existentBoundaryCondition : currentConfiguration->getBoundaryConditions()) {
+        if (existentBoundaryCondition != currentBoundaryCondition && existentBoundaryCondition->getName() == ui->cbxVariable->currentText()) {
+            QMessageBox::warning(this, tr("Water Quality Boundary Condition"), QString("A boundary condition using variable %1 already exists.").arg(ui->cbxVariable->currentText()));
+            return false;
+        }
+    }
+    
     if (ui->rdoConstant->isChecked() && ui->edtConstant->text().isEmpty()) {
         QMessageBox::warning(this, tr("Water Quality Boundary Condition"), tr("Constant value can't be empty"));
         return false;
+    }
+    
+    if (ui->edtMinimumElevation->isEnabled()) {
+        if (ui->edtMinimumElevation->text().isEmpty() || ui->edtMaximumElevation->text().isEmpty()) {
+            QMessageBox::warning(this, tr("Water Quality Boundary Condition"), tr("Elevation interval can't be blank."));
+            return false;
+        } else if (ui->edtMinimumElevation->text().toDouble() > ui->edtMaximumElevation->text().toDouble()) {
+            QMessageBox::warning(this, tr("Water Quality Boundary Condition"), tr("Invalid elevation interval."));
+            return false;
+        }
     }
     
     return true;

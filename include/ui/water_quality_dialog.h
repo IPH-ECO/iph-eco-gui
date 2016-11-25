@@ -28,6 +28,7 @@ private:
 	void buildTreeWidgets(WaterQualityParameter *parameter);
     bool isItemWidgetVisible(QTreeWidgetItem *item) const;
     void bindCurrentConfigurationToTreeWidgets();
+    void bindCurrentConfigurationToBoundaryConditionsTable();
     void loadFoodMatrix();
     void loadInitialConditions();
     void loadBoundaryConditions();
