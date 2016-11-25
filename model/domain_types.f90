@@ -47,10 +47,15 @@ module domain_types
         integer(c_long_long) :: verticeIds(2);
     end type
 
-    type, bind(C) :: HydrodynamicBoundaryCondition
+    type, bind(C) :: BoundaryCondition
+        integer(c_int) :: inputModule ! HYDRODYNAMIC = 1, WATER_QUALITY = 2
+        ! For HYDRODYNAMIC
         integer(c_int) :: conditionType
         integer(c_int) :: cellsLength
         type(c_ptr) :: cells
+        ! For WATER_QUALITY
+        type(c_ptr) :: hydrodynamicBoundaryCondition
+        !
         integer(c_int) :: conditionFunction
         real(c_double) :: constantValue
         integer(c_int) :: timeSeriesListSize
@@ -98,9 +103,11 @@ module domain_types
 
     type, bind(C) :: WaterQualityConfiguration
         integer(c_int) :: numberOfParameters
-        type(c_ptr) :: parameters
         integer(c_int) :: foodMatrixSize
+        integer(c_int) :: numberOfBoundaryConditions
+        type(c_ptr) :: parameters
         type(c_ptr) :: foodMatrix
+        type(c_ptr) :: boundaryConditions
     end type
 
     type, bind(C) :: MeteorologicalParameter

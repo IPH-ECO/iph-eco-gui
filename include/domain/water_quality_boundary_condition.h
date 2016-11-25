@@ -6,7 +6,6 @@
 class WaterQualityBoundaryCondition : public BoundaryCondition {
 private:
     HydrodynamicBoundaryCondition *hydrodynamicBoundaryCondition;
-    QString variable;
 
 public:
     WaterQualityBoundaryCondition();
@@ -14,7 +13,7 @@ public:
     HydrodynamicBoundaryCondition* getHydrodynamicBoundaryCondition() const;
     void setHydrodynamicBoundaryCondition(HydrodynamicBoundaryCondition *hydrodynamicBoundaryCondition);
 
-    SimulationDataType::WaterQualityBoundaryCondition toSimulationDataType() const;
+    SimulationDataType::BoundaryCondition toSimulationDataType() const;
 };
 
 #endif // WATER_QUALITY_BOUNDARY_CONDITION_H

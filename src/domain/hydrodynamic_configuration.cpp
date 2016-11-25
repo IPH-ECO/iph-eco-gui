@@ -149,7 +149,7 @@ SimulationDataType::HydrodynamicConfiguration* HydrodynamicConfiguration::toSimu
         i++;
     }
     
-    configuration->boundaryConditions = new SimulationDataType::HydrodynamicBoundaryCondition[this->boundaryConditions.size()];
+    configuration->boundaryConditions = new SimulationDataType::BoundaryCondition[this->boundaryConditions.size()];
     configuration->numberOfBoundaryConditions = this->boundaryConditions.size();
     i = 0;
     

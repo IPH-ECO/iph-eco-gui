@@ -72,10 +72,15 @@ namespace SimulationDataType {
             long long int verticeIds[2];
         };
         
-        struct HydrodynamicBoundaryCondition {
+        struct BoundaryCondition {
+            int inputModule;
+            // HYDRODYNAMIC
             int conditionType;
             int cellsLength;
             SimulationDataType::HydrodynamicBoundaryConditionCell *cells;
+            // WATER_QUALITY
+            BoundaryCondition *hydrodynamicBoundaryCondition;
+            //
             int conditionFunction;
             double constantValue;
             int timeSeriesListSize;
@@ -84,7 +89,7 @@ namespace SimulationDataType {
             double minimumElevation;
             double maximumElevation;
             
-            HydrodynamicBoundaryCondition();
+            BoundaryCondition();
             void destroy();
         };
         
@@ -92,7 +97,7 @@ namespace SimulationDataType {
             int numberOfParameters;
             SimulationDataType::HydrodynamicParameter *parameters;
             int numberOfBoundaryConditions;
-            SimulationDataType::HydrodynamicBoundaryCondition *boundaryConditions;
+            SimulationDataType::BoundaryCondition *boundaryConditions;
             SimulationDataType::GridDataConfiguration *gridDataConfiguration;
             
             HydrodynamicConfiguration();
@@ -129,16 +134,13 @@ namespace SimulationDataType {
             FoodMatrixValue();
         };
         
-        struct WaterQualityBoundaryCondition {
-            char variable[DEFAULT_STRING_LEN];
-            double value;
-        };
-        
         struct WaterQualityConfiguration {
             int numberOfParameters;
-            SimulationDataType::WaterQualityParameter *parameters;
             int foodMatrixSize;
+            int numberOfBoundaryConditions;
+            SimulationDataType::WaterQualityParameter *parameters;
             SimulationDataType::FoodMatrixValue *foodMatrix;
+            SimulationDataType::BoundaryCondition *boundaryConditions;
             
             WaterQualityConfiguration();
             void destroy();

@@ -72,12 +72,12 @@ void SimulationDataType::HydrodynamicParameter::destroy() {
     delete name;
 }
 
-SimulationDataType::HydrodynamicBoundaryCondition::HydrodynamicBoundaryCondition() :
+SimulationDataType::BoundaryCondition::BoundaryCondition() :
     cells(nullptr),
     timeSeriesList(nullptr)
 {}
 
-void SimulationDataType::HydrodynamicBoundaryCondition::destroy() {
+void SimulationDataType::BoundaryCondition::destroy() {
 	delete cells;
     delete timeSeriesList;
 }
@@ -132,12 +132,22 @@ SimulationDataType::FoodMatrixValue::FoodMatrixValue() {
 
 SimulationDataType::WaterQualityConfiguration::WaterQualityConfiguration() :
     parameters(nullptr),
-    foodMatrix(nullptr)
+    foodMatrix(nullptr),
+    boundaryConditions(nullptr)
 {}
 
 void SimulationDataType::WaterQualityConfiguration::destroy() {
-    delete parameters;
+    if (parameters) {
+        parameters->destroy();
+        delete parameters;
+    }
+    
     delete foodMatrix;
+    
+    if (boundaryConditions) {
+        boundaryConditions->destroy();
+        delete boundaryConditions;
+    }
 }
 
 SimulationDataType::MeteorologicalParameter::MeteorologicalParameter() :

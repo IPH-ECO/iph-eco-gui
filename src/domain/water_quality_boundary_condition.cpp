@@ -12,6 +12,22 @@ void WaterQualityBoundaryCondition::setHydrodynamicBoundaryCondition(Hydrodynami
 	this->hydrodynamicBoundaryCondition = hydrodynamicBoundaryCondition;
 }
 
-SimulationDataType::WaterQualityBoundaryCondition WaterQualityBoundaryCondition::toSimulationDataType() const {
-
+SimulationDataType::BoundaryCondition WaterQualityBoundaryCondition::toSimulationDataType() const {
+    SimulationDataType::BoundaryCondition boundaryCondition;
+    
+    boundaryCondition.inputModule = (int) this->inputModule;
+    boundaryCondition.conditionFunction = (int) this->function;
+    boundaryCondition.constantValue = this->constantValue;
+    boundaryCondition.timeSeriesListSize = this->timeSeriesList.size();
+    boundaryCondition.timeSeriesList = new SimulationDataType::TimeSeries[boundaryCondition.timeSeriesListSize];
+    
+    for (vtkIdType i = 0; i < this->timeSeriesList.size(); i++) {
+        boundaryCondition.timeSeriesList[i] = this->timeSeriesList[i]->toSimulationDataType();
+    }
+    
+    boundaryCondition.verticalIntegratedOutflow = this->verticalIntegratedOutflow;
+    boundaryCondition.minimumElevation = this->minimumElevation;
+    boundaryCondition.maximumElevation = this->maximumElevation;
+    
+    return boundaryCondition;
 }

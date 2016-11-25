@@ -185,7 +185,7 @@ SimulationDataType::WaterQualityConfiguration* WaterQualityConfiguration::toSimu
     configuration->foodMatrix = new SimulationDataType::FoodMatrixValue[configuration->foodMatrixSize];
     i = 0;
     
-    for (FoodMatrixValue *foodMatrixValue : foodMatrix)  {
+    for (FoodMatrixValue *foodMatrixValue : this->foodMatrix)  {
         QByteArray predator = foodMatrixValue->predator.toLocal8Bit();
         QByteArray prey = foodMatrixValue->prey.toLocal8Bit();
         
@@ -195,6 +195,15 @@ SimulationDataType::WaterQualityConfiguration* WaterQualityConfiguration::toSimu
         configuration->foodMatrix[i].preyGroup = foodMatrixValue->preyGroup;
         configuration->foodMatrix[i].value = foodMatrixValue->value;
         
+        i++;
+    }
+    
+    configuration->numberOfBoundaryConditions = this->boundaryConditions.size();
+    configuration->boundaryConditions = new SimulationDataType::BoundaryCondition[configuration->numberOfBoundaryConditions];
+    i = 0;
+    
+    for (WaterQualityBoundaryCondition *boundaryCondition : this->boundaryConditions) {
+        configuration->boundaryConditions[i] = boundaryCondition->toSimulationDataType();
         i++;
     }
     

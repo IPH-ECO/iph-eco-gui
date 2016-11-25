@@ -116,11 +116,12 @@ void HydrodynamicBoundaryCondition::setLabelsActor(vtkSmartPointer<vtkActor2D> l
     this->labelsActor = labelsActor;
 }
 
-SimulationDataType::HydrodynamicBoundaryCondition HydrodynamicBoundaryCondition::toSimulationDataType(Mesh *mesh) const {
-    SimulationDataType::HydrodynamicBoundaryCondition boundaryCondition;
+SimulationDataType::BoundaryCondition HydrodynamicBoundaryCondition::toSimulationDataType(Mesh *mesh) const {
+    SimulationDataType::BoundaryCondition boundaryCondition;
     vtkSmartPointer<vtkPolyData> meshPolyData = mesh->getMeshPolyData();
     int cellCount = 0;
     
+    boundaryCondition.inputModule = (int) this->inputModule;
     boundaryCondition.conditionType = (int) this->type;
     boundaryCondition.cellsLength = this->objectIds.size();
     boundaryCondition.cells = new SimulationDataType::HydrodynamicBoundaryConditionCell[boundaryCondition.cellsLength];
