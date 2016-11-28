@@ -185,11 +185,15 @@ void HydrodynamicDataDialog::on_cbxConfiguration_currentIndexChanged(const QStri
     ui->trwProcesses->clear();
     ui->trwParameters->clear();
     
-    for (HydrodynamicBoundaryCondition *boundaryCondition : currentConfiguration->getBoundaryConditions()) {
-        ui->vtkWidget->getMouseInteractor()->removeBoundaryCondition(boundaryCondition);
+    if (currentConfiguration) {
+        for (HydrodynamicBoundaryCondition *boundaryCondition : currentConfiguration->getBoundaryConditions()) {
+            ui->vtkWidget->getMouseInteractor()->removeBoundaryCondition(boundaryCondition);
+        }
     }
     
-    if (!configurationName.isEmpty()) {
+    if (configurationName.isEmpty()) {
+        currentConfiguration = unsavedConfiguration;
+    } else {
         int i = 0;
         
         currentConfiguration = IPHApplication::getCurrentProject()->getHydrodynamicConfiguration(configurationName);
@@ -246,16 +250,24 @@ void HydrodynamicDataDialog::on_cbxGridDataConfiguration_currentIndexChanged(con
 }
 
 void HydrodynamicDataDialog::on_btnRemoveConfiguration_clicked() {
-    QMessageBox::StandardButton question = QMessageBox::question(this, tr("Hydrodynamic Data"), tr("Are you sure you want to remove the selected configuration?"));
+    bool hasBoundaryConditions = !currentConfiguration->getWaterQualityConfigurations().isEmpty();
+    QString questionStr = "Are you sure you want to remove the selected configuration?";
     
-    if (question == QMessageBox::Yes) {
+    if (hasBoundaryConditions) {
+        questionStr = "There are water quality configurations associated with this item. By removing it, they will also be removed. Do you want to proceed?";
+    }
+    
+    if (QMessageBox::question(this, tr("Hydrodynamic Data"), questionStr) == QMessageBox::Yes) {
+        ui->vtkWidget->getMouseInteractor()->resetBoundaryConditions(currentConfiguration);
         IPHApplication::getCurrentProject()->removeHydrodynamicConfiguration(ui->cbxConfiguration->currentText());
+        currentConfiguration = nullptr;
         ui->cbxConfiguration->removeItem(ui->cbxConfiguration->currentIndex());
         this->on_btnNewConfiguration_clicked();
     }
 }
 
 void HydrodynamicDataDialog::on_btnNewConfiguration_clicked() {
+    ui->vtkWidget->getMouseInteractor()->resetBoundaryConditions(currentConfiguration);
     currentConfiguration = unsavedConfiguration;
     currentGridDataConfiguration = nullptr;
     ui->cbxConfiguration->setCurrentIndex(-1);
@@ -265,7 +277,6 @@ void HydrodynamicDataDialog::on_btnNewConfiguration_clicked() {
     ui->tblBoundaryConditions->setRowCount(0);
     ui->btnEditBoundaryCondition->setEnabled(false);
     ui->btnRemoveBoundaryCondition->setEnabled(false);
-    ui->vtkWidget->getMouseInteractor()->setHydrodynamicConfiguration(nullptr);
 }
 
 void HydrodynamicDataDialog::on_btnApplyConfiguration_clicked() {

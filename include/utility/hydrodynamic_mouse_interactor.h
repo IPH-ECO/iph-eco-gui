@@ -30,6 +30,7 @@ public:
     void clearSelection();
     void setHydrodynamicConfiguration(HydrodynamicConfiguration *hydrodynamicConfiguration);
     void setBoundaryCondition(HydrodynamicBoundaryCondition *boundaryCondition);
+    void resetBoundaryConditions(HydrodynamicConfiguration *hydrodynamicConfiguration);
     
     virtual void OnLeftButtonUp();
     virtual void activatePicker(const PickerMode &pickerMode);

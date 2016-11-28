@@ -103,6 +103,7 @@ void Project::removeMesh(Mesh *mesh) {
         if (simulation->getMesh() == mesh) {
             simulations.removeOne(simulation);
             delete simulation;
+            simulation = nullptr;
         }
     }
     
@@ -120,6 +121,7 @@ void Project::removeMesh(Mesh *mesh) {
                 if (hydrodynamicConfiguration->getGridDataConfiguration() == gridDataConfiguration) {
                     hydrodynamicConfigurations.remove(hydrodynamicConfiguration);
                     delete hydrodynamicConfiguration;
+                    hydrodynamicConfiguration = nullptr;
                 }
             }
             
@@ -131,17 +133,19 @@ void Project::removeMesh(Mesh *mesh) {
                 if (meteorologicalConfiguration->getGridDataConfiguration() == gridDataConfiguration) {
                     meteorologicalConfigurations.remove(meteorologicalConfiguration);
                     delete meteorologicalConfiguration;
+                    meteorologicalConfiguration = nullptr;
                 }
             }
             
             gridDataConfigurations.remove(gridDataConfiguration);
             delete gridDataConfiguration;
+            gridDataConfiguration = nullptr;
         }
     }
     
     meshes.remove(mesh);
     delete mesh;
-    
+    mesh = nullptr;
 }
 
 bool Project::containsMesh(const QString &meshName) {
@@ -184,6 +188,7 @@ void Project::removeGridDataConfiguration(const QString &configurationName) {
     if (gridDataConfiguration) {
         gridDataConfigurations.remove(gridDataConfiguration);
         delete gridDataConfiguration;
+        gridDataConfiguration = nullptr;
     }
 
 }
@@ -226,8 +231,15 @@ void Project::removeHydrodynamicConfiguration(const QString &configurationName) 
     HydrodynamicConfiguration *hydrodynamicConfiguration = getHydrodynamicConfiguration(configurationName);
     
     if (hydrodynamicConfiguration) {
+        for (WaterQualityConfiguration *waterQualityConfiguration : hydrodynamicConfiguration->getWaterQualityConfigurations()) {
+            this->waterQualityConfigurations.remove(waterQualityConfiguration);
+            delete waterQualityConfiguration;
+            waterQualityConfiguration = nullptr;
+        }
+        
         hydrodynamicConfigurations.remove(hydrodynamicConfiguration);
         delete hydrodynamicConfiguration;
+        hydrodynamicConfiguration = nullptr;
     }
 }
 
@@ -271,6 +283,7 @@ void Project::removeWaterQualityConfiguration(const QString &configurationName) 
     if (waterQualityConfiguration) {
         waterQualityConfigurations.remove(waterQualityConfiguration);
         delete waterQualityConfiguration;
+        waterQualityConfiguration = nullptr;
     }
 }
 
@@ -314,6 +327,7 @@ void Project::removeMeteorologicalConfiguration(const QString &configurationName
     if (configuration) {
         this->meteorologicalConfigurations.remove(configuration);
         delete configuration;
+        configuration = nullptr;
     }
 }
 
@@ -359,6 +373,7 @@ void Project::removeSimulation(const QString &simulationLabel) {
     if (simulation) {
         simulations.removeOne(simulation);
         delete simulation;
+        simulation = nullptr;
     }
 }
 

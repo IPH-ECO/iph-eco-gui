@@ -166,20 +166,22 @@ void HydrodynamicMouseInteractor::clearSelection() {
 }
 
 void HydrodynamicMouseInteractor::setHydrodynamicConfiguration(HydrodynamicConfiguration *hydrodynamicConfiguration) {
-    if (!hydrodynamicConfiguration) {
-        if (this->hydrodynamicConfiguration) {
-            for (HydrodynamicBoundaryCondition *boundaryCondition : this->hydrodynamicConfiguration->getBoundaryConditions()) {
-                removeBoundaryCondition(boundaryCondition);
-            }
-            this->GetDefaultRenderer()->RemoveActor(this->boundaryEdgesActor);
-        }
-    } else {
+    if (hydrodynamicConfiguration) {
         this->hydrodynamicConfiguration = hydrodynamicConfiguration;
         this->meshPolyData = hydrodynamicConfiguration->getGridDataConfiguration()->getMesh()->getMeshPolyData();
         this->boundaryPolyData = hydrodynamicConfiguration->getGridDataConfiguration()->getMesh()->getBoundaryPolyData();
         
         this->clearSelection();
         MeshMouseInteractor::deactivatePicker();
+    }
+}
+
+void HydrodynamicMouseInteractor::resetBoundaryConditions(HydrodynamicConfiguration *hydrodynamicConfiguration) {
+    if (hydrodynamicConfiguration) {
+        for (HydrodynamicBoundaryCondition *boundaryCondition : hydrodynamicConfiguration->getBoundaryConditions()) {
+            removeBoundaryCondition(boundaryCondition);
+        }
+        this->GetDefaultRenderer()->RemoveActor(this->boundaryEdgesActor);
     }
 }
 
