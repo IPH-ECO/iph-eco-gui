@@ -14,8 +14,10 @@ void WaterQualityBoundaryCondition::setHydrodynamicBoundaryCondition(Hydrodynami
 
 SimulationDataType::BoundaryCondition WaterQualityBoundaryCondition::toSimulationDataType() const {
     SimulationDataType::BoundaryCondition boundaryCondition;
+    QByteArray conditionType = this->name.toLocal8Bit();
     
     boundaryCondition.inputModule = (int) this->inputModule;
+    strncpy(boundaryCondition.conditionType, conditionType.constData(), conditionType.size());
     boundaryCondition.conditionFunction = (int) this->function;
     boundaryCondition.constantValue = this->constantValue;
     boundaryCondition.timeSeriesListSize = this->timeSeriesList.size();

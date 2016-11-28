@@ -74,11 +74,12 @@ namespace SimulationDataType {
         
         struct BoundaryCondition {
             int inputModule;
+            char conditionType[DEFAULT_STRING_LEN];
             // HYDRODYNAMIC
-            int conditionType;
             int cellsLength;
             SimulationDataType::HydrodynamicBoundaryConditionCell *cells;
             // WATER_QUALITY
+            char conditionTypeWQ[DEFAULT_STRING_LEN];
             BoundaryCondition *hydrodynamicBoundaryCondition;
             //
             int conditionFunction;

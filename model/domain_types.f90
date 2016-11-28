@@ -49,8 +49,8 @@ module domain_types
 
     type, bind(C) :: BoundaryCondition
         integer(c_int) :: inputModule ! HYDRODYNAMIC = 1, WATER_QUALITY = 2
+        character(kind = c_char, len = 255) :: conditionType ! waterFlow, waterLevel or normalDepth for Hydrodynamic module
         ! For HYDRODYNAMIC
-        integer(c_int) :: conditionType
         integer(c_int) :: cellsLength
         type(c_ptr) :: cells
         ! For WATER_QUALITY

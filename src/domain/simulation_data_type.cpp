@@ -75,7 +75,9 @@ void SimulationDataType::HydrodynamicParameter::destroy() {
 SimulationDataType::BoundaryCondition::BoundaryCondition() :
     cells(nullptr),
     timeSeriesList(nullptr)
-{}
+{
+    memset(conditionType, ' ', sizeof(conditionType));
+}
 
 void SimulationDataType::BoundaryCondition::destroy() {
 	delete cells;

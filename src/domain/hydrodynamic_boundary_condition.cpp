@@ -119,14 +119,16 @@ void HydrodynamicBoundaryCondition::setLabelsActor(vtkSmartPointer<vtkActor2D> l
 SimulationDataType::BoundaryCondition HydrodynamicBoundaryCondition::toSimulationDataType(Mesh *mesh) const {
     SimulationDataType::BoundaryCondition boundaryCondition;
     vtkSmartPointer<vtkPolyData> meshPolyData = mesh->getMeshPolyData();
+    QByteArray conditionType = "waterFlow";
     int cellCount = 0;
     
     boundaryCondition.inputModule = (int) this->inputModule;
-    boundaryCondition.conditionType = (int) this->type;
     boundaryCondition.cellsLength = this->objectIds.size();
     boundaryCondition.cells = new SimulationDataType::HydrodynamicBoundaryConditionCell[boundaryCondition.cellsLength];
     
     if (this->type == BoundaryConditionType::WATER_LEVEL) {
+        conditionType = "waterLevel";
+        
         for (vtkIdType objectId : objectIds) {
             boundaryCondition.cells[cellCount] = SimulationDataType::HydrodynamicBoundaryConditionCell();
             boundaryCondition.cells[cellCount].cellId = objectId;
@@ -167,8 +169,13 @@ SimulationDataType::BoundaryCondition HydrodynamicBoundaryCondition::toSimulatio
 
             cellCount++;
         }
+        
+        if (this->type == BoundaryConditionType::NORMAL_DEPTH) {
+            conditionType = "normalDepth";
+        }
     }
     
+    strncpy(boundaryCondition.conditionType, conditionType.constData(), conditionType.size());
     boundaryCondition.conditionFunction = (int) this->function;
     boundaryCondition.constantValue = this->constantValue;
     boundaryCondition.timeSeriesListSize = this->timeSeriesList.size();
