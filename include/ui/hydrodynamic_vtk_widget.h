@@ -19,6 +19,8 @@ public:
     void togglePicker(bool activate, const PickerMode &pickerMode = PickerMode::NO_PICKER);
     vtkIdTypeArray* getSelectedCellIds() const;
     HydrodynamicMouseInteractor* getMouseInteractor() const;
+    void updateBoundaryCondition(HydrodynamicBoundaryCondition*);
+    void clearBoundaryCondition(HydrodynamicBoundaryCondition*);
 };
 
 #endif // HYDRODYNAMIC_VTK_WIDGET_H

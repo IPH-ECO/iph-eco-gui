@@ -4,7 +4,7 @@
 #include <domain/hydrodynamic_configuration.h>
 #include <repository/hydrodynamic_data_repository.h>
 #include "abstract_mesh_dialog.h"
-#include "boundary_condition_dialog.h"
+#include "hydrodynamic_boundary_condition_dialog.h"
 
 #include <QDialog>
 #include <QWidget>
@@ -17,25 +17,24 @@ namespace Ui {
 }
 
 class HydrodynamicVTKWidget;
-class BoundaryConditionDialog;
+class HydrodynamicBoundaryConditionDialog;
 
 class HydrodynamicDataDialog : public AbstractMeshDialog {
     Q_OBJECT
     
-    friend class BoundaryConditionDialog;
+    friend class HydrodynamicBoundaryConditionDialog;
 private:
     Ui::HydrodynamicDataDialog *ui;
     HydrodynamicDataRepository *hydrodynamicDataRepository;
     HydrodynamicConfiguration *unsavedConfiguration;
     HydrodynamicConfiguration *currentConfiguration;
     GridDataConfiguration *currentGridDataConfiguration;
-    BoundaryConditionDialog *boundaryConditionDialog;
+    HydrodynamicBoundaryConditionDialog *boundaryConditionDialog;
     
     void addParameterItemWidget(HydrodynamicParameter *parameter);
     void setupItems();
     void expandParameterTree();
     void closeEvent(QCloseEvent *event);
-    void toggleWidgets(bool enable);
     void clearLayout(QLayout *layout);
 private slots:
     void on_cbxConfiguration_currentIndexChanged(const QString &configurationName);
@@ -52,8 +51,8 @@ private slots:
 public:
     explicit HydrodynamicDataDialog(QWidget *parent);
     ~HydrodynamicDataDialog();
-    bool isCellLabelsActionChecked() const;
     void toggleZoomAreaAction(bool enable);
+    void toggleWidgets(bool enable);
 };
 
 #endif // HYDRODYNAMIC_DATA_DIALOG_H

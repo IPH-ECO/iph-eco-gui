@@ -5,7 +5,8 @@
 #include <domain/unstructured_mesh.h>
 #include <domain/structured_mesh.h>
 #include <domain/hydrodynamic_parameter.h>
-#include <ui/boundary_condition_dialog.h>
+#include <ui/vertical_integrated_boundary_condition_dialog.h>
+#include <ui/non_vertical_integrated_boundary_condition_dialog.h>
 
 #include <QTreeWidgetItemIterator>
 #include <QColorDialog>
@@ -407,8 +408,14 @@ void HydrodynamicDataDialog::on_trwProcesses_itemChanged(QTreeWidgetItem *item, 
 }
 
 void HydrodynamicDataDialog::on_btnAddBoundaryCondition_clicked() {
-    boundaryConditionDialog = new BoundaryConditionDialog(currentConfiguration, nullptr);
-    boundaryConditionDialog->setHydrodynamicDataDialog(this);
+    if (QMessageBox::question(this, "Boundary Condition", "Is it vertical integrated?", QMessageBox::Yes | QMessageBox::No, QMessageBox::No) == QMessageBox::No) {
+        boundaryConditionDialog = new NonVerticalIntegratedBoundaryConditionDialog(currentConfiguration, nullptr);
+    } else {
+        boundaryConditionDialog = new VerticalIntegratedBoundaryConditionDialog(currentConfiguration, nullptr);
+    }
+    
+    connect(this->toggleCellLabelsAction, SIGNAL(triggered(bool)), boundaryConditionDialog, SLOT(toggleLabelsActor(bool)));
+    
     boundaryConditionDialog->show();
     
     toggleWidgets(false);
@@ -418,8 +425,7 @@ void HydrodynamicDataDialog::on_btnEditBoundaryCondition_clicked() {
     int row = ui->tblBoundaryConditions->currentRow();
     HydrodynamicBoundaryCondition *boundaryCondition = (HydrodynamicBoundaryCondition*) ui->tblBoundaryConditions->verticalHeaderItem(row)->data(Qt::UserRole).value<void*>();
     
-    boundaryConditionDialog = new BoundaryConditionDialog(currentConfiguration, boundaryCondition);
-    boundaryConditionDialog->setHydrodynamicDataDialog(this);
+    boundaryConditionDialog = new VerticalIntegratedBoundaryConditionDialog(currentConfiguration, boundaryCondition);
     boundaryConditionDialog->show();
     
     toggleWidgets(false);
@@ -509,11 +515,6 @@ void HydrodynamicDataDialog::clearLayout(QLayout *layout) {
         }
         delete item;
     }
-}
-
-
-bool HydrodynamicDataDialog::isCellLabelsActionChecked() const {
-    return this->toggleCellLabelsAction->isChecked();
 }
 
 void HydrodynamicDataDialog::toggleZoomAreaAction(bool enable) {

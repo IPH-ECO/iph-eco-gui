@@ -1,54 +1,47 @@
-#ifndef BOUNDARY_CONDITION_DIALOG_H
-#define BOUNDARY_CONDITION_DIALOG_H
+#ifndef HYDRODYNAMIC_BOUNDARY_CONDITION_DIALOG_H
+#define HYDRODYNAMIC_BOUNDARY_CONDITION_DIALOG_H
 
 #include <QCloseEvent>
 #include <QToolButton>
 #include <QDialog>
 #include <QWidget>
+#include <QDialogButtonBox>
+#include <QToolButton>
 
 #include "hydrodynamic_data_dialog.h"
 
-namespace Ui {
-	class BoundaryConditionDialog;
-}
-
 class HydrodynamicDataDialog;
 
-class BoundaryConditionDialog : public QDialog {
+class HydrodynamicBoundaryConditionDialog : public QDialog {
 	Q_OBJECT
-    
-    friend class HydrodynamicDataDialog;
-private:
-	Ui::BoundaryConditionDialog *ui;
+protected:
+    HydrodynamicDataDialog *hydrodynamicDataDialog;
     HydrodynamicConfiguration *configuration;
     HydrodynamicBoundaryCondition *currentBoundaryCondition;
     QToolButton *btnIndividualObjectPicker;
     QToolButton *btnMultipleObjectPicker;
-    HydrodynamicDataDialog *hydrodynamicDataDialog;
+    QToolButton *btnClearSelection;
     QSet<vtkIdType> originalObjectIds;
-    QList<TimeSeries*> originalTimeSeriesList;
-    QList<TimeSeries*> timeSeriesList;
     bool isNewBoundaryCondition;
     
-    void closeEvent(QCloseEvent *event);
-    virtual void accept();
+    void setupUi();
+    virtual void closeEvent(QCloseEvent *event);
     virtual void reject();
-    bool isValid();
-    void undoChanges();
+    virtual bool isValid() = 0;
 public:
-	explicit BoundaryConditionDialog(HydrodynamicConfiguration *configuration, HydrodynamicBoundaryCondition *boundaryCondition);
-    ~BoundaryConditionDialog();
-    
-    void setHydrodynamicDataDialog(HydrodynamicDataDialog *dialog);
-private slots:
-    void on_cbxType_currentIndexChanged(const QString &type);
-    void on_btnTimeSeries_clicked();
-    void on_btnCellColor_clicked();
+	explicit HydrodynamicBoundaryConditionDialog(HydrodynamicConfiguration *configuration, HydrodynamicBoundaryCondition *boundaryCondition);
+    ~HydrodynamicBoundaryConditionDialog();
+public slots:
     void btnIndividualObjectPicker_clicked(bool checked);
     void btnMultipleObjectPicker_clicked(bool checked);
+private slots:
+    void on_btnCellColor_clicked();
     void btnClearSelection_clicked();
     void showObjectIds();
     void toggleLabelsActor(bool show);
+signals:
+    void updateBoundaryCondition(HydrodynamicBoundaryCondition *boundaryCondition);
+    void togglePicker(bool checked);
 };
 
-#endif // BOUNDARY_CONDITION_DIALOG_H
+#endif // HYDRODYNAMIC_BOUNDARY_CONDITION_DIALOG_H

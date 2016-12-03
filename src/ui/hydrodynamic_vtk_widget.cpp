@@ -88,3 +88,23 @@ void HydrodynamicVTKWidget::handleMouseEvent(QMouseEvent *event) {
         HydrodynamicMouseInteractor::SafeDownCast(mouseInteractor)->pickCell();
     }
 }
+
+void HydrodynamicVTKWidget::updateBoundaryCondition(HydrodynamicBoundaryCondition *boundaryCondition) {
+    HydrodynamicMouseInteractor *interactor = HydrodynamicMouseInteractor::SafeDownCast(mouseInteractor);
+    
+    interactor->setBoundaryCondition(boundaryCondition);
+    interactor->highlightBoundaryCondition(boundaryCondition, false);
+}
+
+void HydrodynamicVTKWidget::clearBoundaryCondition(HydrodynamicBoundaryCondition *boundaryCondition) {
+    HydrodynamicMouseInteractor *interactor = HydrodynamicMouseInteractor::SafeDownCast(mouseInteractor);
+    
+    if (boundaryCondition->isPersisted()) {
+        interactor->removeBoundaryCondition(boundaryCondition);
+    } else {
+        interactor->renderBoundaryCondition(boundaryCondition);
+        interactor->highlightBoundaryCondition(boundaryCondition, true);
+    }
+    
+    this->togglePicker(false);
+}
