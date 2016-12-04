@@ -19,7 +19,6 @@ NonVerticalIntegratedBoundaryConditionDialog::NonVerticalIntegratedBoundaryCondi
     
     if (!isNewBoundaryCondition) {
         bool isConstantSelected = boundaryCondition->getFunction() == BoundaryConditionFunction::CONSTANT;
-        bool useVerticalIntegratedOutflow = boundaryCondition->useVerticalIntegratedOutflow();
         
         ui->edtName->setText(boundaryCondition->getName());
         ui->cbxType->blockSignals(true);
@@ -45,14 +44,6 @@ NonVerticalIntegratedBoundaryConditionDialog::NonVerticalIntegratedBoundaryCondi
             ui->btnTimeSeries->setEnabled(boundaryCondition->getFunction() == BoundaryConditionFunction::TIME_SERIES);
         }
         
-        ui->chkVIO->setEnabled(boundaryCondition->getType() == BoundaryConditionType::WATER_FLOW);
-        ui->chkVIO->setChecked(useVerticalIntegratedOutflow);
-        ui->edtMinimumElevation->setEnabled(!useVerticalIntegratedOutflow);
-        ui->edtMaximumElevation->setEnabled(!useVerticalIntegratedOutflow);
-        if (!useVerticalIntegratedOutflow) {
-            ui->edtMinimumElevation->setText(QString::number(boundaryCondition->getMinimumElevation()));
-            ui->edtMaximumElevation->setText(QString::number(boundaryCondition->getMaximumElevation()));
-        }
         btnIndividualObjectPicker->setEnabled(ui->cbxType->currentText() == "Water Level");
     }
 }
@@ -96,13 +87,6 @@ void NonVerticalIntegratedBoundaryConditionDialog::on_cbxType_currentIndexChange
         ui->rdoConstant->setChecked(isNormalDepth);
         ui->rdoTimeSeries->setDisabled(isNormalDepth);
         ui->lblConstant->setText(isNormalDepth ? "Friction slope" : "Value");
-        ui->chkVIO->setDisabled(isNormalDepth);
-        ui->edtMinimumElevation->setDisabled(true);
-        ui->edtMaximumElevation->setDisabled(true);
-    } else {
-        ui->chkVIO->setDisabled(true);
-        ui->edtMinimumElevation->setDisabled(isWaterLevel || ui->chkVIO->isChecked());
-        ui->edtMaximumElevation->setDisabled(isWaterLevel || ui->chkVIO->isChecked());
     }
 }
 
@@ -193,47 +177,6 @@ bool NonVerticalIntegratedBoundaryConditionDialog::isValid() {
     if (ui->rdoTimeSeries->isChecked() && timeSeriesList.isEmpty()) {
         QMessageBox::warning(this, tr("Hydrodynamic Boundary Condition"), tr("Please provide a valid time series list."));
         return false;
-    }
-    
-    if (ui->edtMinimumElevation->isEnabled()) {
-        if (ui->edtMinimumElevation->text().isEmpty() || ui->edtMaximumElevation->text().isEmpty()) {
-            QMessageBox::warning(this, tr("Hydrodynamic Boundary Condition"), tr("Elevation interval can't be blank."));
-            return false;
-        } else if (ui->edtMinimumElevation->text().toDouble() > ui->edtMaximumElevation->text().toDouble()) {
-            QMessageBox::warning(this, tr("Hydrodynamic Boundary Condition"), tr("Invalid elevation interval."));
-            return false;
-        }
-        
-        GridDataConfiguration *gridDataConfiguration = configuration->getGridDataConfiguration();
-        Mesh *mesh = gridDataConfiguration->getMesh();
-        QSet<vtkIdType> boundaryCells = mesh->getBoundaryCellIds(currentBoundaryCondition->getVTKObjectIds());
-        GridData *bathymetryGridData = nullptr;
-        
-        for (GridData *gridData : gridDataConfiguration->getGridDataVector()) {
-            if (gridData->getGridDataType() == GridDataType::BATHYMETRY) {
-                bathymetryGridData = gridData;
-                break;
-            }
-        }
-        
-        double minimumElevation = ui->edtMinimumElevation->text().toDouble();
-        double minimumWeight = std::numeric_limits<double>::min();
-        
-        for (vtkIdType cellId : boundaryCells) {
-            QByteArray arrayName = bathymetryGridData->getName().toLocal8Bit();
-            double weight = mesh->getMeshPolyData()->GetCellData()->GetScalars(arrayName.constData())->GetTuple1(cellId);
-            
-            if (minimumWeight == std::numeric_limits<double>::min()) {
-                minimumWeight = weight;
-            } else if (weight < minimumWeight) {
-                minimumWeight = weight;
-            }
-        }
-        
-        if (minimumElevation < minimumWeight) {
-            QMessageBox::warning(this, tr("Hydrodynamic Boundary Condition"), tr("Minimum elevation must be greater than or equal to %1.").arg(minimumWeight));
-            return false;
-        }
     }
     
     return true;

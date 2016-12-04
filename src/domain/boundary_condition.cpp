@@ -4,7 +4,6 @@ BoundaryCondition::BoundaryCondition() :
     id(0),
     type(BoundaryConditionType::WATER_LEVEL),
     function(BoundaryConditionFunction::CONSTANT),
-    verticalIntegratedOutflow(true),
     timeSeriesChanged(false)
 {}
 
@@ -126,28 +125,4 @@ QString BoundaryCondition::getTypeLabel() const {
 
 QString BoundaryCondition::getFunctionLabel() const {
     return function == BoundaryConditionFunction::CONSTANT ? "Constant" : "Time Series";
-}
-
-bool BoundaryCondition::useVerticalIntegratedOutflow() const {
-    return verticalIntegratedOutflow;
-}
-
-void BoundaryCondition::setVerticalIntegratedOutflow(bool verticalIntegratedOutflow) {
-    this->verticalIntegratedOutflow = verticalIntegratedOutflow;
-}
-
-double BoundaryCondition::getMinimumElevation() const {
-    return minimumElevation;
-}
-
-void BoundaryCondition::setMinimumElevation(const double &minimumElevation) {
-    this->minimumElevation = minimumElevation;
-}
-
-double BoundaryCondition::getMaximumElevation() const {
-    return maximumElevation;
-}
-
-void BoundaryCondition::setMaximumElevation(const double &maximumElevation) {
-    this->maximumElevation = maximumElevation;
 }

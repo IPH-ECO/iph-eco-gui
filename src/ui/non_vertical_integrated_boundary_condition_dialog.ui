@@ -6,14 +6,14 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>412</width>
-    <height>334</height>
+    <width>309</width>
+    <height>261</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>412</width>
-    <height>334</height>
+    <width>309</width>
+    <height>261</height>
    </size>
   </property>
   <property name="maximumSize">
@@ -26,121 +26,6 @@
    <string>Non Vertical Integrated Hydrodynamic Boundary Condition</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="3" column="0">
-    <widget class="QLabel" name="label">
-     <property name="text">
-      <string>Color</string>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="4">
-    <widget class="QToolButton" name="btnCellColor">
-     <property name="text">
-      <string/>
-     </property>
-     <property name="iconSize">
-      <size>
-       <width>10</width>
-       <height>10</height>
-      </size>
-     </property>
-    </widget>
-   </item>
-   <item row="8" column="0">
-    <widget class="QLabel" name="label_2">
-     <property name="text">
-      <string>Elevation</string>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="0">
-    <widget class="QLabel" name="label_3">
-     <property name="text">
-      <string>Type</string>
-     </property>
-    </widget>
-   </item>
-   <item row="4" column="4">
-    <widget class="QRadioButton" name="rdoConstant">
-     <property name="text">
-      <string>Constant</string>
-     </property>
-     <property name="checked">
-      <bool>true</bool>
-     </property>
-     <attribute name="buttonGroup">
-      <string notr="true">buttonGroup_2</string>
-     </attribute>
-    </widget>
-   </item>
-   <item row="5" column="4">
-    <widget class="QLineEdit" name="edtConstant">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>80</width>
-       <height>16777215</height>
-      </size>
-     </property>
-    </widget>
-   </item>
-   <item row="4" column="5">
-    <widget class="QRadioButton" name="rdoTimeSeries">
-     <property name="text">
-      <string>Time Series</string>
-     </property>
-     <attribute name="buttonGroup">
-      <string notr="true">buttonGroup_2</string>
-     </attribute>
-    </widget>
-   </item>
-   <item row="1" column="4" colspan="2">
-    <widget class="QComboBox" name="cbxType">
-     <property name="currentIndex">
-      <number>0</number>
-     </property>
-     <item>
-      <property name="text">
-       <string>Water Level</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Water Flow</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Normal Depth</string>
-      </property>
-     </item>
-    </widget>
-   </item>
-   <item row="7" column="4" colspan="2">
-    <widget class="QCheckBox" name="chkVIO">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
-     <property name="text">
-      <string>Vertical Integrated Outflow</string>
-     </property>
-     <property name="checked">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item row="4" column="0">
-    <widget class="QLabel" name="label_6">
-     <property name="text">
-      <string>Function</string>
-     </property>
-    </widget>
-   </item>
    <item row="2" column="4" colspan="2">
     <widget class="QLabel" name="lblElementIds">
      <property name="sizePolicy">
@@ -151,6 +36,20 @@
      </property>
      <property name="text">
       <string>-</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="0">
+    <widget class="QLabel" name="label_6">
+     <property name="text">
+      <string>Function</string>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="0">
+    <widget class="QLabel" name="lblConstant">
+     <property name="text">
+      <string>Value</string>
      </property>
     </widget>
    </item>
@@ -177,14 +76,7 @@
      </property>
     </widget>
    </item>
-   <item row="5" column="0">
-    <widget class="QLabel" name="lblConstant">
-     <property name="text">
-      <string>Value</string>
-     </property>
-    </widget>
-   </item>
-   <item row="11" column="0" colspan="6">
+   <item row="9" column="0" colspan="6">
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -194,69 +86,27 @@
      </property>
     </widget>
    </item>
-   <item row="8" column="4">
-    <layout class="QHBoxLayout" name="horizontalLayout">
+   <item row="1" column="4" colspan="2">
+    <widget class="QComboBox" name="cbxType">
+     <property name="currentIndex">
+      <number>0</number>
+     </property>
      <item>
-      <widget class="QLineEdit" name="edtMinimumElevation">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>50</width>
-         <height>0</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>80</width>
-         <height>16777215</height>
-        </size>
-       </property>
-      </widget>
+      <property name="text">
+       <string>Water Level</string>
+      </property>
      </item>
      <item>
-      <widget class="QLabel" name="label_4">
-       <property name="text">
-        <string>:</string>
-       </property>
-      </widget>
+      <property name="text">
+       <string>Water Flow</string>
+      </property>
      </item>
      <item>
-      <widget class="QLineEdit" name="edtMaximumElevation">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>50</width>
-         <height>0</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>80</width>
-         <height>16777215</height>
-        </size>
-       </property>
-      </widget>
+      <property name="text">
+       <string>Normal Depth</string>
+      </property>
      </item>
-    </layout>
-   </item>
-   <item row="0" column="4" colspan="2">
-    <widget class="QLineEdit" name="edtName"/>
+    </widget>
    </item>
    <item row="0" column="0">
     <widget class="QLabel" name="label_5">
@@ -265,7 +115,66 @@
      </property>
     </widget>
    </item>
-   <item row="9" column="0">
+   <item row="4" column="5">
+    <widget class="QRadioButton" name="rdoTimeSeries">
+     <property name="text">
+      <string>Time Series</string>
+     </property>
+     <attribute name="buttonGroup">
+      <string notr="true">buttonGroup_2</string>
+     </attribute>
+    </widget>
+   </item>
+   <item row="3" column="4">
+    <widget class="QToolButton" name="btnCellColor">
+     <property name="text">
+      <string/>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>10</width>
+       <height>10</height>
+      </size>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QLabel" name="label_3">
+     <property name="text">
+      <string>Type</string>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="4">
+    <widget class="QLineEdit" name="edtConstant">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>80</width>
+       <height>16777215</height>
+      </size>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="4">
+    <widget class="QRadioButton" name="rdoConstant">
+     <property name="text">
+      <string>Constant</string>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+     <attribute name="buttonGroup">
+      <string notr="true">buttonGroup_2</string>
+     </attribute>
+    </widget>
+   </item>
+   <item row="7" column="0">
     <spacer name="verticalSpacer">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
@@ -278,6 +187,16 @@
      </property>
     </spacer>
    </item>
+   <item row="0" column="4" colspan="2">
+    <widget class="QLineEdit" name="edtName"/>
+   </item>
+   <item row="3" column="0">
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>Color</string>
+     </property>
+    </widget>
+   </item>
   </layout>
  </widget>
  <tabstops>
@@ -288,9 +207,6 @@
   <tabstop>rdoTimeSeries</tabstop>
   <tabstop>edtConstant</tabstop>
   <tabstop>btnTimeSeries</tabstop>
-  <tabstop>chkVIO</tabstop>
-  <tabstop>edtMinimumElevation</tabstop>
-  <tabstop>edtMaximumElevation</tabstop>
  </tabstops>
  <resources>
   <include location="../../resources/resources.qrc"/>
@@ -389,38 +305,6 @@
     <hint type="destinationlabel">
      <x>155</x>
      <y>100</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>chkVIO</sender>
-   <signal>clicked(bool)</signal>
-   <receiver>edtMinimumElevation</receiver>
-   <slot>setDisabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>221</x>
-     <y>157</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>155</x>
-     <y>184</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>chkVIO</sender>
-   <signal>clicked(bool)</signal>
-   <receiver>edtMaximumElevation</receiver>
-   <slot>setDisabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>227</x>
-     <y>161</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>206</x>
-     <y>189</y>
     </hint>
    </hints>
   </connection>

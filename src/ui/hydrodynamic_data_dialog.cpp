@@ -425,7 +425,12 @@ void HydrodynamicDataDialog::on_btnEditBoundaryCondition_clicked() {
     int row = ui->tblBoundaryConditions->currentRow();
     HydrodynamicBoundaryCondition *boundaryCondition = (HydrodynamicBoundaryCondition*) ui->tblBoundaryConditions->verticalHeaderItem(row)->data(Qt::UserRole).value<void*>();
     
-    boundaryConditionDialog = new VerticalIntegratedBoundaryConditionDialog(currentConfiguration, boundaryCondition);
+    if (boundaryCondition->instanceOf("NonVerticalBoundaryCondition")) {
+        boundaryConditionDialog = new NonVerticalIntegratedBoundaryConditionDialog(currentConfiguration, boundaryCondition);
+    } else {
+        boundaryConditionDialog = new VerticalIntegratedBoundaryConditionDialog(currentConfiguration, boundaryCondition);
+    }
+    
     boundaryConditionDialog->show();
     
     toggleWidgets(false);

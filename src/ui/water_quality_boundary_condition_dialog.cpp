@@ -87,15 +87,6 @@ WaterQualityBoundaryConditionDialog::WaterQualityBoundaryConditionDialog(WaterQu
         ui->edtConstant->setText(QString::number(currentBoundaryCondition->getConstantValue()));
     }
     
-    ui->chkVerticalIntegratedFlow->setChecked(currentBoundaryCondition->useVerticalIntegratedOutflow());
-    ui->edtMinimumElevation->setDisabled(currentBoundaryCondition->useVerticalIntegratedOutflow());
-    ui->edtMaximumElevation->setDisabled(currentBoundaryCondition->useVerticalIntegratedOutflow());
-    
-    if (!currentBoundaryCondition->useVerticalIntegratedOutflow()) {
-        ui->edtMinimumElevation->setText(QString::number(currentBoundaryCondition->getMinimumElevation()));
-        ui->edtMaximumElevation->setText(QString::number(currentBoundaryCondition->getMaximumElevation()));
-    }
-    
     this->originalTimeSeriesList = currentBoundaryCondition->getTimeSeriesList();
     this->timeSeriesList = originalTimeSeriesList;
 }
@@ -138,9 +129,9 @@ void WaterQualityBoundaryConditionDialog::accept() {
         currentBoundaryCondition->setTimeSeriesList(timeSeriesList);
     }
     
-    currentBoundaryCondition->setVerticalIntegratedOutflow(ui->chkVerticalIntegratedFlow->isChecked());
+    /*currentBoundaryCondition->setVerticalIntegratedOutflow(ui->chkVerticalIntegratedFlow->isChecked());
     currentBoundaryCondition->setMinimumElevation(ui->edtMinimumElevation->text().toDouble());
-    currentBoundaryCondition->setMaximumElevation(ui->edtMaximumElevation->text().toDouble());
+    currentBoundaryCondition->setMaximumElevation(ui->edtMaximumElevation->text().toDouble());*/
     
     currentConfiguration->addBoundaryCondition(currentBoundaryCondition);
     

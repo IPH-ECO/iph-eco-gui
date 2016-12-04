@@ -38,6 +38,7 @@ public:
     void setSelectionActor(vtkSmartPointer<vtkActor> selectionActor);
     vtkSmartPointer<vtkActor2D> getLabelsActor() const;
     void setLabelsActor(vtkSmartPointer<vtkActor2D> labelsActor);
+    virtual bool instanceOf(const QString &typeName) const;
 
     SimulationDataType::BoundaryCondition toSimulationDataType(Mesh *mesh) const;
 

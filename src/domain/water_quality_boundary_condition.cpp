@@ -12,6 +12,10 @@ void WaterQualityBoundaryCondition::setHydrodynamicBoundaryCondition(Hydrodynami
 	this->hydrodynamicBoundaryCondition = hydrodynamicBoundaryCondition;
 }
 
+bool WaterQualityBoundaryCondition::instanceOf(const QString &typeName) const {
+    return "WaterQualityBoundaryCondition";
+}
+
 SimulationDataType::BoundaryCondition WaterQualityBoundaryCondition::toSimulationDataType() const {
     SimulationDataType::BoundaryCondition boundaryCondition;
     QByteArray conditionType = this->name.toLocal8Bit();
@@ -26,10 +30,6 @@ SimulationDataType::BoundaryCondition WaterQualityBoundaryCondition::toSimulatio
     for (vtkIdType i = 0; i < this->timeSeriesList.size(); i++) {
         boundaryCondition.timeSeriesList[i] = this->timeSeriesList[i]->toSimulationDataType();
     }
-    
-    boundaryCondition.verticalIntegratedOutflow = this->verticalIntegratedOutflow;
-    boundaryCondition.minimumElevation = this->minimumElevation;
-    boundaryCondition.maximumElevation = this->maximumElevation;
     
     return boundaryCondition;
 }

@@ -116,6 +116,10 @@ void HydrodynamicBoundaryCondition::setLabelsActor(vtkSmartPointer<vtkActor2D> l
     this->labelsActor = labelsActor;
 }
 
+bool HydrodynamicBoundaryCondition::instanceOf(const QString &typeName) const {
+    return typeName == "NonVerticalBoundaryCondition";
+}
+
 SimulationDataType::BoundaryCondition HydrodynamicBoundaryCondition::toSimulationDataType(Mesh *mesh) const {
     SimulationDataType::BoundaryCondition boundaryCondition;
     vtkSmartPointer<vtkPolyData> meshPolyData = mesh->getMeshPolyData();
@@ -184,10 +188,6 @@ SimulationDataType::BoundaryCondition HydrodynamicBoundaryCondition::toSimulatio
     for (vtkIdType i = 0; i < this->timeSeriesList.size(); i++) {
         boundaryCondition.timeSeriesList[i] = this->timeSeriesList[i]->toSimulationDataType();
     }
-    
-    boundaryCondition.verticalIntegratedOutflow = this->verticalIntegratedOutflow;
-    boundaryCondition.minimumElevation = this->minimumElevation;
-    boundaryCondition.maximumElevation = this->maximumElevation;
     
     return boundaryCondition;
 }

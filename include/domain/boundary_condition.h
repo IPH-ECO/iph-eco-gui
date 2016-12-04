@@ -19,10 +19,7 @@ protected:
     double constantValue;
     InputModule inputModule;
     QList<TimeSeries*> timeSeriesList;
-    bool verticalIntegratedOutflow;
-    double minimumElevation;
-    double maximumElevation;
-
+    
     // Transient attributes
     bool timeSeriesChanged;
 
@@ -50,15 +47,9 @@ public:
     QString getObjectTypeLabel() const;
     QString getTypeLabel() const;
     QString getFunctionLabel() const;
-    bool useVerticalIntegratedOutflow() const;
-    void setVerticalIntegratedOutflow(bool verticalIntegratedOutflow);
-    double getMinimumElevation() const;
-    void setMinimumElevation(const double &minimumElevation);
-    double getMaximumElevation() const;
-    void setMaximumElevation(const double &maximumElevation);
-    
     bool isTimeSeriesChanged() const;
     void setTimeSeriesChanged(bool timeSeriesChanged);
+    virtual bool instanceOf(const QString &typeName) const = 0;
 };
 
 #endif // BOUNDARY_CONDITION_H

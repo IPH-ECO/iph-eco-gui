@@ -12,6 +12,7 @@ public:
 
     HydrodynamicBoundaryCondition* getHydrodynamicBoundaryCondition() const;
     void setHydrodynamicBoundaryCondition(HydrodynamicBoundaryCondition *hydrodynamicBoundaryCondition);
+    virtual bool instanceOf(const QString &typeName) const;
 
     SimulationDataType::BoundaryCondition toSimulationDataType() const;
 };
