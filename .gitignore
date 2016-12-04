@@ -5,6 +5,7 @@ build/
 release/
 debug/
 model/iph-eco-model/
+model/*.dylib
 installer/packages/com.4techlabs.ipheco/data/
 installer/iph-eco-installer.*
 *.o
