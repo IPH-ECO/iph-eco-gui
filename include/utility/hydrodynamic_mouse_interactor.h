@@ -29,6 +29,7 @@ public:
     void highlightBoundaryCondition(HydrodynamicBoundaryCondition *boundaryCondition, bool hightlight);
     void clearSelection();
     void setHydrodynamicConfiguration(HydrodynamicConfiguration *hydrodynamicConfiguration);
+    HydrodynamicConfiguration* getHydrodynamicConfiguration() const;
     void setBoundaryCondition(HydrodynamicBoundaryCondition *boundaryCondition);
     void resetBoundaryConditions(HydrodynamicConfiguration *hydrodynamicConfiguration);
     

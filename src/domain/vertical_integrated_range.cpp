@@ -1,6 +1,9 @@
 #include <domain/vertical_integrated_range.h>
 
-VerticalIntegratedRange::VerticalIntegratedRange() : id(0) {}
+VerticalIntegratedRange::VerticalIntegratedRange() :
+    id(0),
+    timeSeriesChanged(false)
+{}
 
 uint VerticalIntegratedRange::getId() const {
     return id;

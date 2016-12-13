@@ -176,6 +176,10 @@ void HydrodynamicMouseInteractor::setHydrodynamicConfiguration(HydrodynamicConfi
     }
 }
 
+HydrodynamicConfiguration* HydrodynamicMouseInteractor::getHydrodynamicConfiguration() const {
+    return hydrodynamicConfiguration;
+}
+
 void HydrodynamicMouseInteractor::resetBoundaryConditions(HydrodynamicConfiguration *hydrodynamicConfiguration) {
     if (hydrodynamicConfiguration) {
         for (HydrodynamicBoundaryCondition *boundaryCondition : hydrodynamicConfiguration->getBoundaryConditions()) {

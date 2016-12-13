@@ -98,12 +98,13 @@ void HydrodynamicVTKWidget::updateBoundaryCondition(HydrodynamicBoundaryConditio
 
 void HydrodynamicVTKWidget::clearBoundaryCondition(HydrodynamicBoundaryCondition *boundaryCondition) {
     HydrodynamicMouseInteractor *interactor = HydrodynamicMouseInteractor::SafeDownCast(mouseInteractor);
+    HydrodynamicConfiguration *hydrodynamicConfiguration = interactor->getHydrodynamicConfiguration();
     
-    if (boundaryCondition->isPersisted()) {
-        interactor->removeBoundaryCondition(boundaryCondition);
-    } else {
+    if (hydrodynamicConfiguration->getBoundaryConditions().contains(boundaryCondition)) {
         interactor->renderBoundaryCondition(boundaryCondition);
         interactor->highlightBoundaryCondition(boundaryCondition, true);
+    } else {
+        interactor->removeBoundaryCondition(boundaryCondition);
     }
     
     this->togglePicker(false);

@@ -86,7 +86,7 @@ void VerticalIntegratedBoundaryConditionDialog::accept() {
     }
     
     currentBoundaryCondition->setName(ui->edtName->text());
-    currentBoundaryCondition->setType(BoundaryConditionType::WATER_LEVEL);
+    currentBoundaryCondition->setType(BoundaryConditionType::WATER_FLOW);
     currentBoundaryCondition->setObjectIds(ui->lblElementIds->text());
     currentBoundaryCondition->setInputModule(InputModule::HYDRODYNAMIC);
     currentBoundaryCondition->setVerticalIntegrated(true);
@@ -268,7 +268,9 @@ void VerticalIntegratedBoundaryConditionDialog::onBtnTimeSeriesClicked() {
     TimeSeriesDialog *dialog = new TimeSeriesDialog(this, TimeSeriesType::DEFAULT);
     dialog->setObjectType(TimeSeriesObjectType::VERTICAL_INTEGRATED_RANGE);
     dialog->loadTimeSeriesList(timeSeriesList);
-    dialog->exec();
+    int exitCode = dialog->exec();
     
-    sender()->setProperty("timeSeriesChanged", dialog->hasChanges());
+    if (exitCode == QDialog::Accepted) {
+        sender()->setProperty("timeSeriesChanged", dialog->hasChanges());
+    }
 }

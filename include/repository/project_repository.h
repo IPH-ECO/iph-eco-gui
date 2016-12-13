@@ -42,7 +42,7 @@ private:
     void saveBoundaryConditions(HydrodynamicConfiguration *configuration);
     void saveVerticalIntegratedRanges(HydrodynamicBoundaryCondition *boundaryCondition);
     template<typename T> void saveTimeSeries(T *t);
-    void saveTimeSeries(const int &objectId, const QString &objectType, const QList<TimeSeries*> &timeSeriesList);
+    void saveTimeSeries(const uint &objectId, const QString &objectType, const QList<TimeSeries*> &timeSeriesList);
     
     void saveWaterQualityConfigurations(Project *project);
     void saveWaterQualityParameters(WaterQualityConfiguration *configuration);

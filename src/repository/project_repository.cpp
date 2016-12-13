@@ -264,8 +264,6 @@ void ProjectRepository::loadVerticalIntegratedRanges(HydrodynamicBoundaryConditi
         boundaryCondition->addVerticalIntegratedRange(range);
         
         updateProgressAndProcessEvents();
-        
-        loadTimeSeries<VerticalIntegratedRange>(range);
     }
 }
 
@@ -970,8 +968,15 @@ void ProjectRepository::saveBoundaryConditions(HydrodynamicConfiguration *config
         }
     }
     
-    query.prepare("delete from boundary_condition where id not in (" + boundaryConditionIds.join(",") + ") and configuration_id = " + QString::number(configuration->getId()) + " and input_module = " + QString::number((int) InputModule::HYDRODYNAMIC));
-    query.exec();
+    QStringList queries;
+    
+    queries << "delete from boundary_condition where id not in (" + boundaryConditionIds.join(",") + ") and configuration_id = " + QString::number(configuration->getId()) + " and input_module = " + QString::number((int) InputModule::HYDRODYNAMIC);
+    queries << "delete from vertical_integrated_range where boundary_condition_id not in (" + boundaryConditionIds.join(",") + ")";
+    
+    for (QString sql : queries) {
+        query.prepare(sql);
+        query.exec();
+    }
 }
 
 template<typename T> void ProjectRepository::saveTimeSeries(T *t) {
@@ -991,7 +996,7 @@ template<typename T> void ProjectRepository::saveTimeSeries(T *t) {
     }
 }
 
-void ProjectRepository::saveTimeSeries(const int &objectId, const QString &objectType, const QList<TimeSeries*> &timeSeriesList) {
+void ProjectRepository::saveTimeSeries(const uint &objectId, const QString &objectType, const QList<TimeSeries*> &timeSeriesList) {
     QSqlQuery query(databaseUtility->getDatabase());
     QString deleteSql = QString("delete from time_series where object_id = %2 and object_type = '%3'").arg(objectId).arg(objectType);
 
@@ -1241,16 +1246,19 @@ void ProjectRepository::saveVerticalIntegratedRanges(HydrodynamicBoundaryConditi
         }
         
         rangeIds.append(QString::number(range->getId()));
-        saveTimeSeries(range);
+        saveTimeSeries<VerticalIntegratedRange>(range);
     }
     
     // Handle exclusions
     QStringList queries;
+    QString boundaryConditionId = QString::number(boundaryCondition->getId());
     
     if (rangeIds.isEmpty()) {
-        queries << "delete from vertical_integrated_range where boundary_condition_id = " + QString::number(boundaryCondition->getId());
+        queries << "delete from time_series where object_id in (select object_id from time_series t inner join vertical_integrated_range v on v.id = t.object_id and t.object_type = 'VerticalIntegratedRange' where v.boundary_condition_id = " + boundaryConditionId + ")";
+        queries << "delete from vertical_integrated_range where boundary_condition_id = " + boundaryConditionId;
     } else {
-        queries << "delete from vertical_integrated_range where id not in (" + rangeIds.join(",") + " and boundary_condition_id = " + QString::number(boundaryCondition->getId()) + ")";
+        queries << "delete from time_series where object_id in (select object_id from time_series t inner join vertical_integrated_range v on v.id = t.object_id and t.object_type = 'VerticalIntegratedRange' where v.id not in (" + rangeIds.join(",") + ") and v.boundary_condition_id = " + boundaryConditionId + ")";
+        queries << "delete from vertical_integrated_range where id not in (" + rangeIds.join(",") + ") and boundary_condition_id = " + boundaryConditionId;
     }
     
     for (QString sql : queries) {
