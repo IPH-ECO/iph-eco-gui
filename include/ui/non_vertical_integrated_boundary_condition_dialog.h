@@ -26,7 +26,6 @@ public:
 private slots:
 	void on_cbxType_currentIndexChanged(const QString &type);
     void on_btnTimeSeries_clicked();
-
 };
 
 #endif // NON_VERTICAL_INTEGRATED_BOUNDARY_CONDITION_DIALOG_H

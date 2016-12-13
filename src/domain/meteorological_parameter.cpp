@@ -1,17 +1,29 @@
 #include <domain/meteorological_parameter.h>
 
-MeteorologicalParameter::MeteorologicalParameter() : id(0), timeSeriesChanged(false) {}
+MeteorologicalParameter::MeteorologicalParameter() :
+    id(0),
+    timeSeriesChanged(false)
+{}
+
+MeteorologicalParameter::MeteorologicalParameter(const QString &name, const QString &unit, double constantValue) :
+    id(0),
+    name(name),
+    unit(unit),
+    function(BoundaryConditionFunction::CONSTANT),
+    constantValue(constantValue),
+    xComponent(0),
+    yComponent(0),
+    intensity(0),
+    direction(0),
+    useXYComponent(false),
+    timeSeriesChanged(false)
+{}
 
 MeteorologicalParameter::~MeteorologicalParameter() {
     for (TimeSeries *timeSeries : timeSeriesList) {
         delete timeSeries;
     }
 }
-
-MeteorologicalParameter::MeteorologicalParameter(const QString &name, const QString &unit, double constantValue) :
-    id(0), name(name), unit(unit), function(MeteorologicalParameterFunction::CONSTANT), constantValue(constantValue),
-    xComponent(0), yComponent(0), intensity(0), direction(0), useXYComponent(false), timeSeriesChanged(false)
-{}
 
 uint MeteorologicalParameter::getId() const {
     return id;
@@ -41,32 +53,32 @@ void MeteorologicalParameter::setUnit(const QString &unit) {
     this->unit = unit;
 }
 
-MeteorologicalParameterFunction MeteorologicalParameter::getFunction() const {
+BoundaryConditionFunction MeteorologicalParameter::getFunction() const {
     return function;
 }
 
 QString MeteorologicalParameter::getFunctionStr() const {
-    if (function == MeteorologicalParameterFunction::CONSTANT) {
+    if (function == BoundaryConditionFunction::CONSTANT) {
         return "Constant";
     }
-    if (function == MeteorologicalParameterFunction::TIME_SERIES) {
+    if (function == BoundaryConditionFunction::TIME_SERIES) {
         return "Time Series";
     }
 
     return "Modeling";
 }
 
-void MeteorologicalParameter::setFunction(const MeteorologicalParameterFunction &function) {
+void MeteorologicalParameter::setFunction(const BoundaryConditionFunction &function) {
     this->function = function;
 }
 
 void MeteorologicalParameter::setFunction(const QString &functionStr) {
     if (functionStr == "Constant") {
-        this->function = MeteorologicalParameterFunction::CONSTANT;
+        this->function = BoundaryConditionFunction::CONSTANT;
     } else if (functionStr == "Time Series") {
-        this->function = MeteorologicalParameterFunction::TIME_SERIES;
+        this->function = BoundaryConditionFunction::TIME_SERIES;
     } else {
-        this->function = MeteorologicalParameterFunction::MODELING;
+        this->function = BoundaryConditionFunction::MODELING;
     }
 }
 

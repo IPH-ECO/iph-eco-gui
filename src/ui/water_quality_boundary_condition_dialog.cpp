@@ -98,7 +98,7 @@ WaterQualityBoundaryConditionDialog::~WaterQualityBoundaryConditionDialog() {
 void WaterQualityBoundaryConditionDialog::on_btnTimeSeries_clicked() {
     TimeSeriesDialog *timeSeriesDialog = new TimeSeriesDialog(this, TimeSeriesType::DEFAULT);
     timeSeriesDialog->loadTimeSeriesList(&timeSeriesList);
-    timeSeriesDialog->setBoundaryCondition(currentBoundaryCondition);
+    timeSeriesDialog->setObjectType(TimeSeriesObjectType::BOUNDARY_CONDITION);
     int exitCode = timeSeriesDialog->exec();
     
     if (exitCode == QDialog::Accepted) {

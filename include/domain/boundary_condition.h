@@ -6,7 +6,6 @@
 #include "mesh.h"
 
 enum class BoundaryConditionType { WATER_LEVEL = 1, WATER_FLOW, NORMAL_DEPTH };
-enum class BoundaryConditionFunction { CONSTANT = 1, TIME_SERIES };
 enum class InputModule { HYDRODYNAMIC = 1, WATER_QUALITY };
 
 class BoundaryCondition : public QObject {
@@ -49,7 +48,6 @@ public:
     QString getFunctionLabel() const;
     bool isTimeSeriesChanged() const;
     void setTimeSeriesChanged(bool timeSeriesChanged);
-    virtual bool instanceOf(const QString &typeName) const = 0;
 };
 
 #endif // BOUNDARY_CONDITION_H

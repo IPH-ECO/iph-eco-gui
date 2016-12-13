@@ -24,8 +24,9 @@ protected:
     QSet<vtkIdType> originalObjectIds;
     bool isNewBoundaryCondition;
     
-    void setupUi();
+    void setupBaseUi();
     virtual void closeEvent(QCloseEvent *event);
+    virtual void accept();
     virtual void reject();
     virtual bool isValid() = 0;
 public:
@@ -40,7 +41,7 @@ private slots:
     void showObjectIds();
     void toggleLabelsActor(bool show);
 signals:
-    void updateBoundaryCondition(HydrodynamicBoundaryCondition *boundaryCondition);
+    void boundaryConditionUpdated(HydrodynamicBoundaryCondition *boundaryCondition);
     void togglePicker(bool checked);
 };
 

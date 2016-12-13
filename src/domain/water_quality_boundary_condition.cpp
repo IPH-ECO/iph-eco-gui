@@ -12,10 +12,6 @@ void WaterQualityBoundaryCondition::setHydrodynamicBoundaryCondition(Hydrodynami
 	this->hydrodynamicBoundaryCondition = hydrodynamicBoundaryCondition;
 }
 
-bool WaterQualityBoundaryCondition::instanceOf(const QString &typeName) const {
-    return "WaterQualityBoundaryCondition";
-}
-
 SimulationDataType::BoundaryCondition WaterQualityBoundaryCondition::toSimulationDataType() const {
     SimulationDataType::BoundaryCondition boundaryCondition;
     QByteArray conditionType = this->name.toLocal8Bit();

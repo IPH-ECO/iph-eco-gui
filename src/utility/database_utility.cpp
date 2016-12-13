@@ -129,6 +129,7 @@ void DatabaseUtility::createApplicationTables() {
     sql << "create table boundary_condition (" \
         "id integer primary key, " \
         "name text not null, " \
+        "vertical_integrated bool default false, " \
         "type text default null, " \
         "object_ids text default null, " \
         "function text not null, " \
@@ -137,6 +138,16 @@ void DatabaseUtility::createApplicationTables() {
         "cell_color varchar(7) default '#FFFFFF', " \
         "hydro_boundary_condition_id integer default null, " \
         "configuration_id integer not null" \
+    ")";
+    
+    sql << "drop table if exists vertical_integrated_range";
+    sql << "create table vertical_integrated_range (" \
+        "id integer primery key, "\
+        "minimum_elevation float not null, " \
+        "maximum_elevation float not null, " \
+        "function integer not null, " \
+        "value float default null, " \
+        "boundary_condition_id integer not null" \
     ")";
     
     sql << "drop table if exists time_series";

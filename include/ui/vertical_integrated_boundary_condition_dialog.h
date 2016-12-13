@@ -13,9 +13,15 @@ class VerticalIntegratedBoundaryConditionDialog : public HydrodynamicBoundaryCon
     Q_OBJECT
 private:
     Ui::VerticalIntegratedBoundaryConditionDialog *ui;
+    QSet<VerticalIntegratedRange*> unsavedRanges;
     
     void accept();
     bool isValid();
+private slots:
+    void on_btnAddRange_clicked();
+    void on_btnRemoveRange_clicked();
+    void onCbxFunctionCurrentTextChanged(const QString &text);
+    void onBtnTimeSeriesClicked();
 public:
     explicit VerticalIntegratedBoundaryConditionDialog(HydrodynamicConfiguration *configuration, HydrodynamicBoundaryCondition *boundaryCondition);
     virtual ~VerticalIntegratedBoundaryConditionDialog();

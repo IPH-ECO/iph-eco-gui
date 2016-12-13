@@ -1,8 +1,7 @@
 #ifndef TIME_SERIES_DIALOG_H
 #define TIME_SERIES_DIALOG_H
 
-#include <domain/boundary_condition.h>
-#include <domain/meteorological_parameter.h>
+#include <domain/time_series.h>
 
 #include <QList>
 #include <QDialog>
@@ -14,17 +13,18 @@ namespace Ui {
 	class TimeSeriesDialog;
 }
 
+enum class TimeSeriesObjectType { BOUNDARY_CONDITION = 1, METEOROLOGICAL_PARAMETER, VERTICAL_INTEGRATED_RANGE };
+
 class TimeSeriesDialog : public QDialog {
     Q_OBJECT
 private:
-    const QString HYDRODYNAMIC_DEFAULT_DIR_KEY;
+    const QString TIME_SERIES_DEFAULT_DIR_KEY;
     const QString DATE_TIME_FORMAT;
     const int ITEMS_PER_PAGE;
 
+    TimeSeriesObjectType objectType;
     QSettings *appSettings;
 	Ui::TimeSeriesDialog *ui;
-    BoundaryCondition *currentBoundaryCondition;
-    MeteorologicalParameter *currentMeteorologicalParameter;
     QList<TimeSeries> copyTimeSeriesList;
     QList<TimeSeries*>* originalTimeSeriesList;
     TimeSeriesType timeSeriesType;
@@ -37,9 +37,8 @@ public:
 	explicit TimeSeriesDialog(QWidget *parent, const TimeSeriesType &timeSeriesType);
     ~TimeSeriesDialog();
     
+    void setObjectType(const TimeSeriesObjectType &objectType);
     QList<TimeSeries*>* getTimeSeriesList() const;
-    void setBoundaryCondition(BoundaryCondition *boundaryCondition);
-    void setMeteorologicalParameter(MeteorologicalParameter *meteorologicalParameter);
     void loadTimeSeriesList(QList<TimeSeries*> *timeSeriesList);
     virtual void accept();
     bool hasChanges() const;

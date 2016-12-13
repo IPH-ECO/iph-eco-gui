@@ -2,6 +2,7 @@
 #include "ui_non_vertical_integrated_boundary_condition_dialog.h"
 
 #include <ui/hydrodynamic_vtk_widget.h>
+#include <ui/time_series_dialog.h>
 
 #include <vtkCellData.h>
 
@@ -12,7 +13,7 @@ NonVerticalIntegratedBoundaryConditionDialog::NonVerticalIntegratedBoundaryCondi
     ui(new Ui::NonVerticalIntegratedBoundaryConditionDialog)
 {
     ui->setupUi(this);
-    this->setupUi();
+    this->setupBaseUi();
     
     this->originalTimeSeriesList = this->currentBoundaryCondition->getTimeSeriesList();
     this->timeSeriesList = originalTimeSeriesList;
@@ -91,7 +92,15 @@ void NonVerticalIntegratedBoundaryConditionDialog::on_cbxType_currentIndexChange
 }
 
 void NonVerticalIntegratedBoundaryConditionDialog::on_btnTimeSeries_clicked() {
+    TimeSeriesDialog *timeSeriesDialog = new TimeSeriesDialog(this, TimeSeriesType::DEFAULT);
+    timeSeriesDialog->loadTimeSeriesList(&timeSeriesList);
+    timeSeriesDialog->setObjectType(TimeSeriesObjectType::BOUNDARY_CONDITION);
+    int exitCode = timeSeriesDialog->exec();
     
+    if (exitCode == QDialog::Accepted) {
+        timeSeriesList = *timeSeriesDialog->getTimeSeriesList();
+        currentBoundaryCondition->setTimeSeriesChanged(timeSeriesDialog->hasChanges());
+    }
 }
 
 void NonVerticalIntegratedBoundaryConditionDialog::accept() {
@@ -110,36 +119,17 @@ void NonVerticalIntegratedBoundaryConditionDialog::accept() {
     currentBoundaryCondition->setName(ui->edtName->text());
     currentBoundaryCondition->setType(boundaryConditionType);
     currentBoundaryCondition->setObjectIds(ui->lblElementIds->text());
+    currentBoundaryCondition->setFunction(ui->rdoConstant->isChecked() ? BoundaryConditionFunction::CONSTANT : BoundaryConditionFunction::TIME_SERIES);
+    currentBoundaryCondition->setConstantValue(ui->edtConstant->text().toDouble());
     currentBoundaryCondition->setInputModule(InputModule::HYDRODYNAMIC);
+    currentBoundaryCondition->setVerticalIntegrated(false);
     
-    configuration->addBoundaryCondition(currentBoundaryCondition);
-    
-    HydrodynamicVTKWidget *vtkWidget = hydrodynamicDataDialog->findChild<HydrodynamicVTKWidget*>("vtkWidget");
-    QTableWidget *tblBoundaryConditions = hydrodynamicDataDialog->findChild<QTableWidget*>("tblBoundaryConditions");
-    int row = -1;
-    
-    if (isNewBoundaryCondition) {
-        QTableWidgetItem *item = new QTableWidgetItem();
-        
-        item->setData(Qt::UserRole, qVariantFromValue((void*) currentBoundaryCondition));
-        row = tblBoundaryConditions->rowCount();
-        tblBoundaryConditions->insertRow(row);
-        tblBoundaryConditions->setVerticalHeaderItem(row, item);
-    } else {
-        row = tblBoundaryConditions->currentRow();
-        vtkWidget->getMouseInteractor()->highlightBoundaryCondition(currentBoundaryCondition, true);
+    if (ui->rdoTimeSeries->isChecked()) {
+        currentBoundaryCondition->setTimeSeriesList(timeSeriesList);
     }
-    
-    tblBoundaryConditions->setItem(row, 0, new QTableWidgetItem(currentBoundaryCondition->getName()));
-    tblBoundaryConditions->setItem(row, 1, new QTableWidgetItem(currentBoundaryCondition->getTypeLabel()));
-    tblBoundaryConditions->setItem(row, 2, new QTableWidgetItem(currentBoundaryCondition->getFunctionLabel()));
-    
-    btnIndividualObjectPicker_clicked(false);
-    btnMultipleObjectPicker_clicked(false);
-    hydrodynamicDataDialog->toggleZoomAreaAction(true);
-    hydrodynamicDataDialog->toggleWidgets(true);
-    
-    QDialog::accept();
+
+    configuration->addBoundaryCondition(currentBoundaryCondition);
+    emit boundaryConditionUpdated(currentBoundaryCondition);
     
     HydrodynamicBoundaryConditionDialog::accept();
 }
@@ -159,7 +149,7 @@ void NonVerticalIntegratedBoundaryConditionDialog::closeEvent(QCloseEvent *event
 
 bool NonVerticalIntegratedBoundaryConditionDialog::isValid() {
     if (ui->edtName->text().isEmpty()) {
-        QMessageBox::warning(this, tr("Hydrodynamic Boundary Condition"), tr("Please input Hydrodynamic Boundary Condition name."));
+        QMessageBox::warning(this, tr("Hydrodynamic Boundary Condition"), tr("Please input the boundary condition name."));
         return false;
     }
     

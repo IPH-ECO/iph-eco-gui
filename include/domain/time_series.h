@@ -6,6 +6,7 @@
 #include <QDateTime>
 
 enum class TimeSeriesType { DEFAULT = 1, XY_COMPONENTS, INTENSITY_DIRECTION };
+enum class BoundaryConditionFunction { CONSTANT = 1, TIME_SERIES, MODELING };
 
 class TimeSeries {
 private:

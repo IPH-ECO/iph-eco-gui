@@ -6,14 +6,12 @@
 #include <QList>
 #include <QMetaType>
 
-enum class MeteorologicalParameterFunction { CONSTANT = 1, TIME_SERIES, MODELING };
-
 class MeteorologicalParameter {
 protected:
     uint id;
     QString name;
     QString unit;
-    MeteorologicalParameterFunction function;
+    BoundaryConditionFunction function;
     double constantValue;
     QList<TimeSeries*> timeSeriesList;
     
@@ -37,8 +35,8 @@ public:
     void setName(const QString &name);
     QString getUnit() const;
     void setUnit(const QString &unit);
-    MeteorologicalParameterFunction getFunction() const;
-    void setFunction(const MeteorologicalParameterFunction &function);
+    BoundaryConditionFunction getFunction() const;
+    void setFunction(const BoundaryConditionFunction &function);
     void setFunction(const QString &functionStr);
     QString getFunctionStr() const;
     double getConstantValue() const;

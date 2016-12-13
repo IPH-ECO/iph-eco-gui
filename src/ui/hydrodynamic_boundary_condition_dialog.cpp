@@ -37,7 +37,7 @@ HydrodynamicBoundaryConditionDialog::HydrodynamicBoundaryConditionDialog(Hydrody
     vtkWidget->updateBoundaryCondition(currentBoundaryCondition);
 }
 
-void HydrodynamicBoundaryConditionDialog::setupUi() {
+void HydrodynamicBoundaryConditionDialog::setupBaseUi() {
     connect(currentBoundaryCondition, SIGNAL(objectIdsChanged()), this, SLOT(showObjectIds()));
     
     btnIndividualObjectPicker = new QToolButton(this);
@@ -174,6 +174,15 @@ void HydrodynamicBoundaryConditionDialog::reject() {
     hydrodynamicDataDialog->toggleWidgets(true);
     
     QDialog::reject();
+}
+
+void HydrodynamicBoundaryConditionDialog::accept() {
+    btnIndividualObjectPicker_clicked(false);
+    btnMultipleObjectPicker_clicked(false);
+    hydrodynamicDataDialog->toggleZoomAreaAction(true);
+    hydrodynamicDataDialog->toggleWidgets(true);
+    
+    QDialog::accept();
 }
 
 void HydrodynamicBoundaryConditionDialog::closeEvent(QCloseEvent *event) {

@@ -3,11 +3,26 @@
 #include <vtkProperty.h>
 
 HydrodynamicBoundaryCondition::HydrodynamicBoundaryCondition() :
+    verticalIntegrated(false),
     cellColor("#FF0000"),
     selectionActor(vtkSmartPointer<vtkActor>::New()),
     labelsActor(vtkSmartPointer<vtkActor2D>::New())
 {
     selectionActor->GetProperty()->LightingOff();
+}
+
+HydrodynamicBoundaryCondition::~HydrodynamicBoundaryCondition() {
+    for (VerticalIntegratedRange *range : verticalIntegratedRanges) {
+        delete range;
+    }
+}
+
+bool HydrodynamicBoundaryCondition::isVerticalIntegrated() const {
+    return verticalIntegrated;
+}
+
+void HydrodynamicBoundaryCondition::setVerticalIntegrated(const bool &verticalIntegrated) {
+    this->verticalIntegrated = verticalIntegrated;
 }
 
 QSet<vtkIdType> HydrodynamicBoundaryCondition::getObjectIds() const {
@@ -100,6 +115,22 @@ void HydrodynamicBoundaryCondition::setCellColor(const QString &cellColor) {
     this->cellColor = cellColor;
 }
 
+QSet<VerticalIntegratedRange*> HydrodynamicBoundaryCondition::getVerticalIntegratedRanges() const {
+    return verticalIntegratedRanges;
+}
+
+void HydrodynamicBoundaryCondition::setVerticalIntegratedRanges(const QSet<VerticalIntegratedRange*> &verticalIntegratedRanges) {
+    this->verticalIntegratedRanges = verticalIntegratedRanges;
+}
+
+void HydrodynamicBoundaryCondition::addVerticalIntegratedRange(VerticalIntegratedRange *verticalIntegratedRange) {
+    verticalIntegratedRanges.insert(verticalIntegratedRange);
+}
+
+void HydrodynamicBoundaryCondition::removeVerticalIntegratedRange(VerticalIntegratedRange *verticalIntegratedRange) {
+    verticalIntegratedRanges.remove(verticalIntegratedRange);
+}
+
 vtkSmartPointer<vtkActor> HydrodynamicBoundaryCondition::getSelectionActor() const {
     return selectionActor;
 }
@@ -114,10 +145,6 @@ vtkSmartPointer<vtkActor2D> HydrodynamicBoundaryCondition::getLabelsActor() cons
 
 void HydrodynamicBoundaryCondition::setLabelsActor(vtkSmartPointer<vtkActor2D> labelsActor) {
     this->labelsActor = labelsActor;
-}
-
-bool HydrodynamicBoundaryCondition::instanceOf(const QString &typeName) const {
-    return typeName == "NonVerticalBoundaryCondition";
 }
 
 SimulationDataType::BoundaryCondition HydrodynamicBoundaryCondition::toSimulationDataType(Mesh *mesh) const {

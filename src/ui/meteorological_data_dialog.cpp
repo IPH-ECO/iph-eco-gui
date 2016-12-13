@@ -77,8 +77,8 @@ void MeteorologicalDataDialog::on_trStations_itemSelectionChanged() {
     
         if (isParameterItem) {
             MeteorologicalParameter *parameter = qvariant_cast<MeteorologicalParameter*>(selectedItem->data(0, Qt::UserRole));
-            MeteorologicalParameterFunction function = parameter->getFunction();
-            bool isConstant = function == MeteorologicalParameterFunction::CONSTANT;
+            BoundaryConditionFunction function = parameter->getFunction();
+            bool isConstant = function == BoundaryConditionFunction::CONSTANT;
             bool isWindParameter = parameter->getName() == "Wind";
             bool isEvaporation = parameter->getName() == "Evaporation";
             
@@ -327,7 +327,7 @@ void MeteorologicalDataDialog::on_cbxFunction_currentIndexChanged(const QString 
     
     MeteorologicalParameter *parameter = qvariant_cast<MeteorologicalParameter*>(ui->trStations->currentItem()->data(0, Qt::UserRole));
     
-    if (!isTimeSeries && !parameter->getTimeSeriesListPointer()->isEmpty() && parameter->getFunction() == MeteorologicalParameterFunction::TIME_SERIES) {
+    if (!isTimeSeries && !parameter->getTimeSeriesListPointer()->isEmpty() && parameter->getFunction() == BoundaryConditionFunction::TIME_SERIES) {
         QString question = tr("Would you like to remove %1 time series entries?").arg(parameter->getName());
         QMessageBox::StandardButton button = QMessageBox::question(this, tr("Meteorological Data"), question);
         
@@ -360,7 +360,7 @@ void MeteorologicalDataDialog::on_btnShowTimeSeries_clicked() {
     TimeSeriesDialog *timeSeriesDialog = new TimeSeriesDialog(this, timeSeriesType);
 
     timeSeriesDialog->loadTimeSeriesList(parameter->getTimeSeriesListPointer());
-    timeSeriesDialog->setMeteorologicalParameter(parameter);
+    timeSeriesDialog->setObjectType(TimeSeriesObjectType::METEOROLOGICAL_PARAMETER);
     int exitCode = timeSeriesDialog->exec();
     
     if (exitCode == QDialog::Accepted) {

@@ -48,6 +48,7 @@ private slots:
     void on_btnApplyConfiguration_clicked();
     void on_tblBoundaryConditions_currentItemChanged(QTableWidgetItem *current, QTableWidgetItem *previous);
     virtual void onToggleLabelsClicked(bool checked);
+    void updateBoundaryConditionsTable(HydrodynamicBoundaryCondition *boundaryCondition);
 public:
     explicit HydrodynamicDataDialog(QWidget *parent);
     ~HydrodynamicDataDialog();

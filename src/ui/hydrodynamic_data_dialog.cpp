@@ -208,8 +208,7 @@ void HydrodynamicDataDialog::on_cbxConfiguration_currentIndexChanged(const QStri
             ui->tblBoundaryConditions->insertRow(i);
             ui->tblBoundaryConditions->setVerticalHeaderItem(i, item);
             ui->tblBoundaryConditions->setItem(i, 0, new QTableWidgetItem(boundaryCondition->getName()));
-            ui->tblBoundaryConditions->setItem(i, 1, new QTableWidgetItem(boundaryCondition->getTypeLabel()));
-            ui->tblBoundaryConditions->setItem(i, 2, new QTableWidgetItem(boundaryCondition->getFunctionLabel()));
+            ui->tblBoundaryConditions->setItem(i, 1, new QTableWidgetItem(boundaryCondition->isVerticalIntegrated() ? "Vertical Integrated" : "Non-vertical integrated"));
             ui->vtkWidget->getMouseInteractor()->renderBoundaryCondition(boundaryCondition);
             i++;
         }
@@ -414,6 +413,7 @@ void HydrodynamicDataDialog::on_btnAddBoundaryCondition_clicked() {
         boundaryConditionDialog = new VerticalIntegratedBoundaryConditionDialog(currentConfiguration, nullptr);
     }
     
+    connect(boundaryConditionDialog, SIGNAL(boundaryConditionUpdated(HydrodynamicBoundaryCondition*)), this, SLOT(updateBoundaryConditionsTable(HydrodynamicBoundaryCondition*)));
     connect(this->toggleCellLabelsAction, SIGNAL(triggered(bool)), boundaryConditionDialog, SLOT(toggleLabelsActor(bool)));
     
     boundaryConditionDialog->show();
@@ -425,11 +425,12 @@ void HydrodynamicDataDialog::on_btnEditBoundaryCondition_clicked() {
     int row = ui->tblBoundaryConditions->currentRow();
     HydrodynamicBoundaryCondition *boundaryCondition = (HydrodynamicBoundaryCondition*) ui->tblBoundaryConditions->verticalHeaderItem(row)->data(Qt::UserRole).value<void*>();
     
-    if (boundaryCondition->instanceOf("NonVerticalBoundaryCondition")) {
-        boundaryConditionDialog = new NonVerticalIntegratedBoundaryConditionDialog(currentConfiguration, boundaryCondition);
-    } else {
+    if (boundaryCondition->isVerticalIntegrated()) {
         boundaryConditionDialog = new VerticalIntegratedBoundaryConditionDialog(currentConfiguration, boundaryCondition);
+    } else {
+        boundaryConditionDialog = new NonVerticalIntegratedBoundaryConditionDialog(currentConfiguration, boundaryCondition);
     }
+    connect(boundaryConditionDialog, SIGNAL(boundaryConditionUpdated(HydrodynamicBoundaryCondition*)), this, SLOT(updateBoundaryConditionsTable(HydrodynamicBoundaryCondition*)));
     
     boundaryConditionDialog->show();
     
@@ -525,4 +526,31 @@ void HydrodynamicDataDialog::clearLayout(QLayout *layout) {
 void HydrodynamicDataDialog::toggleZoomAreaAction(bool enable) {
     this->zoomAreaAction->setChecked(false);
     this->zoomAreaAction->setEnabled(enable);
+}
+
+void HydrodynamicDataDialog::updateBoundaryConditionsTable(HydrodynamicBoundaryCondition *boundaryCondition) {
+    int row = -1;
+    
+    for (int i = 0; i < ui->tblBoundaryConditions->rowCount(); i++) {
+        BoundaryCondition *existingBoundaryCondition = static_cast<BoundaryCondition*>(ui->tblBoundaryConditions->verticalHeaderItem(i)->data(Qt::UserRole).value<void*>());
+
+        if (existingBoundaryCondition == boundaryCondition) {
+            row = i;
+            break;
+        }
+    }
+    
+    if (row == -1) {
+        QTableWidgetItem *item = new QTableWidgetItem();
+        row = ui->tblBoundaryConditions->rowCount();
+        
+        item->setData(Qt::UserRole, qVariantFromValue((void*) boundaryCondition));
+        ui->tblBoundaryConditions->insertRow(row);
+        ui->tblBoundaryConditions->setVerticalHeaderItem(row, item);
+    } else {
+        ui->vtkWidget->getMouseInteractor()->highlightBoundaryCondition(boundaryCondition, true);
+    }
+    
+    ui->tblBoundaryConditions->setItem(row, 0, new QTableWidgetItem(boundaryCondition->getName()));
+    ui->tblBoundaryConditions->setItem(row, 1, new QTableWidgetItem(boundaryCondition->isVerticalIntegrated() ? "Vertical Integrated" : "Non-vertical integrated"));
 }

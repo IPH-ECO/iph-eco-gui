@@ -1,6 +1,8 @@
 #include <ui/time_series_dialog.h>
 #include "ui_time_series_dialog.h"
 
+#include <domain/vertical_integrated_range.h>
+
 #include <QTableWidgetItem>
 #include <QProgressDialog>
 #include <QFileDialog>
@@ -12,12 +14,10 @@
 
 TimeSeriesDialog::TimeSeriesDialog(QWidget *parent, const TimeSeriesType &timeSeriesType) :
     QDialog(parent),
-    HYDRODYNAMIC_DEFAULT_DIR_KEY("default_hydrodynamic_dir"),
+    TIME_SERIES_DEFAULT_DIR_KEY("default_time_series_dir"),
     DATE_TIME_FORMAT("yyyy-MM-dd HH:mm:ss"),
     ITEMS_PER_PAGE(500),
     ui(new Ui::TimeSeriesDialog),
-    currentBoundaryCondition(nullptr),
-    currentMeteorologicalParameter(nullptr),
     timeSeriesType(timeSeriesType),
     changed(false)
 {
@@ -39,6 +39,10 @@ TimeSeriesDialog::TimeSeriesDialog(QWidget *parent, const TimeSeriesType &timeSe
 TimeSeriesDialog::~TimeSeriesDialog() {
     delete appSettings;
     delete ui;
+}
+
+void TimeSeriesDialog::setObjectType(const TimeSeriesObjectType &objectType) {
+    this->objectType = objectType;
 }
 
 void TimeSeriesDialog::loadTimeSeriesList(QList<TimeSeries*> *timeSeriesList) {
@@ -82,7 +86,7 @@ void TimeSeriesDialog::accept() {
 }
 
 QString TimeSeriesDialog::getDefaultDirectory() {
-    return appSettings->value(HYDRODYNAMIC_DEFAULT_DIR_KEY).toString().isEmpty() ? QDir::homePath() : appSettings->value(HYDRODYNAMIC_DEFAULT_DIR_KEY).toString();
+    return appSettings->value(TIME_SERIES_DEFAULT_DIR_KEY).toString().isEmpty() ? QDir::homePath() : appSettings->value(TIME_SERIES_DEFAULT_DIR_KEY).toString();
 }
 
 void TimeSeriesDialog::on_btnImportCSV_clicked() {
@@ -102,7 +106,7 @@ void TimeSeriesDialog::on_btnImportCSV_clicked() {
         bool hasError = false;
         QStringList tokens;
         
-        appSettings->setValue(HYDRODYNAMIC_DEFAULT_DIR_KEY, QFileInfo(fileName).absoluteDir().absolutePath());
+        appSettings->setValue(TIME_SERIES_DEFAULT_DIR_KEY, QFileInfo(fileName).absoluteDir().absolutePath());
         
         if (csvFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
             int columnCount = timeSeriesType == TimeSeriesType::DEFAULT ? 2 : 3;
@@ -143,7 +147,18 @@ void TimeSeriesDialog::on_btnImportCSV_clicked() {
                     if (timeSeriesType != TimeSeriesType::DEFAULT) {
                         timeSeries.setValue2(tokens[2].toDouble());
                     }
-                    timeSeries.setObjectType(currentBoundaryCondition ? "BoundaryCondition" : "MeteorologicalParameter");
+                    
+                    QString objecTypeStr;
+                    
+                    if (objectType == TimeSeriesObjectType::METEOROLOGICAL_PARAMETER) {
+                        objecTypeStr = "MeteorologicalParameter";
+                    } else if (objectType == TimeSeriesObjectType::VERTICAL_INTEGRATED_RANGE) {
+                        objecTypeStr = "VerticalIntegratedRange";
+                    } else {
+                        objecTypeStr = "BoundaryCondition";
+                    }
+                    
+                    timeSeries.setObjectType(objecTypeStr);
                     
                     copyTimeSeriesList.append(timeSeries);
                 }
@@ -257,14 +272,6 @@ void TimeSeriesDialog::on_btnClear_clicked() {
 
 QList<TimeSeries*>* TimeSeriesDialog::getTimeSeriesList() const {
     return originalTimeSeriesList;
-}
-
-void TimeSeriesDialog::setBoundaryCondition(BoundaryCondition *boundaryCondition) {
-    currentBoundaryCondition = boundaryCondition;
-}
-
-void TimeSeriesDialog::setMeteorologicalParameter(MeteorologicalParameter *meteorologicalParameter) {
-    currentMeteorologicalParameter = meteorologicalParameter;
 }
 
 void TimeSeriesDialog::on_btnFirstPage_clicked() {
