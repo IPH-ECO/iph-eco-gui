@@ -1,5 +1,5 @@
-#include <ui/non_vertical_integrated_boundary_condition_dialog.h>
-#include "ui_non_vertical_integrated_boundary_condition_dialog.h"
+#include <ui/vertically_integrated_boundary_condition_dialog.h>
+#include "ui_vertically_integrated_boundary_condition_dialog.h"
 
 #include <ui/hydrodynamic_vtk_widget.h>
 #include <ui/time_series_dialog.h>
@@ -8,9 +8,9 @@
 
 #include <QMessageBox>
 
-NonVerticalIntegratedBoundaryConditionDialog::NonVerticalIntegratedBoundaryConditionDialog(HydrodynamicConfiguration *configuration, HydrodynamicBoundaryCondition *boundaryCondition) :
+VerticallyIntegratedBoundaryConditionDialog::VerticallyIntegratedBoundaryConditionDialog(HydrodynamicConfiguration *configuration, HydrodynamicBoundaryCondition *boundaryCondition) :
     HydrodynamicBoundaryConditionDialog(configuration, boundaryCondition),
-    ui(new Ui::NonVerticalIntegratedBoundaryConditionDialog)
+    ui(new Ui::VerticallyIntegratedBoundaryConditionDialog)
 {
     ui->setupUi(this);
     this->setupBaseUi();
@@ -49,11 +49,11 @@ NonVerticalIntegratedBoundaryConditionDialog::NonVerticalIntegratedBoundaryCondi
     }
 }
 
-NonVerticalIntegratedBoundaryConditionDialog::~NonVerticalIntegratedBoundaryConditionDialog() {
+VerticallyIntegratedBoundaryConditionDialog::~VerticallyIntegratedBoundaryConditionDialog() {
     delete ui;
 }
 
-void NonVerticalIntegratedBoundaryConditionDialog::on_cbxType_currentIndexChanged(const QString &type) {
+void VerticallyIntegratedBoundaryConditionDialog::on_cbxType_currentIndexChanged(const QString &type) {
     bool isWaterLevel = type == "Water Level";
     QString elementIds = "-";
     
@@ -91,7 +91,7 @@ void NonVerticalIntegratedBoundaryConditionDialog::on_cbxType_currentIndexChange
     }
 }
 
-void NonVerticalIntegratedBoundaryConditionDialog::on_btnTimeSeries_clicked() {
+void VerticallyIntegratedBoundaryConditionDialog::on_btnTimeSeries_clicked() {
     TimeSeriesDialog *timeSeriesDialog = new TimeSeriesDialog(this, TimeSeriesType::DEFAULT);
     timeSeriesDialog->loadTimeSeriesList(&timeSeriesList);
     timeSeriesDialog->setObjectType(TimeSeriesObjectType::BOUNDARY_CONDITION);
@@ -103,7 +103,7 @@ void NonVerticalIntegratedBoundaryConditionDialog::on_btnTimeSeries_clicked() {
     }
 }
 
-void NonVerticalIntegratedBoundaryConditionDialog::accept() {
+void VerticallyIntegratedBoundaryConditionDialog::accept() {
     if (!isValid()) {
         return;
     }
@@ -122,7 +122,7 @@ void NonVerticalIntegratedBoundaryConditionDialog::accept() {
     currentBoundaryCondition->setFunction(ui->rdoConstant->isChecked() ? BoundaryConditionFunction::CONSTANT : BoundaryConditionFunction::TIME_SERIES);
     currentBoundaryCondition->setConstantValue(ui->edtConstant->text().toDouble());
     currentBoundaryCondition->setInputModule(InputModule::HYDRODYNAMIC);
-    currentBoundaryCondition->setVerticalIntegrated(false);
+    currentBoundaryCondition->setVerticallyIntegrated(true);
     
     if (ui->rdoTimeSeries->isChecked()) {
         currentBoundaryCondition->setTimeSeriesList(timeSeriesList);
@@ -134,12 +134,12 @@ void NonVerticalIntegratedBoundaryConditionDialog::accept() {
     HydrodynamicBoundaryConditionDialog::accept();
 }
 
-void NonVerticalIntegratedBoundaryConditionDialog::reject() {
+void VerticallyIntegratedBoundaryConditionDialog::reject() {
     currentBoundaryCondition->setTimeSeriesList(originalTimeSeriesList);
     HydrodynamicBoundaryConditionDialog::reject();
 }
 
-void NonVerticalIntegratedBoundaryConditionDialog::closeEvent(QCloseEvent *event) {
+void VerticallyIntegratedBoundaryConditionDialog::closeEvent(QCloseEvent *event) {
     if (!isNewBoundaryCondition) {
         currentBoundaryCondition->setTimeSeriesList(originalTimeSeriesList);
     }
@@ -147,7 +147,7 @@ void NonVerticalIntegratedBoundaryConditionDialog::closeEvent(QCloseEvent *event
     HydrodynamicBoundaryConditionDialog::closeEvent(event);
 }
 
-bool NonVerticalIntegratedBoundaryConditionDialog::isValid() {
+bool VerticallyIntegratedBoundaryConditionDialog::isValid() {
     if (ui->edtName->text().isEmpty()) {
         QMessageBox::warning(this, tr("Hydrodynamic Boundary Condition"), tr("Please input the boundary condition name."));
         return false;

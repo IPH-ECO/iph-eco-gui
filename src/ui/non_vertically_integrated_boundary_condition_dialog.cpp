@@ -1,14 +1,14 @@
-#include <ui/vertical_integrated_boundary_condition_dialog.h>
-#include "ui_vertical_integrated_boundary_condition_dialog.h"
+#include <ui/non_vertically_integrated_boundary_condition_dialog.h>
+#include "ui_non_vertically_integrated_boundary_condition_dialog.h"
 
 #include <ui/time_series_dialog.h>
 
 #include <QMessageBox>
 #include <vtkCellData.h>
 
-VerticalIntegratedBoundaryConditionDialog::VerticalIntegratedBoundaryConditionDialog(HydrodynamicConfiguration *configuration, HydrodynamicBoundaryCondition *boundaryCondition) :
+NonVerticallyIntegratedBoundaryConditionDialog::NonVerticallyIntegratedBoundaryConditionDialog(HydrodynamicConfiguration *configuration, HydrodynamicBoundaryCondition *boundaryCondition) :
     HydrodynamicBoundaryConditionDialog(configuration, boundaryCondition),
-    ui(new Ui::VerticalIntegratedBoundaryConditionDialog)
+    ui(new Ui::NonVerticallyIntegratedBoundaryConditionDialog)
 {
     ui->setupUi(this);
     this->setupBaseUi();
@@ -21,7 +21,7 @@ VerticalIntegratedBoundaryConditionDialog::VerticalIntegratedBoundaryConditionDi
         ui->edtName->setText(boundaryCondition->getName());
         ui->lblElementIds->setText(boundaryCondition->getObjectIdsStr());
         
-        for (VerticalIntegratedRange *range : currentBoundaryCondition->getVerticalIntegratedRanges()) {
+        for (VerticallyIntegratedRange *range : currentBoundaryCondition->getVerticallyIntegratedRanges()) {
             QTableWidgetItem *rangeItem = new QTableWidgetItem();
             
             rangeItem->setData(Qt::UserRole, qVariantFromValue((void*) range));
@@ -72,15 +72,15 @@ VerticalIntegratedBoundaryConditionDialog::VerticalIntegratedBoundaryConditionDi
     }
 }
 
-VerticalIntegratedBoundaryConditionDialog::~VerticalIntegratedBoundaryConditionDialog() {
-    for (VerticalIntegratedRange *unsavedRange : unsavedRanges) {
+NonVerticallyIntegratedBoundaryConditionDialog::~NonVerticallyIntegratedBoundaryConditionDialog() {
+    for (VerticallyIntegratedRange *unsavedRange : unsavedRanges) {
         delete unsavedRange;
     }
     
     delete ui;
 }
 
-void VerticalIntegratedBoundaryConditionDialog::accept() {
+void NonVerticallyIntegratedBoundaryConditionDialog::accept() {
     if (!isValid()) {
         return;
     }
@@ -89,11 +89,11 @@ void VerticalIntegratedBoundaryConditionDialog::accept() {
     currentBoundaryCondition->setType(BoundaryConditionType::WATER_FLOW);
     currentBoundaryCondition->setObjectIds(ui->lblElementIds->text());
     currentBoundaryCondition->setInputModule(InputModule::HYDRODYNAMIC);
-    currentBoundaryCondition->setVerticalIntegrated(true);
+    currentBoundaryCondition->setVerticallyIntegrated(false);
     
     for (int i = 0; i < ui->tblRanges->rowCount(); i++) {
         QComboBox *cbxFunction = static_cast<QComboBox*>(ui->tblRanges->cellWidget(i, 2));
-        VerticalIntegratedRange *range = static_cast<VerticalIntegratedRange*>(ui->tblRanges->verticalHeaderItem(i)->data(Qt::UserRole).value<void*>());
+        VerticallyIntegratedRange *range = static_cast<VerticallyIntegratedRange*>(ui->tblRanges->verticalHeaderItem(i)->data(Qt::UserRole).value<void*>());
         
         range->setMinimumElevation(ui->tblRanges->item(i, 0)->text().toDouble());
         range->setMaximumElevation(ui->tblRanges->item(i, 1)->text().toDouble());
@@ -110,7 +110,7 @@ void VerticalIntegratedBoundaryConditionDialog::accept() {
             range->setFunction(BoundaryConditionFunction::TIME_SERIES);
         }
         
-        currentBoundaryCondition->addVerticalIntegratedRange(range);
+        currentBoundaryCondition->addVerticallyIntegratedRange(range);
         unsavedRanges.remove(range);
     }
     
@@ -120,7 +120,7 @@ void VerticalIntegratedBoundaryConditionDialog::accept() {
     HydrodynamicBoundaryConditionDialog::accept();
 }
 
-bool VerticalIntegratedBoundaryConditionDialog::isValid() {
+bool NonVerticallyIntegratedBoundaryConditionDialog::isValid() {
     if (ui->edtName->text().isEmpty()) {
         QMessageBox::warning(this, tr("Hydrodynamic Boundary Condition"), tr("Please input the boundary condition name."));
         return false;
@@ -201,9 +201,9 @@ bool VerticalIntegratedBoundaryConditionDialog::isValid() {
     return true;
 }
 
-void VerticalIntegratedBoundaryConditionDialog::on_btnAddRange_clicked() {
+void NonVerticallyIntegratedBoundaryConditionDialog::on_btnAddRange_clicked() {
     int rowCount = ui->tblRanges->rowCount();
-    VerticalIntegratedRange *range = new VerticalIntegratedRange();
+    VerticallyIntegratedRange *range = new VerticallyIntegratedRange();
     QTableWidgetItem *rangeItem = new QTableWidgetItem();
     
     rangeItem->setData(Qt::UserRole, qVariantFromValue((void*) range));
@@ -241,7 +241,7 @@ void VerticalIntegratedBoundaryConditionDialog::on_btnAddRange_clicked() {
     ui->tblRanges->setCellWidget(rowCount, 2, cbxFunction);
 }
 
-void VerticalIntegratedBoundaryConditionDialog::on_btnRemoveRange_clicked() {
+void NonVerticallyIntegratedBoundaryConditionDialog::on_btnRemoveRange_clicked() {
     int currentRow = ui->tblRanges->currentRow();
     
     if (currentRow > -1 && QMessageBox::question(this, "Vertical Integrated Boundary Condition", "Are you sure?") == QMessageBox::Yes) {
@@ -249,7 +249,7 @@ void VerticalIntegratedBoundaryConditionDialog::on_btnRemoveRange_clicked() {
     }
 }
 
-void VerticalIntegratedBoundaryConditionDialog::onCbxFunctionCurrentTextChanged(const QString &text) {
+void NonVerticallyIntegratedBoundaryConditionDialog::onCbxFunctionCurrentTextChanged(const QString &text) {
     QComboBox *cbxFunction = static_cast<QComboBox*>(sender());
     QLineEdit *edtConstant = cbxFunction->itemData(0).value<QLineEdit*>();
     QToolButton *btnTimeSeries = cbxFunction->itemData(1).value<QToolButton*>();
@@ -263,10 +263,10 @@ void VerticalIntegratedBoundaryConditionDialog::onCbxFunctionCurrentTextChanged(
     }
 }
 
-void VerticalIntegratedBoundaryConditionDialog::onBtnTimeSeriesClicked() {
+void NonVerticallyIntegratedBoundaryConditionDialog::onBtnTimeSeriesClicked() {
     QList<TimeSeries*> *timeSeriesList = static_cast<QList<TimeSeries*>*>(sender()->property("timeSeries").value<void*>());
     TimeSeriesDialog *dialog = new TimeSeriesDialog(this, TimeSeriesType::DEFAULT);
-    dialog->setObjectType(TimeSeriesObjectType::VERTICAL_INTEGRATED_RANGE);
+    dialog->setObjectType(TimeSeriesObjectType::vertically_integrated_range);
     dialog->loadTimeSeriesList(timeSeriesList);
     int exitCode = dialog->exec();
     

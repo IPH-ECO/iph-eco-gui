@@ -1,7 +1,7 @@
 #include <ui/time_series_dialog.h>
 #include "ui_time_series_dialog.h"
 
-#include <domain/vertical_integrated_range.h>
+#include <domain/vertically_integrated_range.h>
 
 #include <QTableWidgetItem>
 #include <QProgressDialog>
@@ -153,7 +153,7 @@ void TimeSeriesDialog::on_btnImportCSV_clicked() {
                     if (objectType == TimeSeriesObjectType::METEOROLOGICAL_PARAMETER) {
                         objecTypeStr = "MeteorologicalParameter";
                     } else if (objectType == TimeSeriesObjectType::VERTICAL_INTEGRATED_RANGE) {
-                        objecTypeStr = "VerticalIntegratedRange";
+                        objecTypeStr = "VerticallyIntegratedRange";
                     } else {
                         objecTypeStr = "BoundaryCondition";
                     }

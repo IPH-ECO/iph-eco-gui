@@ -3,7 +3,7 @@
 #include <vtkProperty.h>
 
 HydrodynamicBoundaryCondition::HydrodynamicBoundaryCondition() :
-    verticalIntegrated(false),
+    verticallyIntegrated(false),
     cellColor("#FF0000"),
     selectionActor(vtkSmartPointer<vtkActor>::New()),
     labelsActor(vtkSmartPointer<vtkActor2D>::New())
@@ -12,17 +12,17 @@ HydrodynamicBoundaryCondition::HydrodynamicBoundaryCondition() :
 }
 
 HydrodynamicBoundaryCondition::~HydrodynamicBoundaryCondition() {
-    for (VerticalIntegratedRange *range : verticalIntegratedRanges) {
+    for (VerticallyIntegratedRange *range : verticallyIntegratedRanges) {
         delete range;
     }
 }
 
-bool HydrodynamicBoundaryCondition::isVerticalIntegrated() const {
-    return verticalIntegrated;
+bool HydrodynamicBoundaryCondition::isVerticallyIntegrated() const {
+    return verticallyIntegrated;
 }
 
-void HydrodynamicBoundaryCondition::setVerticalIntegrated(const bool &verticalIntegrated) {
-    this->verticalIntegrated = verticalIntegrated;
+void HydrodynamicBoundaryCondition::setVerticallyIntegrated(const bool &verticallyIntegrated) {
+    this->verticallyIntegrated = verticallyIntegrated;
 }
 
 QSet<vtkIdType> HydrodynamicBoundaryCondition::getObjectIds() const {
@@ -115,20 +115,20 @@ void HydrodynamicBoundaryCondition::setCellColor(const QString &cellColor) {
     this->cellColor = cellColor;
 }
 
-QSet<VerticalIntegratedRange*> HydrodynamicBoundaryCondition::getVerticalIntegratedRanges() const {
-    return verticalIntegratedRanges;
+QSet<VerticallyIntegratedRange*> HydrodynamicBoundaryCondition::getVerticallyIntegratedRanges() const {
+    return verticallyIntegratedRanges;
 }
 
-void HydrodynamicBoundaryCondition::setVerticalIntegratedRanges(const QSet<VerticalIntegratedRange*> &verticalIntegratedRanges) {
-    this->verticalIntegratedRanges = verticalIntegratedRanges;
+void HydrodynamicBoundaryCondition::setVerticallyIntegratedRanges(const QSet<VerticallyIntegratedRange*> &verticallyIntegratedRanges) {
+    this->verticallyIntegratedRanges = verticallyIntegratedRanges;
 }
 
-void HydrodynamicBoundaryCondition::addVerticalIntegratedRange(VerticalIntegratedRange *verticalIntegratedRange) {
-    verticalIntegratedRanges.insert(verticalIntegratedRange);
+void HydrodynamicBoundaryCondition::addVerticallyIntegratedRange(VerticallyIntegratedRange *verticallyIntegratedRange) {
+    verticallyIntegratedRanges.insert(verticallyIntegratedRange);
 }
 
-void HydrodynamicBoundaryCondition::removeVerticalIntegratedRange(VerticalIntegratedRange *verticalIntegratedRange) {
-    verticalIntegratedRanges.remove(verticalIntegratedRange);
+void HydrodynamicBoundaryCondition::removeVerticallyIntegratedRange(VerticallyIntegratedRange *verticallyIntegratedRange) {
+    verticallyIntegratedRanges.remove(verticallyIntegratedRange);
 }
 
 vtkSmartPointer<vtkActor> HydrodynamicBoundaryCondition::getSelectionActor() const {
@@ -208,17 +208,18 @@ SimulationDataType::BoundaryCondition HydrodynamicBoundaryCondition::toSimulatio
     
     strncpy(boundaryCondition.conditionType, conditionType.constData(), conditionType.size());
     
-    if (this->verticalIntegrated) {
+    if (this->verticallyIntegrated) {
         int i = 0;
         
-        boundaryCondition.rangesSize = this->verticalIntegratedRanges.size();
-        boundaryCondition.ranges = new SimulationDataType::VerticalIntegratedRange[boundaryCondition.rangesSize];
+        boundaryCondition.rangesSize = this->verticallyIntegratedRanges.size();
+        boundaryCondition.ranges = new SimulationDataType::VerticallyIntegratedRange[boundaryCondition.rangesSize];
         
-        for (VerticalIntegratedRange *range : verticalIntegratedRanges) {
+        for (VerticallyIntegratedRange *range : verticallyIntegratedRanges) {
             boundaryCondition.ranges[i] = range->toSimulationDataType();
             i++;
         }
     } else {
+        boundaryCondition.rangesSize = 0;
         boundaryCondition.conditionFunction = (int) this->function;
         boundaryCondition.constantValue = this->constantValue;
         boundaryCondition.timeSeriesListSize = this->timeSeriesList.size();

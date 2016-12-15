@@ -2,7 +2,7 @@
 #define HYDRODYNAMIC_BOUNDARY_CONDITION_H
 
 #include "boundary_condition.h"
-#include "vertical_integrated_range.h"
+#include "vertically_integrated_range.h"
 
 #include <vtkSmartPointer.h>
 #include <vtkIdTypeArray.h>
@@ -13,10 +13,10 @@
 class HydrodynamicBoundaryCondition : public BoundaryCondition {
     Q_OBJECT
 private:
-    bool verticalIntegrated;
+    bool verticallyIntegrated;
     QSet<vtkIdType> objectIds;
     QString cellColor;
-    QSet<VerticalIntegratedRange*> verticalIntegratedRanges;
+    QSet<VerticallyIntegratedRange*> verticallyIntegratedRanges;
     
     // Transient attributes
     vtkSmartPointer<vtkActor> selectionActor;
@@ -26,8 +26,8 @@ public:
     HydrodynamicBoundaryCondition();
     ~HydrodynamicBoundaryCondition();
 
-    bool isVerticalIntegrated() const;
-    void setVerticalIntegrated(const bool &verticalIntegrated);
+    bool isVerticallyIntegrated() const;
+    void setVerticallyIntegrated(const bool &verticallyIntegrated);
     QSet<vtkIdType> getObjectIds() const;
     vtkSmartPointer<vtkIdTypeArray> getVTKObjectIds() const;
     QString getVTKObjectsArrayName() const;
@@ -40,10 +40,10 @@ public:
     void clearObjectIds();
     QString getCellColor() const;
     void setCellColor(const QString &cellColor);
-    QSet<VerticalIntegratedRange*> getVerticalIntegratedRanges() const;
-    void setVerticalIntegratedRanges(const QSet<VerticalIntegratedRange*> &verticalIntegratedRanges);
-    void addVerticalIntegratedRange(VerticalIntegratedRange *verticalIntegratedRange);
-    void removeVerticalIntegratedRange(VerticalIntegratedRange *verticalIntegratedRange);
+    QSet<VerticallyIntegratedRange*> getVerticallyIntegratedRanges() const;
+    void setVerticallyIntegratedRanges(const QSet<VerticallyIntegratedRange*> &VerticallyIntegratedRanges);
+    void addVerticallyIntegratedRange(VerticallyIntegratedRange *verticallyIntegratedRanges);
+    void removeVerticallyIntegratedRange(VerticallyIntegratedRange *verticallyIntegratedRanges);
     vtkSmartPointer<vtkActor> getSelectionActor() const;
     void setSelectionActor(vtkSmartPointer<vtkActor> selectionActor);
     vtkSmartPointer<vtkActor2D> getLabelsActor() const;

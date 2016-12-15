@@ -129,7 +129,7 @@
    <item row="4" column="1" colspan="2">
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
-      <widget class="QCheckBox" name="chkVerticalIntegratedFlow">
+      <widget class="QCheckBox" name="chkVerticallyIntegratedFlow">
        <property name="text">
         <string>Vertical Integrated Flow</string>
        </property>
@@ -274,7 +274,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>chkVerticalIntegratedFlow</sender>
+   <sender>chkVerticallyIntegratedFlow</sender>
    <signal>clicked(bool)</signal>
    <receiver>edtMinimumElevation</receiver>
    <slot>setDisabled(bool)</slot>
@@ -290,7 +290,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>chkVerticalIntegratedFlow</sender>
+   <sender>chkVerticallyIntegratedFlow</sender>
    <signal>clicked(bool)</signal>
    <receiver>edtMaximumElevation</receiver>
    <slot>setDisabled(bool)</slot>

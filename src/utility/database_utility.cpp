@@ -129,7 +129,7 @@ void DatabaseUtility::createApplicationTables() {
     sql << "create table boundary_condition (" \
         "id integer primary key, " \
         "name text not null, " \
-        "vertical_integrated bool default false, " \
+        "vertically_integrated bool default false, " \
         "type text default null, " \
         "object_ids text default null, " \
         "function text not null, " \
@@ -140,8 +140,8 @@ void DatabaseUtility::createApplicationTables() {
         "configuration_id integer not null" \
     ")";
     
-    sql << "drop table if exists vertical_integrated_range";
-    sql << "create table vertical_integrated_range (" \
+    sql << "drop table if exists vertically_integrated_range";
+    sql << "create table vertically_integrated_range (" \
         "id integer primary key, "\
         "minimum_elevation float not null, " \
         "maximum_elevation float not null, " \

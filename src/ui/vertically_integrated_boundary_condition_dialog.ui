@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>NonVerticalIntegratedBoundaryConditionDialog</class>
- <widget class="QDialog" name="NonVerticalIntegratedBoundaryConditionDialog">
+ <class>VerticallyIntegratedBoundaryConditionDialog</class>
+ <widget class="QDialog" name="VerticallyIntegratedBoundaryConditionDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -23,7 +23,7 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>Non Vertical Integrated Hydrodynamic Boundary Condition</string>
+   <string>Vertically Integrated Hydrodynamic Boundary Condition</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="2" column="4" colspan="2">
@@ -215,7 +215,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>accepted()</signal>
-   <receiver>NonVerticalIntegratedBoundaryConditionDialog</receiver>
+   <receiver>VerticallyIntegratedBoundaryConditionDialog</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -231,7 +231,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>rejected()</signal>
-   <receiver>NonVerticalIntegratedBoundaryConditionDialog</receiver>
+   <receiver>VerticallyIntegratedBoundaryConditionDialog</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">

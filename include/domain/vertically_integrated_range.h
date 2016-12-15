@@ -1,9 +1,9 @@
-#ifndef VERTICAL_INTEGRATED_RANGE_H
-#define VERTICAL_INTEGRATED_RANGE_H
+#ifndef VERTICALLY_INTEGRATED_RANGE_H
+#define VERTICALLY_INTEGRATED_RANGE_H
 
 #include "boundary_condition.h"
 
-class VerticalIntegratedRange {
+class VerticallyIntegratedRange {
 private:
     uint id;
     double minimumElevation;
@@ -16,7 +16,7 @@ private:
     bool timeSeriesChanged;
     
 public:
-    VerticalIntegratedRange();
+    VerticallyIntegratedRange();
 
     uint getId() const;
     void setId(const uint &id);
@@ -36,7 +36,7 @@ public:
     bool isTimeSeriesChanged() const;
     void setTimeSeriesChanged(bool timeSeriesChanged);
     
-    SimulationDataType::VerticalIntegratedRange toSimulationDataType() const;
+    SimulationDataType::VerticallyIntegratedRange toSimulationDataType() const;
 };
 
-#endif // VERTICAL_INTEGRATED_RANGE_H
+#endif // VERTICALLY_INTEGRATED_RANGE_H

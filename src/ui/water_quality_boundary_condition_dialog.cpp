@@ -129,7 +129,7 @@ void WaterQualityBoundaryConditionDialog::accept() {
         currentBoundaryCondition->setTimeSeriesList(timeSeriesList);
     }
     
-    /*currentBoundaryCondition->setVerticalIntegratedOutflow(ui->chkVerticalIntegratedFlow->isChecked());
+    /*currentBoundaryCondition->setVerticallyIntegratedOutflow(ui->chkVerticallyIntegratedFlow->isChecked());
     currentBoundaryCondition->setMinimumElevation(ui->edtMinimumElevation->text().toDouble());
     currentBoundaryCondition->setMaximumElevation(ui->edtMaximumElevation->text().toDouble());*/
     

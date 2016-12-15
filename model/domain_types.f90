@@ -47,7 +47,7 @@ module domain_types
         integer(c_long_long) :: verticeIds(2);
     end type
 
-    type, bind(C) :: VerticalIntegratedRange
+    type, bind(C) :: VerticallyIntegratedRange
         real(c_double) :: minimumElevation;
         real(c_double) :: maximumElevation;
         integer(c_int) :: function;
@@ -59,7 +59,7 @@ module domain_types
     type, bind(C) :: BoundaryCondition
         integer(c_int) :: inputModule ! HYDRODYNAMIC = 1, WATER_QUALITY = 2
         character(kind = c_char, len = 255) :: conditionType ! waterFlow, waterLevel or normalDepth for Hydrodynamic module
-        logical(c_bool) :: verticalIntegrated
+        logical(c_bool) :: verticallyIntegrated
         integer(c_int) :: rangesSize
         type(c_ptr) :: ranges
         ! For HYDRODYNAMIC

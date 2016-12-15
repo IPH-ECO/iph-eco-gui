@@ -5,8 +5,8 @@
 #include <domain/unstructured_mesh.h>
 #include <domain/structured_mesh.h>
 #include <domain/hydrodynamic_parameter.h>
-#include <ui/vertical_integrated_boundary_condition_dialog.h>
-#include <ui/non_vertical_integrated_boundary_condition_dialog.h>
+#include <ui/vertically_integrated_boundary_condition_dialog.h>
+#include <ui/non_vertically_integrated_boundary_condition_dialog.h>
 
 #include <QTreeWidgetItemIterator>
 #include <QColorDialog>
@@ -208,7 +208,7 @@ void HydrodynamicDataDialog::on_cbxConfiguration_currentIndexChanged(const QStri
             ui->tblBoundaryConditions->insertRow(i);
             ui->tblBoundaryConditions->setVerticalHeaderItem(i, item);
             ui->tblBoundaryConditions->setItem(i, 0, new QTableWidgetItem(boundaryCondition->getName()));
-            ui->tblBoundaryConditions->setItem(i, 1, new QTableWidgetItem(boundaryCondition->isVerticalIntegrated() ? "Vertical Integrated" : "Non-vertical integrated"));
+            ui->tblBoundaryConditions->setItem(i, 1, new QTableWidgetItem(boundaryCondition->isVerticallyIntegrated() ? "Vertically Integrated" : "Non-vertically integrated"));
             ui->vtkWidget->getMouseInteractor()->renderBoundaryCondition(boundaryCondition);
             i++;
         }
@@ -407,10 +407,10 @@ void HydrodynamicDataDialog::on_trwProcesses_itemChanged(QTreeWidgetItem *item, 
 }
 
 void HydrodynamicDataDialog::on_btnAddBoundaryCondition_clicked() {
-    if (QMessageBox::question(this, "Boundary Condition", "Is it vertical integrated?", QMessageBox::Yes | QMessageBox::No, QMessageBox::No) == QMessageBox::No) {
-        boundaryConditionDialog = new NonVerticalIntegratedBoundaryConditionDialog(currentConfiguration, nullptr);
+    if (QMessageBox::question(this, "Boundary Condition", "Is it vertically integrated?", QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes) == QMessageBox::Yes) {
+        boundaryConditionDialog = new VerticallyIntegratedBoundaryConditionDialog(currentConfiguration, nullptr);
     } else {
-        boundaryConditionDialog = new VerticalIntegratedBoundaryConditionDialog(currentConfiguration, nullptr);
+        boundaryConditionDialog = new NonVerticallyIntegratedBoundaryConditionDialog(currentConfiguration, nullptr);
     }
     
     connect(boundaryConditionDialog, SIGNAL(boundaryConditionUpdated(HydrodynamicBoundaryCondition*)), this, SLOT(updateBoundaryConditionsTable(HydrodynamicBoundaryCondition*)));
@@ -425,10 +425,10 @@ void HydrodynamicDataDialog::on_btnEditBoundaryCondition_clicked() {
     int row = ui->tblBoundaryConditions->currentRow();
     HydrodynamicBoundaryCondition *boundaryCondition = (HydrodynamicBoundaryCondition*) ui->tblBoundaryConditions->verticalHeaderItem(row)->data(Qt::UserRole).value<void*>();
     
-    if (boundaryCondition->isVerticalIntegrated()) {
-        boundaryConditionDialog = new VerticalIntegratedBoundaryConditionDialog(currentConfiguration, boundaryCondition);
+    if (boundaryCondition->isVerticallyIntegrated()) {
+        boundaryConditionDialog = new VerticallyIntegratedBoundaryConditionDialog(currentConfiguration, boundaryCondition);
     } else {
-        boundaryConditionDialog = new NonVerticalIntegratedBoundaryConditionDialog(currentConfiguration, boundaryCondition);
+        boundaryConditionDialog = new NonVerticallyIntegratedBoundaryConditionDialog(currentConfiguration, boundaryCondition);
     }
     connect(boundaryConditionDialog, SIGNAL(boundaryConditionUpdated(HydrodynamicBoundaryCondition*)), this, SLOT(updateBoundaryConditionsTable(HydrodynamicBoundaryCondition*)));
     
@@ -552,5 +552,5 @@ void HydrodynamicDataDialog::updateBoundaryConditionsTable(HydrodynamicBoundaryC
     }
     
     ui->tblBoundaryConditions->setItem(row, 0, new QTableWidgetItem(boundaryCondition->getName()));
-    ui->tblBoundaryConditions->setItem(row, 1, new QTableWidgetItem(boundaryCondition->isVerticalIntegrated() ? "Vertical Integrated" : "Non-vertical integrated"));
+    ui->tblBoundaryConditions->setItem(row, 1, new QTableWidgetItem(boundaryCondition->isVerticallyIntegrated() ? "Vertical Integrated" : "Non-vertical integrated"));
 }

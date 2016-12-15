@@ -72,7 +72,7 @@ namespace SimulationDataType {
             long long int verticeIds[2];
         };
         
-        struct VerticalIntegratedRange {
+        struct VerticallyIntegratedRange {
             double minimumElevation;
             double maximumElevation;
             int function;
@@ -80,16 +80,16 @@ namespace SimulationDataType {
             int timeSeriesListSize;
             SimulationDataType::TimeSeries *timeSeriesList;
             
-            VerticalIntegratedRange();
+            VerticallyIntegratedRange();
             void destroy();
         };
         
         struct BoundaryCondition {
             int inputModule;
             char conditionType[DEFAULT_STRING_LEN];
-            bool verticalIntegrated;
+            bool VerticallyIntegrated;
             int rangesSize;
-            SimulationDataType::VerticalIntegratedRange *ranges;
+            SimulationDataType::VerticallyIntegratedRange *ranges;
             // HYDRODYNAMIC
             int cellsLength;
             SimulationDataType::HydrodynamicBoundaryConditionCell *cells;
