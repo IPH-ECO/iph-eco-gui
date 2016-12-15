@@ -78,3 +78,24 @@ bool VerticalIntegratedRange::isTimeSeriesChanged() const {
 void VerticalIntegratedRange::setTimeSeriesChanged(bool timeSeriesChanged) {
     this->timeSeriesChanged = timeSeriesChanged;
 }
+
+SimulationDataType::VerticalIntegratedRange VerticalIntegratedRange::toSimulationDataType() const {
+    SimulationDataType::VerticalIntegratedRange range;
+    
+    range.minimumElevation = this->minimumElevation;
+    range.maximumElevation = this->maximumElevation;
+    range.function = (int) this->function;
+    
+    if (this->function == BoundaryConditionFunction::CONSTANT) {
+        range.value = this->value;
+    } else {
+        range.timeSeriesListSize = this->timeSeriesList.size();
+        range.timeSeriesList = new SimulationDataType::TimeSeries[range.timeSeriesListSize];
+        
+        for (int i = 0; i < range.timeSeriesListSize; i++) {
+            range.timeSeriesList[i] = this->timeSeriesList[i]->toSimulationDataType();
+        }
+    }
+    
+    return range;
+}

@@ -47,9 +47,21 @@ module domain_types
         integer(c_long_long) :: verticeIds(2);
     end type
 
+    type, bind(C) :: VerticalIntegratedRange
+        real(c_double) :: minimumElevation;
+        real(c_double) :: maximumElevation;
+        integer(c_int) :: function;
+        real(c_double) :: value;
+        integer(c_int) :: timeSeriesListSize;
+        type(c_ptr) :: timeSeriesList
+    end type
+
     type, bind(C) :: BoundaryCondition
         integer(c_int) :: inputModule ! HYDRODYNAMIC = 1, WATER_QUALITY = 2
         character(kind = c_char, len = 255) :: conditionType ! waterFlow, waterLevel or normalDepth for Hydrodynamic module
+        logical(c_bool) :: verticalIntegrated
+        integer(c_int) :: rangesSize
+        type(c_ptr) :: ranges
         ! For HYDRODYNAMIC
         integer(c_int) :: cellsLength
         type(c_ptr) :: cells
@@ -60,9 +72,6 @@ module domain_types
         real(c_double) :: constantValue
         integer(c_int) :: timeSeriesListSize
         type(c_ptr) :: timeSeriesList
-        logical(c_bool) :: verticalIntegratedOutflow
-        real(c_double) :: minimumElevation
-        real(c_double) :: maximumElevation
     end type
 
     type, bind(C) :: TimeSeries

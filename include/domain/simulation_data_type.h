@@ -72,23 +72,34 @@ namespace SimulationDataType {
             long long int verticeIds[2];
         };
         
+        struct VerticalIntegratedRange {
+            double minimumElevation;
+            double maximumElevation;
+            int function;
+            double value;
+            int timeSeriesListSize;
+            SimulationDataType::TimeSeries *timeSeriesList;
+            
+            VerticalIntegratedRange();
+            void destroy();
+        };
+        
         struct BoundaryCondition {
             int inputModule;
             char conditionType[DEFAULT_STRING_LEN];
+            bool verticalIntegrated;
+            int rangesSize;
+            SimulationDataType::VerticalIntegratedRange *ranges;
             // HYDRODYNAMIC
             int cellsLength;
             SimulationDataType::HydrodynamicBoundaryConditionCell *cells;
             // WATER_QUALITY
-            char conditionTypeWQ[DEFAULT_STRING_LEN];
             BoundaryCondition *hydrodynamicBoundaryCondition;
             //
             int conditionFunction;
             double constantValue;
             int timeSeriesListSize;
             SimulationDataType::TimeSeries *timeSeriesList;
-            bool verticalIntegratedOutflow;
-            double minimumElevation;
-            double maximumElevation;
             
             BoundaryCondition();
             void destroy();
@@ -159,7 +170,7 @@ namespace SimulationDataType {
             double direction;
             int timeSizeListLength;
             SimulationDataType::TimeSeries *timeSeriesList;
-          
+            
             MeteorologicalParameter();
             void destroy();
         };

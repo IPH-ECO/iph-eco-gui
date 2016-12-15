@@ -72,7 +72,15 @@ void SimulationDataType::HydrodynamicParameter::destroy() {
     delete name;
 }
 
+SimulationDataType::VerticalIntegratedRange::VerticalIntegratedRange() : timeSeriesList(nullptr)
+{}
+
+void SimulationDataType::VerticalIntegratedRange::destroy() {
+    delete timeSeriesList;
+}
+
 SimulationDataType::BoundaryCondition::BoundaryCondition() :
+    ranges(nullptr),
     cells(nullptr),
     timeSeriesList(nullptr)
 {
@@ -80,6 +88,7 @@ SimulationDataType::BoundaryCondition::BoundaryCondition() :
 }
 
 void SimulationDataType::BoundaryCondition::destroy() {
+    delete ranges;
 	delete cells;
     delete timeSeriesList;
 }

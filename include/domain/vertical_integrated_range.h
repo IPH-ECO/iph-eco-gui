@@ -36,7 +36,7 @@ public:
     bool isTimeSeriesChanged() const;
     void setTimeSeriesChanged(bool timeSeriesChanged);
     
-    // SimulationDataType::BoundaryCondition toSimulationDataType(Mesh *mesh) const;
+    SimulationDataType::VerticalIntegratedRange toSimulationDataType() const;
 };
 
 #endif // VERTICAL_INTEGRATED_RANGE_H

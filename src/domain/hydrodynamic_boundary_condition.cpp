@@ -207,13 +207,26 @@ SimulationDataType::BoundaryCondition HydrodynamicBoundaryCondition::toSimulatio
     }
     
     strncpy(boundaryCondition.conditionType, conditionType.constData(), conditionType.size());
-    boundaryCondition.conditionFunction = (int) this->function;
-    boundaryCondition.constantValue = this->constantValue;
-    boundaryCondition.timeSeriesListSize = this->timeSeriesList.size();
-    boundaryCondition.timeSeriesList = new SimulationDataType::TimeSeries[boundaryCondition.timeSeriesListSize];
     
-    for (vtkIdType i = 0; i < this->timeSeriesList.size(); i++) {
-        boundaryCondition.timeSeriesList[i] = this->timeSeriesList[i]->toSimulationDataType();
+    if (this->verticalIntegrated) {
+        int i = 0;
+        
+        boundaryCondition.rangesSize = this->verticalIntegratedRanges.size();
+        boundaryCondition.ranges = new SimulationDataType::VerticalIntegratedRange[boundaryCondition.rangesSize];
+        
+        for (VerticalIntegratedRange *range : verticalIntegratedRanges) {
+            boundaryCondition.ranges[i] = range->toSimulationDataType();
+            i++;
+        }
+    } else {
+        boundaryCondition.conditionFunction = (int) this->function;
+        boundaryCondition.constantValue = this->constantValue;
+        boundaryCondition.timeSeriesListSize = this->timeSeriesList.size();
+        boundaryCondition.timeSeriesList = new SimulationDataType::TimeSeries[boundaryCondition.timeSeriesListSize];
+        
+        for (int i = 0; i < this->timeSeriesList.size(); i++) {
+            boundaryCondition.timeSeriesList[i] = this->timeSeriesList[i]->toSimulationDataType();
+        }
     }
     
     return boundaryCondition;
