@@ -26,7 +26,7 @@ private:
     void loadHydrodynamicConfigurations(Project *project);
     void loadHydrodynamicParameter(HydrodynamicConfiguration *configuration, Project *project);
     void loadBoundaryConditions(HydrodynamicConfiguration *configuration);
-    void loadVerticallyIntegratedRanges(HydrodynamicBoundaryCondition *boundaryCondition);
+    void loadNonVerticallyIntegratedRanges(HydrodynamicBoundaryCondition *boundaryCondition);
     template<typename T> void loadTimeSeries(T *t);
     
     void loadWaterQualityConfigurations(Project *project);
@@ -40,7 +40,7 @@ private:
     void saveHydrodynamicConfigurations(Project *project);
     void saveHydrodynamicParameters(HydrodynamicConfiguration *configuration);
     void saveBoundaryConditions(HydrodynamicConfiguration *configuration);
-    void saveVerticallyIntegratedRanges(HydrodynamicBoundaryCondition *boundaryCondition);
+    void saveNonVerticallyIntegratedRanges(HydrodynamicBoundaryCondition *boundaryCondition);
     template<typename T> void saveTimeSeries(T *t);
     void saveTimeSeries(const uint &objectId, const QString &objectType, const QList<TimeSeries*> &timeSeriesList);
     

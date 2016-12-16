@@ -140,8 +140,8 @@ void DatabaseUtility::createApplicationTables() {
         "configuration_id integer not null" \
     ")";
     
-    sql << "drop table if exists vertically_integrated_range";
-    sql << "create table vertically_integrated_range (" \
+    sql << "drop table if exists non_vertically_integrated_range";
+    sql << "create table non_vertically_integrated_range (" \
         "id integer primary key, "\
         "minimum_elevation float not null, " \
         "maximum_elevation float not null, " \

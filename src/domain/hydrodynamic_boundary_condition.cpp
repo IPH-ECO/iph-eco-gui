@@ -12,7 +12,7 @@ HydrodynamicBoundaryCondition::HydrodynamicBoundaryCondition() :
 }
 
 HydrodynamicBoundaryCondition::~HydrodynamicBoundaryCondition() {
-    for (VerticallyIntegratedRange *range : verticallyIntegratedRanges) {
+    for (NonVerticallyIntegratedRange *range : nonVerticallyIntegratedRanges) {
         delete range;
     }
 }
@@ -115,20 +115,20 @@ void HydrodynamicBoundaryCondition::setCellColor(const QString &cellColor) {
     this->cellColor = cellColor;
 }
 
-QSet<VerticallyIntegratedRange*> HydrodynamicBoundaryCondition::getVerticallyIntegratedRanges() const {
-    return verticallyIntegratedRanges;
+QSet<NonVerticallyIntegratedRange*> HydrodynamicBoundaryCondition::getNonVerticallyIntegratedRanges() const {
+    return nonVerticallyIntegratedRanges;
 }
 
-void HydrodynamicBoundaryCondition::setVerticallyIntegratedRanges(const QSet<VerticallyIntegratedRange*> &verticallyIntegratedRanges) {
-    this->verticallyIntegratedRanges = verticallyIntegratedRanges;
+void HydrodynamicBoundaryCondition::setNonVerticallyIntegratedRanges(const QSet<NonVerticallyIntegratedRange*> &nonVerticallyIntegratedRanges) {
+    this->nonVerticallyIntegratedRanges = nonVerticallyIntegratedRanges;
 }
 
-void HydrodynamicBoundaryCondition::addVerticallyIntegratedRange(VerticallyIntegratedRange *verticallyIntegratedRange) {
-    verticallyIntegratedRanges.insert(verticallyIntegratedRange);
+void HydrodynamicBoundaryCondition::addNonVerticallyIntegratedRange(NonVerticallyIntegratedRange *verticallyIntegratedRange) {
+    nonVerticallyIntegratedRanges.insert(verticallyIntegratedRange);
 }
 
-void HydrodynamicBoundaryCondition::removeVerticallyIntegratedRange(VerticallyIntegratedRange *verticallyIntegratedRange) {
-    verticallyIntegratedRanges.remove(verticallyIntegratedRange);
+void HydrodynamicBoundaryCondition::removeNonVerticallyIntegratedRange(NonVerticallyIntegratedRange *verticallyIntegratedRange) {
+    nonVerticallyIntegratedRanges.remove(verticallyIntegratedRange);
 }
 
 vtkSmartPointer<vtkActor> HydrodynamicBoundaryCondition::getSelectionActor() const {
@@ -209,16 +209,6 @@ SimulationDataType::BoundaryCondition HydrodynamicBoundaryCondition::toSimulatio
     strncpy(boundaryCondition.conditionType, conditionType.constData(), conditionType.size());
     
     if (this->verticallyIntegrated) {
-        int i = 0;
-        
-        boundaryCondition.rangesSize = this->verticallyIntegratedRanges.size();
-        boundaryCondition.ranges = new SimulationDataType::VerticallyIntegratedRange[boundaryCondition.rangesSize];
-        
-        for (VerticallyIntegratedRange *range : verticallyIntegratedRanges) {
-            boundaryCondition.ranges[i] = range->toSimulationDataType();
-            i++;
-        }
-    } else {
         boundaryCondition.rangesSize = 0;
         boundaryCondition.conditionFunction = (int) this->function;
         boundaryCondition.constantValue = this->constantValue;
@@ -227,6 +217,16 @@ SimulationDataType::BoundaryCondition HydrodynamicBoundaryCondition::toSimulatio
         
         for (int i = 0; i < this->timeSeriesList.size(); i++) {
             boundaryCondition.timeSeriesList[i] = this->timeSeriesList[i]->toSimulationDataType();
+        }
+    } else {
+        int i = 0;
+        
+        boundaryCondition.rangesSize = this->nonVerticallyIntegratedRanges.size();
+        boundaryCondition.ranges = new SimulationDataType::NonVerticallyIntegratedRange[boundaryCondition.rangesSize];
+        
+        for (NonVerticallyIntegratedRange *range : nonVerticallyIntegratedRanges) {
+            boundaryCondition.ranges[i] = range->toSimulationDataType();
+            i++;
         }
     }
     

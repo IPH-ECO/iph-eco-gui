@@ -1,7 +1,7 @@
 #include <ui/time_series_dialog.h>
 #include "ui_time_series_dialog.h"
 
-#include <domain/vertically_integrated_range.h>
+#include <domain/non_vertically_integrated_range.h>
 
 #include <QTableWidgetItem>
 #include <QProgressDialog>

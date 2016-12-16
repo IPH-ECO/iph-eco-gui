@@ -21,7 +21,7 @@ NonVerticallyIntegratedBoundaryConditionDialog::NonVerticallyIntegratedBoundaryC
         ui->edtName->setText(boundaryCondition->getName());
         ui->lblElementIds->setText(boundaryCondition->getObjectIdsStr());
         
-        for (VerticallyIntegratedRange *range : currentBoundaryCondition->getVerticallyIntegratedRanges()) {
+        for (NonVerticallyIntegratedRange *range : currentBoundaryCondition->getNonVerticallyIntegratedRanges()) {
             QTableWidgetItem *rangeItem = new QTableWidgetItem();
             
             rangeItem->setData(Qt::UserRole, qVariantFromValue((void*) range));
@@ -73,7 +73,7 @@ NonVerticallyIntegratedBoundaryConditionDialog::NonVerticallyIntegratedBoundaryC
 }
 
 NonVerticallyIntegratedBoundaryConditionDialog::~NonVerticallyIntegratedBoundaryConditionDialog() {
-    for (VerticallyIntegratedRange *unsavedRange : unsavedRanges) {
+    for (NonVerticallyIntegratedRange *unsavedRange : unsavedRanges) {
         delete unsavedRange;
     }
     
@@ -93,7 +93,7 @@ void NonVerticallyIntegratedBoundaryConditionDialog::accept() {
     
     for (int i = 0; i < ui->tblRanges->rowCount(); i++) {
         QComboBox *cbxFunction = static_cast<QComboBox*>(ui->tblRanges->cellWidget(i, 2));
-        VerticallyIntegratedRange *range = static_cast<VerticallyIntegratedRange*>(ui->tblRanges->verticalHeaderItem(i)->data(Qt::UserRole).value<void*>());
+        NonVerticallyIntegratedRange *range = static_cast<NonVerticallyIntegratedRange*>(ui->tblRanges->verticalHeaderItem(i)->data(Qt::UserRole).value<void*>());
         
         range->setMinimumElevation(ui->tblRanges->item(i, 0)->text().toDouble());
         range->setMaximumElevation(ui->tblRanges->item(i, 1)->text().toDouble());
@@ -110,7 +110,7 @@ void NonVerticallyIntegratedBoundaryConditionDialog::accept() {
             range->setFunction(BoundaryConditionFunction::TIME_SERIES);
         }
         
-        currentBoundaryCondition->addVerticallyIntegratedRange(range);
+        currentBoundaryCondition->addNonVerticallyIntegratedRange(range);
         unsavedRanges.remove(range);
     }
     
@@ -203,7 +203,7 @@ bool NonVerticallyIntegratedBoundaryConditionDialog::isValid() {
 
 void NonVerticallyIntegratedBoundaryConditionDialog::on_btnAddRange_clicked() {
     int rowCount = ui->tblRanges->rowCount();
-    VerticallyIntegratedRange *range = new VerticallyIntegratedRange();
+    NonVerticallyIntegratedRange *range = new NonVerticallyIntegratedRange();
     QTableWidgetItem *rangeItem = new QTableWidgetItem();
     
     rangeItem->setData(Qt::UserRole, qVariantFromValue((void*) range));
@@ -266,7 +266,7 @@ void NonVerticallyIntegratedBoundaryConditionDialog::onCbxFunctionCurrentTextCha
 void NonVerticallyIntegratedBoundaryConditionDialog::onBtnTimeSeriesClicked() {
     QList<TimeSeries*> *timeSeriesList = static_cast<QList<TimeSeries*>*>(sender()->property("timeSeries").value<void*>());
     TimeSeriesDialog *dialog = new TimeSeriesDialog(this, TimeSeriesType::DEFAULT);
-    dialog->setObjectType(TimeSeriesObjectType::vertically_integrated_range);
+    dialog->setObjectType(TimeSeriesObjectType::VERTICAL_INTEGRATED_RANGE);
     dialog->loadTimeSeriesList(timeSeriesList);
     int exitCode = dialog->exec();
     

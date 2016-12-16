@@ -47,7 +47,7 @@ public:
     QString getTypeLabel() const;
     QString getFunctionLabel() const;
     bool isTimeSeriesChanged() const;
-    void setTimeSeriesChanged(bool timeSeriesChanged);
+    void setTimeSeriesChanged(const bool &timeSeriesChanged);
 };
 
 #endif // BOUNDARY_CONDITION_H

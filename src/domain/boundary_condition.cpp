@@ -91,7 +91,7 @@ bool BoundaryCondition::isTimeSeriesChanged() const {
     return timeSeriesChanged;
 }
 
-void BoundaryCondition::setTimeSeriesChanged(bool timeSeriesChanged) {
+void BoundaryCondition::setTimeSeriesChanged(const bool &timeSeriesChanged) {
     this->timeSeriesChanged = timeSeriesChanged;
 }
 

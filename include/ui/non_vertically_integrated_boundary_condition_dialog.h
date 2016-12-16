@@ -13,7 +13,7 @@ class NonVerticallyIntegratedBoundaryConditionDialog : public HydrodynamicBounda
     Q_OBJECT
 private:
     Ui::NonVerticallyIntegratedBoundaryConditionDialog *ui;
-    QSet<VerticallyIntegratedRange*> unsavedRanges;
+    QSet<NonVerticallyIntegratedRange*> unsavedRanges;
     
     void accept();
     bool isValid();

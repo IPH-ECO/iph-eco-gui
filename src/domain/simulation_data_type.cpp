@@ -72,10 +72,11 @@ void SimulationDataType::HydrodynamicParameter::destroy() {
     delete name;
 }
 
-SimulationDataType::VerticallyIntegratedRange::VerticallyIntegratedRange() : timeSeriesList(nullptr)
+SimulationDataType::NonVerticallyIntegratedRange::NonVerticallyIntegratedRange() :
+    timeSeriesList(nullptr)
 {}
 
-void SimulationDataType::VerticallyIntegratedRange::destroy() {
+void SimulationDataType::NonVerticallyIntegratedRange::destroy() {
     delete timeSeriesList;
 }
 
