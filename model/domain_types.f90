@@ -47,7 +47,7 @@ module domain_types
         integer(c_long_long) :: verticeIds(2);
     end type
 
-    type, bind(C) :: VerticallyIntegratedRange
+    type, bind(C) :: NonVerticallyIntegratedRange
         real(c_double) :: minimumElevation;
         real(c_double) :: maximumElevation;
         integer(c_int) :: function;
