@@ -1,7 +1,7 @@
 #ifndef NON_VERTICALLY_INTEGRATED_RANGE_H
 #define NON_VERTICALLY_INTEGRATED_RANGE_H
 
-#include "boundary_condition.h"
+#include "time_series.h"
 
 class NonVerticallyIntegratedRange {
 private:

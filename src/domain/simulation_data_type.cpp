@@ -247,7 +247,6 @@ void SimulationDataType::Simulation::destroy() {
         delete outputParameters;
     }
     
-    
     delete label;
     delete layers;
     delete observations;
@@ -255,7 +254,9 @@ void SimulationDataType::Simulation::destroy() {
     
     // Intel Fortran deallocates automatically
     #if !defined(_WIN32) && !defined(_WIN64)
-    recoveryVariables->destroy();
-    delete recoveryVariables;
+    if (recoveryVariables) {
+        recoveryVariables->destroy();
+        delete recoveryVariables;
+    }
     #endif
 }

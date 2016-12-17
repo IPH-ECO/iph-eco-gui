@@ -3,7 +3,6 @@
 #include <vtkProperty.h>
 
 HydrodynamicBoundaryCondition::HydrodynamicBoundaryCondition() :
-    verticallyIntegrated(false),
     cellColor("#FF0000"),
     selectionActor(vtkSmartPointer<vtkActor>::New()),
     labelsActor(vtkSmartPointer<vtkActor2D>::New())
@@ -15,14 +14,6 @@ HydrodynamicBoundaryCondition::~HydrodynamicBoundaryCondition() {
     for (NonVerticallyIntegratedRange *range : nonVerticallyIntegratedRanges) {
         delete range;
     }
-}
-
-bool HydrodynamicBoundaryCondition::isVerticallyIntegrated() const {
-    return verticallyIntegrated;
-}
-
-void HydrodynamicBoundaryCondition::setVerticallyIntegrated(const bool &verticallyIntegrated) {
-    this->verticallyIntegrated = verticallyIntegrated;
 }
 
 QSet<vtkIdType> HydrodynamicBoundaryCondition::getObjectIds() const {
@@ -113,22 +104,6 @@ QString HydrodynamicBoundaryCondition::getCellColor() const {
 
 void HydrodynamicBoundaryCondition::setCellColor(const QString &cellColor) {
     this->cellColor = cellColor;
-}
-
-QSet<NonVerticallyIntegratedRange*> HydrodynamicBoundaryCondition::getNonVerticallyIntegratedRanges() const {
-    return nonVerticallyIntegratedRanges;
-}
-
-void HydrodynamicBoundaryCondition::setNonVerticallyIntegratedRanges(const QSet<NonVerticallyIntegratedRange*> &nonVerticallyIntegratedRanges) {
-    this->nonVerticallyIntegratedRanges = nonVerticallyIntegratedRanges;
-}
-
-void HydrodynamicBoundaryCondition::addNonVerticallyIntegratedRange(NonVerticallyIntegratedRange *verticallyIntegratedRange) {
-    nonVerticallyIntegratedRanges.insert(verticallyIntegratedRange);
-}
-
-void HydrodynamicBoundaryCondition::removeNonVerticallyIntegratedRange(NonVerticallyIntegratedRange *verticallyIntegratedRange) {
-    nonVerticallyIntegratedRanges.remove(verticallyIntegratedRange);
 }
 
 vtkSmartPointer<vtkActor> HydrodynamicBoundaryCondition::getSelectionActor() const {

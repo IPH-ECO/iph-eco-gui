@@ -4,6 +4,7 @@ BoundaryCondition::BoundaryCondition() :
     id(0),
     type(BoundaryConditionType::WATER_LEVEL),
     function(BoundaryConditionFunction::CONSTANT),
+    verticallyIntegrated(true),
     timeSeriesChanged(false)
 {}
 
@@ -49,6 +50,14 @@ void BoundaryCondition::setFunction(const BoundaryConditionFunction &function) {
     this->function = function;
 }
 
+bool BoundaryCondition::isVerticallyIntegrated() const {
+    return verticallyIntegrated;
+}
+
+void BoundaryCondition::setVerticallyIntegrated(const bool &verticallyIntegrated) {
+    this->verticallyIntegrated = verticallyIntegrated;
+}
+
 double BoundaryCondition::getConstantValue() const {
     return constantValue;
 }
@@ -85,6 +94,22 @@ bool BoundaryCondition::addTimeSeries(TimeSeries *timeSeries) {
     timeSeriesList.append(timeSeries);
 
     return true;
+}
+
+QSet<NonVerticallyIntegratedRange*> BoundaryCondition::getNonVerticallyIntegratedRanges() const {
+    return nonVerticallyIntegratedRanges;
+}
+
+void BoundaryCondition::setNonVerticallyIntegratedRanges(const QSet<NonVerticallyIntegratedRange*> &nonVerticallyIntegratedRanges) {
+    this->nonVerticallyIntegratedRanges = nonVerticallyIntegratedRanges;
+}
+
+void BoundaryCondition::addNonVerticallyIntegratedRange(NonVerticallyIntegratedRange *verticallyIntegratedRange) {
+    nonVerticallyIntegratedRanges.insert(verticallyIntegratedRange);
+}
+
+void BoundaryCondition::removeNonVerticallyIntegratedRange(NonVerticallyIntegratedRange *verticallyIntegratedRange) {
+    nonVerticallyIntegratedRanges.remove(verticallyIntegratedRange);
 }
 
 bool BoundaryCondition::isTimeSeriesChanged() const {

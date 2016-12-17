@@ -2,7 +2,6 @@
 #define HYDRODYNAMIC_BOUNDARY_CONDITION_H
 
 #include "boundary_condition.h"
-#include "non_vertically_integrated_range.h"
 
 #include <vtkSmartPointer.h>
 #include <vtkIdTypeArray.h>
@@ -13,10 +12,8 @@
 class HydrodynamicBoundaryCondition : public BoundaryCondition {
     Q_OBJECT
 private:
-    bool verticallyIntegrated;
     QSet<vtkIdType> objectIds;
     QString cellColor;
-    QSet<NonVerticallyIntegratedRange*> nonVerticallyIntegratedRanges;
     
     // Transient attributes
     vtkSmartPointer<vtkActor> selectionActor;
@@ -26,8 +23,6 @@ public:
     HydrodynamicBoundaryCondition();
     ~HydrodynamicBoundaryCondition();
 
-    bool isVerticallyIntegrated() const;
-    void setVerticallyIntegrated(const bool &verticallyIntegrated);
     QSet<vtkIdType> getObjectIds() const;
     vtkSmartPointer<vtkIdTypeArray> getVTKObjectIds() const;
     QString getVTKObjectsArrayName() const;
@@ -40,10 +35,6 @@ public:
     void clearObjectIds();
     QString getCellColor() const;
     void setCellColor(const QString &cellColor);
-    QSet<NonVerticallyIntegratedRange*> getNonVerticallyIntegratedRanges() const;
-    void setNonVerticallyIntegratedRanges(const QSet<NonVerticallyIntegratedRange*> &nonVerticallyIntegratedRanges);
-    void addNonVerticallyIntegratedRange(NonVerticallyIntegratedRange *nonVerticallyIntegratedRanges);
-    void removeNonVerticallyIntegratedRange(NonVerticallyIntegratedRange *nonVerticallyIntegratedRanges);
     vtkSmartPointer<vtkActor> getSelectionActor() const;
     void setSelectionActor(vtkSmartPointer<vtkActor> selectionActor);
     vtkSmartPointer<vtkActor2D> getLabelsActor() const;

@@ -4,6 +4,7 @@
 #include "simulation_data_type.h"
 #include "time_series.h"
 #include "mesh.h"
+#include "non_vertically_integrated_range.h"
 
 enum class BoundaryConditionType { WATER_LEVEL = 1, WATER_FLOW, NORMAL_DEPTH };
 enum class InputModule { HYDRODYNAMIC = 1, WATER_QUALITY };
@@ -15,9 +16,11 @@ protected:
     QString name;
     BoundaryConditionType type;
     BoundaryConditionFunction function;
+    bool verticallyIntegrated;
     double constantValue;
     InputModule inputModule;
     QList<TimeSeries*> timeSeriesList;
+    QSet<NonVerticallyIntegratedRange*> nonVerticallyIntegratedRanges;
     
     // Transient attributes
     bool timeSeriesChanged;
@@ -35,6 +38,8 @@ public:
     void setType(const BoundaryConditionType &type);
     BoundaryConditionFunction getFunction() const;
     void setFunction(const BoundaryConditionFunction &function);
+    bool isVerticallyIntegrated() const;
+    void setVerticallyIntegrated(const bool &verticallyIntegrated);
     double getConstantValue() const;
     void setConstantValue(double constantValue);
     InputModule getInputModule() const;
@@ -43,6 +48,10 @@ public:
     QList<TimeSeries*>* getTimeSeriesListPointer();
     void setTimeSeriesList(const QList<TimeSeries*> &timeSeriesList);
     bool addTimeSeries(TimeSeries *timeSeries);
+    QSet<NonVerticallyIntegratedRange*> getNonVerticallyIntegratedRanges() const;
+    void setNonVerticallyIntegratedRanges(const QSet<NonVerticallyIntegratedRange*> &nonVerticallyIntegratedRanges);
+    void addNonVerticallyIntegratedRange(NonVerticallyIntegratedRange *nonVerticallyIntegratedRanges);
+    void removeNonVerticallyIntegratedRange(NonVerticallyIntegratedRange *nonVerticallyIntegratedRanges);
     QString getObjectTypeLabel() const;
     QString getTypeLabel() const;
     QString getFunctionLabel() const;
