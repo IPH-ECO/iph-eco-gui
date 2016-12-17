@@ -185,16 +185,6 @@ bool WaterQualityBoundaryConditionDialog::isValid() {
         return false;
     }
     
-    if (ui->edtMinimumElevation->isEnabled()) {
-        if (ui->edtMinimumElevation->text().isEmpty() || ui->edtMaximumElevation->text().isEmpty()) {
-            QMessageBox::warning(this, tr("Water Quality Boundary Condition"), tr("Elevation interval can't be blank."));
-            return false;
-        } else if (ui->edtMinimumElevation->text().toDouble() > ui->edtMaximumElevation->text().toDouble()) {
-            QMessageBox::warning(this, tr("Water Quality Boundary Condition"), tr("Invalid elevation interval."));
-            return false;
-        }
-    }
-    
     return true;
 }
 

@@ -21,8 +21,6 @@ class HydrodynamicBoundaryConditionDialog;
 
 class HydrodynamicDataDialog : public AbstractMeshDialog {
     Q_OBJECT
-    
-    friend class HydrodynamicBoundaryConditionDialog;
 private:
     Ui::HydrodynamicDataDialog *ui;
     HydrodynamicDataRepository *hydrodynamicDataRepository;
