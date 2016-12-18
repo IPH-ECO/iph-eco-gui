@@ -4,7 +4,7 @@
 #include <application/iph_application.h>
 #include <domain/project.h>
 #include <ui/water_quality_parameter_dialog.h>
-#include <ui/water_quality_boundary_condition_dialog.h>
+#include <ui/vertically_integrated_water_quality_boundary_condition_dialog.h>
 
 #include <QUrl>
 #include <QLineEdit>
@@ -669,7 +669,7 @@ void WaterQualityDialog::on_btnAddBoundaryCondition_clicked() {
         return;
     }
     
-    WaterQualityBoundaryConditionDialog *boundaryConditionDialog = new WaterQualityBoundaryConditionDialog(this, currentConfiguration, nullptr);
+    VerticallyIntegratedWaterQualityBoundaryConditionDialog *boundaryConditionDialog = new VerticallyIntegratedWaterQualityBoundaryConditionDialog(this, currentConfiguration, nullptr);
     boundaryConditionDialog->exec();
     delete boundaryConditionDialog;
 }
@@ -679,7 +679,7 @@ void WaterQualityDialog::on_btnEditBoundaryCondition_clicked() {
     
     if (currentRow > -1) {
         WaterQualityBoundaryCondition *boundaryCondition = (WaterQualityBoundaryCondition*) ui->tblBoundaryConditions->verticalHeaderItem(currentRow)->data(Qt::UserRole).value<void*>();
-        WaterQualityBoundaryConditionDialog *boundaryConditionDialog = new WaterQualityBoundaryConditionDialog(this, currentConfiguration, boundaryCondition);
+        VerticallyIntegratedWaterQualityBoundaryConditionDialog *boundaryConditionDialog = new VerticallyIntegratedWaterQualityBoundaryConditionDialog(this, currentConfiguration, boundaryCondition);
         boundaryConditionDialog->exec();
         delete boundaryConditionDialog;
     }

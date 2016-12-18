@@ -1,5 +1,5 @@
-#include <ui/water_quality_boundary_condition_dialog.h>
-#include "ui_water_quality_boundary_condition_dialog.h"
+#include <ui/vertically_integrated_water_quality_boundary_condition_dialog.h>
+#include "ui_vertically_integrated_water_quality_boundary_condition_dialog.h"
 
 #include <ui/water_quality_dialog.h>
 #include <ui/time_series_dialog.h>
@@ -8,9 +8,9 @@
 
 #include <QMessageBox>
 
-WaterQualityBoundaryConditionDialog::WaterQualityBoundaryConditionDialog(WaterQualityDialog *parent, WaterQualityConfiguration *configuration, WaterQualityBoundaryCondition *boundaryCondition) :
+VerticallyIntegratedWaterQualityBoundaryConditionDialog::VerticallyIntegratedWaterQualityBoundaryConditionDialog(WaterQualityDialog *parent, WaterQualityConfiguration *configuration, WaterQualityBoundaryCondition *boundaryCondition) :
 	QDialog(parent),
-	ui(new Ui::WaterQualityBoundaryConditionDialog),
+	ui(new Ui::VerticallyIntegratedWaterQualityBoundaryConditionDialog),
 	currentConfiguration(configuration),
 	currentBoundaryCondition(boundaryCondition),
 	isNewBoundaryCondition(boundaryCondition == nullptr)
@@ -91,11 +91,11 @@ WaterQualityBoundaryConditionDialog::WaterQualityBoundaryConditionDialog(WaterQu
     this->timeSeriesList = originalTimeSeriesList;
 }
 
-WaterQualityBoundaryConditionDialog::~WaterQualityBoundaryConditionDialog() {
+VerticallyIntegratedWaterQualityBoundaryConditionDialog::~VerticallyIntegratedWaterQualityBoundaryConditionDialog() {
 	delete ui;
 }
 
-void WaterQualityBoundaryConditionDialog::on_btnTimeSeries_clicked() {
+void VerticallyIntegratedWaterQualityBoundaryConditionDialog::on_btnTimeSeries_clicked() {
     TimeSeriesDialog *timeSeriesDialog = new TimeSeriesDialog(this, TimeSeriesType::DEFAULT);
     timeSeriesDialog->loadTimeSeriesList(&timeSeriesList);
     timeSeriesDialog->setObjectType(TimeSeriesObjectType::BOUNDARY_CONDITION);
@@ -107,12 +107,12 @@ void WaterQualityBoundaryConditionDialog::on_btnTimeSeries_clicked() {
     }
 }
 
-void WaterQualityBoundaryConditionDialog::closeEvent(QCloseEvent *event) {
+void VerticallyIntegratedWaterQualityBoundaryConditionDialog::closeEvent(QCloseEvent *event) {
     undoChanges();
     QDialog::closeEvent(event);
 }
 
-void WaterQualityBoundaryConditionDialog::accept() {
+void VerticallyIntegratedWaterQualityBoundaryConditionDialog::accept() {
     if (!isValid()) {
         return;
     }
@@ -157,12 +157,12 @@ void WaterQualityBoundaryConditionDialog::accept() {
     QDialog::accept();
 }
 
-void WaterQualityBoundaryConditionDialog::reject() {
+void VerticallyIntegratedWaterQualityBoundaryConditionDialog::reject() {
     undoChanges();
     QDialog::reject();
 }
 
-bool WaterQualityBoundaryConditionDialog::isValid() {
+bool VerticallyIntegratedWaterQualityBoundaryConditionDialog::isValid() {
     if (ui->cbxHydroBoundaryCondition->currentIndex() == - 1) {
         QMessageBox::warning(this, tr("Water Quality Boundary Condition"), tr("Hydrodynamic boundary condition can't be empty"));
         return false;
@@ -188,7 +188,7 @@ bool WaterQualityBoundaryConditionDialog::isValid() {
     return true;
 }
 
-void WaterQualityBoundaryConditionDialog::undoChanges() {
+void VerticallyIntegratedWaterQualityBoundaryConditionDialog::undoChanges() {
     if (!isNewBoundaryCondition) {
         currentBoundaryCondition->setTimeSeriesList(originalTimeSeriesList);
     }

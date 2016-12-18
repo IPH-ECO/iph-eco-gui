@@ -12,12 +12,12 @@ namespace Ui {
 	class WaterQualityDialog;
 }
 
-class WaterQualityBoundaryConditionDialog;
+class VerticallyIntegratedWaterQualityBoundaryConditionDialog;
 
 class WaterQualityDialog : public QDialog {
 	Q_OBJECT
     
-    friend class WaterQualityBoundaryConditionDialog;
+    friend class VerticallyIntegratedWaterQualityBoundaryConditionDialog;
 private:
 	Ui::WaterQualityDialog *ui;
 	WaterQualityConfiguration *unsavedConfiguration;
