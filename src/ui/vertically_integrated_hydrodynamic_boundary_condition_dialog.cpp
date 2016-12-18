@@ -1,5 +1,5 @@
-#include <ui/vertically_integrated_boundary_condition_dialog.h>
-#include "ui_vertically_integrated_boundary_condition_dialog.h"
+#include <ui/vertically_integrated_hydrodynamic_boundary_condition_dialog.h>
+#include "ui_vertically_integrated_hydrodynamic_boundary_condition_dialog.h"
 
 #include <ui/hydrodynamic_vtk_widget.h>
 #include <ui/time_series_dialog.h>
@@ -8,9 +8,9 @@
 
 #include <QMessageBox>
 
-VerticallyIntegratedBoundaryConditionDialog::VerticallyIntegratedBoundaryConditionDialog(HydrodynamicConfiguration *configuration, HydrodynamicBoundaryCondition *boundaryCondition) :
+VerticallyIntegratedHydrodynamicBoundaryConditionDialog::VerticallyIntegratedHydrodynamicBoundaryConditionDialog(HydrodynamicConfiguration *configuration, HydrodynamicBoundaryCondition *boundaryCondition) :
     HydrodynamicBoundaryConditionDialog(configuration, boundaryCondition),
-    ui(new Ui::VerticallyIntegratedBoundaryConditionDialog)
+    ui(new Ui::VerticallyIntegratedHydrodynamicBoundaryConditionDialog)
 {
     ui->setupUi(this);
     this->setupBaseUi();
@@ -49,11 +49,11 @@ VerticallyIntegratedBoundaryConditionDialog::VerticallyIntegratedBoundaryConditi
     }
 }
 
-VerticallyIntegratedBoundaryConditionDialog::~VerticallyIntegratedBoundaryConditionDialog() {
+VerticallyIntegratedHydrodynamicBoundaryConditionDialog::~VerticallyIntegratedHydrodynamicBoundaryConditionDialog() {
     delete ui;
 }
 
-void VerticallyIntegratedBoundaryConditionDialog::on_cbxType_currentIndexChanged(const QString &type) {
+void VerticallyIntegratedHydrodynamicBoundaryConditionDialog::on_cbxType_currentIndexChanged(const QString &type) {
     bool isWaterLevel = type == "Water Level";
     QString elementIds = "-";
     
@@ -91,7 +91,7 @@ void VerticallyIntegratedBoundaryConditionDialog::on_cbxType_currentIndexChanged
     }
 }
 
-void VerticallyIntegratedBoundaryConditionDialog::on_btnTimeSeries_clicked() {
+void VerticallyIntegratedHydrodynamicBoundaryConditionDialog::on_btnTimeSeries_clicked() {
     TimeSeriesDialog *timeSeriesDialog = new TimeSeriesDialog(this, TimeSeriesType::DEFAULT);
     timeSeriesDialog->loadTimeSeriesList(&timeSeriesList);
     timeSeriesDialog->setObjectType(TimeSeriesObjectType::BOUNDARY_CONDITION);
@@ -103,7 +103,7 @@ void VerticallyIntegratedBoundaryConditionDialog::on_btnTimeSeries_clicked() {
     }
 }
 
-void VerticallyIntegratedBoundaryConditionDialog::accept() {
+void VerticallyIntegratedHydrodynamicBoundaryConditionDialog::accept() {
     if (!isValid()) {
         return;
     }
@@ -134,12 +134,12 @@ void VerticallyIntegratedBoundaryConditionDialog::accept() {
     HydrodynamicBoundaryConditionDialog::accept();
 }
 
-void VerticallyIntegratedBoundaryConditionDialog::reject() {
+void VerticallyIntegratedHydrodynamicBoundaryConditionDialog::reject() {
     currentBoundaryCondition->setTimeSeriesList(originalTimeSeriesList);
     HydrodynamicBoundaryConditionDialog::reject();
 }
 
-void VerticallyIntegratedBoundaryConditionDialog::closeEvent(QCloseEvent *event) {
+void VerticallyIntegratedHydrodynamicBoundaryConditionDialog::closeEvent(QCloseEvent *event) {
     if (!isNewBoundaryCondition) {
         currentBoundaryCondition->setTimeSeriesList(originalTimeSeriesList);
     }
@@ -147,7 +147,7 @@ void VerticallyIntegratedBoundaryConditionDialog::closeEvent(QCloseEvent *event)
     HydrodynamicBoundaryConditionDialog::closeEvent(event);
 }
 
-bool VerticallyIntegratedBoundaryConditionDialog::isValid() {
+bool VerticallyIntegratedHydrodynamicBoundaryConditionDialog::isValid() {
     if (ui->edtName->text().isEmpty()) {
         QMessageBox::warning(this, tr("Hydrodynamic Boundary Condition"), tr("Please input the boundary condition name."));
         return false;

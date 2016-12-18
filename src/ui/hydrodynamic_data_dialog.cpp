@@ -5,8 +5,8 @@
 #include <domain/unstructured_mesh.h>
 #include <domain/structured_mesh.h>
 #include <domain/hydrodynamic_parameter.h>
-#include <ui/vertically_integrated_boundary_condition_dialog.h>
-#include <ui/non_vertically_integrated_boundary_condition_dialog.h>
+#include <ui/vertically_integrated_hydrodynamic_boundary_condition_dialog.h>
+#include <ui/non_vertically_integrated_hydrodynamic_boundary_condition_dialog.h>
 
 #include <QTreeWidgetItemIterator>
 #include <QColorDialog>
@@ -408,9 +408,9 @@ void HydrodynamicDataDialog::on_trwProcesses_itemChanged(QTreeWidgetItem *item, 
 
 void HydrodynamicDataDialog::on_btnAddBoundaryCondition_clicked() {
     if (QMessageBox::question(this, "Boundary Condition", "Is it vertically integrated?", QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes) == QMessageBox::Yes) {
-        boundaryConditionDialog = new VerticallyIntegratedBoundaryConditionDialog(currentConfiguration, nullptr);
+        boundaryConditionDialog = new VerticallyIntegratedHydrodynamicBoundaryConditionDialog(currentConfiguration, nullptr);
     } else {
-        boundaryConditionDialog = new NonVerticallyIntegratedBoundaryConditionDialog(currentConfiguration, nullptr);
+        boundaryConditionDialog = new NonVerticallyIntegratedHydrodynamicBoundaryConditionDialog(currentConfiguration, nullptr);
     }
     
     connect(boundaryConditionDialog, SIGNAL(boundaryConditionUpdated(HydrodynamicBoundaryCondition*)), this, SLOT(updateBoundaryConditionsTable(HydrodynamicBoundaryCondition*)));
@@ -426,9 +426,9 @@ void HydrodynamicDataDialog::on_btnEditBoundaryCondition_clicked() {
     HydrodynamicBoundaryCondition *boundaryCondition = (HydrodynamicBoundaryCondition*) ui->tblBoundaryConditions->verticalHeaderItem(row)->data(Qt::UserRole).value<void*>();
     
     if (boundaryCondition->isVerticallyIntegrated()) {
-        boundaryConditionDialog = new VerticallyIntegratedBoundaryConditionDialog(currentConfiguration, boundaryCondition);
+        boundaryConditionDialog = new VerticallyIntegratedHydrodynamicBoundaryConditionDialog(currentConfiguration, boundaryCondition);
     } else {
-        boundaryConditionDialog = new NonVerticallyIntegratedBoundaryConditionDialog(currentConfiguration, boundaryCondition);
+        boundaryConditionDialog = new NonVerticallyIntegratedHydrodynamicBoundaryConditionDialog(currentConfiguration, boundaryCondition);
     }
     connect(boundaryConditionDialog, SIGNAL(boundaryConditionUpdated(HydrodynamicBoundaryCondition*)), this, SLOT(updateBoundaryConditionsTable(HydrodynamicBoundaryCondition*)));
     

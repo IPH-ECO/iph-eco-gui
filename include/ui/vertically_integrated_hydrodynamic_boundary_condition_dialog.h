@@ -6,13 +6,13 @@
 #include "hydrodynamic_boundary_condition_dialog.h"
 
 namespace Ui {
-	class VerticallyIntegratedBoundaryConditionDialog;
+	class VerticallyIntegratedHydrodynamicBoundaryConditionDialog;
 }
 
-class VerticallyIntegratedBoundaryConditionDialog : public HydrodynamicBoundaryConditionDialog {
+class VerticallyIntegratedHydrodynamicBoundaryConditionDialog : public HydrodynamicBoundaryConditionDialog {
     Q_OBJECT
 private:
-    Ui::VerticallyIntegratedBoundaryConditionDialog *ui;
+    Ui::VerticallyIntegratedHydrodynamicBoundaryConditionDialog *ui;
     QList<TimeSeries*> originalTimeSeriesList;
     QList<TimeSeries*> timeSeriesList;
     
@@ -21,8 +21,8 @@ private:
     virtual void closeEvent(QCloseEvent *event);
     bool isValid();
 public:
-    explicit VerticallyIntegratedBoundaryConditionDialog(HydrodynamicConfiguration *configuration, HydrodynamicBoundaryCondition *boundaryCondition);
-    virtual ~VerticallyIntegratedBoundaryConditionDialog();
+    explicit VerticallyIntegratedHydrodynamicBoundaryConditionDialog(HydrodynamicConfiguration *configuration, HydrodynamicBoundaryCondition *boundaryCondition);
+    virtual ~VerticallyIntegratedHydrodynamicBoundaryConditionDialog();
 private slots:
 	void on_cbxType_currentIndexChanged(const QString &type);
     void on_btnTimeSeries_clicked();

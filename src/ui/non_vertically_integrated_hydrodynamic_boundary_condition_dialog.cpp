@@ -1,14 +1,14 @@
-#include <ui/non_vertically_integrated_boundary_condition_dialog.h>
-#include "ui_non_vertically_integrated_boundary_condition_dialog.h"
+#include <ui/non_vertically_integrated_hydrodynamic_boundary_condition_dialog.h>
+#include "ui_non_vertically_integrated_hydrodynamic_boundary_condition_dialog.h"
 
 #include <ui/time_series_dialog.h>
 
 #include <QMessageBox>
 #include <vtkCellData.h>
 
-NonVerticallyIntegratedBoundaryConditionDialog::NonVerticallyIntegratedBoundaryConditionDialog(HydrodynamicConfiguration *configuration, HydrodynamicBoundaryCondition *boundaryCondition) :
+NonVerticallyIntegratedHydrodynamicBoundaryConditionDialog::NonVerticallyIntegratedHydrodynamicBoundaryConditionDialog(HydrodynamicConfiguration *configuration, HydrodynamicBoundaryCondition *boundaryCondition) :
     HydrodynamicBoundaryConditionDialog(configuration, boundaryCondition),
-    ui(new Ui::NonVerticallyIntegratedBoundaryConditionDialog)
+    ui(new Ui::NonVerticallyIntegratedHydrodynamicBoundaryConditionDialog)
 {
     ui->setupUi(this);
     this->setupBaseUi();
@@ -72,7 +72,7 @@ NonVerticallyIntegratedBoundaryConditionDialog::NonVerticallyIntegratedBoundaryC
     }
 }
 
-NonVerticallyIntegratedBoundaryConditionDialog::~NonVerticallyIntegratedBoundaryConditionDialog() {
+NonVerticallyIntegratedHydrodynamicBoundaryConditionDialog::~NonVerticallyIntegratedHydrodynamicBoundaryConditionDialog() {
     for (NonVerticallyIntegratedRange *unsavedRange : unsavedRanges) {
         delete unsavedRange;
     }
@@ -80,7 +80,7 @@ NonVerticallyIntegratedBoundaryConditionDialog::~NonVerticallyIntegratedBoundary
     delete ui;
 }
 
-void NonVerticallyIntegratedBoundaryConditionDialog::accept() {
+void NonVerticallyIntegratedHydrodynamicBoundaryConditionDialog::accept() {
     if (!isValid()) {
         return;
     }
@@ -120,7 +120,7 @@ void NonVerticallyIntegratedBoundaryConditionDialog::accept() {
     HydrodynamicBoundaryConditionDialog::accept();
 }
 
-bool NonVerticallyIntegratedBoundaryConditionDialog::isValid() {
+bool NonVerticallyIntegratedHydrodynamicBoundaryConditionDialog::isValid() {
     if (ui->edtName->text().isEmpty()) {
         QMessageBox::warning(this, tr("Hydrodynamic Boundary Condition"), tr("Please input the boundary condition name."));
         return false;
@@ -201,7 +201,7 @@ bool NonVerticallyIntegratedBoundaryConditionDialog::isValid() {
     return true;
 }
 
-void NonVerticallyIntegratedBoundaryConditionDialog::on_btnAddRange_clicked() {
+void NonVerticallyIntegratedHydrodynamicBoundaryConditionDialog::on_btnAddRange_clicked() {
     int rowCount = ui->tblRanges->rowCount();
     NonVerticallyIntegratedRange *range = new NonVerticallyIntegratedRange();
     QTableWidgetItem *rangeItem = new QTableWidgetItem();
@@ -241,7 +241,7 @@ void NonVerticallyIntegratedBoundaryConditionDialog::on_btnAddRange_clicked() {
     ui->tblRanges->setCellWidget(rowCount, 2, cbxFunction);
 }
 
-void NonVerticallyIntegratedBoundaryConditionDialog::on_btnRemoveRange_clicked() {
+void NonVerticallyIntegratedHydrodynamicBoundaryConditionDialog::on_btnRemoveRange_clicked() {
     int currentRow = ui->tblRanges->currentRow();
     
     if (currentRow > -1 && QMessageBox::question(this, "Vertical Integrated Boundary Condition", "Are you sure?") == QMessageBox::Yes) {
@@ -249,7 +249,7 @@ void NonVerticallyIntegratedBoundaryConditionDialog::on_btnRemoveRange_clicked()
     }
 }
 
-void NonVerticallyIntegratedBoundaryConditionDialog::onCbxFunctionCurrentTextChanged(const QString &text) {
+void NonVerticallyIntegratedHydrodynamicBoundaryConditionDialog::onCbxFunctionCurrentTextChanged(const QString &text) {
     QComboBox *cbxFunction = static_cast<QComboBox*>(sender());
     QLineEdit *edtConstant = cbxFunction->itemData(0).value<QLineEdit*>();
     QToolButton *btnTimeSeries = cbxFunction->itemData(1).value<QToolButton*>();
@@ -263,7 +263,7 @@ void NonVerticallyIntegratedBoundaryConditionDialog::onCbxFunctionCurrentTextCha
     }
 }
 
-void NonVerticallyIntegratedBoundaryConditionDialog::onBtnTimeSeriesClicked() {
+void NonVerticallyIntegratedHydrodynamicBoundaryConditionDialog::onBtnTimeSeriesClicked() {
     QList<TimeSeries*> *timeSeriesList = static_cast<QList<TimeSeries*>*>(sender()->property("timeSeries").value<void*>());
     TimeSeriesDialog *dialog = new TimeSeriesDialog(this, TimeSeriesType::DEFAULT);
     dialog->setObjectType(TimeSeriesObjectType::VERTICAL_INTEGRATED_RANGE);
