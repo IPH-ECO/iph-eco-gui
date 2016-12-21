@@ -211,6 +211,30 @@ void ProjectRepository::loadHydrodynamicParameter(HydrodynamicConfiguration *con
     }
 }
 
+template<typename T> void ProjectRepository::loadNonVerticallyIntegratedRanges(T *boundaryCondition) {
+    QSqlQuery query(databaseUtility->getDatabase());
+    
+    query.prepare("select * from non_vertically_integrated_range where boundary_condition_id = " + QString::number(boundaryCondition->getId()));
+    query.exec();
+    
+    while (query.next() && !operationCanceled) {
+        NonVerticallyIntegratedRange *range = new NonVerticallyIntegratedRange();
+        range->setId(query.value("id").toUInt());
+        range->setMinimumElevation(query.value("minimum_elevation").toDouble());
+        range->setMaximumElevation(query.value("maximum_elevation").toDouble());
+        range->setFunction((BoundaryConditionFunction) query.value("function").toInt());
+        if (range->getFunction() == BoundaryConditionFunction::CONSTANT) {
+            range->setValue(query.value("value").toDouble());
+        } else {
+            loadTimeSeries<NonVerticallyIntegratedRange>(range);
+        }
+        
+        boundaryCondition->addNonVerticallyIntegratedRange(range);
+        
+        updateProgressAndProcessEvents();
+    }
+}
+
 void ProjectRepository::loadBoundaryConditions(HydrodynamicConfiguration *configuration) {
     QSqlQuery query(databaseUtility->getDatabase());
     QString configurationId = QString::number(configuration->getId());
@@ -240,30 +264,6 @@ void ProjectRepository::loadBoundaryConditions(HydrodynamicConfiguration *config
         } else {
             loadNonVerticallyIntegratedRanges(boundaryCondition);
         }
-    }
-}
-
-void ProjectRepository::loadNonVerticallyIntegratedRanges(HydrodynamicBoundaryCondition *boundaryCondition) {
-    QSqlQuery query(databaseUtility->getDatabase());
-    
-    query.prepare("select * from non_vertically_integrated_range where boundary_condition_id = " + QString::number(boundaryCondition->getId()));
-    query.exec();
-    
-    while (query.next() && !operationCanceled) {
-        NonVerticallyIntegratedRange *range = new NonVerticallyIntegratedRange();
-        range->setId(query.value("id").toUInt());
-        range->setMinimumElevation(query.value("minimum_elevation").toDouble());
-        range->setMaximumElevation(query.value("maximum_elevation").toDouble());
-        range->setFunction((BoundaryConditionFunction) query.value("function").toInt());
-        if (range->getFunction() == BoundaryConditionFunction::CONSTANT) {
-            range->setValue(query.value("value").toDouble());
-        } else {
-            loadTimeSeries<NonVerticallyIntegratedRange>(range);
-        }
-        
-        boundaryCondition->addNonVerticallyIntegratedRange(range);
-        
-        updateProgressAndProcessEvents();
     }
 }
 
@@ -383,6 +383,7 @@ void ProjectRepository::loadBoundaryConditions(WaterQualityConfiguration *config
         boundaryCondition->setFunction((BoundaryConditionFunction) query.value("function").toInt());
         boundaryCondition->setConstantValue(query.value("constant_value").toDouble());
         boundaryCondition->setInputModule((InputModule) query.value("input_module").toInt());
+        boundaryCondition->setVerticallyIntegrated(query.value("vertically_integrated").toBool());
         
         for (HydrodynamicBoundaryCondition *hydroBoundaryCondition : hydrodynamicConfiguration->getBoundaryConditions()) {
             if (hydroBoundaryCondition->getId() == hydroBoundaryConditionId) {
@@ -395,7 +396,11 @@ void ProjectRepository::loadBoundaryConditions(WaterQualityConfiguration *config
         
         updateProgressAndProcessEvents();
         
-        loadTimeSeries<BoundaryCondition>(boundaryCondition);
+        if (boundaryCondition->isVerticallyIntegrated()) {
+            loadTimeSeries<BoundaryCondition>(boundaryCondition);
+        } else {
+            loadNonVerticallyIntegratedRanges(boundaryCondition);
+        }
     }
 }
 
@@ -964,19 +969,14 @@ void ProjectRepository::saveBoundaryConditions(HydrodynamicConfiguration *config
         if (boundaryCondition->isVerticallyIntegrated()) {
             saveTimeSeries(boundaryCondition);
         } else {
-            saveNonVerticallyIntegratedRanges(boundaryCondition);
+            saveNonVerticallyIntegratedRanges<HydrodynamicBoundaryCondition>(boundaryCondition);
         }
     }
     
-    QStringList queries;
+    QString deleteSql = "delete from boundary_condition where id not in (" + boundaryConditionIds.join(",") + ") and configuration_id = " + QString::number(configuration->getId()) + " and input_module = " + QString::number((int) InputModule::HYDRODYNAMIC);
     
-    queries << "delete from boundary_condition where id not in (" + boundaryConditionIds.join(",") + ") and configuration_id = " + QString::number(configuration->getId()) + " and input_module = " + QString::number((int) InputModule::HYDRODYNAMIC);
-    queries << "delete from non_vertically_integrated_range where boundary_condition_id not in (" + boundaryConditionIds.join(",") + ")";
-    
-    for (QString sql : queries) {
-        query.prepare(sql);
-        query.exec();
-    }
+    query.prepare(deleteSql);
+    query.exec();
 }
 
 template<typename T> void ProjectRepository::saveTimeSeries(T *t) {
@@ -1176,8 +1176,9 @@ void ProjectRepository::saveBoundaryConditions(WaterQualityConfiguration *config
             query.prepare("update boundary_condition set name = :n, function = :f, constant_value = :c, hydro_boundary_condition_id = :b where id = :i");
             query.bindValue(":i", boundaryCondition->getId());
         } else {
-            query.prepare("insert into boundary_condition (name, function, constant_value, input_module, hydro_boundary_condition_id, configuration_id) values (:n, :f, :c, :i, :b, :ci)");
+            query.prepare("insert into boundary_condition (name, vertically_integrated, function, constant_value, input_module, hydro_boundary_condition_id, configuration_id) values (:n, :v, :f, :c, :i, :b, :ci)");
             query.bindValue(":i", (int) InputModule::WATER_QUALITY);
+            query.bindValue(":v", boundaryCondition->isVerticallyIntegrated());
             query.bindValue(":ci", configuration->getId());
         }
         
@@ -1198,14 +1199,18 @@ void ProjectRepository::saveBoundaryConditions(WaterQualityConfiguration *config
         
         boundaryConditionIds.append(QString::number(boundaryCondition->getId()));
         
-        saveTimeSeries(boundaryCondition);
+        if (boundaryCondition->isVerticallyIntegrated()) {
+            saveTimeSeries(boundaryCondition);
+        } else {
+            saveNonVerticallyIntegratedRanges<WaterQualityBoundaryCondition>(boundaryCondition);
+        }
     }
     
     query.prepare("delete from boundary_condition where id not in (" + boundaryConditionIds.join(",") + ") and configuration_id = " + QString::number(configuration->getId()) + " and input_module = " + QString::number((int) InputModule::WATER_QUALITY));
     query.exec();
 }
 
-void ProjectRepository::saveNonVerticallyIntegratedRanges(HydrodynamicBoundaryCondition *boundaryCondition) {
+template<typename T> void ProjectRepository::saveNonVerticallyIntegratedRanges(T *boundaryCondition) {
     QSqlQuery query(databaseUtility->getDatabase());
     QSet<NonVerticallyIntegratedRange*> ranges = boundaryCondition->getNonVerticallyIntegratedRanges();
     QStringList rangeIds;

@@ -124,35 +124,14 @@ void VerticallyIntegratedWaterQualityBoundaryConditionDialog::accept() {
     currentBoundaryCondition->setFunction(ui->rdoConstant->isChecked() ? BoundaryConditionFunction::CONSTANT : BoundaryConditionFunction::TIME_SERIES);
     currentBoundaryCondition->setConstantValue(ui->edtConstant->text().toDouble());
     currentBoundaryCondition->setInputModule(InputModule::WATER_QUALITY);
+    currentBoundaryCondition->setVerticallyIntegrated(true);
     
     if (ui->rdoTimeSeries->isChecked()) {
         currentBoundaryCondition->setTimeSeriesList(timeSeriesList);
     }
     
-    /*currentBoundaryCondition->setVerticallyIntegratedOutflow(ui->chkVerticallyIntegratedFlow->isChecked());
-    currentBoundaryCondition->setMinimumElevation(ui->edtMinimumElevation->text().toDouble());
-    currentBoundaryCondition->setMaximumElevation(ui->edtMaximumElevation->text().toDouble());*/
-    
     currentConfiguration->addBoundaryCondition(currentBoundaryCondition);
-    
-    WaterQualityDialog *waterQualityDialog = static_cast<WaterQualityDialog*>(parentWidget());
-    QTableWidget *tableWidget = waterQualityDialog->ui->tblBoundaryConditions;
-    int row = -1;
-    
-    if (isNewBoundaryCondition) {
-        QTableWidgetItem *headerItem = new QTableWidgetItem();
-        
-        row = tableWidget->rowCount();
-        tableWidget->insertRow(row);
-        headerItem->setData(Qt::UserRole, qVariantFromValue((void*) currentBoundaryCondition));
-        tableWidget->setVerticalHeaderItem(row, headerItem);
-    } else {
-        row = tableWidget->currentRow();
-    }
-    
-    tableWidget->setItem(row, 0, new QTableWidgetItem(currentBoundaryCondition->getHydrodynamicBoundaryCondition()->getName()));
-    tableWidget->setItem(row, 1, new QTableWidgetItem(currentBoundaryCondition->getName()));
-    tableWidget->setItem(row, 2, new QTableWidgetItem(currentBoundaryCondition->getFunctionLabel()));
+    emit boundaryConditionUpdated(currentBoundaryCondition);
     
     QDialog::accept();
 }

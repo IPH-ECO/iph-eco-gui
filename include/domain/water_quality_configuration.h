@@ -6,7 +6,8 @@
 #include "water_quality_boundary_condition.h"
 #include "food_matrix_value.h"
 
-class WaterQualityConfiguration {
+class WaterQualityConfiguration : QObject {
+    Q_OBJECT
 private:
     uint id;
     QString name;

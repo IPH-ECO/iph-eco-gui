@@ -5,6 +5,7 @@
 #include <domain/project.h>
 #include <ui/water_quality_parameter_dialog.h>
 #include <ui/vertically_integrated_water_quality_boundary_condition_dialog.h>
+#include <ui/non_vertically_integrated_water_quality_boundary_condition_dialog.h>
 
 #include <QUrl>
 #include <QLineEdit>
@@ -669,8 +670,18 @@ void WaterQualityDialog::on_btnAddBoundaryCondition_clicked() {
         return;
     }
     
-    VerticallyIntegratedWaterQualityBoundaryConditionDialog *boundaryConditionDialog = new VerticallyIntegratedWaterQualityBoundaryConditionDialog(this, currentConfiguration, nullptr);
+    QDialog *boundaryConditionDialog;
+    
+    if (QMessageBox::question(this, "Boundary Condition", "Is it vertically integrated?", QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes) == QMessageBox::Yes) {
+        boundaryConditionDialog = new VerticallyIntegratedWaterQualityBoundaryConditionDialog(this, currentConfiguration, nullptr);
+    } else {
+        boundaryConditionDialog = new NonVerticallyIntegratedWaterQualityBoundaryConditionDialog(this, currentConfiguration, nullptr);
+    }
+    
+    connect(boundaryConditionDialog, SIGNAL(boundaryConditionUpdated(WaterQualityBoundaryCondition*)), this, SLOT(updateBoundaryConditionsTable(WaterQualityBoundaryCondition*)));
+    
     boundaryConditionDialog->exec();
+    
     delete boundaryConditionDialog;
 }
 
@@ -679,7 +690,16 @@ void WaterQualityDialog::on_btnEditBoundaryCondition_clicked() {
     
     if (currentRow > -1) {
         WaterQualityBoundaryCondition *boundaryCondition = (WaterQualityBoundaryCondition*) ui->tblBoundaryConditions->verticalHeaderItem(currentRow)->data(Qt::UserRole).value<void*>();
-        VerticallyIntegratedWaterQualityBoundaryConditionDialog *boundaryConditionDialog = new VerticallyIntegratedWaterQualityBoundaryConditionDialog(this, currentConfiguration, boundaryCondition);
+        QDialog *boundaryConditionDialog = nullptr;
+        
+        if (boundaryCondition->isVerticallyIntegrated()) {
+            boundaryConditionDialog = new VerticallyIntegratedWaterQualityBoundaryConditionDialog(this, currentConfiguration, boundaryCondition);
+        } else {
+            boundaryConditionDialog = new NonVerticallyIntegratedWaterQualityBoundaryConditionDialog(this, currentConfiguration, boundaryCondition);
+        }
+        
+        connect(boundaryConditionDialog, SIGNAL(boundaryConditionUpdated(WaterQualityBoundaryCondition*)), this, SLOT(updateBoundaryConditionsTable(WaterQualityBoundaryCondition*)));
+        
         boundaryConditionDialog->exec();
         delete boundaryConditionDialog;
     }
@@ -701,4 +721,30 @@ void WaterQualityDialog::updateInlineValue(const QString &text) {
     QString parameterName = QObject::sender()->objectName();
     
     currentConfiguration->getParameter(parameterName, section)->setValue(text.toDouble());
+}
+
+void WaterQualityDialog::updateBoundaryConditionsTable(WaterQualityBoundaryCondition *boundaryCondition) {
+    int row = -1;
+    
+    for (int i = 0; i < ui->tblBoundaryConditions->rowCount(); i++) {
+        BoundaryCondition *existingBoundaryCondition = static_cast<BoundaryCondition*>(ui->tblBoundaryConditions->verticalHeaderItem(i)->data(Qt::UserRole).value<void*>());
+        
+        if (existingBoundaryCondition == boundaryCondition) {
+            row = i;
+            break;
+        }
+    }
+    
+    if (row == -1) {
+        QTableWidgetItem *item = new QTableWidgetItem();
+        row = ui->tblBoundaryConditions->rowCount();
+        
+        item->setData(Qt::UserRole, qVariantFromValue((void*) boundaryCondition));
+        ui->tblBoundaryConditions->insertRow(row);
+        ui->tblBoundaryConditions->setVerticalHeaderItem(row, item);
+    }
+    
+    ui->tblBoundaryConditions->setItem(row, 0, new QTableWidgetItem(boundaryCondition->getHydrodynamicBoundaryCondition()->getName()));
+    ui->tblBoundaryConditions->setItem(row, 1, new QTableWidgetItem(boundaryCondition->getName()));
+    ui->tblBoundaryConditions->setItem(row, 2, new QTableWidgetItem(boundaryCondition->getFunctionLabel()));
 }

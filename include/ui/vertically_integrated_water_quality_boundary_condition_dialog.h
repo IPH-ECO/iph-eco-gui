@@ -34,6 +34,9 @@ public:
     
 private slots:
     void on_btnTimeSeries_clicked();
+    
+signals:
+    void boundaryConditionUpdated(WaterQualityBoundaryCondition *boundaryCondition);
 };
 
 #endif // VERTICALLY_INTEGRATED_WATER_QUALITY_BOUNDARY_CONDITION_DIALOG_H
