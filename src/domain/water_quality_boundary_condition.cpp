@@ -18,13 +18,27 @@ SimulationDataType::BoundaryCondition WaterQualityBoundaryCondition::toSimulatio
     
     boundaryCondition.inputModule = (int) this->inputModule;
     strncpy(boundaryCondition.conditionType, conditionType.constData(), conditionType.size());
-    boundaryCondition.conditionFunction = (int) this->function;
-    boundaryCondition.constantValue = this->constantValue;
-    boundaryCondition.timeSeriesListSize = this->timeSeriesList.size();
-    boundaryCondition.timeSeriesList = new SimulationDataType::TimeSeries[boundaryCondition.timeSeriesListSize];
     
-    for (vtkIdType i = 0; i < this->timeSeriesList.size(); i++) {
-        boundaryCondition.timeSeriesList[i] = this->timeSeriesList[i]->toSimulationDataType();
+    if (this->verticallyIntegrated) {
+        boundaryCondition.rangesSize = 0;
+        boundaryCondition.conditionFunction = (int) this->function;
+        boundaryCondition.constantValue = this->constantValue;
+        boundaryCondition.timeSeriesListSize = this->timeSeriesList.size();
+        boundaryCondition.timeSeriesList = new SimulationDataType::TimeSeries[boundaryCondition.timeSeriesListSize];
+        
+        for (int i = 0; i < this->timeSeriesList.size(); i++) {
+            boundaryCondition.timeSeriesList[i] = this->timeSeriesList[i]->toSimulationDataType();
+        }
+    } else {
+        int i = 0;
+        
+        boundaryCondition.rangesSize = this->nonVerticallyIntegratedRanges.size();
+        boundaryCondition.ranges = new SimulationDataType::NonVerticallyIntegratedRange[boundaryCondition.rangesSize];
+        
+        for (NonVerticallyIntegratedRange *range : nonVerticallyIntegratedRanges) {
+            boundaryCondition.ranges[i] = range->toSimulationDataType();
+            i++;
+        }
     }
     
     return boundaryCondition;
