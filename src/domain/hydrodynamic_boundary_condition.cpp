@@ -182,6 +182,7 @@ SimulationDataType::BoundaryCondition HydrodynamicBoundaryCondition::toSimulatio
     }
     
     strncpy(boundaryCondition.conditionType, conditionType.constData(), conditionType.size());
+    boundaryCondition.verticallyIntegrated = this->verticallyIntegrated;
     
     if (this->verticallyIntegrated) {
         boundaryCondition.rangesSize = 0;
