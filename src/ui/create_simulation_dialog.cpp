@@ -324,12 +324,15 @@ void CreateSimulationDialog::on_btnBrowseOutputDirectory_clicked() {
 void CreateSimulationDialog::on_cbxTemplate_currentTextChanged(const QString &simulationLabel) {
     Project *project = IPHApplication::getCurrentProject();
     Simulation *simulation = project->getSimulation(simulationLabel);
+    HydrodynamicConfiguration *hydrodynamicConfiguration = simulation->getHydrodynamicConfiguration();
     
     ui->cbxType->setCurrentText(Simulation::getSimulationTypesMap().value(simulation->getSimulationType()));
     ui->edtInitialTime->setDateTime(simulation->getInitialTimeAsDateTime());
     ui->edtPeriod->setText(QString::number(simulation->getPeriod()));
     ui->edtStepTime->setText(QString::number(simulation->getStepTime()));
-    ui->cbxHydrodynamic->setCurrentText(simulation->getHydrodynamicConfiguration()->getName());
+    if (hydrodynamicConfiguration) {
+        ui->cbxHydrodynamic->setCurrentText(hydrodynamicConfiguration->getName());
+    }
     ui->cbxMeteorological->setCurrentText(simulation->getMeteorologicalConfiguration()->getName());
     ui->edtMinLimit->setText(QString::number(simulation->getMinimumVerticalLimit()));
     ui->edtMaxLimit->setText(QString::number(simulation->getMaximumVerticalLimit()));
