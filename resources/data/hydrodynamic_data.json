@@ -155,7 +155,7 @@
             "name": "windDragConstant",
             "parentName": "iWindDrag",
             "rangeMaximum": 0.001,
-            "rangeMinimum": 1e-10
+            "rangeMinimum": 0
         },
         {
             "defaultValue": 0,
