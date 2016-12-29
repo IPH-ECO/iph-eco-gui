@@ -18,6 +18,7 @@ SimulationDataType::BoundaryCondition WaterQualityBoundaryCondition::toSimulatio
     
     boundaryCondition.inputModule = (int) this->inputModule;
     strncpy(boundaryCondition.conditionType, conditionType.constData(), conditionType.size());
+    boundaryCondition.verticallyIntegrated = this->verticallyIntegrated;
     
     if (this->verticallyIntegrated) {
         boundaryCondition.rangesSize = 0;

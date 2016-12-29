@@ -1491,7 +1491,7 @@ void ProjectRepository::saveSimulation(Simulation *simulation) {
         query.prepare("update simulation set label = :l, observations = :o where id = :i");
         query.bindValue(":i", simulation->getId());
     } else {
-        query.prepare("insert into simulation (label, simulation_type, start_time, initial_time, period, step_time, minimum_vertical_limit, maximum_vertical_limit, layers, observations, output_time_interval, output_directory, autosave_time_interval, output_parameters, status, recovery_variables, hydrodynamic_configuration_id, meteorological_configuration_id) values (:l, :t, :st1, :it, :p, :st2, :min, :max, :la, :o, :oti, :od, :ati, :op, :s, :r, :h, :m)");
+        query.prepare("insert into simulation (label, simulation_type, start_time, initial_time, period, step_time, minimum_vertical_limit, maximum_vertical_limit, layers, observations, output_time_interval, output_directory, autosave_time_interval, output_parameters, status, recovery_variables, hydrodynamic_configuration_id, water_quality_configuration_id, meteorological_configuration_id) values (:l, :t, :st1, :it, :p, :st2, :min, :max, :la, :o, :oti, :od, :ati, :op, :s, :r, :h, :wq, :m)");
     }
     
     query.bindValue(":l", simulation->getLabel());
@@ -1511,6 +1511,7 @@ void ProjectRepository::saveSimulation(Simulation *simulation) {
     query.bindValue(":s", (int) simulation->getStatus());
     query.bindValue(":r", simulation->getRecoveryVariables());
     query.bindValue(":h", simulation->getHydrodynamicConfiguration()->getId());
+    query.bindValue(":wq", simulation->getWaterQualityConfiguration() ? simulation->getWaterQualityConfiguration()->getId() : QVariant());
     query.bindValue(":m", simulation->getMeteorologicalConfiguration()->getId());
     
     if (!query.exec()) {
