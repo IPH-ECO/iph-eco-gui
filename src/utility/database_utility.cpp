@@ -242,6 +242,7 @@ void DatabaseUtility::createApplicationTables() {
         "progress integer default 0, " \
         "recovery_variables text, " \
         "hydrodynamic_configuration_id integer, " \
+        "water_quality_configuration_id integer, " \
         "meteorological_configuration_id integer" \
     ")";
     
