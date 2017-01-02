@@ -13,7 +13,7 @@ public:
     HydrodynamicBoundaryCondition* getHydrodynamicBoundaryCondition() const;
     void setHydrodynamicBoundaryCondition(HydrodynamicBoundaryCondition *hydrodynamicBoundaryCondition);
     
-    SimulationDataType::BoundaryCondition toSimulationDataType() const;
+    SimulationDataType::BoundaryCondition toSimulationDataType(Mesh *mesh) const;
 };
 
 #endif // WATER_QUALITY_BOUNDARY_CONDITION_H

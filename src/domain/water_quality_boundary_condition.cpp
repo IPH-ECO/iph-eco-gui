@@ -12,13 +12,14 @@ void WaterQualityBoundaryCondition::setHydrodynamicBoundaryCondition(Hydrodynami
 	this->hydrodynamicBoundaryCondition = hydrodynamicBoundaryCondition;
 }
 
-SimulationDataType::BoundaryCondition WaterQualityBoundaryCondition::toSimulationDataType() const {
+SimulationDataType::BoundaryCondition WaterQualityBoundaryCondition::toSimulationDataType(Mesh *mesh) const {
     SimulationDataType::BoundaryCondition boundaryCondition;
     QByteArray conditionType = this->name.toLocal8Bit();
     
     boundaryCondition.inputModule = (int) this->inputModule;
     strncpy(boundaryCondition.conditionType, conditionType.constData(), conditionType.size());
     boundaryCondition.verticallyIntegrated = this->verticallyIntegrated;
+    *boundaryCondition.hydrodynamicBoundaryCondition = this->hydrodynamicBoundaryCondition->toSimulationDataType(mesh);
     
     if (this->verticallyIntegrated) {
         boundaryCondition.rangesSize = 0;

@@ -171,6 +171,7 @@ bool WaterQualityConfiguration::isLoaded() const {
 SimulationDataType::WaterQualityConfiguration* WaterQualityConfiguration::toSimulationDataType() const {
     SimulationDataType::WaterQualityConfiguration *configuration = new SimulationDataType::WaterQualityConfiguration();
     QList<WaterQualityParameter*> persistableParameters = this->getParameters(true);
+    Mesh *mesh = this->hydrodynamicConfiguration->getGridDataConfiguration()->getMesh();
     int i = 0;
     
     configuration->numberOfParameters = persistableParameters.size();
@@ -203,7 +204,7 @@ SimulationDataType::WaterQualityConfiguration* WaterQualityConfiguration::toSimu
     i = 0;
     
     for (WaterQualityBoundaryCondition *boundaryCondition : this->boundaryConditions) {
-        configuration->boundaryConditions[i] = boundaryCondition->toSimulationDataType();
+        configuration->boundaryConditions[i] = boundaryCondition->toSimulationDataType(mesh);
         i++;
     }
     
