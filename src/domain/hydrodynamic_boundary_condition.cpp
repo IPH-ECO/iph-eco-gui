@@ -128,7 +128,6 @@ SimulationDataType::BoundaryCondition HydrodynamicBoundaryCondition::toSimulatio
     QByteArray conditionType = "waterFlow";
     int cellCount = 0;
     
-    boundaryCondition.inputModule = (int) this->inputModule;
     boundaryCondition.cellsLength = this->objectIds.size();
     boundaryCondition.cells = new SimulationDataType::HydrodynamicBoundaryConditionCell[boundaryCondition.cellsLength];
     

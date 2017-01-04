@@ -85,17 +85,12 @@ namespace SimulationDataType {
         };
         
         struct BoundaryCondition {
-            int inputModule;
             char conditionType[DEFAULT_STRING_LEN];
             bool verticallyIntegrated;
             int rangesSize;
             SimulationDataType::NonVerticallyIntegratedRange *ranges;
-            // HYDRODYNAMIC
             int cellsLength;
             SimulationDataType::HydrodynamicBoundaryConditionCell *cells;
-            // WATER_QUALITY
-            SimulationDataType::BoundaryCondition *hydrodynamicBoundaryCondition;
-            //
             int conditionFunction;
             double constantValue;
             int timeSeriesListSize;

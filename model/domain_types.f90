@@ -57,17 +57,12 @@ module domain_types
     end type
 
     type, bind(C) :: BoundaryCondition
-        integer(c_int) :: inputModule ! HYDRODYNAMIC = 1, WATER_QUALITY = 2
         character(kind = c_char, len = 255) :: conditionType ! waterFlow, waterLevel or normalDepth for Hydrodynamic module
         logical(c_bool) :: verticallyIntegrated
         integer(c_int) :: rangesSize
         type(c_ptr) :: ranges
-        ! For HYDRODYNAMIC
         integer(c_int) :: cellsLength
         type(c_ptr) :: cells
-        ! For WATER_QUALITY
-        type(c_ptr) :: hydrodynamicBoundaryCondition
-        !
         integer(c_int) :: conditionFunction
         real(c_double) :: constantValue
         integer(c_int) :: timeSeriesListSize
