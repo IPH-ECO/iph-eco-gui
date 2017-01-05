@@ -20,12 +20,36 @@ SimulationDataType::BoundaryCondition WaterQualityBoundaryCondition::toSimulatio
     strncpy(boundaryCondition.conditionType, conditionType.constData(), conditionType.size());
     boundaryCondition.verticallyIntegrated = this->verticallyIntegrated;
     
+    if (this->verticallyIntegrated) {
+        boundaryCondition.rangesSize = 0;
+        boundaryCondition.conditionFunction = (int) this->function;
+        boundaryCondition.constantValue = this->constantValue;
+        boundaryCondition.timeSeriesListSize = this->timeSeriesList.size();
+        boundaryCondition.timeSeriesList = new SimulationDataType::TimeSeries[boundaryCondition.timeSeriesListSize];
+        
+        for (int i = 0; i < this->timeSeriesList.size(); i++) {
+            boundaryCondition.timeSeriesList[i] = this->timeSeriesList[i]->toSimulationDataType();
+        }
+    } else {
+        int i = 0;
+        
+        boundaryCondition.rangesSize = this->nonVerticallyIntegratedRanges.size();
+        boundaryCondition.ranges = new SimulationDataType::NonVerticallyIntegratedRange[boundaryCondition.rangesSize];
+        
+        for (NonVerticallyIntegratedRange *range : nonVerticallyIntegratedRanges) {
+            boundaryCondition.ranges[i] = range->toSimulationDataType();
+            i++;
+        }
+    }
+    
+    // TODO: code duplicated. Create a method in HydrodynamicBoundaryCondition class.
+    
     int cellCount = 0;
     
     boundaryCondition.cellsLength = this->hydrodynamicBoundaryCondition->getObjectIds().size();
     boundaryCondition.cells = new SimulationDataType::HydrodynamicBoundaryConditionCell[boundaryCondition.cellsLength];
     
-    if (this->type == BoundaryConditionType::WATER_LEVEL) {
+    if (this->hydrodynamicBoundaryCondition->getType() == BoundaryConditionType::WATER_LEVEL) {
         conditionType = "waterLevel";
         
         for (vtkIdType objectId : this->hydrodynamicBoundaryCondition->getObjectIds()) {
@@ -69,30 +93,8 @@ SimulationDataType::BoundaryCondition WaterQualityBoundaryCondition::toSimulatio
             cellCount++;
         }
         
-        if (this->type == BoundaryConditionType::NORMAL_DEPTH) {
+        if (this->hydrodynamicBoundaryCondition->getType() == BoundaryConditionType::NORMAL_DEPTH) {
             conditionType = "normalDepth";
-        }
-    }
-    
-    if (this->verticallyIntegrated) {
-        boundaryCondition.rangesSize = 0;
-        boundaryCondition.conditionFunction = (int) this->function;
-        boundaryCondition.constantValue = this->constantValue;
-        boundaryCondition.timeSeriesListSize = this->timeSeriesList.size();
-        boundaryCondition.timeSeriesList = new SimulationDataType::TimeSeries[boundaryCondition.timeSeriesListSize];
-        
-        for (int i = 0; i < this->timeSeriesList.size(); i++) {
-            boundaryCondition.timeSeriesList[i] = this->timeSeriesList[i]->toSimulationDataType();
-        }
-    } else {
-        int i = 0;
-        
-        boundaryCondition.rangesSize = this->nonVerticallyIntegratedRanges.size();
-        boundaryCondition.ranges = new SimulationDataType::NonVerticallyIntegratedRange[boundaryCondition.rangesSize];
-        
-        for (NonVerticallyIntegratedRange *range : nonVerticallyIntegratedRanges) {
-            boundaryCondition.ranges[i] = range->toSimulationDataType();
-            i++;
         }
     }
     
