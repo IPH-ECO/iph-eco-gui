@@ -78,7 +78,7 @@ void ProjectRepository::loadMeshes(Project *project) {
         
         if (meshType == "StructuredMesh") {
             mesh = new StructuredMesh();
-            static_cast<StructuredMesh*>(mesh)->setResolution(query.value("resolution").toUInt());
+            static_cast<StructuredMesh*>(mesh)->setResolution(query.value("resolution").toDouble());
         } else {
             mesh = new UnstructuredMesh();
         }
