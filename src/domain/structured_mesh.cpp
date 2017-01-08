@@ -90,10 +90,10 @@ void StructuredMesh::generate() {
 void StructuredMesh::computeBounds(ulong *points) {
     double *bounds = this->boundaryPolygon->getFilteredPolygon()->GetPoints()->GetBounds();
 
-    points[0] = bounds[0] - fmod(bounds[0], this->resolution); // xmin
-    points[1] = bounds[1] - fmod(bounds[1], this->resolution); // xmax
-    points[2] = bounds[2] - fmod(bounds[2], this->resolution); // ymin
-    points[3] = bounds[3] - fmod(bounds[3], this->resolution); // ymax
+    points[0] = bounds[0] - remainder(bounds[0], this->resolution); // xmin
+    points[1] = bounds[1] - remainder(bounds[1], this->resolution); // xmax
+    points[2] = bounds[2] - remainder(bounds[2], this->resolution); // ymin
+    points[3] = bounds[3] - remainder(bounds[3], this->resolution); // ymax
 }
 
 bool StructuredMesh::pointInMesh(double *point) {
