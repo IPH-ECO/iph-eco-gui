@@ -492,7 +492,7 @@ void ProjectRepository::loadSimulations(Project *project) {
         simulation->setStartTime(query.value("start_time").toUInt());
         simulation->setInitialTime(query.value("initial_time").toUInt());
         simulation->setPeriod(query.value("period").toDouble());
-        simulation->setStepTime(query.value("step_time").toInt());
+        simulation->setStepTime(query.value("step_time").toDouble());
         simulation->setMinimumVerticalLimit(query.value("minimum_vertical_limit").toDouble());
         simulation->setMaximumVerticalLimit(query.value("maximum_vertical_limit").toDouble());
         simulation->setLayersFromString(query.value("layers").toString());

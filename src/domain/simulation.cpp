@@ -103,11 +103,11 @@ void Simulation::setPeriod(double period) {
 	this->period = period;
 }
 
-int Simulation::getStepTime() const {
+double Simulation::getStepTime() const {
 	return stepTime;
 }
 
-void Simulation::setStepTime(int stepTime) {
+void Simulation::setStepTime(const double &stepTime) {
 	this->stepTime = stepTime;
 }
 
