@@ -229,7 +229,7 @@ void DatabaseUtility::createApplicationTables() {
         "start_time integer not null, " \
         "initial_time integer not null, " \
         "period float not null, " \
-        "step_time float not null, " \
+        "step_time integer not null, " \
         "minimum_vertical_limit float, " \
         "maximum_vertical_limit float, " \
         "layers text, " \

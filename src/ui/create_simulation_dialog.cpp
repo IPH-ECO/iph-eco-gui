@@ -222,7 +222,7 @@ void CreateSimulationDialog::accept() {
     simulation->setSimulationType(Simulation::getSimulationTypesMap().key(ui->cbxType->currentText()));
     simulation->setInitialTime(time.toTime_t());
     simulation->setPeriod(ui->edtPeriod->text().toDouble());
-    simulation->setStepTime(ui->edtStepTime->text().toDouble());
+    simulation->setStepTime(ui->edtStepTime->text().toInt());
     simulation->setMinimumVerticalLimit(ui->edtMinLimit->text().toDouble());
     simulation->setMaximumVerticalLimit(ui->edtMaxLimit->text().toDouble());
     

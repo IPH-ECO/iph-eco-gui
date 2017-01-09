@@ -34,7 +34,7 @@ private:
     uint startTime;
 	uint initialTime;
 	double period;
-	double stepTime;
+	int stepTime;
 	QList<double> layers;
 	HydrodynamicConfiguration *hydrodynamicConfiguration;
     WaterQualityConfiguration *waterQualityConfiguration;
@@ -78,8 +78,8 @@ public:
 	void setInitialTime(uint initialTime);
 	double getPeriod() const;
 	void setPeriod(double period);
-	double getStepTime() const;
-	void setStepTime(const double &stepTime);
+	int getStepTime() const;
+	void setStepTime(int stepTime);
 	QList<double> getLayers() const;
     QString getLayersAsString() const;
 	void setLayers(const QList<double> &layers);
