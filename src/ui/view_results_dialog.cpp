@@ -274,6 +274,9 @@ void ViewResultsDialog::showTimeSeriesChart() {
     ui->vtkWidget->setLayer(layerAndComponent.first());
     ui->vtkWidget->setComponent(layerAndComponent.last());
     
+    zoomAreaAction->setChecked(false);
+    zoomAreaAction->triggered(false);
+    
     TimeSeriesChartDialog *dialog = new TimeSeriesChartDialog(this, ui->vtkWidget, layerKey);
     QObject::connect(dialog, SIGNAL(rejected()), this, SLOT(disableLeftWidgets()));
     dialog->show();

@@ -30,7 +30,7 @@ private:
 
     Ui::TimeSeriesChartDialog *ui;
     SimulationVTKWidget *simulationVTKWidget;
-    TimeSeriesChartMouseInteractor *timeSeriesInteractor;
+    vtkSmartPointer<TimeSeriesChartMouseInteractor> timeSeriesInteractor;
     vtkSmartPointer<vtkRectilinearGrid> rectilinearGrid;
     vtkSmartPointer<vtkCubeAxesActor> axesActor;
     vtkSmartPointer<vtkRenderer> renderer;

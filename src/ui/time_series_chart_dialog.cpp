@@ -43,6 +43,11 @@ TimeSeriesChartDialog::TimeSeriesChartDialog(QWidget *parent, SimulationVTKWidge
     layerKey(layerKey)
 {
     this->timeSeriesInteractor = TimeSeriesChartMouseInteractor::SafeDownCast(simulationVTKWidget->GetInteractor()->GetInteractorStyle());
+    
+    if (!this->timeSeriesInteractor) {
+        this->timeSeriesInteractor = vtkSmartPointer<TimeSeriesChartMouseInteractor>::New();
+    }
+    
     Simulation *simulation = simulationVTKWidget->getCurrentSimulation();
     
     ui->setupUi(this);
@@ -263,7 +268,7 @@ void TimeSeriesChartDialog::on_btnPlot_clicked() {
         int tickIncrement = table->GetNumberOfRows() / (numberOfTicks - 1);
         
         for (vtkIdType i = 0; i < table->GetNumberOfRows(); i++) {
-            if (labelPositions->GetNumberOfTuples() != numberOfTicks && (i % tickIncrement == 0 || i == timeStamps->GetNumberOfTuples() - 1)) {
+            if (labelPositions->GetNumberOfTuples() != numberOfTicks && (tickIncrement == 0 || i % tickIncrement == 0 || i == timeStamps->GetNumberOfTuples() - 1)) {
                 labelPositions->InsertNextValue(timeStamps->GetValue(i));
                 xLabels->InsertNextValue(timeStampStrings->GetValue(i));
             }
