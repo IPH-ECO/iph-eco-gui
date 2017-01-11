@@ -508,6 +508,9 @@ void ProjectRepository::loadSimulations(Project *project) {
         HydrodynamicConfiguration *hydrodynamicConfiguration = project->getHydrodynamicConfiguration(query.value("hydrodynamic_configuration_id").toUInt());
         simulation->setHydrodynamicConfiguration(hydrodynamicConfiguration);
         
+        WaterQualityConfiguration *waterQualityConfiguration = project->getWaterQualityConfiguration(query.value("water_quality_configuration_id").toUInt());
+        simulation->setWaterQualityConfiguration(waterQualityConfiguration);
+        
         MeteorologicalConfiguration *meteorologicalConfiguration = project->getMeteorologicalConfiguration(query.value("meteorological_configuration_id").toUInt());
         simulation->setMeteorologicalConfiguration(meteorologicalConfiguration);
         

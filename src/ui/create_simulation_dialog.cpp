@@ -31,10 +31,14 @@ CreateSimulationDialog::CreateSimulationDialog(QWidget *parent) :
         ui->cbxHydrodynamic->addItem(configuration->getName());
     }
     
-    for (WaterQualityConfiguration *configuration : project->getWaterQualityConfigurations()) {
-        ui->cbxWaterQuality->addItem(configuration->getName());
+    if (project->getWaterQuality()) {
+        for (WaterQualityConfiguration *configuration : project->getWaterQualityConfigurations()) {
+            ui->cbxWaterQuality->addItem(configuration->getName());
+        }
+        ui->cbxWaterQuality->setCurrentIndex(-1);
+    } else {
+        ui->cbxWaterQuality->setDisabled(true);
     }
-    ui->cbxWaterQuality->setCurrentIndex(-1);
     
     for (MeteorologicalConfiguration *configuration : project->getMeteorologicalConfigurations()) {
         ui->cbxMeteorological->addItem(configuration->getName());
@@ -114,11 +118,6 @@ bool CreateSimulationDialog::isValid() {
 		QMessageBox::warning(this, tr("Create Simulation"), tr("Hydrodynamic data can't be blank."));
 		return false;
 	}
-
-//	if (ui->cbxWaterQuality->currentIndex() == -1) {
-//		QMessageBox::warning(this, tr("Create Simulation"), tr("Water quality data can't be blank."));
-//		return false;
-//	}
 
 	if (ui->cbxMeteorological->currentIndex() == -1) {
 		QMessageBox::warning(this, tr("Create Simulation"), tr("Meteorological data can't be blank."));
@@ -325,6 +324,7 @@ void CreateSimulationDialog::on_cbxTemplate_currentTextChanged(const QString &si
     Project *project = IPHApplication::getCurrentProject();
     Simulation *simulation = project->getSimulation(simulationLabel);
     HydrodynamicConfiguration *hydrodynamicConfiguration = simulation->getHydrodynamicConfiguration();
+    WaterQualityConfiguration *waterQualityConfiguration = simulation->getWaterQualityConfiguration();
     
     ui->cbxType->setCurrentText(Simulation::getSimulationTypesMap().value(simulation->getSimulationType()));
     ui->edtInitialTime->setDateTime(simulation->getInitialTimeAsDateTime());
@@ -332,6 +332,9 @@ void CreateSimulationDialog::on_cbxTemplate_currentTextChanged(const QString &si
     ui->edtStepTime->setText(QString::number(simulation->getStepTime()));
     if (hydrodynamicConfiguration) {
         ui->cbxHydrodynamic->setCurrentText(hydrodynamicConfiguration->getName());
+    }
+    if (waterQualityConfiguration) {
+        ui->cbxWaterQuality->setCurrentText(waterQualityConfiguration->getName());
     }
     ui->cbxMeteorological->setCurrentText(simulation->getMeteorologicalConfiguration()->getName());
     ui->edtMinLimit->setText(QString::number(simulation->getMinimumVerticalLimit()));

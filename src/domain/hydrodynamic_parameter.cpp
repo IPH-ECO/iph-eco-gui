@@ -183,9 +183,8 @@ SimulationDataType::HydrodynamicParameter HydrodynamicParameter::toSimulationDat
     SimulationDataType::HydrodynamicParameter parameter;
     QByteArray name = this->name.toLocal8Bit();
     
-    parameter.length = this->name.size();
-    parameter.name = new char[parameter.length];
     strncpy(parameter.name, name.constData(), this->name.size());
+    
     parameter.value = this->value;
     
     return parameter;

@@ -37,8 +37,7 @@ module domain_types
     end type
 
     type, bind(C) :: HydrodynamicParameter
-        type(c_ptr) :: name
-        integer(c_int) :: length
+        character(kind = c_char, len = 255) :: name
         real(c_double) :: value
     end type
 

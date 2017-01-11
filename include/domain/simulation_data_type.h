@@ -53,12 +53,10 @@ namespace SimulationDataType {
         };
         
         struct HydrodynamicParameter {
-            char *name;
-            int length;
+            char name[DEFAULT_STRING_LEN];
             double value;
             
             HydrodynamicParameter();
-            void destroy();
         };
         
         struct TimeSeries {

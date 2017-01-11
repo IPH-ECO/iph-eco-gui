@@ -142,8 +142,6 @@ SimulationDataType::HydrodynamicConfiguration* HydrodynamicConfiguration::toSimu
     for (HydrodynamicParameter *parameter : this->parameters) {
         QByteArray name = parameter->getName().toLocal8Bit();
         
-        configuration->parameters[i].length = (int) name.size();
-        configuration->parameters[i].name = new char[name.size()];
         strncpy(configuration->parameters[i].name, name.constData(), name.size());
         configuration->parameters[i].value = parameter->getValue();
         i++;

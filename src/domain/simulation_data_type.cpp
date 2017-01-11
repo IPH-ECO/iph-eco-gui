@@ -64,12 +64,8 @@ void SimulationDataType::GridDataConfiguration::destroy() {
     }
 }
 
-SimulationDataType::HydrodynamicParameter::HydrodynamicParameter() :
-    name(nullptr)
-{}
-
-void SimulationDataType::HydrodynamicParameter::destroy() {
-    delete name;
+SimulationDataType::HydrodynamicParameter::HydrodynamicParameter() {
+    memset(name, ' ', sizeof(name));
 }
 
 SimulationDataType::NonVerticallyIntegratedRange::NonVerticallyIntegratedRange() :
@@ -101,10 +97,7 @@ SimulationDataType::HydrodynamicConfiguration::HydrodynamicConfiguration() :
 {}
 
 void SimulationDataType::HydrodynamicConfiguration::destroy() {
-    if (parameters) {
-        parameters->destroy();
-        delete parameters;
-    }
+    delete parameters;
     
     if (gridDataConfiguration) {
         gridDataConfiguration->destroy();
