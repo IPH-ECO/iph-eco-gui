@@ -22,6 +22,9 @@ WaterQualityDialog::WaterQualityDialog(QWidget *parent) :
     waterQualityRepository(WaterQualityRepository::getInstance()),
     isWebViewLoaded(false)
 {
+    MainWindow *mainWindow = IPHApplication::getMainWindow();
+    QObject::connect(this, SIGNAL(rejected()), mainWindow, SLOT(closeCurrentSubWindow()));
+    
     ui->setupUi(this);
     ui->trwParameter->header()->setStretchLastSection(false);
     ui->trwParameter->header()->setSectionResizeMode(0, QHeaderView::Stretch);
