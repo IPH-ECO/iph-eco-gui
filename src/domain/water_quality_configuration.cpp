@@ -117,7 +117,7 @@ void WaterQualityConfiguration::setBoundaryConditions(const QList<WaterQualityBo
 
 void WaterQualityConfiguration::addBoundaryCondition(WaterQualityBoundaryCondition *boundaryCondition) {
     for (WaterQualityBoundaryCondition *existentBoundaryCondition : this->boundaryConditions) {
-        if (existentBoundaryCondition->getName() == boundaryCondition->getName()) {
+        if (existentBoundaryCondition->getHydrodynamicBoundaryCondition() == boundaryCondition->getHydrodynamicBoundaryCondition() && existentBoundaryCondition->getName() == boundaryCondition->getName()) {
             return;
         }
     }

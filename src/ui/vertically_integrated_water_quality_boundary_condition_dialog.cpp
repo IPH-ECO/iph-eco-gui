@@ -118,9 +118,10 @@ void VerticallyIntegratedWaterQualityBoundaryConditionDialog::accept() {
     }
     
     HydrodynamicConfiguration *hydrodynamicConfiguration = currentConfiguration->getHydrodynamicConfiguration();
+    HydrodynamicBoundaryCondition *hydrodynamicBoundaryCondition = hydrodynamicConfiguration->getBoundaryCondition(ui->cbxHydroBoundaryCondition->currentText());
     
     currentBoundaryCondition->setName(ui->cbxVariable->currentText());
-    currentBoundaryCondition->setHydrodynamicBoundaryCondition(hydrodynamicConfiguration->getBoundaryCondition(ui->cbxHydroBoundaryCondition->currentText()));
+    currentBoundaryCondition->setHydrodynamicBoundaryCondition(hydrodynamicBoundaryCondition);
     currentBoundaryCondition->setFunction(ui->rdoConstant->isChecked() ? BoundaryConditionFunction::CONSTANT : BoundaryConditionFunction::TIME_SERIES);
     currentBoundaryCondition->setConstantValue(ui->edtConstant->text().toDouble());
     currentBoundaryCondition->setInputModule(InputModule::WATER_QUALITY);
@@ -152,8 +153,11 @@ bool VerticallyIntegratedWaterQualityBoundaryConditionDialog::isValid() {
         return false;
     }
     
+    HydrodynamicConfiguration *hydrodynamicConfiguration = currentConfiguration->getHydrodynamicConfiguration();
+    HydrodynamicBoundaryCondition *hydrodynamicBoundaryCondition = hydrodynamicConfiguration->getBoundaryCondition(ui->cbxHydroBoundaryCondition->currentText());
+    
     for (WaterQualityBoundaryCondition *existentBoundaryCondition : currentConfiguration->getBoundaryConditions()) {
-        if (existentBoundaryCondition != currentBoundaryCondition && existentBoundaryCondition->getName() == ui->cbxVariable->currentText()) {
+        if (existentBoundaryCondition->getHydrodynamicBoundaryCondition() == hydrodynamicBoundaryCondition && existentBoundaryCondition->getName() == ui->cbxVariable->currentText()) {
             QMessageBox::warning(this, tr("Water Quality Boundary Condition"), QString("A boundary condition using variable %1 already exists.").arg(ui->cbxVariable->currentText()));
             return false;
         }
