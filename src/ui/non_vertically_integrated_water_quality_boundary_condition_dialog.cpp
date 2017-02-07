@@ -193,8 +193,11 @@ bool NonVerticallyIntegratedWaterQualityBoundaryConditionDialog::isValid() {
         return false;
     }
     
+    HydrodynamicConfiguration *hydrodynamicConfiguration = currentConfiguration->getHydrodynamicConfiguration();
+    HydrodynamicBoundaryCondition *hydrodynamicBoundaryCondition = hydrodynamicConfiguration->getBoundaryCondition(ui->cbxHydroBoundaryCondition->currentText());
+    
     for (WaterQualityBoundaryCondition *existentBoundaryCondition : currentConfiguration->getBoundaryConditions()) {
-        if (existentBoundaryCondition != currentBoundaryCondition && existentBoundaryCondition->getName() == ui->cbxVariable->currentText()) {
+        if (existentBoundaryCondition->getHydrodynamicBoundaryCondition() == hydrodynamicBoundaryCondition && existentBoundaryCondition->getName() == ui->cbxVariable->currentText()) {
             QMessageBox::warning(this, tr("Water Quality Boundary Condition"), QString("A boundary condition using variable %1 already exists.").arg(ui->cbxVariable->currentText()));
             return false;
         }
