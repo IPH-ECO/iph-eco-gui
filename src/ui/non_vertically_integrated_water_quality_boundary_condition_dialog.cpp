@@ -125,6 +125,10 @@ NonVerticallyIntegratedWaterQualityBoundaryConditionDialog::NonVerticallyIntegra
             i++;
         }
     }
+    
+    if (currentBoundaryCondition->getHydrodynamicBoundaryCondition()) {
+        ui->cbxHydroBoundaryCondition->setCurrentText(currentBoundaryCondition->getHydrodynamicBoundaryCondition()->getName());
+    }
 }
 
 NonVerticallyIntegratedWaterQualityBoundaryConditionDialog::~NonVerticallyIntegratedWaterQualityBoundaryConditionDialog() {
