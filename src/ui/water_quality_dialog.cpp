@@ -353,7 +353,7 @@ void WaterQualityDialog::loadBoundaryConditions() {
         ui->tblBoundaryConditions->setVerticalHeaderItem(i, headerItem);
         ui->tblBoundaryConditions->setItem(i, 0, new QTableWidgetItem(boundaryCondition->getHydrodynamicBoundaryCondition()->getName()));
         ui->tblBoundaryConditions->setItem(i, 1, new QTableWidgetItem(boundaryCondition->getName()));
-        ui->tblBoundaryConditions->setItem(i, 2, new QTableWidgetItem(boundaryCondition->getFunctionLabel()));
+        ui->tblBoundaryConditions->setItem(i, 2, new QTableWidgetItem(boundaryCondition->isVerticallyIntegrated() ? "Vertically Integrated" : "Non-vertically integrated"));
     }
 }
 
@@ -749,5 +749,5 @@ void WaterQualityDialog::updateBoundaryConditionsTable(WaterQualityBoundaryCondi
     
     ui->tblBoundaryConditions->setItem(row, 0, new QTableWidgetItem(boundaryCondition->getHydrodynamicBoundaryCondition()->getName()));
     ui->tblBoundaryConditions->setItem(row, 1, new QTableWidgetItem(boundaryCondition->getName()));
-    ui->tblBoundaryConditions->setItem(row, 2, new QTableWidgetItem(boundaryCondition->getFunctionLabel()));
+    ui->tblBoundaryConditions->setItem(row, 2, new QTableWidgetItem(boundaryCondition->isVerticallyIntegrated() ? "Vertically Integrated" : "Non-vertically integrated"));
 }

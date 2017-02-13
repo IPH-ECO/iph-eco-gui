@@ -267,7 +267,7 @@
            </column>
            <column>
             <property name="text">
-             <string>Function</string>
+             <string>Type</string>
             </property>
            </column>
           </widget>
