@@ -122,6 +122,14 @@ void HydrodynamicBoundaryCondition::setLabelsActor(vtkSmartPointer<vtkActor2D> l
     this->labelsActor = labelsActor;
 }
 
+void HydrodynamicBoundaryCondition::addWaterQualityBoundaryCondition(WaterQualityBoundaryCondition *waterQualityBoundaryCondition) {
+    waterQualityBoundaryConditions.insert(waterQualityBoundaryCondition);
+}
+
+QSet<WaterQualityBoundaryCondition*> HydrodynamicBoundaryCondition::getWaterQualityBoundaryConditions() const {
+    return waterQualityBoundaryConditions;
+}
+
 SimulationDataType::BoundaryCondition HydrodynamicBoundaryCondition::toSimulationDataType(Mesh *mesh) const {
     SimulationDataType::BoundaryCondition boundaryCondition;
     vtkSmartPointer<vtkPolyData> meshPolyData = mesh->getMeshPolyData();

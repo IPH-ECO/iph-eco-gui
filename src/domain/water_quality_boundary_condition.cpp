@@ -4,12 +4,21 @@ WaterQualityBoundaryCondition::WaterQualityBoundaryCondition() :
 	hydrodynamicBoundaryCondition(nullptr)
 {}
 
+WaterQualityConfiguration* WaterQualityBoundaryCondition::getWaterQualityConfiguration() const {
+    return waterQualityConfiguration;
+}
+
+void WaterQualityBoundaryCondition::setWaterQualityConfiguration(WaterQualityConfiguration *waterQualityConfiguration) {
+    this->waterQualityConfiguration = waterQualityConfiguration;
+}
+
 HydrodynamicBoundaryCondition* WaterQualityBoundaryCondition::getHydrodynamicBoundaryCondition() const {
 	return hydrodynamicBoundaryCondition;
 }
 
 void WaterQualityBoundaryCondition::setHydrodynamicBoundaryCondition(HydrodynamicBoundaryCondition *hydrodynamicBoundaryCondition) {
 	this->hydrodynamicBoundaryCondition = hydrodynamicBoundaryCondition;
+    this->hydrodynamicBoundaryCondition->addWaterQualityBoundaryCondition(this);
 }
 
 SimulationDataType::BoundaryCondition WaterQualityBoundaryCondition::toSimulationDataType(Mesh *mesh) const {

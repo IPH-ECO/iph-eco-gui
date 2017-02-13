@@ -2,12 +2,15 @@
 #define HYDRODYNAMIC_BOUNDARY_CONDITION_H
 
 #include "boundary_condition.h"
+#include "water_quality_boundary_condition.h"
 
 #include <vtkSmartPointer.h>
 #include <vtkIdTypeArray.h>
 #include <vtkActor2D.h>
 #include <vtkActor.h>
 #include <QSet>
+
+class WaterQualityBoundaryCondition;
 
 class HydrodynamicBoundaryCondition : public BoundaryCondition {
     Q_OBJECT
@@ -18,6 +21,7 @@ private:
     // Transient attributes
     vtkSmartPointer<vtkActor> selectionActor;
     vtkSmartPointer<vtkActor2D> labelsActor;
+    QSet<WaterQualityBoundaryCondition*> waterQualityBoundaryConditions;
 
 public:
     HydrodynamicBoundaryCondition();
@@ -39,6 +43,8 @@ public:
     void setSelectionActor(vtkSmartPointer<vtkActor> selectionActor);
     vtkSmartPointer<vtkActor2D> getLabelsActor() const;
     void setLabelsActor(vtkSmartPointer<vtkActor2D> labelsActor);
+    void addWaterQualityBoundaryCondition(WaterQualityBoundaryCondition *waterQualityBoundaryCondition);
+    QSet<WaterQualityBoundaryCondition*> getWaterQualityBoundaryConditions() const;
 
     SimulationDataType::BoundaryCondition toSimulationDataType(Mesh *mesh) const;
 

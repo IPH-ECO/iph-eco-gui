@@ -1,5 +1,7 @@
 #include <domain/hydrodynamic_configuration.h>
 
+#include <domain/water_quality_configuration.h>
+
 HydrodynamicConfiguration::HydrodynamicConfiguration() : id(0) {}
 
 HydrodynamicConfiguration::~HydrodynamicConfiguration() {
@@ -70,6 +72,14 @@ void HydrodynamicConfiguration::setBoundaryConditions(const QList<HydrodynamicBo
 
 void HydrodynamicConfiguration::removeBoundaryCondition(int i) {
     HydrodynamicBoundaryCondition *boundaryCondition = this->boundaryConditions.at(i);
+    QSet<WaterQualityBoundaryCondition*> waterQualityBoundaryConditions = boundaryCondition->getWaterQualityBoundaryConditions();
+    
+    for (WaterQualityBoundaryCondition *waterQualityBoundaryCondition : waterQualityBoundaryConditions) {
+        WaterQualityConfiguration *waterQualityConfiguration = waterQualityBoundaryCondition->getWaterQualityConfiguration();
+        waterQualityConfiguration->removeBoundaryCondition(waterQualityBoundaryCondition);
+    }
+    
+    waterQualityBoundaryConditions.clear();
     
     this->boundaryConditions.removeOne(boundaryCondition);
     delete boundaryCondition;

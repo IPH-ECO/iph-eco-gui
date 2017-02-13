@@ -123,6 +123,7 @@ void WaterQualityConfiguration::addBoundaryCondition(WaterQualityBoundaryConditi
     }
     
     boundaryConditions.append(boundaryCondition);
+    boundaryCondition->setWaterQualityConfiguration(this);
 }
 
 void WaterQualityConfiguration::removeBoundaryCondition(WaterQualityBoundaryCondition *boundaryCondition) {
