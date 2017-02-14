@@ -164,6 +164,33 @@ bool CreateSimulationDialog::isValid() {
         }
     }
     
+    if (ui->cbxWaterQuality->currentIndex() != -1) {
+        WaterQualityConfiguration *waterQualityConfiguration = project->getWaterQualityConfiguration(ui->cbxWaterQuality->currentText());
+        
+        for (BoundaryCondition *boundaryCondition : waterQualityConfiguration->getBoundaryConditions()) {
+            if (boundaryCondition->getFunction() == BoundaryConditionFunction::TIME_SERIES) {
+                TimeSeries *firstEntry = boundaryCondition->getTimeSeriesList().first();
+                
+                if (minimumTimeStamp == 0) {
+                    minimumTimeStamp = firstEntry->getTimeStamp();
+                    maximumTimeStamp = firstEntry->getTimeStamp();
+                }
+                
+                for (TimeSeries *timeSeries : boundaryCondition->getTimeSeriesList()) {
+                    uint timeStamp = (uint) timeSeries->getTimeStamp();
+                    
+                    if (minimumTimeStamp > timeStamp) {
+                        minimumTimeStamp = timeStamp;
+                    }
+                    
+                    if (maximumTimeStamp < timeStamp) {
+                        maximumTimeStamp = timeStamp;
+                    }
+                }
+            }
+        }
+    }
+    
     if (minimumTimeStamp != 0 && initialTimeStamp < minimumTimeStamp) {
         initialTime = QDateTime::fromTime_t(minimumTimeStamp, Qt::UTC);
         QMessageBox::warning(this, tr("Create Simulation"), QString("Initial time must be the same or greater than %1.").arg(initialTime.toString("yyyy-MM-dd HH:mm:ss")));
