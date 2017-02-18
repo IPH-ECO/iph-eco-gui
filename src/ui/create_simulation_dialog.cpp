@@ -142,12 +142,26 @@ bool CreateSimulationDialog::isValid() {
     QSet<uint> lastTimeStamps;
     
     for (BoundaryCondition *boundaryCondition : hydrodynamicConfiguration->getBoundaryConditions()) {
-        if (boundaryCondition->getFunction() == BoundaryConditionFunction::TIME_SERIES) {
-            TimeSeries *firstEntry = boundaryCondition->getTimeSeriesList().first();
-            TimeSeries *lastEntry = boundaryCondition->getTimeSeriesList().last();
-            
-            firstTimeStamps.insert(firstEntry->getTimeStamp());
-            lastTimeStamps.insert(lastEntry->getTimeStamp());
+        if (boundaryCondition->isVerticallyIntegrated()) {
+            if (boundaryCondition->getFunction() == BoundaryConditionFunction::TIME_SERIES) {
+                uint localMinimumTimestamp = calculateMinimumTimestamp(boundaryCondition->getTimeSeriesList());
+                uint localMaximumTimestamp = calculateMaximumTimestamp(boundaryCondition->getTimeSeriesList());
+                
+                firstTimeStamps.insert(localMinimumTimestamp);
+                lastTimeStamps.insert(localMaximumTimestamp);
+            }
+        } else {
+            for (NonVerticallyIntegratedRange *range : boundaryCondition->getNonVerticallyIntegratedRanges()) {
+                if (range->getFunction() != BoundaryConditionFunction::TIME_SERIES) {
+                    continue;
+                }
+                
+                uint localMinimumTimestamp = calculateMinimumTimestamp(range->getTimeSeriesList());
+                uint localMaximumTimestamp = calculateMaximumTimestamp(range->getTimeSeriesList());
+                
+                firstTimeStamps.insert(localMinimumTimestamp);
+                lastTimeStamps.insert(localMaximumTimestamp);
+            }
         }
     }
     
@@ -157,11 +171,11 @@ bool CreateSimulationDialog::isValid() {
         for (BoundaryCondition *boundaryCondition : waterQualityConfiguration->getBoundaryConditions()) {
             if (boundaryCondition->isVerticallyIntegrated()) {
                 if (boundaryCondition->getFunction() == BoundaryConditionFunction::TIME_SERIES) {
-                    TimeSeries *firstEntry = boundaryCondition->getTimeSeriesList().first();
-                    TimeSeries *lastEntry = boundaryCondition->getTimeSeriesList().last();
+                    uint localMinimumTimestamp = calculateMinimumTimestamp(boundaryCondition->getTimeSeriesList());
+                    uint localMaximumTimestamp = calculateMaximumTimestamp(boundaryCondition->getTimeSeriesList());
                     
-                    firstTimeStamps.insert(firstEntry->getTimeStamp());
-                    lastTimeStamps.insert(lastEntry->getTimeStamp());
+                    firstTimeStamps.insert(localMinimumTimestamp);
+                    lastTimeStamps.insert(localMaximumTimestamp);
                 }
             } else {
                 for (NonVerticallyIntegratedRange *range : boundaryCondition->getNonVerticallyIntegratedRanges()) {
@@ -169,26 +183,40 @@ bool CreateSimulationDialog::isValid() {
                         continue;
                     }
                     
-                    TimeSeries *firstEntry = range->getTimeSeriesList().first();
-                    TimeSeries *lastEntry = range->getTimeSeriesList().last();
+                    uint localMinimumTimestamp = calculateMinimumTimestamp(range->getTimeSeriesList());
+                    uint localMaximumTimestamp = calculateMaximumTimestamp(range->getTimeSeriesList());
                     
-                    firstTimeStamps.insert(firstEntry->getTimeStamp());
-                    lastTimeStamps.insert(lastEntry->getTimeStamp());
+                    firstTimeStamps.insert(localMinimumTimestamp);
+                    lastTimeStamps.insert(localMaximumTimestamp);
                 }
             }
         }
     }
     
-    uint minimumTimeStamp = firstTimeStamps.isEmpty() ? std::numeric_limits<uint>::min() : *std::max_element(firstTimeStamps.begin(), firstTimeStamps.end());
-    uint maximumTimeStamp = lastTimeStamps.isEmpty() ? std::numeric_limits<uint>::min() : *std::max_element(lastTimeStamps.begin(), lastTimeStamps.end());
+    MeteorologicalConfiguration *meteorologicalConfiguration = project->getMeteorologicalConfiguration(ui->cbxMeteorological->currentText());
     
-    if (minimumTimeStamp != std::numeric_limits<uint>::min() && initialTimeStamp < minimumTimeStamp) {
+    for (MeteorologicalStation *station : meteorologicalConfiguration->getStations()) {
+        for (MeteorologicalParameter *parameter : station->getParameters()) {
+            if (parameter->getFunction() == BoundaryConditionFunction::TIME_SERIES) {
+                uint localMinimumTimestamp = calculateMinimumTimestamp(parameter->getTimeSeriesList());
+                uint localMaximumTimestamp = calculateMaximumTimestamp(parameter->getTimeSeriesList());
+                
+                firstTimeStamps.insert(localMinimumTimestamp);
+                lastTimeStamps.insert(localMaximumTimestamp);
+            }
+        }
+    }
+    
+    uint minimumTimeStamp = firstTimeStamps.isEmpty() ? 0 : *std::max_element(firstTimeStamps.begin(), firstTimeStamps.end());
+    uint maximumTimeStamp = lastTimeStamps.isEmpty() ? 0 : *std::max_element(lastTimeStamps.begin(), lastTimeStamps.end());
+    
+    if (minimumTimeStamp != 0 && initialTimeStamp < minimumTimeStamp) {
         initialTime = QDateTime::fromTime_t(minimumTimeStamp, Qt::UTC);
         QMessageBox::warning(this, tr("Create Simulation"), QString("Initial time must be the same or greater than %1.").arg(initialTime.toString("yyyy-MM-dd HH:mm:ss")));
         return false;
     }
     
-    if (maximumTimeStamp != std::numeric_limits<uint>::min() && maximumTimeStamp > endTimeStamp) {
+    if (maximumTimeStamp != 0 && endTimeStamp > maximumTimeStamp) {
         endTime = QDateTime::fromTime_t(maximumTimeStamp, Qt::UTC);
         QMessageBox::warning(this, tr("Create Simulation"), QString("Total simulation time must be the same or lesser than %1.").arg(endTime.toString("yyyy-MM-dd HH:mm:ss")));
         return false;
@@ -216,6 +244,26 @@ bool CreateSimulationDialog::isValid() {
     }
 
 	return true;
+}
+
+uint CreateSimulationDialog::calculateMaximumTimestamp(const QList<TimeSeries*> &timeSeriesList) {
+    QSet<uint> timestamps;
+    
+    for (TimeSeries *timeSeries : timeSeriesList) {
+        timestamps.insert(timeSeries->getTimeStamp());
+    }
+    
+    return *std::max_element(timestamps.begin(), timestamps.end());
+}
+
+uint CreateSimulationDialog::calculateMinimumTimestamp(const QList<TimeSeries*> &timeSeriesList) {
+    QSet<uint> timestamps;
+    
+    for (TimeSeries *timeSeries : timeSeriesList) {
+        timestamps.insert(timeSeries->getTimeStamp());
+    }
+    
+    return *std::min_element(timestamps.begin(), timestamps.end());
 }
 
 void CreateSimulationDialog::accept() {

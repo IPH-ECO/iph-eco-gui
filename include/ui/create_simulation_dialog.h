@@ -18,6 +18,8 @@ private:
 	bool isValid();
 
     virtual void accept();
+    uint calculateMaximumTimestamp(const QList<TimeSeries*> &timeSeriesList);
+    uint calculateMinimumTimestamp(const QList<TimeSeries*> &timeSeriesList);
 
 public:
 	explicit CreateSimulationDialog(QWidget *parent = 0);
@@ -27,6 +29,7 @@ private slots:
     void on_btnAddLayer_clicked();
     void on_btnRemoveLayer_clicked();
     void on_cbxHydrodynamic_currentTextChanged(const QString &configurationName);
+    void on_cbxWaterQuality_currentTextChanged(const QString &configurationName);
     void on_btnBrowseOutputDirectory_clicked();
     void on_cbxTemplate_currentTextChanged(const QString &simulationLabel);
 };
