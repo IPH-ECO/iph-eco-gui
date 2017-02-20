@@ -375,6 +375,9 @@ void CreateSimulationDialog::on_cbxHydrodynamic_currentTextChanged(const QString
     ui->edtMinLimit->setText(QString::number(gridData->getMinimumWeight()));
 }
 
+void CreateSimulationDialog::on_cbxWaterQuality_currentTextChanged(const QString &configurationName) {
+}
+
 void CreateSimulationDialog::on_btnBrowseOutputDirectory_clicked() {
     QFileDialog fileDialog(this, tr("Select a output directory"));
     fileDialog.setFileMode(QFileDialog::Directory);
