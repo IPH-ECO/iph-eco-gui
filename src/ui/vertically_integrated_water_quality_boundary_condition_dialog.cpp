@@ -89,6 +89,10 @@ VerticallyIntegratedWaterQualityBoundaryConditionDialog::VerticallyIntegratedWat
     
     this->originalTimeSeriesList = currentBoundaryCondition->getTimeSeriesList();
     this->timeSeriesList = originalTimeSeriesList;
+    
+    if (currentBoundaryCondition->getHydrodynamicBoundaryCondition()) {
+        ui->cbxHydroBoundaryCondition->setCurrentText(currentBoundaryCondition->getHydrodynamicBoundaryCondition()->getName());
+    }
 }
 
 VerticallyIntegratedWaterQualityBoundaryConditionDialog::~VerticallyIntegratedWaterQualityBoundaryConditionDialog() {
