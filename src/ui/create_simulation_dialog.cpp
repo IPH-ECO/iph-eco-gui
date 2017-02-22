@@ -27,15 +27,19 @@ CreateSimulationDialog::CreateSimulationDialog(QWidget *parent) :
     
     Project *project = IPHApplication::getCurrentProject();
     
+    ui->cbxHydrodynamic->blockSignals(true);
     for (HydrodynamicConfiguration *configuration : project->getHydrodynamicConfigurations()) {
         ui->cbxHydrodynamic->addItem(configuration->getName());
     }
+    ui->cbxHydrodynamic->blockSignals(false);
     
     if (project->getWaterQuality()) {
+        ui->cbxWaterQuality->blockSignals(true);
         for (WaterQualityConfiguration *configuration : project->getWaterQualityConfigurations()) {
             ui->cbxWaterQuality->addItem(configuration->getName());
         }
         ui->cbxWaterQuality->setCurrentIndex(-1);
+        ui->cbxWaterQuality->blockSignals(false);
     } else {
         ui->cbxWaterQuality->setDisabled(true);
     }
@@ -49,7 +53,7 @@ CreateSimulationDialog::CreateSimulationDialog(QWidget *parent) :
         ui->edtOutputDirectory->setText(fileInfo.absolutePath());
     }
     
-    SimulationRepository::loadOutputParametersTree(ui->trOutputVariables);
+    SimulationRepository::loadOutputParametersTree(ui->trOutputVariables, nullptr);
     
     QTreeWidgetItemIterator it(ui->trOutputVariables, QTreeWidgetItemIterator::All);
     
@@ -376,6 +380,10 @@ void CreateSimulationDialog::on_cbxHydrodynamic_currentTextChanged(const QString
 }
 
 void CreateSimulationDialog::on_cbxWaterQuality_currentTextChanged(const QString &configurationName) {
+    Project *project = IPHApplication::getCurrentProject();
+    WaterQualityConfiguration *waterQualityConfiguration = project->getWaterQualityConfiguration(configurationName);
+    
+    SimulationRepository::loadOutputParametersTree(ui->trOutputVariables, waterQualityConfiguration);
 }
 
 void CreateSimulationDialog::on_btnBrowseOutputDirectory_clicked() {

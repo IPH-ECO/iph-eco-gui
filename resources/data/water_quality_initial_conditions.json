@@ -27,7 +27,8 @@
 	},
 	{
 		"label": "Nutrients & Gases",
-		"name": "nutrientsAndGases"
+		"name": "nutrientsAndGases",
+		"target": "limnologyModeling"
 	},
 	{
 		"label": "Oxygen/BOD Modeling",
@@ -116,6 +117,7 @@
 	{
 		"label": "Nutrient Modeling",
 		"name": "nutrientModeling",
+		"target": "limnologyModeling",
 		"parentName": "nutrientsAndGases"
 	},
 	{
