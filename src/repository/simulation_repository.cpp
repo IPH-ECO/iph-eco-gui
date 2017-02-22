@@ -72,12 +72,13 @@ void SimulationRepository::appendChildren(WaterQualityParameter *parameter, QTre
     
     if (parameter->getChildren().isEmpty()) {
         widgetItem = new QTreeWidgetItem(parentItem, QStringList(parameter->getLabel()));
+        widgetItem->setData(0, Qt::UserRole, QVariant(parameter->getName()));
         widgetItem->setToolTip(0, parameter->getDescription());
         widgetItem->setCheckState(0, Qt::Unchecked);
     } else {
         WaterQualityParameter *targetParameter = parameter->getTarget();
         
-        if ((targetParameter && targetParameter->getValue() == 1)/* || isRootChecked(targetParameter)*/) {
+        if ((targetParameter && targetParameter->getValue() == 1)) {
             widgetItem = new QTreeWidgetItem(parentItem, QStringList(parameter->getLabel()));
             
             for (WaterQualityParameter *child : parameter->getChildren()) {
