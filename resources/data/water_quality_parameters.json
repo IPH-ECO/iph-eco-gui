@@ -463,8 +463,14 @@
 		"parentName": "sedimentsFractions"
 	},
 	{
+		"label": "Limnology Modeling",
+		"name": "iLimn",
+		"persistable": false
+	},
+	{
 		"label": "Nutrients & gases",
 		"name": "nutrientsGases",
+		"parentName": "iLimn",
 		"persistable": false
 	},
 	{
@@ -624,11 +630,6 @@
 		"inputType": "inline",
 		"defaultValue": 1.1,
 		"parentName": "nutrientsGasesDiffusion"
-	},
-	{
-		"label": "Limnology Modeling",
-		"name": "iLimn",
-		"persistable": false
 	},
 	{
 		"label": "Bacterioplankton Modeling",
