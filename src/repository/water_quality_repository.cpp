@@ -122,6 +122,7 @@ void WaterQualityRepository::loadParameters(WaterQualityConfiguration *configura
         parameter->setRangeMaximum(jsonParameter["rangeMaximum"].toDouble());
         parameter->setRadio(jsonParameter["radio"].toBool(false));
         parameter->setGroup(jsonParameter["group"].toBool(false));
+        parameter->setCheckable(false);
         parameter->setPersistable(jsonParameter["persistable"].toBool(true));
         
         if (parameter->getLabel() == "Groups") {
@@ -188,12 +189,9 @@ void WaterQualityRepository::loadParameters(WaterQualityConfiguration *configura
         WaterQualityParameter *parameter = configuration->getParameter(parameterName, WaterQualityParameterSection::STRUCTURE);
         WaterQualityParameter *targetParameter = configuration->getParameter(jsonParameter["target"].toString(), WaterQualityParameterSection::PARAMETER);
         
-        if (parameter) {
-            parameter->setChecked(parameter->getValue());
-        } else {
+        if (!parameter) {
             parameter = new WaterQualityParameter();
             parameter->setChecked(jsonParameter["checked"].toBool());
-            parameter->setValue(parameter->isChecked());
         }
         
         parameter->setName(jsonParameter["name"].toString());

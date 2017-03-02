@@ -518,7 +518,6 @@ void WaterQualityDialog::on_trwStructure_itemChanged(QTreeWidgetItem *item, int 
     
     if (sourceParameter && (item->checkState(0) == Qt::Checked || item->checkState(0) == Qt::Unchecked)) {
         sourceParameter->setChecked(item->checkState(0) == Qt::Checked);
-        sourceParameter->setValue(sourceParameter->isChecked());
         
         if (!sourceParameter->getDiagramItem().isEmpty()) {
             QString jsFunction = sourceParameter->isChecked() ? "enableVariable" : "disableVariable";
@@ -579,6 +578,7 @@ void WaterQualityDialog::on_trwStructure_itemChanged(QTreeWidgetItem *item, int 
                     for (WaterQualityParameter *sibling : sourceParameter->getTarget()->getSiblings()) {
                         if (sibling->isRadio()) {
                             sibling->getItemWidget()->setHidden(true);
+                            sibling->setChecked(false);
                         }
                     }
                 } else {
@@ -586,11 +586,13 @@ void WaterQualityDialog::on_trwStructure_itemChanged(QTreeWidgetItem *item, int 
                         WaterQualityParameter *sourceParentParameter = sourceParameter->getParent()->getTarget();
                         
                         sourceParentParameter->getItemWidget()->setHidden(false);
+                        sourceParentParameter->setChecked(true);
                     }
                 }
             }
             
             sourceParameter->getTarget()->getItemWidget()->setHidden(!sourceParameter->isChecked());
+            sourceParameter->getTarget()->setChecked(sourceParameter->isChecked());
         }
     }
 }

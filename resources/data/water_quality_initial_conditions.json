@@ -26,9 +26,15 @@
 		"parentName": "salinity"
 	},
 	{
+		"label": "Liminology Modeling",
+		"name": "limnologyModeling",
+		"target": "limnologyModeling"
+	},
+	{
 		"label": "Nutrients & Gases",
 		"name": "nutrientsAndGases",
-		"target": "limnologyModeling"
+		"target": "limnologyModeling",
+		"parentName": "limnologyModeling"
 	},
 	{
 		"label": "Oxygen/BOD Modeling",
@@ -180,7 +186,7 @@
 		"label": "Inorganic Matter Modeling",
 		"name": "inorganicMatterModeling",
 		"target": "iMatInorg",
-		"parentName": "nutrientsAndGases"
+		"parentName": "limnologyModeling"
 	},
 	{
 		"label": "sDIMW",
@@ -191,17 +197,11 @@
 		"parentName": "inorganicMatterModeling"
 	},
 	{
-		"label": "Organic Matter Modeling",
-		"name": "organicMatterModeling",
-		"target": "organicMatterModeling",
-		"parentName": "nutrientsAndGases"
-	},
-	{
 		"label": "Organic Matter",
 		"name": "organicMatter1",
 		"section": "parameter",
 		"target": "organicMatter1",
-		"parentName": "organicMatterModeling"
+		"parentName": "limnologyModeling"
 	},
 	{
 		"label": "sOMW",
@@ -216,7 +216,7 @@
 		"name": "organicMatter2",
 		"section": "parameter",
 		"target": "organicMatter2",
-		"parentName": "organicMatterModeling"
+		"parentName": "limnologyModeling"
 	},
 	{
 		"label": "sDPomW",
@@ -255,7 +255,7 @@
 		"name": "organicMatter3",
 		"section": "parameter",
 		"target": "organicMatter3",
-		"parentName": "organicMatterModeling"
+		"parentName": "limnologyModeling"
 	},
 	{
 		"label": "sDPomLW",
@@ -325,7 +325,7 @@
 		"label": "Bacterioplankton Modeling",
 		"name": "bacterioplanktonModeling",
 		"target": "bacterioplanktonModeling",
-		"parentName": "nutrientsAndGases"
+		"parentName": "limnologyModeling"
 	},
 	{
 		"label": "sDBacW",
@@ -349,7 +349,7 @@
 		"label": "Phytoplankton Modeling",
 		"name": "phytoplanktonModeling",
 		"target": "phytoplanktonModeling",
-		"parentName": "nutrientsAndGases"
+		"parentName": "limnologyModeling"
 	},
 	{
 		"label": "sDPhytW",
@@ -373,7 +373,7 @@
 		"label": "Macrophytes Modeling",
 		"name": "macrophytesModeling",
 		"target": "iMac",
-		"parentName": "nutrientsAndGases"
+		"parentName": "limnologyModeling"
 	},
 	{
 		"label": "sDMac",
@@ -388,7 +388,7 @@
 		"label": "Zooplankton Modeling",
 		"name": "zooplanktonModeling",
 		"target": "zooplanktonModeling",
-		"parentName": "nutrientsAndGases"
+		"parentName": "limnologyModeling"
 	},
 	{
 		"label": "sDZoo",
@@ -403,7 +403,7 @@
 		"label": "Zoobenthos Modeling",
 		"name": "zoobenthosModeling",
 		"target": "iBen",
-		"parentName": "nutrientsAndGases"
+		"parentName": "limnologyModeling"
 	},
 	{
 		"label": "sDBent",
@@ -418,7 +418,7 @@
 		"label": "Fish Modeling",
 		"name": "fishModeling",
 		"target": "fishModeling",
-		"parentName": "nutrientsAndGases"
+		"parentName": "limnologyModeling"
 	},
 	{
 		"label": "sDFiAd",

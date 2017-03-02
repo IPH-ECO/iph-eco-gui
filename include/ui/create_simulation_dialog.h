@@ -20,6 +20,7 @@ private:
     virtual void accept();
     uint calculateMaximumTimestamp(const QList<TimeSeries*> &timeSeriesList);
     uint calculateMinimumTimestamp(const QList<TimeSeries*> &timeSeriesList);
+    void expandOutputTree();
 
 public:
 	explicit CreateSimulationDialog(QWidget *parent = 0);

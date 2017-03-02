@@ -174,6 +174,7 @@ void DatabaseUtility::createApplicationTables() {
         "input_type integer not null, " \
         "value float default 0, " \
         "group_values text default null, " \
+        "checked bool default false, " \
         "water_quality_configuration_id integer not null" \
     ")";
     

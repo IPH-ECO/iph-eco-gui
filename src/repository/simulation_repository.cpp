@@ -33,13 +33,7 @@ void SimulationRepository::loadOutputParametersTree(QTreeWidget *trOutputVariabl
     	QTreeWidgetItem *moduleItem = new QTreeWidgetItem(trOutputVariables, QStringList(moduleJson["module"].toString()));
         
         if (moduleJson["useInitialConditions"].toBool()) {
-            QFile initialConditionsFile(":/data/water_quality_initial_conditions.json");
             WaterQualityRepository *waterQualityRepository = WaterQualityRepository::getInstance();
-            
-            initialConditionsFile.open(QFile::ReadOnly);
-            QJsonDocument jsonInitialConditions = QJsonDocument::fromJson(initialConditionsFile.readAll());
-            QJsonArray jsonVariables = jsonInitialConditions.array();
-            initialConditionsFile.close();
             
             waterQualityRepository->loadParameters(waterQualityConfiguration);
             
@@ -78,7 +72,7 @@ void SimulationRepository::appendChildren(WaterQualityParameter *parameter, QTre
     } else {
         WaterQualityParameter *targetParameter = parameter->getTarget();
         
-        if ((targetParameter && targetParameter->getValue() == 1)) {
+        if (targetParameter && targetParameter->isChecked()) {
             widgetItem = new QTreeWidgetItem(parentItem, QStringList(parameter->getLabel()));
             
             for (WaterQualityParameter *child : parameter->getChildren()) {

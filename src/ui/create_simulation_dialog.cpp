@@ -55,28 +55,7 @@ CreateSimulationDialog::CreateSimulationDialog(QWidget *parent) :
     
     SimulationRepository::loadOutputParametersTree(ui->trOutputVariables, nullptr);
     
-    QTreeWidgetItemIterator it(ui->trOutputVariables, QTreeWidgetItemIterator::All);
-    
-    while (*it) {
-        (*it)->setExpanded(true);
-        it++;
-    }
-    
-    it = QTreeWidgetItemIterator(ui->trOutputVariables, QTreeWidgetItemIterator::All);
-    
-    while (*it) {
-        QTreeWidgetItem *item = *it;
-        
-        if (item->childCount() == 0) {
-            QFont font = item->font(0);
-            
-            font.setBold(true);
-            item->setFont(0, font);
-        }
-        item->setExpanded(true);
-        
-        it++;
-    }
+    expandOutputTree();
     
     ui->cbxTemplate->blockSignals(true);
     for (Simulation *simulation : project->getSimulations()) {
@@ -384,6 +363,8 @@ void CreateSimulationDialog::on_cbxWaterQuality_currentTextChanged(const QString
     WaterQualityConfiguration *waterQualityConfiguration = project->getWaterQualityConfiguration(configurationName);
     
     SimulationRepository::loadOutputParametersTree(ui->trOutputVariables, waterQualityConfiguration);
+    
+    expandOutputTree();
 }
 
 void CreateSimulationDialog::on_btnBrowseOutputDirectory_clicked() {
@@ -433,6 +414,31 @@ void CreateSimulationDialog::on_cbxTemplate_currentTextChanged(const QString &si
     while (*it) {
         QString parameterName = (*it)->data(0, Qt::UserRole).toString();
         (*it)->setCheckState(0, simulation->getOutputParameters().contains(parameterName) ? Qt::Checked : Qt::Unchecked);
+        it++;
+    }
+}
+
+void CreateSimulationDialog::expandOutputTree() {
+    QTreeWidgetItemIterator it(ui->trOutputVariables, QTreeWidgetItemIterator::All);
+    
+    while (*it) {
+        (*it)->setExpanded(true);
+        it++;
+    }
+    
+    it = QTreeWidgetItemIterator(ui->trOutputVariables, QTreeWidgetItemIterator::All);
+    
+    while (*it) {
+        QTreeWidgetItem *item = *it;
+        
+        if (item->childCount() == 0) {
+            QFont font = item->font(0);
+            
+            font.setBold(true);
+            item->setFont(0, font);
+        }
+        item->setExpanded(true);
+        
         it++;
     }
 }
