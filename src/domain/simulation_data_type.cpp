@@ -198,7 +198,8 @@ void SimulationDataType::OutputParameter::destroy() {
 SimulationDataType::RecoveryVariables::RecoveryVariables() :
     u(nullptr),
     w(nullptr),
-    eta(nullptr)
+    eta(nullptr),
+    wqo(nullptr)
 {}
 
 void SimulationDataType::RecoveryVariables::destroy() {
@@ -216,6 +217,7 @@ SimulationDataType::Simulation::Simulation() :
     observations(nullptr),
     outputDirectory(nullptr),
     outputParameters(nullptr),
+    wqOutputParameters(nullptr),
     recoveryVariables(nullptr)
 {}
 

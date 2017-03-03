@@ -202,6 +202,9 @@ namespace SimulationDataType {
             double *w;
             int elements;
             double *eta;
+            // Water Quality module
+            double *wqo;
+            
             int simulationTime;
             bool changed;
 
@@ -233,6 +236,8 @@ namespace SimulationDataType {
             int autosaveTimeInterval;
             int outputParametersLength;
             SimulationDataType::OutputParameter *outputParameters;
+            int wqOutputParametersLength;
+            SimulationDataType::OutputParameter *wqOutputParameters;
             SimulationDataType::RecoveryVariables *recoveryVariables;
             int statusCode;
             int progress;

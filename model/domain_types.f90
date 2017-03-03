@@ -172,6 +172,8 @@ module domain_types
         integer(c_int) :: autosaveTimeInterval
         integer(c_int) :: outputParametersLength
         type(c_ptr) :: outputParameters
+        integer(c_int) :: wqOutputParametersLength
+        type(c_ptr) :: wqOutputParameters
         type(c_ptr) :: recoveryVariables
         integer(c_int) :: statusCode
         integer(c_int) :: progress
@@ -184,6 +186,7 @@ module domain_types
         type(c_ptr) :: w
         integer(c_int) :: elements
         type(c_ptr) :: eta
+        type(c_ptr) :: wqo
         integer(c_int) :: simulationTime
         logical(c_bool) :: changed
     end type

@@ -27,11 +27,9 @@ CreateSimulationDialog::CreateSimulationDialog(QWidget *parent) :
     
     Project *project = IPHApplication::getCurrentProject();
     
-    ui->cbxHydrodynamic->blockSignals(true);
     for (HydrodynamicConfiguration *configuration : project->getHydrodynamicConfigurations()) {
         ui->cbxHydrodynamic->addItem(configuration->getName());
     }
-    ui->cbxHydrodynamic->blockSignals(false);
     
     if (project->getWaterQuality()) {
         ui->cbxWaterQuality->blockSignals(true);
@@ -290,16 +288,27 @@ void CreateSimulationDialog::accept() {
     simulation->setOutputTimeInterval(ui->edtOutputTimeInterval->text().toInt());
     simulation->setAutosaveTimeInterval(ui->edtAutosaveInterval->text().toInt());
 
-    QTreeWidgetItemIterator it(ui->trOutputVariables, QTreeWidgetItemIterator::Checked);
+    QTreeWidgetItemIterator checkedIt(ui->trOutputVariables, QTreeWidgetItemIterator::Checked);
     QList<QString> parameters;
 
-    while (*it) {
-        QString parameter = (*it)->data(0, Qt::UserRole).toString();
+    while (*checkedIt) {
+        QString parameter = (*checkedIt)->data(0, Qt::UserRole).toString();
         parameters.append(parameter);
-        it++;
+        checkedIt++;
     }
 
     simulation->setOutputParameters(parameters);
+    
+    QTreeWidgetItemIterator wqIt(ui->trOutputVariables, QTreeWidgetItemIterator::NoChildren);
+    QStringList wqParameters;
+    
+    while (*wqIt) {
+        QString parameter = (*wqIt)->data(0, Qt::UserRole).toString();
+        wqParameters.append(parameter);
+        wqIt++;
+    }
+    
+    simulation->setWqOutputParameters(wqParameters);
     
     if (startOnCreate) {
         simulation->setStartTime(QDateTime::currentDateTimeUtc().toTime_t());

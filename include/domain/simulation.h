@@ -44,6 +44,7 @@ private:
 	QString observations;
     QString outputDirectory;
     QStringList outputParameters;
+    QStringList wqOutputParameters;
     SimulationStatus status;
     QString recoveryVariables;
     int outputTimeInterval;
@@ -108,6 +109,8 @@ public:
     void setOutputDirectory(const QString &outputDirectory);
     QStringList getOutputParameters() const;
     void setOutputParameters(const QStringList &outputParameters);
+    QStringList getWqOutputParameters() const;
+    void setWqOutputParameters(const QStringList &wqOutputParameters);
     SimulationStatus getStatus() const;
     void setStatus(const SimulationStatus &status);
     QString getRecoveryVariables() const;

@@ -223,6 +223,14 @@ void Simulation::setOutputParameters(const QStringList &outputParameters) {
 	this->outputParameters = outputParameters;
 }
 
+QStringList Simulation::getWqOutputParameters() const {
+    return wqOutputParameters;
+}
+
+void Simulation::setWqOutputParameters(const QStringList &wqOutputParameters) {
+    this->wqOutputParameters = wqOutputParameters;
+}
+
 SimulationStatus Simulation::getStatus() const {
     return status;
 }
@@ -461,6 +469,18 @@ SimulationDataType::Simulation* Simulation::toSimulationDataType() {
 			strncpy(simulationStruct->outputParameters[i].name, parameterByteArray.constData(), parameter.size());
 			i++;
 		}
+        
+        simulationStruct->wqOutputParametersLength = this->wqOutputParameters.size();
+        simulationStruct->wqOutputParameters = new SimulationDataType::OutputParameter[simulationStruct->wqOutputParametersLength];
+        i = 0;
+        
+        for (QString parameter : this->wqOutputParameters) {
+            QByteArray parameterByteArray = parameter.toLocal8Bit();
+            simulationStruct->wqOutputParameters[i].nameLength = parameter.size();
+            simulationStruct->wqOutputParameters[i].name = new char[parameter.size()];
+            strncpy(simulationStruct->wqOutputParameters[i].name, parameterByteArray.constData(), parameter.size());
+            i++;
+        }
         
         simulationStruct->progress = this->progress;
         
