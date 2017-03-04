@@ -140,8 +140,7 @@ module domain_types
     end type
 
     type, bind(C) :: OutputParameter
-        integer(c_int) :: nameLength
-        type(c_ptr) :: name
+        character(kind = c_char, len = 255) :: name
     end type
 
     type, bind(C) :: SimulationStatus
@@ -170,10 +169,12 @@ module domain_types
         type(c_ptr) :: outputDirectory
         integer(c_int) :: outputTimeInterval
         integer(c_int) :: autosaveTimeInterval
-        integer(c_int) :: outputParametersLength
-        type(c_ptr) :: outputParameters
+        integer(c_int) :: hydroOutputParametersLength
+        type(c_ptr) :: hydroOutputParameters
         integer(c_int) :: wqOutputParametersLength
         type(c_ptr) :: wqOutputParameters
+        integer(c_int) :: wqoParametersLength
+        type(c_ptr) :: wqoParameters
         type(c_ptr) :: recoveryVariables
         integer(c_int) :: statusCode
         integer(c_int) :: progress

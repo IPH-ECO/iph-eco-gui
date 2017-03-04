@@ -508,11 +508,13 @@ SimulationDataType::Simulation* Simulation::toSimulationDataType() {
                 i++;
             }
             
+            simulationStruct->wqoParametersLength = this->wqOutputParameters.size();
+            simulationStruct->wqoParameters = new SimulationDataType::OutputParameter[simulationStruct->wqoParametersLength];
             i = 0;
             
             for (QString parameter : this->wqoParameters) {
                 QByteArray parameterByteArray = parameter.toLocal8Bit();
-                strncpy(simulationStruct->wqOutputParameters[i].name, parameterByteArray.constData(), parameter.size());
+                strncpy(simulationStruct->wqoParameters[i].name, parameterByteArray.constData(), parameter.size());
                 i++;
             }
         }
