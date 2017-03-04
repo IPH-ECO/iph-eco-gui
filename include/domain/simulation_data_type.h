@@ -187,11 +187,9 @@ namespace SimulationDataType {
         };
 
         struct OutputParameter {
-            int nameLength;
-            char *name;
+            char name[DEFAULT_STRING_LEN];
             
             OutputParameter();
-            void destroy();
         };
         
         struct RecoveryVariables {
@@ -234,10 +232,12 @@ namespace SimulationDataType {
             char *outputDirectory;
             int outputTimeInterval;
             int autosaveTimeInterval;
-            int outputParametersLength;
-            SimulationDataType::OutputParameter *outputParameters;
+            int hydroOutputParametersLength;
+            SimulationDataType::OutputParameter *hydroOutputParameters;
             int wqOutputParametersLength;
             SimulationDataType::OutputParameter *wqOutputParameters;
+            int wqoParametersLength;
+            SimulationDataType::OutputParameter *wqoParameters;
             SimulationDataType::RecoveryVariables *recoveryVariables;
             int statusCode;
             int progress;

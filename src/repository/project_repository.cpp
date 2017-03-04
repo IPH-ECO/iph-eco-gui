@@ -501,7 +501,9 @@ void ProjectRepository::loadSimulations(Project *project) {
         simulation->setOutputTimeInterval(query.value("output_time_interval").toInt());
         simulation->setOutputDirectory(query.value("output_directory").toString());
         simulation->setAutosaveTimeInterval(query.value("autosave_time_interval").toInt());
-        simulation->setOutputParameters(query.value("output_parameters").toString().split(","));
+        simulation->setHydroOutputParameters(query.value("hydro_output_parameters").toString().split(","));
+        simulation->setWqOutputParameters(query.value("wq_output_parameters").toString().split(","));
+        simulation->setWqoParameters(query.value("wqo_parameters").toString().split(","));
         simulation->setStatus((SimulationStatus) query.value("status").toInt());
         simulation->setProgress(query.value("progress").toInt());
         simulation->setRecoveryVariables(query.value("recovery_variables").toString());
@@ -1496,7 +1498,7 @@ void ProjectRepository::saveSimulation(Simulation *simulation) {
         query.prepare("update simulation set label = :l, observations = :o where id = :i");
         query.bindValue(":i", simulation->getId());
     } else {
-        query.prepare("insert into simulation (label, simulation_type, start_time, initial_time, period, step_time, minimum_vertical_limit, maximum_vertical_limit, layers, observations, output_time_interval, output_directory, autosave_time_interval, output_parameters, status, recovery_variables, hydrodynamic_configuration_id, water_quality_configuration_id, meteorological_configuration_id) values (:l, :t, :st1, :it, :p, :st2, :min, :max, :la, :o, :oti, :od, :ati, :op, :s, :r, :h, :wq, :m)");
+        query.prepare("insert into simulation (label, simulation_type, start_time, initial_time, period, step_time, minimum_vertical_limit, maximum_vertical_limit, layers, observations, output_time_interval, output_directory, autosave_time_interval, hydro_output_parameters, wq_output_parameters, wqo_parameters, status, recovery_variables, hydrodynamic_configuration_id, water_quality_configuration_id, meteorological_configuration_id) values (:l, :t, :st1, :it, :p, :st2, :min, :max, :la, :o, :oti, :od, :ati, :hop, :wop, :wqo, :s, :r, :h, :wq, :m)");
     }
     
     query.bindValue(":l", simulation->getLabel());
@@ -1512,7 +1514,9 @@ void ProjectRepository::saveSimulation(Simulation *simulation) {
     query.bindValue(":oti", simulation->getOutputTimeInterval());
     query.bindValue(":od", simulation->getOutputDirectory());
     query.bindValue(":ati", simulation->getAutosaveTimeInterval());
-    query.bindValue(":op", simulation->getOutputParameters().join(","));
+    query.bindValue(":hop", simulation->getHydroOutputParameters().join(","));
+    query.bindValue(":wop", simulation->getWqOutputParameters().join(","));
+    query.bindValue(":wqo", simulation->getWqoParameters().join(","));
     query.bindValue(":s", (int) simulation->getStatus());
     query.bindValue(":r", simulation->getRecoveryVariables());
     query.bindValue(":h", simulation->getHydrodynamicConfiguration()->getId());

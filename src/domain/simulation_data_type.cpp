@@ -187,12 +187,8 @@ void SimulationDataType::MeteorologicalConfiguration::destroy() {
     }
 }
 
-SimulationDataType::OutputParameter::OutputParameter() :
-    name(nullptr)
-{}
-
-void SimulationDataType::OutputParameter::destroy() {
-    delete name;
+SimulationDataType::OutputParameter::OutputParameter() {
+    memset(name, ' ', sizeof(name));
 }
 
 SimulationDataType::RecoveryVariables::RecoveryVariables() :
@@ -216,8 +212,9 @@ SimulationDataType::Simulation::Simulation() :
     meteorologicalConfiguration(nullptr),
     observations(nullptr),
     outputDirectory(nullptr),
-    outputParameters(nullptr),
+    hydroOutputParameters(nullptr),
     wqOutputParameters(nullptr),
+    wqoParameters(nullptr),
     recoveryVariables(nullptr)
 {}
 
@@ -237,14 +234,12 @@ void SimulationDataType::Simulation::destroy() {
         delete meteorologicalConfiguration;
     }
     
-    if (outputParameters) {
-        outputParameters->destroy();
-        delete outputParameters;
-    }
-    
     delete label;
     delete layers;
     delete observations;
+    delete hydroOutputParameters;
+    delete wqOutputParameters;
+    delete wqoParameters;
     delete outputDirectory;
     
     // Intel Fortran deallocates automatically

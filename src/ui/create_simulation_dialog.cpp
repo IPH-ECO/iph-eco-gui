@@ -288,27 +288,44 @@ void CreateSimulationDialog::accept() {
     simulation->setOutputTimeInterval(ui->edtOutputTimeInterval->text().toInt());
     simulation->setAutosaveTimeInterval(ui->edtAutosaveInterval->text().toInt());
 
-    QTreeWidgetItemIterator checkedIt(ui->trOutputVariables, QTreeWidgetItemIterator::Checked);
+    QTreeWidgetItemIterator hydroIt(ui->trOutputVariables, QTreeWidgetItemIterator::Checked);
     QList<QString> parameters;
 
-    while (*checkedIt) {
-        QString parameter = (*checkedIt)->data(0, Qt::UserRole).toString();
-        parameters.append(parameter);
-        checkedIt++;
+    while (*hydroIt) {
+        QTreeWidgetItem *item = *hydroIt;
+        
+        if (item->data(0, Qt::UserRole + 1).toString() == "Hydrodynamic") {
+            QString parameter = item->data(0, Qt::UserRole).toString();
+            parameters.append(parameter);
+        }
+        
+        hydroIt++;
     }
 
-    simulation->setOutputParameters(parameters);
+    simulation->setHydroOutputParameters(parameters);
     
     QTreeWidgetItemIterator wqIt(ui->trOutputVariables, QTreeWidgetItemIterator::NoChildren);
-    QStringList wqParameters;
+    QStringList checkedParameters;
+    
+    parameters.clear();
     
     while (*wqIt) {
-        QString parameter = (*wqIt)->data(0, Qt::UserRole).toString();
-        wqParameters.append(parameter);
+        QTreeWidgetItem *item = *wqIt;
+        
+        if (item->data(0, Qt::UserRole + 1).toString() == "Water Quality") {
+            QString parameter = (*wqIt)->data(0, Qt::UserRole).toString();
+            parameters.append(parameter);
+            
+            if (item->checkState(0) == Qt::Checked) {
+                checkedParameters.append(parameter);
+            }
+        }
+        
         wqIt++;
     }
     
-    simulation->setWqOutputParameters(wqParameters);
+    simulation->setWqOutputParameters(checkedParameters);
+    simulation->setWqoParameters(parameters);
     
     if (startOnCreate) {
         simulation->setStartTime(QDateTime::currentDateTimeUtc().toTime_t());
@@ -419,10 +436,11 @@ void CreateSimulationDialog::on_cbxTemplate_currentTextChanged(const QString &si
     ui->edtAutosaveInterval->setText(QString::number(simulation->getAutosaveTimeInterval()));
     
     QTreeWidgetItemIterator it(ui->trOutputVariables, QTreeWidgetItemIterator::NoChildren);
+    QStringList allParameters = simulation->getAllParameters();
     
     while (*it) {
         QString parameterName = (*it)->data(0, Qt::UserRole).toString();
-        (*it)->setCheckState(0, simulation->getOutputParameters().contains(parameterName) ? Qt::Checked : Qt::Unchecked);
+        (*it)->setCheckState(0, allParameters.contains(parameterName) ? Qt::Checked : Qt::Unchecked);
         it++;
     }
 }

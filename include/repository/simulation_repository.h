@@ -13,6 +13,6 @@ public:
     static void updateSimulationProgress(Simulation *simulation, int progress);
     static void deleteSimulation(Simulation *simulation);
     static void saveRecoveryVariables(Simulation *simulation);
-    static void appendChildren(WaterQualityParameter *parent, QTreeWidgetItem *parentItem);
+    static void appendChildren(WaterQualityParameter *parent, QTreeWidgetItem *parentItem, const QString &module);
 };
 #endif // SIMULATION_REPOSITORY_H

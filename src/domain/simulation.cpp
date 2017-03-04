@@ -215,12 +215,12 @@ void Simulation::setOutputDirectory(const QString &outputDirectory) {
     this->outputDirectory = outputDirectory;
 }
 
-QStringList Simulation::getOutputParameters() const {
-	return outputParameters;
+QStringList Simulation::getHydroOutputParameters() const {
+	return hydroOutputParameters;
 }
 
-void Simulation::setOutputParameters(const QStringList &outputParameters) {
-	this->outputParameters = outputParameters;
+void Simulation::setHydroOutputParameters(const QStringList &hydroOutputParameters) {
+	this->hydroOutputParameters = hydroOutputParameters;
 }
 
 QStringList Simulation::getWqOutputParameters() const {
@@ -229,6 +229,18 @@ QStringList Simulation::getWqOutputParameters() const {
 
 void Simulation::setWqOutputParameters(const QStringList &wqOutputParameters) {
     this->wqOutputParameters = wqOutputParameters;
+}
+
+QStringList Simulation::getWqoParameters() const {
+    return wqoParameters;
+}
+
+void Simulation::setWqoParameters(const QStringList &wqoParameters) {
+    this->wqoParameters = wqoParameters;
+}
+
+QStringList Simulation::getAllParameters() const {
+    return hydroOutputParameters + wqOutputParameters;
 }
 
 SimulationStatus Simulation::getStatus() const {
@@ -327,6 +339,15 @@ void Simulation::buildRecoveryVariablesJson() {
         }
         
         jsonObject["eta"] = eta;
+        
+        QJsonArray wqo;
+        
+        for (int i = 0; i < this->wqoParameters.size(); i++) {
+            wqo.append(simulationStruct->recoveryVariables->wqo[i]);
+        }
+        
+        jsonObject["wqo"] = wqo;
+        
         jsonObject["simulationTime"] = simulationStruct->recoveryVariables->simulationTime;
     
         json = QJsonDocument(jsonObject).toJson(QJsonDocument::Compact);
@@ -368,6 +389,14 @@ void Simulation::loadRecoveryVariables() {
         
         for (int i = 0; i < eta.size(); i++) {
             simulationStruct->recoveryVariables->eta[i] = eta[i].toDouble();
+        }
+        
+        QJsonArray wqo = jsonObject["wqo"].toArray();
+        
+        simulationStruct->recoveryVariables->wqo = new double[wqo.size()];
+        
+        for (int i = 0; i < wqo.size(); i++) {
+            simulationStruct->recoveryVariables->wqo[i] = wqo[i].toDouble();
         }
         
         simulationStruct->recoveryVariables->simulationTime = jsonObject["simulationTime"].toDouble();
@@ -458,28 +487,34 @@ SimulationDataType::Simulation* Simulation::toSimulationDataType() {
 
         simulationStruct->outputTimeInterval = this->outputTimeInterval;
         simulationStruct->autosaveTimeInterval = this->autosaveTimeInterval;
-		simulationStruct->outputParametersLength = this->outputParameters.size();
-	    simulationStruct->outputParameters = new SimulationDataType::OutputParameter[simulationStruct->outputParametersLength];
+		simulationStruct->hydroOutputParametersLength = this->hydroOutputParameters.size();
+	    simulationStruct->hydroOutputParameters = new SimulationDataType::OutputParameter[simulationStruct->hydroOutputParametersLength];
 		i = 0;
 
-		for (QString parameter : this->outputParameters) {
+		for (QString parameter : this->hydroOutputParameters) {
 			QByteArray parameterByteArray = parameter.toLocal8Bit();
-			simulationStruct->outputParameters[i].nameLength = parameter.size();
-			simulationStruct->outputParameters[i].name = new char[parameter.size()];
-			strncpy(simulationStruct->outputParameters[i].name, parameterByteArray.constData(), parameter.size());
+			strncpy(simulationStruct->hydroOutputParameters[i].name, parameterByteArray.constData(), parameter.size());
 			i++;
 		}
         
-        simulationStruct->wqOutputParametersLength = this->wqOutputParameters.size();
-        simulationStruct->wqOutputParameters = new SimulationDataType::OutputParameter[simulationStruct->wqOutputParametersLength];
-        i = 0;
-        
-        for (QString parameter : this->wqOutputParameters) {
-            QByteArray parameterByteArray = parameter.toLocal8Bit();
-            simulationStruct->wqOutputParameters[i].nameLength = parameter.size();
-            simulationStruct->wqOutputParameters[i].name = new char[parameter.size()];
-            strncpy(simulationStruct->wqOutputParameters[i].name, parameterByteArray.constData(), parameter.size());
-            i++;
+        if (this->waterQualityConfiguration) {
+            simulationStruct->wqOutputParametersLength = this->wqOutputParameters.size();
+            simulationStruct->wqOutputParameters = new SimulationDataType::OutputParameter[simulationStruct->wqOutputParametersLength];
+            i = 0;
+            
+            for (QString parameter : this->wqOutputParameters) {
+                QByteArray parameterByteArray = parameter.toLocal8Bit();
+                strncpy(simulationStruct->wqOutputParameters[i].name, parameterByteArray.constData(), parameter.size());
+                i++;
+            }
+            
+            i = 0;
+            
+            for (QString parameter : this->wqoParameters) {
+                QByteArray parameterByteArray = parameter.toLocal8Bit();
+                strncpy(simulationStruct->wqOutputParameters[i].name, parameterByteArray.constData(), parameter.size());
+                i++;
+            }
         }
         
         simulationStruct->progress = this->progress;

@@ -43,8 +43,9 @@ private:
     double maximumVerticalLimit;
 	QString observations;
     QString outputDirectory;
-    QStringList outputParameters;
+    QStringList hydroOutputParameters;
     QStringList wqOutputParameters;
+    QStringList wqoParameters;
     SimulationStatus status;
     QString recoveryVariables;
     int outputTimeInterval;
@@ -106,11 +107,14 @@ public:
     int getAutosaveTimeInterval() const;
     void setAutosaveTimeInterval(int autosaveTimeInterval);
     QString getOutputDirectory() const;
-    void setOutputDirectory(const QString &outputDirectory);
-    QStringList getOutputParameters() const;
-    void setOutputParameters(const QStringList &outputParameters);
+    void setOutputDirectory(const QString &hydroOutputParameters);
+    QStringList getHydroOutputParameters() const;
+    void setHydroOutputParameters(const QStringList &outputParameters);
     QStringList getWqOutputParameters() const;
+    void setWqoParameters(const QStringList &wqoParameters);
+    QStringList getWqoParameters() const;
     void setWqOutputParameters(const QStringList &wqOutputParameters);
+    QStringList getAllParameters() const;
     SimulationStatus getStatus() const;
     void setStatus(const SimulationStatus &status);
     QString getRecoveryVariables() const;

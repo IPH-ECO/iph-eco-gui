@@ -238,7 +238,9 @@ void DatabaseUtility::createApplicationTables() {
         "output_time_interval integer, " \
         "output_directory text, " \
         "autosave_time_interval integer, " \
-        "output_parameters text, " \
+        "hydro_output_parameters text, " \
+        "wq_output_parameters text, " \
+        "wqo_parameters text, " \
         "status integer default 1, " \
         "progress integer default 0, " \
         "recovery_variables text, " \

@@ -25,12 +25,13 @@ void SimulationRepository::loadOutputParametersTree(QTreeWidget *trOutputVariabl
     
     for (int i = 0; i < jsonArray.size(); i++) {
         QJsonObject moduleJson = jsonArray[i].toObject();
+        QString module = moduleJson.value("module").toString();
         
-        if (moduleJson.value("module").toString() == "Water Quality" && !waterQualityConfiguration) {
+        if (module == "Water Quality" && !waterQualityConfiguration) {
             return;
         }
         
-    	QTreeWidgetItem *moduleItem = new QTreeWidgetItem(trOutputVariables, QStringList(moduleJson["module"].toString()));
+    	QTreeWidgetItem *moduleItem = new QTreeWidgetItem(trOutputVariables, QStringList(module));
         
         if (moduleJson["useInitialConditions"].toBool()) {
             WaterQualityRepository *waterQualityRepository = WaterQualityRepository::getInstance();
@@ -38,7 +39,7 @@ void SimulationRepository::loadOutputParametersTree(QTreeWidget *trOutputVariabl
             waterQualityRepository->loadParameters(waterQualityConfiguration);
             
             for (WaterQualityParameter *parameter : waterQualityConfiguration->getRootParameters(WaterQualityParameterSection::INITIAL_CONDITION)) {
-                appendChildren(parameter, moduleItem);
+                appendChildren(parameter, moduleItem, module);
             }
         } else {
             QJsonArray categoriesJson = moduleJson["categories"].toArray();
@@ -51,7 +52,8 @@ void SimulationRepository::loadOutputParametersTree(QTreeWidget *trOutputVariabl
                 for (int k = 0; k < parameteresJson.size(); k++) {
                     QJsonObject parameterJson = parameteresJson[k].toObject();
                     QTreeWidgetItem *parameterItem = new QTreeWidgetItem(categoryItem, QStringList(parameterJson["label"].toString()));
-                    parameterItem->setData(0, Qt::UserRole, QVariant(parameterJson["name"].toString()));
+                    parameterItem->setData(0, Qt::UserRole, parameterJson["name"].toString());
+                    parameterItem->setData(0, Qt::UserRole + 1, module);
                     bool checked = parameterJson["selected"].toBool();
 
                     parameterItem->setCheckState(0, checked ? Qt::Checked : Qt::Unchecked);
@@ -61,12 +63,13 @@ void SimulationRepository::loadOutputParametersTree(QTreeWidget *trOutputVariabl
     }
 }
 
-void SimulationRepository::appendChildren(WaterQualityParameter *parameter, QTreeWidgetItem *parentItem) {
+void SimulationRepository::appendChildren(WaterQualityParameter *parameter, QTreeWidgetItem *parentItem, const QString &module) {
     QTreeWidgetItem *widgetItem = nullptr;
     
     if (parameter->getChildren().isEmpty()) {
         widgetItem = new QTreeWidgetItem(parentItem, QStringList(parameter->getLabel()));
-        widgetItem->setData(0, Qt::UserRole, QVariant(parameter->getName()));
+        widgetItem->setData(0, Qt::UserRole, parameter->getName());
+        widgetItem->setData(0, Qt::UserRole + 1, module);
         widgetItem->setToolTip(0, parameter->getDescription());
         widgetItem->setCheckState(0, Qt::Unchecked);
     } else {
@@ -76,7 +79,7 @@ void SimulationRepository::appendChildren(WaterQualityParameter *parameter, QTre
             widgetItem = new QTreeWidgetItem(parentItem, QStringList(parameter->getLabel()));
             
             for (WaterQualityParameter *child : parameter->getChildren()) {
-                appendChildren(child, widgetItem);
+                appendChildren(child, widgetItem, module);
             }
         }
     }

@@ -250,7 +250,7 @@ void ViewResultsDialog::on_btnAddLayer_clicked() {
 }
 
 void ViewResultsDialog::fillLayersComboBox(Simulation *simulation) {
-    QStringList outputParameters = simulation->getOutputParameters();
+    QStringList outputParameters = simulation->getAllParameters();
     QMap<QString, QString> layers = SimulationRepository::loadOutputParametersLabels(outputParameters);
     int i = 0;
     
