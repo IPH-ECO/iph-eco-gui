@@ -313,7 +313,7 @@ void CreateSimulationDialog::accept() {
         QTreeWidgetItem *item = *wqIt;
         
         if (item->data(0, Qt::UserRole + 1).toString() == "Water Quality") {
-            QString parameter = (*wqIt)->data(0, Qt::UserRole).toString();
+            QString parameter = item->data(0, Qt::UserRole).toString();
             parameters.append(parameter);
             
             if (item->checkState(0) == Qt::Checked) {

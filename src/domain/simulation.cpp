@@ -508,7 +508,7 @@ SimulationDataType::Simulation* Simulation::toSimulationDataType() {
                 i++;
             }
             
-            simulationStruct->wqoParametersLength = this->wqOutputParameters.size();
+            simulationStruct->wqoParametersLength = this->wqoParameters.size();
             simulationStruct->wqoParameters = new SimulationDataType::OutputParameter[simulationStruct->wqoParametersLength];
             i = 0;
             
