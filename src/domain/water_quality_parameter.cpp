@@ -313,7 +313,7 @@ SimulationDataType::WaterQualityParameter WaterQualityParameter::toSimulationDat
     
     if (section == WaterQualityParameterSection::STRUCTURE || inputType == WaterQualityParameterInputType::INLINE) {
         parameter.numberOfGroups = 0;
-        parameter.value = this->value;
+        parameter.value = section == WaterQualityParameterSection::STRUCTURE ? this->checked : this->value;
     } else { // WaterQualityParameterInputType::TABULAR
         int i = 0;
         
