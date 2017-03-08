@@ -183,12 +183,19 @@ void WaterQualityParameter::setGroupValues(const QString &groupValuesStr) {
     }
 }
 
+void WaterQualityParameter::clearGroupValues() {
+    groupValues.clear();
+}
+
 QStringList WaterQualityParameter::getGroups() const {
     return groups;
 }
 
-void WaterQualityParameter::setGroups(const QStringList &groups) {
-    this->groups = groups;
+void WaterQualityParameter::setGroups(const QList<WaterQualityParameter*> &groups) {
+    for (WaterQualityParameter *group : groups) {
+        this->groups.append(group->getName());
+        group->groupTargets.append(this);
+    }
 }
 
 WaterQualityParameter* WaterQualityParameter::getParent() const {
@@ -297,6 +304,10 @@ QList<WaterQualityParameter*> WaterQualityParameter::getChildren() const {
 
 WaterQualityParameter* WaterQualityParameter::getChild(int i) const {
     return children[i];
+}
+
+QList<WaterQualityParameter*> WaterQualityParameter::getGroupTargets() const {
+    return groupTargets;
 }
 
 bool WaterQualityParameter::sort(WaterQualityParameter *p1, WaterQualityParameter *p2) {

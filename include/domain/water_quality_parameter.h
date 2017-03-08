@@ -29,6 +29,7 @@ private:
     QString diagramItem;
     WaterQualityParameterSection section;
     WaterQualityParameter *target;
+    QList<WaterQualityParameter*> groupTargets;
     QStringList groups;
     WaterQualityParameter *parent;
     QMap<QString, double> defaultGroupValues;
@@ -55,6 +56,7 @@ public:
     void setGroupValues(const QString &groupValuesStr);
     QMap<QString, QList<double> > getGroupValues() const;
     void setGroupValues(const QMap<QString, QList<double> > &groupValues);
+    void clearGroupValues();
     bool isPersistable() const;
     void setPersistable(const bool &persistable);
     bool isCheckable() const;
@@ -78,7 +80,7 @@ public:
     WaterQualityParameter* getTarget() const;
     void setTarget(WaterQualityParameter *target);
     QStringList getGroups() const;
-    void setGroups(const QStringList &groups);
+    void setGroups(const QList<WaterQualityParameter*> &groups);
     WaterQualityParameter* getParent() const;
     void setParent(WaterQualityParameter *parent);
     QMap<QString, double> getDefaultGroupValues() const;
@@ -102,6 +104,7 @@ public:
     void toggleSubTreeVisibility(bool hide);
     QList<WaterQualityParameter*> getChildren() const;
     WaterQualityParameter* getChild(int i) const;
+    QList<WaterQualityParameter*> getGroupTargets() const;
     SimulationDataType::WaterQualityParameter toSimulationDataType() const;
     
     static bool sort(WaterQualityParameter *p1, WaterQualityParameter *p2);

@@ -98,7 +98,7 @@ void WaterQualityRepository::loadParameters(WaterQualityConfiguration *configura
     }
     
     WaterQualityParameter *lastGroupParameter = nullptr;
-    QStringList lastGroups;
+    QList<WaterQualityParameter*> lastGroups;
     
     for (int i = 0; i < this->jsonParameters.size(); i++) {
         QJsonObject jsonParameter = jsonParameters[i].toObject();
@@ -134,7 +134,7 @@ void WaterQualityRepository::loadParameters(WaterQualityConfiguration *configura
         
         if (lastGroupParameter) {
             if (lastGroupParameter->getName() == parentName) {
-                lastGroups.append(parameter->getName());
+                lastGroups.append(parameter);
             } else {
                 QString group = jsonParameter["groups"].toString();
                 
@@ -151,11 +151,11 @@ void WaterQualityRepository::loadParameters(WaterQualityConfiguration *configura
                 QJsonArray defaultValuesArray = jsonParameter["groupDefaultValues"].toArray();
                 
                 for (int i = 0; i < lastGroups.size(); i++) {
-                    defaultGroupValues.insert(lastGroups.at(i), defaultValuesArray.at(i).toDouble());
+                    defaultGroupValues.insert(lastGroups.at(i)->getName(), defaultValuesArray.at(i).toDouble());
                 }
             } else {
                 for (int i = 0; i < lastGroups.size(); i++) {
-                    defaultGroupValues.insert(lastGroups.at(i), jsonParameter["groupDefaultValues"].toDouble());
+                    defaultGroupValues.insert(lastGroups.at(i)->getName(), jsonParameter["groupDefaultValues"].toDouble());
                 }
             }
             
@@ -244,7 +244,7 @@ void WaterQualityRepository::loadParameters(WaterQualityConfiguration *configura
     for (int i = 0; i < this->jsonInitialConditions.size(); i++) {
         QJsonObject jsonParameter = this->jsonInitialConditions[i].toObject();
         QString parameterName = jsonParameter["name"].toString();
-        QStringList groups = this->findGroups(configuration, jsonParameter["groups"].toString());
+        QList<WaterQualityParameter*> groups = this->findGroups(configuration, jsonParameter["groups"].toString());
         WaterQualityParameter *parameter = configuration->getParameter(parameterName, WaterQualityParameterSection::INITIAL_CONDITION);
         WaterQualityParameterSection targetParameterSection = jsonParameter["section"].toString() == "parameter" ? WaterQualityParameterSection::PARAMETER : WaterQualityParameterSection::STRUCTURE;
         WaterQualityParameter *targetParameter = configuration->getParameter(jsonParameter["target"].toString(), targetParameterSection);
@@ -272,11 +272,11 @@ void WaterQualityRepository::loadParameters(WaterQualityConfiguration *configura
                 QJsonArray defaultValuesArray = jsonParameter["groupDefaultValues"].toArray();
                 
                 for (int i = 0; i < groups.size(); i++) {
-                    defaultGroupValues.insert(groups.at(i), defaultValuesArray.at(i).toDouble());
+                    defaultGroupValues.insert(groups.at(i)->getName(), defaultValuesArray.at(i).toDouble());
                 }
             } else {
                 for (int i = 0; i < groups.size(); i++) {
-                    defaultGroupValues.insert(groups.at(i), jsonParameter["groupDefaultValues"].toDouble());
+                    defaultGroupValues.insert(groups.at(i)->getName(), jsonParameter["groupDefaultValues"].toDouble());
                 }
             }
             
@@ -336,9 +336,9 @@ FoodMatrixElement* WaterQualityRepository::findPreyByName(const QString &name) {
     return nullptr;
 }
 
-QStringList WaterQualityRepository::findGroups(WaterQualityConfiguration *configuration, const QString &parentGroupName) const {
+QList<WaterQualityParameter*> WaterQualityRepository::findGroups(WaterQualityConfiguration *configuration, const QString &parentGroupName) const {
     WaterQualityParameter *parentGroupItem = nullptr;
-    QStringList groups;
+    QList<WaterQualityParameter*> groups;
     
     for (WaterQualityParameter *parameter : configuration->getParameters()) {
         if (parameter->getName() == parentGroupName && parameter->getSection() == WaterQualityParameterSection::PARAMETER) {
@@ -349,7 +349,7 @@ QStringList WaterQualityRepository::findGroups(WaterQualityConfiguration *config
     
     if (parentGroupItem) {
         for (WaterQualityParameter *child : parentGroupItem->getChildren()) {
-            groups.append(child->getName());
+            groups.append(child);
         }
     }
     

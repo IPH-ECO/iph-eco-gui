@@ -722,10 +722,17 @@ void WaterQualityDialog::on_btnRemoveBoundaryCondition_clicked() {
 }
 
 void WaterQualityDialog::updateInlineValue(const QString &text) {
-    WaterQualityParameterSection section = (WaterQualityParameterSection) QObject::sender()->property("section").toInt();
-    QString parameterName = QObject::sender()->objectName();
+    QObject *sender = QObject::sender();
+    WaterQualityParameterSection section = (WaterQualityParameterSection) sender->property("section").toInt();
+    WaterQualityParameter *parameter = currentConfiguration->getParameter(sender->objectName(), section);
     
-    currentConfiguration->getParameter(parameterName, section)->setValue(text.toDouble());
+    parameter->setValue(text.toDouble());
+    
+    if (parameter->isGroup() && parameter->getValue() == 0) {
+        for (WaterQualityParameter *target : parameter->getGroupTargets()) {
+            target->clearGroupValues();
+        }
+    }
 }
 
 void WaterQualityDialog::updateBoundaryConditionsTable(WaterQualityBoundaryCondition *boundaryCondition) {

@@ -25,7 +25,7 @@ private:
     WaterQualityRepository();
 
     FoodMatrixElement* findPreyByName(const QString &name);
-    QStringList findGroups(WaterQualityConfiguration *configuration, const QString &parentGroupName) const;
+    QList<WaterQualityParameter*> findGroups(WaterQualityConfiguration *configuration, const QString &parentGroupName) const;
 public:
     static WaterQualityRepository* getInstance();
     
