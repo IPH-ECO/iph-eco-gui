@@ -433,7 +433,18 @@ void WaterQualityDialog::on_btnApplyConfiguration_clicked() {
         if (parameter->getInputType() == WaterQualityParameterInputType::INLINE) {
             QTreeWidget *treeWidget = parameter->getSection() == WaterQualityParameterSection::PARAMETER ? ui->trwParameter : ui->trwInitialConditions;
             QLineEdit *lineEdit = static_cast<QLineEdit*>(treeWidget->itemWidget(parameter->getItemWidget(), 1));
-            parameter->setValue(lineEdit->text().toDouble());
+            double value = lineEdit->text().toDouble();
+            
+            if (parameter->isGroup()) {
+                WaterQualityParameter *targetParameter = parameter->getParent()->getParent();
+                
+                if (!targetParameter->getSource()->isChecked()) {
+                    value = 0;
+                    parameter->clearGroupValues();
+                }
+            }
+            
+            parameter->setValue(value);
         } else if (parameter->getInputType() == WaterQualityParameterInputType::TABULAR) {
             QMap<QString, QList<double> > groupValues = parameter->getGroupValues();
             
@@ -572,10 +583,12 @@ void WaterQualityDialog::on_trwStructure_itemChanged(QTreeWidgetItem *item, int 
             }
         }
         
-        if (sourceParameter->getTarget() && sourceParameter->getTarget()->getItemWidget()) {
-            if (sourceParameter->getTarget()->isRadio()) {
+        WaterQualityParameter *targetParameter = sourceParameter->getTarget();
+        
+        if (targetParameter && targetParameter->getItemWidget()) {
+            if (targetParameter->isRadio()) {
                 if (sourceParameter->isChecked()) {
-                    for (WaterQualityParameter *sibling : sourceParameter->getTarget()->getSiblings()) {
+                    for (WaterQualityParameter *sibling : targetParameter->getSiblings()) {
                         if (sibling->isRadio()) {
                             sibling->getItemWidget()->setHidden(true);
                             sibling->setChecked(false);

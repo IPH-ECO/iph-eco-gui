@@ -29,6 +29,7 @@ private:
     QString diagramItem;
     WaterQualityParameterSection section;
     WaterQualityParameter *target;
+    WaterQualityParameter *source;
     QList<WaterQualityParameter*> groupTargets;
     QStringList groups;
     WaterQualityParameter *parent;
@@ -79,6 +80,8 @@ public:
     void setSection(const WaterQualityParameterSection &section);
     WaterQualityParameter* getTarget() const;
     void setTarget(WaterQualityParameter *target);
+    WaterQualityParameter* getSource() const;
+    void setSource(WaterQualityParameter *source);
     QStringList getGroups() const;
     void setGroups(const QList<WaterQualityParameter*> &groups);
     WaterQualityParameter* getParent() const;

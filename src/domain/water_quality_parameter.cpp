@@ -9,6 +9,7 @@ WaterQualityParameter::WaterQualityParameter() :
     checked(false),
     enabled(true),
     target(nullptr),
+    source(nullptr),
     parent(nullptr),
     editable(true),
     group(false),
@@ -148,6 +149,18 @@ WaterQualityParameter* WaterQualityParameter::getTarget() const {
 
 void WaterQualityParameter::setTarget(WaterQualityParameter *target) {
     this->target = target;
+    
+    if (target) {
+        target->setSource(this);
+    }
+}
+
+WaterQualityParameter* WaterQualityParameter::getSource() const {
+    return source;
+}
+
+void WaterQualityParameter::setSource(WaterQualityParameter *source) {
+    this->source = source;
 }
 
 QString WaterQualityParameter::getGroupValuesStr() const {
