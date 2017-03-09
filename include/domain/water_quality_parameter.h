@@ -101,7 +101,6 @@ public:
     void setItemWidget(QTreeWidgetItem *itemWidget);
     
     QList<WaterQualityParameter*> getSiblings() const;
-    void toggleSubTreeVisibility(bool hide);
     QList<WaterQualityParameter*> getChildren() const;
     WaterQualityParameter* getChild(int i) const;
     QList<WaterQualityParameter*> getGroupTargets() const;

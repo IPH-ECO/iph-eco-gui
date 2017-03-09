@@ -290,14 +290,6 @@ QList<WaterQualityParameter*> WaterQualityParameter::getSiblings() const {
     return siblings;
 }
 
-void WaterQualityParameter::toggleSubTreeVisibility(bool hide) {
-    this->itemWidget->setHidden(hide);
-    
-    for (int i = 0; i < children.size(); i++) {
-        children[i]->toggleSubTreeVisibility(hide);
-    }
-}
-
 QList<WaterQualityParameter*> WaterQualityParameter::getChildren() const {
     return children;
 }
