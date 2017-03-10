@@ -103,7 +103,19 @@ void WaterQualityDialog::bindCurrentConfigurationToTreeWidgets() {
     
     for (WaterQualityParameter *parameter : currentConfiguration->getParameters()) {
         if (parameter->isCheckable()) {
+            bool isMatOrgSplit = parameter->getName() == "iMatOrgSplit";
+            
+            if (isMatOrgSplit) {
+                parameter->getParent()->getItemWidget()->setCheckState(0, Qt::Unchecked);
+            }
+            
             parameter->getItemWidget()->setCheckState(0, parameter->isChecked() ? Qt::Checked : Qt::Unchecked);
+            
+            if (isMatOrgSplit) {
+                ui->trwStructure->blockSignals(true);
+                parameter->getParent()->getItemWidget()->setCheckState(0, parameter->getParent()->isChecked() ? Qt::Checked : Qt::Unchecked);
+                ui->trwStructure->blockSignals(false);
+            }
         } else if (parameter->getInputType() == WaterQualityParameterInputType::INLINE) {
             QTreeWidget *treeWidget = parameter->getSection() == WaterQualityParameterSection::PARAMETER ? ui->trwParameter : ui->trwInitialConditions;
             QLineEdit *lineEdit = treeWidget->findChild<QLineEdit*>(parameter->getName());
@@ -633,7 +645,7 @@ void WaterQualityDialog::toggleItem(const QString &itemName, const bool &checked
     
     if (parameter) {
         parameter->setChecked(checked);
-        parameter->getItemWidget()->setCheckState(0, parameter->isChecked() ? Qt::Checked : Qt::Unchecked);
+        parameter->getItemWidget()->setCheckState(0, checked ? Qt::Checked : Qt::Unchecked);
     }
 }
 
