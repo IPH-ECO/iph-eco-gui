@@ -325,6 +325,10 @@
 			{
 				"prey": "freshwaterDiatoms",
 				"value": 0.8
+			},
+			{
+				"prey": "microZooGroup",
+				"value": 0
 			}
 		]
 	},
