@@ -359,48 +359,51 @@ void Simulation::buildRecoveryVariablesJson() {
 void Simulation::loadRecoveryVariables() {
     if (this->recoveryVariables.isEmpty()) {
         simulationStruct->recoveryVariables = nullptr;
-    } else {
-        QJsonObject jsonObject = QJsonDocument::fromJson(this->recoveryVariables.toUtf8()).object();
-        
-        simulationStruct->recoveryVariables = new SimulationDataType::RecoveryVariables();
-        simulationStruct->recoveryVariables->layers = jsonObject["layers"].toInt();
-        simulationStruct->recoveryVariables->edges = jsonObject["edges"].toInt();
-        simulationStruct->recoveryVariables->elements = jsonObject["elements"].toInt();
-        
-        QJsonArray u = jsonObject["u"].toArray();
-        
-        simulationStruct->recoveryVariables->u = new double[u.size()];
-        
-        for (int i = 0; i < u.size(); i++) {
-            simulationStruct->recoveryVariables->u[i] = u[i].toDouble();
-        }
-        
-        QJsonArray w = jsonObject["w"].toArray();
-        
-        simulationStruct->recoveryVariables->w = new double[w.size()];
-        
-        for (int i = 0; i < w.size(); i++) {
-            simulationStruct->recoveryVariables->w[i] = w[i].toDouble();
-        }
-        
-        QJsonArray eta = jsonObject["eta"].toArray();
-        
-        simulationStruct->recoveryVariables->eta = new double[eta.size()];
-        
-        for (int i = 0; i < eta.size(); i++) {
-            simulationStruct->recoveryVariables->eta[i] = eta[i].toDouble();
-        }
-        
-        QJsonArray wqo = jsonObject["wqo"].toArray();
-        
+        return;
+    }
+    
+    QJsonObject jsonObject = QJsonDocument::fromJson(this->recoveryVariables.toUtf8()).object();
+    
+    simulationStruct->recoveryVariables = new SimulationDataType::RecoveryVariables();
+    simulationStruct->recoveryVariables->layers = jsonObject["layers"].toInt();
+    simulationStruct->recoveryVariables->edges = jsonObject["edges"].toInt();
+    simulationStruct->recoveryVariables->elements = jsonObject["elements"].toInt();
+    
+    QJsonArray u = jsonObject["u"].toArray();
+    
+    simulationStruct->recoveryVariables->u = new double[u.size()];
+    
+    for (int i = 0; i < u.size(); i++) {
+        simulationStruct->recoveryVariables->u[i] = u[i].toDouble();
+    }
+    
+    QJsonArray w = jsonObject["w"].toArray();
+    
+    simulationStruct->recoveryVariables->w = new double[w.size()];
+    
+    for (int i = 0; i < w.size(); i++) {
+        simulationStruct->recoveryVariables->w[i] = w[i].toDouble();
+    }
+    
+    QJsonArray eta = jsonObject["eta"].toArray();
+    
+    simulationStruct->recoveryVariables->eta = new double[eta.size()];
+    
+    for (int i = 0; i < eta.size(); i++) {
+        simulationStruct->recoveryVariables->eta[i] = eta[i].toDouble();
+    }
+    
+    QJsonArray wqo = jsonObject["wqo"].toArray();
+    
+    if (!wqo.empty()) {
         simulationStruct->recoveryVariables->wqo = new double[wqo.size()];
         
         for (int i = 0; i < wqo.size(); i++) {
             simulationStruct->recoveryVariables->wqo[i] = wqo[i].toDouble();
         }
-        
-        simulationStruct->recoveryVariables->simulationTime = jsonObject["simulationTime"].toDouble();
     }
+    
+    simulationStruct->recoveryVariables->simulationTime = jsonObject["simulationTime"].toDouble();
 }
 
 QFileInfoList Simulation::getOutputFiles(bool scanOutputDirectory) {

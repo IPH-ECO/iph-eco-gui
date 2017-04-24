@@ -105,7 +105,10 @@ void SimulationDataType::HydrodynamicConfiguration::destroy() {
     }
     
     if (boundaryConditions) {
-        boundaryConditions->destroy();
+        for (int i = 0; i < numberOfBoundaryConditions; i++) {
+            boundaryConditions[i].destroy();
+        }
+        
         delete boundaryConditions;
     }
 }
@@ -150,7 +153,10 @@ void SimulationDataType::WaterQualityConfiguration::destroy() {
     delete foodMatrix;
     
     if (boundaryConditions) {
-        boundaryConditions->destroy();
+        for (int i = 0; i < numberOfBoundaryConditions; i++) {
+            boundaryConditions[i].destroy();
+        }
+        
         delete boundaryConditions;
     }
 }

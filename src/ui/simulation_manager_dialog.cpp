@@ -87,7 +87,7 @@ Simulation* SimulationManagerDialog::getCurrentSimulation() const {
     }
     
     int row = tableWidget->currentRow();
-    QTableWidgetItem *labelItem = tableWidget->item(row, 0);
+    QTableWidgetItem *labelItem = tableWidget->item(row, 1);
     
     if (labelItem) {
         return IPHApplication::getCurrentProject()->getSimulation(labelItem->text());
