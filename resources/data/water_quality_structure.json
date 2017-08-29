@@ -241,6 +241,103 @@
 		"checkable": true
 	},
 	{
+		"label": "Numerical scheme for advection–diffusion equation",
+		"name": "advectionDiffusionEquation",
+		"target": "advectionDiffusionEquation",
+		"checkable": true
+	},
+	{
+		"label": "Numerical scheme",
+		"name": "iTranspFlag",
+		"parentName": "advectionDiffusionEquation",
+		"radio": true
+	},
+	{
+		"label": "Upwind",
+		"name": "nsUpwind",
+		"parentName": "iTranspFlag",
+		"checkable": true,
+		"checked": true
+	},
+	{
+		"label": "Lax-Wendroff",
+		"name": "nsLaxWendroff",
+		"parentName": "iTranspFlag",
+		"checkable": true
+	},
+	{
+		"label": "Superbee",
+		"name": "nsSuperbee",
+		"parentName": "iTranspFlag",
+		"checkable": true
+	},
+	{
+		"label": "Van Leer",
+		"name": "nsVanLeer",
+		"parentName": "iTranspFlag",
+		"checkable": true
+	},
+	{
+		"label": "MinMod",
+		"name": "nsMinMod",
+		"parentName": "iTranspFlag",
+		"checkable": true
+	},
+	{
+		"label": "Muscl",
+		"name": "nsMuscl",
+		"parentName": "iTranspFlag",
+		"checkable": true
+	},
+	{
+		"label": "Super-C",
+		"name": "nsSuperC",
+		"parentName": "iTranspFlag",
+		"checkable": true
+	},
+	{
+		"label": "Ultimate-Quickest",
+		"name": "nsUltimateQuickest",
+		"parentName": "iTranspFlag",
+		"checkable": true
+	},
+	{
+		"label": "Hyper-C",
+		"name": "nsHyperC",
+		"parentName": "iTranspFlag",
+		"checkable": true
+	},
+	{
+		"label": "OSPRE",
+		"name": "nsOSPRE",
+		"parentName": "iTranspFlag",
+		"checkable": true
+	},
+	{
+		"label": "SPL-1/3",
+		"name": "nsSPL13",
+		"parentName": "iTranspFlag",
+		"checkable": true
+	},
+	{
+		"label": "H-CUI",
+		"name": "nsHCUI",
+		"parentName": "iTranspFlag",
+		"checkable": true
+	},
+	{
+		"label": "Smart",
+		"name": "nsSmart",
+		"parentName": "iTranspFlag",
+		"checkable": true
+	},
+	{
+		"label": "Adaptative Time Step",
+		"name": "iAdaptativeTimeStep",
+		"parentName": "advectionDiffusionEquation",
+		"checkable": true
+	},
+	{
 		"label": "Pathogens Modeling",
 		"name": "iPatho",
 		"checkable": true,
