@@ -633,19 +633,6 @@
         {
             "defaultValue": 0,
             "editable": false,
-            "selected": true,
-            "hideSiblings": true,
-            "parentValue": 0,
-            "label": "Hydrostatic pressure",
-            "name": "noPressureSimulation",
-            "parentName": "pressure",
-            "rangeMaximum": 0,
-            "rangeMinimum": 0
-        },
-        {
-            "defaultValue": 0,
-            "editable": false,
-            "hideSiblings": true,
             "parentValue": 1,
             "label": "Barotropic and the baroclinic contributions to the hydrostatic pressure",
             "name": "iBarot",
@@ -654,13 +641,33 @@
             "rangeMinimum": 0
         },
         {
+            "checkable": false,
+            "checked": false,
+            "label": "Hydrostatic component",
+            "name": "hydrostaticComponent",
+            "parentName": "pressure",
+            "targetParameter": ""
+        },
+        {
             "defaultValue": 0,
             "editable": false,
             "hideSiblings": true,
             "parentValue": 2,
             "label": "Non-hydrostatic pressure",
             "name": "iNonHydro",
-            "parentName": "pressure",
+            "parentName": "hydrostaticComponent",
+            "rangeMaximum": 0,
+            "rangeMinimum": 0
+        },
+        {
+            "defaultValue": 0,
+            "editable": false,
+            "selected": true,
+            "hideSiblings": true,
+            "parentValue": 0,
+            "label": "Hydrostatic pressure",
+            "name": "noPressureSimulation",
+            "parentName": "hydrostaticComponent",
             "rangeMaximum": 0,
             "rangeMinimum": 0
         },
@@ -972,11 +979,27 @@
             "targetParameter": ""
         },
         {
+            "checkable": false,
+            "checked": false,
+            "label": "Hydrostatic component",
+            "name": "hydrostaticComponent",
+            "parentName": "pressure",
+            "targetParameter": ""
+        },
+        {
             "checkable": true,
             "label": "Hydrostatic pressure",
             "name": "noPressureSimulation",
-            "parentName": "pressure",
+            "parentName": "hydrostaticComponent",
             "targetParameter": "noPressureSimulation"
+        },
+        {
+            "checkable": true,
+            "checked": false,
+            "label": "Non-hydrostatic pressure",
+            "name": "iNonHydro",
+            "parentName": "hydrostaticComponent",
+            "targetParameter": "iNonHydro"
         },
         {
             "checkable": true,
@@ -985,14 +1008,6 @@
             "name": "iBarot",
             "parentName": "pressure",
             "targetParameter": "iBarot"
-        },
-        {
-            "checkable": true,
-            "checked": false,
-            "label": "Non-hydrostatic pressure",
-            "name": "iNonHydro",
-            "parentName": "pressure",
-            "targetParameter": "iNonHydro"
         },
         {
             "checkable": true,
