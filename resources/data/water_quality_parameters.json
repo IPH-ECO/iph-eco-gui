@@ -904,7 +904,7 @@
 		"description": "Half-saturation PAR for algae at 20\u00b0C (W/m\u00b3)",
 		"inputType": "tabular",
 		"groups": "phytoplanktonGroups",
-		"groupDefaultValues": 17000,
+		"groupDefaultValues": 17,
 		"parentName": "iPhytoPrimaryProduction"
 	},
 	{
@@ -913,7 +913,7 @@
 		"description": "Optimum PAR at 20\u00b0C (Steele function - W/m\u00b3)",
 		"inputType": "tabular",
 		"groups": "phytoplanktonGroups",
-		"groupDefaultValues": 2000,
+		"groupDefaultValues": 20,
 		"parentName": "iPhytoPrimaryProduction"
 	},
 	{
@@ -922,7 +922,7 @@
 		"description": "Min. chlorophyll/C ratio for algae (mgChl/mgDW)",
 		"inputType": "tabular",
 		"groups": "phytoplanktonGroups",
-		"groupDefaultValues": 0.015,
+		"groupDefaultValues": 0.005,
 		"parentName": "iPhytoPrimaryProduction"
 	},
 	{
@@ -931,7 +931,7 @@
 		"description": "Max. chlorophyll/C ratio for algae (mgChl/mgDW)",
 		"inputType": "tabular",
 		"groups": "phytoplanktonGroups",
-		"groupDefaultValues": 0.005,
+		"groupDefaultValues": 0.015,
 		"parentName": "iPhytoPrimaryProduction"
 	},
 	{
@@ -946,7 +946,7 @@
 		"description": "Temperature constant for algae (sigma in Gaussian curve - \u00b0C)",
 		"inputType": "tabular",
 		"groups": "phytoplanktonGroups",
-		"groupDefaultValues": 18000,
+		"groupDefaultValues": 20,
 		"parentName": "phytoplanktonNutrientUptake"
 	},
 	{
@@ -955,7 +955,7 @@
 		"description": "Optimum temp. for algae (\u00b0C)",
 		"inputType": "tabular",
 		"groups": "phytoplanktonGroups",
-		"groupDefaultValues": 20000,
+		"groupDefaultValues": 18,
 		"parentName": "phytoplanktonNutrientUptake"
 	},
 	{
