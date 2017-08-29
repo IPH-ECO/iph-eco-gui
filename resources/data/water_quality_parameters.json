@@ -2918,7 +2918,7 @@
 		"label": "Sedimentation",
 		"name": "organicMatterSedimentation3",
 		"persistable": false,
-		"parentName": "organicMatter1"
+		"parentName": "organicMatter3"
 	},
 	{
 		"label": "cVSetPOM",
