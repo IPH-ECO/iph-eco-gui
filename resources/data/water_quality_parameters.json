@@ -910,6 +910,15 @@
 	{
 		"label": "cLOptRefPhyt",
 		"name": "cLOptRefPhyt",
+		"description": "Maximum growth rate for algae (1/day)",
+		"inputType": "tabular",
+		"groups": "phytoplanktonGroups",
+		"groupDefaultValues": 2,
+		"parentName": "iPhytoPrimaryProduction"
+	},
+	{
+		"label": "cMuMaxPhyt",
+		"name": "cMuMaxPhyt",
 		"description": "Optimum PAR at 20\u00b0C (Steele function - W/m\u00b3)",
 		"inputType": "tabular",
 		"groups": "phytoplanktonGroups",
