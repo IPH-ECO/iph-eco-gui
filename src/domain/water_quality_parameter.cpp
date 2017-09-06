@@ -311,6 +311,16 @@ WaterQualityParameter* WaterQualityParameter::getChild(int i) const {
     return children[i];
 }
 
+WaterQualityParameter* WaterQualityParameter::getChild(const QString &childName) const {
+	for (WaterQualityParameter *child : this->children) {
+		if (child->getName() == childName) {
+			return child;
+		}
+	}
+
+	return nullptr;
+}
+
 QList<WaterQualityParameter*> WaterQualityParameter::getGroupTargets() const {
     return groupTargets;
 }

@@ -106,6 +106,7 @@ public:
     QList<WaterQualityParameter*> getSiblings() const;
     QList<WaterQualityParameter*> getChildren() const;
     WaterQualityParameter* getChild(int i) const;
+	WaterQualityParameter* getChild(const QString &childName) const;
     QList<WaterQualityParameter*> getGroupTargets() const;
     SimulationDataType::WaterQualityParameter toSimulationDataType() const;
     

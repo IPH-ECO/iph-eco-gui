@@ -243,8 +243,7 @@
 	{
 		"label": "Numerical scheme for advection–diffusion equation",
 		"name": "advectionDiffusionEquation",
-		"target": "advectionDiffusionEquation",
-		"checkable": true
+		"target": "advectionDiffusionEquation"
 	},
 	{
 		"label": "Numerical scheme",
