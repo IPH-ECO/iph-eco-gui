@@ -645,14 +645,13 @@
             "checked": false,
             "label": "Hydrostatic component",
             "name": "hydrostaticComponent",
-            "parentName": "pressure",
-            "targetParameter": ""
+            "parentName": "pressure"
         },
         {
             "defaultValue": 0,
             "editable": false,
             "hideSiblings": true,
-            "parentValue": 2,
+            "parentValue": 0,
             "label": "Non-hydrostatic pressure",
             "name": "iNonHydro",
             "parentName": "hydrostaticComponent",
@@ -664,9 +663,9 @@
             "editable": false,
             "selected": true,
             "hideSiblings": true,
-            "parentValue": 0,
+            "parentValue": 1,
             "label": "Hydrostatic pressure",
-            "name": "noPressureSimulation",
+            "name": "iHydro",
             "parentName": "hydrostaticComponent",
             "rangeMaximum": 0,
             "rangeMinimum": 0
@@ -983,15 +982,14 @@
             "checked": false,
             "label": "Hydrostatic component",
             "name": "hydrostaticComponent",
-            "parentName": "pressure",
-            "targetParameter": ""
+            "parentName": "pressure"
         },
         {
             "checkable": true,
             "label": "Hydrostatic pressure",
-            "name": "noPressureSimulation",
+            "name": "iHydro",
             "parentName": "hydrostaticComponent",
-            "targetParameter": "noPressureSimulation"
+            "targetParameter": "iHydro"
         },
         {
             "checkable": true,
