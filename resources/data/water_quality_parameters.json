@@ -163,6 +163,14 @@
 		"parentName": "general"
 	},
 	{
+		"label": "fPAR",
+		"name": "fPAR",
+		"description": "Fraction of photosynthetically active radiation",
+		"inputType": "inline",
+		"defaultValue": 0.45,
+		"parentName": "general"
+	},
+	{
 		"label": "Sediments",
 		"name": "iSed",
 		"persistable": false,
