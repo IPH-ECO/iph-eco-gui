@@ -250,16 +250,23 @@ void ViewResultsDialog::on_btnAddLayer_clicked() {
 }
 
 void ViewResultsDialog::fillLayersComboBox(Simulation *simulation) {
-    QStringList outputParameters = simulation->getAllParameters();
-    QMap<QString, QString> layers = SimulationRepository::loadOutputParametersLabels(outputParameters);
+	QStringList hydroOutputParameters = simulation->getHydroOutputParameters();
+	QStringList wqOutputParameters = simulation->getWqOutputParameters();
+	QMap<QString, QString> hydroLayers = SimulationRepository::loadHydroOutputParametersLabels(hydroOutputParameters);
     int i = 0;
     
     ui->cbxLayers->clear();
-    for (QString layerLabel : layers.keys()) {
+	for (QString layerLabel : hydroLayers.keys()) {
         ui->cbxLayers->addItem(layerLabel);
-        ui->cbxLayers->setItemData(i, layers.value(layerLabel));
+		ui->cbxLayers->setItemData(i, hydroLayers.value(layerLabel));
         i++;
     }
+
+	for (QString layerLabel : wqOutputParameters) {
+		ui->cbxLayers->addItem(layerLabel);
+		ui->cbxLayers->setItemData(i, layerLabel);
+		i++;
+	}
     ui->cbxLayers->setCurrentIndex(-1);
     
     ui->tblLayers->setRowCount(0);

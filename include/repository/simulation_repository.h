@@ -8,7 +8,7 @@
 class SimulationRepository {
 public:
 	static void loadOutputParametersTree(QTreeWidget *trOutputVariables, WaterQualityConfiguration *waterQualityConfiguration);
-    static QMap<QString, QString> loadOutputParametersLabels(const QStringList &parameters);
+	static QMap<QString, QString> loadHydroOutputParametersLabels(const QStringList &parameters);
     static void updateSimulationStatus(Simulation *simulation, const SimulationStatus &status);
     static void updateSimulationProgress(Simulation *simulation, int progress);
     static void deleteSimulation(Simulation *simulation);

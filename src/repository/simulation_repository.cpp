@@ -85,7 +85,7 @@ void SimulationRepository::appendChildren(WaterQualityParameter *parameter, QTre
     }
 }
 
-QMap<QString, QString> SimulationRepository::loadOutputParametersLabels(const QStringList &parameters) {
+QMap<QString, QString> SimulationRepository::loadHydroOutputParametersLabels(const QStringList &parameters) {
     QMap<QString, QString> parametersLabels;
     QFile dataFile(":/data/output_variables.json");
     
