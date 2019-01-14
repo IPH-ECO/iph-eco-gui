@@ -42,6 +42,7 @@ void HydrodynamicBoundaryConditionDialog::setupBaseUi() {
     
     btnIndividualObjectPicker = new QToolButton(this);
     btnIndividualObjectPicker->setCheckable(true);
+    btnIndividualObjectPicker->setEnabled(false);
 	btnIndividualObjectPicker->setIcon(QIcon(":/icons/individual-object-picker.png"));
 	btnIndividualObjectPicker->setToolTip("Individual cell picker");
     connect(btnIndividualObjectPicker, SIGNAL(clicked(bool)), this, SLOT(btnIndividualObjectPicker_clicked(bool)));
@@ -117,7 +118,8 @@ void HydrodynamicBoundaryConditionDialog::btnMultipleObjectPicker_clicked(bool c
     HydrodynamicVTKWidget *vtkWidget = hydrodynamicDataDialog->findChild<HydrodynamicVTKWidget*>("vtkWidget");
     QComboBox *cbxType = this->findChild<QComboBox*>("cbxType");
     
-    vtkWidget->togglePicker(checked, cbxType->currentText() == "Water Level" ? PickerMode::MULTIPLE_CELL : PickerMode::MULTIPLE_EDGE);
+    // vtkWidget->togglePicker(checked, cbxType->currentText() == "Water Level" ? PickerMode::MULTIPLE_CELL : PickerMode::MULTIPLE_EDGE);
+    vtkWidget->togglePicker(checked, PickerMode::MULTIPLE_EDGE);
     vtkWidget->toggleZoomArea(false);
     hydrodynamicDataDialog->toggleZoomAreaAction(checked);
     

@@ -3,7 +3,11 @@
 
 #include <application/iph_application.h>
 #include <domain/structured_mesh.h>
+
+#ifdef WITH_UNSTRUCTURED_MESH
 #include <domain/unstructured_mesh.h>
+#endif
+
 #include <exceptions/grid_data_exception.h>
 #include <ui/main_window.h>
 #include <ui/grid_layer_dialog.h>
@@ -112,11 +116,15 @@ void GridDataDialog::on_cbxMesh_currentIndexChanged(const QString &meshName) {
     
     currentMesh = IPHApplication::getCurrentProject()->getMesh(meshName);
 
+#ifdef WITH_UNSTRUCTURED_MESH
     if (currentMesh->instanceOf("UnstructuredMesh")) {
         currentMesh = static_cast<UnstructuredMesh*>(currentMesh);
     } else {
         currentMesh = static_cast<StructuredMesh*>(currentMesh);
     }
+#else
+    currentMesh = static_cast<StructuredMesh*>(currentMesh);
+#endif
 
     ui->vtkWidget->render(currentMesh);
     ui->vtkWidget->toggleCellPicker(false);

@@ -185,16 +185,19 @@ void MainWindow::on_actionStructuredMeshGeneration_triggered() {
 }
 
 void MainWindow::on_actionUnstructuredMeshGeneration_triggered() {
+#ifdef WITH_UNSTRUCTURED_MESH
     if (dynamic_cast<UnstructuredMeshDialog*>(currentSubWindow->widget()) && currentSubWindow->isVisible()) {
         return;
     }
-    
+
     this->closeCurrentSubWindow();
+
     UnstructuredMeshDialog *unstructuredMeshDialog = new UnstructuredMeshDialog(this);
     currentSubWindow->setWidget(unstructuredMeshDialog);
     unstructuredMeshDialog->show();
 #ifdef __APPLE__
     this->update();
+#endif
 #endif
 }
 

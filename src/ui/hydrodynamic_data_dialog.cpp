@@ -2,7 +2,11 @@
 #include "ui_hydrodynamic_data_dialog.h"
 
 #include <application/iph_application.h>
+
+#ifdef WITH_UNSTRUCTURED_MESH
 #include <domain/unstructured_mesh.h>
+#endif
+
 #include <domain/structured_mesh.h>
 #include <domain/hydrodynamic_parameter.h>
 #include <ui/vertically_integrated_hydrodynamic_boundary_condition_dialog.h>

@@ -1,7 +1,9 @@
 #ifndef GRID_DATA_POINT_H
 #define GRID_DATA_POINT_H
 
+#ifdef WITH_UNSTRUCTURED_MESH
 #include <utility/cgal_definitions.h>
+#endif
 
 class GridDataPoint {
 private:

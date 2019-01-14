@@ -11,7 +11,10 @@
 
 #include "new_project_dialog.h"
 #include "project_properties_dialog.h"
+
+#ifdef WITH_UNSTRUCTURED_MESH
 #include "unstructured_mesh_dialog.h"
+#endif
 
 namespace Ui {
     class MainWindow;

@@ -2,7 +2,11 @@
 
 #include <application/iph_application.h>
 #include <exceptions/database_exception.h>
+
+#ifdef WITH_UNSTRUCTURED_MESH
 #include <domain/unstructured_mesh.h>
+#endif
+
 #include <domain/structured_mesh.h>
 #include <repository/simulation_repository.h>
 
@@ -74,15 +78,21 @@ void ProjectRepository::loadMeshes(Project *project) {
     
     while (query.next() && !operationCanceled) {
         QString meshType = query.value("type").toString();
+       
+#ifdef WITH_UNSTRUCTURED_MESH
         Mesh *mesh = NULL;
         
         if (meshType == "StructuredMesh") {
             mesh = new StructuredMesh();
-            static_cast<StructuredMesh*>(mesh)->setResolution(query.value("resolution").toDouble());
+            static_cast<StructuredMesh*>(mesh)->setResolution(query.value("resolution").toUInt());
         } else {
             mesh = new UnstructuredMesh();
         }
-        
+#else
+        Mesh *mesh = new StructuredMesh();
+        static_cast<StructuredMesh*>(mesh)->setResolution(query.value("resolution").toUInt());
+#endif
+
         mesh->setId(query.value("id").toUInt());
         mesh->setName(query.value("name").toString());
         mesh->setCoordinatesDistance(query.value("coordinates_distance").toDouble());

@@ -4,7 +4,10 @@
 #include "simulation_data_type.h"
 #include "mesh.h"
 #include <exceptions/mesh_exception.h>
+
+#ifdef WITH_UNSTRUCTURED_MESH
 #include <utility/cgal_definitions.h>
+#endif
 
 #include <QList>
 

@@ -111,7 +111,8 @@ bool HydrodynamicMouseInteractor::renderBoundaryCondition(HydrodynamicBoundaryCo
     QColor cellColor(boundaryCondition->getCellColor());
     selectionActor->SetMapper(mapper);
     selectionActor->GetProperty()->SetColor(cellColor.redF(), cellColor.greenF(), cellColor.blueF());
-    selectionActor->GetProperty()->SetLineWidth(pickerMode == PickerMode::MULTIPLE_EDGE || boundaryCondition->getType() == BoundaryConditionType::WATER_FLOW ? 2 : 1);
+    // selectionActor->GetProperty()->SetLineWidth(pickerMode == PickerMode::MULTIPLE_EDGE || boundaryCondition->getType() == BoundaryConditionType::WATER_FLOW ? 2 : 1);
+    selectionActor->GetProperty()->SetLineWidth(2);
     this->GetDefaultRenderer()->AddActor(selectionActor);
     
     this->GetDefaultRenderer()->GetRenderWindow()->Render();
@@ -194,6 +195,7 @@ void HydrodynamicMouseInteractor::setBoundaryCondition(HydrodynamicBoundaryCondi
 }
 
 vtkSmartPointer<vtkPolyData> HydrodynamicMouseInteractor::getTargetPolyData(BoundaryCondition *boundaryCondition) const {
+    return boundaryPolyData;
     if (pickerMode == PickerMode::NO_PICKER) {
         return boundaryCondition->getType() == BoundaryConditionType::WATER_LEVEL ? meshPolyData : boundaryPolyData;
     }

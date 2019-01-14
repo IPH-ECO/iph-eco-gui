@@ -1,7 +1,10 @@
 #include <domain/grid_data_configuration.h>
 
 #include <domain/structured_mesh.h>
+
+#ifdef WITH_UNSTRUCTURED_MESH
 #include <domain/unstructured_mesh.h>
+#endif
 
 #include <vtkDoubleArray.h>
 #include <vtkCellData.h>
@@ -120,6 +123,7 @@ SimulationDataType::GridDataConfiguration* GridDataConfiguration::toSimulationDa
         gridDataConfiguration->layers[i++] = gridData->toSimulationDataType();
     }
     
+#ifdef WITH_UNSTRUCTURED_MESH
     gridDataConfiguration->isStructured = this->getMesh()->instanceOf("StructuredMesh");
     
     if (gridDataConfiguration->isStructured) {
@@ -127,6 +131,9 @@ SimulationDataType::GridDataConfiguration* GridDataConfiguration::toSimulationDa
     } else {
         gridDataConfiguration->unstructuredMesh = static_cast<UnstructuredMesh*>(this->getMesh())->toSimulationDataType();
     }
+#else
+    gridDataConfiguration->structuredMesh = static_cast<StructuredMesh*>(this->getMesh())->toSimulationDataType(hydrodynamicConfiguration);
+#endif
     
     return gridDataConfiguration;
 }

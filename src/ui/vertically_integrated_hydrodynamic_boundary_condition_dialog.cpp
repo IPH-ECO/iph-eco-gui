@@ -45,7 +45,8 @@ VerticallyIntegratedHydrodynamicBoundaryConditionDialog::VerticallyIntegratedHyd
             ui->btnTimeSeries->setEnabled(boundaryCondition->getFunction() == BoundaryConditionFunction::TIME_SERIES);
         }
         
-        btnIndividualObjectPicker->setEnabled(ui->cbxType->currentText() == "Water Level");
+        // btnIndividualObjectPicker->setEnabled(ui->cbxType->currentText() == "Water Level");
+        // btnIndividualObjectPicker->setEnabled(false);
     }
 }
 
@@ -58,7 +59,8 @@ void VerticallyIntegratedHydrodynamicBoundaryConditionDialog::on_cbxType_current
     QString elementIds = "-";
     
     if (currentBoundaryCondition->getObjectIds().isEmpty()) {
-        btnIndividualObjectPicker->setEnabled(isWaterLevel);
+        // btnIndividualObjectPicker->setEnabled(isWaterLevel);
+        btnIndividualObjectPicker->setEnabled(false);
         btnIndividualObjectPicker->setChecked(false);
         btnMultipleObjectPicker->setEnabled(true);
         btnMultipleObjectPicker->setChecked(false);
@@ -80,7 +82,7 @@ void VerticallyIntegratedHydrodynamicBoundaryConditionDialog::on_cbxType_current
     }
     
     ui->lblElementIds->setText(elementIds);
-    ui->lblElementLabel->setText(isWaterLevel ? "Cells" : "Edges");
+    // ui->lblElementLabel->setText(isWaterLevel ? "Cells" : "Edges");
     
     if (!isWaterLevel) {
         bool isNormalDepth = type == "Normal Depth";
