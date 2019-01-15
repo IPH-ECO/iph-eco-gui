@@ -121,7 +121,9 @@ void BoundaryCondition::setTimeSeriesChanged(const bool &timeSeriesChanged) {
 }
 
 QString BoundaryCondition::getObjectTypeLabel() const {
-    if (this->type == BoundaryConditionType::WATER_FLOW || this->type == BoundaryConditionType::NORMAL_DEPTH) {
+    return "Edges";
+
+    /*if (this->type == BoundaryConditionType::WATER_FLOW || this->type == BoundaryConditionType::NORMAL_DEPTH) {
         return "Edges";
     }
     
@@ -129,7 +131,7 @@ QString BoundaryCondition::getObjectTypeLabel() const {
         return "Cells";
     }
     
-    return "Undefined";
+    return "Undefined";*/
 }
 
 QString BoundaryCondition::getTypeLabel() const {
