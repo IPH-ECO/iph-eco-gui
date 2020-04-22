@@ -750,7 +750,7 @@
             "targetParameter": "windDragConstant"
         },
         {
-            "checkable": true,
+            "checkable": false,
             "checked": false,
             "label": "Linear function",
             "name": "windDragLinearFunction",
@@ -899,7 +899,7 @@
             "targetParameter": "zeroEquationModel"
         },
         {
-            "checkable": true,
+            "checkable": false,
             "checked": false,
             "label": "Generic Length Scale Model",
             "name": "genericLengthScaleModel",
@@ -907,7 +907,7 @@
             "targetParameter": "genericLengthScaleModel"
         },
         {
-            "checkable": true,
+            "checkable": false,
             "checked": false,
             "label": "Mellor and Yamada Turbulence Model",
             "name": "mellorAndYamadaTurbulenceModel",
@@ -915,7 +915,7 @@
             "targetParameter": "mellorAndYamadaTurbulenceModel"
         },
         {
-            "checkable": true,
+            "checkable": false,
             "checked": false,
             "label": "ELCOM Mixing Model",
             "name": "elcomMixingModel",
@@ -954,7 +954,7 @@
             "targetParameter": "eulerianLagrangianMethod"
         },
         {
-            "checkable": true,
+            "checkable": false,
             "checked": false,
             "label": "Second Order MUSCL Method",
             "name": "secondOrderMusclMethod",
@@ -962,7 +962,7 @@
             "targetParameter": "secondOrderMusclMethod"
         },
         {
-            "checkable": true,
+            "checkable": false,
             "checked": false,
             "label": "High-order ENO/WENO Method",
             "name": "highOrderEnoWenoMethod",
@@ -1000,7 +1000,7 @@
             "targetParameter": "iNonHydro"
         },
         {
-            "checkable": true,
+            "checkable": false,
             "checked": false,
             "label": "Barotropic and the baroclinic contributions to the hydrostatic pressure",
             "name": "iBarot",
